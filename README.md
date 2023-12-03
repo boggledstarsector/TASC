@@ -19,3 +19,5 @@ The instructions below are intended for those with a software development backgr
 9. Using IntelliJ, open the project located at C:\Program Files (x86)\Fractal Softworks\Starsector\mods\tasc.
 10. Select Build -> Rebuild Project. If the build is successful you did everything correctly.
 11. Launch Starsector and enable TASC. Since the repo was cloned to your mods folder, you can simply make changes, rebuild TASC and restart Starsector, and your new build of TASC will be used.
+
+## Contributions ##
