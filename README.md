@@ -4,6 +4,8 @@ TASC (Terraforming and Station Construction) is a mod for the video game Starsec
 
 TASC adds various features including terraforming planets and constructing space stations.
 
+The official forumn thread with installation instructions for non-developers is at https://fractalsoftworks.com/forum/index.php?topic=17094.0.
+
 ## Setup ##
 
 The instructions below are intended for those with a software development background but who are new to modding Starsector. Following them will make it quick and easy to start writing code, rebuild TASC and launch Starsector with your changes.
@@ -19,5 +21,3 @@ The instructions below are intended for those with a software development backgr
 9. Using IntelliJ, open the project located at C:\Program Files (x86)\Fractal Softworks\Starsector\mods\tasc.
 10. Select Build -> Rebuild Project. If the build is successful you did everything correctly.
 11. Launch Starsector and enable TASC. Since the repo was cloned to your mods folder, you can simply make changes, rebuild TASC and restart Starsector, and your new build of TASC will be used.
-
-## Contributions ##
