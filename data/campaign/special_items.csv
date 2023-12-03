@@ -1,0 +1,4 @@
+name,id,tags,tech/manufacturer,rarity,base price,stack size,cargo space,baseRaidDanger,icon,sound id,sound id drop,plugin,plugin params,desc,order
+Planet-Killer Device,boggled_planetkiller,,Domain Restricted,,1000000,1000,1,,graphics/icons/cargo/planetkiller.png,ui_cargo_special_military_pickup,ui_cargo_special_military_drop,com.fs.starfarer.api.campaign.impl.items.GenericSpecialItemPlugin,,"A specialized warhead capable of sundering a world. Operating principles are only dimly understood and are thought to involve utilizing the world's spin and some form of resonance.
+
+This one is ready for deployment. Doing so will result in almost universal condemnation from the inhabitants of the Sector.",10

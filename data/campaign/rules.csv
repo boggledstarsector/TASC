@@ -1,0 +1,609 @@
+id,trigger,conditions,script,text,options,notes
+,,,,,,
+#Remnant Patrol Dialogue
+,,,,,,
+boggledRemnantPatrolDefaultGreeting,OpenCommLink,boggledIsRemnantPatrol score:1000,"$menuState = fleetConvMain 0
+FireAll PopulateOptions","""AIS code confirmed. Greetings $playerName. My directive is to protect your assets in this system.""",,
+#Domain-Tech Crafting
+,,,,,,
+boggledMarketAddCraftingControlPanel,PopulateOptions,"boggledCraftingCheckEnabled
+$menuState == main",,,"21:boggledOpenCraftingPanel:Craft Domain-tech items",
+boggledOpenCraftingControlPanel,DialogOptionSelected,$option == boggledOpenCraftingPanel,FireAll boggledCraftingPopulateSubmenus,,,
+boggledAddBackOptionToCraftingMenu,boggledCraftingPopulateSubmenus,,SetShortcut boggledGoBackToMainColonyInteractionMenu ""ESCAPE"",,50:boggledGoBackToMainColonyInteractionMenu:Cancel,
+boggledGoBackToCorpSelectionSubmenuTrigger,DialogOptionSelected,$option == boggledGoBackToCorpSelectionSubmenu,"$menuState = main 0
+FireAll boggledCraftingPopulateSubmenus",,,,
+,,,,,,
+#Domain Restricted
+,,,,,,
+boggledCraftingAddDomainRestricted,boggledCraftingPopulateSubmenus,,,,0:boggledConsiderDomainRestrictedItems:Domain Restricted items,
+boggledPopulateDomainRestrictedOptionsTrigger,DialogOptionSelected,$option == boggledConsiderDomainRestrictedItems,FireAll boggledPopulateDomainRestrictedOptions,,,
+boggledAddCancelToDomainRestrictedOptions,boggledPopulateDomainRestrictedOptions,,SetShortcut boggledGoBackToCorpSelectionSubmenu ""ESCAPE"",,50:boggledGoBackToCorpSelectionSubmenu:Back,
+boggledReturnToDomainRestrictedItemsList,DialogOptionSelected,$option == boggledCancelBuildDomainRestrictedItem,"$menuState = main 0
+FireAll boggledPopulateDomainRestrictedOptions",,,
+boggledGoBackToDomainRestrictedSubmenu,DialogOptionSelected,$option == boggledGoBackToDomainRestrictedSubmenu,"$menuState = main 0
+FireAll boggledPopulateDomainRestrictedOptions",,,,
+,,,,,,#Corrupted Nanoforge
+boggledAddCorruptedNanoforgeOption,boggledPopulateDomainRestrictedOptions,,,,0:boggledConsiderCorruptedNanoforge:Corrupted Nanoforge,
+boggledPopulateCorruptedNanoforgeMenu,DialogOptionSelected,$option == boggledConsiderCorruptedNanoforge,FireBest boggledPopulateCorruptedNanoforgeOptions,,,
+boggledCorruptedNanoforgeYes,boggledPopulateCorruptedNanoforgeOptions,boggledCraftingRequirementsMet,"boggledCraftingPrintRequirements
+SetShortcut boggledGoBackToDomainRestrictedSubmenu ""ESCAPE""",,"1:boggledTriggerCorruptedNanoforge:Craft Corrupted Nanoforge
+50:boggledGoBackToDomainRestrictedSubmenu:Back",
+boggledCorruptedNanoforgeNo,boggledPopulateCorruptedNanoforgeOptions,!boggledCraftingRequirementsMet,"boggledCraftingPrintRequirements
+SetEnabled boggledTriggerCorruptedNanoforge false
+SetShortcut boggledGoBackToDomainRestrictedSubmenu ""ESCAPE""",,"1:boggledTriggerCorruptedNanoforge:Craft Corrupted Nanoforge
+50:boggledGoBackToDomainRestrictedSubmenu:Back",
+boggledTriggerCraftingCorruptedNanoforge,DialogOptionSelected,$option == boggledTriggerCorruptedNanoforge,"boggledCraftingBuildItem
+$menuState = main 0
+FireAll PopulateOptions","Corrupted Nanoforge crafted successfully.",,,
+,,,,,,#Pristine Nanoforge
+boggledAddPristineNanoforgeOption,boggledPopulateDomainRestrictedOptions,,,,0:boggledConsiderPristineNanoforge:Pristine Nanoforge,
+boggledPopulatePristineNanoforgeMenu,DialogOptionSelected,$option == boggledConsiderPristineNanoforge,FireBest boggledPopulatePristineNanoforgeOptions,,,
+boggledPristineNanoforgeYes,boggledPopulatePristineNanoforgeOptions,boggledCraftingRequirementsMet,"boggledCraftingPrintRequirements
+SetShortcut boggledGoBackToDomainRestrictedSubmenu ""ESCAPE""",,"1:boggledTriggerPristineNanoforge:Craft Pristine Nanoforge
+50:boggledGoBackToDomainRestrictedSubmenu:Back",
+boggledPristineNanoforgeNo,boggledPopulatePristineNanoforgeOptions,!boggledCraftingRequirementsMet,"boggledCraftingPrintRequirements
+SetEnabled boggledTriggerPristineNanoforge false
+SetShortcut boggledGoBackToDomainRestrictedSubmenu ""ESCAPE""",,"1:boggledTriggerPristineNanoforge:Craft Pristine Nanoforge
+50:boggledGoBackToDomainRestrictedSubmenu:Back",
+boggledTriggerCraftingPristineNanoforge,DialogOptionSelected,$option == boggledTriggerPristineNanoforge,"boggledCraftingBuildItem
+$menuState = main 0
+FireAll PopulateOptions","Pristine Nanoforge crafted successfully.",,,
+,,,,,,#Synchrotron Core
+boggledAddSynchrotronCoreOption,boggledPopulateDomainRestrictedOptions,,,,0:boggledConsiderSynchrotronCore:Synchrotron Core,
+boggledPopulateSynchrotronCoreMenu,DialogOptionSelected,$option == boggledConsiderSynchrotronCore,FireBest boggledPopulateSynchrotronCoreOptions,,,
+boggledSynchrotronCoreYes,boggledPopulateSynchrotronCoreOptions,boggledCraftingRequirementsMet,"boggledCraftingPrintRequirements
+SetShortcut boggledGoBackToDomainRestrictedSubmenu ""ESCAPE""",,"1:boggledTriggerSynchrotronCore:Craft Synchrotron Core
+50:boggledGoBackToDomainRestrictedSubmenu:Back",
+boggledSynchrotronCoreNo,boggledPopulateSynchrotronCoreOptions,!boggledCraftingRequirementsMet,"boggledCraftingPrintRequirements
+SetEnabled boggledTriggerSynchrotronCore false
+SetShortcut boggledGoBackToDomainRestrictedSubmenu ""ESCAPE""",,"1:boggledTriggerSynchrotronCore:Craft Synchrotron Core
+50:boggledGoBackToDomainRestrictedSubmenu:Back",
+boggledTriggerCraftingSynchrotronCore,DialogOptionSelected,$option == boggledTriggerSynchrotronCore,"boggledCraftingBuildItem
+$menuState = main 0
+FireAll PopulateOptions","Corrupted Nanoforge crafted successfully.",,,
+,,,,,,#Hypershunt Tap
+boggledAddHypershuntTapOption,boggledPopulateDomainRestrictedOptions,,,,0:boggledConsiderHypershuntTap:Hypershunt Tap,
+boggledPopulateHypershuntTapMenu,DialogOptionSelected,$option == boggledConsiderHypershuntTap,FireBest boggledPopulateHypershuntTapOptions,,,
+boggledHypershuntTapYes,boggledPopulateHypershuntTapOptions,boggledCraftingRequirementsMet,"boggledCraftingPrintRequirements
+SetShortcut boggledGoBackToDomainRestrictedSubmenu ""ESCAPE""",,"1:boggledTriggerHypershuntTap:Craft Hypershunt Tap
+50:boggledGoBackToDomainRestrictedSubmenu:Back",
+boggledHypershuntTapNo,boggledPopulateHypershuntTapOptions,!boggledCraftingRequirementsMet,"boggledCraftingPrintRequirements
+SetEnabled boggledTriggerHypershuntTap false
+SetShortcut boggledGoBackToDomainRestrictedSubmenu ""ESCAPE""",,"1:boggledTriggerHypershuntTap:Craft Hypershunt Tap
+50:boggledGoBackToDomainRestrictedSubmenu:Back",
+boggledTriggerCraftingHypershuntTap,DialogOptionSelected,$option == boggledTriggerHypershuntTap,"boggledCraftingBuildItem
+$menuState = main 0
+FireAll PopulateOptions","Hypershunt Tap crafted successfully.",,,
+,,,,,,#Cryoarithmetic Engine
+boggledAddCryoarithmeticEngineOption,boggledPopulateDomainRestrictedOptions,,,,0:boggledConsiderCryoarithmeticEngine:Cryoarithmetic Engine,
+boggledPopulateCryoarithmeticEngineMenu,DialogOptionSelected,$option == boggledConsiderCryoarithmeticEngine,FireBest boggledPopulateCryoarithmeticEngineOptions,,,
+boggledCryoarithmeticEngineYes,boggledPopulateCryoarithmeticEngineOptions,boggledCraftingRequirementsMet,"boggledCraftingPrintRequirements
+SetShortcut boggledGoBackToDomainRestrictedSubmenu ""ESCAPE""",,"1:boggledTriggerCryoarithmeticEngine:Craft Cryoarithmetic Engine
+50:boggledGoBackToDomainRestrictedSubmenu:Back",
+boggledCryoarithmeticEngineNo,boggledPopulateCryoarithmeticEngineOptions,!boggledCraftingRequirementsMet,"boggledCraftingPrintRequirements
+SetEnabled boggledTriggerCryoarithmeticEngine false
+SetShortcut boggledGoBackToDomainRestrictedSubmenu ""ESCAPE""",,"1:boggledTriggerCryoarithmeticEngine:Craft Cryoarithmetic Engine
+50:boggledGoBackToDomainRestrictedSubmenu:Back",
+boggledTriggerCraftingCryoarithmeticEngine,DialogOptionSelected,$option == boggledTriggerCryoarithmeticEngine,"boggledCraftingBuildItem
+$menuState = main 0
+FireAll PopulateOptions","Cryoarithmetic Engine crafted successfully.",,,
+,,,,,,#Planet-Killer Device
+boggledAddPlanetKillerDeviceOption,boggledPopulateDomainRestrictedOptions,boggledPlanetKillerCheckEnabled,,,0:boggledConsiderPlanetKillerDevice:Planet-Killer Device,
+boggledPopulatePlanetKillerDeviceMenu,DialogOptionSelected,$option == boggledConsiderPlanetKillerDevice,FireBest boggledPopulatePlanetKillerDeviceOptions,,,
+boggledPlanetKillerDeviceYes,boggledPopulatePlanetKillerDeviceOptions,boggledCraftingRequirementsMet,"boggledCraftingPrintRequirements
+SetShortcut boggledGoBackToDomainRestrictedSubmenu ""ESCAPE""",,"1:boggledTriggerPlanetKillerDevice:Craft Planet-Killer Device
+50:boggledGoBackToDomainRestrictedSubmenu:Back",
+boggledPlanetKillerDeviceNo,boggledPopulatePlanetKillerDeviceOptions,!boggledCraftingRequirementsMet,"boggledCraftingPrintRequirements
+SetEnabled boggledTriggerPlanetKillerDevice false
+SetShortcut boggledGoBackToDomainRestrictedSubmenu ""ESCAPE""",,"1:boggledTriggerPlanetKillerDevice:Planet-Killer Device Nanoforge
+50:boggledGoBackToDomainRestrictedSubmenu:Back",
+boggledTriggerCraftingPlanetKillerDevice,DialogOptionSelected,$option == boggledTriggerPlanetKillerDevice,"boggledCraftingBuildItem
+$menuState = main 0
+FireAll PopulateOptions","Planet-Killer Device crafted successfully.",,,
+,,,,,,
+#Fabrique Orbitale
+,,,,,,
+boggledCraftingAddFabriqueOrbitale,boggledCraftingPopulateSubmenus,,,,0:boggledConsiderFabriqueOrbitaleItems:Fabrique Orbitale items,
+boggledPopulateFabriqueOrbitaleOptionsTrigger,DialogOptionSelected,$option == boggledConsiderFabriqueOrbitaleItems,FireAll boggledPopulateFabriqueOrbitaleOptions,,,
+boggledAddCancelToFabriqueOrbitaleOptions,boggledPopulateFabriqueOrbitaleOptions,,SetShortcut boggledGoBackToCorpSelectionSubmenu ""ESCAPE"",,50:boggledGoBackToCorpSelectionSubmenu:Back,
+boggledReturnToFabriqueOrbitaleItemsList,DialogOptionSelected,$option == boggledCancelBuildFabriqueOrbitaleItem,"$menuState = main 0
+FireAll boggledPopulateFabriqueOrbitaleOptions",,,
+boggledGoBackToFabriqueOrbitaleSubmenu,DialogOptionSelected,$option == boggledGoBackToFabriqueOrbitaleSubmenu,"$menuState = main 0
+FireAll boggledPopulateFabriqueOrbitaleOptions",,,,
+,,,,,,#Orbital Fusion Lamp
+boggledAddOrbitalFusionLampOption,boggledPopulateFabriqueOrbitaleOptions,,,,0:boggledConsiderOrbitalFusionLamp:Orbital Fusion Lamp,
+boggledPopulateOrbitalFusionLampMenu,DialogOptionSelected,$option == boggledConsiderOrbitalFusionLamp,FireBest boggledPopulateOrbitalFusionLampOptions,,,
+boggledOrbitalFusionLampYes,boggledPopulateOrbitalFusionLampOptions,boggledCraftingRequirementsMet,"boggledCraftingPrintRequirements
+SetShortcut boggledGoBackToFabriqueOrbitaleSubmenu ""ESCAPE""",,"1:boggledTriggerOrbitalFusionLamp:Craft Orbital Fusion Lamp
+50:boggledGoBackToFabriqueOrbitaleSubmenu:Back",
+boggledOrbitalFusionLampNo,boggledPopulateOrbitalFusionLampOptions,!boggledCraftingRequirementsMet,"boggledCraftingPrintRequirements
+SetEnabled boggledTriggerOrbitalFusionLamp false
+SetShortcut boggledGoBackToFabriqueOrbitaleSubmenu ""ESCAPE""",,"1:boggledTriggerOrbitalFusionLamp:Craft Orbital Fusion Lamp
+50:boggledGoBackToFabriqueOrbitaleSubmenu:Back",
+boggledTriggerCraftingOrbitalFusionLamp,DialogOptionSelected,$option == boggledTriggerOrbitalFusionLamp,"boggledCraftingBuildItem
+$menuState = main 0
+FireAll PopulateOptions","Orbital Fusion Lamp crafted successfully.",,,
+,,,,,,#Fullerene Spool
+boggledAddFullereneSpoolOption,boggledPopulateFabriqueOrbitaleOptions,,,,0:boggledConsiderFullereneSpool:Fullerene Spool,
+boggledPopulateFullereneSpoolMenu,DialogOptionSelected,$option == boggledConsiderFullereneSpool,FireBest boggledPopulateFullereneSpoolOptions,,,
+boggledFullereneSpoolYes,boggledPopulateFullereneSpoolOptions,boggledCraftingRequirementsMet,"boggledCraftingPrintRequirements
+SetShortcut boggledGoBackToFabriqueOrbitaleSubmenu ""ESCAPE""",,"1:boggledTriggerFullereneSpool:Craft Fullerene Spool
+50:boggledGoBackToFabriqueOrbitaleSubmenu:Back",
+boggledFullereneSpoolNo,boggledPopulateFullereneSpoolOptions,!boggledCraftingRequirementsMet,"boggledCraftingPrintRequirements
+SetEnabled boggledTriggerFullereneSpool false
+SetShortcut boggledGoBackToFabriqueOrbitaleSubmenu ""ESCAPE""",,"1:boggledTriggerFullereneSpool:Craft Fullerene Spool
+50:boggledGoBackToFabriqueOrbitaleSubmenu:Back",
+boggledTriggerCraftingFullereneSpool,DialogOptionSelected,$option == boggledTriggerFullereneSpool,"boggledCraftingBuildItem
+$menuState = main 0
+FireAll PopulateOptions","Fullerene Spool crafted successfully.",,,
+,,,,,,#Plasma Dynamo
+boggledAddPlasmaDynamoOption,boggledPopulateFabriqueOrbitaleOptions,,,,0:boggledConsiderPlasmaDynamo:Plasma Dynamo,
+boggledPopulatePlasmaDynamoMenu,DialogOptionSelected,$option == boggledConsiderPlasmaDynamo,FireBest boggledPopulatePlasmaDynamoOptions,,,
+boggledPlasmaDynamoYes,boggledPopulatePlasmaDynamoOptions,boggledCraftingRequirementsMet,"boggledCraftingPrintRequirements
+SetShortcut boggledGoBackToFabriqueOrbitaleSubmenu ""ESCAPE""",,"1:boggledTriggerPlasmaDynamo:Craft Plasma Dynamo
+50:boggledGoBackToFabriqueOrbitaleSubmenu:Back",
+boggledPlasmaDynamoNo,boggledPopulatePlasmaDynamoOptions,!boggledCraftingRequirementsMet,"boggledCraftingPrintRequirements
+SetEnabled boggledTriggerPlasmaDynamo false
+SetShortcut boggledGoBackToFabriqueOrbitaleSubmenu ""ESCAPE""",,"1:boggledTriggerPlasmaDynamo:Craft Plasma Dynamo
+50:boggledGoBackToFabriqueOrbitaleSubmenu:Back",
+boggledTriggerCraftingPlasmaDynamo,DialogOptionSelected,$option == boggledTriggerPlasmaDynamo,"boggledCraftingBuildItem
+$menuState = main 0
+FireAll PopulateOptions","Plasma Dynamo crafted successfully.",,,
+,,,,,,
+#Eridani-Utopia Terraforming
+,,,,,,
+boggledCraftingAddEridaniUtopiaTerraforming,boggledCraftingPopulateSubmenus,,,,0:boggledConsiderEridaniUtopiaTerraformingItems:Eridani-Utopia Terraforming items,
+boggledPopulateEridaniUtopiaTerraformingOptionsTrigger,DialogOptionSelected,$option == boggledConsiderEridaniUtopiaTerraformingItems,FireAll boggledPopulateEridaniUtopiaTerraformingOptions,,,
+boggledAddCancelToEridaniUtopiaTerraformingOptions,boggledPopulateEridaniUtopiaTerraformingOptions,,SetShortcut boggledGoBackToCorpSelectionSubmenu ""ESCAPE"",,50:boggledGoBackToCorpSelectionSubmenu:Back,
+boggledReturnToEridaniUtopiaTerraformingItemsList,DialogOptionSelected,$option == boggledCancelBuildEridaniUtopiaTerraformingItem,"$menuState = main 0
+FireAll boggledPopulateEridaniUtopiaTerraformingOptions",,,
+boggledGoBackToEridaniUtopiaTerraformingSubmenu,DialogOptionSelected,$option == boggledGoBackToEridaniUtopiaTerraformingSubmenu,"$menuState = main 0
+FireAll boggledPopulateEridaniUtopiaTerraformingOptions",,,,
+,,,,,,#Autonomous Mantle Bore
+boggledAddAutonomousMantleBoreOption,boggledPopulateEridaniUtopiaTerraformingOptions,,,,0:boggledConsiderAutonomousMantleBore:Autonomous Mantle Bore,
+boggledPopulateAutonomousMantleBoreMenu,DialogOptionSelected,$option == boggledConsiderAutonomousMantleBore,FireBest boggledPopulateAutonomousMantleBoreOptions,,,
+boggledAutonomousMantleBoreYes,boggledPopulateAutonomousMantleBoreOptions,boggledCraftingRequirementsMet,"boggledCraftingPrintRequirements
+SetShortcut boggledGoBackToEridaniUtopiaTerraformingSubmenu ""ESCAPE""",,"1:boggledTriggerAutonomousMantleBore:Craft Autonomous Mantle Bore
+50:boggledGoBackToEridaniUtopiaTerraformingSubmenu:Back",
+boggledAutonomousMantleBoreNo,boggledPopulateAutonomousMantleBoreOptions,!boggledCraftingRequirementsMet,"boggledCraftingPrintRequirements
+SetEnabled boggledTriggerAutonomousMantleBore false
+SetShortcut boggledGoBackToEridaniUtopiaTerraformingSubmenu ""ESCAPE""",,"1:boggledTriggerAutonomousMantleBore:Craft Autonomous Mantle Bore
+50:boggledGoBackToEridaniUtopiaTerraformingSubmenu:Back",
+boggledTriggerCraftingAutonomousMantleBore,DialogOptionSelected,$option == boggledTriggerAutonomousMantleBore,"boggledCraftingBuildItem
+$menuState = main 0
+FireAll PopulateOptions","Autonomous Mantle Bore crafted successfully.",,,
+,,,,,,#Soil Nanites
+boggledAddSoilNanitesOption,boggledPopulateEridaniUtopiaTerraformingOptions,,,,0:boggledConsiderSoilNanites:Soil Nanites,
+boggledPopulateSoilNanitesMenu,DialogOptionSelected,$option == boggledConsiderSoilNanites,FireBest boggledPopulateSoilNanitesOptions,,,
+boggledSoilNanitesYes,boggledPopulateSoilNanitesOptions,boggledCraftingRequirementsMet,"boggledCraftingPrintRequirements
+SetShortcut boggledGoBackToEridaniUtopiaTerraformingSubmenu ""ESCAPE""",,"1:boggledTriggerSoilNanites:Craft Soil Nanites
+50:boggledGoBackToEridaniUtopiaTerraformingSubmenu:Back",
+boggledSoilNanitesNo,boggledPopulateSoilNanitesOptions,!boggledCraftingRequirementsMet,"boggledCraftingPrintRequirements
+SetEnabled boggledTriggerSoilNanites false
+SetShortcut boggledGoBackToEridaniUtopiaTerraformingSubmenu ""ESCAPE""",,"1:boggledTriggerSoilNanites:Craft Soil Nanites
+50:boggledGoBackToEridaniUtopiaTerraformingSubmenu:Back",
+boggledTriggerCraftingSoilNanites,DialogOptionSelected,$option == boggledTriggerSoilNanites,"boggledCraftingBuildItem
+$menuState = main 0
+FireAll PopulateOptions","Soil Nanites crafted successfully.",,,
+,,,,,,
+#Ko Combine
+,,,,,,
+boggledCraftingAddKoCombine,boggledCraftingPopulateSubmenus,,,,0:boggledConsiderKoCombineItems:Ko Combine items,
+boggledPopulateKoCombineOptionsTrigger,DialogOptionSelected,$option == boggledConsiderKoCombineItems,FireAll boggledPopulateKoCombineOptions,,,
+boggledAddCancelToKoCombineOptions,boggledPopulateKoCombineOptions,,SetShortcut boggledGoBackToCorpSelectionSubmenu ""ESCAPE"",,50:boggledGoBackToCorpSelectionSubmenu:Back,
+boggledReturnToKoCombineItemsList,DialogOptionSelected,$option == boggledCancelBuildKoCombineItem,"$menuState = main 0
+FireAll boggledPopulateKoCombineOptions",,,
+boggledGoBackToKoCombineSubmenu,DialogOptionSelected,$option == boggledGoBackToKoCombineSubmenu,"$menuState = main 0
+FireAll boggledPopulateKoCombineOptions",,,,
+,,,,,,#Catalytic Core
+boggledAddCatalyticCoreOption,boggledPopulateKoCombineOptions,,,,0:boggledConsiderCatalyticCore:Catalytic Core,
+boggledPopulateCatalyticCoreMenu,DialogOptionSelected,$option == boggledConsiderCatalyticCore,FireBest boggledPopulateCatalyticCoreOptions,,,
+boggledCatalyticCoreYes,boggledPopulateCatalyticCoreOptions,boggledCraftingRequirementsMet,"boggledCraftingPrintRequirements
+SetShortcut boggledGoBackToKoCombineSubmenu ""ESCAPE""",,"1:boggledTriggerCatalyticCore:Craft Catalytic Core
+50:boggledGoBackToKoCombineSubmenu:Back",
+boggledCatalyticCoreNo,boggledPopulateCatalyticCoreOptions,!boggledCraftingRequirementsMet,"boggledCraftingPrintRequirements
+SetEnabled boggledTriggerCatalyticCore false
+SetShortcut boggledGoBackToKoCombineSubmenu ""ESCAPE""",,"1:boggledTriggerCatalyticCore:Craft Catalytic Core
+50:boggledGoBackToKoCombineSubmenu:Back",
+boggledTriggerCraftingCatalyticCore,DialogOptionSelected,$option == boggledTriggerCatalyticCore,"boggledCraftingBuildItem
+$menuState = main 0
+FireAll PopulateOptions","Catalytic Core crafted successfully.",,,
+,,,,,,#Combat Drone Replicator
+boggledAddCombatDroneReplicatorOption,boggledPopulateKoCombineOptions,,,,0:boggledConsiderCombatDroneReplicator:Combat Drone Replicator,
+boggledPopulateCombatDroneReplicatorMenu,DialogOptionSelected,$option == boggledConsiderCombatDroneReplicator,FireBest boggledPopulateCombatDroneReplicatorOptions,,,
+boggledCombatDroneReplicatorYes,boggledPopulateCombatDroneReplicatorOptions,boggledCraftingRequirementsMet,"boggledCraftingPrintRequirements
+SetShortcut boggledGoBackToKoCombineSubmenu ""ESCAPE""",,"1:boggledTriggerCombatDroneReplicator:Craft Combat Drone Replicator
+50:boggledGoBackToKoCombineSubmenu:Back",
+boggledCombatDroneReplicatorNo,boggledPopulateCombatDroneReplicatorOptions,!boggledCraftingRequirementsMet,"boggledCraftingPrintRequirements
+SetEnabled boggledTriggerCombatDroneReplicator false
+SetShortcut boggledGoBackToKoCombineSubmenu ""ESCAPE""",,"1:boggledTriggerCombatDroneReplicator:Craft Combat Drone Replicator
+50:boggledGoBackToKoCombineSubmenu:Back",
+boggledTriggerCraftingCombatDroneReplicator,DialogOptionSelected,$option == boggledTriggerCombatDroneReplicator,"boggledCraftingBuildItem
+$menuState = main 0
+FireAll PopulateOptions","Combat Drone Replicator crafted successfully.",,,
+,,,,,,
+#Exodyne Biotech
+,,,,,,
+boggledCraftingAddExodyneBiotech,boggledCraftingPopulateSubmenus,,,,0:boggledConsiderExodyneBiotechItems:Exodyne Biotech items,
+boggledPopulateExodyneBiotechOptionsTrigger,DialogOptionSelected,$option == boggledConsiderExodyneBiotechItems,FireAll boggledPopulateExodyneBiotechOptions,,,
+boggledAddCancelToExodyneBiotechOptions,boggledPopulateExodyneBiotechOptions,,SetShortcut boggledGoBackToCorpSelectionSubmenu ""ESCAPE"",,50:boggledGoBackToCorpSelectionSubmenu:Back,
+boggledReturnToExodyneBiotechItemsList,DialogOptionSelected,$option == boggledCancelBuildExodyneBiotechItem,"$menuState = main 0
+FireAll boggledPopulateExodyneBiotechOptions",,,
+boggledGoBackToExodyneBiotechSubmenu,DialogOptionSelected,$option == boggledGoBackToExodyneBiotechSubmenu,"$menuState = main 0
+FireAll boggledPopulateExodyneBiotechOptions",,,,
+,,,,,,#Biofactory Embryo
+boggledAddBiofactoryEmbryoOption,boggledPopulateExodyneBiotechOptions,,,,0:boggledConsiderBiofactoryEmbryo:Biofactory Embryo,
+boggledPopulateBiofactoryEmbryoMenu,DialogOptionSelected,$option == boggledConsiderBiofactoryEmbryo,FireBest boggledPopulateBiofactoryEmbryoOptions,,,
+boggledBiofactoryEmbryoYes,boggledPopulateBiofactoryEmbryoOptions,boggledCraftingRequirementsMet,"boggledCraftingPrintRequirements
+SetShortcut boggledGoBackToExodyneBiotechSubmenu ""ESCAPE""",,"1:boggledTriggerBiofactoryEmbryo:Craft Biofactory Embryo
+50:boggledGoBackToExodyneBiotechSubmenu:Back",
+boggledBiofactoryEmbryoNo,boggledPopulateBiofactoryEmbryoOptions,!boggledCraftingRequirementsMet,"boggledCraftingPrintRequirements
+SetEnabled boggledTriggerBiofactoryEmbryo false
+SetShortcut boggledGoBackToExodyneBiotechSubmenu ""ESCAPE""",,"1:boggledTriggerBiofactoryEmbryo:Craft Biofactory Embryo
+50:boggledGoBackToExodyneBiotechSubmenu:Back",
+boggledTriggerCraftingBiofactoryEmbryo,DialogOptionSelected,$option == boggledTriggerBiofactoryEmbryo,"boggledCraftingBuildItem
+$menuState = main 0
+FireAll PopulateOptions","Biofactory Embryo crafted successfully.",,,
+,,,,,,
+#Mbaye-Gogol
+,,,,,,
+boggledCraftingAddMbayeGogol,boggledCraftingPopulateSubmenus,,,,0:boggledConsiderMbayeGogolItems:Mbaye-Gogol items,
+boggledPopulateMbayeGogolOptionsTrigger,DialogOptionSelected,$option == boggledConsiderMbayeGogolItems,FireAll boggledPopulateMbayeGogolOptions,,,
+boggledAddCancelToMbayeGogolOptions,boggledPopulateMbayeGogolOptions,,SetShortcut boggledGoBackToCorpSelectionSubmenu ""ESCAPE"",,50:boggledGoBackToCorpSelectionSubmenu:Back,
+boggledReturnToMbayeGogolItemsList,DialogOptionSelected,$option == boggledCancelBuildMbayeGogolItem,"$menuState = main 0
+FireAll boggledPopulateMbayeGogolOptions",,,
+boggledGoBackToMbayeGogolSubmenu,DialogOptionSelected,$option == boggledGoBackToMbayeGogolSubmenu,"$menuState = main 0
+FireAll boggledPopulateMbayeGogolOptions",,,,
+,,,,,,#Dealmaker Holosuite
+boggledAddDealmakerHolosuiteOption,boggledPopulateMbayeGogolOptions,,,,0:boggledConsiderDealmakerHolosuite:Dealmaker Holosuite,
+boggledPopulateDealmakerHolosuiteMenu,DialogOptionSelected,$option == boggledConsiderDealmakerHolosuite,FireBest boggledPopulateDealmakerHolosuiteOptions,,,
+boggledDealmakerHolosuiteYes,boggledPopulateDealmakerHolosuiteOptions,boggledCraftingRequirementsMet,"boggledCraftingPrintRequirements
+SetShortcut boggledGoBackToMbayeGogolSubmenu ""ESCAPE""",,"1:boggledTriggerDealmakerHolosuite:Craft Dealmaker Holosuite
+50:boggledGoBackToMbayeGogolSubmenu:Back",
+boggledDealmakerHolosuiteNo,boggledPopulateDealmakerHolosuiteOptions,!boggledCraftingRequirementsMet,"boggledCraftingPrintRequirements
+SetEnabled boggledTriggerDealmakerHolosuite false
+SetShortcut boggledGoBackToMbayeGogolSubmenu ""ESCAPE""",,"1:boggledTriggerDealmakerHolosuite:Craft Dealmaker Holosuite
+50:boggledGoBackToMbayeGogolSubmenu:Back",
+boggledTriggerCraftingDealmakerHolosuite,DialogOptionSelected,$option == boggledTriggerDealmakerHolosuite,"boggledCraftingBuildItem
+$menuState = main 0
+FireAll PopulateOptions","Dealmaker Holosuite crafted successfully.",,,
+,,,,,,
+#Terraforming controls at planet
+,,,,,,
+#boggledMarketAddTerraformingControlPanel,PopulateOptions,"boggledTerraformingCheckEnabled
+#$menuState == main",,,"20:boggledOpenTerraformingPanel:Examine terraforming options",
+boggledOpenTerraformingControlPanel,DialogOptionSelected,$option == boggledOpenTerraformingPanel,"boggledAddTerraformingController
+boggledTerraformingPrintStatus
+FireAll boggledTerraformingPopulateSubmenus",,,
+boggledAddTypeTransformationMenu,boggledTerraformingPopulateSubmenus,,,,0:boggledMoveToTypeTransformationList:Planet type change options,
+boggledAddResourceModificationMenu,boggledTerraformingPopulateSubmenus,,,,1:boggledMoveToResourceImprovementList:Resource deposit improvement options,
+boggledAddConditionModificationMenu,boggledTerraformingPopulateSubmenus,,,,2:boggledMoveToConditionImprovementList:Atmospheric conditions improvement options,
+boggledAddCancelOptionToSubmenuSelection,boggledTerraformingPopulateSubmenus,,SetShortcut boggledGoBackToMainColonyInteractionMenu ""ESCAPE"",,50:boggledGoBackToMainColonyInteractionMenu:Cancel,
+boggledGoBackToMainColonyInteractionMenuFromTerraformingControlPanel,DialogOptionSelected,$option == boggledGoBackToMainColonyInteractionMenu,"$menuState = main 0
+FireAll PopulateOptions",,,,
+boggledTypeTransformationSubmenu,DialogOptionSelected,$option == boggledMoveToTypeTransformationList,FireAll boggledTerraformingPopulateTypeChangeSubmenus,,,
+boggledResourceImprovementSubmenu,DialogOptionSelected,$option == boggledMoveToResourceImprovementList,FireAll boggledTerraformingPopulateResourceImprovementSubmenus,,,
+boggledConditionImprovementSubmenu,DialogOptionSelected,$option == boggledMoveToConditionImprovementList,FireAll boggledTerraformingPopulateConditionImprovementSubmenus,,,
+,,,,,,
+#Cancel current project
+boggledAddCancelCurrentProjectMenuYes,boggledTerraformingPopulateSubmenus,!boggledTerraformingCheckProjectOngoing,,,3:boggledMoveToCancelCurrentProjectMenu:Cancel current project,
+boggledAddCancelCurrentProjectMenuNo,boggledTerraformingPopulateSubmenus,boggledTerraformingCheckProjectOngoing,SetEnabled boggledMoveToCancelCurrentProjectMenu false,,3:boggledMoveToCancelCurrentProjectMenu:Cancel current project,
+boggledCancelCurrentProjectMenu,DialogOptionSelected,$option == boggledMoveToCancelCurrentProjectMenu,"boggledTerraformingPrintResultsAndRequirements
+SetShortcut boggledGoBackToTerraformingControlPanelRoot ""ESCAPE""",,"0:boggledTriggerCancelCurrentProject:Cancel project
+1:boggledGoBackToTerraformingControlPanelRoot:Back",
+boggledTriggerCancelCurrentProject,DialogOptionSelected,$option == boggledTriggerCancelCurrentProject,"boggledTerraformingInitiateProject
+$menuState = main 0
+FireAll PopulateOptions",,,,
+,,,,,,
+#Arid type change logic
+,,,,,,
+boggledAddAridTypeChangeOption,boggledTerraformingPopulateTypeChangeSubmenus,,,,0:boggledConsiderAridTypeChange:Consider terraforming $marketName into an arid world,
+boggledPopulateAridTypeChangeMenu,DialogOptionSelected,$option == boggledConsiderAridTypeChange,FireBest boggledPopulateAridTypeChangeOptions,,,
+boggledAridTypeChangeYes,boggledPopulateAridTypeChangeOptions,boggledTerraformingProjectRequirementsMet,"boggledTerraformingPrintResultsAndRequirements
+SetShortcut boggledGoBackToTypeChangeSubmenu ""ESCAPE""",,"1:boggledTriggerAridTypeChange:Start terraforming project
+50:boggledGoBackToTypeChangeSubmenu:Back",
+boggledAridTypeChangeNo,boggledPopulateAridTypeChangeOptions,!boggledTerraformingProjectRequirementsMet,"boggledTerraformingPrintResultsAndRequirements
+SetEnabled boggledTriggerAridTypeChange false
+SetShortcut boggledGoBackToTypeChangeSubmenu ""ESCAPE""",,"1:boggledTriggerAridTypeChange:Start terraforming project
+50:boggledGoBackToTypeChangeSubmenu:Back",
+boggledTriggerAridTypeChange,DialogOptionSelected,$option == boggledTriggerAridTypeChange,"boggledTerraformingInitiateProject
+$menuState = main 0
+FireAll PopulateOptions",,,,
+,,,,,,
+#Frozen type change logic
+,,,,,,
+boggledAddFrozenTypeChangeOption,boggledTerraformingPopulateTypeChangeSubmenus,,,,1:boggledConsiderFrozenTypeChange:Consider terraforming $marketName into a frozen world,
+boggledPopulateFrozenTypeChangeMenu,DialogOptionSelected,$option == boggledConsiderFrozenTypeChange,FireBest boggledPopulateFrozenTypeChangeOptions,,,
+boggledFrozenTypeChangeYes,boggledPopulateFrozenTypeChangeOptions,boggledTerraformingProjectRequirementsMet,"boggledTerraformingPrintResultsAndRequirements
+SetShortcut boggledGoBackToTypeChangeSubmenu ""ESCAPE""",,"1:boggledTriggerFrozenTypeChange:Start terraforming project
+50:boggledGoBackToTypeChangeSubmenu:Back",
+boggledFrozenTypeChangeNo,boggledPopulateFrozenTypeChangeOptions,!boggledTerraformingProjectRequirementsMet,"boggledTerraformingPrintResultsAndRequirements
+SetEnabled boggledTriggerFrozenTypeChange false
+SetShortcut boggledGoBackToTypeChangeSubmenu ""ESCAPE""",,"1:boggledTriggerFrozenTypeChange:Start terraforming project
+50:boggledGoBackToTypeChangeSubmenu:Back",
+boggledTriggerFrozenTypeChange,DialogOptionSelected,$option == boggledTriggerFrozenTypeChange,"boggledTerraformingInitiateProject
+$menuState = main 0
+FireAll PopulateOptions",,,,
+,,,,,,
+#Jungle type change logic
+,,,,,,
+boggledAddJungleTypeChangeOption,boggledTerraformingPopulateTypeChangeSubmenus,,,,2:boggledConsiderJungleTypeChange:Consider terraforming $marketName into a jungle world,
+boggledPopulateJungleTypeChangeMenu,DialogOptionSelected,$option == boggledConsiderJungleTypeChange,FireBest boggledPopulateJungleTypeChangeOptions,,,
+boggledJungleTypeChangeYes,boggledPopulateJungleTypeChangeOptions,boggledTerraformingProjectRequirementsMet,"boggledTerraformingPrintResultsAndRequirements
+SetShortcut boggledGoBackToTypeChangeSubmenu ""ESCAPE""",,"1:boggledTriggerJungleTypeChange:Start terraforming project
+50:boggledGoBackToTypeChangeSubmenu:Back",
+boggledJungleTypeChangeNo,boggledPopulateJungleTypeChangeOptions,!boggledTerraformingProjectRequirementsMet,"boggledTerraformingPrintResultsAndRequirements
+SetEnabled boggledTriggerJungleTypeChange false
+SetShortcut boggledGoBackToTypeChangeSubmenu ""ESCAPE""",,"1:boggledTriggerJungleTypeChange:Start terraforming project
+50:boggledGoBackToTypeChangeSubmenu:Back",
+boggledTriggerJungleTypeChange,DialogOptionSelected,$option == boggledTriggerJungleTypeChange,"boggledTerraformingInitiateProject
+$menuState = main 0
+FireAll PopulateOptions",,,,
+,,,,,,
+#Terran type change logic
+,,,,,,
+boggledAddTerranTypeChangeOption,boggledTerraformingPopulateTypeChangeSubmenus,,,,3:boggledConsiderTerranTypeChange:Consider terraforming $marketName into a Terran world,
+boggledPopulateTerranTypeChangeMenu,DialogOptionSelected,$option == boggledConsiderTerranTypeChange,FireBest boggledPopulateTerranTypeChangeOptions,,,
+boggledTerranTypeChangeYes,boggledPopulateTerranTypeChangeOptions,boggledTerraformingProjectRequirementsMet,"boggledTerraformingPrintResultsAndRequirements
+SetShortcut boggledGoBackToTypeChangeSubmenu ""ESCAPE""",,"1:boggledTriggerTerranTypeChange:Start terraforming project
+50:boggledGoBackToTypeChangeSubmenu:Back",
+boggledTerranTypeChangeNo,boggledPopulateTerranTypeChangeOptions,!boggledTerraformingProjectRequirementsMet,"boggledTerraformingPrintResultsAndRequirements
+SetEnabled boggledTriggerTerranTypeChange false
+SetShortcut boggledGoBackToTypeChangeSubmenu ""ESCAPE""",,"1:boggledTriggerTerranTypeChange:Start terraforming project
+50:boggledGoBackToTypeChangeSubmenu:Back",
+boggledTriggerTerranTypeChange,DialogOptionSelected,$option == boggledTriggerTerranTypeChange,"boggledTerraformingInitiateProject
+$menuState = main 0
+FireAll PopulateOptions",,,,
+,,,,,,
+#Tundra type change logic
+,,,,,,
+boggledAddTundraTypeChangeOption,boggledTerraformingPopulateTypeChangeSubmenus,,,,4:boggledConsiderTundraTypeChange:Consider terraforming $marketName into a tundra world,
+boggledPopulateTundraTypeChangeMenu,DialogOptionSelected,$option == boggledConsiderTundraTypeChange,FireBest boggledPopulateTundraTypeChangeOptions,,,
+boggledTundraTypeChangeYes,boggledPopulateTundraTypeChangeOptions,boggledTerraformingProjectRequirementsMet,"boggledTerraformingPrintResultsAndRequirements
+SetShortcut boggledGoBackToTypeChangeSubmenu ""ESCAPE""",,"1:boggledTriggerTundraTypeChange:Start terraforming project
+50:boggledGoBackToTypeChangeSubmenu:Back",
+boggledTundraTypeChangeNo,boggledPopulateTundraTypeChangeOptions,!boggledTerraformingProjectRequirementsMet,"boggledTerraformingPrintResultsAndRequirements
+SetEnabled boggledTriggerTundraTypeChange false
+SetShortcut boggledGoBackToTypeChangeSubmenu ""ESCAPE""",,"1:boggledTriggerTundraTypeChange:Start terraforming project
+50:boggledGoBackToTypeChangeSubmenu:Back",
+boggledTriggerTundraTypeChange,DialogOptionSelected,$option == boggledTriggerTundraTypeChange,"boggledTerraformingInitiateProject
+$menuState = main 0
+FireAll PopulateOptions",,,,
+,,,,,,
+#Water type change logic
+,,,,,,
+boggledAddWaterTypeChangeOption,boggledTerraformingPopulateTypeChangeSubmenus,,,,5:boggledConsiderWaterTypeChange:Consider terraforming $marketName into a water world,
+boggledPopulateWaterTypeChangeMenu,DialogOptionSelected,$option == boggledConsiderWaterTypeChange,FireBest boggledPopulateWaterTypeChangeOptions,,,
+boggledWaterTypeChangeYes,boggledPopulateWaterTypeChangeOptions,boggledTerraformingProjectRequirementsMet,"boggledTerraformingPrintResultsAndRequirements
+SetShortcut boggledGoBackToTypeChangeSubmenu ""ESCAPE""",,"1:boggledTriggerWaterTypeChange:Start terraforming project
+50:boggledGoBackToTypeChangeSubmenu:Back",
+boggledWaterTypeChangeNo,boggledPopulateWaterTypeChangeOptions,!boggledTerraformingProjectRequirementsMet,"boggledTerraformingPrintResultsAndRequirements
+SetEnabled boggledTriggerWaterTypeChange false
+SetShortcut boggledGoBackToTypeChangeSubmenu ""ESCAPE""",,"1:boggledTriggerWaterTypeChange:Start terraforming project
+50:boggledGoBackToTypeChangeSubmenu:Back",
+boggledTriggerWaterTypeChange,DialogOptionSelected,$option == boggledTriggerWaterTypeChange,"boggledTerraformingInitiateProject
+$menuState = main 0
+FireAll PopulateOptions",,,,
+,,,,,,
+#Farmland resource improvement logic
+,,,,,,
+boggledAddFarmlandResourceImprovementOption,boggledTerraformingPopulateResourceImprovementSubmenus,,,,0:boggledConsiderFarmlandResourceImprovement:Consider improving the farmland on $marketName,
+boggledPopulateFarmlandResourceImprovementMenu,DialogOptionSelected,$option == boggledConsiderFarmlandResourceImprovement,FireBest boggledPopulateFarmlandResourceImprovementOptions,,,
+boggledFarmlandResourceImprovementYes,boggledPopulateFarmlandResourceImprovementOptions,boggledTerraformingProjectRequirementsMet,"boggledTerraformingPrintResultsAndRequirements
+SetShortcut boggledGoBackToResourceImprovementSubmenu ""ESCAPE""",,"1:boggledTriggerFarmlandResourceImprovement:Start terraforming project
+50:boggledGoBackToResourceImprovementSubmenu:Back",
+boggledFarmlandResourceImprovementNo,boggledPopulateFarmlandResourceImprovementOptions,!boggledTerraformingProjectRequirementsMet,"boggledTerraformingPrintResultsAndRequirements
+SetEnabled boggledTriggerFarmlandResourceImprovement false
+SetShortcut boggledGoBackToResourceImprovementSubmenu ""ESCAPE""",,"1:boggledTriggerFarmlandResourceImprovement:Start terraforming project
+50:boggledGoBackToResourceImprovementSubmenu:Back",
+boggledTriggerFarmlandResourceImprovement,DialogOptionSelected,$option == boggledTriggerFarmlandResourceImprovement,"boggledTerraformingInitiateProject
+$menuState = main 0
+FireAll PopulateOptions",,,,
+,,,,,,
+#Organics resource improvement logic
+,,,,,,
+boggledAddOrganicsResourceImprovementOption,boggledTerraformingPopulateResourceImprovementSubmenus,,,,0:boggledConsiderOrganicsResourceImprovement:Consider improving the organics on $marketName,
+boggledPopulateOrganicsResourceImprovementMenu,DialogOptionSelected,$option == boggledConsiderOrganicsResourceImprovement,FireBest boggledPopulateOrganicsResourceImprovementOptions,,,
+boggledOrganicsResourceImprovementYes,boggledPopulateOrganicsResourceImprovementOptions,boggledTerraformingProjectRequirementsMet,"boggledTerraformingPrintResultsAndRequirements
+SetShortcut boggledGoBackToResourceImprovementSubmenu ""ESCAPE""",,"1:boggledTriggerOrganicsResourceImprovement:Start terraforming project
+50:boggledGoBackToResourceImprovementSubmenu:Back",
+boggledOrganicsResourceImprovementNo,boggledPopulateOrganicsResourceImprovementOptions,!boggledTerraformingProjectRequirementsMet,"boggledTerraformingPrintResultsAndRequirements
+SetEnabled boggledTriggerOrganicsResourceImprovement false
+SetShortcut boggledGoBackToResourceImprovementSubmenu ""ESCAPE""",,"1:boggledTriggerOrganicsResourceImprovement:Start terraforming project
+50:boggledGoBackToResourceImprovementSubmenu:Back",
+boggledTriggerOrganicsResourceImprovement,DialogOptionSelected,$option == boggledTriggerOrganicsResourceImprovement,"boggledTerraformingInitiateProject
+$menuState = main 0
+FireAll PopulateOptions",,,,
+,,,,,,
+#Volatiles resource improvement logic
+,,,,,,
+boggledAddVolatilesResourceImprovementOption,boggledTerraformingPopulateResourceImprovementSubmenus,,,,0:boggledConsiderVolatilesResourceImprovement:Consider improving the volatiles on $marketName,
+boggledPopulateVolatilesResourceImprovementMenu,DialogOptionSelected,$option == boggledConsiderVolatilesResourceImprovement,FireBest boggledPopulateVolatilesResourceImprovementOptions,,,
+boggledVolatilesResourceImprovementYes,boggledPopulateVolatilesResourceImprovementOptions,boggledTerraformingProjectRequirementsMet,"boggledTerraformingPrintResultsAndRequirements
+SetShortcut boggledGoBackToResourceImprovementSubmenu ""ESCAPE""",,"1:boggledTriggerVolatilesResourceImprovement:Start terraforming project
+50:boggledGoBackToResourceImprovementSubmenu:Back",
+boggledVolatilesResourceImprovementNo,boggledPopulateVolatilesResourceImprovementOptions,!boggledTerraformingProjectRequirementsMet,"boggledTerraformingPrintResultsAndRequirements
+SetEnabled boggledTriggerVolatilesResourceImprovement false
+SetShortcut boggledGoBackToResourceImprovementSubmenu ""ESCAPE""",,"1:boggledTriggerVolatilesResourceImprovement:Start terraforming project
+50:boggledGoBackToResourceImprovementSubmenu:Back",
+boggledTriggerVolatilesResourceImprovement,DialogOptionSelected,$option == boggledTriggerVolatilesResourceImprovement,"boggledTerraformingInitiateProject
+$menuState = main 0
+FireAll PopulateOptions",,,,
+,,,,,,
+#Extreme Weather condition improvement logic
+,,,,,,
+boggledAddExtremeWeatherConditionImprovementOption,boggledTerraformingPopulateConditionImprovementSubmenus,,,,0:boggledConsiderExtremeWeatherConditionImprovement:Consider making the weather patterns on $marketName less extreme,
+boggledPopulateExtremeWeatherConditionImprovementMenu,DialogOptionSelected,$option == boggledConsiderExtremeWeatherConditionImprovement,FireBest boggledPopulateExtremeWeatherConditionImprovementOptions,,,
+boggledExtremeWeatherConditionImprovementYes,boggledPopulateExtremeWeatherConditionImprovementOptions,boggledTerraformingProjectRequirementsMet,"boggledTerraformingPrintResultsAndRequirements
+SetShortcut boggledGoBackToConditionImprovementSubmenu ""ESCAPE""",,"1:boggledTriggerExtremeWeatherConditionImprovement:Start terraforming project
+50:boggledGoBackToConditionImprovementSubmenu:Back",
+boggledExtremeWeatherConditionImprovementNo,boggledPopulateExtremeWeatherConditionImprovementOptions,!boggledTerraformingProjectRequirementsMet,"boggledTerraformingPrintResultsAndRequirements
+SetEnabled boggledTriggerExtremeWeatherConditionImprovement false
+SetShortcut boggledGoBackToConditionImprovementSubmenu ""ESCAPE""",,"1:boggledTriggerExtremeWeatherConditionImprovement:Start terraforming project
+50:boggledGoBackToConditionImprovementSubmenu:Back",
+boggledTriggerExtremeWeatherConditionImprovement,DialogOptionSelected,$option == boggledTriggerExtremeWeatherConditionImprovement,"boggledTerraformingInitiateProject
+$menuState = main 0
+FireAll PopulateOptions",,,,
+,,,,,,
+#Mild Climate condition improvement logic
+,,,,,,
+boggledAddMildClimateConditionImprovementOption,boggledTerraformingPopulateConditionImprovementSubmenus,,,,0:boggledConsiderMildClimateConditionImprovement:Consider making the weather patterns on $marketName mild,
+boggledPopulateMildClimateConditionImprovementMenu,DialogOptionSelected,$option == boggledConsiderMildClimateConditionImprovement,FireBest boggledPopulateMildClimateConditionImprovementOptions,,,
+boggledMildClimateConditionImprovementYes,boggledPopulateMildClimateConditionImprovementOptions,boggledTerraformingProjectRequirementsMet,"boggledTerraformingPrintResultsAndRequirements
+SetShortcut boggledGoBackToConditionImprovementSubmenu ""ESCAPE""",,"1:boggledTriggerMildClimateConditionImprovement:Start terraforming project
+50:boggledGoBackToConditionImprovementSubmenu:Back",
+boggledMildClimateConditionImprovementNo,boggledPopulateMildClimateConditionImprovementOptions,!boggledTerraformingProjectRequirementsMet,"boggledTerraformingPrintResultsAndRequirements
+SetEnabled boggledTriggerMildClimateConditionImprovement false
+SetShortcut boggledGoBackToConditionImprovementSubmenu ""ESCAPE""",,"1:boggledTriggerMildClimateConditionImprovement:Start terraforming project
+50:boggledGoBackToConditionImprovementSubmenu:Back",
+boggledTriggerMildClimateConditionImprovement,DialogOptionSelected,$option == boggledTriggerMildClimateConditionImprovement,"boggledTerraformingInitiateProject
+$menuState = main 0
+FireAll PopulateOptions",,,,
+,,,,,,
+#Habitable condition improvement logic
+,,,,,,
+boggledAddHabitableConditionImprovementOption,boggledTerraformingPopulateConditionImprovementSubmenus,,,,0:boggledConsiderHabitableConditionImprovement:Consider making the atmosphere on $marketName human-breathable,
+boggledPopulateHabitableConditionImprovementMenu,DialogOptionSelected,$option == boggledConsiderHabitableConditionImprovement,FireBest boggledPopulateHabitableConditionImprovementOptions,,,
+boggledHabitableConditionImprovementYes,boggledPopulateHabitableConditionImprovementOptions,boggledTerraformingProjectRequirementsMet,"boggledTerraformingPrintResultsAndRequirements
+SetShortcut boggledGoBackToConditionImprovementSubmenu ""ESCAPE""",,"1:boggledTriggerHabitableConditionImprovement:Start terraforming project
+50:boggledGoBackToConditionImprovementSubmenu:Back",
+boggledHabitableConditionImprovementNo,boggledPopulateHabitableConditionImprovementOptions,!boggledTerraformingProjectRequirementsMet,"boggledTerraformingPrintResultsAndRequirements
+SetEnabled boggledTriggerHabitableConditionImprovement false
+SetShortcut boggledGoBackToConditionImprovementSubmenu ""ESCAPE""",,"1:boggledTriggerHabitableConditionImprovement:Start terraforming project
+50:boggledGoBackToConditionImprovementSubmenu:Back",
+boggledTriggerHabitableConditionImprovement,DialogOptionSelected,$option == boggledTriggerHabitableConditionImprovement,"boggledTerraformingInitiateProject
+$menuState = main 0
+FireAll PopulateOptions",,,,
+,,,,,,
+#Atmosphere Density condition improvement logic
+,,,,,,
+boggledAddAtmosphereDensityConditionImprovementOption,boggledTerraformingPopulateConditionImprovementSubmenus,,,,0:boggledConsiderAtmosphereDensityConditionImprovement:Consider normalizing atmospheric density on $marketName,
+boggledPopulateAtmosphereDensityConditionImprovementMenu,DialogOptionSelected,$option == boggledConsiderAtmosphereDensityConditionImprovement,FireBest boggledPopulateAtmosphereDensityConditionImprovementOptions,,,
+boggledAtmosphereDensityConditionImprovementYes,boggledPopulateAtmosphereDensityConditionImprovementOptions,boggledTerraformingProjectRequirementsMet,"boggledTerraformingPrintResultsAndRequirements
+SetShortcut boggledGoBackToConditionImprovementSubmenu ""ESCAPE""",,"1:boggledTriggerAtmosphereDensityConditionImprovement:Start terraforming project
+50:boggledGoBackToConditionImprovementSubmenu:Back",
+boggledAtmosphereDensityConditionImprovementNo,boggledPopulateAtmosphereDensityConditionImprovementOptions,!boggledTerraformingProjectRequirementsMet,"boggledTerraformingPrintResultsAndRequirements
+SetEnabled boggledTriggerAtmosphereDensityConditionImprovement false
+SetShortcut boggledGoBackToConditionImprovementSubmenu ""ESCAPE""",,"1:boggledTriggerAtmosphereDensityConditionImprovement:Start terraforming project
+50:boggledGoBackToConditionImprovementSubmenu:Back",
+boggledTriggerAtmosphereDensityConditionImprovement,DialogOptionSelected,$option == boggledTriggerAtmosphereDensityConditionImprovement,"boggledTerraformingInitiateProject
+$menuState = main 0
+FireAll PopulateOptions",,,,
+,,,,,,
+#Toxic Atmosphere condition improvement logic
+,,,,,,
+boggledAddToxicAtmosphereConditionImprovementOption,boggledTerraformingPopulateConditionImprovementSubmenus,,,,0:boggledConsiderToxicAtmosphereConditionImprovement:Consider remediating atmospheric toxicity on $marketName,
+boggledPopulateToxicAtmosphereConditionImprovementMenu,DialogOptionSelected,$option == boggledConsiderToxicAtmosphereConditionImprovement,FireBest boggledPopulateToxicAtmosphereConditionImprovementOptions,,,
+boggledToxicAtmosphereConditionImprovementYes,boggledPopulateToxicAtmosphereConditionImprovementOptions,boggledTerraformingProjectRequirementsMet,"boggledTerraformingPrintResultsAndRequirements
+SetShortcut boggledGoBackToConditionImprovementSubmenu ""ESCAPE""",,"1:boggledTriggerToxicAtmosphereConditionImprovement:Start terraforming project
+50:boggledGoBackToConditionImprovementSubmenu:Back",
+boggledToxicAtmosphereConditionImprovementNo,boggledPopulateToxicAtmosphereConditionImprovementOptions,!boggledTerraformingProjectRequirementsMet,"boggledTerraformingPrintResultsAndRequirements
+SetEnabled boggledTriggerToxicAtmosphereConditionImprovement false
+SetShortcut boggledGoBackToConditionImprovementSubmenu ""ESCAPE""",,"1:boggledTriggerToxicAtmosphereConditionImprovement:Start terraforming project
+50:boggledGoBackToConditionImprovementSubmenu:Back",
+boggledTriggerToxicAtmosphereConditionImprovement,DialogOptionSelected,$option == boggledTriggerToxicAtmosphereConditionImprovement,"boggledTerraformingInitiateProject
+$menuState = main 0
+FireAll PopulateOptions",,,,
+,,,,,,
+#Irradiated improvement logic (non-default)
+,,,,,,
+boggledAddIrradiatedConditionImprovementOption,boggledTerraformingPopulateConditionImprovementSubmenus,boggledTerraformingCheckEnabledIrradiatedProject,,,0:boggledConsiderIrradiatedConditionImprovement:Consider remediating radiation on $marketName,
+boggledPopulateIrradiatedConditionImprovementMenu,DialogOptionSelected,$option == boggledConsiderIrradiatedConditionImprovement,FireBest boggledPopulateIrradiatedConditionImprovementOptions,,,
+boggledIrradiatedConditionImprovementYes,boggledPopulateIrradiatedConditionImprovementOptions,boggledTerraformingProjectRequirementsMet,"boggledTerraformingPrintResultsAndRequirements
+SetShortcut boggledGoBackToConditionImprovementSubmenu ""ESCAPE""",,"1:boggledTriggerIrradiatedConditionImprovement:Start terraforming project
+50:boggledGoBackToConditionImprovementSubmenu:Back",
+boggledIrradiatedConditionImprovementNo,boggledPopulateIrradiatedConditionImprovementOptions,!boggledTerraformingProjectRequirementsMet,"boggledTerraformingPrintResultsAndRequirements
+SetEnabled boggledTriggerIrradiatedConditionImprovement false
+SetShortcut boggledGoBackToConditionImprovementSubmenu ""ESCAPE""",,"1:boggledTriggerIrradiatedConditionImprovement:Start terraforming project
+50:boggledGoBackToConditionImprovementSubmenu:Back",
+boggledTriggerIrradiatedConditionImprovement,DialogOptionSelected,$option == boggledTriggerIrradiatedConditionImprovement,"boggledTerraformingInitiateProject
+$menuState = main 0
+FireAll PopulateOptions",,,,
+,,,,,,
+boggledAddCancelOptionToTypeChangeSubmenu,boggledTerraformingPopulateTypeChangeSubmenus,,SetShortcut boggledGoBackToTerraformingControlPanelRoot ""ESCAPE"",,50:boggledGoBackToTerraformingControlPanelRoot:Back,
+boggledAddCancelOptionToResourceImprovementSubmenu,boggledTerraformingPopulateResourceImprovementSubmenus,,SetShortcut boggledGoBackToTerraformingControlPanelRoot ""ESCAPE"",,50:boggledGoBackToTerraformingControlPanelRoot:Back,
+boggledAddCancelOptionToConditionImprovementSubmenu,boggledTerraformingPopulateConditionImprovementSubmenus,,SetShortcut boggledGoBackToTerraformingControlPanelRoot ""ESCAPE"",,50:boggledGoBackToTerraformingControlPanelRoot:Back,
+boggledGoBackToTypeChangeSubmenu,DialogOptionSelected,$option == boggledGoBackToTypeChangeSubmenu,"$menuState = main 0
+FireAll boggledTerraformingPopulateTypeChangeSubmenus",,,,
+boggledGoBackToResourceImprovementSubmenu,DialogOptionSelected,$option == boggledGoBackToResourceImprovementSubmenu,"$menuState = main 0
+FireAll boggledTerraformingPopulateResourceImprovementSubmenus",,,,
+boggledGoBackToConditionImprovementSubmenu,DialogOptionSelected,$option == boggledGoBackToConditionImprovementSubmenu,"$menuState = main 0
+FireAll boggledTerraformingPopulateConditionImprovementSubmenus",,,,
+boggledGoBackToTerraformingControlPanelRoot,DialogOptionSelected,$option == boggledGoBackToTerraformingControlPanelRoot,"$menuState = main 0
+FireAll boggledTerraformingPopulateSubmenus",,,,
+,,,,,,
+#stations under construction interactions
+,,,,,,
+boggledMiningStationUnderConstructionOpenDialog,OpenInteractionDialog,"$tag:boggled_mining_station
+!$hasMarket","ShowDefaultVisual
+boggledStationUnderConstructionPrintDescription
+SetShortcut boggledMiningStationUnderConstructionLeave ""ESCAPE""",,boggledMiningStationUnderConstructionLeave:Leave,,
+boggledMiningStationUnderConstructionLeave,DialogOptionSelected,$option == boggledMiningStationUnderConstructionLeave,DismissDialog,,,,
+boggledSiphonStationUnderConstructionOpenDialog,OpenInteractionDialog,"$tag:boggled_siphon_station
+!$hasMarket","ShowDefaultVisual
+boggledStationUnderConstructionPrintDescription
+SetShortcut boggledSiphonStationUnderConstructionLeave ""ESCAPE""",,boggledSiphonStationUnderConstructionLeave:Leave,,
+boggledSiphonStationUnderConstructionLeave,DialogOptionSelected,$option == boggledSiphonStationUnderConstructionLeave,DismissDialog,,,,
+boggledAstropolisStationUnderConstructionOpenDialog,OpenInteractionDialog,"$tag:boggled_astropolis
+!$hasMarket","ShowDefaultVisual
+boggledStationUnderConstructionPrintDescription
+SetShortcut boggledAstropolisStationUnderConstructionLeave ""ESCAPE""",,boggledAstropolisStationUnderConstructionLeave:Leave,,
+boggledAstropolisStationUnderConstructionLeave,DialogOptionSelected,$option == boggledAstropolisStationUnderConstructionLeave,DismissDialog,,,,
+,,,,,,
+#Building Domain-era stable location structures
+,,,,,,
+stable_buildRelayDomainOpt,Stable_AddBuildOptions,boggledObjectiveCheckEnabled,,,40:SL_buildDomainRelay:Construct a Domain-tech comm relay,
+stable_buildArrayDomainOpt,Stable_AddBuildOptions,boggledObjectiveCheckEnabled,,,50:SL_buildDomainArray:Construct a Domain-tech sensor array,
+stable_buildBuoyDomainOpt,Stable_AddBuildOptions,boggledObjectiveCheckEnabled,,,60:SL_buildDomainBuoy:Construct a Domain-tech nav buoy,
+stable_buildInactiveGateOpt,Stable_AddBuildOptions,boggledInactiveGateCheckEnabled,,,70:SL_buildInactiveGate:Construct an inactive Gate,
+stable_buildDomainRelay,DialogOptionSelected,$option == SL_buildDomainRelay,"$slBuildType = comm_relay 0
+boggledObjectivePrintDescription $slBuildType
+FireBest Stable_DomainBuildConfirmOptions",,,
+stable_buildDomainSensor,DialogOptionSelected,$option == SL_buildDomainArray,"$slBuildType = sensor_array 0
+boggledObjectivePrintDescription $slBuildType
+FireBest Stable_DomainBuildConfirmOptions",,,
+stable_buildDomainBuoy,DialogOptionSelected,$option == SL_buildDomainBuoy,"$slBuildType = nav_buoy 0
+boggledObjectivePrintDescription $slBuildType
+FireBest Stable_DomainBuildConfirmOptions",,,
+stable_buildInactiveGate,DialogOptionSelected,$option == SL_buildInactiveGate,"$slBuildType = inactive_gate 0
+boggledObjectivePrintDescription $slBuildType
+FireBest Stable_DomainBuildConfirmOptions",,,
+stable_confirmOptsDomain,Stable_DomainBuildConfirmOptions,boggledObjectiveCanBuild $slBuildType,,,"boggledDomainbuildProceed:Proceed
+SL_cancelBuild:Never mind",
+stable_confirmOptsCantDomain,Stable_DomainBuildConfirmOptions,!boggledObjectiveCanBuild $slBuildType,SetEnabled boggledDomainbuildProceed false,,"boggledDomainbuildProceed:Proceed
+SL_cancelBuild:Never mind",
+stable_buildProceedDomain,DialogOptionSelected,$option == boggledDomainbuildProceed,"boggledObjectiveBuild $slBuildType
+DismissDialog",,,
+,,,,,,
+#Upgrading sector-tech stable location structures
+,,,,,,
+stable_upgradeRelayDomainOpt,COB_AddOptions,"boggledObjectiveCheckEnabled
+$tag:makeshift
+$tag:comm_relay",,,21:SL_upgradeToDomainRelay:Upgrade this relay to Domain-tech,
+stable_upgradeArrayDomainOpt,COB_AddOptions,"boggledObjectiveCheckEnabled
+$tag:makeshift
+$tag:sensor_array",,,21:SL_upgradeToDomainArray:Upgrade this sensor array to Domain-tech,
+stable_upgradeBuoyDomainOpt,COB_AddOptions,"boggledObjectiveCheckEnabled
+$tag:makeshift
+$tag:nav_buoy",,,21:SL_upgradeToDomainBuoy:Upgrade this nav buoy to Domain-tech,
+#
+stable_upgradeToDomainRelay,DialogOptionSelected,$option == SL_upgradeToDomainRelay,"$slBuildType = comm_relay 0
+boggledObjectivePrintDescription $slBuildType
+FireBest Stable_DomainUpgradeConfirmOptions",,,
+stable_upgradeToDomainArray,DialogOptionSelected,$option == SL_upgradeToDomainArray,"$slBuildType = sensor_array 0
+boggledObjectivePrintDescription $slBuildType
+FireBest Stable_DomainUpgradeConfirmOptions",,,
+stable_upgradeToDomainBuoy,DialogOptionSelected,$option == SL_upgradeToDomainBuoy,"$slBuildType = nav_buoy 0
+boggledObjectivePrintDescription $slBuildType
+FireBest Stable_DomainUpgradeConfirmOptions",,,
+#
+stable_confirmOptsDomainUpgrade,Stable_DomainUpgradeConfirmOptions,boggledObjectiveCanBuild $slBuildType,,,"boggledDomainUpgradeProceed:Proceed
+SL_cancelUpgrade:Never mind",
+stable_confirmOptsCantDomainUpgrade,Stable_DomainUpgradeConfirmOptions,!boggledObjectiveCanBuild $slBuildType,SetEnabled boggledDomainUpgradeProceed false,,"boggledDomainUpgradeProceed:Proceed
+SL_cancelUpgrade:Never mind",
+stable_upgradeProceedDomain,DialogOptionSelected,$option == boggledDomainUpgradeProceed,"boggledObjectiveBuild $slBuildType
+DismissDialog",,,
+stable_nevermindBoggledUpgrade,DialogOptionSelected,$option == SL_cancelUpgrade,"ShowDefaultVisual
+FireAll COB_AddOptions
+FireBest COB_DisableOptionsIfNeeded
+FireAll COB_DisableIndividualOptions",,,

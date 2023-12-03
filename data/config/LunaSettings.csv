@@ -1,0 +1,190 @@
+fieldID,fieldName,fieldType,defaultValue,secondaryValue,fieldDescription,minValue,maxValue,tab
+boggled_terraformingProjectsHeader,Project Settings,Header,Project Settings,,,,,Terraforming
+boggledTerraformingContentEnabled,Enable terraforming content,Boolean,True,,"Set this to false to completely disable all terraforming content regardless of other settings.",,,Terraforming
+boggledTerraformingTime,Planet type change time,Int,400,,"Controls how long planet type change projects take (in days).",1,2000,Terraforming
+boggledResourceImprovementTime,Resource improvement time,Int,200,,"Controls how long resource improvement projects take (in days).",1,1000,Terraforming
+boggledConditionImprovementTime,Condition improvement time,Int,200,,"Controls how long condition improvement projects take (in days).",1,1000,Terraforming
+boggledTerraformingTypeChangeAddVolatiles,Add volatiles to Terran and tundra worlds,Boolean,True,,"Set this to false to prevent Terran and tundra type change projects from creating volatiles deposits.",,,Terraforming
+boggledTerraformingRemoveRadiationProjectEnabled,Enable radiation remediation project,Boolean,False,,"Set this to true to enable the terraforming project to remove radiation from a market.",,,Terraforming
+boggledTerraformingRemoveAtmosphereProjectEnabled,Enable the remove atmosphere project,Boolean,False,,"Set this to true to enable the terraforming project to remove the atmosphere from a market.",,,Terraforming
+boggled_terraformingBuildingHeader,Building Settings,Header,Building Settings,,,,,Terraforming
+boggledStellarReflectorArrayEnabled,Enable Stellar Reflector Array,Boolean,True,,"Set this to false to disable the Stellar Reflector Array building.",,,Terraforming
+boggledStellarReflectorArrayMarketAutoPlacementEnabled,Enable Stellar Reflector Array Autoplacement,Boolean,True,,"Set this to false to prevent certain markets from starting the game with the Stellar Reflector Array building already constructed.
+
+If set to false, Eventide, Eochu Bres and certain other markets will get to keep their Solar Array market condition for free without needing to maintain the Stellar Reflector Building.",,,Terraforming
+boggledGenelabEnabled,Enable Genelab,Boolean,True,,"Set this to false to disable the Genelab building.",,,Terraforming
+boggledMesozoicParkEnabled,Enable Mesozoic Park,Boolean,True,,"Set this to false to disable the Mesozoic Park building.",,,Terraforming
+boggledDomedCitiesEnabled,Enable Domed Cities,Boolean,True,,"Set this to false to disable the Domed Cities building.
+
+Also controls whether the Seafloor Cities building is enabled or disabled.",,,Terraforming
+boggledDomedCitiesDefensePenaltyEnabled,Enable Domed Cities defense penalty,Boolean,True,,"Set this to false to remove the defense penalty from the Domed Cities building.",,,Terraforming
+boggledHarmonicDamperEnabled,Enable Harmonic Damper,Boolean,False,,"Set this to true to enable the Harmonic Damper building.
+
+The Harmonic Damper building suppresses tectonic activity market conditions.",,,Terraforming
+boggledPlanetaryAgravFieldEnabled,Enable Planetary Agrav Field,Boolean,False,,"Set this to true to enable the Planetary Agrav Field building.
+
+The Planetary Agrav Field building supresses high and low gravity market conditions if the Domed Cities building is present on the colony.",,,Terraforming
+boggledMagnetoshieldEnabled,Enable Magnetoshield,Boolean,False,,"Set this to true to enable the Magnetoshield building.
+
+The Magnetoshield building will suppress the irradiated market condition.",,,Terraforming
+boggledPlanetCrackerEnabled,Enable Planet Cracker,Boolean,False,,"Set this to true to enable the Planet Cracker building.
+
+The Planet Cracker building can be constructed on a station orbiting a planet. It will permanently improve ore and rare ore resources on that planet by one level but will add the tectonic activity market condition. Does nothing if the planet already has tectonic activity.",,,Terraforming
+boggledOuyangOptimizerEnabled,Enable Ouyang Optimzer,Boolean,False,,"Set this to true to enable the Ouyang Optimizer building.
+
+The Ouyang Optimizer building can be constructed on a station orbiting a gas giant. It will permanently improve volatiles resources on that planet by one level but will add the extreme weather market condition. Does nothing if the planet already has extreme weather.",,,Terraforming
+boggledStationConstructionContentEnabled,Enable station construction content,Boolean,True,,"Set this to false to completely disable all station construction content regardless of other settings.",,,Station Construction
+boggledStationConstructionDelayEnabled,Enable station construction time,Boolean,False,,"Set this to true to cause station construction to take the specified number of days instead of completing instantly.",,,Station Construction
+boggledStationConstructionDelayDays,Station construction delay time,Int,90,,"If the station construction delay is enabled this controls how many days it will take to complete.",1,450,Station Construction
+boggledStationAccessibilityBoost,Modify station accessibility,Int,0,,"Adds an accessibility modifier to player-constructed stations. Negative values can be used to decrease accessibility.",-100,100,Station Construction
+boggledStationHazardRatingModifier,Modify station hazard,Int,0,,"Adds a hazard modifier to player-constructed stations. Negative values can be used to decrease hazard.",-100,100,Station Construction
+boggledApplyStationSettingsToAllStationsInSector,Apply settings to all stations,Boolean,True,,"Applies Cramped Quarters (if enabled), applies hazard and accessibility modifiers, and enables 'no atmosphere' special items on all stations sector-wide.
+
+If set to false, only stations created using Terraforming & Station Construction will have the above features applied to them.",,,Station Construction
+boggledEnableAIMiningDronesStructure,Enable AI Mining Drones building,Boolean,False,,"Set this to true to enable the AI Mining Drones building.
+
+Can be built on station markets to increase mining yields. Balanced around Cramped Quarters also being enabled.",,,Station Construction
+boggled_CrampedQuartersHeader,Cramped Quarters Settings,Header,Cramped Quarters Settings,,,,,Station Construction
+boggledStationCrampedQuartersEnabled,Enable Cramped Quarters,Boolean,False,,"Set this to true to enable the Cramped Quarters condition.
+
+Cramped Quarters reduces population growth on station markets starting from the value chosen below.",,,Station Construction
+boggledStationCrampedQuartersSizeGrowthReductionStarts,Cramped Quarters growth penalty market size,Int,3,,"If Cramped Quarters is enabled this setting controls at what market size the growth penalty begins to apply.",0,6,Station Construction
+boggledStationCrampedQuartersBaseGrowthPenalty,Cramped Quarters penalty magnitude,Int,25,,"If Cramped Quarters is enabled this setting controls how significant the growth penalty is.
+
+Note that the penalty will become more severe as the station grows beyond the base size at which the penalty began applying.",1,125,Station Construction
+boggledStationCrampedQuartersPlayerCanPayToIncreaseStationSize,Enable Expand Station building,Boolean,False,,"Set this to true to enable the Expand Station building.
+
+The Expand Station building will increase the base level at which the Cramped Quarters growth penalty begins to apply.",,,Station Construction
+boggledStationProgressiveIncreaseInCostsToExpandStation,Expand Station progressive cost increase,Boolean,True,,"Set this to false to disable the progressive cost increase for the Expand Station building.
+
+By default, the Expand Station building will cost more each time it is built after the first time on a given station market.",,,Station Construction
+boggled_AstropolisHeader,Astropolis Settings,Header,Astropolis Settings,,,,,Station Construction
+boggledAstropolisEnabled,Enable Astropolis construction,Boolean,True,,"Set this to false to disable construction of astropolis stations.
+
+Astropolis stations can be constructed using an ability when the player is close to a planet they have already colonized. The station will orbit the planet and have a separate market from the market on the colony. Astropolis stations have no resource deposits.",,,Station Construction
+boggledMaxNumAstropoliPerPlanet,Maximum number of astropolis stations per planet,Int,3,,"Controls how many astropolis stations can be constructed in orbit around a single planet.
+
+Three is the maximum value for this setting - modifying the CSV to increase the value will do nothing.",0,3,Station Construction
+boggledCanBuildAstropolisOnPurchasedGovernorshipPlanets,Astropolis stations can be built on purchased planets,Boolean,False,,"Set this to true to allow astropolis stations to be constructed in orbit around planets where the player purchased governorship.",,,Station Construction
+boggledAstropolisIgnoreOrbitalRequirements,Astropolis stations ignore orbital requirements,Boolean,False,,"Set this to true to allow construction of astropolis stations in orbit around planets that otherwise do not meet the criteria for astropolis construction.
+
+The criteria for astropolis construction are factors like the size of the planet, other planets or moons orbiting close to it, etc.",,,Station Construction
+boggledAstropolisStationBuildCreditCost,Astropolis station credit build cost,Int,500000,,"How many credits are required to construct an astropolis station.",0,2500000,Station Construction
+boggledAstropolisStationBuildCrewCost,Astropolis station crew build cost,Int,1000,,"How many crew are required to construct an astropolis station.",0,5000,Station Construction
+boggledAstropolisStationBuildHeavyMachineryCost,Astropolis station heavy machinery build cost,Int,250,,"How much heavy machinery is required to construct an astropolis station.",0,1250,Station Construction
+boggledAstropolisStationBuildMetalCost,Astropolis station metal build cost,Int,1000,,"How much metal is required to construct an astropolis station.",0,5000,Station Construction
+boggledAstropolisStationBuildTransplutonicsCost,Astropolis station transplutonics build cost,Int,250,,"How much transplutonic metal is required to construct an astropolis station.",0,1250,Station Construction
+boggledAstropolisSpriteToUse,Astropolis sprite controller,Int,0,,"Controls which sprite(s) are used for astropolis stations.
+
+Zero means the sprites for astropolis stations rotate between low tech, midline and high tech. One makes astropolis stations use exclusively low tech sprites, two is for midline sprites and three is for high tech sprites.",0,3,Station Construction
+boggled_MiningHeader,Mining Station Settings,Header,Mining Station Settings,,,,,Station Construction
+boggledMiningStationEnabled,Enable mining station construction,Boolean,True,,"Set this to false to disable construction of mining stations.
+
+Mining stations can be constructed using an ability when the player is in an asteroid field or asteroid belt. Mining stations have ore and rare ore resource deposits.",,,Station Construction
+boggledMaxNumMiningStationsPerSystem,Maximum mining stations per system,Int,1,,"Controls how many mining stations can be constructed per system.
+
+This value can be arbitrarily large but balance and performance problems will occur if too many colonies are in the same system.",0,5,Station Construction
+boggledMiningStationLinkToResourceBelts,Link mining resources to number of fields/belts,Boolean,False,,"Set this to true to link the ore and rare ore resource deposits on mining stations to the number of asteroid belts and fields present in the system.",,,Station Construction
+boggledMiningStationSparseOre,Number of belts/fields required for sparse ore deposits,Int,0,,"How many asteroid fields and/or asteroid belts are required in the system for mining stations to have at least sparse ore deposits.",0,10,Station Construction
+boggledMiningStationModerateOre,Number of belts/fields required for moderate ore deposits,Int,2,,"How many asteroid fields and/or asteroid belts are required in the system for mining stations to have at least moderate ore deposits.",0,10,Station Construction
+boggledMiningStationAbundantOre,Number of belts/fields required for abundant ore deposits,Int,5,,"How many asteroid fields and/or asteroid belts are required in the system for mining stations to have at least abundant ore deposits.",0,25,Station Construction
+boggledMiningStationRichOre,Number of belts/fields required for rich ore deposits,Int,7,,"How many asteroid fields and/or asteroid belts are required in the system for mining stations to have at least rich ore deposits.",0,35,Station Construction
+boggledMiningStationUltrarichOre,Number of belts/fields required for ultrarich ore deposits,Int,9,,"How many asteroid fields and/or asteroid belts are required in the system for mining stations to have at least ultra rich ore deposits.",0,45,Station Construction
+boggledMiningStationStaticAmount,Static resource deposit amount,Int,2,,"If the setting to link mining station resource deposits to the number of asteroid belts and fields in the system is set to false, this controls the amount of the resource deposits on mining stations.
+
+1 = Sparse, 2 = Moderate, 3 = Abundant, 4 = Rich, 5 = Ultrarich, Any other value = set to moderate",1,5,Station Construction
+boggledMiningStationBuildCreditCost,Mining station credit build cost,Int,500000,,"How many credits are required to construct a mining station.",0,2500000,Station Construction
+boggledMiningStationBuildCrewCost,Mining station crew build cost,Int,1000,,"How many crew are required to construct a mining station.",0,5000,Station Construction
+boggledMiningStationBuildHeavyMachineryCost,Mining station heavy machinery build cost,Int,250,,"How much heavy machinery is required to construct a mining station.",0,1250,Station Construction
+boggledMiningStationBuildMetalCost,Mining station metal build cost,Int,1000,,"How much metal is required to construct a mining station.",0,5000,Station Construction
+boggledMiningStationBuildTransplutonicsCost,Mining station transplutonics build cost,Int,250,,"How much transplutonic metal is required to construct a mining station.",0,1250,Station Construction
+boggled_SiphonHeader,Siphon Station Settings,Header,Siphon Station Settings,,,,,Station Construction
+boggledSiphonStationEnabled,Enable siphon station construction,Boolean,True,,"Set this to false to disable construction of siphon stations.
+
+Siphon stations can be constructed using an ability when the player is near a gas giant. Siphon stations have volatiles resource deposits.",,,Station Construction
+boggledSiphonStationLinkToGasGiant,Link siphon station volatiles to gas giant,Boolean,True,,"By default, siphon station volatiles resource deposits are the same level as the gas giant the station orbits.
+
+Toggling this to false will cause siphon stations to have a static amount of volatiles instead.",,,Station Construction
+boggledSiphonStationStaticAmount,Siphon station volatiles static amount,Int,2,,"If the setting to link siphon station volatiles deposits to the gas giant the station is orbiting is set to false, this controls the amount of the volatiles resource deposit on the station.
+
+1 = Trace, 2 = Diffuse, 3 = Abundant, 4 = Plentiful, Any other value = set to diffuse",1,4,Station Construction
+boggledSiphonStationBuildCreditCost,Siphon station credit build cost,Int,500000,,"How many credits are required to construct a siphon station.",0,2500000,Station Construction
+boggledSiphonStationBuildCrewCost,Siphon station crew build cost,Int,1000,,"How many crew are required to construct a siphon station.",0,5000,Station Construction
+boggledSiphonStationBuildHeavyMachineryCost,Siphon station heavy machinery build cost,Int,250,,"How much heavy machinery is required to construct a siphon station.",0,1250,Station Construction
+boggledSiphonStationBuildMetalCost,Siphon station metal build cost,Int,1000,,"How much metal is required to construct a siphon station.",0,5000,Station Construction
+boggledSiphonStationBuildTransplutonicsCost,Siphon station transplutonics build cost,Int,250,,"How much transplutonic metal is required to construct a siphon station.",0,1250,Station Construction
+boggled_RecolonizationHeader,Station Recolonization Settings,Header,Station Recolonization Settings,,,,,Station Construction
+boggledStationColonizationEnabled,Enable station recolonization,Boolean,True,,"Set this to false to disable station recolonization.
+
+Certain abandoned stations can be recolonized using an ability. Stations constructed using Terraforming & Station Construction can be recolonized, as well as some vanilla stations.",,,Station Construction
+boggledStationRecolonizeCreditCost,Station recolonization credit cost,Int,250000,,"How many credits are required to recolonize a station.",0,1250000,Station Construction
+boggledStationRecolonizeCrewCost,Station recolonization crew cost,Int,500,,"How many crew are required to recolonize a station.",0,2500,Station Construction
+boggledStationRecolonizeHeavyMachineryCost,Station recolonization heavy machinery cost,Int,125,,"How much heavy machinery is required to recolonize a station.",0,625,Station Construction
+boggledStationRecolonizeMetalCost,Station recolonization metal cost,Int,500,,"How much metal is required to recolonize a station.",0,2500,Station Construction
+boggledStationRecolonizeTransplutonicsCost,Station recolonization transplutonics cost,Int,125,,"How much transplutonic metal is required to recolonize a station.",0,625,Station Construction
+boggledDomainTechContentEnabled,Enable Domain-tech content,Boolean,True,,"Set this to false to completely disable all Domain-tech content regardless of other settings.",,,Domain-tech Content
+boggled_CraftingHeader,Domain-tech Crafting Settings,Header,Domain-tech Crafting Settings,,,,,Domain-tech Content
+boggledDomainTechCraftingEnabled,Enable Domain-tech crafting,Boolean,True,,"Set this to false to disable Domain-tech crafting.
+
+Domain-tech crafting allows the player to use Domain-era artifacts and story points to craft powerful special items that can usually only be obtained via exploring.",,,Domain-tech Content
+boggledDomainTechCraftingArtifactCost,Domain-tech crafting cost,Int,2000,,"How many Domain-era artifacts are required to craft one special item.
+
+This amount is increased for more powerful items and decreased for less powerful items.",0,10000,Domain-tech Content
+boggledDomainTechCraftingStoryPointCost,Domain-tech story point crafting cost,Int,2,,"How many story points are required to craft one special item.",0,10,Domain-tech Content
+boggled_PlanetKillerHeader,Planet-killer device settings,Header,Planet-killer device settings,,,,,Domain-tech Content
+boggledPlanetKillerEnabled,Enable planet-killer device,Boolean,False,,"Set this to true to enable the planet-killer device.
+
+Please note that this feature is problematic from a balance and lore standpoint and may cause bugs and/or crashes. Use it at your own risk.",,,Domain-tech Content
+boggledPlanetKillerAllowDestructionOfColoniesMarkedAsEssentialForQuests,Planet-killer device can destroy essential planets,Boolean,True,,"Set this to false to prevent the planet-killer device from being used on planets marked as essential to story quests.
+
+Using the planet-killer device on a story essential planet is guaranteed to cause bugs and/or crashes. This should only be used if the player has already completed all the story quests they intend to complete in the current save.",,,Domain-tech Content
+boggled_PerihelionProjectHeader,Coronal Hypershunt construction settings,Header,Coronal Hypershunt construction settings,,,,,Domain-tech Content
+boggledPerihelionProjectEnabled,Enable Perihelion Project,Boolean,False,,"Set this to true to enable the Perihelion Project.
+
+The Perihelion Project allows the player to construct a coronal hypershunt in a star system that meets certain requirements.",,,Domain-tech Content
+boggledPerihelionProjectDaysToFinish,Days to finish Perihelion Project,Int,600,,"How many days are required to finish the Perihelion Project.",1,3000,Domain-tech Content
+boggled_DomainArchaeologyHeader,Domain-tech building settings,Header,Domain-tech building settings,,,,,Domain-tech Content
+boggledDomainArchaeologyEnabled,Enable Domain Archaeology,Boolean,True,,"Set this to false to disable the Domain Archaeology building.
+
+The Domain Archaeology building is an industry that produces Domain-era artifacts based on the level of ruins on the planet. Setting this to false will disable crafting, and buildings that require Domain-era artifacts will no longer require them.",,,Domain-tech Content
+boggledReplaceAgreusTechMiningWithDomainArchaeology,Replace techmining building on Agreus with Domain Archaeology,Boolean,True,,"Set this to false to prevent the techmining building on Agreus from being removed and replaced with a Domain Archaeology building.",,,Domain-tech Content
+boggledAddDomainTechBuildingsToVanillaColonies,Add Domain-tech buildings to several colonies,Boolean,True,,"Adds buildings that demand Domain-era artifacts to several vanilla colonies.
+
+This includes: Genelab on Volturn, Limelight Network on Fikenhild, GPA on Ancyra, DAE demand on Cryosanctum on Nomios.",,,Domain-tech Content
+boggledKletkaSimulatorEnabled,Enable Kletka Simulator,Boolean,True,,"Set this to false to disable the Kletka Simulator building.
+
+The Kletka Simulator is an industry that produces AI cores. The AI cores are sent to storage along with other items and ships the player receives each month.",,,Domain-tech Content
+boggledKletkaSimulatorTemperatureBasedUpkeep,Kletka Simulator upkeep is based on temperature,Boolean,True,,"Set this to false to make the Kletka Simulator have a static upkeep instead of the upkeep cost being dependant on the temperature of the market it is located on.",,,Domain-tech Content
+boggledCHAMELEONEnabled,Enable CHAMELEON,Boolean,True,,"Set this to false to disable the CHAMELEON building.
+
+The CHAMELEON is a building that can slowly remove certain hazardous conditions from a market, such as a decivilized subpopulation.",,,Domain-tech Content
+boggledLimelightNetworkPlayerBuildEnabled,Limelight Network building can be constructed by the player,Boolean,False,,"Set this to true to allow the player to construct the Limelight Network building.",,,Domain-tech Content
+boggledCryosanctumPlayerBuildEnabled,Cryosanctum building can be constructed by the player,Boolean,False,,"Set this to true to allow the player to construct the Cryosanctum building.",,,Domain-tech Content
+boggledCryosanctumReplaceEverywhere,Cryosanctum buildings demand Domain-era artifacts,Boolean,True,,"Set this to false to prevent Cryosanctum buildings from demanding Domain-era artifacts.",,,Domain-tech Content
+boggled_ObjectivesHeader,Stable location structure settings,Header,Stable location structure settings,,,,,Domain-tech Content
+boggledDomainTechObjectivesEnabled,Enable Domain-tech stable location structures,Boolean,True,,"Set this to false to disable construction of Domain-tech stable location structures.
+
+This refers to the comm relays, nav buoys and sensor arrays that can be constructed at stable locations. The Domain-tech versions have more powerful effects.",,,Domain-tech Content
+boggledDomainTechObjectivesUpgradeRelationshipImpact,Relationship impact from upgrading stable location structures,Int,5,,"Upgrading sector-tech stable location structures controlled by another faction improves the player's relationship with that faction. This setting controls the magnitude of the improvement.",0,25,Domain-tech Content
+boggledStableLocationDomainTechStructureCostHeavyMachinery,Domain-tech stable location structure heavy machinery cost,Int,50,,"How much heavy machinery is required to construct a Domain-tech stable location structure.",0,250,Domain-tech Content
+boggledStableLocationDomainTechStructureCostMetals,Domain-tech stable location structure metal cost,Int,200,,"How much metal is required to construct a Domain-tech stable location structure.",0,1000,Domain-tech Content
+boggledStableLocationDomainTechStructureCostTransplutonics,Domain-tech stable location structure transplutonics cost,Int,20,,"How much transplutonic metal is required to construct a Domain-tech stable location structure.",0,100,Domain-tech Content
+boggledStableLocationDomainTechStructureCostDomainEraArtifacts,Domain-tech stable location structure Domain-era artifact cost,Int,20,,"How many Domain-era artifacts are required to construct a Domain-tech stable location structure.",0,100,Domain-tech Content
+boggled_InactiveGateHeader,Inactive gate construction settings,Header,Inactive gate construction settings,,,,,Domain-tech Content
+boggledDomainTechInactiveGateConstructionEnabled,Enable inactive gate construction,Boolean,True,,"Set this to false to disable construction of inactive gates.",,,Domain-tech Content
+boggledDomainTechInactiveGateConstructionMainQuestCompletionRequired,Main quest completion required to build gates,Boolean,True,,"Set this to false to allow construction of inactive gates before the main questline is completed.",,,Domain-tech Content
+boggledPlayerMustHaveMarketInSystemToBuildInactiveGate,Player must have colony in system to build gates,Boolean,True,,"Set this to false to allow construction of inactive gates even if the player does not own a colony in the system.",,,Domain-tech Content
+boggledMarketSizeRequiredToBuildInactiveGate,Market size required for inactive gate construction,Int,5,,"How large the player's largest colony in-system must be to meet the requirements to build an inactive gate.",1,10,Domain-tech Content
+boggledStableLocationGateCostHeavyMachinery,Inactive gate heavy machinery cost,Int,500,,"How much heavy machinery is required to construct an inactive gate.",0,2500,Domain-tech Content
+boggledStableLocationGateCostMetals,Inactive gate metal cost,Int,2000,,"How much metal is required to construct an inactive gate.",0,10000,Domain-tech Content
+boggledStableLocationGateCostTransplutonics,Inactive gate transplutonics cost,Int,200,,"How much transplutonic metal is required to construct an inactive gate.",0,1000,Domain-tech Content
+boggledStableLocationGateCostDomainEraArtifacts,Inactive gate Domain-era artifact cost,Int,200,,"How many Domain-era artifacts are required to construct an inactive gate.",0,1000,Domain-tech Content
+boggledRemnantStationEnabled,Enable Remnant Station,Boolean,True,,"Set this to false to disable construction of the Remnant Station building.
+
+The Remnant Station is a type of orbital station. It has only one level instead of three and it spawns remnant patrols allied with the player to protect the colony.",,,Miscellaneous
+boggledHydroponicsEnabled,Enable Hydroponics,Boolean,False,,"Set this to true to enable construction of the Hydroponics building.
+
+The Hydroponics building is an industry that can produce food without any farmland.",,,Miscellaneous
+boggledCloningEnabled,Enable Cloning,Boolean,False,,"Set this to true to enable construction of the Cloning building.
+
+The Cloning building is an industry that can produce harvested organs and increase colony growth.",,,Miscellaneous

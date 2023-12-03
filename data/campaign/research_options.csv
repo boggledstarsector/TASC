@@ -1,0 +1,17 @@
+id,tier,research_cost,is_researched,must_researched,req_items,has_downgrade,downgrade,is_disabled,mod_id,disabled_factor
+#id of industry,#tier  (from 1-3 ),#research cost in days,#boolean that determines if tech is researched from the start of game,#ids of researchoptions needed,#list of ids of req items,#boolean determining if industry has downgrade,#downgrade id(must be an industry),#boolean that determines if reserarch is hidden,#id of mod ,"#here you insert name of boolean from settings.json that determines if your industry is eneabled, if left then API is treating as none of field exists "
+BOGGLED_MESOZOIC_PARK,1,60,false,BOGGLED_GENELAB,,false,,false,Terraforming & Station Construction,"boggledTerraformingContentEnabled,boggledMesozoicParkEnabled"
+BOGGLED_ATMOSPHERE_PROCESSOR,1,30,false,,,false,,false,Terraforming & Station Construction,boggledTerraformingContentEnabled
+BOGGLED_DOMAIN_ARCHAEOLOGY,1,15,false,,,false,,false,Terraforming & Station Construction,"boggledDomainTechContentEnabled,boggledDomainArchaeologyEnabled"
+BOGGLED_MAGNETOSHIELD,1,30,false,,,false,,false,Terraforming & Station Construction,"boggledMagnetoshieldEnabled,boggledTerraformingContentEnabled"
+BOGGLED_AI_MINING_DRONES,2,60,false,,,false,,false,Terraforming & Station Construction,"boggledStationConstructionContentEnabled,boggledEnableAIMiningDronesStructure"
+BOGGLED_GENELAB,2,75,false,,,false,,false,Terraforming & Station Construction,"boggledTerraformingContentEnabled,boggledGenelabEnabled"
+BOGGLED_CLONING,2,60,false,BOGGLED_GENELAB,,false,,false,Terraforming & Station Construction,boggledCloningEnabled
+BOGGLED_STELLAR_REFLECTOR_ARRAY,2,45,false,,"domain_artifacts:250",false,,false,Terraforming & Station Construction,"boggledTerraformingContentEnabled,boggledStellarReflectorArrayEnabled"
+BOGGLED_CHAMELEON,2,75,false,,"alpha_core:1,beta_core:3,gamma_core:5,domain_artifacts:250",false,,false,Terraforming & Station Construction,"boggledDomainTechContentEnabled,boggledCHAMELEONEnabled"
+BOGGLED_HARMONIC_DAMPER,2,60,false,,,false,,false,Terraforming & Station Construction,"boggledTerraformingContentEnabled,boggledHarmonicDamperEnabled"
+BOGGLED_ISMARA_SLING,2,75,false,,,false,,false,Terraforming & Station Construction,boggledTerraformingContentEnabled
+BOGGLED_KLETKA_SIMULATOR,2,90,false,,"alpha_core:1,beta_core:3,gamma_core:5,domain_artifacts:500",false,,false,Terraforming & Station Construction,"boggledDomainTechContentEnabled,boggledKletkaSimulatorEnabled"
+BOGGLED_LIMELIGHT_NETWORK,2,60,false,,,false,,false,Terraforming & Station Construction,"boggledDomainTechContentEnabled,boggledLimelightNetworkPlayerBuildEnabled"
+BOGGLED_AI_STATION,2,90,false,BOGGLED_KLETKA_SIMULATOR,"alpha_core:1,beta_core:3,gamma_core:5,domain_artifacts:500",false,,false,Terraforming & Station Construction,boggledRemnantStationEnabled
+BOGGLED_PERIHELION_PROJECT,3,120,false,"BOGGLED_DOMAIN_ARCHAEOLOGY","domain_artifacts:1000",false,,false,Terraforming & Station Construction,"boggledDomainTechContentEnabled,boggledPerihelionProjectEnabled"

@@ -1,0 +1,22 @@
+{
+
+#collapseopen ABILITIES
+
+	"ui_boggled_station_constructed":{
+		"sounds":[
+			{"file":"sounds/sfx_interface/colony_faction_establish.ogg","pitch":1,"volume":0.3},
+		],
+	},
+	"ui_boggled_station_start_building":{
+		"sounds":[
+			{"file":"sounds/sfx_interface/colony_industry_build.ogg","pitch":1,"volume":0.3},
+		],
+	},
+
+#collapseclose
+
+}
+
+
+
+

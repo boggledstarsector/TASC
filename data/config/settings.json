@@ -1,0 +1,329 @@
+{
+	"ruleCommandPackages":[
+		"data.scripts"
+	],
+
+	# IMPORTANT NOTE
+	# LunaLib overrides the settings chosen in this file.
+	# If you have LunaLib enabled, you must change these settings in-game using LunaLib.
+	
+	#######################
+	# TERRAFORMING SETTINGS
+	#######################
+
+	# Set this to false to completely disable all terraforming content regardless of other settings.
+	"boggledTerraformingContentEnabled":true,
+
+	# Controls how long planet type changes take (in days).
+	"boggledTerraformingTime":400,
+
+	# Controls how long resource improvement projects take (in days).
+	"boggledResourceImprovementTime":200,
+
+	# Controls how long condition improvements take (in days)
+	"boggledConditionImprovementTime":200,
+
+	# Set this to false to disable the Stellar Reflector Array building.
+	"boggledStellarReflectorArrayEnabled":true,
+	# Set this to false to prevent certain markets from starting the game with the Stellar Reflector Array building already constructed.
+	# If set to false, Eventide, Eochu Bres and certain other markets will get to keep their Solar Array market condition for free without needing to maintain the Stellar Reflector Building.
+	"boggledStellarReflectorArrayMarketAutoPlacementEnabled":true,
+
+	# Set this to false to disable the Genelab building.
+	"boggledGenelabEnabled":true,
+
+	# Set this to false to disable the Mesozoic Park building.
+	"boggledMesozoicParkEnabled":true,
+
+	# Set this to false to disable the Domed Cities building.
+	# Also controls whether Seafloor Cities is enabled or disabled.
+	"boggledDomedCitiesEnabled":true,
+	# Set this to false to remove the defense penalty from the Domed Cities building.
+	"boggledDomedCitiesDefensePenaltyEnabled":true,
+
+	# Set this to true to enable the Harmonic Damper building.
+	# The Harmonic Damper building suppresses tectonic activity market conditions.
+	"boggledHarmonicDamperEnabled":false,
+
+	# Set this to true to enable the Planetary Agrav Field building.
+	# The Planetary Agrav Field building supresses high and low gravity market conditions if the Domed Cities building is present on the colony.
+	"boggledPlanetaryAgravFieldEnabled":false,
+
+	# Can be used to enable the Magnetoshield structure
+	# This building remove the "Irradiated" condition, but it will return if
+	# the building is deconstructed.
+	"boggledMagnetoshieldEnabled":false,
+
+	# Set this to true to enable the Planet Cracker building.
+	# Only buildable on stations orbiting a planet.
+	# The Planet Cracker building can be constructed on a station orbiting a planet. 
+	# It will permanently improve ore and rare ore resources on that planet by one level but will add the tectonic activity market condition.
+	# Does nothing if the planet already has tectonic activity.
+	"boggledPlanetCrackerEnabled":false,
+
+	# Set this to true to enable the Ouyang Optimizer building.
+	# The Ouyang Optimizer building can be constructed on a station orbiting a gas giant. 
+	# It will permanently improve volatiles resources on that planet by one level but will add the extreme weather market condition.
+	# Does nothing if the planet already has extreme weather.
+	"boggledOuyangOptimizerEnabled":false,
+
+	# Set this to false to prevent Terran and tundra type change projects from creating volatiles deposits.
+	"boggledTerraformingTypeChangeAddVolatiles":true,
+
+	# Set this to true to enable the terraforming project to remove radiation from a market.
+	"boggledTerraformingRemoveRadiationProjectEnabled":false,
+
+	# Set this to true to enable the terraforming project to remove the atmosphere from a market.
+	"boggledTerraformingRemoveAtmosphereProjectEnabled":false,
+
+	##################
+	# STATION SETTINGS
+	##################
+
+	# Setting this to false will completely disable all station construction content
+	"boggledStationConstructionContentEnabled":true,
+
+	# Set this to true to cause station construction to take the specified number of days instead of completing instantly.
+	"boggledStationConstructionDelayEnabled":false,
+	# If the station construction delay is enabled this controls how many days it will take to complete.
+	"boggledStationConstructionDelayDays":90,
+
+	# Set this to false to disable construction of astropolis stations.
+	# Astropolis stations can be constructed using an ability when the player is close to a planet they have already colonized. 
+	# The station will orbit the planet and have a separate market from the market on the colony. Astropolis stations have no resource deposits.
+	"boggledAstropolisEnabled":true,
+	# Controls how many astropolis stations can be constructed in orbit around a single planet.
+	# Three is the maximum value for this setting - modifying the CSV to increase the value will do nothing.
+	"boggledMaxNumAstropoliPerPlanet":3,
+	# Set this to true to allow astropolis stations to be constructed in orbit around planets where the player purchased governorship.
+	"boggledCanBuildAstropolisOnPurchasedGovernorshipPlanets":false,
+	
+	# Set this to true to allow construction of astropolis stations in orbit around planets that otherwise do not meet the criteria for astropolis construction.
+	# The criteria for astropolis construction are factors like the size of the planet, other planets or moons orbiting close to it, etc.
+	"boggledAstropolisIgnoreOrbitalRequirements":false,
+
+	# Controls the costs for building astropolis stations
+	"boggledAstropolisStationBuildCreditCost":500000,
+	"boggledAstropolisStationBuildCrewCost":1000,
+	"boggledAstropolisStationBuildHeavyMachineryCost":250,
+	"boggledAstropolisStationBuildMetalCost":1000,
+	"boggledAstropolisStationBuildTransplutonicsCost":250,
+
+	# Controls which sprite(s) are used for astropolis stations.
+	# 0 - Alternates between low tech, midline and high tech sprites.
+	# 1 - All low tech sprites.
+	# 2 - All midline sprites.
+	# 3 - All high tech sprites.
+	"boggledAstropolisSpriteToUse":0,
+
+	# Set this to false to disable construction of mining stations.
+	# Mining stations can be constructed using an ability when the player is in an asteroid field or asteroid belt. Mining stations have ore and rare ore resource deposits.
+	"boggledMiningStationEnabled":true,
+	
+	# Controls how many mining stations can be constructed per system.
+	# This value can be arbitrarily large but balance and performance problems will occur if too many colonies are in the same system.
+	"boggledMaxNumMiningStationsPerSystem":1,
+
+	# Set this to true to link the ore and rare ore resource deposits on mining stations to the number of asteroid belts and fields present in the system.
+	"boggledMiningStationLinkToResourceBelts":false,
+
+	# If boggledMiningStationLinkToResourceBelts is set to false above, the following option will control ore resources
+	# on mining stations:
+	# 1 = Sparse, 2 = Moderate, 3 = Abundant, 4 = Rich, 5 = Ultrarich, Any other value = set to moderate
+	"boggledMiningStationStaticAmount":2,
+
+	# If boggledMiningStationLinkToResourceBelts is set to true above, the following options will control ore resources
+	# on mining stations. Resources are based on the number of asteroid belts in the system, with the number for each resource
+	# level being the minimum number of belts required for that resource level.
+	"boggledMiningStationSparseOre":0,
+	"boggledMiningStationModerateOre":2,
+	"boggledMiningStationAbundantOre":5,
+	"boggledMiningStationRichOre":7,
+	"boggledMiningStationUltrarichOre":9,
+
+	# Controls the costs for building mining stations
+	"boggledMiningStationBuildCreditCost":500000,
+	"boggledMiningStationBuildCrewCost":1000,
+	"boggledMiningStationBuildHeavyMachineryCost":250,
+	"boggledMiningStationBuildMetalCost":1000,
+	"boggledMiningStationBuildTransplutonicsCost":250,
+
+	# Setting this to false will disable siphon station construction
+	"boggledSiphonStationEnabled":true,
+
+	# By default, siphon station volatiles resource deposits are the same level as the gas giant the station orbits.
+	# Toggling this to false will cause siphon stations to have a static amount of volatiles instead.
+	"boggledSiphonStationLinkToGasGiant":true,
+	# If the setting to link siphon station volatiles deposits to the gas giant the station is orbiting is set to false, this controls the amount of the volatiles resource deposit on the station.
+	# 1 = Trace, 2 = Diffuse, 3 = Abundant, 4 = Plentiful, Any other value = set to diffuse
+	"boggledSiphonStationStaticAmount":2,
+
+	# Controls the costs for building siphon stations
+	"boggledSiphonStationBuildCreditCost":500000,
+	"boggledSiphonStationBuildCrewCost":1000,
+	"boggledSiphonStationBuildHeavyMachineryCost":250,
+	"boggledSiphonStationBuildMetalCost":1000,
+	"boggledSiphonStationBuildTransplutonicsCost":250,
+
+	# Setting this to false will disable colonization of abandoned stations
+	"boggledStationColonizationEnabled":true,
+
+	# Controls the costs for colonizing an abandoned station
+	"boggledStationRecolonizeCreditCost":250000,
+	"boggledStationRecolonizeCrewCost":1000,
+	"boggledStationRecolonizeHeavyMachineryCost":125,
+	"boggledStationRecolonizeMetalCost":500,
+	"boggledStationRecolonizeTransplutonicsCost":125,
+
+	# Set this to true to enable the Cramped Quarters condition.
+	# Cramped Quarters reduces population growth on station markets starting from the value chosen below.
+	"boggledStationCrampedQuartersEnabled":false,
+	# If Cramped Quarters is enabled this setting controls at what market size the growth penalty begins to apply.
+	"boggledStationCrampedQuartersSizeGrowthReductionStarts":3,
+	# If Cramped Quarters is enabled this setting controls how significant the growth penalty is.
+	# Note that the penalty will become more severe as the station grows beyond the base size at which the penalty began applying.
+	"boggledStationCrampedQuartersBaseGrowthPenalty":25,
+
+	# Set this to true to enable the Expand Station building.
+	# The Expand Station building will increase the base level at which the Cramped Quarters growth penalty begins to apply.
+	"boggledStationCrampedQuartersPlayerCanPayToIncreaseStationSize":false,
+	# Set this to false to disable the progressive cost increase for the Expand Station building.
+	# By default, the Expand Station building will cost more each time it is built after the first time on a given station market.
+	"boggledStationProgressiveIncreaseInCostsToExpandStation":true,
+
+	# Adds an accessibility modifier to player-constructed stations. Negative values can be used to decrease accessibility.
+	"boggledStationAccessibilityBoost":0,
+
+	# Adds a hazard modifier to player-constructed stations. Negative values can be used to decrease hazard.
+	"boggledStationHazardRatingModifier":0,
+	
+	# Applies Cramped Quarters (if enabled), applies hazard and accessibility modifiers, and 
+	# enables "no atmosphere" special items on all stations sector-wide.
+	# If set to false, only stations created using Terraforming & Station Construction will have the above features applied to them.
+	"boggledApplyStationSettingsToAllStationsInSector":true,
+
+	# Enable the AI Mining Drones station-exclusive structure.
+	# Balanced around stations being capped at 3 or 4 market size by cramped quarters.
+	# Strongly recommended to keep disabled unless cramped quarters is enabled.
+	"boggledEnableAIMiningDronesStructure":false,
+	
+	######################
+	# DOMAIN-TECH SETTINGS
+	######################
+
+	# Setting this to false will completely disable any Domain-tech content
+	"boggledDomainTechContentEnabled":true,
+
+	# Set this to false to disable Domain-tech crafting.
+	# Domain-tech crafting allows the player to use Domain-era artifacts and story points to craft powerful special items that can usually only be obtained via exploring.
+	"boggledDomainTechCraftingEnabled":true,
+	# How many Domain-era artifacts are required to craft one special item.
+	# This amount is increased for more powerful items and decreased for less powerful items.
+	"boggledDomainTechCraftingArtifactCost":2000,
+	# How many story points are required to craft one special item.
+	"boggledDomainTechCraftingStoryPointCost":2,
+
+	# Set this to true to enable the planet-killer device.
+	# Please note that this feature is problematic from a balance and lore standpoint and may cause bugs or crashes. Use it at your own risk.
+	"boggledPlanetKillerEnabled":false,
+	# Set this to false to prevent the planet-killer device from being used on planets marked as essential to story quests.
+	# Using the planet-killer device on a story essential planet is guaranteed to cause bugs and/or crashes. This should only be used if the player has already completed all the story quests they intend to complete in the current save.
+	"boggledPlanetKillerAllowDestructionOfColoniesMarkedAsEssentialForQuests":true,
+
+	# Set this to true to enable the Perihelion Project.
+	# The Perihelion Project allows the player to construct a coronal hypershunt in a star system that meets certain requirements.
+	"boggledPerihelionProjectEnabled":false,
+	# How many days are required to finish the Perihelion Project.
+	"boggledPerihelionProjectDaysToFinish":600,
+	
+	# Set this to false to disable the Domain Archaeology building.
+	# The Domain Archaeology building is an industry that produces Domain-era artifacts based on the level of ruins on the planet.
+	# Setting this to false will disable crafting, and buildings that require Domain-era artifacts will no longer require them.
+	"boggledDomainArchaeologyEnabled":true,
+	# Set this to false to prevent the techmining building on Agreus from being removed and replaced with a Domain Archaeology building.
+	"boggledReplaceAgreusTechMiningWithDomainArchaeology":true,
+
+	# Adds buildings that demand Domain-era artifacts to several vanilla colonies.
+	# This includes: Genelab on Volturn, Limelight Network on Fikenhild, GPA on Ancyra, DAE demand on Cryosanctum on Nomios.
+	"boggledAddDomainTechBuildingsToVanillaColonies":true,
+
+	# Set this to false to disable the Kletka Simulator building.
+	# The Kletka Simulator is an industry that produces AI cores. The AI cores are sent to storage along with other items and ships the player receives each month.
+	"boggledKletkaSimulatorEnabled":true,
+	# Set this to false to make the Kletka Simulator have a static upkeep instead of the upkeep cost being dependant on the temperature of the market it is located on.
+	"boggledKletkaSimulatorTemperatureBasedUpkeep":true,
+
+	# Set this to false to disable the CHAMELEON building.
+	# The CHAMELEON is a building that can slowly remove certain hazardous conditions from a market, such as a decivilized subpopulation.
+	"boggledCHAMELEONEnabled":true,
+
+	# Set this to true to allow the player to construct the Limelight Network building.
+	"boggledLimelightNetworkPlayerBuildEnabled":false,
+
+	# Set this to true to allow the player to construct the Cryosanctum building.
+	"boggledCryosanctumPlayerBuildEnabled":false,
+	# Set this to false to prevent Cryosanctum buildings from demanding Domain-era artifacts.
+	"boggledCryosanctumReplaceEverywhere":true,
+
+	# Set this to false to disable construction of Domain-tech stable location structures.
+	# This refers to the comm relays, nav buoys and sensor arrays that can be constructed at stable locations. The Domain-tech versions have more powerful effects.
+	"boggledDomainTechObjectivesEnabled":true,
+	# Upgrading sector-tech stable location structures controlled by another faction improves the player's relationship with that faction. This setting controls the magnitude of the improvement.
+	"boggledDomainTechObjectivesUpgradeRelationshipImpact":5,
+
+	# Configure costs for Domain-tech stable location structures
+	"boggledStableLocationDomainTechStructureCostHeavyMachinery":50,
+	"boggledStableLocationDomainTechStructureCostMetals":200,
+	"boggledStableLocationDomainTechStructureCostTransplutonics":20,
+	"boggledStableLocationDomainTechStructureCostDomainEraArtifacts":20,
+
+	# Set this to false to disable construction of inactive gates.
+	"boggledDomainTechInactiveGateConstructionEnabled":true,
+	# Set this to false to allow construction of inactive gates before the main questline is completed.
+	"boggledDomainTechInactiveGateConstructionMainQuestCompletionRequired":true,
+	# Set this to false to allow construction of inactive gates even if the player does not own a colony in the system.
+	"boggledPlayerMustHaveMarketInSystemToBuildInactiveGate":true,
+	# How large the player's largest colony in-system must be to meet the requirements to build an inactive gate.
+	"boggledMarketSizeRequiredToBuildInactiveGate":5,
+
+	# Configure costs for Inactive Gate construction
+	"boggledStableLocationGateCostHeavyMachinery":500,
+	"boggledStableLocationGateCostMetals":2000,
+	"boggledStableLocationGateCostTransplutonics":200,
+	"boggledStableLocationGateCostDomainEraArtifacts":200,
+
+	########################
+	# MISCELLANEOUS SETTINGS
+	########################
+
+	# Set this to false to disable construction of the Remnant Station building.
+	# The Remnant Station is a type of orbital station. It has only one level instead of three and it spawns remnant patrols allied with the player to protect the colony.
+	"boggledRemnantStationEnabled":true,
+
+	# Set this to true to enable construction of the Hydroponics building.
+	# The Hydroponics building is an industry that can produce food without any farmland.
+	"boggledHydroponicsEnabled":false,
+
+	# Set this to true to enable construction of the Cloning building.
+	# The Cloning building is an industry that can produce harvested organs and increase colony growth.
+	"boggledCloningEnabled":false,
+
+	"graphics":
+	{
+		"boggled":
+		{
+			"stellar_mirror":"graphics/icons/industry/stellar_mirror.jpg",
+			"stellar_shade":"graphics/icons/industry/stellar_shade.jpg",
+			"asteroid_processing":"graphics/icons/industry/asteroid_processing.jpg",
+			"seafloor_cities":"graphics/icons/industry/boggled_seafloor_cities.png",
+
+			"mesozoic_park_terran":"graphics/icons/industry/mesozoic_park_terran.jpg",
+			"mesozoic_park_water":"graphics/icons/industry/mesozoic_park_water.jpg",
+			"mesozoic_park_jungle":"graphics/icons/industry/mesozoic_park_jungle.jpg",
+			"mesozoic_park_desert":"graphics/icons/industry/mesozoic_park_desert.jpg",
+
+			"stellar_mirror_condition":"graphics/icons/conditions/stellar_mirror.png",
+			"stellar_shade_condition":"graphics/icons/conditions/stellar_shade.png",
+		},
+	}	
+}

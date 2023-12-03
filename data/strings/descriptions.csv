@@ -1,0 +1,5 @@
+id,type,text1,text2,text3,notes
+astropolis_station,CUSTOM,"A colossal orbital station that rivals the famed astropoli of Mairaath. Due to concerns about history repeating itself, the station is equipped with a remotely triggered planet-killer device that can blow it into pieces too small to threaten a colony.",,,
+boggled_mining_station,CUSTOM,"Purpose-built to support asteroid mining operations throughout the system, this station features the high-bandwidth FTL data transmission infrastructure necessary to control vast fleets of mining drones. It also features morally flexible officials to ensure boredom does not become an impediment to productivity or employee retention.",,,
+boggled_siphon_station,CUSTOM,"An orbital station that can pull volatiles into space by manipulating the magnetosphere of a nearby gas giant. The amount of volatiles the station can harvest is proportional to how abundant they are on the gas giant itself.",,,
+domain_artifacts,RESOURCE,"Computing equipment and industrial machinery superior to what can currently be produced in the Sector. Useful for terraforming projects, megascale engineering and artificial intelligence research.",,,
