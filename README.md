@@ -4,7 +4,7 @@ TASC (Terraforming and Station Construction) is a mod for the video game Starsec
 
 TASC adds various features including terraforming planets and constructing space stations.
 
-The official forumn thread with installation instructions for non-developers is at https://fractalsoftworks.com/forum/index.php?topic=17094.0.
+The forum thread is at https://fractalsoftworks.com/forum/index.php?topic=17094.0.
 
 ## Contributions ##
 
