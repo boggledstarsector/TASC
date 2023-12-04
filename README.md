@@ -6,6 +6,10 @@ TASC adds various features including terraforming planets and constructing space
 
 The official forumn thread with installation instructions for non-developers is at https://fractalsoftworks.com/forum/index.php?topic=17094.0.
 
+## Contributions ##
+
+Please PM me on the fractalsoftworks.com forums for collaborator permissions.
+
 ## Setup ##
 
 The instructions below are intended for those with a software development background but who are new to modding Starsector. Following them will make it quick and easy to start writing code, rebuild TASC and launch Starsector with your changes.
