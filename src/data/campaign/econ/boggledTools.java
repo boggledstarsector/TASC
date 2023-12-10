@@ -28,6 +28,7 @@ import com.fs.starfarer.campaign.CircularOrbit;
 import com.fs.starfarer.campaign.CircularOrbitPointDown;
 import com.fs.starfarer.campaign.CircularOrbitWithSpin;
 import com.fs.starfarer.loading.specs.PlanetSpec;
+import data.kaysaar.aotd.vok.scripts.research.AoTDMainResearchManager;
 import illustratedEntities.helper.ImageHandler;
 import illustratedEntities.helper.Settings;
 import illustratedEntities.helper.TextHandler;
@@ -40,8 +41,376 @@ import java.awt.*;
 import java.util.*;
 import java.util.List;
 
+import static java.util.Arrays.asList;
+
 public class boggledTools
 {
+    // A mistyped string compiles fine and leads to plenty of debugging. A mistyped constant gives an error.
+    private static final String colonyNotJungleWorld = "Colony is not already a jungle world";
+    private static final String colonyNotAridWorld = "Colony is not already an arid world";
+    private static final String colonyNotTerranWorld = "Colony is not already a Terran world";
+    private static final String colonyNotWaterWorld = "Colony is not already a water world";
+    private static final String colonyNotTundraWorld = "Colony is not already a tundra world";
+    private static final String colonyNotFrozenWorld = "Colony is not already a frozen world";
+
+    private static final String colonyBarrenOrFrozen = "Colony is barren or frozen";
+    private static final String colonyAtmosphericDensityNormal = "Colony has normal atmospheric density";
+    private static final String colonyAtmosphereNotToxicOrIrradiated = "Colony atmosphere is not toxic or irradiated";
+    private static final String colonyNotColdOrVeryCold = "Colony is not cold or very cold";
+    private static final String colonyHotOrVeryHot = "Colony is hot or very hot";
+    private static final String colonyNotVeryColdOrVeryHot = "Colony is not very cold or very hot";
+    private static final String colonyNotHotOrVeryHot = "Colony is not hot or very hot";
+    private static final String colonyVeryCold = "Colony is very cold";
+    private static final String colonyTemperateOrHot = "Colony is temperate or hot";
+    private static final String colonyTemperateOrCold = "Colony is temperate or cold";
+
+    private static final String colonyHasStellarReflectors = "Colony has stellar reflectors";
+    private static final String colonyHasAtmosphereProcessor = "Colony has atmosphere processor";
+    private static final String colonyHasGenelab = "Colony has genelab";
+
+    private static final String colonyHasModerateWaterPresent = "Colony has a moderate amount of water present";
+    private static final String colonyHasLargeWaterPresent = "Colony has a large amount of water present";
+
+    private static final String colonyHabitable = "Colony is habitable";
+    private static final String colonyNotAlreadyHabitable = "Colony is not already habitable";
+
+    private static final String colonyExtremeWeather = "Colony has extreme weather";
+    private static final String colonyNormalClimate = "Colony has normal climate";
+
+    private static final String colonyAtmosphereToxic = "Colony atmosphere is toxic";
+    private static final String colonyIrradiated = "Colony is irradiated";
+
+    private static final String colonyHasAtmosphere = "Colony has atmosphere";
+    private static final String colonyAtmosphereSuboptimalDensity = "Colony atmosphere has suboptimal density";
+
+    private static final String worldTypeSupportsFarmlandImprovement = "World type supports further farmland improvement";
+    private static final String worldTypeSupportsOrganicsImprovement = "World type supports further organics improvement";
+    private static final String worldTypeSupportsVolatilesImprovement = "World type supports further volatiles improvement";
+
+    private static final String worldTypeAllowsTerraforming = "World type allows for terraforming";
+    private static final String worldTypeAllowsMildClimate = "World type allows for mild climate";
+    private static final String worldTypeAllowsHumanHabitability = "World type allows for human habitability";
+
+    private static final String colonyHasAtLeast100kInhabitants = "Colony has at least 100,000 inhabitants";
+
+    private static final String colonyHasOrbitalWorksWPristineNanoforge = "Colony has orbital works with a pristine nanoforge";
+
+    private static final String jungleTypeChangeProjectID = "jungleTypeChange";
+    private static final String aridTypeChangeProjectID = "aridTypeChange";
+    private static final String terranTypeChangeProjectID = "terranTypeChange";
+    private static final String waterTypeChangeProjectID = "waterTypeChange";
+    private static final String tundraTypeChangeProjectID = "tundraTypeChange";
+    private static final String frozenTypeChangeProjectID = "frozenTypeChange";
+
+    private static final String farmlandResourceImprovementProjectID = "farmlandResourceImprovement";
+    private static final String organicsResourceImprovementProjectID = "organicsResourceImprovement";
+    private static final String volatilesResourceImprovementProjectID = "volatilesResourceImprovement";
+
+    private static final String extremeWeatherConditionImprovementProjectID = "extremeWeatherConditionImprovement";
+    private static final String mildClimateConditionImprovementProjectID = "mildClimateConditionImprovement";
+    private static final String habitableConditionImprovementProjectID = "habitableConditionImprovement";
+    private static final String atmosphereDensityConditionImprovementProjectID = "atmosphereDensityConditionImprovement";
+    private static final String toxicAtmosphereConditionImprovementProjectID = "toxicAtmosphereConditionImprovement";
+    private static final String irradiatedConditionImprovementProjectID = "irradiatedConditionImprovement";
+    private static final String radiationConditionImprovementProjectID = "radiationConditionImprovement";
+    private static final String removeAtmosphereConditionImprovementProjectID = "removeAtmosphereConditionImprovement";
+
+    private static final String aotd_TypeChangeResearchRequirement = "Researched: Terraforming Templates";
+    private static final String aotd_ConditionImprovementResearchRequirement = "Researched : Atmosphere Manipulation";
+    private static final String aotd_ResourceImprovementResearchRequirement = "Researched : Advanced Terraforming Templates";
+
+    private static final String aotd_TypeChangeResearchRequirementID = "tasc_terraforming_templates";
+    private static final String aotd_ConditionImprovementResearchRequirementID = "tasc_atmosphere_manipulation";
+    private static final String aotd_ResourceImprovementResearchRequirementID = "tasc_advacned_terraforming";
+
+    private static HashMap<String, String[]> initialiseProjectRequirements() {
+        HashMap<String, String[]> ret = new HashMap<>();
+
+        boolean aotd_Enabled = Global.getSettings().getModManager().isModEnabled("aotd_vok");
+
+        // Requires:
+        //  - Not already arid
+        //  - Normal atmosphere
+        //  - Normal atmosphere
+        //  - Atmosphere is not toxic or irradiated
+        //  - Colony is temperate or hot
+        //  - Stellar Reflectors
+        //  - Water Level of 1
+        ArrayList<String> aridTypeChangeProjectReq = new ArrayList<>(asList(
+                worldTypeAllowsTerraforming,
+                colonyNotAridWorld,
+                colonyAtmosphericDensityNormal,
+                colonyAtmosphereNotToxicOrIrradiated,
+                colonyTemperateOrHot,
+                colonyHasStellarReflectors,
+                colonyHasModerateWaterPresent
+        ));
+
+        // Requires:
+        //  - Not already jungle
+        //  - Normal atmosphere
+        //  - Atmosphere is not toxic or irradiated
+        //  - Colony is temperate or hot
+        //  - Stellar Reflectors
+        //  - Water Level of 1
+        ArrayList<String> jungleTypeChangeProjectReq = new ArrayList<>(asList(
+                worldTypeAllowsTerraforming,
+                colonyNotJungleWorld,
+                colonyAtmosphericDensityNormal,
+                colonyAtmosphereNotToxicOrIrradiated,
+                colonyTemperateOrHot,
+                colonyHasStellarReflectors,
+                colonyHasModerateWaterPresent
+        ));
+
+        // Requires:
+        //  - Not already Terran
+        //  - Normal atmosphere
+        //  - Atmosphere is not toxic or irradiated
+        //  - Not very cold or very hot temperature
+        //  - Stellar Reflectors
+        //  - Water Level of 1
+        ArrayList<String> terranTypeChangeProjectReq = new ArrayList<>(asList(
+                worldTypeAllowsTerraforming,
+                colonyNotTerranWorld,
+                colonyAtmosphericDensityNormal,
+                colonyAtmosphereNotToxicOrIrradiated,
+                colonyNotVeryColdOrVeryHot,
+                colonyHasStellarReflectors,
+                colonyHasModerateWaterPresent
+        ));
+
+        // Requires:
+        //  - Not already water
+        //  - Normal atmosphere
+        //  - Atmosphere is not toxic or irradiated
+        //  - Not very cold or very hot temperature
+        //  - Stellar Reflectors
+        //  - Water Level of 2
+        ArrayList<String> waterTypeChangeProjectReq = new ArrayList<>(asList(
+                worldTypeAllowsTerraforming,
+                colonyNotWaterWorld,
+                colonyAtmosphericDensityNormal,
+                colonyAtmosphereNotToxicOrIrradiated,
+                colonyNotVeryColdOrVeryHot,
+                colonyHasStellarReflectors,
+                colonyHasLargeWaterPresent
+        ));
+
+        // Requires:
+        //  - Not already tundra
+        //  - Normal atmosphere
+        //  - Atmosphere is not toxic or irradiated
+        //  - Colony is temperate or cold
+        //  - Stellar Reflectors
+        //  - Water Level of 1
+        ArrayList<String> tundraTypeChangeProjectReq = new ArrayList<>(asList(
+                worldTypeAllowsTerraforming,
+                colonyNotTundraWorld,
+                colonyAtmosphericDensityNormal,
+                colonyAtmosphereNotToxicOrIrradiated,
+                colonyTemperateOrCold,
+                colonyHasStellarReflectors,
+                colonyHasModerateWaterPresent
+        ));
+
+        // Requires:
+        //  - Not already frozen
+        //  - Normal atmosphere
+        //  - Very cold
+        //  - Water Level of 2
+        ArrayList<String> frozenTypeChangeProjectReq = new ArrayList<>(asList(
+                worldTypeAllowsTerraforming,
+                colonyNotFrozenWorld,
+                colonyAtmosphericDensityNormal,
+                colonyVeryCold,
+                colonyHasLargeWaterPresent
+        ));
+
+        // Requires:
+        //  - Planet type permits improvement in farmland
+        //  - Normal atmosphere
+        //  - Atmosphere is not toxic or irradiated
+        //  - Water Level of 2
+        ArrayList<String> farmlandResourceImprovementProjectReq = new ArrayList<>(asList(
+                worldTypeSupportsFarmlandImprovement,
+                colonyAtmosphericDensityNormal,
+                colonyAtmosphereNotToxicOrIrradiated,
+                colonyHasLargeWaterPresent
+        ));
+
+        // Requires:
+        //  - Planet type permits improvement in organics
+        ArrayList<String> organicsResourceImprovementProjectReq = new ArrayList<>(asList(
+                worldTypeSupportsOrganicsImprovement
+        ));
+
+        // Requires:
+        //  - Planet type permits improvement in volatiles
+        ArrayList<String> volatilesResourceImprovementProjectReq = new ArrayList<>(asList(
+                worldTypeSupportsVolatilesImprovement
+        ));
+
+        // Requires:
+        //  - Market has Extreme Weather
+        //  - Planet can be terraformed
+        //  - Market has normal atmosphere
+        //  - Market has operational Atmosphere Processor
+        ArrayList<String> extremeWeatherConditionImprovementProjectReq = new ArrayList<>(asList(
+                worldTypeAllowsTerraforming,
+                colonyExtremeWeather,
+                colonyAtmosphericDensityNormal,
+                colonyHasAtmosphereProcessor
+        ));
+
+        // Requires:
+        //  - Market lacks Extreme Weather and Mild Climate
+        //  - Market is habitable
+        //  - World is Earth-like type
+        //  - Market has normal atmosphere
+        //  - Market has operational Atmosphere Processor
+        ArrayList<String> mildClimateConditionImprovementProjectReq = new ArrayList<>(asList(
+                colonyNormalClimate,
+                colonyHabitable,
+                worldTypeAllowsMildClimate,
+                colonyAtmosphericDensityNormal,
+                colonyHasAtmosphereProcessor
+        ));
+
+        // Requires:
+        //  - Market is not already habitable
+        //  - World is Earth-like type
+        //  - Market has normal atmosphere
+        //  - Not very cold or very hot temperature
+        //  - Atmosphere is not toxic or irradiated
+        //  - Market has operational Atmosphere Processor
+        ArrayList<String> habitableConditionImprovementProjectReq = new ArrayList<>(asList(
+                colonyNotAlreadyHabitable,
+                worldTypeAllowsHumanHabitability,
+                colonyAtmosphericDensityNormal,
+                colonyNotVeryColdOrVeryHot,
+                colonyAtmosphereNotToxicOrIrradiated,
+                colonyHasAtmosphereProcessor
+        ));
+
+        // Requires:
+        //  - Market has atmosphere problem(s)
+        //  - Planet can be terraformed
+        //  - Market has operational Atmosphere Processor
+        ArrayList<String> atmosphereDensityConditionImprovementProjectReq = new ArrayList<>(asList(
+                colonyAtmosphereSuboptimalDensity,
+                worldTypeAllowsTerraforming,
+                colonyHasAtmosphereProcessor
+        ));
+
+        // Requires:
+        //  - Market has atmosphere problem(s)
+        //  - Planet can be terraformed
+        //  - Market has operational Atmosphere Processor
+        ArrayList<String> toxicAtmosphereConditionImprovementProjectReq = new ArrayList<>(asList(
+                colonyAtmosphereToxic,
+                worldTypeAllowsTerraforming,
+                colonyHasAtmosphereProcessor
+        ));
+
+        // Requires:
+        //  - Market is irradiated
+        //  - Market has operational Genelab
+        ArrayList<String> irradiatedConditionImprovementProjectReq = new ArrayList<>(asList(
+                colonyIrradiated,
+                colonyHasGenelab
+        ));
+
+        // Requires:
+        //  - Market has an atmosphere
+        //  - Planet can be terraformed
+        //  - Market has operational Atmosphere Processor
+        ArrayList<String> removeAtmosphereConditionImprovementProjectReq = new ArrayList<>(asList(
+                colonyHasAtmosphere,
+                colonyBarrenOrFrozen,
+                colonyHasAtmosphereProcessor
+        ));
+
+        if(aotd_Enabled) {
+            // AotD requirements go here, just .add the display string here
+            // Type change -> "Researched: Terraforming Templates"
+            // Condition improvement -> "Researched : Atmosphere Manipulation"
+            // Resource improvement -> "Researched : Advanced Terraforming Templates"
+
+            aridTypeChangeProjectReq.add(aotd_TypeChangeResearchRequirement);
+            jungleTypeChangeProjectReq.add(aotd_TypeChangeResearchRequirement);
+            terranTypeChangeProjectReq.add(aotd_TypeChangeResearchRequirement);
+            waterTypeChangeProjectReq.add(aotd_TypeChangeResearchRequirement);
+            tundraTypeChangeProjectReq.add(aotd_TypeChangeResearchRequirement);
+            frozenTypeChangeProjectReq.add(aotd_TypeChangeResearchRequirement);
+
+            farmlandResourceImprovementProjectReq.add(aotd_ResourceImprovementResearchRequirement);
+            organicsResourceImprovementProjectReq.add(aotd_ResourceImprovementResearchRequirement);
+            volatilesResourceImprovementProjectReq.add(aotd_ResourceImprovementResearchRequirement);
+
+            extremeWeatherConditionImprovementProjectReq.add(aotd_ResourceImprovementResearchRequirement);
+            mildClimateConditionImprovementProjectReq.add(aotd_ResourceImprovementResearchRequirement);
+            habitableConditionImprovementProjectReq.add(aotd_ResourceImprovementResearchRequirement);
+            atmosphereDensityConditionImprovementProjectReq.add(aotd_ResourceImprovementResearchRequirement);
+            toxicAtmosphereConditionImprovementProjectReq.add(aotd_ResourceImprovementResearchRequirement);
+            irradiatedConditionImprovementProjectReq.add(aotd_ResourceImprovementResearchRequirement);
+            removeAtmosphereConditionImprovementProjectReq.add(aotd_ResourceImprovementResearchRequirement);
+        }
+
+        // Type changes
+        ret.put(aridTypeChangeProjectID, aridTypeChangeProjectReq.toArray(new String[0]));
+        ret.put(jungleTypeChangeProjectID, jungleTypeChangeProjectReq.toArray(new String[0]));
+        ret.put(terranTypeChangeProjectID, terranTypeChangeProjectReq.toArray(new String[0]));
+        ret.put(waterTypeChangeProjectID, waterTypeChangeProjectReq.toArray(new String[0]));
+        ret.put(tundraTypeChangeProjectID, tundraTypeChangeProjectReq.toArray(new String[0]));
+        ret.put(frozenTypeChangeProjectID, frozenTypeChangeProjectReq.toArray(new String[0]));
+
+        // Resource improvements
+        ret.put(farmlandResourceImprovementProjectID, farmlandResourceImprovementProjectReq.toArray(new String[0]));
+        ret.put(organicsResourceImprovementProjectID, organicsResourceImprovementProjectReq.toArray(new String[0]));
+        ret.put(volatilesResourceImprovementProjectID, volatilesResourceImprovementProjectReq.toArray(new String[0]));
+
+        // Condition improvements
+        ret.put(extremeWeatherConditionImprovementProjectID, extremeWeatherConditionImprovementProjectReq.toArray(new String[0]));
+        ret.put(mildClimateConditionImprovementProjectID, mildClimateConditionImprovementProjectReq.toArray(new String[0]));
+        ret.put(habitableConditionImprovementProjectID, habitableConditionImprovementProjectReq.toArray(new String[0]));
+        ret.put(atmosphereDensityConditionImprovementProjectID, atmosphereDensityConditionImprovementProjectReq.toArray(new String[0]));
+        ret.put(toxicAtmosphereConditionImprovementProjectID, toxicAtmosphereConditionImprovementProjectReq.toArray(new String[0]));
+        ret.put(irradiatedConditionImprovementProjectID, irradiatedConditionImprovementProjectReq.toArray(new String[0]));
+        ret.put(removeAtmosphereConditionImprovementProjectID, removeAtmosphereConditionImprovementProjectReq.toArray(new String[0]));
+
+        return ret;
+    }
+
+    private static HashMap<String, String> initialiseProjectTooltips() {
+        HashMap<String, String> ret = new HashMap<>();
+
+        ret.put(jungleTypeChangeProjectID, "Jungle type change");
+        ret.put(aridTypeChangeProjectID, "Arid type change");
+        ret.put(terranTypeChangeProjectID, "Terran type change");
+        ret.put(waterTypeChangeProjectID, "Water type change");
+        ret.put(tundraTypeChangeProjectID, "Tundra type change");
+        ret.put(frozenTypeChangeProjectID, "Frozen type change");
+
+        ret.put(farmlandResourceImprovementProjectID, "Farmland resource improvement");
+        ret.put(organicsResourceImprovementProjectID, "Organics resource improvement");
+        ret.put(volatilesResourceImprovementProjectID, "Volatiles resource improvement");
+
+        ret.put(extremeWeatherConditionImprovementProjectID, "Stabilize weather patterns");
+        ret.put(mildClimateConditionImprovementProjectID, "Make climate mild");
+        ret.put(habitableConditionImprovementProjectID, "Make atmosphere habitable");
+        ret.put(atmosphereDensityConditionImprovementProjectID, "Normalize atmospheric density");
+        ret.put(toxicAtmosphereConditionImprovementProjectID, "Reduce atmosphere toxicity");
+        ret.put(radiationConditionImprovementProjectID, "Eliminate harmful radiation");
+        ret.put(removeAtmosphereConditionImprovementProjectID, "Remove the atmosphere");
+
+        return ret;
+    }
+
+    private static final HashMap<String, String[]> projectRequirements = initialiseProjectRequirements();
+
+    private static final HashMap<String, String> projectTooltip = initialiseProjectTooltips();
+
     public static float getDistanceBetweenPoints(float x1, float y1, float x2, float y2) {
         return (float) Math.sqrt((y2 - y1) * (y2 - y1) + (x2 - x1) * (x2 - x1));
     }
@@ -2066,325 +2435,12 @@ public class boggledTools
 
     public static String[] getProjectRequirementsStrings(String project)
     {
-        if(project.contains("TypeChange"))
+        String[] requirements = projectRequirements.get(project);
+        if (requirements != null)
         {
-            if(project.equals("aridTypeChange"))
-            {
-                // Requires:
-                //  - Not already arid
-                //  - Normal atmosphere
-                //  - Normal atmosphere
-                //  - Atmosphere is not toxic or irradiated
-                //  - Colony is temperate or hot
-                //  - Stellar Reflectors
-                //  - Water Level of 1
-
-                String[] requirements =
-                        {
-                                "World type allows for terraforming",
-                                "Colony is not already an arid world",
-                                "Colony has normal atmospheric density",
-                                "Colony atmosphere is not toxic or irradiated",
-                                "Colony is temperate or hot",
-                                "Colony has stellar reflectors",
-                                "Colony has a moderate amount of water present",
-                        };
-                return requirements;
-            }
-            else if(project.equals("jungleTypeChange"))
-            {
-                // Requires:
-                //  - Not already jungle
-                //  - Normal atmosphere
-                //  - Atmosphere is not toxic or irradiated
-                //  - Colony is temperate or hot
-                //  - Stellar Reflectors
-                //  - Water Level of 1
-
-                String[] requirements =
-                        {
-                                "World type allows for terraforming",
-                                "Colony is not already a jungle world",
-                                "Colony has normal atmospheric density",
-                                "Colony atmosphere is not toxic or irradiated",
-                                "Colony is temperate or hot",
-                                "Colony has stellar reflectors",
-                                "Colony has a moderate amount of water present",
-                        };
-                return requirements;
-            }
-            else if(project.equals("terranTypeChange"))
-            {
-                // Requires:
-                //  - Not already Terran
-                //  - Normal atmosphere
-                //  - Atmosphere is not toxic or irradiated
-                //  - Not very cold or very hot temperature
-                //  - Stellar Reflectors
-                //  - Water Level of 1
-
-                String[] requirements =
-                        {
-                                "World type allows for terraforming",
-                                "Colony is not already a Terran world",
-                                "Colony has normal atmospheric density",
-                                "Colony atmosphere is not toxic or irradiated",
-                                "Colony is not very cold or very hot",
-                                "Colony has stellar reflectors",
-                                "Colony has a moderate amount of water present",
-                        };
-                return requirements;
-            }
-            else if(project.equals("waterTypeChange"))
-            {
-                // Requires:
-                //  - Not already water
-                //  - Normal atmosphere
-                //  - Atmosphere is not toxic or irradiated
-                //  - Not very cold or very hot temperature
-                //  - Stellar Reflectors
-                //  - Water Level of 2
-
-                String[] requirements =
-                        {
-                                "World type allows for terraforming",
-                                "Colony is not already a water world",
-                                "Colony has normal atmospheric density",
-                                "Colony atmosphere is not toxic or irradiated",
-                                "Colony is not very cold or very hot",
-                                "Colony has stellar reflectors",
-                                "Colony has a large amount of water present",
-                        };
-                return requirements;
-            }
-            else if(project.equals("tundraTypeChange"))
-            {
-                // Requires:
-                //  - Not already tundra
-                //  - Normal atmosphere
-                //  - Atmosphere is not toxic or irradiated
-                //  - Colony is temperate or cold
-                //  - Stellar Reflectors
-                //  - Water Level of 1
-
-                String[] requirements =
-                        {
-                                "World type allows for terraforming",
-                                "Colony is not already a tundra world",
-                                "Colony has normal atmospheric density",
-                                "Colony atmosphere is not toxic or irradiated",
-                                "Colony is temperate or cold",
-                                "Colony has stellar reflectors",
-                                "Colony has a moderate amount of water present",
-                        };
-                return requirements;
-            }
-            else if(project.equals("frozenTypeChange"))
-            {
-                // Requires:
-                //  - Not already frozen
-                //  - Normal atmosphere
-                //  - Very cold
-                //  - Water Level of 2
-
-                String[] requirements =
-                        {
-                                "World type allows for terraforming",
-                                "Colony is not already a frozen world",
-                                "Colony has normal atmospheric density",
-                                "Colony is very cold",
-                                "Colony has a large amount of water present",
-                        };
-                return requirements;
-            }
-            else
-            {
-                // Should never be reached unless bad project string passed in.
-                String[] requirements =
-                        {
-                                "You should never see this text. If you do, tell Boggled about it on the forums.",
-                        };
-                return requirements;
-            }
+            return requirements;
         }
-        else if(project.contains("ResourceImprovement"))
-        {
-            if(project.equals("farmlandResourceImprovement"))
-            {
-                // Requires:
-                //  - Planet type permits improvement in farmland
-                //  - Normal atmosphere
-                //  - Atmosphere is not toxic or irradiated
-                //  - Water Level of 2
 
-                String[] requirements =
-                        {
-                                "World type supports further farmland improvement",
-                                "Colony has normal atmospheric density",
-                                "Colony atmosphere is not toxic or irradiated",
-                                "Colony has a large amount of water present",
-                        };
-                return requirements;
-            }
-            else if(project.equals("organicsResourceImprovement"))
-            {
-                // Requires:
-                //  - Planet type permits improvement in organics
-
-                String[] requirements =
-                        {
-                                "World type supports further organics improvement",
-                        };
-                return requirements;
-            }
-            else if(project.equals("volatilesResourceImprovement"))
-            {
-                // Requires:
-                //  - Planet type permits improvement in volatiles
-
-                String[] requirements =
-                        {
-                                "World type supports further volatiles improvement",
-                        };
-                return requirements;
-            }
-            else
-            {
-                // Should never be reached unless bad project string passed in.
-                String[] requirements =
-                        {
-                                "You should never see this text. If you do, tell Boggled about it on the forums.",
-                        };
-                return requirements;
-            }
-        }
-        else if(project.contains("ConditionImprovement"))
-        {
-            if(project.equals("extremeWeatherConditionImprovement"))
-            {
-                // Requires:
-                //  - Market has Extreme Weather
-                //  - Planet can be terraformed
-                //  - Market has normal atmosphere
-                //  - Market has operational Atmosphere Processor
-
-                String[] requirements =
-                        {
-                                "World type allows for terraforming",
-                                "Colony has extreme weather",
-                                "Colony has normal atmospheric density",
-                                "Colony has atmosphere processor",
-                        };
-                return requirements;
-            }
-            else if(project.equals("mildClimateConditionImprovement"))
-            {
-                // Requires:
-                //  - Market lacks Extreme Weather and Mild Climate
-                //  - Market is habitable
-                //  - World is Earth-like type
-                //  - Market has normal atmosphere
-                //  - Market has operational Atmosphere Processor
-
-                String[] requirements =
-                        {
-                                "Colony has normal climate",
-                                "Colony is habitable",
-                                "World type allows for mild climate",
-                                "Colony has normal atmospheric density",
-                                "Colony has atmosphere processor",
-                        };
-                return requirements;
-            }
-            else if(project.equals("habitableConditionImprovement"))
-            {
-                // Requires:
-                //  - Market is not already habitable
-                //  - World is Earth-like type
-                //  - Market has normal atmosphere
-                //  - Not very cold or very hot temperature
-                //  - Atmosphere is not toxic or irradiated
-                //  - Market has operational Atmosphere Processor
-
-                String[] requirements =
-                        {
-                                "Colony is not already habitable",
-                                "World type allows for human habitability",
-                                "Colony has normal atmospheric density",
-                                "Colony is not very cold or very hot",
-                                "Colony atmosphere is not toxic or irradiated",
-                                "Colony has atmosphere processor",
-                        };
-                return requirements;
-            }
-            else if(project.equals("atmosphereDensityConditionImprovement"))
-            {
-                // Requires:
-                //  - Market has atmosphere problem(s)
-                //  - Planet can be terraformed
-                //  - Market has operational Atmosphere Processor
-
-                String[] requirements =
-                        {
-                                "Colony atmosphere has suboptimal density",
-                                "World type allows for terraforming",
-                                "Colony has atmosphere processor",
-                        };
-                return requirements;
-            }
-            else if(project.equals("toxicAtmosphereConditionImprovement"))
-            {
-                // Requires:
-                //  - Market has atmosphere problem(s)
-                //  - Planet can be terraformed
-                //  - Market has operational Atmosphere Processor
-
-                String[] requirements =
-                        {
-                                "Colony atmosphere is toxic",
-                                "World type allows for terraforming",
-                                "Colony has atmosphere processor",
-                        };
-                return requirements;
-            }
-            else if(project.equals("irradiatedConditionImprovement"))
-            {
-                // Requires:
-                //  - Market is irradiated
-                //  - Market has operational Genelab
-
-                String[] requirements =
-                        {
-                                "Colony is irradiated",
-                                "Colony has genelab",
-                        };
-                return requirements;
-            }
-            else if(project.equals("removeAtmosphereConditionImprovement"))
-            {
-                // Requires:
-                //  - Market has an atmosphere
-                //  - Planet can be terraformed
-                //  - Market has operational Atmosphere Processor
-
-                String[] requirements =
-                        {
-                                "Colony has atmosphere",
-                                "Colony is barren or frozen",
-                                "Colony has atmosphere processor",
-                        };
-                return requirements;
-            }
-            else
-            {
-                // Should never be reached unless bad project string passed in.
-                String[] requirements =
-                        {
-                                "You should never see this text. If you do, tell Boggled about it on the forums.",
-                        };
-                return requirements;
-            }
-        }
         else if(project.contains("Crafting"))
         {
             // For now, all the special items require the same conditions to craft.
@@ -2409,32 +2465,21 @@ public class boggledTools
                 adjustedArtifactCost = artifactCost / 2;
             }
 
-            String[] requirements =
-                    {
-                            "Colony has at least 100,000 inhabitants",
-                            "Colony has orbital works with a pristine nanoforge",
-                            "Fleet cargo contains at least " + adjustedArtifactCost + " Domain-era artifacts",
-                    };
+            ArrayList<String> reqs = new ArrayList<>(asList(
+                colonyHasAtLeast100kInhabitants,
+                colonyHasOrbitalWorksWPristineNanoforge,
+                "Fleet cargo contains at least " + adjustedArtifactCost + " Domain-era artifacts"
+            ));
 
             if(storyPointCost > 0)
             {
-                String[] storyPointArray = appendLineTostringArray(requirements, storyPointCost + " story points available to spend");
-                return storyPointArray;
+                reqs.add(storyPointCost + " story points available to spend");
             }
-            else
-            {
-                return requirements;
-            }
+            return reqs.toArray(new String[0]);
         }
-        else
-        {
-            // Should never be reached unless bad project string passed in.
-            String[] requirements =
-                    {
-                            "You should never see this text. If you do, tell Boggled about it on the forums.",
-                    };
-            return requirements;
-        }
+
+        // Should never be reached unless bad project string passed in.
+        return new String[]{"You should never see this text. If you do, tell Boggled about it on the forums."};
     }
 
     private static String[] appendLineTostringArray(String[] existingArray, String lineToAppend)
@@ -2458,8 +2503,8 @@ public class boggledTools
     public static boolean requirementMet(MarketAPI market, String requirement)
     {
         PlanetAPI planet = null;
-        String planetType = null;
-        Integer planetWaterLevel = null;
+        String planetType = "";
+        Integer planetWaterLevel = 0;
 
         if(!boggledTools.marketIsStation(market))
         {
@@ -2472,35 +2517,35 @@ public class boggledTools
         {
             return false;
         }
-        else if(requirement.equals("Colony is not already an arid world"))
+        else if(requirement.equals(colonyNotAridWorld))
         {
             return !planetType.equals("desert");
         }
-        else if(requirement.equals("Colony is not already a jungle world"))
+        else if(requirement.equals(colonyNotJungleWorld))
         {
             return !planetType.equals("jungle");
         }
-        else if(requirement.equals("Colony is not already a Terran world"))
+        else if(requirement.equals(colonyNotTerranWorld))
         {
             return !planetType.equals("terran");
         }
-        else if(requirement.equals("Colony is not already a water world"))
+        else if(requirement.equals(colonyNotWaterWorld))
         {
             return !planetType.equals("water");
         }
-        else if(requirement.equals("Colony is not already a tundra world"))
+        else if(requirement.equals(colonyNotTundraWorld))
         {
             return !planetType.equals("tundra");
         }
-        else if(requirement.equals("Colony is not already a frozen world"))
+        else if(requirement.equals(colonyNotFrozenWorld))
         {
             return !planetType.equals("frozen");
         }
-        else if(requirement.equals("Colony is barren or frozen"))
+        else if(requirement.equals(colonyBarrenOrFrozen))
         {
             return planetType.equals("barren") || planetType.equals("frozen");
         }
-        else if(requirement.equals("Colony has normal atmospheric density"))
+        else if(requirement.equals(colonyAtmosphericDensityNormal))
         {
             if(market.hasCondition("no_atmosphere") || market.hasCondition("thin_atmosphere") || market.hasCondition("dense_atmosphere"))
             {
@@ -2511,7 +2556,7 @@ public class boggledTools
                 return true;
             }
         }
-        else if(requirement.equals("Colony atmosphere is not toxic or irradiated"))
+        else if(requirement.equals(colonyAtmosphereNotToxicOrIrradiated))
         {
             if(market.hasCondition("toxic_atmosphere") || market.hasCondition("irradiated"))
             {
@@ -2522,99 +2567,99 @@ public class boggledTools
                 return true;
             }
         }
-        else if(requirement.equals("Colony is not cold or very cold"))
+        else if(requirement.equals(colonyNotColdOrVeryCold))
         {
             return !market.hasCondition("cold") && !market.hasCondition("very_cold");
         }
-        else if(requirement.equals("Colony is hot or very hot"))
+        else if(requirement.equals(colonyHotOrVeryHot))
         {
             return market.hasCondition("hot") || market.hasCondition("very_hot");
         }
-        else if(requirement.equals("Colony is not very cold or very hot"))
+        else if(requirement.equals(colonyNotVeryColdOrVeryHot))
         {
             return !market.hasCondition("very_hot") && !market.hasCondition("very_cold");
         }
-        else if(requirement.equals("Colony is not hot or very hot"))
+        else if(requirement.equals(colonyNotHotOrVeryHot))
         {
             return !market.hasCondition("hot") && !market.hasCondition("very_hot");
         }
-        else if(requirement.equals("Colony is very cold"))
+        else if(requirement.equals(colonyVeryCold))
         {
             return market.hasCondition("very_cold");
         }
-        else if(requirement.equals("Colony is temperate or hot"))
+        else if(requirement.equals(colonyTemperateOrHot))
         {
             return !market.hasCondition("very_cold") && !market.hasCondition("cold") && !market.hasCondition("very_hot");
         }
-        else if(requirement.equals("Colony is temperate or cold"))
+        else if(requirement.equals(colonyTemperateOrCold))
         {
             return !market.hasCondition("very_cold") && !market.hasCondition("hot") && !market.hasCondition("very_hot");
         }
-        else if(requirement.equals("Colony has stellar reflectors"))
+        else if(requirement.equals(colonyHasStellarReflectors))
         {
             return marketHasStellarReflectorArray(market);
         }
-        else if(requirement.equals("Colony has a moderate amount of water present"))
+        else if(requirement.equals(colonyHasModerateWaterPresent))
         {
             return planetWaterLevel == 1 || planetWaterLevel == 2;
         }
-        else if(requirement.equals("Colony has a large amount of water present"))
+        else if(requirement.equals(colonyHasLargeWaterPresent))
         {
             return planetWaterLevel == 2;
         }
-        else if(requirement.equals("Colony has atmosphere processor"))
+        else if(requirement.equals(colonyHasAtmosphereProcessor))
         {
             return marketHasAtmosphereProcessor(market);
         }
-        else if(requirement.equals("Colony has genelab"))
+        else if(requirement.equals(colonyHasGenelab))
         {
             return marketHasGenelab(market);
         }
-        else if(requirement.equals("Colony is habitable"))
+        else if(requirement.equals(colonyHabitable))
         {
             return market.hasCondition("habitable");
         }
-        else if(requirement.equals("Colony is not already habitable"))
+        else if(requirement.equals(colonyNotAlreadyHabitable))
         {
             return !market.hasCondition("habitable");
         }
-        else if(requirement.equals("Colony has extreme weather"))
+        else if(requirement.equals(colonyExtremeWeather))
         {
             return market.hasCondition("extreme_weather") || market.hasCondition("US_storm");
         }
-        else if(requirement.equals("Colony has normal climate"))
+        else if(requirement.equals(colonyNormalClimate))
         {
             return !market.hasCondition("mild_climate") && !market.hasCondition("extreme_weather") && !market.hasCondition("US_storm");
         }
-        else if(requirement.equals("Colony atmosphere is toxic"))
+        else if(requirement.equals(colonyAtmosphereToxic))
         {
             return market.hasCondition("toxic_atmosphere");
         }
-        else if(requirement.equals("Colony is irradiated"))
+        else if(requirement.equals(colonyIrradiated))
         {
             return market.hasCondition("irradiated");
         }
-        else if(requirement.equals("Colony has atmosphere"))
+        else if(requirement.equals(colonyHasAtmosphere))
         {
             return !market.hasCondition("no_atmosphere");
         }
-        else if(requirement.equals("Colony atmosphere has suboptimal density"))
+        else if(requirement.equals(colonyAtmosphereSuboptimalDensity))
         {
             return market.hasCondition("no_atmosphere") || market.hasCondition("thin_atmosphere") || market.hasCondition("dense_atmosphere");
         }
-        else if(requirement.equals("World type supports further farmland improvement"))
+        else if(requirement.equals(worldTypeSupportsFarmlandImprovement))
         {
             return getMaxFarmlandForMarket(market) > getCurrentFarmlandForMarket(market);
         }
-        else if(requirement.equals("World type supports further organics improvement"))
+        else if(requirement.equals(worldTypeSupportsOrganicsImprovement))
         {
             return getMaxOrganicsForMarket(market) > getCurrentOrganicsForMarket(market);
         }
-        else if(requirement.equals("World type supports further volatiles improvement"))
+        else if(requirement.equals(worldTypeSupportsVolatilesImprovement))
         {
             return getMaxVolatilesForMarket(market) > getCurrentVolatilesForMarket(market);
         }
-        else if(requirement.equals("World type allows for terraforming"))
+        else if(requirement.equals(worldTypeAllowsTerraforming))
         {
             if(planetType.equals("star") || planetType.equals("gas_giant") || planetType.equals("volcanic") || planetType.equals("unknown"))
             {
@@ -2625,7 +2670,7 @@ public class boggledTools
                 return true;
             }
         }
-        else if(requirement.equals("World type allows for mild climate") || requirement.equals("World type allows for human habitability"))
+        else if(requirement.equals(worldTypeAllowsMildClimate) || requirement.equals(worldTypeAllowsHumanHabitability))
         {
             if(planetType.equals("jungle") || planetType.equals("desert") || planetType.equals("terran") || planetType.equals("water") || planetType.equals("tundra"))
             {
@@ -2636,7 +2681,7 @@ public class boggledTools
                 return false;
             }
         }
-        else if(requirement.equals("Colony has at least 100,000 inhabitants"))
+        else if(requirement.equals(colonyHasAtLeast100kInhabitants))
         {
             if(market.getSize() >= 5)
             {
@@ -2647,7 +2692,7 @@ public class boggledTools
                 return false;
             }
         }
-        else if(requirement.equals("Colony has orbital works with a pristine nanoforge"))
+        else if(requirement.equals(colonyHasOrbitalWorksWPristineNanoforge))
         {
             if(market.hasIndustry(Industries.ORBITALWORKS) && market.getIndustry(Industries.ORBITALWORKS).isFunctional())
             {
@@ -2686,6 +2731,18 @@ public class boggledTools
                 return false;
             }
         }
+//        else if(requirement.equals(aotd_TypeChangeResearchRequirement))
+//        {
+//            return AoTDMainResearchManager.getInstance().isResearchedForPlayer(aotd_TypeChangeResearchRequirementID);
+//        }
+//        else if (requirement.equals(aotd_ResourceImprovementResearchRequirement))
+//        {
+//            return AoTDMainResearchManager.getInstance().isResearchedForPlayer(aotd_ResourceImprovementResearchRequirementID);
+//        }
+//        else if (requirement.equals(aotd_ConditionImprovementResearchRequirement))
+//        {
+//            return AoTDMainResearchManager.getInstance().isResearchedForPlayer(aotd_ConditionImprovementResearchRequirementID);
+//        }
         else
         {
             return false;
@@ -2747,7 +2804,7 @@ public class boggledTools
         Color bad = Misc.getNegativeHighlightColor();
 
 
-        if(project.equals("aridTypeChange"))
+        if(project.equals(aridTypeChangeProjectID))
         {
             text.addPara("Prospective project: %s", highlight, new String[]{boggledTools.getTooltipProjectName(project)});
 
@@ -2757,7 +2814,7 @@ public class boggledTools
             text.addPara("          - Bountiful farmland, abundant organics, trace volatiles", highlight, new String[]{""});
             text.addPara("      - Ore deposits are unaffected", highlight, new String[]{""});
         }
-        else if(project.equals("frozenTypeChange"))
+        else if(project.equals(frozenTypeChangeProjectID))
         {
             text.addPara("Prospective project: %s", highlight, new String[]{boggledTools.getTooltipProjectName(project)});
 
@@ -2767,7 +2824,7 @@ public class boggledTools
             text.addPara("          - No farmland, no organics, plentiful volatiles", highlight, new String[]{""});
             text.addPara("      - Ore deposits are unaffected", highlight, new String[]{""});
         }
-        else if(project.equals("jungleTypeChange"))
+        else if(project.equals(jungleTypeChangeProjectID))
         {
             text.addPara("Prospective project: %s", highlight, new String[]{boggledTools.getTooltipProjectName(project)});
 
@@ -2777,7 +2834,7 @@ public class boggledTools
             text.addPara("          - Bountiful farmland, plentiful organics, no volatiles", highlight, new String[]{""});
             text.addPara("      - Ore deposits are unaffected", highlight, new String[]{""});
         }
-        else if(project.equals("terranTypeChange"))
+        else if(project.equals(terranTypeChangeProjectID))
         {
             text.addPara("Prospective project: %s", highlight, new String[]{boggledTools.getTooltipProjectName(project)});
 
@@ -2794,7 +2851,7 @@ public class boggledTools
             text.addPara("          - Bountiful farmland, plentiful organics, trace volatiles", highlight, new String[]{""});
             text.addPara("      - Ore deposits are unaffected", highlight, new String[]{""});
         }
-        else if(project.equals("waterTypeChange"))
+        else if(project.equals(waterTypeChangeProjectID))
         {
             text.addPara("Prospective project: %s", highlight, new String[]{boggledTools.getTooltipProjectName(project)});
 
@@ -2804,7 +2861,7 @@ public class boggledTools
             text.addPara("          - Plentiful organics, plentiful volatiles", highlight, new String[]{""});
             text.addPara("      - Ore deposits are unaffected", highlight, new String[]{""});
         }
-        else if(project.equals("tundraTypeChange"))
+        else if(project.equals(tundraTypeChangeProjectID))
         {
             text.addPara("Prospective project: %s", highlight, new String[]{boggledTools.getTooltipProjectName(project)});
 
@@ -2821,61 +2878,61 @@ public class boggledTools
             text.addPara("          - Bountiful farmland, trace organics, plentiful volatiles", highlight, new String[]{""});
             text.addPara("      - Ore deposits are unaffected", highlight, new String[]{""});
         }
-        else if(project.equals("farmlandResourceImprovement"))
+        else if(project.equals(farmlandResourceImprovementProjectID))
         {
             text.addPara("Prospective project: %s", highlight, new String[]{boggledTools.getTooltipProjectName(project)});
 
             text.addPara("      - Farming yield improved by one", highlight, new String[]{""});
         }
-        else if(project.equals("organicsResourceImprovement"))
+        else if(project.equals(organicsResourceImprovementProjectID))
         {
             text.addPara("Prospective project: %s", highlight, new String[]{boggledTools.getTooltipProjectName(project)});
 
             text.addPara("      - Organics yield improved by one", highlight, new String[]{""});
         }
-        else if(project.equals("volatilesResourceImprovement"))
+        else if(project.equals(volatilesResourceImprovementProjectID))
         {
             text.addPara("Prospective project: %s", highlight, new String[]{boggledTools.getTooltipProjectName(project)});
 
             text.addPara("      - Volatiles yield improved by one", highlight, new String[]{""});
         }
-        else if(project.equals("extremeWeatherConditionImprovement"))
+        else if(project.equals(extremeWeatherConditionImprovementProjectID))
         {
             text.addPara("Prospective project: %s", highlight, new String[]{boggledTools.getTooltipProjectName(project)});
 
             text.addPara("      - Extreme weather patterns remediated", highlight, new String[]{""});
         }
-        else if(project.equals("mildClimateConditionImprovement"))
+        else if(project.equals(mildClimateConditionImprovementProjectID))
         {
             text.addPara("Prospective project: %s", highlight, new String[]{boggledTools.getTooltipProjectName(project)});
 
             text.addPara("      - Climate made mild", highlight, new String[]{""});
         }
-        else if(project.equals("habitableConditionImprovement"))
+        else if(project.equals(habitableConditionImprovementProjectID))
         {
             text.addPara("Prospective project: %s", highlight, new String[]{boggledTools.getTooltipProjectName(project)});
 
             text.addPara("      - Atmosphere made human-breathable", highlight, new String[]{""});
         }
-        else if(project.equals("atmosphereDensityConditionImprovement"))
+        else if(project.equals(atmosphereDensityConditionImprovementProjectID))
         {
             text.addPara("Prospective project: %s", highlight, new String[]{boggledTools.getTooltipProjectName(project)});
 
             text.addPara("      - Atmosphere with Earth-like density created", highlight, new String[]{""});
         }
-        else if(project.equals("toxicAtmosphereConditionImprovement"))
+        else if(project.equals(toxicAtmosphereConditionImprovementProjectID))
         {
             text.addPara("Prospective project: %s", highlight, new String[]{boggledTools.getTooltipProjectName(project)});
 
             text.addPara("      - Atmospheric toxicity remediated", highlight, new String[]{""});
         }
-        else if(project.equals("irradiatedConditionImprovement"))
+        else if(project.equals(irradiatedConditionImprovementProjectID))
         {
             text.addPara("Prospective project: %s", highlight, new String[]{boggledTools.getTooltipProjectName(project)});
 
             text.addPara("      - Radiation remediated", highlight, new String[]{""});
         }
-        else if(project.equals("removeAtmosphereConditionImprovement"))
+        else if(project.equals(removeAtmosphereConditionImprovementProjectID))
         {
             text.addPara("Prospective project: %s", highlight, new String[]{boggledTools.getTooltipProjectName(project)});
 
@@ -2974,7 +3031,7 @@ public class boggledTools
     {
         if(project.contains("TypeChange"))
         {
-            if(project.equals("waterTypeChange") || project.equals("frozenTypeChange"))
+            if(project.equals(waterTypeChangeProjectID) || project.equals(frozenTypeChangeProjectID))
             {
                 return 2;
             }
@@ -2987,22 +3044,22 @@ public class boggledTools
         }
         else if(project.contains("ResourceImprovement"))
         {
-            if(project.equals("farmlandResourceImprovement"))
+            if(project.equals(farmlandResourceImprovementProjectID))
             {
                 return 2;
             }
-            else if(project.equals("organicsResourceImprovement") || project.equals("volatilesResourceImprovement"))
+            else if(project.equals(organicsResourceImprovementProjectID) || project.equals(volatilesResourceImprovementProjectID))
             {
                 return 0;
             }
         }
         else if(project.contains("ConditionImprovement"))
         {
-            if(project.equals("habitableConditionImprovement") || project.equals("mildClimateConditionImprovement") || project.equals("extremeWeatherConditionImprovement") || project.equals("noAtmosphereConditionImprovement") || project.equals("thinAtmosphereConditionImprovement"))
+            if(project.equals(habitableConditionImprovementProjectID) || project.equals(mildClimateConditionImprovementProjectID) || project.equals(extremeWeatherConditionImprovementProjectID) || project.equals("noAtmosphereConditionImprovement") || project.equals("thinAtmosphereConditionImprovement"))
             {
                 return 1;
             }
-            else if(project.equals("denseAtmosphereConditionImprovement") || project.equals("toxicAtmosphereConditionImprovement"))
+            else if(project.equals("denseAtmosphereConditionImprovement") || project.equals(toxicAtmosphereConditionImprovementProjectID))
             {
                 return 0;
             }
@@ -3018,90 +3075,11 @@ public class boggledTools
         {
             return "None";
         }
-        else if(currentProject.contains("TypeChange"))
+
+        String tooltip = projectTooltip.get(currentProject);
+        if(tooltip != null)
         {
-            if(currentProject.equals("jungleTypeChange"))
-            {
-                return "Jungle type change";
-            }
-            else if(currentProject.equals("aridTypeChange"))
-            {
-                return "Arid type change";
-            }
-            else if(currentProject.equals("terranTypeChange"))
-            {
-                return "Terran type change";
-            }
-            else if(currentProject.equals("waterTypeChange"))
-            {
-                return "Water type change";
-            }
-            else if(currentProject.equals("tundraTypeChange"))
-            {
-                return "Tundra type change";
-            }
-            else if(currentProject.equals("frozenTypeChange"))
-            {
-                return "Frozen type change";
-            }
-            else
-            {
-                return "ERROR";
-            }
-        }
-        else if(currentProject.contains("ResourceImprovement"))
-        {
-            if(currentProject.equals("farmlandResourceImprovement"))
-            {
-                return "Farmland resource improvement";
-            }
-            else if(currentProject.equals("organicsResourceImprovement"))
-            {
-                return "Organics resource improvement";
-            }
-            else if(currentProject.equals("volatilesResourceImprovement"))
-            {
-                return "Volatiles resource improvement";
-            }
-            else
-            {
-                return "ERROR";
-            }
-        }
-        else if(currentProject.contains("ConditionImprovement"))
-        {
-            if(currentProject.equals("extremeWeatherConditionImprovement"))
-            {
-                return "Stabilize weather patterns";
-            }
-            else if(currentProject.equals("mildClimateConditionImprovement"))
-            {
-                return "Make climate mild";
-            }
-            else if(currentProject.equals("habitableConditionImprovement"))
-            {
-                return "Make atmosphere habitable";
-            }
-            else if(currentProject.equals("atmosphereDensityConditionImprovement"))
-            {
-                return "Normalize atmospheric density";
-            }
-            else if(currentProject.equals("toxicAtmosphereConditionImprovement"))
-            {
-                return "Reduce atmospheric toxicity";
-            }
-            else if(currentProject.equals("radiationConditionImprovement"))
-            {
-                return "Eliminate harmful radiation";
-            }
-            else if(currentProject.equals("removeAtmosphereConditionImprovement"))
-            {
-                return "Remove the atmosphere";
-            }
-            else
-            {
-                return "ERROR";
-            }
+            return tooltip;
         }
         else
         {
