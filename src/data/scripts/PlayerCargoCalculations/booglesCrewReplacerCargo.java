@@ -15,6 +15,7 @@ public class booglesCrewReplacerCargo extends bogglesDefaultCargo {
         createJobs(Astropolis_Station,AsS_Requierments);
         createJobs(Mining_Station,MiS_Requierments);
         createJobs(Siphon_Station,SiS_Requierments);
+        //crewReplacer_Main.getCrewSet(name+"_"+"crew").addNewCrew("AIretrofit_WorkerDrone",1,9);
     }
     private void createJobs(String stationType,String[] job_Materials){
         for (String a : job_Materials){

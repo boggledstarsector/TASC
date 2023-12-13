@@ -328,8 +328,8 @@ public class BoggledTascPlugin extends BaseModPlugin
 
     @Override
     public void onApplicationLoad()  {
-        if (Global.getSettings().getModManager().isModEnabled("bogglesDefaultCargo")){
-            bogglesDefaultCargo.active = new booglesCrewReplacerCargo();
+        if (Global.getSettings().getModManager().isModEnabled("aaacrew_replacer")){
+            bogglesDefaultCargo.active = new booglesCrewReplacerCargo();//(for consal commands testing. please dont judge me.)//addItem 1000 crew; addItem 1000 metal; addITem 250 rare_matal; addITem 250 heavy_matchnery; addCredits 500000;
         }else{
             bogglesDefaultCargo.active = new bogglesDefaultCargo();
         }
