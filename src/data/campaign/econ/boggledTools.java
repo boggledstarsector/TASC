@@ -112,7 +112,7 @@ public class boggledTools
     private static final String atmosphereDensityConditionImprovementProjectID = "atmosphereDensityConditionImprovement";
     private static final String toxicAtmosphereConditionImprovementProjectID = "toxicAtmosphereConditionImprovement";
     private static final String irradiatedConditionImprovementProjectID = "irradiatedConditionImprovement";
-    private static final String radiationConditionImprovementProjectID = "radiationConditionImprovement";
+    private static final String radiationConditionImprovementProjectID = "irradiatedConditionImprovement";
     private static final String removeAtmosphereConditionImprovementProjectID = "removeAtmosphereConditionImprovement";
 
     private static final String aotd_TypeChangeResearchRequirement = "Researched: Terraforming Templates";
@@ -502,7 +502,7 @@ public class boggledTools
         if (!playerMarketInSystem(playerFleet)) {
             return null;
         } else {
-            ArrayList<SectorEntityToken> allPlayerMarketsInSystem = new ArrayList<SectorEntityToken>();
+            ArrayList<SectorEntityToken> allPlayerMarketsInSystem = new ArrayList<>();
 
             for (SectorEntityToken entity : playerFleet.getStarSystem().getAllEntities()) {
                 if (entity.getMarket() != null && entity.getMarket().isPlayerOwned()) {
@@ -537,7 +537,7 @@ public class boggledTools
         if (!gasGiantInSystem(playerFleet)) {
             return null;
         } else {
-            ArrayList<SectorEntityToken> allGasGiantsInSystem = new ArrayList<SectorEntityToken>();
+            ArrayList<SectorEntityToken> allGasGiantsInSystem = new ArrayList<>();
 
             for (SectorEntityToken planet : playerFleet.getStarSystem().getAllEntities()) {
                 if (planet instanceof PlanetAPI && ((PlanetAPI) planet).isGasGiant()) {
@@ -572,7 +572,7 @@ public class boggledTools
         if (!colonizableStationInSystem(playerFleet)) {
             return null;
         } else {
-            ArrayList<SectorEntityToken> allColonizableStationsInSystem = new ArrayList<SectorEntityToken>();
+            ArrayList<SectorEntityToken> allColonizableStationsInSystem = new ArrayList<>();
 
             for (SectorEntityToken entity : playerFleet.getStarSystem().getAllEntities()) {
                 if (entity.hasTag("station") && entity.getMarket() != null && entity.getMarket().hasCondition(Conditions.ABANDONED_STATION)) {
@@ -607,7 +607,7 @@ public class boggledTools
         if (!stationInSystem(playerFleet)) {
             return null;
         } else {
-            ArrayList<SectorEntityToken> allStationsInSystem = new ArrayList<SectorEntityToken>();
+            ArrayList<SectorEntityToken> allStationsInSystem = new ArrayList<>();
 
             for (SectorEntityToken entity : playerFleet.getStarSystem().getAllEntities()) {
                 if (entity.hasTag("station")) {
@@ -629,7 +629,7 @@ public class boggledTools
     }
 
     public static ArrayList<String> getListOfFactionsWithMarketInSystem(StarSystemAPI system) {
-        ArrayList<String> factionsWithMarketInSystem = new ArrayList<String>();
+        ArrayList<String> factionsWithMarketInSystem = new ArrayList<>();
 
         for (MarketAPI market : Global.getSector().getEconomy().getMarkets(system)) {
             if (!factionsWithMarketInSystem.contains(market.getFactionId())) {
@@ -641,7 +641,7 @@ public class boggledTools
     }
 
     public static ArrayList<Integer> getCompanionListOfTotalMarketPopulation(StarSystemAPI system, ArrayList<String> factions) {
-        ArrayList<Integer> totalFactionMarketSize = new ArrayList<Integer>();
+        ArrayList<Integer> totalFactionMarketSize = new ArrayList<>();
         int buffer = 0;
 
         for (String faction : factions) {
@@ -676,7 +676,7 @@ public class boggledTools
         if (!planetInSystem(playerFleet)) {
             return null;
         } else {
-            ArrayList<SectorEntityToken> allPlanetsInSystem = new ArrayList<SectorEntityToken>();
+            ArrayList<SectorEntityToken> allPlanetsInSystem = new ArrayList<>();
 
             for (SectorEntityToken entity : playerFleet.getStarSystem().getAllEntities()) {
                 if (entity instanceof PlanetAPI && !getPlanetType(((PlanetAPI) entity)).equals("star")) {
@@ -2467,7 +2467,7 @@ public class boggledTools
     {
         PlanetAPI planet = null;
         String planetType = "";
-        Integer planetWaterLevel = 0;
+        int planetWaterLevel = 0;
 
         if(!boggledTools.marketIsStation(market))
         {
@@ -2718,14 +2718,14 @@ public class boggledTools
         if(project != null && !project.equals("None"))
         {
             // Print requirements, and if not met, print terraforming is stalled
-            text.addPara("Project Requirements:", highlight, new String[]{""});
+            text.addPara("Project Requirements:");
             String[] requirements = boggledTools.getProjectRequirementsStrings(project);
-            Boolean foundUnmetRequirement = false;
+            boolean foundUnmetRequirement = false;
             for (String requirement : requirements) {
                 if (boggledTools.requirementMet(market, requirement)) {
-                    text.addPara("      - %s", good, new String[]{requirement + ""});
+                    text.addPara("      - %s", good, requirement);
                 } else {
-                    text.addPara("      - %s", bad, new String[]{requirement + ""});
+                    text.addPara("      - %s", bad, requirement);
                     foundUnmetRequirement = true;
                 }
             }
@@ -2742,119 +2742,118 @@ public class boggledTools
         Color good = Misc.getPositiveHighlightColor();
         Color bad = Misc.getNegativeHighlightColor();
 
-
         switch (project) {
             case aridTypeChangeProjectID:
-                text.addPara("Prospective project: %s", highlight, new String[]{boggledTools.getTooltipProjectName(project)});
+                text.addPara("Prospective project: %s", highlight, boggledTools.getTooltipProjectName(project));
 
-                text.addPara("      - Arid world starting resources:", highlight, new String[]{""});
-                text.addPara("          - Adequate farmland, common organics, no volatiles", highlight, new String[]{""});
-                text.addPara("      - Arid world maximum resources:", highlight, new String[]{""});
-                text.addPara("          - Bountiful farmland, abundant organics, trace volatiles", highlight, new String[]{""});
-                text.addPara("      - Ore deposits are unaffected", highlight, new String[]{""});
+                text.addPara("      - Arid world starting resources:");
+                text.addPara("          - Adequate farmland, common organics, no volatiles");
+                text.addPara("      - Arid world maximum resources:");
+                text.addPara("          - Bountiful farmland, abundant organics, trace volatiles");
+                text.addPara("      - Ore deposits are unaffected");
                 break;
             case frozenTypeChangeProjectID:
-                text.addPara("Prospective project: %s", highlight, new String[]{boggledTools.getTooltipProjectName(project)});
+                text.addPara("Prospective project: %s", highlight, boggledTools.getTooltipProjectName(project));
 
-                text.addPara("      - Frozen world starting resources:", highlight, new String[]{""});
-                text.addPara("          - No farmland, no organics, abundant volatiles", highlight, new String[]{""});
-                text.addPara("      - Frozen world maximum resources:", highlight, new String[]{""});
-                text.addPara("          - No farmland, no organics, plentiful volatiles", highlight, new String[]{""});
-                text.addPara("      - Ore deposits are unaffected", highlight, new String[]{""});
+                text.addPara("      - Frozen world starting resources:");
+                text.addPara("          - No farmland, no organics, abundant volatiles");
+                text.addPara("      - Frozen world maximum resources:");
+                text.addPara("          - No farmland, no organics, plentiful volatiles");
+                text.addPara("      - Ore deposits are unaffected");
                 break;
             case jungleTypeChangeProjectID:
-                text.addPara("Prospective project: %s", highlight, new String[]{boggledTools.getTooltipProjectName(project)});
+                text.addPara("Prospective project: %s", highlight, boggledTools.getTooltipProjectName(project));
 
-                text.addPara("      - Jungle world starting resources:", highlight, new String[]{""});
-                text.addPara("          - Adequate farmland, common organics, no volatiles", highlight, new String[]{""});
-                text.addPara("      - Jungle world maximum resources:", highlight, new String[]{""});
-                text.addPara("          - Bountiful farmland, plentiful organics, no volatiles", highlight, new String[]{""});
-                text.addPara("      - Ore deposits are unaffected", highlight, new String[]{""});
+                text.addPara("      - Jungle world starting resources:");
+                text.addPara("          - Adequate farmland, common organics, no volatiles");
+                text.addPara("      - Jungle world maximum resources:");
+                text.addPara("          - Bountiful farmland, plentiful organics, no volatiles");
+                text.addPara("      - Ore deposits are unaffected");
                 break;
             case terranTypeChangeProjectID:
-                text.addPara("Prospective project: %s", highlight, new String[]{boggledTools.getTooltipProjectName(project)});
+                text.addPara("Prospective project: %s", highlight, boggledTools.getTooltipProjectName(project));
 
-                text.addPara("      - Terran world starting resources:", highlight, new String[]{""});
+                text.addPara("      - Terran world starting resources:");
                 if (boggledTools.getBooleanSetting("boggledTerraformingTypeChangeAddVolatiles")) {
-                    text.addPara("          - Adequate farmland, trace organics, trace volatiles", highlight, new String[]{""});
+                    text.addPara("          - Adequate farmland, trace organics, trace volatiles");
                 } else {
-                    text.addPara("          - Adequate farmland, trace organics, no volatiles", highlight, new String[]{""});
+                    text.addPara("          - Adequate farmland, trace organics, no volatiles");
                 }
-                text.addPara("      - Terran world maximum resources:", highlight, new String[]{""});
-                text.addPara("          - Bountiful farmland, plentiful organics, trace volatiles", highlight, new String[]{""});
-                text.addPara("      - Ore deposits are unaffected", highlight, new String[]{""});
+                text.addPara("      - Terran world maximum resources:");
+                text.addPara("          - Bountiful farmland, plentiful organics, trace volatiles");
+                text.addPara("      - Ore deposits are unaffected");
                 break;
             case waterTypeChangeProjectID:
-                text.addPara("Prospective project: %s", highlight, new String[]{boggledTools.getTooltipProjectName(project)});
+                text.addPara("Prospective project: %s", highlight, boggledTools.getTooltipProjectName(project));
 
-                text.addPara("      - Water world starting resources:", highlight, new String[]{""});
-                text.addPara("          - No organics, no volatiles", highlight, new String[]{""});
-                text.addPara("      - Water world maximum resources:", highlight, new String[]{""});
-                text.addPara("          - Plentiful organics, plentiful volatiles", highlight, new String[]{""});
-                text.addPara("      - Ore deposits are unaffected", highlight, new String[]{""});
+                text.addPara("      - Water world starting resources:");
+                text.addPara("          - No organics, no volatiles");
+                text.addPara("      - Water world maximum resources:");
+                text.addPara("          - Plentiful organics, plentiful volatiles");
+                text.addPara("      - Ore deposits are unaffected");
                 break;
             case tundraTypeChangeProjectID:
-                text.addPara("Prospective project: %s", highlight, new String[]{boggledTools.getTooltipProjectName(project)});
+                text.addPara("Prospective project: %s", highlight, boggledTools.getTooltipProjectName(project));
 
-                text.addPara("      - Tundra world starting resources:", highlight, new String[]{""});
+                text.addPara("      - Tundra world starting resources:");
                 if (boggledTools.getBooleanSetting("boggledTerraformingTypeChangeAddVolatiles")) {
-                    text.addPara("          - Adequate farmland, trace organics, trace volatiles", highlight, new String[]{""});
+                    text.addPara("          - Adequate farmland, trace organics, trace volatiles");
                 } else {
-                    text.addPara("          - Adequate farmland, trace organics, no volatiles", highlight, new String[]{""});
+                    text.addPara("          - Adequate farmland, trace organics, no volatiles");
                 }
-                text.addPara("      - Tundra world maximum resources:", highlight, new String[]{""});
-                text.addPara("          - Bountiful farmland, trace organics, plentiful volatiles", highlight, new String[]{""});
-                text.addPara("      - Ore deposits are unaffected", highlight, new String[]{""});
+                text.addPara("      - Tundra world maximum resources:");
+                text.addPara("          - Bountiful farmland, trace organics, plentiful volatiles");
+                text.addPara("      - Ore deposits are unaffected");
                 break;
             case farmlandResourceImprovementProjectID:
-                text.addPara("Prospective project: %s", highlight, new String[]{boggledTools.getTooltipProjectName(project)});
+                text.addPara("Prospective project: %s", highlight, boggledTools.getTooltipProjectName(project));
 
-                text.addPara("      - Farming yield improved by one", highlight, new String[]{""});
+                text.addPara("      - Farming yield improved by one");
                 break;
             case organicsResourceImprovementProjectID:
-                text.addPara("Prospective project: %s", highlight, new String[]{boggledTools.getTooltipProjectName(project)});
+                text.addPara("Prospective project: %s", highlight, boggledTools.getTooltipProjectName(project));
 
-                text.addPara("      - Organics yield improved by one", highlight, new String[]{""});
+                text.addPara("      - Organics yield improved by one");
                 break;
             case volatilesResourceImprovementProjectID:
-                text.addPara("Prospective project: %s", highlight, new String[]{boggledTools.getTooltipProjectName(project)});
+                text.addPara("Prospective project: %s", highlight, boggledTools.getTooltipProjectName(project));
 
-                text.addPara("      - Volatiles yield improved by one", highlight, new String[]{""});
+                text.addPara("      - Volatiles yield improved by one");
                 break;
             case extremeWeatherConditionImprovementProjectID:
-                text.addPara("Prospective project: %s", highlight, new String[]{boggledTools.getTooltipProjectName(project)});
+                text.addPara("Prospective project: %s", highlight, boggledTools.getTooltipProjectName(project));
 
-                text.addPara("      - Extreme weather patterns remediated", highlight, new String[]{""});
+                text.addPara("      - Extreme weather patterns remediated");
                 break;
             case mildClimateConditionImprovementProjectID:
-                text.addPara("Prospective project: %s", highlight, new String[]{boggledTools.getTooltipProjectName(project)});
+                text.addPara("Prospective project: %s", highlight, boggledTools.getTooltipProjectName(project));
 
-                text.addPara("      - Climate made mild", highlight, new String[]{""});
+                text.addPara("      - Climate made mild");
                 break;
             case habitableConditionImprovementProjectID:
-                text.addPara("Prospective project: %s", highlight, new String[]{boggledTools.getTooltipProjectName(project)});
+                text.addPara("Prospective project: %s", highlight, boggledTools.getTooltipProjectName(project));
 
-                text.addPara("      - Atmosphere made human-breathable", highlight, new String[]{""});
+                text.addPara("      - Atmosphere made human-breathable");
                 break;
             case atmosphereDensityConditionImprovementProjectID:
-                text.addPara("Prospective project: %s", highlight, new String[]{boggledTools.getTooltipProjectName(project)});
+                text.addPara("Prospective project: %s", highlight, boggledTools.getTooltipProjectName(project));
 
-                text.addPara("      - Atmosphere with Earth-like density created", highlight, new String[]{""});
+                text.addPara("      - Atmosphere with Earth-like density created");
                 break;
             case toxicAtmosphereConditionImprovementProjectID:
-                text.addPara("Prospective project: %s", highlight, new String[]{boggledTools.getTooltipProjectName(project)});
+                text.addPara("Prospective project: %s", highlight, boggledTools.getTooltipProjectName(project));
 
-                text.addPara("      - Atmospheric toxicity remediated", highlight, new String[]{""});
+                text.addPara("      - Atmospheric toxicity remediated");
                 break;
             case irradiatedConditionImprovementProjectID:
-                text.addPara("Prospective project: %s", highlight, new String[]{boggledTools.getTooltipProjectName(project)});
+                text.addPara("Prospective project: %s", highlight, boggledTools.getTooltipProjectName(project));
 
-                text.addPara("      - Radiation remediated", highlight, new String[]{""});
+                text.addPara("      - Radiation remediated");
                 break;
             case removeAtmosphereConditionImprovementProjectID:
-                text.addPara("Prospective project: %s", highlight, new String[]{boggledTools.getTooltipProjectName(project)});
+                text.addPara("Prospective project: %s", highlight, boggledTools.getTooltipProjectName(project));
 
-                text.addPara("      - Atmosphere removed", highlight, new String[]{""});
+                text.addPara("      - Atmosphere removed");
                 break;
         }
     }
