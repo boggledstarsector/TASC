@@ -6,20 +6,194 @@ import com.fs.starfarer.api.campaign.econ.MarketConditionAPI;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import com.fs.starfarer.api.combat.EngagementResultAPI;
 import com.fs.starfarer.api.util.Misc;
+import com.fs.starfarer.api.util.Pair;
 import data.campaign.econ.boggledTools;
 import data.campaign.econ.conditions.Terraforming_Controller;
 
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Map;
+import java.util.*;
+
+import static java.util.Arrays.asList;
 
 public class boggledTerraformingDialogPlugin implements InteractionDialogPlugin
 {
     protected InteractionDialogAPI dialog;
 
     private int pageNumber;
+
+    private static final String aridTypeChangeYes = "boggledAridTypeChangeYes";
+    private static final String triggerAridTypeChange = "boggledTriggerAridTypeChange";
+
+    private static final String frozenTypeChangeYes = "boggledFrozenTypeChangeYes";
+    private static final String triggerFrozenTypeChange = "boggledTriggerFrozenTypeChange";
+
+    private static final String jungleTypeChangeYes = "boggledJungleTypeChangeYes";
+    private static final String triggerJungleTypeChange = "boggledTriggerJungleTypeChange";
+
+    private static final String terranTypeChangeYes = "boggledTerranTypeChangeYes";
+    private static final String triggerTerranTypeChange = "boggledTriggerTerranTypeChange";
+
+    private static final String tundraTypeChangeYes = "boggledTundraTypeChangeYes";
+    private static final String triggerTundraTypeChange = "boggledTriggerTundraTypeChange";
+
+    private static final String waterTypeChangeYes = "boggledWaterTypeChangeYes";
+    private static final String triggerWaterTypeChange = "boggledTriggerWaterTypeChange";
+
+    private static final String farmlandResourceImprovementYes = "boggledFarmlandResourceImprovementYes";
+    private static final String triggerFarmlandResourceImprovement = "boggledTriggerFarmlandResourceImprovement";
+
+    private static final String organicsResourceImprovementYes = "boggledOrganicsResourceImprovementYes";
+    private static final String triggerOrganicsResourceImprovement = "boggledTriggerOrganicsResourceImprovement";
+
+    private static final String volatilesResourceImprovementYes = "boggledVolatilesResourceImprovementYes";
+    private static final String triggerVolatilesResourceImprovement = "boggledTriggerVolatilesResourceImprovement";
+
+    private static final String extremeWeatherConditionImprovementYes = "boggledExtremeWeatherConditionImprovementYes";
+    private static final String triggerExtremeWeatherConditionImprovement = "boggledTriggerExtremeWeatherConditionImprovement";
+
+    private static final String mildClimateConditionImprovementYes = "boggledMildClimateConditionImprovementYes";
+    private static final String triggerMildClimateConditionImprovement = "boggledTriggerMildClimateConditionImprovement";
+
+    private static final String habitableConditionImprovementYes = "boggledHabitableConditionImprovementYes";
+    private static final String triggerHabitableConditionImprovement = "boggledTriggerHabitableConditionImprovement";
+
+    private static final String atmosphereDensityConditionImprovementYes = "boggledAtmosphereDensityConditionImprovementYes";
+    private static final String triggerAtmosphereDensityConditionImprovement = "boggledTriggerAtmosphereDensityConditionImprovement";
+
+    private static final String toxicAtmosphereConditionImprovementYes = "boggledToxicAtmosphereConditionImprovementYes";
+    private static final String triggerToxicAtmosphereConditionImprovement = "boggledTriggerToxicAtmosphereConditionImprovement";
+
+    private static final String irradiatedConditionImprovementYes = "boggledIrradiatedConditionImprovementYes";
+    private static final String triggerIrradiatedConditionImprovement = "boggledTriggerIrradiatedConditionImprovement";
+
+    private static final String removeAtmosphereConditionImprovementYes = "boggledRemoveAtmosphereConditionImprovementYes";
+    private static final String triggerRemoveAtmosphereConditionImprovement = "boggledTriggerRemoveAtmosphereConditionImprovement";
+
+    private static final String triggerCancelCurrentProject = "boggledTriggerCancelCurrentProject";
+
+    private HashMap<OptionId, String> initialiseOptionIdToProjectYesDialogue() {
+        HashMap<OptionId, String> ret = new HashMap<>();
+
+        ret.put(OptionId.ARID_TYPE_CHANGE, aridTypeChangeYes);
+        ret.put(OptionId.FROZEN_TYPE_CHANGE, frozenTypeChangeYes);
+        ret.put(OptionId.JUNGLE_TYPE_CHANGE, jungleTypeChangeYes);
+        ret.put(OptionId.TERRAN_TYPE_CHANGE, terranTypeChangeYes);
+        ret.put(OptionId.TUNDRA_TYPE_CHANGE, tundraTypeChangeYes);
+        ret.put(OptionId.WATER_TYPE_CHANGE, waterTypeChangeYes);
+
+        ret.put(OptionId.FARMLAND_IMPROVEMENT, farmlandResourceImprovementYes);
+        ret.put(OptionId.ORGANICS_IMPROVEMENT, organicsResourceImprovementYes);
+        ret.put(OptionId.VOLATILES_IMPROVEMENT, volatilesResourceImprovementYes);
+
+        ret.put(OptionId.EXTREME_WEATHER_IMPROVEMENT, extremeWeatherConditionImprovementYes);
+        ret.put(OptionId.MILD_CLIMATE_IMPROVEMENT, mildClimateConditionImprovementYes);
+        ret.put(OptionId.HABITABLE_IMPROVEMENT, habitableConditionImprovementYes);
+        ret.put(OptionId.ATMOSPHERE_DENSITY_IMPROVEMENT, atmosphereDensityConditionImprovementYes);
+        ret.put(OptionId.TOXIC_ATMOSPHERE_IMPROVEMENT, toxicAtmosphereConditionImprovementYes);
+        ret.put(OptionId.IRRADIATED_IMPROVEMENT, irradiatedConditionImprovementYes);
+        ret.put(OptionId.REMOVE_ATMOSPHERE_IMPROVEMENT, removeAtmosphereConditionImprovementYes);
+
+        return ret;
+    }
+
+    private HashMap<OptionId, String> initialiseOptionIdToStartProjectDialogue() {
+        HashMap<OptionId, String> ret = new HashMap<>();
+
+        ret.put(OptionId.START_ARID_TYPE_CHANGE_PROJECT, triggerAridTypeChange);
+        ret.put(OptionId.START_FROZEN_TYPE_CHANGE_PROJECT, triggerFrozenTypeChange);
+        ret.put(OptionId.START_JUNGLE_TYPE_CHANGE_PROJECT, triggerJungleTypeChange);
+        ret.put(OptionId.START_TERRAN_TYPE_CHANGE_PROJECT, triggerTerranTypeChange);
+        ret.put(OptionId.START_TUNDRA_TYPE_CHANGE_PROJECT, triggerTundraTypeChange);
+        ret.put(OptionId.START_WATER_TYPE_CHANGE_PROJECT, triggerWaterTypeChange);
+
+        ret.put(OptionId.START_FARMLAND_IMPROVEMENT, triggerFarmlandResourceImprovement);
+        ret.put(OptionId.START_ORGANICS_IMPROVEMENT, triggerOrganicsResourceImprovement);
+        ret.put(OptionId.START_VOLATILES_IMPROVEMENT, triggerVolatilesResourceImprovement);
+
+        ret.put(OptionId.START_EXTREME_WEATHER_IMPROVEMENT, triggerExtremeWeatherConditionImprovement);
+        ret.put(OptionId.START_MILD_CLIMATE_IMPROVEMENT, triggerMildClimateConditionImprovement);
+        ret.put(OptionId.START_HABITABLE_IMPROVEMENT, triggerHabitableConditionImprovement);
+        ret.put(OptionId.START_ATMOSPHERE_DENSITY_IMPROVEMENT, triggerAtmosphereDensityConditionImprovement);
+        ret.put(OptionId.START_TOXIC_ATMOSPHERE_IMPROVEMENT, triggerToxicAtmosphereConditionImprovement);
+        ret.put(OptionId.START_IRRADIATED_IMPROVEMENT, triggerIrradiatedConditionImprovement);
+        ret.put(OptionId.START_REMOVE_ATMOSPHERE, triggerRemoveAtmosphereConditionImprovement);
+
+        ret.put(OptionId.START_CANCEL_PROJECT, triggerCancelCurrentProject);
+
+        return ret;
+    }
+
+    private HashMap<OptionId, Pair<OptionId, OptionId>> initialiseProjectOptionIdToStartProjectOptionId() {
+        HashMap<OptionId, Pair<OptionId, OptionId>> ret = new HashMap<>();
+
+        ret.put(OptionId.ARID_TYPE_CHANGE, new Pair<>(OptionId.START_ARID_TYPE_CHANGE_PROJECT, OptionId.TYPE_CHANGE_OPTIONS));
+        ret.put(OptionId.FROZEN_TYPE_CHANGE, new Pair<>(OptionId.START_FROZEN_TYPE_CHANGE_PROJECT, OptionId.TYPE_CHANGE_OPTIONS));
+        ret.put(OptionId.JUNGLE_TYPE_CHANGE, new Pair<>(OptionId.START_JUNGLE_TYPE_CHANGE_PROJECT, OptionId.TYPE_CHANGE_OPTIONS));
+        ret.put(OptionId.TERRAN_TYPE_CHANGE, new Pair<>(OptionId.START_TERRAN_TYPE_CHANGE_PROJECT, OptionId.TYPE_CHANGE_OPTIONS));
+        ret.put(OptionId.TUNDRA_TYPE_CHANGE, new Pair<>(OptionId.START_TUNDRA_TYPE_CHANGE_PROJECT, OptionId.TYPE_CHANGE_OPTIONS));
+        ret.put(OptionId.WATER_TYPE_CHANGE, new Pair<>(OptionId.START_WATER_TYPE_CHANGE_PROJECT, OptionId.TYPE_CHANGE_OPTIONS));
+
+        ret.put(OptionId.FARMLAND_IMPROVEMENT, new Pair<>(OptionId.START_FARMLAND_IMPROVEMENT, OptionId.RESOURCE_IMPROVEMENTS));
+        ret.put(OptionId.ORGANICS_IMPROVEMENT, new Pair<>(OptionId.START_ORGANICS_IMPROVEMENT, OptionId.RESOURCE_IMPROVEMENTS));
+        ret.put(OptionId.VOLATILES_IMPROVEMENT, new Pair<>(OptionId.START_VOLATILES_IMPROVEMENT, OptionId.RESOURCE_IMPROVEMENTS));
+
+        ret.put(OptionId.EXTREME_WEATHER_IMPROVEMENT, new Pair<>(OptionId.START_EXTREME_WEATHER_IMPROVEMENT, OptionId.CONDITION_IMPROVEMENTS));
+        ret.put(OptionId.MILD_CLIMATE_IMPROVEMENT, new Pair<>(OptionId.START_MILD_CLIMATE_IMPROVEMENT, OptionId.CONDITION_IMPROVEMENTS));
+        ret.put(OptionId.HABITABLE_IMPROVEMENT, new Pair<>(OptionId.START_HABITABLE_IMPROVEMENT, OptionId.CONDITION_IMPROVEMENTS));
+        ret.put(OptionId.ATMOSPHERE_DENSITY_IMPROVEMENT, new Pair<>(OptionId.START_ATMOSPHERE_DENSITY_IMPROVEMENT, OptionId.CONDITION_IMPROVEMENTS));
+        ret.put(OptionId.TOXIC_ATMOSPHERE_IMPROVEMENT, new Pair<>(OptionId.START_TOXIC_ATMOSPHERE_IMPROVEMENT, OptionId.CONDITION_IMPROVEMENTS));
+        ret.put(OptionId.IRRADIATED_IMPROVEMENT, new Pair<>(OptionId.START_IRRADIATED_IMPROVEMENT, OptionId.CONDITION_IMPROVEMENTS));
+        ret.put(OptionId.REMOVE_ATMOSPHERE_IMPROVEMENT, new Pair<>(OptionId.START_REMOVE_ATMOSPHERE, OptionId.CONDITION_IMPROVEMENTS));
+
+        return ret;
+    }
+
+    private HashMap<OptionId, ArrayList<Pair<String, OptionId>>> initialiseTerraformingOptions() {
+        HashMap<OptionId, ArrayList<Pair<String, OptionId>>> ret = new HashMap<>();
+
+        ArrayList<Pair<String, OptionId>> typeChangeOptions = new ArrayList<>(asList(
+                new Pair<>("Consider terraforming $planet into an arid world", OptionId.ARID_TYPE_CHANGE),
+                new Pair<>("Consider terraforming $planet into a frozen world", OptionId.FROZEN_TYPE_CHANGE),
+                new Pair<>("Consider terraforming $planet into a jungle world", OptionId.JUNGLE_TYPE_CHANGE),
+                new Pair<>("Consider terraforming $planet into a Terran world", OptionId.TERRAN_TYPE_CHANGE),
+                new Pair<>("consider terraforming $planet into a tundra world", OptionId.TUNDRA_TYPE_CHANGE),
+                new Pair<>("Consider terraforming $planet into a water world", OptionId.WATER_TYPE_CHANGE)
+        ));
+
+        ArrayList<Pair<String, OptionId>> resourceImprovementOptions = new ArrayList<>(asList(
+                new Pair<>("Consider improving the farmland on $planet", OptionId.FARMLAND_IMPROVEMENT),
+                new Pair<>("Consider improving the organics on $planet", OptionId.ORGANICS_IMPROVEMENT),
+                new Pair<>("Consider improving the volatiles on $planet", OptionId.VOLATILES_IMPROVEMENT)
+        ));
+
+        ArrayList<Pair<String, OptionId>> conditionImprovementOptions = new ArrayList<>(asList(
+                new Pair<>("Consider making the weather patterns on $planet less extreme", OptionId.EXTREME_WEATHER_IMPROVEMENT),
+                new Pair<>("Consider making the weather patterns on $planet mild", OptionId.MILD_CLIMATE_IMPROVEMENT),
+                new Pair<>("Consider making the atmosphere on $planet human-breathable", OptionId.HABITABLE_IMPROVEMENT),
+                new Pair<>("Consider normalizing atmospheric density on $planet", OptionId.ATMOSPHERE_DENSITY_IMPROVEMENT),
+                new Pair<>("Consider remediating atmospheric toxicity on $planet", OptionId.TOXIC_ATMOSPHERE_IMPROVEMENT)
+        ));
+        if (boggledTools.getBooleanSetting("boggledTerraformingRemoveRadiationProjectEnabled"))
+        {
+            conditionImprovementOptions.add(new Pair<>("Consider remediating radiation on $planet", OptionId.IRRADIATED_IMPROVEMENT));
+        }
+        if (boggledTools.getBooleanSetting("boggledTerraformingRemoveAtmosphereProjectEnabled"))
+        {
+            conditionImprovementOptions.add(new Pair<>("Consider removing the atmosphere on $planet", OptionId.REMOVE_ATMOSPHERE_IMPROVEMENT));
+        }
+
+        ret.put(OptionId.TYPE_CHANGE_OPTIONS, typeChangeOptions);
+        ret.put(OptionId.RESOURCE_IMPROVEMENTS, resourceImprovementOptions);
+        ret.put(OptionId.CONDITION_IMPROVEMENTS, conditionImprovementOptions);
+
+        return ret;
+    }
+
+    private final HashMap<OptionId, String> projectOptionIdToProjectYesDialogue = initialiseOptionIdToProjectYesDialogue();
+    private final HashMap<OptionId, String> startProjectOptionIdToStartProjectDialogue = initialiseOptionIdToStartProjectDialogue();
+    private final HashMap<OptionId, Pair<OptionId, OptionId>> projectOptionIdToStartProjectOptionId = initialiseProjectOptionIdToStartProjectOptionId();
+
+    private final HashMap<OptionId, ArrayList<Pair<String, OptionId>>> terraformingOptions = initialiseTerraformingOptions();
 
     @Override
     public void init(InteractionDialogAPI dialog)
@@ -28,7 +202,7 @@ public class boggledTerraformingDialogPlugin implements InteractionDialogPlugin
         this.optionSelected(null, boggledTerraformingDialogPlugin.OptionId.INIT);
     }
 
-    public OptionId getOptionIdForInt(int i, boolean all)
+    private OptionId getOptionIdForInt(int i, boolean all)
     {
         if(all)
         {
@@ -219,7 +393,7 @@ public class boggledTerraformingDialogPlugin implements InteractionDialogPlugin
         }
     }
 
-    class MarketComparator implements Comparator<MarketAPI>
+    static class MarketComparator implements Comparator<MarketAPI>
     {
         public int compare(MarketAPI market1, MarketAPI market2)
         {
@@ -231,6 +405,25 @@ public class boggledTerraformingDialogPlugin implements InteractionDialogPlugin
             else
                 return -1;
         }
+    }
+
+    private void typeChangeDialogueOption(boggledTerraformingPrintResultsAndRequirements printResultsAndRequirements, boggledTerraformingProjectRequirementsMet requirementsMet, OptionId projectOptionId)
+    {
+        String ruleId = projectOptionIdToProjectYesDialogue.get(projectOptionId);
+        Pair<OptionId, OptionId> optionId = projectOptionIdToStartProjectOptionId.get(projectOptionId);
+
+        // Print results and requirements for prospective project
+        printResultsAndRequirements.execute(ruleId, dialog, null, null);
+
+        dialog.getOptionPanel().addOption("Start project",optionId.one);
+
+        if (!requirementsMet.execute(ruleId, dialog, null, null))
+        {
+            dialog.getOptionPanel().setEnabled(optionId.one, false);
+        }
+
+        dialog.getOptionPanel().addOption("Back", optionId.two);
+        dialog.setOptionOnEscape("Exit", OptionId.DUMMY);
     }
 
     @Override
@@ -375,349 +568,80 @@ public class boggledTerraformingDialogPlugin implements InteractionDialogPlugin
                     showColonySelectedOptionsAndLoadVisual(optionText, true, true);
                     break;
                 case VIEW_COLONY:
-                    printColonyConditions();
-                    showColonySelectedOptionsAndLoadVisual(optionText, false, false);
-                    break;
                 case VIEW_COLONY_ALL:
                     printColonyConditions();
-                    showColonySelectedOptionsAndLoadVisual(optionText, true, false);
+                    showColonySelectedOptionsAndLoadVisual(optionText, optionData.equals(OptionId.VIEW_COLONY_ALL), false);
                     break;
                 case CANCEL_PROJECT:
                     Color bad = Misc.getNegativeHighlightColor();
                     TextPanelAPI text = this.dialog.getTextPanel();
-                    text.addPara("%s", bad, new String[]{"Canceling the current project will result in all progress being lost!"});
+                    text.addPara("%s", bad, "Canceling the current project will result in all progress being lost!");
 
                     dialog.getOptionPanel().addOption("Cancel project", OptionId.START_CANCEL_PROJECT);
                     dialog.getOptionPanel().addOption("Back", OptionId.INIT);
                     dialog.setOptionOnEscape("Exit", OptionId.DUMMY);
                     break;
-                case START_CANCEL_PROJECT:
-                    initiateProject.execute("boggledTriggerCancelCurrentProject", dialog, null, null);
-                    this.optionSelected(null, boggledTerraformingDialogPlugin.OptionId.INIT);
-                    break;
+
+
                 case TYPE_CHANGE_OPTIONS:
-                    dialog.getOptionPanel().addOption("Consider terraforming " + dialog.getInteractionTarget().getMarket().getName() + " into an arid world", OptionId.ARID_TYPE_CHANGE);
-                    dialog.getOptionPanel().addOption("Consider terraforming " + dialog.getInteractionTarget().getMarket().getName() + " into a frozen world", OptionId.FROZEN_TYPE_CHANGE);
-                    dialog.getOptionPanel().addOption("Consider terraforming " + dialog.getInteractionTarget().getMarket().getName() + " into a jungle world", OptionId.JUNGLE_TYPE_CHANGE);
-                    dialog.getOptionPanel().addOption("Consider terraforming " + dialog.getInteractionTarget().getMarket().getName() + " into a Terran world", OptionId.TERRAN_TYPE_CHANGE);
-                    dialog.getOptionPanel().addOption("Consider terraforming " + dialog.getInteractionTarget().getMarket().getName() + " into a tundra world", OptionId.TUNDRA_TYPE_CHANGE);
-                    dialog.getOptionPanel().addOption("Consider terraforming " + dialog.getInteractionTarget().getMarket().getName() + " into a water world", OptionId.WATER_TYPE_CHANGE);
-
-                    dialog.getOptionPanel().addOption("Back", OptionId.COLONY_1);
-                    dialog.setOptionOnEscape("Exit", OptionId.DUMMY);
-                    break;
-                case ARID_TYPE_CHANGE:
-                    // Print results and requirements for prospective project
-                    printResultsAndRequirements.execute("boggledAridTypeChangeYes", dialog, null, null);
-
-                    // Add start project option and disable it if the requirements are not met
-                    dialog.getOptionPanel().addOption("Start project", OptionId.START_ARID_TYPE_CHANGE_PROJECT);
-                    if(!requirementsMet.execute("boggledAridTypeChangeYes", dialog, null, null))
-                    {
-                        dialog.getOptionPanel().setEnabled(OptionId.START_ARID_TYPE_CHANGE_PROJECT, false);
-                    }
-
-                    dialog.getOptionPanel().addOption("Back", OptionId.TYPE_CHANGE_OPTIONS);
-                    dialog.setOptionOnEscape("Exit", OptionId.DUMMY);
-                    break;
-                case START_ARID_TYPE_CHANGE_PROJECT:
-                    initiateProject.execute("boggledTriggerAridTypeChange", dialog, null, null);
-                    this.optionSelected(null, boggledTerraformingDialogPlugin.OptionId.INIT);
-                    break;
-                case FROZEN_TYPE_CHANGE:
-                    // Print results and requirements for prospective project
-                    printResultsAndRequirements.execute("boggledFrozenTypeChangeYes", dialog, null, null);
-
-                    // Add start project option and disable it if the requirements are not met
-                    dialog.getOptionPanel().addOption("Start project", OptionId.START_FROZEN_TYPE_CHANGE_PROJECT);
-                    if(!requirementsMet.execute("boggledFrozenTypeChangeYes", dialog, null, null))
-                    {
-                        dialog.getOptionPanel().setEnabled(OptionId.START_FROZEN_TYPE_CHANGE_PROJECT, false);
-                    }
-
-                    dialog.getOptionPanel().addOption("Back", OptionId.TYPE_CHANGE_OPTIONS);
-                    dialog.setOptionOnEscape("Exit", OptionId.DUMMY);
-                    break;
-                case START_FROZEN_TYPE_CHANGE_PROJECT:
-                    initiateProject.execute("boggledTriggerFrozenTypeChange", dialog, null, null);
-                    this.optionSelected(null, boggledTerraformingDialogPlugin.OptionId.INIT);
-                    break;
-                case JUNGLE_TYPE_CHANGE:
-                    // Print results and requirements for prospective project
-                    printResultsAndRequirements.execute("boggledJungleTypeChangeYes", dialog, null, null);
-
-                    // Add start project option and disable it if the requirements are not met
-                    dialog.getOptionPanel().addOption("Start project", OptionId.START_JUNGLE_TYPE_CHANGE_PROJECT);
-                    if(!requirementsMet.execute("boggledJungleTypeChangeYes", dialog, null, null))
-                    {
-                        dialog.getOptionPanel().setEnabled(OptionId.START_JUNGLE_TYPE_CHANGE_PROJECT, false);
-                    }
-
-                    dialog.getOptionPanel().addOption("Back", OptionId.TYPE_CHANGE_OPTIONS);
-                    dialog.setOptionOnEscape("Exit", OptionId.DUMMY);
-                    break;
-                case START_JUNGLE_TYPE_CHANGE_PROJECT:
-                    initiateProject.execute("boggledTriggerJungleTypeChange", dialog, null, null);
-                    this.optionSelected(null, boggledTerraformingDialogPlugin.OptionId.INIT);
-                    break;
-                case TERRAN_TYPE_CHANGE:
-                    // Print results and requirements for prospective project
-                    printResultsAndRequirements.execute("boggledTerranTypeChangeYes", dialog, null, null);
-
-                    // Add start project option and disable it if the requirements are not met
-                    dialog.getOptionPanel().addOption("Start project", OptionId.START_TERRAN_TYPE_CHANGE_PROJECT);
-                    if(!requirementsMet.execute("boggledTerranTypeChangeYes", dialog, null, null))
-                    {
-                        dialog.getOptionPanel().setEnabled(OptionId.START_TERRAN_TYPE_CHANGE_PROJECT, false);
-                    }
-
-                    dialog.getOptionPanel().addOption("Back", OptionId.TYPE_CHANGE_OPTIONS);
-                    dialog.setOptionOnEscape("Exit", OptionId.DUMMY);
-                    break;
-                case START_TERRAN_TYPE_CHANGE_PROJECT:
-                    initiateProject.execute("boggledTriggerTerranTypeChange", dialog, null, null);
-                    this.optionSelected(null, boggledTerraformingDialogPlugin.OptionId.INIT);
-                    break;
-                case TUNDRA_TYPE_CHANGE:
-                    // Print results and requirements for prospective project
-                    printResultsAndRequirements.execute("boggledTundraTypeChangeYes", dialog, null, null);
-
-                    // Add start project option and disable it if the requirements are not met
-                    dialog.getOptionPanel().addOption("Start project", OptionId.START_TUNDRA_TYPE_CHANGE_PROJECT);
-                    if(!requirementsMet.execute("boggledTundraTypeChangeYes", dialog, null, null))
-                    {
-                        dialog.getOptionPanel().setEnabled(OptionId.START_TUNDRA_TYPE_CHANGE_PROJECT, false);
-                    }
-
-                    dialog.getOptionPanel().addOption("Back", OptionId.TYPE_CHANGE_OPTIONS);
-                    dialog.setOptionOnEscape("Exit", OptionId.DUMMY);
-                    break;
-                case START_TUNDRA_TYPE_CHANGE_PROJECT:
-                    initiateProject.execute("boggledTriggerTundraTypeChange", dialog, null, null);
-                    this.optionSelected(null, boggledTerraformingDialogPlugin.OptionId.INIT);
-                    break;
-                case WATER_TYPE_CHANGE:
-                    // Print results and requirements for prospective project
-                    printResultsAndRequirements.execute("boggledWaterTypeChangeYes", dialog, null, null);
-
-                    // Add start project option and disable it if the requirements are not met
-                    dialog.getOptionPanel().addOption("Start project", OptionId.START_WATER_TYPE_CHANGE_PROJECT);
-                    if(!requirementsMet.execute("boggledWaterTypeChangeYes", dialog, null, null))
-                    {
-                        dialog.getOptionPanel().setEnabled(OptionId.START_WATER_TYPE_CHANGE_PROJECT, false);
-                    }
-
-                    dialog.getOptionPanel().addOption("Back", OptionId.TYPE_CHANGE_OPTIONS);
-                    dialog.setOptionOnEscape("Exit", OptionId.DUMMY);
-                    break;
-                case START_WATER_TYPE_CHANGE_PROJECT:
-                    initiateProject.execute("boggledTriggerWaterTypeChange", dialog, null, null);
-                    this.optionSelected(null, boggledTerraformingDialogPlugin.OptionId.INIT);
-                    break;
                 case RESOURCE_IMPROVEMENTS:
-                    dialog.getOptionPanel().addOption("Consider improving the farmland on " + dialog.getInteractionTarget().getMarket().getName(), OptionId.FARMLAND_IMPROVEMENT);
-                    dialog.getOptionPanel().addOption("Consider improving the organics on " + dialog.getInteractionTarget().getMarket().getName(), OptionId.ORGANICS_IMPROVEMENT);
-                    dialog.getOptionPanel().addOption("Consider improving the volatiles on " + dialog.getInteractionTarget().getMarket().getName(), OptionId.VOLATILES_IMPROVEMENT);
-
-                    dialog.getOptionPanel().addOption("Back", OptionId.COLONY_1);
-                    dialog.setOptionOnEscape("Exit", OptionId.DUMMY);
-                    break;
-                case FARMLAND_IMPROVEMENT:
-                    // Print results and requirements for prospective project
-                    printResultsAndRequirements.execute("boggledFarmlandResourceImprovementYes", dialog, null, null);
-
-                    // Add start project option and disable it if the requirements are not met
-                    dialog.getOptionPanel().addOption("Start project", OptionId.START_FARMLAND_IMPROVEMENT);
-                    if(!requirementsMet.execute("boggledFarmlandResourceImprovementYes", dialog, null, null))
-                    {
-                        dialog.getOptionPanel().setEnabled(OptionId.START_FARMLAND_IMPROVEMENT, false);
-                    }
-
-                    dialog.getOptionPanel().addOption("Back", OptionId.RESOURCE_IMPROVEMENTS);
-                    dialog.setOptionOnEscape("Exit", OptionId.DUMMY);
-                    break;
-                case START_FARMLAND_IMPROVEMENT:
-                    initiateProject.execute("boggledTriggerFarmlandResourceImprovement", dialog, null, null);
-                    this.optionSelected(null, boggledTerraformingDialogPlugin.OptionId.INIT);
-                    break;
-                case ORGANICS_IMPROVEMENT:
-                    // Print results and requirements for prospective project
-                    printResultsAndRequirements.execute("boggledOrganicsResourceImprovementYes", dialog, null, null);
-
-                    // Add start project option and disable it if the requirements are not met
-                    dialog.getOptionPanel().addOption("Start project", OptionId.START_ORGANICS_IMPROVEMENT);
-                    if(!requirementsMet.execute("boggledOrganicsResourceImprovementYes", dialog, null, null))
-                    {
-                        dialog.getOptionPanel().setEnabled(OptionId.START_ORGANICS_IMPROVEMENT, false);
-                    }
-
-                    dialog.getOptionPanel().addOption("Back", OptionId.RESOURCE_IMPROVEMENTS);
-                    dialog.setOptionOnEscape("Exit", OptionId.DUMMY);
-                    break;
-                case START_ORGANICS_IMPROVEMENT:
-                    initiateProject.execute("boggledTriggerOrganicsResourceImprovement", dialog, null, null);
-                    this.optionSelected(null, boggledTerraformingDialogPlugin.OptionId.INIT);
-                    break;
-                case VOLATILES_IMPROVEMENT:
-                    // Print results and requirements for prospective project
-                    printResultsAndRequirements.execute("boggledVolatilesResourceImprovementYes", dialog, null, null);
-
-                    // Add start project option and disable it if the requirements are not met
-                    dialog.getOptionPanel().addOption("Start project", OptionId.START_VOLATILES_IMPROVEMENT);
-                    if(!requirementsMet.execute("boggledVolatilesResourceImprovementYes", dialog, null, null))
-                    {
-                        dialog.getOptionPanel().setEnabled(OptionId.START_VOLATILES_IMPROVEMENT, false);
-                    }
-
-                    dialog.getOptionPanel().addOption("Back", OptionId.RESOURCE_IMPROVEMENTS);
-                    dialog.setOptionOnEscape("Exit", OptionId.DUMMY);
-                    break;
-                case START_VOLATILES_IMPROVEMENT:
-                    initiateProject.execute("boggledTriggerVolatilesResourceImprovement", dialog, null, null);
-                    this.optionSelected(null, boggledTerraformingDialogPlugin.OptionId.INIT);
-                    break;
                 case CONDITION_IMPROVEMENTS:
-                    dialog.getOptionPanel().addOption("Consider making the weather patterns on " + dialog.getInteractionTarget().getMarket().getName() + " less extreme", OptionId.EXTREME_WEATHER_IMPROVEMENT);
-                    dialog.getOptionPanel().addOption("Consider making the weather patterns on " + dialog.getInteractionTarget().getMarket().getName() + " mild", OptionId.MILD_CLIMATE_IMPROVEMENT);
-                    dialog.getOptionPanel().addOption("Consider making the atmosphere on " + dialog.getInteractionTarget().getMarket().getName() + " human-breathable", OptionId.HABITABLE_IMPROVEMENT);
-                    dialog.getOptionPanel().addOption("Consider normalizing atmospheric density on " + dialog.getInteractionTarget().getMarket().getName(), OptionId.ATMOSPHERE_DENSITY_IMPROVEMENT);
-                    dialog.getOptionPanel().addOption("Consider remediating atmospheric toxicity on " + dialog.getInteractionTarget().getMarket().getName(), OptionId.TOXIC_ATMOSPHERE_IMPROVEMENT);
-                    if(boggledTools.getBooleanSetting("boggledTerraformingRemoveRadiationProjectEnabled"))
+                    ArrayList<Pair<String, OptionId>> terraformingOption = terraformingOptions.get(optionData);
+                    for (Pair<String, OptionId> terraform : terraformingOption)
                     {
-                        dialog.getOptionPanel().addOption("Consider remediating radiation on " + dialog.getInteractionTarget().getMarket().getName(), OptionId.IRRADIATED_IMPROVEMENT);
-                    }
-                    if(boggledTools.getBooleanSetting("boggledTerraformingRemoveAtmosphereProjectEnabled"))
-                    {
-                        dialog.getOptionPanel().addOption("Consider removing the atmosphere on " + dialog.getInteractionTarget().getMarket().getName(), OptionId.REMOVE_ATMOSPHERE_IMPROVEMENT);
+                        dialog.getOptionPanel().addOption(terraform.one.replace("$planet", dialog.getInteractionTarget().getMarket().getName()), terraform.two);
                     }
 
                     dialog.getOptionPanel().addOption("Back", OptionId.COLONY_1);
                     dialog.setOptionOnEscape("Exit", OptionId.DUMMY);
                     break;
+
+                /*
+                Type changes from here
+                */
+                case ARID_TYPE_CHANGE:
+                case FROZEN_TYPE_CHANGE:
+                case JUNGLE_TYPE_CHANGE:
+                case TERRAN_TYPE_CHANGE:
+                case TUNDRA_TYPE_CHANGE:
+                case WATER_TYPE_CHANGE:
+
+                case FARMLAND_IMPROVEMENT:
+                case ORGANICS_IMPROVEMENT:
+                case VOLATILES_IMPROVEMENT:
+
                 case EXTREME_WEATHER_IMPROVEMENT:
-                    // Print results and requirements for prospective project
-                    printResultsAndRequirements.execute("boggledExtremeWeatherConditionImprovementYes", dialog, null, null);
-
-                    // Add start project option and disable it if the requirements are not met
-                    dialog.getOptionPanel().addOption("Start project", OptionId.START_EXTREME_WEATHER_IMPROVEMENT);
-                    if(!requirementsMet.execute("boggledExtremeWeatherConditionImprovementYes", dialog, null, null))
-                    {
-                        dialog.getOptionPanel().setEnabled(OptionId.START_EXTREME_WEATHER_IMPROVEMENT, false);
-                    }
-
-                    dialog.getOptionPanel().addOption("Back", OptionId.CONDITION_IMPROVEMENTS);
-                    dialog.setOptionOnEscape("Exit", OptionId.DUMMY);
-                    break;
-                case START_EXTREME_WEATHER_IMPROVEMENT:
-                    initiateProject.execute("boggledTriggerExtremeWeatherConditionImprovement", dialog, null, null);
-                    this.optionSelected(null, boggledTerraformingDialogPlugin.OptionId.INIT);
-                    break;
                 case MILD_CLIMATE_IMPROVEMENT:
-                    // Print results and requirements for prospective project
-                    printResultsAndRequirements.execute("boggledMildClimateConditionImprovementYes", dialog, null, null);
-
-                    // Add start project option and disable it if the requirements are not met
-                    dialog.getOptionPanel().addOption("Start project", OptionId.START_MILD_CLIMATE_IMPROVEMENT);
-                    if(!requirementsMet.execute("boggledMildClimateConditionImprovementYes", dialog, null, null))
-                    {
-                        dialog.getOptionPanel().setEnabled(OptionId.START_MILD_CLIMATE_IMPROVEMENT, false);
-                    }
-
-                    dialog.getOptionPanel().addOption("Back", OptionId.CONDITION_IMPROVEMENTS);
-                    dialog.setOptionOnEscape("Exit", OptionId.DUMMY);
-                    break;
-                case START_MILD_CLIMATE_IMPROVEMENT:
-                    initiateProject.execute("boggledTriggerMildClimateConditionImprovement", dialog, null, null);
-                    this.optionSelected(null, boggledTerraformingDialogPlugin.OptionId.INIT);
-                    break;
                 case HABITABLE_IMPROVEMENT:
-                    // Print results and requirements for prospective project
-                    printResultsAndRequirements.execute("boggledHabitableConditionImprovementYes", dialog, null, null);
-
-                    // Add start project option and disable it if the requirements are not met
-                    dialog.getOptionPanel().addOption("Start project", OptionId.START_HABITABLE_IMPROVEMENT);
-                    if(!requirementsMet.execute("boggledHabitableConditionImprovementYes", dialog, null, null))
-                    {
-                        dialog.getOptionPanel().setEnabled(OptionId.START_HABITABLE_IMPROVEMENT, false);
-                    }
-
-                    dialog.getOptionPanel().addOption("Back", OptionId.CONDITION_IMPROVEMENTS);
-                    dialog.setOptionOnEscape("Exit", OptionId.DUMMY);
-                    break;
-                case START_HABITABLE_IMPROVEMENT:
-                    initiateProject.execute("boggledTriggerHabitableConditionImprovement", dialog, null, null);
-                    this.optionSelected(null, boggledTerraformingDialogPlugin.OptionId.INIT);
-                    break;
                 case ATMOSPHERE_DENSITY_IMPROVEMENT:
-                    // Print results and requirements for prospective project
-                    printResultsAndRequirements.execute("boggledAtmosphereDensityConditionImprovementYes", dialog, null, null);
-
-                    // Add start project option and disable it if the requirements are not met
-                    dialog.getOptionPanel().addOption("Start project", OptionId.START_ATMOSPHERE_DENSITY_IMPROVEMENT);
-                    if(!requirementsMet.execute("boggledAtmosphereDensityConditionImprovementYes", dialog, null, null))
-                    {
-                        dialog.getOptionPanel().setEnabled(OptionId.START_ATMOSPHERE_DENSITY_IMPROVEMENT, false);
-                    }
-
-                    dialog.getOptionPanel().addOption("Back", OptionId.CONDITION_IMPROVEMENTS);
-                    dialog.setOptionOnEscape("Exit", OptionId.DUMMY);
-                    break;
-                case START_ATMOSPHERE_DENSITY_IMPROVEMENT:
-                    initiateProject.execute("boggledTriggerAtmosphereDensityConditionImprovement", dialog, null, null);
-                    this.optionSelected(null, boggledTerraformingDialogPlugin.OptionId.INIT);
-                    break;
                 case TOXIC_ATMOSPHERE_IMPROVEMENT:
-                    // Print results and requirements for prospective project
-                    printResultsAndRequirements.execute("boggledToxicAtmosphereConditionImprovementYes", dialog, null, null);
-
-                    // Add start project option and disable it if the requirements are not met
-                    dialog.getOptionPanel().addOption("Start project", OptionId.START_TOXIC_ATMOSPHERE_IMPROVEMENT);
-                    if(!requirementsMet.execute("boggledToxicAtmosphereConditionImprovementYes", dialog, null, null))
-                    {
-                        dialog.getOptionPanel().setEnabled(OptionId.START_TOXIC_ATMOSPHERE_IMPROVEMENT, false);
-                    }
-
-                    dialog.getOptionPanel().addOption("Back", OptionId.CONDITION_IMPROVEMENTS);
-                    dialog.setOptionOnEscape("Exit", OptionId.DUMMY);
-                    break;
-                case START_TOXIC_ATMOSPHERE_IMPROVEMENT:
-                    initiateProject.execute("boggledTriggerToxicAtmosphereConditionImprovement", dialog, null, null);
-                    this.optionSelected(null, boggledTerraformingDialogPlugin.OptionId.INIT);
-                    break;
                 case IRRADIATED_IMPROVEMENT:
-                    // Print results and requirements for prospective project
-                    printResultsAndRequirements.execute("boggledIrradiatedConditionImprovementYes", dialog, null, null);
-
-                    // Add start project option and disable it if the requirements are not met
-                    dialog.getOptionPanel().addOption("Start project", OptionId.START_IRRADIATED_IMPROVEMENT);
-                    if(!requirementsMet.execute("boggledIrradiatedConditionImprovementYes", dialog, null, null))
-                    {
-                        dialog.getOptionPanel().setEnabled(OptionId.START_IRRADIATED_IMPROVEMENT, false);
-                    }
-
-                    dialog.getOptionPanel().addOption("Back", OptionId.CONDITION_IMPROVEMENTS);
-                    dialog.setOptionOnEscape("Exit", OptionId.DUMMY);
-                    break;
-                case START_IRRADIATED_IMPROVEMENT:
-                    initiateProject.execute("boggledTriggerIrradiatedConditionImprovement", dialog, null, null);
-                    this.optionSelected(null, boggledTerraformingDialogPlugin.OptionId.INIT);
-                    break;
                 case REMOVE_ATMOSPHERE_IMPROVEMENT:
-                    // Print results and requirements for prospective project
-                    printResultsAndRequirements.execute("boggledRemoveAtmosphereConditionImprovementYes", dialog, null, null);
-
-                    // Add start project option and disable it if the requirements are not met
-                    dialog.getOptionPanel().addOption("Start project", OptionId.START_REMOVE_ATMOSPHERE);
-                    if(!requirementsMet.execute("boggledRemoveAtmosphereConditionImprovementYes", dialog, null, null))
-                    {
-                        dialog.getOptionPanel().setEnabled(OptionId.START_REMOVE_ATMOSPHERE, false);
-                    }
-
-                    dialog.getOptionPanel().addOption("Back", OptionId.CONDITION_IMPROVEMENTS);
-                    dialog.setOptionOnEscape("Exit", OptionId.DUMMY);
+                    typeChangeDialogueOption(printResultsAndRequirements, requirementsMet, (OptionId)optionData);
                     break;
+
+                case START_ARID_TYPE_CHANGE_PROJECT:
+                case START_FROZEN_TYPE_CHANGE_PROJECT:
+                case START_JUNGLE_TYPE_CHANGE_PROJECT:
+                case START_TERRAN_TYPE_CHANGE_PROJECT:
+                case START_TUNDRA_TYPE_CHANGE_PROJECT:
+                case START_WATER_TYPE_CHANGE_PROJECT:
+
+                case START_FARMLAND_IMPROVEMENT:
+                case START_ORGANICS_IMPROVEMENT:
+                case START_VOLATILES_IMPROVEMENT:
+
+                case START_EXTREME_WEATHER_IMPROVEMENT:
+                case START_MILD_CLIMATE_IMPROVEMENT:
+                case START_HABITABLE_IMPROVEMENT:
+                case START_ATMOSPHERE_DENSITY_IMPROVEMENT:
+                case START_TOXIC_ATMOSPHERE_IMPROVEMENT:
+                case START_IRRADIATED_IMPROVEMENT:
                 case START_REMOVE_ATMOSPHERE:
-                    initiateProject.execute("boggledTriggerRemoveAtmosphereConditionImprovement", dialog, null, null);
+
+                case START_CANCEL_PROJECT:
+                    String ruleId = startProjectOptionIdToStartProjectDialogue.get(optionData);
+                    initiateProject.execute(ruleId, dialog, null, null);
                     this.optionSelected(null, boggledTerraformingDialogPlugin.OptionId.INIT);
                     break;
             }
