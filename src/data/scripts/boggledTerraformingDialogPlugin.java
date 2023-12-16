@@ -148,40 +148,82 @@ public class boggledTerraformingDialogPlugin implements InteractionDialogPlugin
         return ret;
     }
 
-    private HashMap<OptionId, ArrayList<Pair<String, OptionId>>> initialiseTerraformingOptions() {
-        HashMap<OptionId, ArrayList<Pair<String, OptionId>>> ret = new HashMap<>();
+    static class TextPanelPara {
+        String format;
+        Color hlColor;
+        String highlights;
 
-        ArrayList<Pair<String, OptionId>> typeChangeOptions = new ArrayList<>(asList(
-                new Pair<>("Consider terraforming $planet into an arid world", OptionId.ARID_TYPE_CHANGE),
-                new Pair<>("Consider terraforming $planet into a frozen world", OptionId.FROZEN_TYPE_CHANGE),
-                new Pair<>("Consider terraforming $planet into a jungle world", OptionId.JUNGLE_TYPE_CHANGE),
-                new Pair<>("Consider terraforming $planet into a Terran world", OptionId.TERRAN_TYPE_CHANGE),
-                new Pair<>("consider terraforming $planet into a tundra world", OptionId.TUNDRA_TYPE_CHANGE),
-                new Pair<>("Consider terraforming $planet into a water world", OptionId.WATER_TYPE_CHANGE)
-        ));
+        TextPanelPara(String format, Color hlColor, String highlights) {
+            this.format = format;
+            this.hlColor = hlColor;
+            this.highlights = highlights;
+        }
+    }
 
-        ArrayList<Pair<String, OptionId>> resourceImprovementOptions = new ArrayList<>(asList(
-                new Pair<>("Consider improving the farmland on $planet", OptionId.FARMLAND_IMPROVEMENT),
-                new Pair<>("Consider improving the organics on $planet", OptionId.ORGANICS_IMPROVEMENT),
-                new Pair<>("Consider improving the volatiles on $planet", OptionId.VOLATILES_IMPROVEMENT)
-        ));
+    static class DialogOption {
+        String text;
+        OptionId optionId;
 
-        ArrayList<Pair<String, OptionId>> conditionImprovementOptions = new ArrayList<>(asList(
-                new Pair<>("Consider making the weather patterns on $planet less extreme", OptionId.EXTREME_WEATHER_IMPROVEMENT),
-                new Pair<>("Consider making the weather patterns on $planet mild", OptionId.MILD_CLIMATE_IMPROVEMENT),
-                new Pair<>("Consider making the atmosphere on $planet human-breathable", OptionId.HABITABLE_IMPROVEMENT),
-                new Pair<>("Consider normalizing atmospheric density on $planet", OptionId.ATMOSPHERE_DENSITY_IMPROVEMENT),
-                new Pair<>("Consider remediating atmospheric toxicity on $planet", OptionId.TOXIC_ATMOSPHERE_IMPROVEMENT)
-        ));
+        DialogOption(String text, OptionId optionId) {
+            this.text = text;
+            this.optionId = optionId;
+        }
+    }
+
+    private HashMap<OptionId, Pair<ArrayList<TextPanelPara>, ArrayList<DialogOption>>> initialiseTerraformingOptions() {
+        HashMap<OptionId, Pair<ArrayList<TextPanelPara>, ArrayList<DialogOption>>> ret = new HashMap<>();
+
+        Pair<ArrayList<TextPanelPara>, ArrayList<DialogOption>> cancelOptions = new Pair<>(
+                new ArrayList<>(asList(
+                        new TextPanelPara("%s", Misc.getNegativeHighlightColor(), "Canceling the current project will result in all progress being lost!")
+                )),
+                new ArrayList<>(asList(
+                        new DialogOption("Cancel project", OptionId.START_CANCEL_PROJECT)
+                ))
+        );
+
+        Pair<ArrayList<TextPanelPara>, ArrayList<DialogOption>> typeChangeOptions = new Pair<>(
+                new ArrayList<TextPanelPara>(),
+                new ArrayList<>(asList(
+                        new DialogOption("Consider terraforming $planet into an arid world", OptionId.ARID_TYPE_CHANGE),
+                        new DialogOption("Consider terraforming $planet into a frozen world", OptionId.FROZEN_TYPE_CHANGE),
+                        new DialogOption("Consider terraforming $planet into a jungle world", OptionId.JUNGLE_TYPE_CHANGE),
+                        new DialogOption("Consider terraforming $planet into a Terran world", OptionId.TERRAN_TYPE_CHANGE),
+                        new DialogOption("Consider terraforming $planet into a tundra world", OptionId.TUNDRA_TYPE_CHANGE),
+                        new DialogOption("Consider terraforming $planet into a water world", OptionId.WATER_TYPE_CHANGE)
+                ))
+        );
+
+        Pair<ArrayList<TextPanelPara>, ArrayList<DialogOption>> resourceImprovementOptions = new Pair<>(
+                new ArrayList<TextPanelPara>(),
+                new ArrayList<>(asList(
+                        new DialogOption("Consider improving the farmland on $planet", OptionId.FARMLAND_IMPROVEMENT),
+                        new DialogOption("Consider improving the organics on $planet", OptionId.ORGANICS_IMPROVEMENT),
+                        new DialogOption("Consider improving the volatiles on $planet", OptionId.VOLATILES_IMPROVEMENT)
+                ))
+        );
+
+        Pair<ArrayList<TextPanelPara>, ArrayList<DialogOption>> conditionImprovementOptions = new Pair<>(
+                new ArrayList<TextPanelPara>(),
+                new ArrayList<>(asList(
+                        new DialogOption("Consider making the weather patterns on $planet less extreme", OptionId.EXTREME_WEATHER_IMPROVEMENT),
+                        new DialogOption("Consider making the weather patterns on $planet mild", OptionId.MILD_CLIMATE_IMPROVEMENT),
+                        new DialogOption("Consider making the atmosphere on $planet human-breathable", OptionId.HABITABLE_IMPROVEMENT),
+                        new DialogOption("Consider normalizing atmospheric density on $planet", OptionId.ATMOSPHERE_DENSITY_IMPROVEMENT),
+                        new DialogOption("Consider remediating atmospheric toxicity on $planet", OptionId.TOXIC_ATMOSPHERE_IMPROVEMENT)
+                ))
+        );
+
         if (boggledTools.getBooleanSetting("boggledTerraformingRemoveRadiationProjectEnabled"))
         {
-            conditionImprovementOptions.add(new Pair<>("Consider remediating radiation on $planet", OptionId.IRRADIATED_IMPROVEMENT));
+            conditionImprovementOptions.two.add(new DialogOption("Consider remediating radiation on $planet", OptionId.IRRADIATED_IMPROVEMENT));
         }
         if (boggledTools.getBooleanSetting("boggledTerraformingRemoveAtmosphereProjectEnabled"))
         {
-            conditionImprovementOptions.add(new Pair<>("Consider removing the atmosphere on $planet", OptionId.REMOVE_ATMOSPHERE_IMPROVEMENT));
+            conditionImprovementOptions.two.add(new DialogOption("Consider removing the atmosphere on $planet", OptionId.REMOVE_ATMOSPHERE_IMPROVEMENT));
         }
 
+        ret.put(OptionId.CANCEL_PROJECT, cancelOptions);
         ret.put(OptionId.TYPE_CHANGE_OPTIONS, typeChangeOptions);
         ret.put(OptionId.RESOURCE_IMPROVEMENTS, resourceImprovementOptions);
         ret.put(OptionId.CONDITION_IMPROVEMENTS, conditionImprovementOptions);
@@ -193,7 +235,7 @@ public class boggledTerraformingDialogPlugin implements InteractionDialogPlugin
     private final HashMap<OptionId, String> startProjectOptionIdToStartProjectDialogue = initialiseOptionIdToStartProjectDialogue();
     private final HashMap<OptionId, Pair<OptionId, OptionId>> projectOptionIdToStartProjectOptionId = initialiseProjectOptionIdToStartProjectOptionId();
 
-    private final HashMap<OptionId, ArrayList<Pair<String, OptionId>>> terraformingOptions = initialiseTerraformingOptions();
+    private final HashMap<OptionId, Pair<ArrayList<TextPanelPara>, ArrayList<DialogOption>>> terraformingOptions = initialiseTerraformingOptions();
 
     @Override
     public void init(InteractionDialogAPI dialog)
@@ -325,7 +367,7 @@ public class boggledTerraformingDialogPlugin implements InteractionDialogPlugin
         {
             // Print planet name to dialog window
             Color playerColor = Misc.getBasePlayerColor();
-            dialog.getTextPanel().addPara("Colony: %s", playerColor, new String[]{market.getName()});
+            dialog.getTextPanel().addPara("Colony: %s", playerColor, market.getName());
 
             // Print status of current project to dialog window
             boggledTerraformingPrintStatus printStatusCmd = new boggledTerraformingPrintStatus();
@@ -372,7 +414,7 @@ public class boggledTerraformingDialogPlugin implements InteractionDialogPlugin
         TextPanelAPI text = this.dialog.getTextPanel();
 
         MarketAPI market = this.dialog.getInteractionTarget().getMarket();
-        text.addPara("Current resources and conditions on %s:", highlight, new String[]{market.getName()});
+        text.addPara("Current resources and conditions on %s:", highlight, market.getName());
 
         ArrayList<String> conditionsStrings = new ArrayList<>();
         for(MarketConditionAPI condition : market.getConditions())
@@ -389,7 +431,7 @@ public class boggledTerraformingDialogPlugin implements InteractionDialogPlugin
         Collections.sort(conditionsStrings);
         for(String name : conditionsStrings)
         {
-            text.addPara("      - %s", highlight, new String[]{name});
+            text.addPara("      - %s", highlight, name);
         }
     }
 
@@ -426,6 +468,38 @@ public class boggledTerraformingDialogPlugin implements InteractionDialogPlugin
         dialog.setOptionOnEscape("Exit", OptionId.DUMMY);
     }
 
+    private void coloniesSelectOption(String optionText, int numMarkets, ArrayList<MarketAPI> markets, boolean all) {
+        if(optionText.equals("Next page"))
+        {
+            pageNumber += 1;
+        }
+
+        if(numMarkets <= 8)
+        {
+            for(int i = 0; i < numMarkets; i++)
+            {
+                dialog.getOptionPanel().addOption(markets.get(i).getName(), getOptionIdForInt(i + 1, all));
+            }
+        }
+        else
+        {
+            for(int i = (pageNumber * 7); i < (pageNumber * 7) + 7 && i < numMarkets; i++)
+            {
+                dialog.getOptionPanel().addOption(markets.get(i).getName(), getOptionIdForInt((i - (pageNumber * 7)) + 1, all));
+            }
+
+            dialog.getOptionPanel().addOption("Next page", OptionId.ALL_COLONIES);
+            dialog.getOptionPanel().setEnabled(OptionId.ALL_COLONIES, false);
+            if( numMarkets - ((pageNumber + 1) * 7) > 0)
+            {
+                dialog.getOptionPanel().setEnabled(OptionId.ALL_COLONIES, true);
+            }
+        }
+
+        dialog.getOptionPanel().addOption("Back", OptionId.INIT);
+        dialog.setOptionOnEscape("Exit", OptionId.DUMMY);
+    }
+
     @Override
     public void optionSelected(String optionText, Object optionData)
     {
@@ -444,7 +518,7 @@ public class boggledTerraformingDialogPlugin implements InteractionDialogPlugin
             Collections.sort(allNonStationPlayerMarkets, new MarketComparator());
             int numMarkets = allNonStationPlayerMarkets.size();
 
-            ArrayList<MarketAPI> marketsWithNoOngoingProject = new ArrayList<MarketAPI>();
+            ArrayList<MarketAPI> marketsWithNoOngoingProject = new ArrayList<>();
             for(MarketAPI market : allNonStationPlayerMarkets)
             {
                 if(!market.hasCondition("terraforming_controller") || ((Terraforming_Controller) market.getCondition("terraforming_controller").getPlugin()).getProject().equals("None"))
@@ -486,66 +560,10 @@ public class boggledTerraformingDialogPlugin implements InteractionDialogPlugin
                     dialog.dismiss();
                     break;
                 case COLONIES_WITH_NO_ONGOING_PROJECT:
-                    if(optionText.equals("Next page"))
-                    {
-                        pageNumber += 1;
-                    }
-
-                    if(numMarketsNoOngoing <= 8)
-                    {
-                        for(int i = 0; i < numMarketsNoOngoing; i++)
-                        {
-                            dialog.getOptionPanel().addOption(marketsWithNoOngoingProject.get(i).getName(), getOptionIdForInt(i + 1, false));
-                        }
-                    }
-                    else
-                    {
-                        for(int i = (pageNumber * 7); i < (pageNumber * 7) + 7 && i < numMarketsNoOngoing; i++)
-                        {
-                            dialog.getOptionPanel().addOption(marketsWithNoOngoingProject.get(i).getName(), getOptionIdForInt((i - (pageNumber * 7)) + 1, false));
-                        }
-
-                        dialog.getOptionPanel().addOption("Next page", OptionId.COLONIES_WITH_NO_ONGOING_PROJECT);
-                        dialog.getOptionPanel().setEnabled(OptionId.COLONIES_WITH_NO_ONGOING_PROJECT, false);
-                        if( numMarketsNoOngoing - ((pageNumber + 1) * 7) > 0)
-                        {
-                            dialog.getOptionPanel().setEnabled(OptionId.COLONIES_WITH_NO_ONGOING_PROJECT, true);
-                        }
-                    }
-
-                    dialog.getOptionPanel().addOption("Back", OptionId.INIT);
-                    dialog.setOptionOnEscape("Exit", OptionId.DUMMY);
+                    coloniesSelectOption(optionText, numMarketsNoOngoing, marketsWithNoOngoingProject, false);
                     break;
                 case ALL_COLONIES:
-                    if(optionText.equals("Next page"))
-                    {
-                        pageNumber += 1;
-                    }
-
-                    if(numMarkets <= 8)
-                    {
-                        for(int i = 0; i < numMarkets; i++)
-                        {
-                            dialog.getOptionPanel().addOption(allNonStationPlayerMarkets.get(i).getName(), getOptionIdForInt(i + 1, true));
-                        }
-                    }
-                    else
-                    {
-                        for(int i = (pageNumber * 7); i < (pageNumber * 7) + 7 && i < numMarkets; i++)
-                        {
-                            dialog.getOptionPanel().addOption(allNonStationPlayerMarkets.get(i).getName(), getOptionIdForInt((i - (pageNumber * 7)) + 1, true));
-                        }
-
-                        dialog.getOptionPanel().addOption("Next page", OptionId.ALL_COLONIES);
-                        dialog.getOptionPanel().setEnabled(OptionId.ALL_COLONIES, false);
-                        if( numMarkets - ((pageNumber + 1) * 7) > 0)
-                        {
-                            dialog.getOptionPanel().setEnabled(OptionId.ALL_COLONIES, true);
-                        }
-                    }
-
-                    dialog.getOptionPanel().addOption("Back", OptionId.INIT);
-                    dialog.setOptionOnEscape("Exit", OptionId.DUMMY);
+                    coloniesSelectOption(optionText, numMarkets, allNonStationPlayerMarkets, true);
                     break;
                 case COLONY_1:
                 case COLONY_2:
@@ -572,24 +590,21 @@ public class boggledTerraformingDialogPlugin implements InteractionDialogPlugin
                     printColonyConditions();
                     showColonySelectedOptionsAndLoadVisual(optionText, optionData.equals(OptionId.VIEW_COLONY_ALL), false);
                     break;
+
                 case CANCEL_PROJECT:
-                    Color bad = Misc.getNegativeHighlightColor();
-                    TextPanelAPI text = this.dialog.getTextPanel();
-                    text.addPara("%s", bad, "Canceling the current project will result in all progress being lost!");
-
-                    dialog.getOptionPanel().addOption("Cancel project", OptionId.START_CANCEL_PROJECT);
-                    dialog.getOptionPanel().addOption("Back", OptionId.INIT);
-                    dialog.setOptionOnEscape("Exit", OptionId.DUMMY);
-                    break;
-
-
                 case TYPE_CHANGE_OPTIONS:
                 case RESOURCE_IMPROVEMENTS:
                 case CONDITION_IMPROVEMENTS:
-                    ArrayList<Pair<String, OptionId>> terraformingOption = terraformingOptions.get(optionData);
-                    for (Pair<String, OptionId> terraform : terraformingOption)
+                    Pair<ArrayList<TextPanelPara>, ArrayList<DialogOption>> terraformingInfo = terraformingOptions.get(optionData);
+
+                    TextPanelAPI textPanel = this.dialog.getTextPanel();
+                    for (TextPanelPara textPanelPara : terraformingInfo.one) {
+                        textPanel.addPara(textPanelPara.format, textPanelPara.hlColor, textPanelPara.highlights);
+                    }
+
+                    for (DialogOption dialogOption : terraformingInfo.two)
                     {
-                        dialog.getOptionPanel().addOption(terraform.one.replace("$planet", dialog.getInteractionTarget().getMarket().getName()), terraform.two);
+                        dialog.getOptionPanel().addOption(dialogOption.text.replace("$planet", dialog.getInteractionTarget().getMarket().getName()), dialogOption.optionId);
                     }
 
                     dialog.getOptionPanel().addOption("Back", OptionId.COLONY_1);
