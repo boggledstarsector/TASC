@@ -246,82 +246,29 @@ public class boggledTerraformingDialogPlugin implements InteractionDialogPlugin
 
     private OptionId getOptionIdForInt(int i, boolean all)
     {
-        if(all)
-        {
-            if(i == 1)
-            {
-                return OptionId.COLONY_1_ALL;
+        if (all) {
+            switch (i) {
+                case 1: return OptionId.COLONY_1_ALL;
+                case 2: return OptionId.COLONY_2_ALL;
+                case 3: return OptionId.COLONY_3_ALL;
+                case 4: return OptionId.COLONY_4_ALL;
+                case 5: return OptionId.COLONY_5_ALL;
+                case 6: return OptionId.COLONY_6_ALL;
+                case 7: return OptionId.COLONY_7_ALL;
+                case 8: return OptionId.COLONY_8_ALL;
+                default: return null;
             }
-            else if(i == 2)
-            {
-                return OptionId.COLONY_2_ALL;
-            }
-            else if(i == 3)
-            {
-                return OptionId.COLONY_3_ALL;
-            }
-            else if(i == 4)
-            {
-                return OptionId.COLONY_4_ALL;
-            }
-            else if(i == 5)
-            {
-                return OptionId.COLONY_5_ALL;
-            }
-            else if(i == 6)
-            {
-                return OptionId.COLONY_6_ALL;
-            }
-            else if(i == 7)
-            {
-                return OptionId.COLONY_7_ALL;
-            }
-            else if(i == 8)
-            {
-                return OptionId.COLONY_8_ALL;
-            }
-            else
-            {
-                return null;
-            }
-        }
-        else
-        {
-            if(i == 1)
-            {
-                return OptionId.COLONY_1;
-            }
-            else if(i == 2)
-            {
-                return OptionId.COLONY_2;
-            }
-            else if(i == 3)
-            {
-                return OptionId.COLONY_3;
-            }
-            else if(i == 4)
-            {
-                return OptionId.COLONY_4;
-            }
-            else if(i == 5)
-            {
-                return OptionId.COLONY_5;
-            }
-            else if(i == 6)
-            {
-                return OptionId.COLONY_6;
-            }
-            else if(i == 7)
-            {
-                return OptionId.COLONY_7;
-            }
-            else if(i == 8)
-            {
-                return OptionId.COLONY_8;
-            }
-            else
-            {
-                return null;
+        } else {
+            switch (i) {
+                case 1: return OptionId.COLONY_1;
+                case 2: return OptionId.COLONY_2;
+                case 3: return OptionId.COLONY_3;
+                case 4: return OptionId.COLONY_4;
+                case 5: return OptionId.COLONY_5;
+                case 6: return OptionId.COLONY_6;
+                case 7: return OptionId.COLONY_7;
+                case 8: return OptionId.COLONY_8;
+                default: return null;
             }
         }
     }
@@ -474,20 +421,12 @@ public class boggledTerraformingDialogPlugin implements InteractionDialogPlugin
             pageNumber += 1;
         }
 
-        if(numMarkets <= 8)
+        for(int i = (pageNumber * 7); i < (pageNumber * 7) + 7 && i < numMarkets; i++)
         {
-            for(int i = 0; i < numMarkets; i++)
-            {
-                dialog.getOptionPanel().addOption(markets.get(i).getName(), getOptionIdForInt(i + 1, all));
-            }
+            dialog.getOptionPanel().addOption(markets.get(i).getName(), getOptionIdForInt((i - (pageNumber * 7)) + 1, all));
         }
-        else
+        if (numMarkets > 8)
         {
-            for(int i = (pageNumber * 7); i < (pageNumber * 7) + 7 && i < numMarkets; i++)
-            {
-                dialog.getOptionPanel().addOption(markets.get(i).getName(), getOptionIdForInt((i - (pageNumber * 7)) + 1, all));
-            }
-
             dialog.getOptionPanel().addOption("Next page", OptionId.ALL_COLONIES);
             dialog.getOptionPanel().setEnabled(OptionId.ALL_COLONIES, false);
             if( numMarkets - ((pageNumber + 1) * 7) > 0)
