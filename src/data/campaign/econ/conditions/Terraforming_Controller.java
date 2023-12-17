@@ -223,7 +223,7 @@ public class Terraforming_Controller extends BaseHazardCondition
 
         double percentCompete = (daysCompleted / daysRequired) * 100;
         int returnValue = (int) percentCompete;
-        return Math.max(returnValue, 99);
+        return Math.min(returnValue, 99);
     }
 
     public void advance(float amount)
@@ -288,15 +288,15 @@ public class Terraforming_Controller extends BaseHazardCondition
                         currentProject = null;
                         daysCompleted = 0;
                         lastDayChecked = 0;
-                    }
 
-                    if (market.isPlayerOwned() || market.getFaction().isPlayerFaction())
-                    {
-                        MessageIntel intel = new MessageIntel("Terraforming on " + market.getName(), Misc.getBasePlayerColor());
-                        intel.addLine("    - Completed");
-                        intel.setIcon(Global.getSector().getPlayerFaction().getCrest());
-                        intel.setSound(BaseIntelPlugin.getSoundStandardUpdate());
-                        Global.getSector().getCampaignUI().addMessage(intel, CommMessageAPI.MessageClickAction.COLONY_INFO, market);
+                        if (market.isPlayerOwned() || market.getFaction().isPlayerFaction())
+                        {
+                            MessageIntel intel = new MessageIntel("Terraforming on " + market.getName(), Misc.getBasePlayerColor());
+                            intel.addLine("    - Completed");
+                            intel.setIcon(Global.getSector().getPlayerFaction().getCrest());
+                            intel.setSound(BaseIntelPlugin.getSoundStandardUpdate());
+                            Global.getSector().getCampaignUI().addMessage(intel, CommMessageAPI.MessageClickAction.COLONY_INFO, market);
+                        }
                     }
                 }
                 else
