@@ -5,6 +5,7 @@ import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import com.fs.starfarer.api.impl.campaign.rulecmd.BaseCommandPlugin;
 import com.fs.starfarer.api.util.Misc;
+import data.campaign.econ.boggledTools;
 import data.campaign.econ.conditions.Terraforming_Controller;
 import java.util.*;
 import java.util.List;
@@ -12,6 +13,34 @@ import java.lang.String;
 
 public class boggledTerraformingInitiateProject extends BaseCommandPlugin
 {
+    private static HashMap<String, String> initialiseTriggerProjectToProjectId() {
+        HashMap<String, String> ret = new HashMap<>();
+
+        ret.put(boggledTerraformingDialogPlugin.triggerCancelCurrentProject, boggledTools.noneProjectID);
+
+        ret.put(boggledTerraformingDialogPlugin.triggerAridTypeChange, boggledTools.aridTypeChangeProjectID);
+        ret.put(boggledTerraformingDialogPlugin.triggerFrozenTypeChange, boggledTools.frozenTypeChangeProjectID);
+        ret.put(boggledTerraformingDialogPlugin.triggerJungleTypeChange, boggledTools.jungleTypeChangeProjectID);
+        ret.put(boggledTerraformingDialogPlugin.triggerTerranTypeChange, boggledTools.terranTypeChangeProjectID);
+        ret.put(boggledTerraformingDialogPlugin.triggerTundraTypeChange, boggledTools.tundraTypeChangeProjectID);
+        ret.put(boggledTerraformingDialogPlugin.triggerWaterTypeChange, boggledTools.waterTypeChangeProjectID);
+
+        ret.put(boggledTerraformingDialogPlugin.triggerFarmlandResourceImprovement, boggledTools.farmlandResourceImprovementProjectID);
+        ret.put(boggledTerraformingDialogPlugin.triggerOrganicsResourceImprovement, boggledTools.organicsResourceImprovementProjectID);
+        ret.put(boggledTerraformingDialogPlugin.triggerVolatilesResourceImprovement, boggledTools.volatilesResourceImprovementProjectID);
+
+        ret.put(boggledTerraformingDialogPlugin.triggerExtremeWeatherConditionImprovement, boggledTools.extremeWeatherConditionImprovementProjectID);
+        ret.put(boggledTerraformingDialogPlugin.triggerMildClimateConditionImprovement, boggledTools.mildClimateConditionImprovementProjectID);
+        ret.put(boggledTerraformingDialogPlugin.triggerHabitableConditionImprovement, boggledTools.habitableConditionImprovementProjectID);
+        ret.put(boggledTerraformingDialogPlugin.triggerAtmosphereDensityConditionImprovement, boggledTools.atmosphereDensityConditionImprovementProjectID);
+        ret.put(boggledTerraformingDialogPlugin.triggerToxicAtmosphereConditionImprovement, boggledTools.toxicAtmosphereConditionImprovementProjectID);
+        ret.put(boggledTerraformingDialogPlugin.triggerIrradiatedConditionImprovement, boggledTools.irradiatedConditionImprovementProjectID);
+        ret.put(boggledTerraformingDialogPlugin.triggerRemoveAtmosphereConditionImprovement, boggledTools.removeAtmosphereConditionImprovementProjectID);
+
+        return ret;
+    }
+    private static final HashMap<String, String> triggerProjectToProjectId = initialiseTriggerProjectToProjectId();
+
     protected SectorEntityToken entity;
 
     public boggledTerraformingInitiateProject() {}
@@ -30,81 +59,12 @@ public class boggledTerraformingInitiateProject extends BaseCommandPlugin
     {
         if(dialog == null) return false;
 
-        this.entity = dialog.getInteractionTarget();
-        TextPanelAPI text = dialog.getTextPanel();
-
-        MarketAPI market = this.entity.getMarket();
-        PlanetAPI planet = market.getPlanetEntity();
+        MarketAPI market = dialog.getInteractionTarget().getMarket();
         Terraforming_Controller terraformingController = (Terraforming_Controller) market.getCondition("terraforming_controller").getPlugin();
-        String currentProject = terraformingController.getProject();
 
-        if(ruleId.equals("boggledTriggerCancelCurrentProject"))
-        {
-            terraformingController.setProject("None");
-        }
-        else if(ruleId.equals("boggledTriggerAridTypeChange"))
-        {
-            terraformingController.setProject("aridTypeChange");
-        }
-        else if(ruleId.equals("boggledTriggerFrozenTypeChange"))
-        {
-            terraformingController.setProject("frozenTypeChange");
-        }
-        else if(ruleId.equals("boggledTriggerJungleTypeChange"))
-        {
-            terraformingController.setProject("jungleTypeChange");
-        }
-        else if(ruleId.equals("boggledTriggerTerranTypeChange"))
-        {
-            terraformingController.setProject("terranTypeChange");
-        }
-        else if(ruleId.equals("boggledTriggerTundraTypeChange"))
-        {
-            terraformingController.setProject("tundraTypeChange");
-        }
-        else if(ruleId.equals("boggledTriggerWaterTypeChange"))
-        {
-            terraformingController.setProject("waterTypeChange");
-        }
-        else if(ruleId.equals("boggledTriggerFarmlandResourceImprovement"))
-        {
-            terraformingController.setProject("farmlandResourceImprovement");
-        }
-        else if(ruleId.equals("boggledTriggerOrganicsResourceImprovement"))
-        {
-            terraformingController.setProject("organicsResourceImprovement");
-        }
-        else if(ruleId.equals("boggledTriggerVolatilesResourceImprovement"))
-        {
-            terraformingController.setProject("volatilesResourceImprovement");
-        }
-        else if(ruleId.equals("boggledTriggerExtremeWeatherConditionImprovement"))
-        {
-            terraformingController.setProject("extremeWeatherConditionImprovement");
-        }
-        else if(ruleId.equals("boggledTriggerMildClimateConditionImprovement"))
-        {
-            terraformingController.setProject("mildClimateConditionImprovement");
-        }
-        else if(ruleId.equals("boggledTriggerHabitableConditionImprovement"))
-        {
-            terraformingController.setProject("habitableConditionImprovement");
-        }
-        else if(ruleId.equals("boggledTriggerAtmosphereDensityConditionImprovement"))
-        {
-            terraformingController.setProject("atmosphereDensityConditionImprovement");
-        }
-        else if(ruleId.equals("boggledTriggerToxicAtmosphereConditionImprovement"))
-        {
-            terraformingController.setProject("toxicAtmosphereConditionImprovement");
-        }
-        else if(ruleId.equals("boggledTriggerIrradiatedConditionImprovement"))
-        {
-            terraformingController.setProject("irradiatedConditionImprovement");
-        }
-        else if(ruleId.equals("boggledTriggerRemoveAtmosphereConditionImprovement"))
-        {
-            terraformingController.setProject("removeAtmosphereConditionImprovement");
+        String projectId = triggerProjectToProjectId.get(ruleId);
+        if (projectId != null) {
+            terraformingController.setProject(projectId);
         }
 
         return true;

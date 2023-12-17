@@ -5,20 +5,107 @@ import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.*;
 import com.fs.starfarer.api.campaign.comm.CommMessageAPI;
 import com.fs.starfarer.api.impl.campaign.econ.BaseHazardCondition;
+import com.fs.starfarer.api.impl.campaign.ids.Conditions;
 import com.fs.starfarer.api.impl.campaign.intel.BaseIntelPlugin;
 import com.fs.starfarer.api.impl.campaign.intel.MessageIntel;
 import com.fs.starfarer.api.util.Misc;
-import java.util.Iterator;
+
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
+
+import com.fs.starfarer.api.util.Pair;
 import data.campaign.econ.boggledTools;
+
+import static java.util.Arrays.asList;
 
 public class Terraforming_Controller extends BaseHazardCondition
 {
+    private static class BoggledSettings {
+        public static String terraformingTime = "boggledTerraformingTime";
+        public static String resourceImprovementTime = "boggledResourceImprovementTime";
+        public static String conditionImprovementTime = resourceImprovementTime;
+    }
+
+    private static class BoggledTags {
+        public static String terraformingControllerDaysCompleted = "boggledTerraformingControllerDaysCompleted_";
+        public static String terraformingControllerLastDayChecked = "boggledTerraformingControllerLastDayChecked_";
+        public static String terraformingControllerCurrentProject = "boggledTerraformingControllerCurrentProject_";
+    }
+
+    private static HashMap<String, Pair<ArrayList<String>, ArrayList<String>>> initialiseProjectChangeConditions() {
+        HashMap<String, Pair<ArrayList<String>, ArrayList<String>>> ret = new HashMap<>();
+        // one is conditions added, two is conditions removed
+        // Resource improvement and planet type change has to be handled separately for now, so they're not in here
+        ArrayList<String> extremeWeatherConditionsAdded = new ArrayList<>();
+        ArrayList<String> extremeWeatherConditionsRemoved = new ArrayList<>(asList(
+                Conditions.EXTREME_WEATHER
+        ));
+
+        ArrayList<String> mildClimateConditionsAdded = new ArrayList<>(asList(
+                Conditions.MILD_CLIMATE
+        ));
+        ArrayList<String> mildClimateConditionsRemoved = new ArrayList<>();
+
+        ArrayList<String> habitableConditionsAdded = new ArrayList<>(asList(
+                Conditions.HABITABLE
+        ));
+        ArrayList<String> habitableConditionsRemoved = new ArrayList<>();
+
+        ArrayList<String> atmosphereDensityConditionsAdded = new ArrayList<>(asList(
+                Conditions.NO_ATMOSPHERE,
+                Conditions.THIN_ATMOSPHERE,
+                Conditions.DENSE_ATMOSPHERE
+        ));
+        ArrayList<String> atmosphereDensityConditionsRemoved = new ArrayList<>();
+
+        ArrayList<String> toxicAtmosphereConditionsAdded = new ArrayList<>();
+        ArrayList<String> toxicAtmosphereConditionsRemoved = new ArrayList<>(asList(
+                Conditions.TOXIC_ATMOSPHERE
+        ));
+
+        ArrayList<String> irradiatedConditionsAdded = new ArrayList<>();
+        ArrayList<String> irradiatedConditionsRemoved = new ArrayList<>(asList(
+                Conditions.IRRADIATED
+        ));
+
+        ArrayList<String> removeAtmosphereConditionsAdded = new ArrayList<>(asList(
+                Conditions.NO_ATMOSPHERE
+        ));
+        ArrayList<String> removeAtmosphereConditionsRemoved = new ArrayList<>(asList(
+                Conditions.THIN_ATMOSPHERE,
+                Conditions.TOXIC_ATMOSPHERE,
+                Conditions.DENSE_ATMOSPHERE,
+                Conditions.POLLUTION,
+                Conditions.INIMICAL_BIOSPHERE,
+                Conditions.EXTREME_WEATHER,
+                Conditions.MILD_CLIMATE,
+                Conditions.HABITABLE
+        ));
+
+        ret.put(boggledTools.extremeWeatherConditionImprovementProjectID, new Pair<>(extremeWeatherConditionsAdded, extremeWeatherConditionsRemoved));
+        ret.put(boggledTools.mildClimateConditionImprovementProjectID, new Pair<>(mildClimateConditionsAdded, mildClimateConditionsRemoved));
+        ret.put(boggledTools.habitableConditionImprovementProjectID, new Pair<>(habitableConditionsAdded, habitableConditionsRemoved));
+        ret.put(boggledTools.atmosphereDensityConditionImprovementProjectID, new Pair<>(atmosphereDensityConditionsAdded, atmosphereDensityConditionsRemoved));
+        ret.put(boggledTools.toxicAtmosphereConditionImprovementProjectID, new Pair<>(toxicAtmosphereConditionsAdded, toxicAtmosphereConditionsRemoved));
+        ret.put(boggledTools.irradiatedConditionImprovementProjectID, new Pair<>(irradiatedConditionsAdded, irradiatedConditionsRemoved));
+        ret.put(boggledTools.removeAtmosphereConditionImprovementProjectID, new Pair<>(removeAtmosphereConditionsAdded, removeAtmosphereConditionsRemoved));
+
+        // Modded conditions go here, check for mod and then add to relevant section
+
+        return ret;
+    }
+
+    // one is conditions added, two is conditions removed
+    private final HashMap<String, Pair<ArrayList<String>, ArrayList<String>>> projectChangeConditions = initialiseProjectChangeConditions();
+
     public Terraforming_Controller() { }
 
-    public int daysRequiredForTypeChange = boggledTools.getIntSetting("boggledTerraformingTime");
-    public int daysRequiredForResourceImprovement = boggledTools.getIntSetting("boggledResourceImprovementTime");
-    public int daysRequiredForConditionImprovement = boggledTools.getIntSetting("boggledResourceImprovementTime");
+    public int daysRequiredForTypeChange = boggledTools.getIntSetting(BoggledSettings.terraformingTime);
+    public int daysRequiredForResourceImprovement = boggledTools.getIntSetting(BoggledSettings.resourceImprovementTime);
+    public int daysRequiredForConditionImprovement = boggledTools.getIntSetting(BoggledSettings.conditionImprovementTime);
+
+    private int daysRequiredForCurrentProject;
 
     private int daysCompleted = 0;
     private int lastDayChecked = 0;
@@ -27,42 +114,47 @@ public class Terraforming_Controller extends BaseHazardCondition
 
     private void loadVariables()
     {
-        daysRequiredForTypeChange = boggledTools.getIntSetting("boggledTerraformingTime");
-        daysRequiredForResourceImprovement = boggledTools.getIntSetting("boggledResourceImprovementTime");
-        daysRequiredForConditionImprovement = boggledTools.getIntSetting("boggledResourceImprovementTime");
+        daysRequiredForTypeChange = boggledTools.getIntSetting(BoggledSettings.terraformingTime);
+        daysRequiredForResourceImprovement = boggledTools.getIntSetting(BoggledSettings.resourceImprovementTime);
+        daysRequiredForConditionImprovement = boggledTools.getIntSetting(BoggledSettings.conditionImprovementTime);
 
-        Iterator allTags = this.market.getTags().iterator();
-        while(allTags.hasNext())
+        if (currentProject != null)
         {
-            String tag = (String)allTags.next();
-            if(tag.contains("boggledTerraformingControllerDaysCompleted_"))
-            {
-                daysCompleted = Integer.parseInt(tag.replace("boggledTerraformingControllerDaysCompleted_", ""));
+            if (currentProject.contains("TypeChange")) {
+                daysRequiredForCurrentProject = daysRequiredForTypeChange;
+            } else if (currentProject.contains("ResourceImprovement")) {
+                daysRequiredForCurrentProject = daysRequiredForResourceImprovement;
+            } else if (currentProject.contains("ConditionImprovement")) {
+                daysRequiredForCurrentProject = daysRequiredForConditionImprovement;
+            } else {
+                daysRequiredForCurrentProject = 0;
             }
-            else if(tag.contains("boggledTerraformingControllerLastDayChecked_"))
-            {
-                lastDayChecked = Integer.parseInt(tag.replace("boggledTerraformingControllerLastDayChecked_", ""));
-            }
-            else if(tag.contains("boggledTerraformingControllerCurrentProject_"))
-            {
-                currentProject = tag.replace("boggledTerraformingControllerCurrentProject_", "");
+        }
+
+        for (String tag : market.getTags()) {
+            if (tag.contains(BoggledTags.terraformingControllerDaysCompleted)) {
+                daysCompleted = Integer.parseInt(tag.replace(BoggledTags.terraformingControllerDaysCompleted, ""));
+            } else if (tag.contains(BoggledTags.terraformingControllerLastDayChecked)) {
+                lastDayChecked = Integer.parseInt(tag.replace(BoggledTags.terraformingControllerLastDayChecked, ""));
+            } else if (tag.contains(BoggledTags.terraformingControllerCurrentProject)) {
+                currentProject = tag.replace(BoggledTags.terraformingControllerCurrentProject, "");
             }
         }
     }
 
     private void storeVariables()
     {
-        boggledTools.clearBoggledTerraformingControllerTags(this.market);
+        boggledTools.clearBoggledTerraformingControllerTags(market);
 
-        this.market.addTag("boggledTerraformingControllerDaysCompleted_" + daysCompleted);
-        this.market.addTag("boggledTerraformingControllerLastDayChecked_" + lastDayChecked);
+        market.addTag(BoggledTags.terraformingControllerDaysCompleted + daysCompleted);
+        market.addTag(BoggledTags.terraformingControllerLastDayChecked + lastDayChecked);
         if(currentProject == null)
         {
-            this.market.addTag("boggledTerraformingControllerCurrentProject_" + "None");
+            market.addTag(BoggledTags.terraformingControllerCurrentProject + "None");
         }
         else
         {
-            this.market.addTag("boggledTerraformingControllerCurrentProject_" + currentProject);
+            market.addTag(BoggledTags.terraformingControllerCurrentProject + currentProject);
         }
     }
 
@@ -82,28 +174,24 @@ public class Terraforming_Controller extends BaseHazardCondition
 
     public void setProject(String project)
     {
-        this.daysCompleted = 0;
-        this.lastDayChecked = 0;
+        daysCompleted = 0;
+        lastDayChecked = 0;
         currentProject = project;
 
-        if(this.market.isPlayerOwned() || this.market.getFaction().isPlayerFaction())
+        if(market.isPlayerOwned() || market.getFaction().isPlayerFaction())
         {
-            if(project.equals("None"))
+            MessageIntel intel = new MessageIntel("Terraforming of " + market.getName(), Misc.getBasePlayerColor());
+            if(project.equals(boggledTools.noneProjectID))
             {
-                MessageIntel intel = new MessageIntel("Terraforming of " + market.getName(), Misc.getBasePlayerColor());
                 intel.addLine("    - Canceled");
-                intel.setIcon(Global.getSector().getPlayerFaction().getCrest());
-                intel.setSound(BaseIntelPlugin.getSoundStandardUpdate());
-                Global.getSector().getCampaignUI().addMessage(intel, CommMessageAPI.MessageClickAction.COLONY_INFO, market);
             }
             else
             {
-                MessageIntel intel = new MessageIntel("Terraforming of " + market.getName(), Misc.getBasePlayerColor());
                 intel.addLine("    - Started");
-                intel.setIcon(Global.getSector().getPlayerFaction().getCrest());
-                intel.setSound(BaseIntelPlugin.getSoundStandardUpdate());
-                Global.getSector().getCampaignUI().addMessage(intel, CommMessageAPI.MessageClickAction.COLONY_INFO, market);
             }
+            intel.setIcon(Global.getSector().getPlayerFaction().getCrest());
+            intel.setSound(BaseIntelPlugin.getSoundStandardUpdate());
+            Global.getSector().getCampaignUI().addMessage(intel, CommMessageAPI.MessageClickAction.COLONY_INFO, market);
         }
 
         storeVariables();
@@ -120,22 +208,7 @@ public class Terraforming_Controller extends BaseHazardCondition
     {
         loadVariables();
 
-        if(currentProject.contains("TypeChange"))
-        {
-            return daysRequiredForTypeChange;
-        }
-        else if(currentProject.contains("ResourceImprovement"))
-        {
-            return daysRequiredForResourceImprovement;
-        }
-        else if(currentProject.contains("ConditionImprovement"))
-        {
-            return daysRequiredForConditionImprovement;
-        }
-        else
-        {
-            return 0;
-        }
+        return daysRequiredForCurrentProject;
     }
 
     public int getDaysRemaining()
@@ -145,19 +218,12 @@ public class Terraforming_Controller extends BaseHazardCondition
 
     public int getPercentComplete()
     {
-        Double daysCompleted = Double.valueOf(getDaysCompleted());
-        Double daysRequired = Double.valueOf(getDaysRequired());
+        Double daysCompleted = (double) getDaysCompleted();
+        Double daysRequired = (double) getDaysRequired();
 
-        Double percentCompete = (daysCompleted / daysRequired) * 100;
-        int returnValue = percentCompete.intValue();
-        if(returnValue == 100)
-        {
-            return 99;
-        }
-        else
-        {
-            return returnValue;
-        }
+        double percentCompete = (daysCompleted / daysRequired) * 100;
+        int returnValue = (int) percentCompete;
+        return Math.max(returnValue, 99);
     }
 
     public void advance(float amount)
@@ -166,134 +232,76 @@ public class Terraforming_Controller extends BaseHazardCondition
 
         super.advance(amount);
 
-        if(!(this.market.isPlayerOwned() || this.market.getFaction().isPlayerFaction()) || boggledTools.marketIsStation(this.market))
+        if(!(market.isPlayerOwned() || market.getFaction().isPlayerFaction()) || boggledTools.marketIsStation(market))
         {
-            boggledTools.removeCondition(this.market, "terraforming_controller");
+            boggledTools.removeCondition(market, boggledTools.terraformingControllerConditionID);
             return;
         }
 
-        if(currentProject == null)
+        if(currentProject == null || currentProject.equals(boggledTools.noneProjectID))
         {
-            this.daysCompleted = 0;
-            this.lastDayChecked = 0;
+            daysCompleted = 0;
+            lastDayChecked = 0;
         }
         else
         {
             CampaignClockAPI clock = Global.getSector().getClock();
-            if(clock.getDay() != this.lastDayChecked)
+            if(clock.getDay() != lastDayChecked)
             {
-                if(boggledTools.projectRequirementsMet(this.market, currentProject))
+                if(boggledTools.projectRequirementsMet(market, currentProject))
                 {
-                    this.daysCompleted++;
-                    this.lastDayChecked = clock.getDay();
+                    daysCompleted++;
+                    lastDayChecked = clock.getDay();
 
-                    if(this.currentProject.contains("TypeChange") && this.daysCompleted >= daysRequiredForTypeChange)
-                    {
-                        boggledTools.terraformVariantToVariant(this.market, currentProject.replace("TypeChange", ""));
+                    if (daysCompleted >= daysRequiredForCurrentProject) {
+
+                        Pair<ArrayList<String>, ArrayList<String>> conditionsAddedRemoved = projectChangeConditions.get(currentProject);
+                        if (conditionsAddedRemoved != null) {
+                            for (String conditionAdded : conditionsAddedRemoved.one) {
+                                boggledTools.addCondition(market, conditionAdded);
+                            }
+                            for (String conditionRemoved : conditionsAddedRemoved.two) {
+                                boggledTools.removeCondition(market, conditionRemoved);
+                            }
+                        } else {
+                            switch (currentProject) {
+                                case boggledTools.aridTypeChangeProjectID:
+                                case boggledTools.frozenTypeChangeProjectID:
+                                case boggledTools.jungleTypeChangeProjectID:
+                                case boggledTools.terranTypeChangeProjectID:
+                                case boggledTools.tundraTypeChangeProjectID:
+                                case boggledTools.waterTypeChangeProjectID:
+                                    boggledTools.terraformVariantToVariant(market, currentProject);
+                                    break;
+                                case boggledTools.farmlandResourceImprovementProjectID:
+                                    boggledTools.incrementFarmland(market);
+                                    break;
+                                case boggledTools.organicsResourceImprovementProjectID:
+                                    boggledTools.incrementOrganics(market);
+                                    break;
+                                case boggledTools.volatilesResourceImprovementProjectID:
+                                    boggledTools.incrementVolatiles(market);
+                                    break;
+                            }
+                        }
+
                         currentProject = null;
-                        this.daysCompleted = 0;
-                        this.lastDayChecked = 0;
+                        daysCompleted = 0;
+                        lastDayChecked = 0;
                     }
-                    else if(this.currentProject.contains("ResourceImprovement") && this.daysCompleted >= daysRequiredForResourceImprovement)
-                    {
-                        if(this.currentProject.equals("farmlandResourceImprovement"))
-                        {
-                            boggledTools.incrementFarmland(this.market);
-                            currentProject = null;
-                            this.daysCompleted = 0;
-                            this.lastDayChecked = 0;
-                        }
-                        else if(this.currentProject.equals("organicsResourceImprovement"))
-                        {
-                            boggledTools.incrementOrganics(this.market);
-                            currentProject = null;
-                            this.daysCompleted = 0;
-                            this.lastDayChecked = 0;
-                        }
-                        else if(this.currentProject.equals("volatilesResourceImprovement"))
-                        {
-                            boggledTools.incrementVolatiles(this.market);
-                            currentProject = null;
-                            this.daysCompleted = 0;
-                            this.lastDayChecked = 0;
-                        }
-                    }
-                    else if(this.currentProject.contains("ConditionImprovement") && this.daysCompleted >= daysRequiredForConditionImprovement)
-                    {
-                        if(this.currentProject.equals("extremeWeatherConditionImprovement"))
-                        {
-                            boggledTools.removeCondition(this.market, "extreme_weather");
-                            boggledTools.removeCondition(this.market, "US_storm");
-                            currentProject = null;
-                            this.daysCompleted = 0;
-                            this.lastDayChecked = 0;
-                        }
-                        else if(this.currentProject.equals("mildClimateConditionImprovement"))
-                        {
-                            boggledTools.addCondition(this.market, "mild_climate");
-                            currentProject = null;
-                            this.daysCompleted = 0;
-                            this.lastDayChecked = 0;
-                        }
-                        else if(this.currentProject.equals("habitableConditionImprovement"))
-                        {
-                            boggledTools.addCondition(this.market, "habitable");
-                            currentProject = null;
-                            this.daysCompleted = 0;
-                            this.lastDayChecked = 0;
-                        }
-                        else if(this.currentProject.equals("atmosphereDensityConditionImprovement"))
-                        {
-                            boggledTools.removeCondition(this.market, "no_atmosphere");
-                            boggledTools.removeCondition(this.market, "thin_atmosphere");
-                            boggledTools.removeCondition(this.market, "dense_atmosphere");
-                            currentProject = null;
-                            this.daysCompleted = 0;
-                            this.lastDayChecked = 0;
-                        }
-                        else if(this.currentProject.equals("toxicAtmosphereConditionImprovement"))
-                        {
-                            boggledTools.removeCondition(this.market, "toxic_atmosphere");
-                            currentProject = null;
-                            this.daysCompleted = 0;
-                            this.lastDayChecked = 0;
-                        }
-                        else if(this.currentProject.equals("irradiatedConditionImprovement"))
-                        {
-                            boggledTools.removeCondition(this.market, "irradiated");
-                            currentProject = null;
-                            this.daysCompleted = 0;
-                            this.lastDayChecked = 0;
-                        }
-                        else if(this.currentProject.equals("removeAtmosphereConditionImprovement"))
-                        {
-                            boggledTools.removeCondition(this.market, "thin_atmosphere");
-                            boggledTools.removeCondition(this.market, "toxic_atmosphere");
-                            boggledTools.removeCondition(this.market, "dense_atmosphere");
-                            boggledTools.removeCondition(this.market, "pollution");
-                            boggledTools.removeCondition(this.market, "inimical_biosphere");
-                            boggledTools.removeCondition(this.market, "extreme_weather");
-                            boggledTools.removeCondition(this.market, "mild_climate");
-                            boggledTools.removeCondition(this.market, "habitable");
-                            boggledTools.addCondition(this.market, "no_atmosphere");
-                            currentProject = null;
-                            this.daysCompleted = 0;
-                            this.lastDayChecked = 0;
-                        }
 
-                        if (this.market.isPlayerOwned() || this.market.getFaction().isPlayerFaction())
-                        {
-                            MessageIntel intel = new MessageIntel("Terraforming on " + market.getName(), Misc.getBasePlayerColor());
-                            intel.addLine("    - Completed");
-                            intel.setIcon(Global.getSector().getPlayerFaction().getCrest());
-                            intel.setSound(BaseIntelPlugin.getSoundStandardUpdate());
-                            Global.getSector().getCampaignUI().addMessage(intel, CommMessageAPI.MessageClickAction.COLONY_INFO, market);
-                        }
+                    if (market.isPlayerOwned() || market.getFaction().isPlayerFaction())
+                    {
+                        MessageIntel intel = new MessageIntel("Terraforming on " + market.getName(), Misc.getBasePlayerColor());
+                        intel.addLine("    - Completed");
+                        intel.setIcon(Global.getSector().getPlayerFaction().getCrest());
+                        intel.setSound(BaseIntelPlugin.getSoundStandardUpdate());
+                        Global.getSector().getCampaignUI().addMessage(intel, CommMessageAPI.MessageClickAction.COLONY_INFO, market);
                     }
                 }
                 else
                 {
-                    this.lastDayChecked = clock.getDay();
+                    lastDayChecked = clock.getDay();
                 }
             }
         }

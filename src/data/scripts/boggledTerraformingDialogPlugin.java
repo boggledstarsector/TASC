@@ -22,54 +22,54 @@ public class boggledTerraformingDialogPlugin implements InteractionDialogPlugin
     private int pageNumber;
 
     private static final String aridTypeChangeYes = "boggledAridTypeChangeYes";
-    private static final String triggerAridTypeChange = "boggledTriggerAridTypeChange";
+    public static final String triggerAridTypeChange = "boggledTriggerAridTypeChange";
 
     private static final String frozenTypeChangeYes = "boggledFrozenTypeChangeYes";
-    private static final String triggerFrozenTypeChange = "boggledTriggerFrozenTypeChange";
+    public static final String triggerFrozenTypeChange = "boggledTriggerFrozenTypeChange";
 
     private static final String jungleTypeChangeYes = "boggledJungleTypeChangeYes";
-    private static final String triggerJungleTypeChange = "boggledTriggerJungleTypeChange";
+    public static final String triggerJungleTypeChange = "boggledTriggerJungleTypeChange";
 
     private static final String terranTypeChangeYes = "boggledTerranTypeChangeYes";
-    private static final String triggerTerranTypeChange = "boggledTriggerTerranTypeChange";
+    public static final String triggerTerranTypeChange = "boggledTriggerTerranTypeChange";
 
     private static final String tundraTypeChangeYes = "boggledTundraTypeChangeYes";
-    private static final String triggerTundraTypeChange = "boggledTriggerTundraTypeChange";
+    public static final String triggerTundraTypeChange = "boggledTriggerTundraTypeChange";
 
     private static final String waterTypeChangeYes = "boggledWaterTypeChangeYes";
-    private static final String triggerWaterTypeChange = "boggledTriggerWaterTypeChange";
+    public static final String triggerWaterTypeChange = "boggledTriggerWaterTypeChange";
 
     private static final String farmlandResourceImprovementYes = "boggledFarmlandResourceImprovementYes";
-    private static final String triggerFarmlandResourceImprovement = "boggledTriggerFarmlandResourceImprovement";
+    public static final String triggerFarmlandResourceImprovement = "boggledTriggerFarmlandResourceImprovement";
 
     private static final String organicsResourceImprovementYes = "boggledOrganicsResourceImprovementYes";
-    private static final String triggerOrganicsResourceImprovement = "boggledTriggerOrganicsResourceImprovement";
+    public static final String triggerOrganicsResourceImprovement = "boggledTriggerOrganicsResourceImprovement";
 
     private static final String volatilesResourceImprovementYes = "boggledVolatilesResourceImprovementYes";
-    private static final String triggerVolatilesResourceImprovement = "boggledTriggerVolatilesResourceImprovement";
+    public static final String triggerVolatilesResourceImprovement = "boggledTriggerVolatilesResourceImprovement";
 
     private static final String extremeWeatherConditionImprovementYes = "boggledExtremeWeatherConditionImprovementYes";
-    private static final String triggerExtremeWeatherConditionImprovement = "boggledTriggerExtremeWeatherConditionImprovement";
+    public static final String triggerExtremeWeatherConditionImprovement = "boggledTriggerExtremeWeatherConditionImprovement";
 
     private static final String mildClimateConditionImprovementYes = "boggledMildClimateConditionImprovementYes";
-    private static final String triggerMildClimateConditionImprovement = "boggledTriggerMildClimateConditionImprovement";
+    public static final String triggerMildClimateConditionImprovement = "boggledTriggerMildClimateConditionImprovement";
 
     private static final String habitableConditionImprovementYes = "boggledHabitableConditionImprovementYes";
-    private static final String triggerHabitableConditionImprovement = "boggledTriggerHabitableConditionImprovement";
+    public static final String triggerHabitableConditionImprovement = "boggledTriggerHabitableConditionImprovement";
 
     private static final String atmosphereDensityConditionImprovementYes = "boggledAtmosphereDensityConditionImprovementYes";
-    private static final String triggerAtmosphereDensityConditionImprovement = "boggledTriggerAtmosphereDensityConditionImprovement";
+    public static final String triggerAtmosphereDensityConditionImprovement = "boggledTriggerAtmosphereDensityConditionImprovement";
 
     private static final String toxicAtmosphereConditionImprovementYes = "boggledToxicAtmosphereConditionImprovementYes";
-    private static final String triggerToxicAtmosphereConditionImprovement = "boggledTriggerToxicAtmosphereConditionImprovement";
+    public static final String triggerToxicAtmosphereConditionImprovement = "boggledTriggerToxicAtmosphereConditionImprovement";
 
     private static final String irradiatedConditionImprovementYes = "boggledIrradiatedConditionImprovementYes";
-    private static final String triggerIrradiatedConditionImprovement = "boggledTriggerIrradiatedConditionImprovement";
+    public static final String triggerIrradiatedConditionImprovement = "boggledTriggerIrradiatedConditionImprovement";
 
     private static final String removeAtmosphereConditionImprovementYes = "boggledRemoveAtmosphereConditionImprovementYes";
-    private static final String triggerRemoveAtmosphereConditionImprovement = "boggledTriggerRemoveAtmosphereConditionImprovement";
+    public static final String triggerRemoveAtmosphereConditionImprovement = "boggledTriggerRemoveAtmosphereConditionImprovement";
 
-    private static final String triggerCancelCurrentProject = "boggledTriggerCancelCurrentProject";
+    public static final String triggerCancelCurrentProject = "boggledTriggerCancelCurrentProject";
 
     private HashMap<OptionId, String> initialiseOptionIdToProjectYesDialogue() {
         HashMap<OptionId, String> ret = new HashMap<>();
