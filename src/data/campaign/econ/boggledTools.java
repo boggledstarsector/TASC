@@ -1671,91 +1671,71 @@ public class boggledTools
             orbit = station.getOrbit();
         }
 
+        SectorEntityToken targetTokenToDelete = null;
         switch (stationType) {
             case "astropolis": {
-                SectorEntityToken targetTokenToDelete = null;
-
+                String smallTag = null;
+                String mediumTag = null;
+                String largeTag = null;
                 switch (stationGreekLetter) {
                     case "alpha": {
-                        for (SectorEntityToken entity : system.getAllEntities()) {
-                            if (entity.getOrbitFocus() != null && entity.getOrbitFocus().equals(station.getOrbitFocus()) && entity.getCircularOrbitAngle() == station.getCircularOrbitAngle() && (entity.hasTag(BoggledTags.lightsOverlayAstropolisAlphaSmall) || entity.hasTag(BoggledTags.lightsOverlayAstropolisAlphaMedium) || entity.hasTag(BoggledTags.lightsOverlayAstropolisAlphaLarge))) {
-                                targetTokenToDelete = entity;
-                                break;
-                            }
-                        }
+                        smallTag = BoggledTags.lightsOverlayAstropolisAlphaSmall;
+                        mediumTag = BoggledTags.lightsOverlayAstropolisAlphaMedium;
+                        largeTag = BoggledTags.lightsOverlayAstropolisAlphaLarge;
 
-                        if (targetTokenToDelete != null) {
-                            system.removeEntity(targetTokenToDelete);
-                            deleteOldLightsOverlay(station, stationType, stationGreekLetter);
-                        }
                         break;
                     }
                     case "beta": {
-                        for (SectorEntityToken entity : system.getAllEntities()) {
-                            if (entity.getOrbitFocus() != null && entity.getOrbitFocus().equals(station.getOrbitFocus()) && entity.getCircularOrbitAngle() == station.getCircularOrbitAngle() && (entity.hasTag(BoggledTags.lightsOverlayAstropolisBetaSmall) || entity.hasTag(BoggledTags.lightsOverlayAstropolisBetaMedium) || entity.hasTag(BoggledTags.lightsOverlayAstropolisBetaLarge))) {
-                                targetTokenToDelete = entity;
-                                break;
-                            }
-                        }
-
-                        if (targetTokenToDelete != null) {
-                            system.removeEntity(targetTokenToDelete);
-                            deleteOldLightsOverlay(station, stationType, stationGreekLetter);
-                        }
+                        smallTag = BoggledTags.lightsOverlayAstropolisBetaSmall;
+                        mediumTag = BoggledTags.lightsOverlayAstropolisBetaMedium;
+                        largeTag = BoggledTags.lightsOverlayAstropolisBetaLarge;
                         break;
                     }
                     case "gamma": {
-                        for (SectorEntityToken entity : system.getAllEntities()) {
-                            if (entity.getOrbitFocus() != null && entity.getOrbitFocus().equals(station.getOrbitFocus()) && entity.getCircularOrbitAngle() == station.getCircularOrbitAngle() && (entity.hasTag(BoggledTags.lightsOverlayAstropolisGammaSmall) || entity.hasTag(BoggledTags.lightsOverlayAstropolisGammaMedium) || entity.hasTag(BoggledTags.lightsOverlayAstropolisGammaLarge))) {
-                                targetTokenToDelete = entity;
-                                break;
-                            }
-                        }
-
-                        if (targetTokenToDelete != null) {
-                            system.removeEntity(targetTokenToDelete);
-                            deleteOldLightsOverlay(station, stationType, stationGreekLetter);
-                        }
+                        smallTag = BoggledTags.lightsOverlayAstropolisGammaSmall;
+                        mediumTag = BoggledTags.lightsOverlayAstropolisGammaMedium;
+                        largeTag = BoggledTags.lightsOverlayAstropolisGammaLarge;
                         break;
                     }
+                }
+
+                if (smallTag != null) {
+                    for (SectorEntityToken entity : system.getAllEntities()) {
+                        if (entity.getOrbitFocus() != null && entity.getOrbitFocus().equals(station.getOrbitFocus()) && entity.getCircularOrbitAngle() == station.getCircularOrbitAngle() && (entity.hasTag(smallTag) || entity.hasTag(mediumTag) || entity.hasTag(largeTag))) {
+                            targetTokenToDelete = entity;
+                            break;
+                        }
+                    }
+
                 }
                 break;
             }
             case "mining": {
-                SectorEntityToken targetTokenToDelete = null;
-
                 for (SectorEntityToken entity : system.getAllEntities()) {
                     if (entity.hasTag(BoggledTags.lightsOverlayMiningSmall) || entity.hasTag(BoggledTags.lightsOverlayMiningMedium)) {
                         targetTokenToDelete = entity;
                         break;
                     }
                 }
-
-                if (targetTokenToDelete != null) {
-                    system.removeEntity(targetTokenToDelete);
-                    deleteOldLightsOverlay(station, stationType, stationGreekLetter);
-                }
                 break;
             }
             case "siphon": {
-                SectorEntityToken targetTokenToDelete = null;
-
                 for (SectorEntityToken entity : system.getAllEntities()) {
                     if (entity.getOrbitFocus() != null && entity.getOrbitFocus().equals(station.getOrbitFocus()) && (entity.hasTag(BoggledTags.lightsOverlaySiphonSmall) || entity.hasTag(BoggledTags.lightsOverlaySiphonMedium))) {
                         targetTokenToDelete = entity;
                         break;
                     }
                 }
-
-                if (targetTokenToDelete != null) {
-                    system.removeEntity(targetTokenToDelete);
-                    deleteOldLightsOverlay(station, stationType, stationGreekLetter);
-                }
                 break;
             }
             default:
                 //Do nothing because the station type is unrecognized
                 return;
+        }
+
+        if (targetTokenToDelete != null) {
+            system.removeEntity(targetTokenToDelete);
+            deleteOldLightsOverlay(station, stationType, stationGreekLetter);
         }
     }
 
@@ -2444,7 +2424,7 @@ public class boggledTools
                 break;
         }
 
-        market.getPlanetEntity().changeType(newPlanetType, null);
+        market.getPlanetEntity().changeType(newPlanetType.replace("TypeChange",""), null);
 
         Pair<ArrayList<String>, ArrayList<String>> conditionsAddedRemoved = planetTypeChangeConditions.get(newPlanetType);
         if (conditionsAddedRemoved != null) {
