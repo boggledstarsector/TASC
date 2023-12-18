@@ -9,7 +9,6 @@ import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.campaign.econ.MarketConditionAPI;
 import com.fs.starfarer.api.campaign.listeners.ListenerUtil;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
-import com.fs.starfarer.api.characters.MutableCharacterStatsAPI;
 import com.fs.starfarer.api.impl.campaign.MilitaryResponseScript;
 import com.fs.starfarer.api.impl.campaign.ids.*;
 import com.fs.starfarer.api.impl.campaign.intel.BaseIntelPlugin;
@@ -132,9 +131,15 @@ public class boggledTools
         public static final String ismaraSlingIndustryID = "BOGGLED_ISMARA_SLING";
     }
 
+    public static class BoggledResources {
+        public static final String farmlandResourceID = "farmlandResource";
+        public static final String organicsResourceID = "organicsResource";
+        public static final String volatilesResourceID = "volatilesResource";
+    }
+
     private static final String starPlanetID = "star";
 
-    private static final String aridPlanetID = "arid";
+//    private static final String aridPlanetID = "arid";
     private static final String barrenPlanetID = "barren";
     private static final String desertPlanetID = "desert";
     private static final String frozenPlanetID = "frozen";
@@ -152,55 +157,66 @@ public class boggledTools
     private static final String spriteControllerConditionID = "sprite_controller";
     private static final String crampedQuartersConditionID = "cramped_quarters";
 
+    private static class BoggledProjectRequirements {
+        public static final String colonyNotJungleWorld = "Colony is not already a jungle world";
+        public static final String colonyNotAridWorld = "Colony is not already an arid world";
+        public static final String colonyNotTerranWorld = "Colony is not already a Terran world";
+        public static final String colonyNotWaterWorld = "Colony is not already a water world";
+        public static final String colonyNotTundraWorld = "Colony is not already a tundra world";
+        public static final String colonyNotFrozenWorld = "Colony is not already a frozen world";
+
+        public static final String colonyBarrenOrFrozen = "Colony is barren or frozen";
+        public static final String colonyAtmosphericDensityNormal = "Colony has normal atmospheric density";
+        public static final String colonyAtmosphereNotToxicOrIrradiated = "Colony atmosphere is not toxic or irradiated";
+        public static final String colonyNotColdOrVeryCold = "Colony is not cold or very cold";
+        public static final String colonyHotOrVeryHot = "Colony is hot or very hot";
+        public static final String colonyNotVeryColdOrVeryHot = "Colony is not very cold or very hot";
+        public static final String colonyNotHotOrVeryHot = "Colony is not hot or very hot";
+        public static final String colonyVeryCold = "Colony is very cold";
+        public static final String colonyTemperateOrHot = "Colony is temperate or hot";
+        public static final String colonyTemperateOrCold = "Colony is temperate or cold";
+
+        public static final String colonyHasStellarReflectors = "Colony has stellar reflectors";
+        public static final String colonyHasAtmosphereProcessor = "Colony has atmosphere processor";
+        public static final String colonyHasGenelab = "Colony has genelab";
+
+        public static final String colonyHasModerateWaterPresent = "Colony has a moderate amount of water present";
+        public static final String colonyHasLargeWaterPresent = "Colony has a large amount of water present";
+
+        public static final String colonyHabitable = "Colony is habitable";
+        public static final String colonyNotAlreadyHabitable = "Colony is not already habitable";
+
+        public static final String colonyExtremeWeather = "Colony has extreme weather";
+        public static final String colonyNormalClimate = "Colony has normal climate";
+
+        public static final String colonyAtmosphereToxic = "Colony atmosphere is toxic";
+        public static final String colonyIrradiated = "Colony is irradiated";
+
+        public static final String colonyHasAtmosphere = "Colony has atmosphere";
+        public static final String colonyAtmosphereSuboptimalDensity = "Colony atmosphere has suboptimal density";
+
+        public static final String worldTypeSupportsFarmlandImprovement = "World type supports further farmland improvement";
+        public static final String worldTypeSupportsOrganicsImprovement = "World type supports further organics improvement";
+        public static final String worldTypeSupportsVolatilesImprovement = "World type supports further volatiles improvement";
+
+        public static final String worldTypeAllowsTerraforming = "World type allows for terraforming";
+        public static final String worldTypeAllowsMildClimate = "World type allows for mild climate";
+        public static final String worldTypeAllowsHumanHabitability = "World type allows for human habitability";
+
+        public static final String colonyHasAtLeast100kInhabitants = "Colony has at least 100,000 inhabitants";
+
+        public static final String colonyHasOrbitalWorksWPristineNanoforge = "Colony has orbital works with a pristine nanoforge";
+
+        private static final String aotd_TypeChangeResearchRequirement = "Researched: Terraforming Templates";
+        private static final String aotd_ConditionImprovementResearchRequirement = "Researched : Atmosphere Manipulation";
+        private static final String aotd_ResourceImprovementResearchRequirement = "Researched : Advanced Terraforming Templates";
+
+        private static final String aotd_TypeChangeResearchRequirementID = "tasc_terraforming_templates";
+        private static final String aotd_ConditionImprovementResearchRequirementID = "tasc_atmosphere_manipulation";
+        private static final String aotd_ResourceImprovementResearchRequirementID = "tasc_advacned_terraforming";
+    }
     // A mistyped string compiles fine and leads to plenty of debugging. A mistyped constant gives an error.
-    private static final String colonyNotJungleWorld = "Colony is not already a jungle world";
-    private static final String colonyNotAridWorld = "Colony is not already an arid world";
-    private static final String colonyNotTerranWorld = "Colony is not already a Terran world";
-    private static final String colonyNotWaterWorld = "Colony is not already a water world";
-    private static final String colonyNotTundraWorld = "Colony is not already a tundra world";
-    private static final String colonyNotFrozenWorld = "Colony is not already a frozen world";
 
-    private static final String colonyBarrenOrFrozen = "Colony is barren or frozen";
-    private static final String colonyAtmosphericDensityNormal = "Colony has normal atmospheric density";
-    private static final String colonyAtmosphereNotToxicOrIrradiated = "Colony atmosphere is not toxic or irradiated";
-    private static final String colonyNotColdOrVeryCold = "Colony is not cold or very cold";
-    private static final String colonyHotOrVeryHot = "Colony is hot or very hot";
-    private static final String colonyNotVeryColdOrVeryHot = "Colony is not very cold or very hot";
-    private static final String colonyNotHotOrVeryHot = "Colony is not hot or very hot";
-    private static final String colonyVeryCold = "Colony is very cold";
-    private static final String colonyTemperateOrHot = "Colony is temperate or hot";
-    private static final String colonyTemperateOrCold = "Colony is temperate or cold";
-
-    private static final String colonyHasStellarReflectors = "Colony has stellar reflectors";
-    private static final String colonyHasAtmosphereProcessor = "Colony has atmosphere processor";
-    private static final String colonyHasGenelab = "Colony has genelab";
-
-    private static final String colonyHasModerateWaterPresent = "Colony has a moderate amount of water present";
-    private static final String colonyHasLargeWaterPresent = "Colony has a large amount of water present";
-
-    private static final String colonyHabitable = "Colony is habitable";
-    private static final String colonyNotAlreadyHabitable = "Colony is not already habitable";
-
-    private static final String colonyExtremeWeather = "Colony has extreme weather";
-    private static final String colonyNormalClimate = "Colony has normal climate";
-
-    private static final String colonyAtmosphereToxic = "Colony atmosphere is toxic";
-    private static final String colonyIrradiated = "Colony is irradiated";
-
-    private static final String colonyHasAtmosphere = "Colony has atmosphere";
-    private static final String colonyAtmosphereSuboptimalDensity = "Colony atmosphere has suboptimal density";
-
-    private static final String worldTypeSupportsFarmlandImprovement = "World type supports further farmland improvement";
-    private static final String worldTypeSupportsOrganicsImprovement = "World type supports further organics improvement";
-    private static final String worldTypeSupportsVolatilesImprovement = "World type supports further volatiles improvement";
-
-    private static final String worldTypeAllowsTerraforming = "World type allows for terraforming";
-    private static final String worldTypeAllowsMildClimate = "World type allows for mild climate";
-    private static final String worldTypeAllowsHumanHabitability = "World type allows for human habitability";
-
-    private static final String colonyHasAtLeast100kInhabitants = "Colony has at least 100,000 inhabitants";
-
-    private static final String colonyHasOrbitalWorksWPristineNanoforge = "Colony has orbital works with a pristine nanoforge";
 
     public static final String noneProjectID = "None";
 
@@ -221,300 +237,58 @@ public class boggledTools
     public static final String atmosphereDensityConditionImprovementProjectID = "atmosphereDensityConditionImprovement";
     public static final String toxicAtmosphereConditionImprovementProjectID = "toxicAtmosphereConditionImprovement";
     public static final String irradiatedConditionImprovementProjectID = "irradiatedConditionImprovement";
-    public static final String radiationConditionImprovementProjectID = "irradiatedConditionImprovement";
     public static final String removeAtmosphereConditionImprovementProjectID = "removeAtmosphereConditionImprovement";
 
-    private static final String aotd_TypeChangeResearchRequirement = "Researched: Terraforming Templates";
-    private static final String aotd_ConditionImprovementResearchRequirement = "Researched : Atmosphere Manipulation";
-    private static final String aotd_ResourceImprovementResearchRequirement = "Researched : Advanced Terraforming Templates";
+    public static final String jungleTypeChangeProjectTooltip =  "Jungle type change";
+    public static final String aridTypeChangeProjectTooltip = "Arid type change";
+    public static final String terranTypeChangeProjectTooltip = "Terran type change";
+    public static final String waterTypeChangeProjectTooltip = "Water type change";
+    public static final String tundraTypeChangeProjectTooltip = "Tundra type change";
+    public static final String frozenTypeChangeProjectTooltip = "Frozen type change";
 
-    private static final String aotd_TypeChangeResearchRequirementID = "tasc_terraforming_templates";
-    private static final String aotd_ConditionImprovementResearchRequirementID = "tasc_atmosphere_manipulation";
-    private static final String aotd_ResourceImprovementResearchRequirementID = "tasc_advacned_terraforming";
+    public static final String farmlandResourceImprovementProjectTooltip = "Farmland resource improvement";
+    public static final String organicsResourceImprovementProjectTooltip = "Organics resource improvement";
+    public static final String volatilesResourceImprovementProjectTooltip = "Volatiles resource improvement";
 
-    private static HashMap<String, String[]> initialiseProjectRequirements() {
-        HashMap<String, String[]> ret = new HashMap<>();
+    public static final String extremeWeatherConditionImprovementProjectTooltip = "Stabilize weather patterns";
+    public static final String mildClimateConditionImprovementProjectTooltip = "Make climate mild";
+    public static final String habitableConditionImprovementProjectTooltip = "Make atmosphere habitable";
+    public static final String atmosphereDensityConditionImprovementProjectTooltip = "Normalize atmospheric density";
+    public static final String toxicAtmosphereConditionImprovementProjectTooltip = "Reduce atmosphere toxicity";
+    public static final String irradiatedConditionImprovementProjectTooltip = "Remove atmospheric radiation";
+    public static final String removeAtmosphereConditionImprovementProjectTooltip = "Remove the atmosphere";
 
-        boolean aotd_Enabled = Global.getSettings().getModManager().isModEnabled("aotd_vok");
+    public static final String craftCorruptedNanoforgeProjectID = "craftCorruptedNanoforge";
+    public static final String craftPristineNanoforgeProjectID = "craftPristineNanoforge";
+    public static final String craftSynchrotronProjectID = "craftSynchrotron";
+    public static final String craftHypershuntTapProjectID = "craftHypershuntTap";
+    public static final String craftCryoarithmeticEngineProjectID = "craftCryoarithmeticEngine";
+    public static final String craftPlanetKillerDeviceProjectID = "craftPlanetKillerDevice";
+    public static final String craftFusionLampProjectID = "craftFusionLamp";
+    public static final String craftFullereneSpoolProjectID = "craftFullereneSpool";
+    public static final String craftPlasmaDynamoProjectID = "craftPlasmaDynamo";
+    public static final String craftAutonomousMantleBoreProjectID = "craftAutonomousMantleBore";
+    public static final String craftSoilNanitesProjectID = "craftSoilNanites";
+    public static final String craftCatalyticCoreProjectID = "craftCatalyticCore";
+    public static final String craftCombatDroneReplicatorProjectID = "craftCombatDroneReplicator";
+    public static final String craftBiofactoryEmbryoProjectID = "crafyBiofactoryEmbryo";
+    public static final String craftDealmakerHolosuiteProjectID = "craftDealmakerHolosuite";
 
-        // Requires:
-        //  - Not already arid
-        //  - Normal atmosphere
-        //  - Normal atmosphere
-        //  - Atmosphere is not toxic or irradiated
-        //  - Colony is temperate or hot
-        //  - Stellar Reflectors
-        //  - Water Level of 1
-        ArrayList<String> aridTypeChangeProjectReq = new ArrayList<>(asList(
-                worldTypeAllowsTerraforming,
-                colonyNotAridWorld,
-                colonyAtmosphericDensityNormal,
-                colonyAtmosphereNotToxicOrIrradiated,
-                colonyTemperateOrHot,
-                colonyHasStellarReflectors,
-                colonyHasModerateWaterPresent
-        ));
-
-        // Requires:
-        //  - Not already jungle
-        //  - Normal atmosphere
-        //  - Atmosphere is not toxic or irradiated
-        //  - Colony is temperate or hot
-        //  - Stellar Reflectors
-        //  - Water Level of 1
-        ArrayList<String> jungleTypeChangeProjectReq = new ArrayList<>(asList(
-                worldTypeAllowsTerraforming,
-                colonyNotJungleWorld,
-                colonyAtmosphericDensityNormal,
-                colonyAtmosphereNotToxicOrIrradiated,
-                colonyTemperateOrHot,
-                colonyHasStellarReflectors,
-                colonyHasModerateWaterPresent
-        ));
-
-        // Requires:
-        //  - Not already Terran
-        //  - Normal atmosphere
-        //  - Atmosphere is not toxic or irradiated
-        //  - Not very cold or very hot temperature
-        //  - Stellar Reflectors
-        //  - Water Level of 1
-        ArrayList<String> terranTypeChangeProjectReq = new ArrayList<>(asList(
-                worldTypeAllowsTerraforming,
-                colonyNotTerranWorld,
-                colonyAtmosphericDensityNormal,
-                colonyAtmosphereNotToxicOrIrradiated,
-                colonyNotVeryColdOrVeryHot,
-                colonyHasStellarReflectors,
-                colonyHasModerateWaterPresent
-        ));
-
-        // Requires:
-        //  - Not already water
-        //  - Normal atmosphere
-        //  - Atmosphere is not toxic or irradiated
-        //  - Not very cold or very hot temperature
-        //  - Stellar Reflectors
-        //  - Water Level of 2
-        ArrayList<String> waterTypeChangeProjectReq = new ArrayList<>(asList(
-                worldTypeAllowsTerraforming,
-                colonyNotWaterWorld,
-                colonyAtmosphericDensityNormal,
-                colonyAtmosphereNotToxicOrIrradiated,
-                colonyNotVeryColdOrVeryHot,
-                colonyHasStellarReflectors,
-                colonyHasLargeWaterPresent
-        ));
-
-        // Requires:
-        //  - Not already tundra
-        //  - Normal atmosphere
-        //  - Atmosphere is not toxic or irradiated
-        //  - Colony is temperate or cold
-        //  - Stellar Reflectors
-        //  - Water Level of 1
-        ArrayList<String> tundraTypeChangeProjectReq = new ArrayList<>(asList(
-                worldTypeAllowsTerraforming,
-                colonyNotTundraWorld,
-                colonyAtmosphericDensityNormal,
-                colonyAtmosphereNotToxicOrIrradiated,
-                colonyTemperateOrCold,
-                colonyHasStellarReflectors,
-                colonyHasModerateWaterPresent
-        ));
-
-        // Requires:
-        //  - Not already frozen
-        //  - Normal atmosphere
-        //  - Very cold
-        //  - Water Level of 2
-        ArrayList<String> frozenTypeChangeProjectReq = new ArrayList<>(asList(
-                worldTypeAllowsTerraforming,
-                colonyNotFrozenWorld,
-                colonyAtmosphericDensityNormal,
-                colonyVeryCold,
-                colonyHasLargeWaterPresent
-        ));
-
-        // Requires:
-        //  - Planet type permits improvement in farmland
-        //  - Normal atmosphere
-        //  - Atmosphere is not toxic or irradiated
-        //  - Water Level of 2
-        ArrayList<String> farmlandResourceImprovementProjectReq = new ArrayList<>(asList(
-                worldTypeSupportsFarmlandImprovement,
-                colonyAtmosphericDensityNormal,
-                colonyAtmosphereNotToxicOrIrradiated,
-                colonyHasLargeWaterPresent
-        ));
-
-        // Requires:
-        //  - Planet type permits improvement in organics
-        ArrayList<String> organicsResourceImprovementProjectReq = new ArrayList<>(asList(
-                worldTypeSupportsOrganicsImprovement
-        ));
-
-        // Requires:
-        //  - Planet type permits improvement in volatiles
-        ArrayList<String> volatilesResourceImprovementProjectReq = new ArrayList<>(asList(
-                worldTypeSupportsVolatilesImprovement
-        ));
-
-        // Requires:
-        //  - Market has Extreme Weather
-        //  - Planet can be terraformed
-        //  - Market has normal atmosphere
-        //  - Market has operational Atmosphere Processor
-        ArrayList<String> extremeWeatherConditionImprovementProjectReq = new ArrayList<>(asList(
-                worldTypeAllowsTerraforming,
-                colonyExtremeWeather,
-                colonyAtmosphericDensityNormal,
-                colonyHasAtmosphereProcessor
-        ));
-
-        // Requires:
-        //  - Market lacks Extreme Weather and Mild Climate
-        //  - Market is habitable
-        //  - World is Earth-like type
-        //  - Market has normal atmosphere
-        //  - Market has operational Atmosphere Processor
-        ArrayList<String> mildClimateConditionImprovementProjectReq = new ArrayList<>(asList(
-                colonyNormalClimate,
-                colonyHabitable,
-                worldTypeAllowsMildClimate,
-                colonyAtmosphericDensityNormal,
-                colonyHasAtmosphereProcessor
-        ));
-
-        // Requires:
-        //  - Market is not already habitable
-        //  - World is Earth-like type
-        //  - Market has normal atmosphere
-        //  - Not very cold or very hot temperature
-        //  - Atmosphere is not toxic or irradiated
-        //  - Market has operational Atmosphere Processor
-        ArrayList<String> habitableConditionImprovementProjectReq = new ArrayList<>(asList(
-                colonyNotAlreadyHabitable,
-                worldTypeAllowsHumanHabitability,
-                colonyAtmosphericDensityNormal,
-                colonyNotVeryColdOrVeryHot,
-                colonyAtmosphereNotToxicOrIrradiated,
-                colonyHasAtmosphereProcessor
-        ));
-
-        // Requires:
-        //  - Market has atmosphere problem(s)
-        //  - Planet can be terraformed
-        //  - Market has operational Atmosphere Processor
-        ArrayList<String> atmosphereDensityConditionImprovementProjectReq = new ArrayList<>(asList(
-                colonyAtmosphereSuboptimalDensity,
-                worldTypeAllowsTerraforming,
-                colonyHasAtmosphereProcessor
-        ));
-
-        // Requires:
-        //  - Market has atmosphere problem(s)
-        //  - Planet can be terraformed
-        //  - Market has operational Atmosphere Processor
-        ArrayList<String> toxicAtmosphereConditionImprovementProjectReq = new ArrayList<>(asList(
-                colonyAtmosphereToxic,
-                worldTypeAllowsTerraforming,
-                colonyHasAtmosphereProcessor
-        ));
-
-        // Requires:
-        //  - Market is irradiated
-        //  - Market has operational Genelab
-        ArrayList<String> irradiatedConditionImprovementProjectReq = new ArrayList<>(asList(
-                colonyIrradiated,
-                colonyHasGenelab
-        ));
-
-        // Requires:
-        //  - Market has an atmosphere
-        //  - Planet can be terraformed
-        //  - Market has operational Atmosphere Processor
-        ArrayList<String> removeAtmosphereConditionImprovementProjectReq = new ArrayList<>(asList(
-                colonyHasAtmosphere,
-                colonyBarrenOrFrozen,
-                colonyHasAtmosphereProcessor
-        ));
-
-        if(aotd_Enabled) {
-            // AotD requirements go here, just .add the display string here
-            // Type change -> "Researched: Terraforming Templates"
-            // Condition improvement -> "Researched : Atmosphere Manipulation"
-            // Resource improvement -> "Researched : Advanced Terraforming Templates"
-
-            aridTypeChangeProjectReq.add(aotd_TypeChangeResearchRequirement);
-            jungleTypeChangeProjectReq.add(aotd_TypeChangeResearchRequirement);
-            terranTypeChangeProjectReq.add(aotd_TypeChangeResearchRequirement);
-            waterTypeChangeProjectReq.add(aotd_TypeChangeResearchRequirement);
-            tundraTypeChangeProjectReq.add(aotd_TypeChangeResearchRequirement);
-            frozenTypeChangeProjectReq.add(aotd_TypeChangeResearchRequirement);
-
-            farmlandResourceImprovementProjectReq.add(aotd_ResourceImprovementResearchRequirement);
-            organicsResourceImprovementProjectReq.add(aotd_ResourceImprovementResearchRequirement);
-            volatilesResourceImprovementProjectReq.add(aotd_ResourceImprovementResearchRequirement);
-
-            extremeWeatherConditionImprovementProjectReq.add(aotd_ResourceImprovementResearchRequirement);
-            mildClimateConditionImprovementProjectReq.add(aotd_ResourceImprovementResearchRequirement);
-            habitableConditionImprovementProjectReq.add(aotd_ResourceImprovementResearchRequirement);
-            atmosphereDensityConditionImprovementProjectReq.add(aotd_ResourceImprovementResearchRequirement);
-            toxicAtmosphereConditionImprovementProjectReq.add(aotd_ResourceImprovementResearchRequirement);
-            irradiatedConditionImprovementProjectReq.add(aotd_ResourceImprovementResearchRequirement);
-            removeAtmosphereConditionImprovementProjectReq.add(aotd_ResourceImprovementResearchRequirement);
-        }
-
-        // Type changes
-        ret.put(aridTypeChangeProjectID, aridTypeChangeProjectReq.toArray(new String[0]));
-        ret.put(jungleTypeChangeProjectID, jungleTypeChangeProjectReq.toArray(new String[0]));
-        ret.put(terranTypeChangeProjectID, terranTypeChangeProjectReq.toArray(new String[0]));
-        ret.put(waterTypeChangeProjectID, waterTypeChangeProjectReq.toArray(new String[0]));
-        ret.put(tundraTypeChangeProjectID, tundraTypeChangeProjectReq.toArray(new String[0]));
-        ret.put(frozenTypeChangeProjectID, frozenTypeChangeProjectReq.toArray(new String[0]));
-
-        // Resource improvements
-        ret.put(farmlandResourceImprovementProjectID, farmlandResourceImprovementProjectReq.toArray(new String[0]));
-        ret.put(organicsResourceImprovementProjectID, organicsResourceImprovementProjectReq.toArray(new String[0]));
-        ret.put(volatilesResourceImprovementProjectID, volatilesResourceImprovementProjectReq.toArray(new String[0]));
-
-        // Condition improvements
-        ret.put(extremeWeatherConditionImprovementProjectID, extremeWeatherConditionImprovementProjectReq.toArray(new String[0]));
-        ret.put(mildClimateConditionImprovementProjectID, mildClimateConditionImprovementProjectReq.toArray(new String[0]));
-        ret.put(habitableConditionImprovementProjectID, habitableConditionImprovementProjectReq.toArray(new String[0]));
-        ret.put(atmosphereDensityConditionImprovementProjectID, atmosphereDensityConditionImprovementProjectReq.toArray(new String[0]));
-        ret.put(toxicAtmosphereConditionImprovementProjectID, toxicAtmosphereConditionImprovementProjectReq.toArray(new String[0]));
-        ret.put(irradiatedConditionImprovementProjectID, irradiatedConditionImprovementProjectReq.toArray(new String[0]));
-        ret.put(removeAtmosphereConditionImprovementProjectID, removeAtmosphereConditionImprovementProjectReq.toArray(new String[0]));
-
-        return ret;
-    }
-
-    private static HashMap<String, String> initialiseProjectTooltips() {
-        HashMap<String, String> ret = new HashMap<>();
-
-        ret.put(jungleTypeChangeProjectID, "Jungle type change");
-        ret.put(aridTypeChangeProjectID, "Arid type change");
-        ret.put(terranTypeChangeProjectID, "Terran type change");
-        ret.put(waterTypeChangeProjectID, "Water type change");
-        ret.put(tundraTypeChangeProjectID, "Tundra type change");
-        ret.put(frozenTypeChangeProjectID, "Frozen type change");
-
-        ret.put(farmlandResourceImprovementProjectID, "Farmland resource improvement");
-        ret.put(organicsResourceImprovementProjectID, "Organics resource improvement");
-        ret.put(volatilesResourceImprovementProjectID, "Volatiles resource improvement");
-
-        ret.put(extremeWeatherConditionImprovementProjectID, "Stabilize weather patterns");
-        ret.put(mildClimateConditionImprovementProjectID, "Make climate mild");
-        ret.put(habitableConditionImprovementProjectID, "Make atmosphere habitable");
-        ret.put(atmosphereDensityConditionImprovementProjectID, "Normalize atmospheric density");
-        ret.put(toxicAtmosphereConditionImprovementProjectID, "Reduce atmosphere toxicity");
-        ret.put(radiationConditionImprovementProjectID, "Eliminate harmful radiation");
-        ret.put(removeAtmosphereConditionImprovementProjectID, "Remove the atmosphere");
-
-        return ret;
-    }
+    public static final String craftCorruptedNanoforgeProjectTooltip = "Craft Corrupted Nanoforge";
+    public static final String craftPristineNanoforgeProjectTooltip = "Craft Pristine Nanoforge";
+    public static final String craftSynchrotronProjectTooltip = "Craft Synchrotron";
+    public static final String craftHypershuntTapProjectTooltip = "Craft Hypershunt Tap";
+    public static final String craftCryoarithmeticEngineProjectTooltip = "Craft Cryoarithmetic Engine";
+    public static final String craftPlanetKillerDeviceProjectTooltip = "Craft Planet Killer Device";
+    public static final String craftFusionLampProjectTooltip = "Craft Fusion Lamp";
+    public static final String craftFullereneSpoolProjectTooltip = "Craft Fullerene Spool";
+    public static final String craftPlasmaDynamoProjectTooltip = "Craft Plasma Dynamo";
+    public static final String craftAutonomousMantleBoreProjectTooltip = "Craft Autonomous Mantle Bore";
+    public static final String craftSoilNanitesProjectTooltip = "Craft Soil Nanites";
+    public static final String craftCatalyticCoreProjectTooltip = "Craft Catalytic Core";
+    public static final String craftCombatDroneReplicatorProjectTooltip = "Craft Combat Drone Replicator";
+    public static final String craftBiofactoryEmbryoProjectTooltip = "Craft Biofactory Embryo";
+    public static final String craftDealmakerHolosuiteProjectTooltip = "Craft Dealmaker Holosuite";
 
     private static HashMap<String, Pair<ArrayList<String>, ArrayList<String>>> initialisePlanetTypeChangeConditions() {
         // one is conditions added, two is conditions removed
@@ -674,12 +448,570 @@ public class boggledTools
         return ret;
     }
 
-    private static final HashMap<String, String[]> projectRequirements = initialiseProjectRequirements();
+    private static ArrayList<TerraformingProject> initialiseTerraformingProjects() {
+        ArrayList<TerraformingProject> ret = new ArrayList<>();
 
-    private static final HashMap<String, String> projectTooltip = initialiseProjectTooltips();
+        TerraformingRequirements colonyNotAridWorld = new TerraformingRequirements(BoggledProjectRequirements.colonyNotAridWorld, false, new ArrayList<TerraformingRequirement>(asList(
+                new PlanetTypeRequirement(true, desertPlanetID)
+        )));
+
+        TerraformingRequirements colonyNotJungleWorld = new TerraformingRequirements(BoggledProjectRequirements.colonyNotJungleWorld, false, new ArrayList<TerraformingRequirement>(asList(
+                new PlanetTypeRequirement(true,junglePlanetID)
+        )));
+
+        TerraformingRequirements colonyNotTerranWorld = new TerraformingRequirements(BoggledProjectRequirements.colonyNotTerranWorld, false, new ArrayList<TerraformingRequirement>(asList(
+                new PlanetTypeRequirement(true, terranPlanetID)
+        )));
+
+        TerraformingRequirements colonyNotWaterWorld = new TerraformingRequirements(BoggledProjectRequirements.colonyNotWaterWorld, false, new ArrayList<TerraformingRequirement>(asList(
+                new PlanetTypeRequirement(true, waterPlanetID)
+        )));
+
+        TerraformingRequirements colonyNotTundraWorld = new TerraformingRequirements(BoggledProjectRequirements.colonyNotTundraWorld, false, new ArrayList<TerraformingRequirement>(asList(
+                new PlanetTypeRequirement(true, tundraPlanetID)
+        )));
+
+        TerraformingRequirements colonyNotFrozenWorld = new TerraformingRequirements(BoggledProjectRequirements.colonyNotFrozenWorld, false, new ArrayList<TerraformingRequirement>(asList(
+                new PlanetTypeRequirement(true, frozenPlanetID)
+        )));
+
+        TerraformingRequirements colonyBarrenOrFrozen = new TerraformingRequirements(BoggledProjectRequirements.colonyBarrenOrFrozen, false, new ArrayList<TerraformingRequirement>(asList(
+                new PlanetTypeRequirement(false, barrenPlanetID),
+                new PlanetTypeRequirement(false, frozenPlanetID)
+        )));
+
+        TerraformingRequirements colonyAtmosphericDensityNormal = new TerraformingRequirements(BoggledProjectRequirements.colonyAtmosphericDensityNormal, true, new ArrayList<TerraformingRequirement>(asList(
+                new MarketHasCondition(false, Conditions.NO_ATMOSPHERE),
+                new MarketHasCondition(false, Conditions.THIN_ATMOSPHERE),
+                new MarketHasCondition(false, Conditions.DENSE_ATMOSPHERE)
+        )));
+
+        TerraformingRequirements colonyAtmosphereNotToxicOrIrradiated = new TerraformingRequirements(BoggledProjectRequirements.colonyAtmosphereNotToxicOrIrradiated, true, new ArrayList<TerraformingRequirement>(asList(
+                new MarketHasCondition(false, Conditions.TOXIC_ATMOSPHERE),
+                new MarketHasCondition(false, Conditions.IRRADIATED)
+        )));
+
+        TerraformingRequirements colonyNotColdOrVeryCold = new TerraformingRequirements(BoggledProjectRequirements.colonyNotColdOrVeryCold, true, new ArrayList<TerraformingRequirement>(asList(
+                new MarketHasCondition(false, Conditions.COLD),
+                new MarketHasCondition(false, Conditions.VERY_COLD)
+        )));
+
+        TerraformingRequirements colonyHotOrVeryHot = new TerraformingRequirements(BoggledProjectRequirements.colonyHotOrVeryHot, false, new ArrayList<TerraformingRequirement>(asList(
+                new MarketHasCondition(false, Conditions.HOT),
+                new MarketHasCondition(false, Conditions.VERY_HOT)
+        )));
+
+        TerraformingRequirements colonyNotVeryColdOrVeryHot = new TerraformingRequirements(BoggledProjectRequirements.colonyNotVeryColdOrVeryHot, true, new ArrayList<TerraformingRequirement>(asList(
+                new MarketHasCondition(false, Conditions.VERY_COLD),
+                new MarketHasCondition(false, Conditions.VERY_HOT)
+        )));
+
+        TerraformingRequirements colonyNotHotOrVeryHot = new TerraformingRequirements(BoggledProjectRequirements.colonyNotHotOrVeryHot, true, new ArrayList<TerraformingRequirement>(asList(
+                new MarketHasCondition(false, Conditions.HOT),
+                new MarketHasCondition(false, Conditions.VERY_HOT)
+        )));
+
+        TerraformingRequirements colonyVeryCold = new TerraformingRequirements(BoggledProjectRequirements.colonyVeryCold, false, new ArrayList<TerraformingRequirement>(asList(
+                new MarketHasCondition(false, Conditions.VERY_COLD)
+        )));
+
+        TerraformingRequirements colonyTemperateOrHot = new TerraformingRequirements(BoggledProjectRequirements.colonyTemperateOrHot, true, new ArrayList<TerraformingRequirement>(asList(
+                new MarketHasCondition(false, Conditions.VERY_COLD),
+                new MarketHasCondition(false, Conditions.COLD),
+                new MarketHasCondition(false, Conditions.VERY_HOT)
+        )));
+
+        TerraformingRequirements colonyTemperateOrCold = new TerraformingRequirements(BoggledProjectRequirements.colonyTemperateOrCold, true, new ArrayList<TerraformingRequirement>(asList(
+                new MarketHasCondition(false, Conditions.VERY_COLD),
+                new MarketHasCondition(false, Conditions.HOT),
+                new MarketHasCondition(false, Conditions.VERY_HOT)
+        )));
+
+        TerraformingRequirements colonyHasStellarReflectors = new TerraformingRequirements(BoggledProjectRequirements.colonyHasStellarReflectors, false, new ArrayList<TerraformingRequirement>(asList(
+                new MarketHasCondition(false, Conditions.SOLAR_ARRAY)
+        )));
+
+        TerraformingRequirements colonyHasModerateWaterPresent = new TerraformingRequirements(BoggledProjectRequirements.colonyHasModerateWaterPresent, false, new ArrayList<TerraformingRequirement>(asList(
+                new MarketHasWaterPresent(false, 1, 2)
+        )));
+
+        TerraformingRequirements colonyHasLargeWaterPresent = new TerraformingRequirements(BoggledProjectRequirements.colonyHasLargeWaterPresent, false, new ArrayList<TerraformingRequirement>(asList(
+                new MarketHasWaterPresent(false, 2, 2)
+        )));
+
+        TerraformingRequirements colonyHasAtmosphereProcessor = new TerraformingRequirements(BoggledProjectRequirements.colonyHasAtmosphereProcessor, false,new ArrayList<TerraformingRequirement>(asList(
+                new MarketHasIndustry(false, BoggledIndustries.atmosphereProcessorIndustryID)
+        )));
+
+        TerraformingRequirements colonyHasGenelab = new TerraformingRequirements(BoggledProjectRequirements.colonyHasGenelab, false, new ArrayList<TerraformingRequirement>(asList(
+                new MarketHasIndustry(false, BoggledIndustries.genelabIndustryID)
+        )));
+
+        TerraformingRequirements colonyHabitable = new TerraformingRequirements(BoggledProjectRequirements.colonyHabitable, false, new ArrayList<TerraformingRequirement>(asList(
+                new MarketHasCondition(false, Conditions.HABITABLE)
+        )));
+
+        TerraformingRequirements colonyNotAlreadyHabitable = new TerraformingRequirements(BoggledProjectRequirements.colonyNotAlreadyHabitable, false,new ArrayList<TerraformingRequirement>(asList(
+                new MarketHasCondition(true, Conditions.HABITABLE)
+        )));
+
+        TerraformingRequirements colonyExtremeWeather = new TerraformingRequirements(BoggledProjectRequirements.colonyExtremeWeather, false, new ArrayList<TerraformingRequirement>(asList(
+                new MarketHasCondition(false, Conditions.EXTREME_WEATHER)
+        )));
+
+        TerraformingRequirements colonyNormalClimate = new TerraformingRequirements(BoggledProjectRequirements.colonyNormalClimate, true, new ArrayList<TerraformingRequirement>(asList(
+                new MarketHasCondition(false, Conditions.MILD_CLIMATE),
+                new MarketHasCondition(false, Conditions.EXTREME_WEATHER)
+        )));
+
+        TerraformingRequirements colonyAtmosphereToxic = new TerraformingRequirements(BoggledProjectRequirements.colonyAtmosphereToxic, false, new ArrayList<TerraformingRequirement>(asList(
+                new MarketHasCondition(false, Conditions.TOXIC_ATMOSPHERE)
+        )));
+
+        TerraformingRequirements colonyIrradiated = new TerraformingRequirements(BoggledProjectRequirements.colonyIrradiated, false, new ArrayList<TerraformingRequirement>(asList(
+                new MarketHasCondition(false, Conditions.IRRADIATED)
+        )));
+
+        TerraformingRequirements colonyHasAtmosphere = new TerraformingRequirements(BoggledProjectRequirements.colonyHasAtmosphere, false, new ArrayList<TerraformingRequirement>(asList(
+                new MarketHasCondition(true, Conditions.NO_ATMOSPHERE)
+        )));
+
+        TerraformingRequirements colonyAtmosphereSuboptimalDensity = new TerraformingRequirements(BoggledProjectRequirements.colonyAtmosphereSuboptimalDensity, false, new ArrayList<TerraformingRequirement>(asList(
+                new MarketHasCondition(false, Conditions.NO_ATMOSPHERE),
+                new MarketHasCondition(false, Conditions.THIN_ATMOSPHERE),
+                new MarketHasCondition(false, Conditions.DENSE_ATMOSPHERE)
+        )));
+
+        TerraformingRequirements worldTypeSupportsFarmlandImprovement = new TerraformingRequirements(BoggledProjectRequirements.worldTypeSupportsFarmlandImprovement, false, new ArrayList<TerraformingRequirement>(asList(
+                new WorldTypeSupportsResourceImprovement(false, BoggledResources.farmlandResourceID)
+        )));
+
+        TerraformingRequirements worldTypeSupportsOrganicsImprovement = new TerraformingRequirements(BoggledProjectRequirements.worldTypeSupportsOrganicsImprovement, false, new ArrayList<TerraformingRequirement>(asList(
+                new WorldTypeSupportsResourceImprovement(false, BoggledResources.organicsResourceID)
+        )));
+
+        TerraformingRequirements worldTypeSupportsVolatilesImprovement = new TerraformingRequirements(BoggledProjectRequirements.worldTypeSupportsVolatilesImprovement, false, new ArrayList<TerraformingRequirement>(asList(
+                new WorldTypeSupportsResourceImprovement(false, BoggledResources.volatilesResourceID)
+        )));
+
+        TerraformingRequirements worldTypeAllowsTerraforming = new TerraformingRequirements(BoggledProjectRequirements.worldTypeAllowsTerraforming, true, new ArrayList<TerraformingRequirement>(asList(
+                new PlanetTypeRequirement(false, starPlanetID),
+                new PlanetTypeRequirement(false, gasGiantPlanetID),
+                new PlanetTypeRequirement(false, volcanicPlanetID),
+                new PlanetTypeRequirement(false, unknownPlanetID)
+        )));
+
+        TerraformingRequirements worldTypeAllowsMildClimate = new TerraformingRequirements(BoggledProjectRequirements.worldTypeAllowsMildClimate, false, new ArrayList<TerraformingRequirement>(asList(
+                new PlanetTypeRequirement(false, junglePlanetID),
+                new PlanetTypeRequirement(false, desertPlanetID),
+                new PlanetTypeRequirement(false, terranPlanetID),
+                new PlanetTypeRequirement(false, waterPlanetID),
+                new PlanetTypeRequirement(false, tundraPlanetID)
+        )));
+
+        TerraformingRequirements worldTypeAllowsHumanHabitability = new TerraformingRequirements(BoggledProjectRequirements.worldTypeAllowsHumanHabitability, false, new ArrayList<TerraformingRequirement>(asList(
+                new PlanetTypeRequirement(false, junglePlanetID),
+                new PlanetTypeRequirement(false, desertPlanetID),
+                new PlanetTypeRequirement(false, terranPlanetID),
+                new PlanetTypeRequirement(false, waterPlanetID),
+                new PlanetTypeRequirement(false, tundraPlanetID)
+        )));
+
+        // Type change projects
+        // Requires:
+        //  - Not already arid
+        //  - Normal atmosphere
+        //  - Normal atmosphere
+        //  - Atmosphere is not toxic or irradiated
+        //  - Colony is temperate or hot
+        //  - Stellar Reflectors
+        //  - Water Level of 1
+        ret.add(new TerraformingProject(aridTypeChangeProjectID, aridTypeChangeProjectTooltip, new ArrayList<>(asList(
+                worldTypeAllowsTerraforming,
+                colonyNotAridWorld,
+                colonyAtmosphericDensityNormal,
+                colonyAtmosphereNotToxicOrIrradiated,
+                colonyTemperateOrHot,
+                colonyHasStellarReflectors,
+                colonyHasModerateWaterPresent
+        )), new ArrayList<>(asList(
+                "      - Arid world starting resources:",
+                "          - Adequate farmland, common organics, no volatiles",
+                "      - Arid world maximum resources:",
+                "          - Bountiful farmland, abundant organics, trace volatiles",
+                "      - Ore deposits are unaffected"
+        ))));
+
+        // Requires:
+        //  - Not already jungle
+        //  - Normal atmosphere
+        //  - Atmosphere is not toxic or irradiated
+        //  - Colony is temperate or hot
+        //  - Stellar Reflectors
+        //  - Water Level of 1
+        ret.add(new TerraformingProject(jungleTypeChangeProjectID, jungleTypeChangeProjectTooltip, new ArrayList<>(asList(
+                worldTypeAllowsTerraforming,
+                colonyNotJungleWorld,
+                colonyAtmosphericDensityNormal,
+                colonyAtmosphereNotToxicOrIrradiated,
+                colonyTemperateOrHot,
+                colonyHasStellarReflectors,
+                colonyHasModerateWaterPresent
+        )), new ArrayList<>(asList(
+                "      - Jungle world starting resources:",
+                "          - Adequate farmland, common organics, no volatiles",
+                "      - Jungle world maximum resources:",
+                "          - Bountiful farmland, plentiful organics, no volatiles",
+                "      - Ore deposits are unaffected"
+        ))));
+
+        // Requires:
+        //  - Not already Terran
+        //  - Normal atmosphere
+        //  - Atmosphere is not toxic or irradiated
+        //  - Not very cold or very hot temperature
+        //  - Stellar Reflectors
+        //  - Water Level of 1
+        ret.add(new TerraformingProject(terranTypeChangeProjectID, terranTypeChangeProjectTooltip, new ArrayList<>(asList(
+                worldTypeAllowsTerraforming,
+                colonyNotTerranWorld,
+                colonyAtmosphericDensityNormal,
+                colonyAtmosphereNotToxicOrIrradiated,
+                colonyNotVeryColdOrVeryHot,
+                colonyHasStellarReflectors,
+                colonyHasModerateWaterPresent
+        )), new ArrayList<>(asList(
+                "      - Terran world starting resources:",
+                boggledTools.getBooleanSetting(BoggledSettings.terraformingTypeChangeAddVolatiles) ?
+                    "          - Adequate farmland, trace organics, trace volatiles" :
+                    "          - Adequate farmland, trace organics, no volatiles",
+                "      - Terran world maximum resources:",
+                "          - Bountiful farmland, plentiful organics, trace volatiles",
+                "      - Ore deposits are unaffected"
+        ))));
+
+        // Requires:
+        //  - Not already water
+        //  - Normal atmosphere
+        //  - Atmosphere is not toxic or irradiated
+        //  - Not very cold or very hot temperature
+        //  - Stellar Reflectors
+        //  - Water Level of 2
+        ret.add(new TerraformingProject(waterTypeChangeProjectID, waterTypeChangeProjectTooltip, new ArrayList<>(asList(
+                worldTypeAllowsTerraforming,
+                colonyNotWaterWorld,
+                colonyAtmosphericDensityNormal,
+                colonyAtmosphereNotToxicOrIrradiated,
+                colonyNotVeryColdOrVeryHot,
+                colonyHasStellarReflectors,
+                colonyHasLargeWaterPresent
+        )), new ArrayList<>(asList(
+                "      - Water world starting resources:",
+                "          - No organics, no volatiles",
+                "      - Water world maximum resources:",
+                "          - Plentiful organics, plentiful volatiles",
+                "      - Ore deposits are unaffected"
+        ))));
+
+        // Requires:
+        //  - Not already tundra
+        //  - Normal atmosphere
+        //  - Atmosphere is not toxic or irradiated
+        //  - Colony is temperate or cold
+        //  - Stellar Reflectors
+        //  - Water Level of 1
+        ret.add(new TerraformingProject(tundraTypeChangeProjectID, tundraTypeChangeProjectTooltip, new ArrayList<>(asList(
+                worldTypeAllowsTerraforming,
+                colonyNotTundraWorld,
+                colonyAtmosphericDensityNormal,
+                colonyAtmosphereNotToxicOrIrradiated,
+                colonyTemperateOrCold,
+                colonyHasStellarReflectors,
+                colonyHasModerateWaterPresent
+        )), new ArrayList<>(asList(
+                "      - Tundra world starting resources:",
+                boggledTools.getBooleanSetting(BoggledSettings.terraformingTypeChangeAddVolatiles) ?
+                    "          - Adequate farmland, trace organics, trace volatiles" :
+                    "          - Adequate farmland, trace organics, no volatiles",
+                "      - Tundra world maximum resources:",
+                "          - Bountiful farmland, trace organics, plentiful volatiles",
+                "      - Ore deposits are unaffected"
+        ))));
+
+        // Requires:
+        //  - Not already frozen
+        //  - Normal atmosphere
+        //  - Very cold
+        //  - Water Level of 2
+        ret.add(new TerraformingProject(frozenTypeChangeProjectID, frozenTypeChangeProjectTooltip, new ArrayList<>(asList(
+                worldTypeAllowsTerraforming,
+                colonyNotFrozenWorld,
+                colonyAtmosphericDensityNormal,
+                colonyVeryCold,
+                colonyHasLargeWaterPresent
+        )), new ArrayList<>(asList(
+                "      - Frozen world starting resources:",
+                "          - No farmland, no organics, abundant volatiles",
+                "      - Frozen world maximum resources:",
+                "          - No farmland, no organics, plentiful volatiles",
+                "      - Ore deposits are unaffected"
+        ))));
+
+        // Resource improvement projects
+        // Requires:
+        //  - Planet type permits improvement in farmland
+        //  - Normal atmosphere
+        //  - Atmosphere is not toxic or irradiated
+        //  - Water Level of 2
+        ret.add(new TerraformingProject(farmlandResourceImprovementProjectID, farmlandResourceImprovementProjectTooltip, new ArrayList<>(asList(
+                worldTypeSupportsFarmlandImprovement,
+                colonyAtmosphericDensityNormal,
+                colonyAtmosphereNotToxicOrIrradiated,
+                colonyHasLargeWaterPresent
+        )), new ArrayList<>(asList(
+                "      - Farming yield improved by one"
+        ))));
+
+        // Requires:
+        //  - Planet type permits improvement in organics
+        ret.add(new TerraformingProject(organicsResourceImprovementProjectID, organicsResourceImprovementProjectTooltip, new ArrayList<>(asList(
+                worldTypeSupportsOrganicsImprovement
+        )), new ArrayList<>(asList(
+                "      - Organics yield improved by one"
+        ))));
+
+        // Requires:
+        //  - Planet type permits improvement in volatiles
+        ret.add(new TerraformingProject(volatilesResourceImprovementProjectID, volatilesResourceImprovementProjectTooltip, new ArrayList<>(asList(
+                worldTypeSupportsVolatilesImprovement
+        )), new ArrayList<>(asList(
+                "      - Volatiles yield improved by one"
+        ))));
+
+        // Condition improvement projects
+        // Requires:
+        //  - Market has Extreme Weather
+        //  - Planet can be terraformed
+        //  - Market has normal atmosphere
+        //  - Market has operational Atmosphere Processor
+        ret.add(new TerraformingProject(extremeWeatherConditionImprovementProjectID, extremeWeatherConditionImprovementProjectTooltip, new ArrayList<>(asList(
+                worldTypeAllowsTerraforming,
+                colonyExtremeWeather,
+                colonyAtmosphericDensityNormal,
+                colonyHasAtmosphereProcessor
+        )), new ArrayList<>(asList(
+                "      - Extreme weather patterns remediated"
+        ))));
+
+        // Requires:
+        //  - Market lacks Extreme Weather and Mild Climate
+        //  - Market is habitable
+        //  - World is Earth-like type
+        //  - Market has normal atmosphere
+        //  - Market has operational Atmosphere Processor
+        ret.add(new TerraformingProject(mildClimateConditionImprovementProjectID, mildClimateConditionImprovementProjectTooltip, new ArrayList<>(asList(
+                colonyNormalClimate,
+                colonyHabitable,
+                worldTypeAllowsMildClimate,
+                colonyAtmosphericDensityNormal,
+                colonyHasAtmosphereProcessor
+        )), new ArrayList<>(asList(
+                "      - Climate made mild"
+        ))));
+
+        // Requires:
+        //  - Market is not already habitable
+        //  - World is Earth-like type
+        //  - Market has normal atmosphere
+        //  - Not very cold or very hot temperature
+        //  - Atmosphere is not toxic or irradiated
+        //  - Market has operational Atmosphere Processor
+        ret.add(new TerraformingProject(habitableConditionImprovementProjectID, habitableConditionImprovementProjectTooltip, new ArrayList<>(asList(
+                colonyNotAlreadyHabitable,
+                worldTypeAllowsHumanHabitability,
+                colonyAtmosphericDensityNormal,
+                colonyNotVeryColdOrVeryHot,
+                colonyAtmosphereNotToxicOrIrradiated,
+                colonyHasAtmosphereProcessor
+        )), new ArrayList<>(asList(
+                "      - Atmosphere made human-breathable"
+        ))));
+
+        // Requires:
+        //  - Market has atmosphere problem(s)
+        //  - Planet can be terraformed
+        //  - Market has operational Atmosphere Processor
+        ret.add(new TerraformingProject(atmosphereDensityConditionImprovementProjectID, atmosphereDensityConditionImprovementProjectTooltip, new ArrayList<>(asList(
+                colonyAtmosphereSuboptimalDensity,
+                worldTypeAllowsTerraforming,
+                colonyHasAtmosphereProcessor
+        )), new ArrayList<>(asList(
+                "      - Atmosphere with Earth-like density created"
+        ))));
+
+        // Requires:
+        //  - Market has atmosphere problem(s)
+        //  - Planet can be terraformed
+        //  - Market has operational Atmosphere Processor
+        ret.add(new TerraformingProject(toxicAtmosphereConditionImprovementProjectID, toxicAtmosphereConditionImprovementProjectTooltip, new ArrayList<>(asList(
+                colonyAtmosphereToxic,
+                worldTypeAllowsTerraforming,
+                colonyHasAtmosphereProcessor
+        )), new ArrayList<>(asList(
+                "      - Atmospheric toxicity remediated"
+        ))));
+
+        // Requires:
+        //  - Market is irradiated
+        //  - Market has operational Genelab
+        ret.add(new TerraformingProject(irradiatedConditionImprovementProjectID, irradiatedConditionImprovementProjectTooltip, new ArrayList<>(asList(
+                colonyIrradiated,
+                colonyHasGenelab
+        )), new ArrayList<>(asList(
+                "      - Atmospheric radiation remediated"
+        ))));
+
+        // Requires:
+        //  - Market has an atmosphere
+        //  - Planet can be terraformed
+        //  - Market has operational Atmosphere Processor
+        ret.add(new TerraformingProject(removeAtmosphereConditionImprovementProjectID, removeAtmosphereConditionImprovementProjectTooltip, new ArrayList<>(asList(
+                colonyHasAtmosphere,
+                colonyBarrenOrFrozen,
+                colonyHasAtmosphereProcessor
+        )), new ArrayList<>(asList(
+                "      - Atmosphere removed"
+        ))));
+
+        // Crafting projects
+        // They're in a separate collection right now
+        // Maybe once this is all sorted, they can be merged with a new requirement, like "Must be within this distance of the chosen planet"
+
+        return ret;
+    }
+
+    private static ArrayList<TerraformingProject> initialiseCraftingProjects() {
+        ArrayList<TerraformingProject> ret = new ArrayList<>();
+
+        TerraformingRequirements colonyHasAtLeast100kInhabitants = new TerraformingRequirements(BoggledProjectRequirements.colonyHasAtLeast100kInhabitants, false, new ArrayList<TerraformingRequirement>(asList(
+                new MarketIsAtLeastSize(false, 5)
+        )));
+
+        TerraformingRequirements colonyHasOrbitalWorksWPristineNanoforge = new TerraformingRequirements(BoggledProjectRequirements.colonyHasOrbitalWorksWPristineNanoforge, false, new ArrayList<TerraformingRequirement>(asList(
+                new MarketHasIndustryWithItem(false, Industries.ORBITALWORKS, Items.PRISTINE_NANOFORGE)
+        )));
+
+        int domainArtifactCostMedium = boggledTools.getIntSetting(BoggledSettings.domainTechCraftingArtifactCost);
+        int domainArtifactCostHard = domainArtifactCostMedium * 2;
+        int domainArtifactCostEasy = domainArtifactCostMedium / 2;
+        TerraformingRequirements fleetCargoContainsAtLeastDomainArtifactsEasy = new TerraformingRequirements("Fleet cargo contains at least " + domainArtifactCostEasy + " Domain-era artifacts", false, new ArrayList<TerraformingRequirement>(asList(
+                new FleetCargoContainsAtLeast(false, BoggledCommodities.domainArtifacts, domainArtifactCostEasy)
+        )));
+
+        TerraformingRequirements fleetCargoContainsAtLeastDomainArtifactsMedium = new TerraformingRequirements("Fleet cargo contains at least " + domainArtifactCostMedium + " Domain-era artifacts", false, new ArrayList<TerraformingRequirement>(asList(
+                new FleetCargoContainsAtLeast(false, BoggledCommodities.domainArtifacts, domainArtifactCostMedium)
+        )));
+
+        TerraformingRequirements fleetCargoContainsAtLeastDomainArtifactsHard = new TerraformingRequirements("Fleet cargo contains at least " + domainArtifactCostHard + " Domain-era artifacts", false, new ArrayList<TerraformingRequirement>(asList(
+                new FleetCargoContainsAtLeast(false, BoggledCommodities.domainArtifacts, domainArtifactCostHard)
+        )));
+
+        int storyPointCost = boggledTools.getIntSetting(BoggledSettings.domainTechCraftingStoryPointCost);
+        TerraformingRequirements playerHasStoryPointsAtLeast = new TerraformingRequirements(storyPointCost + " story points available to spend", false, new ArrayList<TerraformingRequirement>(asList(
+                new PlayerHasStoryPointsAtLeast(false, storyPointCost)
+        )));
+
+        ArrayList<TerraformingRequirements> craftingProjectReqsEasy = new ArrayList<>(asList(
+                colonyHasAtLeast100kInhabitants,
+                colonyHasOrbitalWorksWPristineNanoforge,
+                fleetCargoContainsAtLeastDomainArtifactsEasy
+        ));
+
+        ArrayList<TerraformingRequirements> craftingProjectReqsMedium = new ArrayList<>(asList(
+                colonyHasAtLeast100kInhabitants,
+                colonyHasOrbitalWorksWPristineNanoforge,
+                fleetCargoContainsAtLeastDomainArtifactsMedium
+        ));
+
+        ArrayList<TerraformingRequirements> craftingProjectReqsHard = new ArrayList<>(asList(
+                colonyHasAtLeast100kInhabitants,
+                colonyHasOrbitalWorksWPristineNanoforge,
+                fleetCargoContainsAtLeastDomainArtifactsHard
+        ));
+
+        if (storyPointCost > 0) {
+            craftingProjectReqsEasy.add(playerHasStoryPointsAtLeast);
+            craftingProjectReqsMedium.add(playerHasStoryPointsAtLeast);
+            craftingProjectReqsHard.add(playerHasStoryPointsAtLeast);
+        }
+
+        ArrayList<String> emptyList = new ArrayList<>();
+
+        ret.add(new TerraformingProject(craftCorruptedNanoforgeProjectID, craftCorruptedNanoforgeProjectTooltip, craftingProjectReqsEasy, emptyList));
+
+        ret.add(new TerraformingProject(craftPristineNanoforgeProjectID, craftPristineNanoforgeProjectTooltip, craftingProjectReqsHard, emptyList));
+
+        ret.add(new TerraformingProject(craftSynchrotronProjectID, craftSynchrotronProjectTooltip, craftingProjectReqsMedium, emptyList));
+
+        ret.add(new TerraformingProject(craftHypershuntTapProjectID, craftHypershuntTapProjectTooltip, craftingProjectReqsHard, emptyList));
+
+        ret.add(new TerraformingProject(craftCryoarithmeticEngineProjectID, craftCryoarithmeticEngineProjectTooltip, craftingProjectReqsMedium, emptyList));
+
+        ret.add(new TerraformingProject(craftPlanetKillerDeviceProjectID, craftPlanetKillerDeviceProjectTooltip, craftingProjectReqsHard, emptyList));
+
+        ret.add(new TerraformingProject(craftFusionLampProjectID, craftFusionLampProjectTooltip, craftingProjectReqsHard, emptyList));
+
+        ret.add(new TerraformingProject(craftFullereneSpoolProjectID, craftFullereneSpoolProjectTooltip, craftingProjectReqsMedium, emptyList));
+
+        ret.add(new TerraformingProject(craftPlasmaDynamoProjectID, craftPlasmaDynamoProjectTooltip, craftingProjectReqsMedium, emptyList));
+
+        ret.add(new TerraformingProject(craftAutonomousMantleBoreProjectID, craftAutonomousMantleBoreProjectTooltip, craftingProjectReqsMedium, emptyList));
+
+        ret.add(new TerraformingProject(craftSoilNanitesProjectID, craftSoilNanitesProjectTooltip, craftingProjectReqsMedium,emptyList ));
+
+        ret.add(new TerraformingProject(craftCatalyticCoreProjectID, craftCatalyticCoreProjectTooltip, craftingProjectReqsMedium,emptyList ));
+
+        ret.add(new TerraformingProject(craftCombatDroneReplicatorProjectID, craftCombatDroneReplicatorProjectTooltip, craftingProjectReqsEasy,emptyList ));
+
+        ret.add(new TerraformingProject(craftBiofactoryEmbryoProjectID, craftBiofactoryEmbryoProjectTooltip, craftingProjectReqsMedium, emptyList));
+
+        ret.add(new TerraformingProject(craftDealmakerHolosuiteProjectID, craftDealmakerHolosuiteProjectTooltip, craftingProjectReqsEasy, emptyList));
+
+        return ret;
+    }
+
+    private static TerraformingProject getProject(String projectId) {
+        for (TerraformingProject project : terraformingProjects) {
+            if (project.projectId.equals(projectId)) {
+                return project;
+            }
+        }
+        return null;
+    }
+
+    public static TerraformingProject getCraftingProject(String projectId) {
+        for (TerraformingProject project : craftingProjects) {
+            if (project.projectId.equals(projectId)) {
+                return project;
+            }
+        }
+        return null;
+    }
 
     // one is conditions added, two is conditions removed
-    private static final HashMap<String, Pair<ArrayList<String>, ArrayList<String>>> planetTypeChangeConditions = initialisePlanetTypeChangeConditions();
+    private static HashMap<String, Pair<ArrayList<String>, ArrayList<String>>> planetTypeChangeConditions = initialisePlanetTypeChangeConditions();
+
+    private static ArrayList<TerraformingProject> terraformingProjects = initialiseTerraformingProjects();
+    private static ArrayList<TerraformingProject> craftingProjects = initialiseCraftingProjects();
+
+    public static ArrayList<TerraformingProject> getTerraformingProjects() { return terraformingProjects; }
+
+    private static void reinitialiseInfo() {
+        planetTypeChangeConditions = initialisePlanetTypeChangeConditions();
+
+        terraformingProjects = initialiseTerraformingProjects();
+        craftingProjects = initialiseCraftingProjects();
+    }
 
     public static float getDistanceBetweenPoints(float x1, float y1, float x2, float y2) {
         return (float) Math.sqrt((y2 - y1) * (y2 - y1) + (x2 - x1) * (x2 - x1));
@@ -1494,7 +1826,7 @@ public class boggledTools
         Iterator<SectorEntityToken> allEntitiesInSystem = market.getStarSystem().getAllEntities().iterator();
         while(allEntitiesInSystem.hasNext())
         {
-            SectorEntityToken entity = (SectorEntityToken)allEntitiesInSystem.next();
+            SectorEntityToken entity = allEntitiesInSystem.next();
             if (entity.getOrbitFocus() != null && entity.getOrbitFocus().equals(market.getPrimaryEntity()) && (entity.getId().contains(Entities.STELLAR_MIRROR) || entity.getId().contains(Entities.STELLAR_SHADE) || entity.hasTag(Entities.STELLAR_MIRROR) || entity.hasTag(Entities.STELLAR_SHADE)))
             {
                 allEntitiesInSystem.remove();
@@ -1524,7 +1856,7 @@ public class boggledTools
             orbit = station.getOrbit();
         }
         CampaignClockAPI clock = Global.getSector().getClock();
-        SectorEntityToken newStation = null;
+        SectorEntityToken newStation;
         SectorEntityToken newStationLights = null;
 
         String size = "null";
@@ -2426,6 +2758,7 @@ public class boggledTools
 
         market.getPlanetEntity().changeType(newPlanetType.replace("TypeChange",""), null);
 
+        reinitialiseInfo();
         Pair<ArrayList<String>, ArrayList<String>> conditionsAddedRemoved = planetTypeChangeConditions.get(newPlanetType);
         if (conditionsAddedRemoved != null) {
             for (String addedCondition : conditionsAddedRemoved.one) {
@@ -2450,304 +2783,272 @@ public class boggledTools
         }
     }
 
-    public static String[] getProjectRequirementsStrings(String project)
-    {
-        String[] requirements = projectRequirements.get(project);
-        if (requirements != null)
-        {
-            return requirements;
-        }
-
-        else if(project.contains("Crafting"))
-        {
-            // For now, all the special items require the same conditions to craft.
-
-            // Requires:
-            //  - Market is size 5 or larger
-            //  - Market has operational Orbital Works with Pristine Nanoforge installed
-
-            int artifactCost = boggledTools.getIntSetting(BoggledSettings.domainTechCraftingArtifactCost);
-            int storyPointCost = boggledTools.getIntSetting(BoggledSettings.domainTechCraftingStoryPointCost);
-            int adjustedArtifactCost = 0;
-            if(project.contains("Hard"))
-            {
-                adjustedArtifactCost = artifactCost * 2;
+    public static String[] getProjectRequirementsStrings(TerraformingProject terraformingProject) {
+        ArrayList<String> ret = new ArrayList<>();
+        if (terraformingProject != null) {
+            for (TerraformingRequirements requirement : terraformingProject.projectRequirements) {
+                ret.add(requirement.tooltip);
             }
-            else if(project.contains("Medium"))
-            {
-                adjustedArtifactCost = artifactCost;
-            }
-            else if(project.contains("Easy"))
-            {
-                adjustedArtifactCost = artifactCost / 2;
-            }
-
-            ArrayList<String> reqs = new ArrayList<>(asList(
-                colonyHasAtLeast100kInhabitants,
-                colonyHasOrbitalWorksWPristineNanoforge,
-                "Fleet cargo contains at least " + adjustedArtifactCost + " Domain-era artifacts"
-            ));
-
-            if(storyPointCost > 0)
-            {
-                reqs.add(storyPointCost + " story points available to spend");
-            }
-            return reqs.toArray(new String[0]);
+            return ret.toArray(new String[0]);
         }
 
         // Should never be reached unless bad project string passed in.
         return new String[]{"You should never see this text. If you do, tell Boggled about it on the forums."};
     }
 
-    public static boolean requirementMet(MarketAPI market, String requirement)
+    public static String[] getProjectRequirementsStrings(String project)
     {
-        PlanetAPI planet = null;
-        String planetType = "";
-        int planetWaterLevel = 0;
+        reinitialiseInfo();
+        TerraformingProject terraformingProject = getProject(project);
+        return getProjectRequirementsStrings(terraformingProject);
+    }
 
-        if(!boggledTools.marketIsStation(market))
-        {
-            planet = market.getPlanetEntity();
-            planetType = getPlanetType(planet);
-            planetWaterLevel = getPlanetWaterLevel(market);
+    public static class TerraformingProject {
+        private final String projectId;
+        private final String projectTooltip;
+        // Multiple separate TerraformingRequirements form an AND'd collection
+        // Each individual requirement inside the TerraformingRequirements forms an OR'd collection
+        // ie If any of the conditions inside a TerraformingRequirements is fulfilled, that entire requirement is filled
+        // But then all the TerraformingRequirements must be fulfilled for the project to be allowed
+        private final ArrayList<TerraformingRequirements> projectRequirements;
+
+        private final ArrayList<String> projectResults;
+
+        public String getProjectId() { return projectId; }
+        public String getProjectTooltip() { return projectTooltip; }
+
+        public ArrayList<TerraformingRequirements> getProjectRequirements() { return projectRequirements; }
+
+        TerraformingProject(String projectId, String projectTooltip, ArrayList<TerraformingRequirements> projectRequirements, ArrayList<String> projectResults) {
+            this.projectId = projectId;
+            this.projectTooltip = projectTooltip;
+            this.projectRequirements = projectRequirements;
+            this.projectResults = projectResults;
+        }
+    }
+
+    public static class TerraformingRequirements {
+        private final String tooltip;
+        private final boolean invertAll;
+        private final ArrayList<TerraformingRequirement> terraformingRequirements;
+
+        TerraformingRequirements(String tooltip, boolean invertAll, ArrayList<TerraformingRequirement> terraformingRequirements) {
+            this.tooltip = tooltip;
+            this.invertAll = invertAll;
+            this.terraformingRequirements = terraformingRequirements;
         }
 
-        if(requirement.equals("You should never see this text. If you do, tell Boggled about it on the forums."))
-        {
-            return false;
+        public final String getTooltip() { return tooltip; }
+
+        public final boolean checkRequirement(MarketAPI market) {
+            boolean requirementsMet = false;
+            for (TerraformingRequirement terraformingRequirement : terraformingRequirements) {
+                requirementsMet = requirementsMet || terraformingRequirement.checkRequirement(market);
+            }
+            if (invertAll) {
+                requirementsMet = !requirementsMet;
+            }
+            return requirementsMet;
         }
-        else if(requirement.equals(colonyNotAridWorld))
-        {
-            return !planetType.equals(desertPlanetID);
+    }
+
+    public abstract static class TerraformingRequirement {
+        private final boolean invert;
+
+        TerraformingRequirement(boolean invert) {
+            this.invert = invert;
         }
-        else if(requirement.equals(colonyNotJungleWorld))
-        {
-            return !planetType.equals(junglePlanetID);
+
+        protected abstract boolean checkRequirementImpl(MarketAPI market);
+
+        public final boolean checkRequirement(MarketAPI market) {
+            boolean ret = checkRequirementImpl(market);
+            if (invert) {
+                ret = !ret;
+            }
+            return ret;
         }
-        else if(requirement.equals(colonyNotTerranWorld))
-        {
-            return !planetType.equals(terranPlanetID);
+    }
+
+    public static class PlanetTypeRequirement extends TerraformingRequirement {
+        String planetTypeID;
+        PlanetTypeRequirement(Boolean invert, String planetTypeID) {
+            super(invert);
+            this.planetTypeID = planetTypeID;
         }
-        else if(requirement.equals(colonyNotWaterWorld))
-        {
-            return !planetType.equals(waterPlanetID);
+
+        @Override
+        protected final boolean checkRequirementImpl(MarketAPI market) {
+            return planetTypeID.equals(getPlanetType(market.getPlanetEntity()));
         }
-        else if(requirement.equals(colonyNotTundraWorld))
-        {
-            return !planetType.equals(tundraPlanetID);
+    }
+
+    public static class MarketHasCondition extends TerraformingRequirement {
+        String conditionID;
+        MarketHasCondition(boolean invert, String conditionID) {
+            super(invert);
+            this.conditionID = conditionID;
         }
-        else if(requirement.equals(colonyNotFrozenWorld))
-        {
-            return !planetType.equals(frozenPlanetID);
+
+        @Override
+        protected final boolean checkRequirementImpl(MarketAPI market) {
+            return market.hasCondition(conditionID);
         }
-        else if(requirement.equals(colonyBarrenOrFrozen))
-        {
-            return planetType.equals(barrenPlanetID) || planetType.equals(frozenPlanetID);
+    }
+
+    public static class MarketHasIndustry extends TerraformingRequirement {
+        String industryID;
+        MarketHasIndustry(boolean invert, String industryID) {
+            super(invert);
+            this.industryID = industryID;
         }
-        else if(requirement.equals(colonyAtmosphericDensityNormal))
-        {
-            if(market.hasCondition(Conditions.NO_ATMOSPHERE) || market.hasCondition(Conditions.THIN_ATMOSPHERE) || market.hasCondition(Conditions.DENSE_ATMOSPHERE))
-            {
+
+        @Override
+        protected boolean checkRequirementImpl(MarketAPI market) {
+            Industry industry = market.getIndustry(industryID);
+            return industry != null && industry.isFunctional() && market.hasIndustry(industryID);
+        }
+    }
+
+    public static class MarketHasIndustryWithItem extends TerraformingRequirement {
+        String industryID;
+        String itemID;
+        MarketHasIndustryWithItem(boolean invert, String industryID, String itemID) {
+            super(invert);
+            this.industryID = industryID;
+            this.itemID = itemID;
+        }
+
+        @Override
+        protected boolean checkRequirementImpl(MarketAPI market) {
+            Industry industry = market.getIndustry(industryID);
+            if (industry == null) {
                 return false;
             }
-            else
-            {
-                return true;
-            }
-        }
-        else if(requirement.equals(colonyAtmosphereNotToxicOrIrradiated))
-        {
-            if(market.hasCondition(Conditions.TOXIC_ATMOSPHERE) || market.hasCondition(Conditions.IRRADIATED))
-            {
-                return false;
-            }
-            else
-            {
-                return true;
-            }
-        }
-        else if(requirement.equals(colonyNotColdOrVeryCold))
-        {
-            return !market.hasCondition(Conditions.COLD) && !market.hasCondition(Conditions.VERY_COLD);
-        }
-        else if(requirement.equals(colonyHotOrVeryHot))
-        {
-            return market.hasCondition(Conditions.HOT) || market.hasCondition(Conditions.VERY_HOT);
-        }
-        else if(requirement.equals(colonyNotVeryColdOrVeryHot))
-        {
-            return !market.hasCondition(Conditions.VERY_HOT) && !market.hasCondition(Conditions.VERY_COLD);
-        }
-        else if(requirement.equals(colonyNotHotOrVeryHot))
-        {
-            return !market.hasCondition(Conditions.HOT) && !market.hasCondition(Conditions.VERY_HOT);
-        }
-        else if(requirement.equals(colonyVeryCold))
-        {
-            return market.hasCondition(Conditions.VERY_COLD);
-        }
-        else if(requirement.equals(colonyTemperateOrHot))
-        {
-            return !market.hasCondition(Conditions.VERY_COLD) && !market.hasCondition(Conditions.COLD) && !market.hasCondition(Conditions.VERY_HOT);
-        }
-        else if(requirement.equals(colonyTemperateOrCold))
-        {
-            return !market.hasCondition(Conditions.VERY_COLD) && !market.hasCondition(Conditions.HOT) && !market.hasCondition(Conditions.VERY_HOT);
-        }
-        else if(requirement.equals(colonyHasStellarReflectors))
-        {
-            return marketHasStellarReflectorArray(market);
-        }
-        else if(requirement.equals(colonyHasModerateWaterPresent))
-        {
-            return planetWaterLevel == 1 || planetWaterLevel == 2;
-        }
-        else if(requirement.equals(colonyHasLargeWaterPresent))
-        {
-            return planetWaterLevel == 2;
-        }
-        else if(requirement.equals(colonyHasAtmosphereProcessor))
-        {
-            return marketHasAtmosphereProcessor(market);
-        }
-        else if(requirement.equals(colonyHasGenelab))
-        {
-            return marketHasGenelab(market);
-        }
-        else if(requirement.equals(colonyHabitable))
-        {
-            return market.hasCondition(Conditions.HABITABLE);
-        }
-        else if(requirement.equals(colonyNotAlreadyHabitable))
-        {
-            return !market.hasCondition(Conditions.HABITABLE);
-        }
-        else if(requirement.equals(colonyExtremeWeather))
-        {
-            return market.hasCondition(Conditions.EXTREME_WEATHER) || market.hasCondition("US_storm");
-        }
-        else if(requirement.equals(colonyNormalClimate))
-        {
-            return !market.hasCondition(Conditions.MILD_CLIMATE) && !market.hasCondition(Conditions.EXTREME_WEATHER) && !market.hasCondition("US_storm");
-        }
-        else if(requirement.equals(colonyAtmosphereToxic))
-        {
-            return market.hasCondition(Conditions.TOXIC_ATMOSPHERE);
-        }
-        else if(requirement.equals(colonyIrradiated))
-        {
-            return market.hasCondition(Conditions.IRRADIATED);
-        }
-        else if(requirement.equals(colonyHasAtmosphere))
-        {
-            return !market.hasCondition(Conditions.NO_ATMOSPHERE);
-        }
-        else if(requirement.equals(colonyAtmosphereSuboptimalDensity))
-        {
-            return market.hasCondition(Conditions.NO_ATMOSPHERE) || market.hasCondition(Conditions.THIN_ATMOSPHERE) || market.hasCondition(Conditions.DENSE_ATMOSPHERE);
-        }
-        else if(requirement.equals(worldTypeSupportsFarmlandImprovement))
-        {
-            return getMaxFarmlandForMarket(market) > getCurrentFarmlandForMarket(market);
-        }
-        else if(requirement.equals(worldTypeSupportsOrganicsImprovement))
-        {
-            return getMaxOrganicsForMarket(market) > getCurrentOrganicsForMarket(market);
-        }
-        else if(requirement.equals(worldTypeSupportsVolatilesImprovement))
-        {
-            return getMaxVolatilesForMarket(market) > getCurrentVolatilesForMarket(market);
-        }
-        else if(requirement.equals(worldTypeAllowsTerraforming))
-        {
-            if(planetType.equals(starPlanetID) || planetType.equals(gasGiantPlanetID) || planetType.equals(volcanicPlanetID) || planetType.equals(unknownPlanetID))
-            {
-                return false;
-            }
-            else
-            {
-                return true;
-            }
-        }
-        else if(requirement.equals(worldTypeAllowsMildClimate) || requirement.equals(worldTypeAllowsHumanHabitability))
-        {
-            if(planetType.equals(junglePlanetID) || planetType.equals(desertPlanetID) || planetType.equals(terranPlanetID) || planetType.equals(waterPlanetID) || planetType.equals(tundraPlanetID))
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        }
-        else if(requirement.equals(colonyHasAtLeast100kInhabitants))
-        {
-            if(market.getSize() >= 5)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        }
-        else if(requirement.equals(colonyHasOrbitalWorksWPristineNanoforge))
-        {
-            if(market.hasIndustry(Industries.ORBITALWORKS) && market.getIndustry(Industries.ORBITALWORKS).isFunctional())
-            {
-                for (SpecialItemData data : market.getIndustry(Industries.ORBITALWORKS).getVisibleInstalledItems()) {
-                    if (data.getId().equals(Items.PRISTINE_NANOFORGE) || data.getId().equals("uaf_dimen_nanoforge")) {
-                        return true;
-                    }
+            for (SpecialItemData specialItemData : industry.getVisibleInstalledItems()) {
+                if (itemID.equals(specialItemData.getId())) {
+                    return true;
                 }
             }
             return false;
         }
-        else if(requirement.contains("Fleet cargo contains at least"))
-        {
-            String[] words = requirement.split(" ");
-            CargoAPI playerCargo = Global.getSector().getPlayerFleet().getCargo();
-            return playerCargo.getCommodityQuantity(BoggledCommodities.domainArtifacts) >= Integer.parseInt(words[5]);
+    }
+
+    public static class MarketHasWaterPresent extends TerraformingRequirement {
+        int minWaterLevel;
+        int maxWaterLevel;
+        MarketHasWaterPresent(boolean invert, int minWaterLevel, int maxWaterLevel) {
+            super(invert);
+            this.minWaterLevel = minWaterLevel;
+            this.maxWaterLevel = maxWaterLevel;
         }
-        else if(requirement.equals(boggledTools.getIntSetting(BoggledSettings.domainTechCraftingStoryPointCost) + " story points available to spend"))
-        {
-            MutableCharacterStatsAPI charStats = Global.getSector().getPlayerStats();
-            return charStats.getStoryPoints() >= boggledTools.getIntSetting(BoggledSettings.domainTechCraftingStoryPointCost);
+
+        @Override
+        protected boolean checkRequirementImpl(MarketAPI market) {
+            int waterLevel = getPlanetWaterLevel(market);
+            return minWaterLevel <= waterLevel && waterLevel <= maxWaterLevel;
         }
-//        else if(requirement.equals(aotd_TypeChangeResearchRequirement))
-//        {
-//            return AoTDMainResearchManager.getInstance().isResearchedForPlayer(aotd_TypeChangeResearchRequirementID);
-//        }
-//        else if (requirement.equals(aotd_ResourceImprovementResearchRequirement))
-//        {
-//            return AoTDMainResearchManager.getInstance().isResearchedForPlayer(aotd_ResourceImprovementResearchRequirementID);
-//        }
-//        else if (requirement.equals(aotd_ConditionImprovementResearchRequirement))
-//        {
-//            return AoTDMainResearchManager.getInstance().isResearchedForPlayer(aotd_ConditionImprovementResearchRequirementID);
-//        }
+    }
+
+
+    public static class MarketIsAtLeastSize extends TerraformingRequirement {
+        int colonySize;
+        MarketIsAtLeastSize(boolean invert, int colonySize) {
+            super(invert);
+            this.colonySize = colonySize;
+        }
+
+        @Override
+        protected boolean checkRequirementImpl(MarketAPI market) {
+            return market.getSize() >= colonySize;
+        }
+    }
+
+    public static class FleetCargoContainsAtLeast extends TerraformingRequirement {
+        String cargoID;
+        int quantity;
+        FleetCargoContainsAtLeast(boolean invert, String cargoID, int quantity) {
+            super(invert);
+            this.cargoID = cargoID;
+            this.quantity = quantity;
+        }
+
+        @Override
+        protected boolean checkRequirementImpl(MarketAPI market) {
+            return Global.getSector().getPlayerFleet().getCargo().getCommodityQuantity(cargoID) >= quantity;
+        }
+    }
+
+    public static class PlayerHasStoryPointsAtLeast extends TerraformingRequirement {
+        int quantity;
+        PlayerHasStoryPointsAtLeast(boolean invert, int quantity) {
+            super(invert);
+            this.quantity = quantity;
+        }
+
+        @Override
+        protected boolean checkRequirementImpl(MarketAPI market) {
+            return Global.getSector().getPlayerStats().getStoryPoints() >= quantity;
+        }
+    }
+
+    public static class WorldTypeSupportsResourceImprovement extends TerraformingRequirement {
+        String resourceID;
+        WorldTypeSupportsResourceImprovement(boolean invert, String resourceID) {
+            super(invert);
+            this.resourceID = resourceID;
+        }
+
+        @Override
+        protected boolean checkRequirementImpl(MarketAPI market) {
+            switch (resourceID) {
+                case BoggledResources.farmlandResourceID:
+                    return getMaxFarmlandForMarket(market) > getCurrentFarmlandForMarket(market);
+                case BoggledResources.organicsResourceID:
+                    return getMaxOrganicsForMarket(market) > getCurrentOrganicsForMarket(market);
+                case BoggledResources.volatilesResourceID:
+                    return getMaxVolatilesForMarket(market) > getCurrentVolatilesForMarket(market);
+            }
+            return false;
+        }
+    }
+
+    public static boolean requirementMet2(MarketAPI market, TerraformingRequirements terraformingRequirements) {
+        return terraformingRequirements.checkRequirement(market);
+    }
+
+    public static boolean requirementMet(MarketAPI market, String requirement)
+    {
+        if(requirement.equals("You should never see this text. If you do, tell Boggled about it on the forums."))
+        {
+            return false;
+        }
         else
         {
             return false;
         }
     }
 
-    public static boolean projectRequirementsMet(MarketAPI market, String project)
-    {
-        String[] requirements = getProjectRequirementsStrings(project);
-        for (String requirement : requirements) {
-            if (!requirementMet(market, requirement)) {
-                return false;
+    public static boolean projectRequirementsMet(MarketAPI market, TerraformingProject terraformingProject) {
+        if (terraformingProject != null) {
+            for (TerraformingRequirements requirements : terraformingProject.projectRequirements) {
+                if (!requirements.checkRequirement(market)) {
+                    return false;
+                }
             }
         }
-
-        // Returns true if no requirement was failed above
         return true;
+    }
+
+    public static boolean projectRequirementsMet(MarketAPI market, String project)
+    {
+        TerraformingProject terraformingProject = getProject(project);
+        return projectRequirementsMet(market, terraformingProject);
     }
 
     public static Boolean printProjectRequirementsReportIfStalled(MarketAPI market, String project, TextPanelAPI text)
     {
-        Color highlight = Misc.getHighlightColor();
+//        Color highlight = Misc.getHighlightColor();
         Color good = Misc.getPositiveHighlightColor();
         Color bad = Misc.getNegativeHighlightColor();
 
@@ -2755,18 +3056,21 @@ public class boggledTools
         {
             // Print requirements, and if not met, print terraforming is stalled
             text.addPara("Project Requirements:");
-            String[] requirements = boggledTools.getProjectRequirementsStrings(project);
-            boolean foundUnmetRequirement = false;
-            for (String requirement : requirements) {
-                if (boggledTools.requirementMet(market, requirement)) {
-                    text.addPara("      - %s", good, requirement);
-                } else {
-                    text.addPara("      - %s", bad, requirement);
-                    foundUnmetRequirement = true;
-                }
-            }
 
-            return foundUnmetRequirement;
+            TerraformingProject terraformingProject = getProject(project);
+            if (terraformingProject != null) {
+                boolean foundUnmetRequirement = false;
+                for (TerraformingRequirements terraformingRequirements : terraformingProject.projectRequirements) {
+                    if (terraformingRequirements.checkRequirement(market)) {
+                        text.addPara("      - %s", good, terraformingRequirements.tooltip);
+                    }
+                    else {
+                        text.addPara("      - %s", bad, terraformingRequirements.tooltip);
+                        foundUnmetRequirement = true;
+                    }
+                }
+                return foundUnmetRequirement;
+            }
         }
 
         return false;
@@ -2775,122 +3079,14 @@ public class boggledTools
     public static void printProjectResults(MarketAPI market, String project, TextPanelAPI text)
     {
         Color highlight = Misc.getHighlightColor();
-        Color good = Misc.getPositiveHighlightColor();
-        Color bad = Misc.getNegativeHighlightColor();
 
-        switch (project) {
-            case aridTypeChangeProjectID:
-                text.addPara("Prospective project: %s", highlight, boggledTools.getTooltipProjectName(project));
+        TerraformingProject terraformingProject = getProject(project);
 
-                text.addPara("      - Arid world starting resources:");
-                text.addPara("          - Adequate farmland, common organics, no volatiles");
-                text.addPara("      - Arid world maximum resources:");
-                text.addPara("          - Bountiful farmland, abundant organics, trace volatiles");
-                text.addPara("      - Ore deposits are unaffected");
-                break;
-            case frozenTypeChangeProjectID:
-                text.addPara("Prospective project: %s", highlight, boggledTools.getTooltipProjectName(project));
-
-                text.addPara("      - Frozen world starting resources:");
-                text.addPara("          - No farmland, no organics, abundant volatiles");
-                text.addPara("      - Frozen world maximum resources:");
-                text.addPara("          - No farmland, no organics, plentiful volatiles");
-                text.addPara("      - Ore deposits are unaffected");
-                break;
-            case jungleTypeChangeProjectID:
-                text.addPara("Prospective project: %s", highlight, boggledTools.getTooltipProjectName(project));
-
-                text.addPara("      - Jungle world starting resources:");
-                text.addPara("          - Adequate farmland, common organics, no volatiles");
-                text.addPara("      - Jungle world maximum resources:");
-                text.addPara("          - Bountiful farmland, plentiful organics, no volatiles");
-                text.addPara("      - Ore deposits are unaffected");
-                break;
-            case terranTypeChangeProjectID:
-                text.addPara("Prospective project: %s", highlight, boggledTools.getTooltipProjectName(project));
-
-                text.addPara("      - Terran world starting resources:");
-                if (boggledTools.getBooleanSetting("boggledTerraformingTypeChangeAddVolatiles")) {
-                    text.addPara("          - Adequate farmland, trace organics, trace volatiles");
-                } else {
-                    text.addPara("          - Adequate farmland, trace organics, no volatiles");
-                }
-                text.addPara("      - Terran world maximum resources:");
-                text.addPara("          - Bountiful farmland, plentiful organics, trace volatiles");
-                text.addPara("      - Ore deposits are unaffected");
-                break;
-            case waterTypeChangeProjectID:
-                text.addPara("Prospective project: %s", highlight, boggledTools.getTooltipProjectName(project));
-
-                text.addPara("      - Water world starting resources:");
-                text.addPara("          - No organics, no volatiles");
-                text.addPara("      - Water world maximum resources:");
-                text.addPara("          - Plentiful organics, plentiful volatiles");
-                text.addPara("      - Ore deposits are unaffected");
-                break;
-            case tundraTypeChangeProjectID:
-                text.addPara("Prospective project: %s", highlight, boggledTools.getTooltipProjectName(project));
-
-                text.addPara("      - Tundra world starting resources:");
-                if (boggledTools.getBooleanSetting("boggledTerraformingTypeChangeAddVolatiles")) {
-                    text.addPara("          - Adequate farmland, trace organics, trace volatiles");
-                } else {
-                    text.addPara("          - Adequate farmland, trace organics, no volatiles");
-                }
-                text.addPara("      - Tundra world maximum resources:");
-                text.addPara("          - Bountiful farmland, trace organics, plentiful volatiles");
-                text.addPara("      - Ore deposits are unaffected");
-                break;
-            case farmlandResourceImprovementProjectID:
-                text.addPara("Prospective project: %s", highlight, boggledTools.getTooltipProjectName(project));
-
-                text.addPara("      - Farming yield improved by one");
-                break;
-            case organicsResourceImprovementProjectID:
-                text.addPara("Prospective project: %s", highlight, boggledTools.getTooltipProjectName(project));
-
-                text.addPara("      - Organics yield improved by one");
-                break;
-            case volatilesResourceImprovementProjectID:
-                text.addPara("Prospective project: %s", highlight, boggledTools.getTooltipProjectName(project));
-
-                text.addPara("      - Volatiles yield improved by one");
-                break;
-            case extremeWeatherConditionImprovementProjectID:
-                text.addPara("Prospective project: %s", highlight, boggledTools.getTooltipProjectName(project));
-
-                text.addPara("      - Extreme weather patterns remediated");
-                break;
-            case mildClimateConditionImprovementProjectID:
-                text.addPara("Prospective project: %s", highlight, boggledTools.getTooltipProjectName(project));
-
-                text.addPara("      - Climate made mild");
-                break;
-            case habitableConditionImprovementProjectID:
-                text.addPara("Prospective project: %s", highlight, boggledTools.getTooltipProjectName(project));
-
-                text.addPara("      - Atmosphere made human-breathable");
-                break;
-            case atmosphereDensityConditionImprovementProjectID:
-                text.addPara("Prospective project: %s", highlight, boggledTools.getTooltipProjectName(project));
-
-                text.addPara("      - Atmosphere with Earth-like density created");
-                break;
-            case toxicAtmosphereConditionImprovementProjectID:
-                text.addPara("Prospective project: %s", highlight, boggledTools.getTooltipProjectName(project));
-
-                text.addPara("      - Atmospheric toxicity remediated");
-                break;
-            case irradiatedConditionImprovementProjectID:
-                text.addPara("Prospective project: %s", highlight, boggledTools.getTooltipProjectName(project));
-
-                text.addPara("      - Radiation remediated");
-                break;
-            case removeAtmosphereConditionImprovementProjectID:
-                text.addPara("Prospective project: %s", highlight, boggledTools.getTooltipProjectName(project));
-
-                text.addPara("      - Atmosphere removed");
-                break;
+        if (terraformingProject != null) {
+            text.addPara("Prospective project: %s", highlight, terraformingProject.getProjectTooltip());
+            for (String result : terraformingProject.projectResults) {
+                text.addPara(result);
+            }
         }
     }
 
@@ -2915,34 +3111,6 @@ public class boggledTools
         }
     }
 
-    public static boolean marketHasAtmosphereProcessor(MarketAPI market)
-    {
-        return market.getIndustry(BoggledIndustries.atmosphereProcessorIndustryID) != null && market.getIndustry(BoggledIndustries.atmosphereProcessorIndustryID).isFunctional() && market.hasIndustry(BoggledIndustries.atmosphereProcessorIndustryID);
-    }
-
-    public static boolean marketHasGenelab(MarketAPI market)
-    {
-        return market.getIndustry(BoggledIndustries.genelabIndustryID) != null && market.getIndustry(BoggledIndustries.genelabIndustryID).isFunctional() && market.hasIndustry(BoggledIndustries.genelabIndustryID);
-    }
-
-    public static boolean marketHasStellarReflectorArray(MarketAPI market)
-    {
-        // Should be functionally the same as the commented out code, unless the player disables autoplacement in the settings file.
-        // Then this will allow terraforming on planets that start with reflectors without having to build the structure on them.
-        return market.hasCondition(Conditions.SOLAR_ARRAY);
-
-        /*
-        if(market.getIndustry("BOGGLED_STELLAR_REFLECTOR_ARRAY") != null && market.getIndustry("BOGGLED_STELLAR_REFLECTOR_ARRAY").isFunctional() && market.hasIndustry("BOGGLED_STELLAR_REFLECTOR_ARRAY"))
-        {
-            return true;
-        }
-        else
-        {
-            return false;
-        }
-        */
-    }
-
     public static boolean marketHasAtmoProblem(MarketAPI market)
     {
         if(!market.hasCondition(Conditions.MILD_CLIMATE) || !market.hasCondition(Conditions.HABITABLE) || market.hasCondition(Conditions.NO_ATMOSPHERE) || market.hasCondition(Conditions.THIN_ATMOSPHERE) || market.hasCondition(Conditions.DENSE_ATMOSPHERE) || market.hasCondition(Conditions.TOXIC_ATMOSPHERE) || market.hasCondition("US_storm"))
@@ -2955,53 +3123,6 @@ public class boggledTools
         }
     }
 
-    public static boolean marketIsIrradiated(MarketAPI market)
-    {
-        return market.hasCondition(Conditions.IRRADIATED);
-    }
-
-    public static int waterLevelNeededForProject(String project)
-    {
-        if(project.contains("TypeChange"))
-        {
-            if(project.equals(waterTypeChangeProjectID) || project.equals(frozenTypeChangeProjectID))
-            {
-                return 2;
-            }
-            else
-            {
-                // Need to adjust this if I end up allowing terraforming to US planet types or barren/toxic.
-                // Assumes project type is Terran, jungle, arid or tundra.
-                return 1;
-            }
-        }
-        else if(project.contains("ResourceImprovement"))
-        {
-            if(project.equals(farmlandResourceImprovementProjectID))
-            {
-                return 2;
-            }
-            else if(project.equals(organicsResourceImprovementProjectID) || project.equals(volatilesResourceImprovementProjectID))
-            {
-                return 0;
-            }
-        }
-        else if(project.contains("ConditionImprovement"))
-        {
-            if(project.equals(habitableConditionImprovementProjectID) || project.equals(mildClimateConditionImprovementProjectID) || project.equals(extremeWeatherConditionImprovementProjectID) || project.equals("noAtmosphereConditionImprovement") || project.equals("thinAtmosphereConditionImprovement"))
-            {
-                return 1;
-            }
-            else if(project.equals("denseAtmosphereConditionImprovement") || project.equals(toxicAtmosphereConditionImprovementProjectID))
-            {
-                return 0;
-            }
-        }
-
-        // Should never be reached unless there's a bug present and/or bad value passed in
-        return 0;
-    }
-
     public static String getTooltipProjectName(String currentProject)
     {
         if(currentProject == null || currentProject.equals(noneProjectID))
@@ -3009,13 +3130,11 @@ public class boggledTools
             return noneProjectID;
         }
 
-        String tooltip = projectTooltip.get(currentProject);
-        if(tooltip != null)
-        {
-            return tooltip;
-        }
-        else
-        {
+        reinitialiseInfo();
+        TerraformingProject terraformingProject = getProject(currentProject);
+        if (terraformingProject != null) {
+            return terraformingProject.projectTooltip;
+        } else {
             return "ERROR";
         }
     }
