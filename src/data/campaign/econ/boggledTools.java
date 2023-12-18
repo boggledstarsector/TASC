@@ -39,6 +39,7 @@ import lunalib.lunaSettings.LunaSettings;
 import java.awt.*;
 import java.util.*;
 import java.util.List;
+import java.util.ArrayList;
 
 public class boggledTools
 {
@@ -2064,6 +2065,59 @@ public class boggledTools
         }
     }
 
+    public static String[] getAllTerraformingProjects()
+    {
+        return new String[]{
+                "aridTypeChange",
+                "jungleTypeChange",
+                "terranTypeChange",
+                "waterTypeChange",
+                "tundraTypeChange",
+                "frozenTypeChange",
+                "farmlandResourceImprovement",
+                "organicsResourceImprovement",
+                "volatilesResourceImprovement",
+                "extremeWeatherConditionImprovement",
+                "mildClimateConditionImprovement",
+                "habitableConditionImprovement",
+                "atmosphereDensityConditionImprovement",
+                "toxicAtmosphereConditionImprovement",
+                "irradiatedConditionImprovement",
+                "removeAtmosphereConditionImprovement"
+        };
+    }
+
+    public static String[] getEnabledTerraformingProjects()
+    {
+        ArrayList<String> enabledProjects = new ArrayList<>();
+        String[] allProjects = getAllTerraformingProjects();
+        for(String project : allProjects)
+        {
+            // Only add radiation project if it's enabled in settings
+            if(project.equals("irradiatedConditionImprovement"))
+            {
+                if(getBooleanSetting("boggledTerraformingRemoveRadiationProjectEnabled"))
+                {
+                    enabledProjects.add(project);
+                }
+            }
+            // Only add atmosphere removal project if it's enabled in settings
+            else if(project.equals("removeAtmosphereConditionImprovement"))
+            {
+                if(getBooleanSetting("boggledTerraformingRemoveAtmosphereProjectEnabled"))
+                {
+                    enabledProjects.add(project);
+                }
+            }
+            else
+            {
+                enabledProjects.add(project);
+            }
+        }
+
+        return enabledProjects.toArray(new String[0]);
+    }
+
     public static String[] getProjectRequirementsStrings(String project)
     {
         if(project.contains("TypeChange"))
@@ -3092,7 +3146,7 @@ public class boggledTools
             }
             else if(currentProject.equals("radiationConditionImprovement"))
             {
-                return "Eliminate harmful radiation";
+                return "Remove atmospheric radiation";
             }
             else if(currentProject.equals("removeAtmosphereConditionImprovement"))
             {

@@ -4,13 +4,27 @@ import com.fs.starfarer.api.BaseModPlugin;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.*;
 import com.fs.starfarer.api.campaign.econ.MarketAPI;
-import com.fs.starfarer.api.campaign.listeners.IndustryOptionProvider;
 import com.fs.starfarer.api.impl.campaign.ids.Industries;
 import data.campaign.econ.boggledTools;
 import java.util.Iterator;
 
 public class BoggledTascPlugin extends BaseModPlugin
 {
+    public void debugActionsPleaseIgnore()
+    {
+        String[] allProjects = boggledTools.getAllTerraformingProjects();
+        for(String project : allProjects)
+        {
+            boggledTools.writeMessageToLog("All: " + project);
+        }
+
+        String[] enabledProjects = boggledTools.getEnabledTerraformingProjects();
+        for(String project : enabledProjects)
+        {
+            boggledTools.writeMessageToLog("Enabled: " + project);
+        }
+    }
+
     public void applyStationSettingsToAllStationsInSector()
     {
         if(boggledTools.getBooleanSetting("boggledApplyStationSettingsToAllStationsInSector"))
@@ -322,5 +336,7 @@ public class BoggledTascPlugin extends BaseModPlugin
         applyDomainArchaeologySettings();
 
         addDomainTechBuildingsToVanillaColonies();
+
+        //debugActionsPleaseIgnore();
     }
 }
