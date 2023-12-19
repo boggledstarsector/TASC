@@ -6,6 +6,9 @@ import com.fs.starfarer.api.campaign.*;
 import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Industries;
 import data.campaign.econ.boggledTools;
+import data.scripts.PlayerCargoCalculations.bogglesDefaultCargo;
+import data.scripts.PlayerCargoCalculations.booglesCrewReplacerCargo;
+
 import java.util.Iterator;
 
 public class BoggledTascPlugin extends BaseModPlugin
@@ -338,5 +341,14 @@ public class BoggledTascPlugin extends BaseModPlugin
         addDomainTechBuildingsToVanillaColonies();
 
         //debugActionsPleaseIgnore();
+    }
+
+    @Override
+    public void onApplicationLoad()  {
+        if (Global.getSettings().getModManager().isModEnabled("aaacrew_replacer")){
+            bogglesDefaultCargo.active = new booglesCrewReplacerCargo();
+        }else{
+            bogglesDefaultCargo.active = new bogglesDefaultCargo();
+        }
     }
 }

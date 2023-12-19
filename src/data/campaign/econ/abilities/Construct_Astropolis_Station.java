@@ -12,6 +12,7 @@ import java.util.Iterator;
 import java.util.List;
 import data.campaign.econ.boggledTools;
 import data.scripts.BoggledUnderConstructionEveryFrameScript;
+import data.scripts.PlayerCargoCalculations.bogglesDefaultCargo;
 
 public class Construct_Astropolis_Station extends BaseDurationAbility
 {
@@ -103,10 +104,10 @@ public class Construct_Astropolis_Station extends BaseDurationAbility
 
         CargoAPI playerCargo = playerFleet.getCargo();
         playerCargo.getCredits().subtract(creditCost);
-        playerCargo.removeCommodity("metals", metalCost);
-        playerCargo.removeCommodity("rare_metals", transplutonicsCost);
-        playerCargo.removeCommodity("crew", crewCost);
-        playerCargo.removeCommodity("heavy_machinery", heavyMachineryCost);
+        bogglesDefaultCargo.active.removeCommodity(bogglesDefaultCargo.Astropolis_Station,"metals", metalCost);
+        bogglesDefaultCargo.active.removeCommodity(bogglesDefaultCargo.Astropolis_Station,"rare_metals", transplutonicsCost);
+        bogglesDefaultCargo.active.removeCommodity(bogglesDefaultCargo.Astropolis_Station,"crew", crewCost);
+        bogglesDefaultCargo.active.removeCommodity(bogglesDefaultCargo.Astropolis_Station,"heavy_machinery", heavyMachineryCost);
 
         SectorEntityToken targetPlanet = boggledTools.getClosestPlanetToken(playerFleet);
         int numAstro = numAstroInOrbit(targetPlanet);
@@ -322,22 +323,22 @@ public class Construct_Astropolis_Station extends BaseDurationAbility
             playerHasResources = false;
         }
 
-        if(playerCargo.getCommodityQuantity("metals") < metalCost)
+        if(bogglesDefaultCargo.active.getCommodityAmount(bogglesDefaultCargo.Astropolis_Station,"metals") < metalCost)
         {
             playerHasResources = false;
         }
 
-        if(playerCargo.getCommodityQuantity("rare_metals") < transplutonicsCost)
+        if(bogglesDefaultCargo.active.getCommodityAmount(bogglesDefaultCargo.Astropolis_Station,"rare_metals") < transplutonicsCost)
         {
             playerHasResources = false;
         }
 
-        if(playerCargo.getCommodityQuantity("crew") < crewCost)
+        if(bogglesDefaultCargo.active.getCommodityAmount(bogglesDefaultCargo.Astropolis_Station,"crew") < crewCost)
         {
             playerHasResources = false;
         }
 
-        if(playerCargo.getCommodityQuantity("heavy_machinery") < heavyMachineryCost)
+        if(bogglesDefaultCargo.active.getCommodityAmount(bogglesDefaultCargo.Astropolis_Station,"heavy_machinery") < heavyMachineryCost)
         {
             playerHasResources = false;
         }
@@ -454,22 +455,22 @@ public class Construct_Astropolis_Station extends BaseDurationAbility
             tooltip.addPara("Insufficient credits.", bad, pad);
         }
 
-        if(playerCargo.getCommodityQuantity("crew") < crewCost)
+        if(bogglesDefaultCargo.active.getCommodityAmount(bogglesDefaultCargo.Astropolis_Station,"crew") < crewCost)
         {
             tooltip.addPara("Insufficient crew.", bad, pad);
         }
 
-        if(playerCargo.getCommodityQuantity("heavy_machinery") < heavyMachineryCost)
+        if(bogglesDefaultCargo.active.getCommodityAmount(bogglesDefaultCargo.Astropolis_Station,"heavy_machinery") < heavyMachineryCost)
         {
             tooltip.addPara("Insufficient heavy machinery.", bad, pad);
         }
 
-        if(playerCargo.getCommodityQuantity("metals") < metalCost)
+        if(bogglesDefaultCargo.active.getCommodityAmount(bogglesDefaultCargo.Astropolis_Station,"metals") < metalCost)
         {
             tooltip.addPara("Insufficient metals.", bad, pad);
         }
 
-        if(playerCargo.getCommodityQuantity("rare_metals") < transplutonicsCost)
+        if(bogglesDefaultCargo.active.getCommodityAmount(bogglesDefaultCargo.Astropolis_Station,"rare_metals") < transplutonicsCost)
         {
             tooltip.addPara("Insufficient transplutonics.", bad, pad);
         }

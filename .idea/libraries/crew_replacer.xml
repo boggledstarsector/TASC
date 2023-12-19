@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="crew_replacer">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/../Crew_Replacer/jars/crew_replacer.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

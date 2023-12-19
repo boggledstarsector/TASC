@@ -12,6 +12,7 @@ import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
 import java.awt.Color;
 import data.campaign.econ.boggledTools;
+import data.scripts.PlayerCargoCalculations.bogglesDefaultCargo;
 
 public class Colonize_Abandoned_Station extends BaseDurationAbility
 {
@@ -32,10 +33,10 @@ public class Colonize_Abandoned_Station extends BaseDurationAbility
 
         CargoAPI playerCargo = playerFleet.getCargo();
         playerCargo.getCredits().subtract(creditCost);
-        playerCargo.removeCommodity("metals", metalCost);
-        playerCargo.removeCommodity("rare_metals", transplutonicsCost);
-        playerCargo.removeCommodity("crew", crewCost);
-        playerCargo.removeCommodity("heavy_machinery", heavyMachineryCost);
+        bogglesDefaultCargo.active.removeCommodity(bogglesDefaultCargo.Abandoned_Station,"metals", metalCost);
+        bogglesDefaultCargo.active.removeCommodity(bogglesDefaultCargo.Abandoned_Station,"rare_metals", transplutonicsCost);
+        bogglesDefaultCargo.active.removeCommodity(bogglesDefaultCargo.Abandoned_Station,"crew", crewCost);
+        bogglesDefaultCargo.active.removeCommodity(bogglesDefaultCargo.Abandoned_Station,"heavy_machinery", heavyMachineryCost);
 
         targetEntityForMarket.setFaction("player");
         CargoAPI cargo = targetEntityForMarket.getMarket().getSubmarket("storage").getCargo();
@@ -234,23 +235,22 @@ public class Colonize_Abandoned_Station extends BaseDurationAbility
         {
             return false;
         }
-
-        if(playerCargo.getCommodityQuantity("metals") < metalCost)
+        if(bogglesDefaultCargo.active.getCommodityAmount(bogglesDefaultCargo.Abandoned_Station,"metals") < metalCost)
         {
             return false;
         }
 
-        if(playerCargo.getCommodityQuantity("rare_metals") < transplutonicsCost)
+        if(bogglesDefaultCargo.active.getCommodityAmount(bogglesDefaultCargo.Abandoned_Station,"rare_metals") < transplutonicsCost)
         {
             return false;
         }
 
-        if(playerCargo.getCommodityQuantity("crew") < crewCost)
+        if(bogglesDefaultCargo.active.getCommodityAmount(bogglesDefaultCargo.Abandoned_Station,"crew") < crewCost)
         {
             return false;
         }
 
-        if(playerCargo.getCommodityQuantity("heavy_machinery") < heavyMachineryCost)
+        if(bogglesDefaultCargo.active.getCommodityAmount(bogglesDefaultCargo.Abandoned_Station,"heavy_machinery") < heavyMachineryCost)
         {
             return false;
         }
@@ -332,22 +332,22 @@ public class Colonize_Abandoned_Station extends BaseDurationAbility
             tooltip.addPara("Insufficient credits.", bad, pad);
         }
 
-        if(playerCargo.getCommodityQuantity("crew") < crewCost)
+        if(bogglesDefaultCargo.active.getCommodityAmount(bogglesDefaultCargo.Abandoned_Station,"crew") < crewCost)
         {
             tooltip.addPara("Insufficient crew.", bad, pad);
         }
 
-        if(playerCargo.getCommodityQuantity("heavy_machinery") < heavyMachineryCost)
+        if(bogglesDefaultCargo.active.getCommodityAmount(bogglesDefaultCargo.Abandoned_Station,"heavy_machinery") < heavyMachineryCost)
         {
             tooltip.addPara("Insufficient heavy machinery.", bad, pad);
         }
 
-        if(playerCargo.getCommodityQuantity("metals") < metalCost)
+        if(bogglesDefaultCargo.active.getCommodityAmount(bogglesDefaultCargo.Abandoned_Station,"metals") < metalCost)
         {
             tooltip.addPara("Insufficient metals.", bad, pad);
         }
 
-        if(playerCargo.getCommodityQuantity("rare_metals") < transplutonicsCost)
+        if(bogglesDefaultCargo.active.getCommodityAmount(bogglesDefaultCargo.Abandoned_Station,"rare_metals") < transplutonicsCost)
         {
             tooltip.addPara("Insufficient transplutonics.", bad, pad);
         }
