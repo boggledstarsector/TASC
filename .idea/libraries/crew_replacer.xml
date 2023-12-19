@@ -1,7 +1,7 @@
 <component name="libraryTable">
   <library name="crew_replacer">
     <CLASSES>
-      <root url="jar://$PROJECT_DIR$/../CrewReplacer/jars/crew_replacer.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../Crew_Replacer/jars/crew_replacer.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />
