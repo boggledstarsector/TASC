@@ -6,6 +6,7 @@ import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import com.fs.starfarer.api.impl.campaign.rulecmd.BaseCommandPlugin;
 import com.fs.starfarer.api.util.Misc;
 import data.campaign.econ.boggledTools;
+
 import java.awt.*;
 import java.util.*;
 import java.util.List;
@@ -40,7 +41,6 @@ public class boggledCraftingPrintRequirements extends BaseCommandPlugin
         }
         else
         {
-            Color highlight = Misc.getHighlightColor();
             Color good = Misc.getPositiveHighlightColor();
             Color bad = Misc.getNegativeHighlightColor();
 
@@ -48,91 +48,92 @@ public class boggledCraftingPrintRequirements extends BaseCommandPlugin
 
             // Print crafting requirements
             String itemToCraftString = null;
+            String craftingProjectId = null;
             if(ruleId.contains("CorruptedNanoforge"))
             {
                 itemToCraftString = "a corrupted nanoforge";
+                craftingProjectId = boggledTools.craftCorruptedNanoforgeProjectID;
             }
             else if(ruleId.contains("PristineNanoforge"))
             {
                 itemToCraftString = "a pristine nanoforge";
+                craftingProjectId = boggledTools.craftPristineNanoforgeProjectID;
             }
             else if(ruleId.contains("SynchrotronCore"))
             {
                 itemToCraftString = "a synchrotron core";
+                craftingProjectId = boggledTools.craftSynchrotronProjectID;
             }
             else if(ruleId.contains("HypershuntTap"))
             {
                 itemToCraftString = "hypershunt tap";
+                craftingProjectId = boggledTools.craftHypershuntTapProjectID;
             }
             else if(ruleId.contains("CryoarithmeticEngine"))
             {
                 itemToCraftString = "a cryoarithmetic engine";
+                craftingProjectId = boggledTools.craftCryoarithmeticEngineProjectID;
             }
             else if(ruleId.contains("PlanetKillerDevice"))
             {
                 itemToCraftString = "a planet-killer device";
+                craftingProjectId = boggledTools.craftPlanetKillerDeviceProjectID;
             }
             else if(ruleId.contains("FusionLamp"))
             {
                 itemToCraftString = "a fusion lamp";
+                craftingProjectId = boggledTools.craftFusionLampProjectID;
             }
             else if(ruleId.contains("FullereneSpool"))
             {
                 itemToCraftString = "a fullerene spool";
+                craftingProjectId = boggledTools.craftFullereneSpoolProjectID;
             }
             else if(ruleId.contains("PlasmaDynamo"))
             {
                 itemToCraftString = "a plasma dynamo";
+                craftingProjectId = boggledTools.craftPlasmaDynamoProjectID;
             }
             else if(ruleId.contains("AutonomousMantleBore"))
             {
                 itemToCraftString = "an autonomous mantle bore";
+                craftingProjectId = boggledTools.craftAutonomousMantleBoreProjectID;
             }
             else if(ruleId.contains("SoilNanites"))
             {
                 itemToCraftString = "soil nanites";
+                craftingProjectId = boggledTools.craftSoilNanitesProjectID;
             }
             else if(ruleId.contains("CatalyticCore"))
             {
                 itemToCraftString = "a catalytic core";
+                craftingProjectId = boggledTools.craftCatalyticCoreProjectID;
             }
             else if(ruleId.contains("CombatDroneReplicator"))
             {
                 itemToCraftString = "a combat drone replicator";
+                craftingProjectId = boggledTools.craftCombatDroneReplicatorProjectID;
             }
             else if(ruleId.contains("BiofactoryEmbryo"))
             {
                 itemToCraftString = "a biofactory embryo";
+                craftingProjectId = boggledTools.craftBiofactoryEmbryoProjectID;
             }
             else if(ruleId.contains("DealmakerHolosuite"))
             {
                 itemToCraftString = "a dealmaker holosuite";
+                craftingProjectId = boggledTools.craftDealmakerHolosuiteProjectID;
             }
 
-            text.addPara("Requirements to craft " +  itemToCraftString + ":", highlight, new String[]{""});
-            String[] requirements = null;
-            if(ruleId.contains("CorruptedNanoforge") || ruleId.contains("CombatDroneReplicator") || ruleId.contains("DealmakerHolosuite"))
-            {
-                requirements = boggledTools.getProjectRequirementsStrings("boggledCraftingEasy");
-            }
-            else if(ruleId.contains("PristineNanoforge") || ruleId.contains("HypershuntTap") || ruleId.contains("PlanetKillerDevice") || ruleId.contains("OrbitalFusionLamp"))
-            {
-                requirements = boggledTools.getProjectRequirementsStrings("boggledCraftingHard");
-            }
-            else
-            {
-                requirements = boggledTools.getProjectRequirementsStrings("boggledCraftingMedium");
-            }
-            int i;
-            for (i = 0; i < requirements.length; i++)
-            {
-                if(boggledTools.requirementMet(market, requirements[i]))
-                {
-                    text.addPara("      - %s", good, new String[]{requirements[i] + ""});
-                }
-                else
-                {
-                    text.addPara("      - %s", bad, new String[]{requirements[i] + ""});
+            text.addPara("Requirements to craft " +  itemToCraftString + ":");
+            boggledTools.TerraformingProject craftingProject = boggledTools.getCraftingProject(craftingProjectId);
+            if (craftingProject != null) {
+                for (boggledTools.TerraformingRequirements craftingRequirements : craftingProject.getProjectRequirements()) {
+                    if (craftingRequirements.checkRequirement(market)) {
+                        text.addPara("      - %s", good, craftingRequirements.getTooltip());
+                    } else {
+                        text.addPara("      - %s", bad, craftingRequirements.getTooltip());
+                    }
                 }
             }
         }

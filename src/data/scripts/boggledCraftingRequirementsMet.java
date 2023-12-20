@@ -6,6 +6,7 @@ import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import com.fs.starfarer.api.impl.campaign.rulecmd.BaseCommandPlugin;
 import com.fs.starfarer.api.util.Misc;
 import data.campaign.econ.boggledTools;
+
 import java.util.*;
 import java.util.List;
 import java.lang.String;
@@ -31,7 +32,6 @@ public class boggledCraftingRequirementsMet extends BaseCommandPlugin
         if(dialog == null) return false;
 
         this.entity = dialog.getInteractionTarget();
-        TextPanelAPI text = dialog.getTextPanel();
 
         if(this.entity.getMarket() == null)
         {
@@ -41,26 +41,74 @@ public class boggledCraftingRequirementsMet extends BaseCommandPlugin
         {
             MarketAPI market = this.entity.getMarket();
 
-            String[] requirements = null;
-            if(ruleId.contains("CorruptedNanoforge") || ruleId.contains("CombatDroneReplicator") || ruleId.contains("DealmakerHolosuite"))
+            String craftingProjectId = null;
+            if(ruleId.contains("CorruptedNanoforge"))
             {
-                requirements = boggledTools.getProjectRequirementsStrings("boggledCraftingEasy");
+                craftingProjectId = boggledTools.craftCorruptedNanoforgeProjectID;
             }
-            else if(ruleId.contains("PristineNanoforge") || ruleId.contains("HypershuntTap") || ruleId.contains("PlanetKillerDevice") || ruleId.contains("OrbitalFusionLamp"))
+            else if(ruleId.contains("PristineNanoforge"))
             {
-                requirements = boggledTools.getProjectRequirementsStrings("boggledCraftingHard");
+                craftingProjectId = boggledTools.craftPristineNanoforgeProjectID;
             }
-            else
+            else if(ruleId.contains("SynchrotronCore"))
             {
-                requirements = boggledTools.getProjectRequirementsStrings("boggledCraftingMedium");
+                craftingProjectId = boggledTools.craftSynchrotronProjectID;
+            }
+            else if(ruleId.contains("HypershuntTap"))
+            {
+                craftingProjectId = boggledTools.craftHypershuntTapProjectID;
+            }
+            else if(ruleId.contains("CryoarithmeticEngine"))
+            {
+                craftingProjectId = boggledTools.craftCryoarithmeticEngineProjectID;
+            }
+            else if(ruleId.contains("PlanetKillerDevice"))
+            {
+                craftingProjectId = boggledTools.craftPlanetKillerDeviceProjectID;
+            }
+            else if(ruleId.contains("FusionLamp"))
+            {
+                craftingProjectId = boggledTools.craftFusionLampProjectID;
+            }
+            else if(ruleId.contains("FullereneSpool"))
+            {
+                craftingProjectId = boggledTools.craftFullereneSpoolProjectID;
+            }
+            else if(ruleId.contains("PlasmaDynamo"))
+            {
+                craftingProjectId = boggledTools.craftPlasmaDynamoProjectID;
+            }
+            else if(ruleId.contains("AutonomousMantleBore"))
+            {
+                craftingProjectId = boggledTools.craftAutonomousMantleBoreProjectID;
+            }
+            else if(ruleId.contains("SoilNanites"))
+            {
+                craftingProjectId = boggledTools.craftSoilNanitesProjectID;
+            }
+            else if(ruleId.contains("CatalyticCore"))
+            {
+                craftingProjectId = boggledTools.craftCatalyticCoreProjectID;
+            }
+            else if(ruleId.contains("CombatDroneReplicator"))
+            {
+                craftingProjectId = boggledTools.craftCombatDroneReplicatorProjectID;
+            }
+            else if(ruleId.contains("BiofactoryEmbryo"))
+            {
+                craftingProjectId = boggledTools.craftBiofactoryEmbryoProjectID;
+            }
+            else if(ruleId.contains("DealmakerHolosuite"))
+            {
+                craftingProjectId = boggledTools.craftDealmakerHolosuiteProjectID;
             }
 
-            int i;
-            for (i = 0; i < requirements.length; i++)
-            {
-                if(!boggledTools.requirementMet(market, requirements[i]))
-                {
-                    return false;
+            boggledTools.TerraformingProject craftingProject = boggledTools.getCraftingProject(craftingProjectId);
+            if (craftingProject != null) {
+                for (boggledTools.TerraformingRequirements craftingRequirements : craftingProject.getProjectRequirements()) {
+                    if (!craftingRequirements.checkRequirement(market)) {
+                        return false;
+                    }
                 }
             }
         }
