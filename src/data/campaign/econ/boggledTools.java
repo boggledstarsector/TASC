@@ -60,7 +60,6 @@ public class boggledTools
         public static final String siphonStationEnabled = "boggledSiphonStationEnabled";
         public static final String stationColonizationEnabled = "boggledStationColonizationEnabled";
 
-
         public static final String perihelionProjectEnabled = "boggledPerihelionProjectEnabled";
         public static final String planetCrackerEnabled = "boggledPlanetCrackerEnabled";
 
@@ -381,18 +380,32 @@ public class boggledTools
             try {
                 JSONObject row = terraformingProjectsJSON.getJSONObject(i);
 
+                String id = row.getString("id");
+
                 String enableSetting = row.getString("enable_setting");
                 if (!enableSetting.isEmpty() && !getBooleanSetting(enableSetting)) {
+                    log.info("Setting " + enableSetting + " is false, disabling project " + id);
                     continue;
+                } else if (!enableSetting.isEmpty()) {
+                    log.info("Setting " + enableSetting + " is true, enabling project " + id);
                 }
 
-                String id = row.getString("id");
                 String tooltip = row.getString("tooltip");
                 String[] requirements = row.getString("requirements").split(";");
                 String planetTypeChange = row.getString("planet_type_change");
                 ArrayList<String> conditionsAdded = arrayListFromJSON(row, "conditions_added", ";");
                 ArrayList<String> conditionsRemoved = arrayListFromJSON(row, "conditions_removed", ";");
                 ArrayList<String> conditionsOption = arrayListFromJSON(row, "conditions_option", ";");
+
+                String optionName = row.getString("option_name");
+                if (!optionName.isEmpty() && getBooleanSetting(optionName)) {
+                    conditionsAdded.addAll(conditionsOption);
+                    log.info("Setting " + optionName + " is true, adding options " + conditionsOption);
+                } else if (!optionName.isEmpty()){
+                    conditionsRemoved.addAll(conditionsOption);
+                    log.info("Setting " + optionName + " is false, removing options " + conditionsOption);
+                }
+
                 ArrayList<String> conditionsProgress = arrayListFromJSON(row, "condition_progress", ";");
 
                 if (id == null || id.isEmpty()) {
