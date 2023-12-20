@@ -1,6 +1,7 @@
 package data.campaign.econ.industries;
 
 import com.fs.starfarer.api.campaign.econ.*;
+import com.fs.starfarer.api.impl.campaign.ids.Commodities;
 import com.fs.starfarer.api.impl.campaign.population.PopulationComposition;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
@@ -23,16 +24,16 @@ public class Boggled_Cloning extends BaseIndustry implements MarketImmigrationMo
 
         int size = this.market.getSize();
 
-        if(boggledTools.getBooleanSetting("boggledDomainTechContentEnabled") && boggledTools.getBooleanSetting("boggledDomainArchaeologyEnabled"))
+        if(boggledTools.getBooleanSetting(boggledTools.BoggledSettings.domainTechContentEnabled) && boggledTools.getBooleanSetting(boggledTools.BoggledSettings.domainArchaeologyEnabled))
         {
-            this.demand("domain_artifacts", size - 2);
+            this.demand(boggledTools.BoggledCommodities.domainArtifacts, size - 2);
         }
-        this.supply("organs", size - 2);
+        this.supply(Commodities.ORGANS, size - 2);
 
-        if(boggledTools.getBooleanSetting("boggledDomainTechContentEnabled") && boggledTools.getBooleanSetting("boggledDomainArchaeologyEnabled"))
+        if(boggledTools.getBooleanSetting(boggledTools.BoggledSettings.domainTechContentEnabled) && boggledTools.getBooleanSetting(boggledTools.BoggledSettings.domainArchaeologyEnabled))
         {
-            Pair<String, Integer> deficit = this.getMaxDeficit(new String[]{"domain_artifacts"});
-            this.applyDeficitToProduction(1, deficit, new String[]{"organs"});
+            Pair<String, Integer> deficit = this.getMaxDeficit(boggledTools.BoggledCommodities.domainArtifacts);
+            this.applyDeficitToProduction(1, deficit, Commodities.ORGANS);
         }
 
         if (!this.isFunctional())
@@ -65,7 +66,7 @@ public class Boggled_Cloning extends BaseIndustry implements MarketImmigrationMo
             return false;
         }
 
-        if(boggledTools.getBooleanSetting("boggledCloningEnabled"))
+        if(boggledTools.getBooleanSetting(boggledTools.BoggledSettings.cloningEnabled))
         {
             return true;
         }

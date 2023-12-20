@@ -39,7 +39,7 @@ public class boggledIsPlanetGasGiant extends BaseCommandPlugin
 
         String type = boggledTools.getPlanetType(this.entity.getMarket().getPlanetEntity());
 
-        if(type.equals("gas_giant"))
+        if(type.equals(boggledTools.gasGiantPlanetID))
         {
             return true;
         }

@@ -33,7 +33,7 @@ public class boggledAddTerraformingController extends BaseCommandPlugin
 
         if(this.entity.getMarket() != null)
         {
-            boggledTools.addCondition(this.entity.getMarket(), "terraforming_controller");
+            boggledTools.addCondition(this.entity.getMarket(), boggledTools.BoggledConditions.terraformingControllerConditionID);
         }
 
         return true;

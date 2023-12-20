@@ -5,7 +5,10 @@ import com.fs.starfarer.api.campaign.*;
 import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.impl.campaign.abilities.BaseDurationAbility;
 import com.fs.starfarer.api.impl.campaign.ids.Conditions;
+import com.fs.starfarer.api.impl.campaign.ids.Commodities;
+import com.fs.starfarer.api.impl.campaign.ids.Factions;
 import com.fs.starfarer.api.impl.campaign.ids.Industries;
+import com.fs.starfarer.api.impl.campaign.ids.Submarkets;
 import com.fs.starfarer.api.impl.campaign.submarkets.StoragePlugin;
 import com.fs.starfarer.api.ui.LabelAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
@@ -38,8 +41,8 @@ public class Colonize_Abandoned_Station extends BaseDurationAbility
         bogglesDefaultCargo.active.removeCommodity(bogglesDefaultCargo.Abandoned_Station,"crew", crewCost);
         bogglesDefaultCargo.active.removeCommodity(bogglesDefaultCargo.Abandoned_Station,"heavy_machinery", heavyMachineryCost);
 
-        targetEntityForMarket.setFaction("player");
-        CargoAPI cargo = targetEntityForMarket.getMarket().getSubmarket("storage").getCargo();
+        targetEntityForMarket.setFaction(Factions.PLAYER);
+        CargoAPI cargo = targetEntityForMarket.getMarket().getSubmarket(Submarkets.SUBMARKET_STORAGE).getCargo();
 
         //Create the new station market
         CampaignClockAPI clock = Global.getSector().getClock();
@@ -49,7 +52,7 @@ public class Colonize_Abandoned_Station extends BaseDurationAbility
         market.setSurveyLevel(MarketAPI.SurveyLevel.FULL);
         market.setPrimaryEntity(targetEntityForMarket);
 
-        market.setFactionId("player");
+        market.setFactionId(Factions.PLAYER);
         market.setPlayerOwned(true);
 
         market.addCondition(Conditions.POPULATION_3);
@@ -85,7 +88,7 @@ public class Colonize_Abandoned_Station extends BaseDurationAbility
         else if(targetEntityForMarket.hasTag("boggled_siphon_station") || targetEntityForMarket.getFullName().contains("Abandoned Siphon Station"))
         {
             SectorEntityToken hostGasGiant = null;
-            if(targetEntityForMarket.getOrbitFocus() != null && targetEntityForMarket.getOrbitFocus() instanceof PlanetAPI && targetEntityForMarket.getOrbitFocus().getMarket() != null && boggledTools.getPlanetType((PlanetAPI)targetEntityForMarket.getOrbitFocus()).equals("gas_giant"))
+            if(targetEntityForMarket.getOrbitFocus() != null && targetEntityForMarket.getOrbitFocus() instanceof PlanetAPI && targetEntityForMarket.getOrbitFocus().getMarket() != null && boggledTools.getPlanetType((PlanetAPI)targetEntityForMarket.getOrbitFocus()).equals(boggledTools.gasGiantPlanetID))
             {
                 hostGasGiant = targetEntityForMarket.getOrbitFocus();
             }
@@ -168,8 +171,8 @@ public class Colonize_Abandoned_Station extends BaseDurationAbility
         //the only change made is to hide the icon on markets where primary entity has station tag
         //This is done so refining and fuel production can slot the special items
         //Hopefully Alex will fix the no_atmosphere detection in the future so this hack can be removed
-        market.addCondition("no_atmosphere");
-        market.suppressCondition("no_atmosphere");
+        market.addCondition(Conditions.NO_ATMOSPHERE);
+        market.suppressCondition(Conditions.NO_ATMOSPHERE);
 
         targetEntityForMarket.setMarket(market);
 
@@ -181,14 +184,14 @@ public class Colonize_Abandoned_Station extends BaseDurationAbility
         //If the player doesn't view the colony management screen within a few days of market creation, then there can be a bug related to population growth
         Global.getSector().getCampaignUI().showInteractionDialog(targetEntityForMarket);
 
-        market.addSubmarket("storage");
-        StoragePlugin storage = (StoragePlugin)market.getSubmarket("storage").getPlugin();
+        market.addSubmarket(Submarkets.SUBMARKET_STORAGE);
+        StoragePlugin storage = (StoragePlugin)market.getSubmarket(Submarkets.SUBMARKET_STORAGE).getPlugin();
         storage.setPlayerPaidToUnlock(true);
         market.addSubmarket("local_resources");
 
         if(!cargo.isEmpty())
         {
-            market.getSubmarket("storage").getCargo().addAll(cargo);
+            market.getSubmarket(Submarkets.SUBMARKET_STORAGE).getCargo().addAll(cargo);
         }
 
         market.addCondition("sprite_controller");
@@ -221,7 +224,7 @@ public class Colonize_Abandoned_Station extends BaseDurationAbility
         {
             return false;
         }
-        else if(closestColonizableStation.getMarket() != null && !closestColonizableStation.getMarket().getFactionId().equals("neutral"))
+        else if(closestColonizableStation.getMarket() != null && !closestColonizableStation.getMarket().getFactionId().equals(Factions.NEUTRAL))
         {
             return false;
         }
@@ -276,7 +279,7 @@ public class Colonize_Abandoned_Station extends BaseDurationAbility
 
         LabelAPI title = tooltip.addTitle("Colonize Abandoned Station");
         float pad = 10.0F;
-        tooltip.addPara("Colonize an abandoned station. Expends %s credits, %s crew, %s heavy machinery, %s metals and %s transplutonics for construction.", pad, highlight, new String[]{(int)creditCost + "",(int)crewCost + "",(int)heavyMachineryCost +"", (int)metalCost + "", (int)transplutonicsCost +""});
+        tooltip.addPara("Colonize an abandoned station. Expends %s credits, %s crew, %s heavy machinery, %s metals and %s transplutonics for construction.", pad, highlight, (int)creditCost + "",(int)crewCost + "",(int)heavyMachineryCost +"", (int)metalCost + "", (int)transplutonicsCost +"");
 
         SectorEntityToken playerFleet = Global.getSector().getPlayerFleet();
 
@@ -308,7 +311,7 @@ public class Colonize_Abandoned_Station extends BaseDurationAbility
             {
                 tooltip.addPara("There are no stations in this system.", bad, pad);
             }
-            else if(closestStation.getMarket() != null && !closestStation.getMarket().getFactionId().equals("neutral"))
+            else if(closestStation.getMarket() != null && !closestStation.getMarket().getFactionId().equals(Factions.NEUTRAL))
             {
                 tooltip.addPara("The station closest to your location is " + closestStation.getName() + " and it is controlled by " + closestStation.getMarket().getFaction().getDisplayNameWithArticle() + ". You cannot colonize a station that is already under the control of a major faction.", bad, pad);
             }

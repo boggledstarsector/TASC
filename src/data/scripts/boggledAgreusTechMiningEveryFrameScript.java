@@ -23,7 +23,7 @@ public class boggledAgreusTechMiningEveryFrameScript implements EveryFrameScript
             if(agreusPlanet != null)
             {
                 MarketAPI agreusMarket = agreusPlanet.getMarket();
-                if(agreusMarket != null && agreusMarket.hasIndustry(Industries.TECHMINING) && !agreusMarket.hasIndustry("BOGGLED_DOMAIN_ARCHAEOLOGY") && !agreusMarket.isPlayerOwned())
+                if(agreusMarket != null && agreusMarket.hasIndustry(Industries.TECHMINING) && !agreusMarket.hasIndustry(boggledTools.BoggledIndustries.domainArchaeologyIndustryID) && !agreusMarket.isPlayerOwned())
                 {
                     // Don't swap these industries if Everybody loves KoC mod is enabled because this causes compatibility issues
                     // per post in TASC thread on page 142, post #2128 by bodeshmoun.
@@ -33,7 +33,7 @@ public class boggledAgreusTechMiningEveryFrameScript implements EveryFrameScript
 
                     if(Global.getSettings().getModManager().isModEnabled("Everybody loves KoC"))
                     {
-                        ((BaseIndustry) agreusMarket.getIndustry("techmining")).supply("domain_artifacts", agreusMarket.getSize() - 1);
+                        ((BaseIndustry) agreusMarket.getIndustry("techmining")).supply(boggledTools.BoggledCommodities.domainArtifacts, agreusMarket.getSize() - 1);
                     }
                 }
             }

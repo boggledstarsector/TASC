@@ -36,15 +36,15 @@ public class Boggled_Stellar_Reflector_Array extends BaseIndustry
     {
         super.apply(true);
 
-        if(boggledTools.getBooleanSetting("boggledDomainTechContentEnabled") && boggledTools.getBooleanSetting("boggledDomainArchaeologyEnabled"))
+        if(boggledTools.getBooleanSetting(boggledTools.BoggledSettings.domainTechContentEnabled) && boggledTools.getBooleanSetting(boggledTools.BoggledSettings.domainArchaeologyEnabled))
         {
-            this.demand("domain_artifacts", 1);
+            this.demand(boggledTools.BoggledCommodities.domainArtifacts, 1);
         }
 
         boolean shortage = false;
-        if(boggledTools.getBooleanSetting("boggledDomainTechContentEnabled") && boggledTools.getBooleanSetting("boggledDomainArchaeologyEnabled"))
+        if(boggledTools.getBooleanSetting(boggledTools.BoggledSettings.domainTechContentEnabled) && boggledTools.getBooleanSetting(boggledTools.BoggledSettings.domainArchaeologyEnabled))
         {
-            Pair<String, Integer> deficit = this.getMaxDeficit(new String[]{"domain_artifacts"});
+            Pair<String, Integer> deficit = this.getMaxDeficit(new String[]{boggledTools.BoggledCommodities.domainArtifacts});
             if(deficit.two != 0)
             {
                 shortage = true;
@@ -72,7 +72,7 @@ public class Boggled_Stellar_Reflector_Array extends BaseIndustry
         // coded it this way instead of just checking if the building is disrupted, if yes, remove solar_array condition, if
         // not disrupted, add solar_array condition if not already present.
         // Seems to work fine as-is, so I'm not going to spend time changing it unless a bug is found.
-        if(!this.market.hasCondition("solar_array") && this.isFunctional())
+        if(!this.market.hasCondition(Conditions.SOLAR_ARRAY) && this.isFunctional())
         {
             Random random = new Random();
             float minDays = 210f;
@@ -86,13 +86,13 @@ public class Boggled_Stellar_Reflector_Array extends BaseIndustry
     @Override
     protected void notifyDisrupted()
     {
-        boggledTools.removeCondition(this.market, "solar_array");
+        boggledTools.removeCondition(this.market, Conditions.SOLAR_ARRAY);
     }
 
     @Override
     protected void disruptionFinished()
     {
-        boggledTools.addCondition(this.market, "solar_array");
+        boggledTools.addCondition(this.market, Conditions.SOLAR_ARRAY);
     }
 
     @Override
@@ -101,7 +101,7 @@ public class Boggled_Stellar_Reflector_Array extends BaseIndustry
         super.buildingFinished();
 
         MarketAPI market = this.market;
-        boggledTools.addCondition(market, "solar_array");
+        boggledTools.addCondition(market, Conditions.SOLAR_ARRAY);
 
         if(boggledTools.numReflectorsInOrbit(market) >= 3)
         {
@@ -217,7 +217,7 @@ public class Boggled_Stellar_Reflector_Array extends BaseIndustry
         super.notifyBeingRemoved(mode, forUpgrade);
 
         boggledTools.clearReflectorsInOrbit(this.market);
-        boggledTools.removeCondition(market, "solar_array");
+        boggledTools.removeCondition(market, Conditions.SOLAR_ARRAY);
     }
 
     @Override
@@ -260,7 +260,7 @@ public class Boggled_Stellar_Reflector_Array extends BaseIndustry
 
         if(mode != IndustryTooltipMode.ADD_INDUSTRY && mode != IndustryTooltipMode.QUEUED && isFunctional())
         {
-            tooltip.addPara("Countering the effects of:", opad, Misc.getHighlightColor(), "");
+            tooltip.addPara("Countering the effects of:", opad);
             int numCondsCountered = 0;
             for (String id : SUPPRESSED_CONDITIONS)
             {
@@ -287,7 +287,7 @@ public class Boggled_Stellar_Reflector_Array extends BaseIndustry
             return false;
         }
 
-        if(!boggledTools.getBooleanSetting("boggledTerraformingContentEnabled") || !boggledTools.getBooleanSetting("boggledStellarReflectorArrayEnabled"))
+        if(!boggledTools.getBooleanSetting(boggledTools.BoggledSettings.terraformingContentEnabled) || !boggledTools.getBooleanSetting(boggledTools.BoggledSettings.stellarReflectorArrayEnabled))
         {
             return false;
         }
@@ -296,9 +296,7 @@ public class Boggled_Stellar_Reflector_Array extends BaseIndustry
         if(boggledTools.marketIsStation(this.market)) { return false; }
 
         //Can't be built on dark planets. All planets in nebulas and orbiting black holes have dark condition.
-        if(this.market.hasCondition("dark")) { return false; }
-
-        return true;
+        return !this.market.hasCondition(Conditions.DARK);
     }
 
     @Override
@@ -309,22 +307,20 @@ public class Boggled_Stellar_Reflector_Array extends BaseIndustry
             return false;
         }
 
-        if(!boggledTools.getBooleanSetting("boggledTerraformingContentEnabled") || !boggledTools.getBooleanSetting("boggledStellarReflectorArrayEnabled"))
+        if(!boggledTools.getBooleanSetting(boggledTools.BoggledSettings.terraformingContentEnabled) || !boggledTools.getBooleanSetting(boggledTools.BoggledSettings.stellarReflectorArrayEnabled))
         {
             return false;
         }
 
         //Can't be built by station markets
-        if(boggledTools.marketIsStation(this.market)) { return false; }
-
-        return true;
+        return !boggledTools.marketIsStation(this.market);
     }
 
     @Override
     public String getUnavailableReason()
     {
         //Can't be built on dark planets. All planets in nebulas and orbiting black holes have dark condition.
-        if(this.market.hasCondition("dark")) { return "Stellar reflectors won't have any effect on a world that receives no light."; }
+        if(this.market.hasCondition(Conditions.DARK)) { return "Stellar reflectors won't have any effect on a world that receives no light."; }
 
         return "Error in getUnavailableReason() in the Stellar Reflector Array. Please tell Boggled about this on the forums.";
     }

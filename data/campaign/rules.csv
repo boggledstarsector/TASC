@@ -270,268 +270,38 @@ FireAll PopulateOptions","Dealmaker Holosuite crafted successfully.",,,
 ,,,,,,
 #Terraforming controls at planet
 ,,,,,,
-#boggledMarketAddTerraformingControlPanel,PopulateOptions,"boggledTerraformingCheckEnabled
-#$menuState == main",,,"20:boggledOpenTerraformingPanel:Examine terraforming options",
-boggledOpenTerraformingControlPanel,DialogOptionSelected,$option == boggledOpenTerraformingPanel,"boggledAddTerraformingController
-boggledTerraformingPrintStatus
-FireAll boggledTerraformingPopulateSubmenus",,,
-boggledAddTypeTransformationMenu,boggledTerraformingPopulateSubmenus,,,,0:boggledMoveToTypeTransformationList:Planet type change options,
-boggledAddResourceModificationMenu,boggledTerraformingPopulateSubmenus,,,,1:boggledMoveToResourceImprovementList:Resource deposit improvement options,
-boggledAddConditionModificationMenu,boggledTerraformingPopulateSubmenus,,,,2:boggledMoveToConditionImprovementList:Atmospheric conditions improvement options,
-boggledAddCancelOptionToSubmenuSelection,boggledTerraformingPopulateSubmenus,,SetShortcut boggledGoBackToMainColonyInteractionMenu ""ESCAPE"",,50:boggledGoBackToMainColonyInteractionMenu:Cancel,
-boggledGoBackToMainColonyInteractionMenuFromTerraformingControlPanel,DialogOptionSelected,$option == boggledGoBackToMainColonyInteractionMenu,"$menuState = main 0
-FireAll PopulateOptions",,,,
-boggledTypeTransformationSubmenu,DialogOptionSelected,$option == boggledMoveToTypeTransformationList,FireAll boggledTerraformingPopulateTypeChangeSubmenus,,,
-boggledResourceImprovementSubmenu,DialogOptionSelected,$option == boggledMoveToResourceImprovementList,FireAll boggledTerraformingPopulateResourceImprovementSubmenus,,,
-boggledConditionImprovementSubmenu,DialogOptionSelected,$option == boggledMoveToConditionImprovementList,FireAll boggledTerraformingPopulateConditionImprovementSubmenus,,,
-,,,,,,
 #Cancel current project
-boggledAddCancelCurrentProjectMenuYes,boggledTerraformingPopulateSubmenus,!boggledTerraformingCheckProjectOngoing,,,3:boggledMoveToCancelCurrentProjectMenu:Cancel current project,
-boggledAddCancelCurrentProjectMenuNo,boggledTerraformingPopulateSubmenus,boggledTerraformingCheckProjectOngoing,SetEnabled boggledMoveToCancelCurrentProjectMenu false,,3:boggledMoveToCancelCurrentProjectMenu:Cancel current project,
-boggledCancelCurrentProjectMenu,DialogOptionSelected,$option == boggledMoveToCancelCurrentProjectMenu,"boggledTerraformingPrintResultsAndRequirements
-SetShortcut boggledGoBackToTerraformingControlPanelRoot ""ESCAPE""",,"0:boggledTriggerCancelCurrentProject:Cancel project
-1:boggledGoBackToTerraformingControlPanelRoot:Back",
-boggledTriggerCancelCurrentProject,DialogOptionSelected,$option == boggledTriggerCancelCurrentProject,"boggledTerraformingInitiateProject
-$menuState = main 0
-FireAll PopulateOptions",,,,
-,,,,,,
+
 #Arid type change logic
-,,,,,,
-boggledAddAridTypeChangeOption,boggledTerraformingPopulateTypeChangeSubmenus,,,,0:boggledConsiderAridTypeChange:Consider terraforming $marketName into an arid world,
-boggledPopulateAridTypeChangeMenu,DialogOptionSelected,$option == boggledConsiderAridTypeChange,FireBest boggledPopulateAridTypeChangeOptions,,,
-boggledAridTypeChangeYes,boggledPopulateAridTypeChangeOptions,boggledTerraformingProjectRequirementsMet,"boggledTerraformingPrintResultsAndRequirements
-SetShortcut boggledGoBackToTypeChangeSubmenu ""ESCAPE""",,"1:boggledTriggerAridTypeChange:Start terraforming project
-50:boggledGoBackToTypeChangeSubmenu:Back",
-boggledAridTypeChangeNo,boggledPopulateAridTypeChangeOptions,!boggledTerraformingProjectRequirementsMet,"boggledTerraformingPrintResultsAndRequirements
-SetEnabled boggledTriggerAridTypeChange false
-SetShortcut boggledGoBackToTypeChangeSubmenu ""ESCAPE""",,"1:boggledTriggerAridTypeChange:Start terraforming project
-50:boggledGoBackToTypeChangeSubmenu:Back",
-boggledTriggerAridTypeChange,DialogOptionSelected,$option == boggledTriggerAridTypeChange,"boggledTerraformingInitiateProject
-$menuState = main 0
-FireAll PopulateOptions",,,,
-,,,,,,
+
 #Frozen type change logic
-,,,,,,
-boggledAddFrozenTypeChangeOption,boggledTerraformingPopulateTypeChangeSubmenus,,,,1:boggledConsiderFrozenTypeChange:Consider terraforming $marketName into a frozen world,
-boggledPopulateFrozenTypeChangeMenu,DialogOptionSelected,$option == boggledConsiderFrozenTypeChange,FireBest boggledPopulateFrozenTypeChangeOptions,,,
-boggledFrozenTypeChangeYes,boggledPopulateFrozenTypeChangeOptions,boggledTerraformingProjectRequirementsMet,"boggledTerraformingPrintResultsAndRequirements
-SetShortcut boggledGoBackToTypeChangeSubmenu ""ESCAPE""",,"1:boggledTriggerFrozenTypeChange:Start terraforming project
-50:boggledGoBackToTypeChangeSubmenu:Back",
-boggledFrozenTypeChangeNo,boggledPopulateFrozenTypeChangeOptions,!boggledTerraformingProjectRequirementsMet,"boggledTerraformingPrintResultsAndRequirements
-SetEnabled boggledTriggerFrozenTypeChange false
-SetShortcut boggledGoBackToTypeChangeSubmenu ""ESCAPE""",,"1:boggledTriggerFrozenTypeChange:Start terraforming project
-50:boggledGoBackToTypeChangeSubmenu:Back",
-boggledTriggerFrozenTypeChange,DialogOptionSelected,$option == boggledTriggerFrozenTypeChange,"boggledTerraformingInitiateProject
-$menuState = main 0
-FireAll PopulateOptions",,,,
-,,,,,,
+
 #Jungle type change logic
-,,,,,,
-boggledAddJungleTypeChangeOption,boggledTerraformingPopulateTypeChangeSubmenus,,,,2:boggledConsiderJungleTypeChange:Consider terraforming $marketName into a jungle world,
-boggledPopulateJungleTypeChangeMenu,DialogOptionSelected,$option == boggledConsiderJungleTypeChange,FireBest boggledPopulateJungleTypeChangeOptions,,,
-boggledJungleTypeChangeYes,boggledPopulateJungleTypeChangeOptions,boggledTerraformingProjectRequirementsMet,"boggledTerraformingPrintResultsAndRequirements
-SetShortcut boggledGoBackToTypeChangeSubmenu ""ESCAPE""",,"1:boggledTriggerJungleTypeChange:Start terraforming project
-50:boggledGoBackToTypeChangeSubmenu:Back",
-boggledJungleTypeChangeNo,boggledPopulateJungleTypeChangeOptions,!boggledTerraformingProjectRequirementsMet,"boggledTerraformingPrintResultsAndRequirements
-SetEnabled boggledTriggerJungleTypeChange false
-SetShortcut boggledGoBackToTypeChangeSubmenu ""ESCAPE""",,"1:boggledTriggerJungleTypeChange:Start terraforming project
-50:boggledGoBackToTypeChangeSubmenu:Back",
-boggledTriggerJungleTypeChange,DialogOptionSelected,$option == boggledTriggerJungleTypeChange,"boggledTerraformingInitiateProject
-$menuState = main 0
-FireAll PopulateOptions",,,,
-,,,,,,
+
 #Terran type change logic
-,,,,,,
-boggledAddTerranTypeChangeOption,boggledTerraformingPopulateTypeChangeSubmenus,,,,3:boggledConsiderTerranTypeChange:Consider terraforming $marketName into a Terran world,
-boggledPopulateTerranTypeChangeMenu,DialogOptionSelected,$option == boggledConsiderTerranTypeChange,FireBest boggledPopulateTerranTypeChangeOptions,,,
-boggledTerranTypeChangeYes,boggledPopulateTerranTypeChangeOptions,boggledTerraformingProjectRequirementsMet,"boggledTerraformingPrintResultsAndRequirements
-SetShortcut boggledGoBackToTypeChangeSubmenu ""ESCAPE""",,"1:boggledTriggerTerranTypeChange:Start terraforming project
-50:boggledGoBackToTypeChangeSubmenu:Back",
-boggledTerranTypeChangeNo,boggledPopulateTerranTypeChangeOptions,!boggledTerraformingProjectRequirementsMet,"boggledTerraformingPrintResultsAndRequirements
-SetEnabled boggledTriggerTerranTypeChange false
-SetShortcut boggledGoBackToTypeChangeSubmenu ""ESCAPE""",,"1:boggledTriggerTerranTypeChange:Start terraforming project
-50:boggledGoBackToTypeChangeSubmenu:Back",
-boggledTriggerTerranTypeChange,DialogOptionSelected,$option == boggledTriggerTerranTypeChange,"boggledTerraformingInitiateProject
-$menuState = main 0
-FireAll PopulateOptions",,,,
-,,,,,,
+
 #Tundra type change logic
-,,,,,,
-boggledAddTundraTypeChangeOption,boggledTerraformingPopulateTypeChangeSubmenus,,,,4:boggledConsiderTundraTypeChange:Consider terraforming $marketName into a tundra world,
-boggledPopulateTundraTypeChangeMenu,DialogOptionSelected,$option == boggledConsiderTundraTypeChange,FireBest boggledPopulateTundraTypeChangeOptions,,,
-boggledTundraTypeChangeYes,boggledPopulateTundraTypeChangeOptions,boggledTerraformingProjectRequirementsMet,"boggledTerraformingPrintResultsAndRequirements
-SetShortcut boggledGoBackToTypeChangeSubmenu ""ESCAPE""",,"1:boggledTriggerTundraTypeChange:Start terraforming project
-50:boggledGoBackToTypeChangeSubmenu:Back",
-boggledTundraTypeChangeNo,boggledPopulateTundraTypeChangeOptions,!boggledTerraformingProjectRequirementsMet,"boggledTerraformingPrintResultsAndRequirements
-SetEnabled boggledTriggerTundraTypeChange false
-SetShortcut boggledGoBackToTypeChangeSubmenu ""ESCAPE""",,"1:boggledTriggerTundraTypeChange:Start terraforming project
-50:boggledGoBackToTypeChangeSubmenu:Back",
-boggledTriggerTundraTypeChange,DialogOptionSelected,$option == boggledTriggerTundraTypeChange,"boggledTerraformingInitiateProject
-$menuState = main 0
-FireAll PopulateOptions",,,,
-,,,,,,
+
 #Water type change logic
-,,,,,,
-boggledAddWaterTypeChangeOption,boggledTerraformingPopulateTypeChangeSubmenus,,,,5:boggledConsiderWaterTypeChange:Consider terraforming $marketName into a water world,
-boggledPopulateWaterTypeChangeMenu,DialogOptionSelected,$option == boggledConsiderWaterTypeChange,FireBest boggledPopulateWaterTypeChangeOptions,,,
-boggledWaterTypeChangeYes,boggledPopulateWaterTypeChangeOptions,boggledTerraformingProjectRequirementsMet,"boggledTerraformingPrintResultsAndRequirements
-SetShortcut boggledGoBackToTypeChangeSubmenu ""ESCAPE""",,"1:boggledTriggerWaterTypeChange:Start terraforming project
-50:boggledGoBackToTypeChangeSubmenu:Back",
-boggledWaterTypeChangeNo,boggledPopulateWaterTypeChangeOptions,!boggledTerraformingProjectRequirementsMet,"boggledTerraformingPrintResultsAndRequirements
-SetEnabled boggledTriggerWaterTypeChange false
-SetShortcut boggledGoBackToTypeChangeSubmenu ""ESCAPE""",,"1:boggledTriggerWaterTypeChange:Start terraforming project
-50:boggledGoBackToTypeChangeSubmenu:Back",
-boggledTriggerWaterTypeChange,DialogOptionSelected,$option == boggledTriggerWaterTypeChange,"boggledTerraformingInitiateProject
-$menuState = main 0
-FireAll PopulateOptions",,,,
-,,,,,,
+
 #Farmland resource improvement logic
-,,,,,,
-boggledAddFarmlandResourceImprovementOption,boggledTerraformingPopulateResourceImprovementSubmenus,,,,0:boggledConsiderFarmlandResourceImprovement:Consider improving the farmland on $marketName,
-boggledPopulateFarmlandResourceImprovementMenu,DialogOptionSelected,$option == boggledConsiderFarmlandResourceImprovement,FireBest boggledPopulateFarmlandResourceImprovementOptions,,,
-boggledFarmlandResourceImprovementYes,boggledPopulateFarmlandResourceImprovementOptions,boggledTerraformingProjectRequirementsMet,"boggledTerraformingPrintResultsAndRequirements
-SetShortcut boggledGoBackToResourceImprovementSubmenu ""ESCAPE""",,"1:boggledTriggerFarmlandResourceImprovement:Start terraforming project
-50:boggledGoBackToResourceImprovementSubmenu:Back",
-boggledFarmlandResourceImprovementNo,boggledPopulateFarmlandResourceImprovementOptions,!boggledTerraformingProjectRequirementsMet,"boggledTerraformingPrintResultsAndRequirements
-SetEnabled boggledTriggerFarmlandResourceImprovement false
-SetShortcut boggledGoBackToResourceImprovementSubmenu ""ESCAPE""",,"1:boggledTriggerFarmlandResourceImprovement:Start terraforming project
-50:boggledGoBackToResourceImprovementSubmenu:Back",
-boggledTriggerFarmlandResourceImprovement,DialogOptionSelected,$option == boggledTriggerFarmlandResourceImprovement,"boggledTerraformingInitiateProject
-$menuState = main 0
-FireAll PopulateOptions",,,,
-,,,,,,
+
 #Organics resource improvement logic
-,,,,,,
-boggledAddOrganicsResourceImprovementOption,boggledTerraformingPopulateResourceImprovementSubmenus,,,,0:boggledConsiderOrganicsResourceImprovement:Consider improving the organics on $marketName,
-boggledPopulateOrganicsResourceImprovementMenu,DialogOptionSelected,$option == boggledConsiderOrganicsResourceImprovement,FireBest boggledPopulateOrganicsResourceImprovementOptions,,,
-boggledOrganicsResourceImprovementYes,boggledPopulateOrganicsResourceImprovementOptions,boggledTerraformingProjectRequirementsMet,"boggledTerraformingPrintResultsAndRequirements
-SetShortcut boggledGoBackToResourceImprovementSubmenu ""ESCAPE""",,"1:boggledTriggerOrganicsResourceImprovement:Start terraforming project
-50:boggledGoBackToResourceImprovementSubmenu:Back",
-boggledOrganicsResourceImprovementNo,boggledPopulateOrganicsResourceImprovementOptions,!boggledTerraformingProjectRequirementsMet,"boggledTerraformingPrintResultsAndRequirements
-SetEnabled boggledTriggerOrganicsResourceImprovement false
-SetShortcut boggledGoBackToResourceImprovementSubmenu ""ESCAPE""",,"1:boggledTriggerOrganicsResourceImprovement:Start terraforming project
-50:boggledGoBackToResourceImprovementSubmenu:Back",
-boggledTriggerOrganicsResourceImprovement,DialogOptionSelected,$option == boggledTriggerOrganicsResourceImprovement,"boggledTerraformingInitiateProject
-$menuState = main 0
-FireAll PopulateOptions",,,,
-,,,,,,
+
 #Volatiles resource improvement logic
-,,,,,,
-boggledAddVolatilesResourceImprovementOption,boggledTerraformingPopulateResourceImprovementSubmenus,,,,0:boggledConsiderVolatilesResourceImprovement:Consider improving the volatiles on $marketName,
-boggledPopulateVolatilesResourceImprovementMenu,DialogOptionSelected,$option == boggledConsiderVolatilesResourceImprovement,FireBest boggledPopulateVolatilesResourceImprovementOptions,,,
-boggledVolatilesResourceImprovementYes,boggledPopulateVolatilesResourceImprovementOptions,boggledTerraformingProjectRequirementsMet,"boggledTerraformingPrintResultsAndRequirements
-SetShortcut boggledGoBackToResourceImprovementSubmenu ""ESCAPE""",,"1:boggledTriggerVolatilesResourceImprovement:Start terraforming project
-50:boggledGoBackToResourceImprovementSubmenu:Back",
-boggledVolatilesResourceImprovementNo,boggledPopulateVolatilesResourceImprovementOptions,!boggledTerraformingProjectRequirementsMet,"boggledTerraformingPrintResultsAndRequirements
-SetEnabled boggledTriggerVolatilesResourceImprovement false
-SetShortcut boggledGoBackToResourceImprovementSubmenu ""ESCAPE""",,"1:boggledTriggerVolatilesResourceImprovement:Start terraforming project
-50:boggledGoBackToResourceImprovementSubmenu:Back",
-boggledTriggerVolatilesResourceImprovement,DialogOptionSelected,$option == boggledTriggerVolatilesResourceImprovement,"boggledTerraformingInitiateProject
-$menuState = main 0
-FireAll PopulateOptions",,,,
-,,,,,,
+
 #Extreme Weather condition improvement logic
-,,,,,,
-boggledAddExtremeWeatherConditionImprovementOption,boggledTerraformingPopulateConditionImprovementSubmenus,,,,0:boggledConsiderExtremeWeatherConditionImprovement:Consider making the weather patterns on $marketName less extreme,
-boggledPopulateExtremeWeatherConditionImprovementMenu,DialogOptionSelected,$option == boggledConsiderExtremeWeatherConditionImprovement,FireBest boggledPopulateExtremeWeatherConditionImprovementOptions,,,
-boggledExtremeWeatherConditionImprovementYes,boggledPopulateExtremeWeatherConditionImprovementOptions,boggledTerraformingProjectRequirementsMet,"boggledTerraformingPrintResultsAndRequirements
-SetShortcut boggledGoBackToConditionImprovementSubmenu ""ESCAPE""",,"1:boggledTriggerExtremeWeatherConditionImprovement:Start terraforming project
-50:boggledGoBackToConditionImprovementSubmenu:Back",
-boggledExtremeWeatherConditionImprovementNo,boggledPopulateExtremeWeatherConditionImprovementOptions,!boggledTerraformingProjectRequirementsMet,"boggledTerraformingPrintResultsAndRequirements
-SetEnabled boggledTriggerExtremeWeatherConditionImprovement false
-SetShortcut boggledGoBackToConditionImprovementSubmenu ""ESCAPE""",,"1:boggledTriggerExtremeWeatherConditionImprovement:Start terraforming project
-50:boggledGoBackToConditionImprovementSubmenu:Back",
-boggledTriggerExtremeWeatherConditionImprovement,DialogOptionSelected,$option == boggledTriggerExtremeWeatherConditionImprovement,"boggledTerraformingInitiateProject
-$menuState = main 0
-FireAll PopulateOptions",,,,
-,,,,,,
+
 #Mild Climate condition improvement logic
-,,,,,,
-boggledAddMildClimateConditionImprovementOption,boggledTerraformingPopulateConditionImprovementSubmenus,,,,0:boggledConsiderMildClimateConditionImprovement:Consider making the weather patterns on $marketName mild,
-boggledPopulateMildClimateConditionImprovementMenu,DialogOptionSelected,$option == boggledConsiderMildClimateConditionImprovement,FireBest boggledPopulateMildClimateConditionImprovementOptions,,,
-boggledMildClimateConditionImprovementYes,boggledPopulateMildClimateConditionImprovementOptions,boggledTerraformingProjectRequirementsMet,"boggledTerraformingPrintResultsAndRequirements
-SetShortcut boggledGoBackToConditionImprovementSubmenu ""ESCAPE""",,"1:boggledTriggerMildClimateConditionImprovement:Start terraforming project
-50:boggledGoBackToConditionImprovementSubmenu:Back",
-boggledMildClimateConditionImprovementNo,boggledPopulateMildClimateConditionImprovementOptions,!boggledTerraformingProjectRequirementsMet,"boggledTerraformingPrintResultsAndRequirements
-SetEnabled boggledTriggerMildClimateConditionImprovement false
-SetShortcut boggledGoBackToConditionImprovementSubmenu ""ESCAPE""",,"1:boggledTriggerMildClimateConditionImprovement:Start terraforming project
-50:boggledGoBackToConditionImprovementSubmenu:Back",
-boggledTriggerMildClimateConditionImprovement,DialogOptionSelected,$option == boggledTriggerMildClimateConditionImprovement,"boggledTerraformingInitiateProject
-$menuState = main 0
-FireAll PopulateOptions",,,,
-,,,,,,
+
 #Habitable condition improvement logic
-,,,,,,
-boggledAddHabitableConditionImprovementOption,boggledTerraformingPopulateConditionImprovementSubmenus,,,,0:boggledConsiderHabitableConditionImprovement:Consider making the atmosphere on $marketName human-breathable,
-boggledPopulateHabitableConditionImprovementMenu,DialogOptionSelected,$option == boggledConsiderHabitableConditionImprovement,FireBest boggledPopulateHabitableConditionImprovementOptions,,,
-boggledHabitableConditionImprovementYes,boggledPopulateHabitableConditionImprovementOptions,boggledTerraformingProjectRequirementsMet,"boggledTerraformingPrintResultsAndRequirements
-SetShortcut boggledGoBackToConditionImprovementSubmenu ""ESCAPE""",,"1:boggledTriggerHabitableConditionImprovement:Start terraforming project
-50:boggledGoBackToConditionImprovementSubmenu:Back",
-boggledHabitableConditionImprovementNo,boggledPopulateHabitableConditionImprovementOptions,!boggledTerraformingProjectRequirementsMet,"boggledTerraformingPrintResultsAndRequirements
-SetEnabled boggledTriggerHabitableConditionImprovement false
-SetShortcut boggledGoBackToConditionImprovementSubmenu ""ESCAPE""",,"1:boggledTriggerHabitableConditionImprovement:Start terraforming project
-50:boggledGoBackToConditionImprovementSubmenu:Back",
-boggledTriggerHabitableConditionImprovement,DialogOptionSelected,$option == boggledTriggerHabitableConditionImprovement,"boggledTerraformingInitiateProject
-$menuState = main 0
-FireAll PopulateOptions",,,,
-,,,,,,
+
 #Atmosphere Density condition improvement logic
-,,,,,,
-boggledAddAtmosphereDensityConditionImprovementOption,boggledTerraformingPopulateConditionImprovementSubmenus,,,,0:boggledConsiderAtmosphereDensityConditionImprovement:Consider normalizing atmospheric density on $marketName,
-boggledPopulateAtmosphereDensityConditionImprovementMenu,DialogOptionSelected,$option == boggledConsiderAtmosphereDensityConditionImprovement,FireBest boggledPopulateAtmosphereDensityConditionImprovementOptions,,,
-boggledAtmosphereDensityConditionImprovementYes,boggledPopulateAtmosphereDensityConditionImprovementOptions,boggledTerraformingProjectRequirementsMet,"boggledTerraformingPrintResultsAndRequirements
-SetShortcut boggledGoBackToConditionImprovementSubmenu ""ESCAPE""",,"1:boggledTriggerAtmosphereDensityConditionImprovement:Start terraforming project
-50:boggledGoBackToConditionImprovementSubmenu:Back",
-boggledAtmosphereDensityConditionImprovementNo,boggledPopulateAtmosphereDensityConditionImprovementOptions,!boggledTerraformingProjectRequirementsMet,"boggledTerraformingPrintResultsAndRequirements
-SetEnabled boggledTriggerAtmosphereDensityConditionImprovement false
-SetShortcut boggledGoBackToConditionImprovementSubmenu ""ESCAPE""",,"1:boggledTriggerAtmosphereDensityConditionImprovement:Start terraforming project
-50:boggledGoBackToConditionImprovementSubmenu:Back",
-boggledTriggerAtmosphereDensityConditionImprovement,DialogOptionSelected,$option == boggledTriggerAtmosphereDensityConditionImprovement,"boggledTerraformingInitiateProject
-$menuState = main 0
-FireAll PopulateOptions",,,,
-,,,,,,
+
 #Toxic Atmosphere condition improvement logic
-,,,,,,
-boggledAddToxicAtmosphereConditionImprovementOption,boggledTerraformingPopulateConditionImprovementSubmenus,,,,0:boggledConsiderToxicAtmosphereConditionImprovement:Consider remediating atmospheric toxicity on $marketName,
-boggledPopulateToxicAtmosphereConditionImprovementMenu,DialogOptionSelected,$option == boggledConsiderToxicAtmosphereConditionImprovement,FireBest boggledPopulateToxicAtmosphereConditionImprovementOptions,,,
-boggledToxicAtmosphereConditionImprovementYes,boggledPopulateToxicAtmosphereConditionImprovementOptions,boggledTerraformingProjectRequirementsMet,"boggledTerraformingPrintResultsAndRequirements
-SetShortcut boggledGoBackToConditionImprovementSubmenu ""ESCAPE""",,"1:boggledTriggerToxicAtmosphereConditionImprovement:Start terraforming project
-50:boggledGoBackToConditionImprovementSubmenu:Back",
-boggledToxicAtmosphereConditionImprovementNo,boggledPopulateToxicAtmosphereConditionImprovementOptions,!boggledTerraformingProjectRequirementsMet,"boggledTerraformingPrintResultsAndRequirements
-SetEnabled boggledTriggerToxicAtmosphereConditionImprovement false
-SetShortcut boggledGoBackToConditionImprovementSubmenu ""ESCAPE""",,"1:boggledTriggerToxicAtmosphereConditionImprovement:Start terraforming project
-50:boggledGoBackToConditionImprovementSubmenu:Back",
-boggledTriggerToxicAtmosphereConditionImprovement,DialogOptionSelected,$option == boggledTriggerToxicAtmosphereConditionImprovement,"boggledTerraformingInitiateProject
-$menuState = main 0
-FireAll PopulateOptions",,,,
-,,,,,,
+
 #Irradiated improvement logic (non-default)
-,,,,,,
-boggledAddIrradiatedConditionImprovementOption,boggledTerraformingPopulateConditionImprovementSubmenus,boggledTerraformingCheckEnabledIrradiatedProject,,,0:boggledConsiderIrradiatedConditionImprovement:Consider remediating radiation on $marketName,
-boggledPopulateIrradiatedConditionImprovementMenu,DialogOptionSelected,$option == boggledConsiderIrradiatedConditionImprovement,FireBest boggledPopulateIrradiatedConditionImprovementOptions,,,
-boggledIrradiatedConditionImprovementYes,boggledPopulateIrradiatedConditionImprovementOptions,boggledTerraformingProjectRequirementsMet,"boggledTerraformingPrintResultsAndRequirements
-SetShortcut boggledGoBackToConditionImprovementSubmenu ""ESCAPE""",,"1:boggledTriggerIrradiatedConditionImprovement:Start terraforming project
-50:boggledGoBackToConditionImprovementSubmenu:Back",
-boggledIrradiatedConditionImprovementNo,boggledPopulateIrradiatedConditionImprovementOptions,!boggledTerraformingProjectRequirementsMet,"boggledTerraformingPrintResultsAndRequirements
-SetEnabled boggledTriggerIrradiatedConditionImprovement false
-SetShortcut boggledGoBackToConditionImprovementSubmenu ""ESCAPE""",,"1:boggledTriggerIrradiatedConditionImprovement:Start terraforming project
-50:boggledGoBackToConditionImprovementSubmenu:Back",
-boggledTriggerIrradiatedConditionImprovement,DialogOptionSelected,$option == boggledTriggerIrradiatedConditionImprovement,"boggledTerraformingInitiateProject
-$menuState = main 0
-FireAll PopulateOptions",,,,
-,,,,,,
-boggledAddCancelOptionToTypeChangeSubmenu,boggledTerraformingPopulateTypeChangeSubmenus,,SetShortcut boggledGoBackToTerraformingControlPanelRoot ""ESCAPE"",,50:boggledGoBackToTerraformingControlPanelRoot:Back,
-boggledAddCancelOptionToResourceImprovementSubmenu,boggledTerraformingPopulateResourceImprovementSubmenus,,SetShortcut boggledGoBackToTerraformingControlPanelRoot ""ESCAPE"",,50:boggledGoBackToTerraformingControlPanelRoot:Back,
-boggledAddCancelOptionToConditionImprovementSubmenu,boggledTerraformingPopulateConditionImprovementSubmenus,,SetShortcut boggledGoBackToTerraformingControlPanelRoot ""ESCAPE"",,50:boggledGoBackToTerraformingControlPanelRoot:Back,
-boggledGoBackToTypeChangeSubmenu,DialogOptionSelected,$option == boggledGoBackToTypeChangeSubmenu,"$menuState = main 0
-FireAll boggledTerraformingPopulateTypeChangeSubmenus",,,,
-boggledGoBackToResourceImprovementSubmenu,DialogOptionSelected,$option == boggledGoBackToResourceImprovementSubmenu,"$menuState = main 0
-FireAll boggledTerraformingPopulateResourceImprovementSubmenus",,,,
-boggledGoBackToConditionImprovementSubmenu,DialogOptionSelected,$option == boggledGoBackToConditionImprovementSubmenu,"$menuState = main 0
-FireAll boggledTerraformingPopulateConditionImprovementSubmenus",,,,
-boggledGoBackToTerraformingControlPanelRoot,DialogOptionSelected,$option == boggledGoBackToTerraformingControlPanelRoot,"$menuState = main 0
-FireAll boggledTerraformingPopulateSubmenus",,,,
-,,,,,,
+
 #stations under construction interactions
 ,,,,,,
 boggledMiningStationUnderConstructionOpenDialog,OpenInteractionDialog,"$tag:boggled_mining_station

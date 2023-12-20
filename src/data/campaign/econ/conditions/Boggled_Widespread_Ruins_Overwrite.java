@@ -14,7 +14,7 @@ public class Boggled_Widespread_Ruins_Overwrite extends BaseHazardCondition
     {
         super.createTooltipAfterDescription(tooltip, expanded);
 
-        if(boggledTools.getBooleanSetting("boggledDomainArchaeologyEnabled"))
+        if(boggledTools.getBooleanSetting(boggledTools.BoggledSettings.domainArchaeologyEnabled))
         {
             tooltip.addPara("No bonuses or penalties to Domain-era artifact production (Domain Archeology)", 10f, Misc.getHighlightColor(), "");
         }

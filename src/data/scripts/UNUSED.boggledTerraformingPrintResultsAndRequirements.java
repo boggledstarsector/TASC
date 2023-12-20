@@ -47,7 +47,7 @@ public class boggledTerraformingPrintResultsAndRequirements extends BaseCommandP
 
             MarketAPI market = this.entity.getMarket();
             PlanetAPI planet = market.getPlanetEntity();
-            Terraforming_Controller terraformingController = (Terraforming_Controller) market.getCondition("terraforming_controller").getPlugin();
+            Terraforming_Controller terraformingController = (Terraforming_Controller) market.getCondition(boggledTools.BoggledConditions.terraformingControllerConditionID).getPlugin();
             String currentProject = terraformingController.getProject();
 
             if(ruleId.equals("boggledCancelCurrentProjectMenu"))
@@ -57,83 +57,83 @@ public class boggledTerraformingPrintResultsAndRequirements extends BaseCommandP
             }
             else if(ruleId.equals("boggledAridTypeChangeYes") || ruleId.equals("boggledAridTypeChangeNo"))
             {
-                boggledTools.printProjectResults(market, "aridTypeChange", text);
-                boggledTools.printProjectRequirementsReportIfStalled(market, "aridTypeChange",text);
+                boggledTools.printProjectResults(market, "arid_type_change", text);
+                boggledTools.printProjectRequirementsReportIfStalled(market, "arid_type_change",text);
             }
             else if(ruleId.equals("boggledFrozenTypeChangeYes") || ruleId.equals("boggledFrozenTypeChangeNo"))
             {
-                boggledTools.printProjectResults(market, "frozenTypeChange", text);
-                boggledTools.printProjectRequirementsReportIfStalled(market, "frozenTypeChange",text);
+                boggledTools.printProjectResults(market, "frozen_type_change", text);
+                boggledTools.printProjectRequirementsReportIfStalled(market, "frozen_type_change",text);
             }
             else if(ruleId.equals("boggledJungleTypeChangeYes") || ruleId.equals("boggledJungleTypeChangeNo"))
             {
-                boggledTools.printProjectResults(market, "jungleTypeChange", text);
-                boggledTools.printProjectRequirementsReportIfStalled(market, "jungleTypeChange",text);
+                boggledTools.printProjectResults(market, "jungle_type_change", text);
+                boggledTools.printProjectRequirementsReportIfStalled(market, "jungle_type_change",text);
             }
             else if(ruleId.equals("boggledTerranTypeChangeYes") || ruleId.equals("boggledTerranTypeChangeNo"))
             {
-                boggledTools.printProjectResults(market, "terranTypeChange", text);
-                boggledTools.printProjectRequirementsReportIfStalled(market, "terranTypeChange",text);
+                boggledTools.printProjectResults(market, "terran_type_change", text);
+                boggledTools.printProjectRequirementsReportIfStalled(market, "terran_type_change",text);
             }
             else if(ruleId.equals("boggledTundraTypeChangeYes") || ruleId.equals("boggledTundraTypeChangeNo"))
             {
-                boggledTools.printProjectResults(market, "tundraTypeChange", text);
-                boggledTools.printProjectRequirementsReportIfStalled(market, "tundraTypeChange",text);
+                boggledTools.printProjectResults(market, "tundra_type_change", text);
+                boggledTools.printProjectRequirementsReportIfStalled(market, "tundra_type_change",text);
             }
             else if(ruleId.equals("boggledWaterTypeChangeYes") || ruleId.equals("boggledWaterTypeChangeNo"))
             {
-                boggledTools.printProjectResults(market, "waterTypeChange", text);
-                boggledTools.printProjectRequirementsReportIfStalled(market, "waterTypeChange",text);
+                boggledTools.printProjectResults(market, "water_type_change", text);
+                boggledTools.printProjectRequirementsReportIfStalled(market, "water_type_change",text);
             }
             else if(ruleId.equals("boggledFarmlandResourceImprovementYes") || ruleId.equals("boggledFarmlandResourceImprovementNo"))
             {
-                boggledTools.printProjectResults(market, "farmlandResourceImprovement", text);
-                boggledTools.printProjectRequirementsReportIfStalled(market, "farmlandResourceImprovement",text);
+                boggledTools.printProjectResults(market, "farmland_resource_mprovement", text);
+                boggledTools.printProjectRequirementsReportIfStalled(market, "farmland_resource_improvement",text);
             }
             else if(ruleId.equals("boggledOrganicsResourceImprovementYes") || ruleId.equals("boggledOrganicsResourceImprovementNo"))
             {
-                boggledTools.printProjectResults(market, "organicsResourceImprovement", text);
-                boggledTools.printProjectRequirementsReportIfStalled(market, "organicsResourceImprovement",text);
+                boggledTools.printProjectResults(market, "organics_resource_improvement", text);
+                boggledTools.printProjectRequirementsReportIfStalled(market, "organics_resource_improvement",text);
             }
             else if(ruleId.equals("boggledVolatilesResourceImprovementYes") || ruleId.equals("boggledVolatilesResourceImprovementNo"))
             {
-                boggledTools.printProjectResults(market, "volatilesResourceImprovement", text);
-                boggledTools.printProjectRequirementsReportIfStalled(market, "volatilesResourceImprovement",text);
+                boggledTools.printProjectResults(market, "volatiles_resource_improvement", text);
+                boggledTools.printProjectRequirementsReportIfStalled(market, "volatiles_resource_improvement",text);
             }
             else if(ruleId.equals("boggledExtremeWeatherConditionImprovementYes") || ruleId.equals("boggledExtremeWeatherConditionImprovementNo"))
             {
-                boggledTools.printProjectResults(market, "extremeWeatherConditionImprovement", text);
-                boggledTools.printProjectRequirementsReportIfStalled(market, "extremeWeatherConditionImprovement",text);
+                boggledTools.printProjectResults(market, "extreme_weather_condition_improvement", text);
+                boggledTools.printProjectRequirementsReportIfStalled(market, "extreme_weather_condition_improvement",text);
             }
             else if(ruleId.equals("boggledMildClimateConditionImprovementYes") || ruleId.equals("boggledMildClimateConditionImprovementNo"))
             {
-                boggledTools.printProjectResults(market, "mildClimateConditionImprovement", text);
-                boggledTools.printProjectRequirementsReportIfStalled(market, "mildClimateConditionImprovement",text);
+                boggledTools.printProjectResults(market, "mild_climate_condition_improvement", text);
+                boggledTools.printProjectRequirementsReportIfStalled(market, "mild_climate_condition_improvement",text);
             }
             else if(ruleId.equals("boggledHabitableConditionImprovementYes") || ruleId.equals("boggledHabitableConditionImprovementNo"))
             {
-                boggledTools.printProjectResults(market, "habitableConditionImprovement", text);
-                boggledTools.printProjectRequirementsReportIfStalled(market, "habitableConditionImprovement",text);
+                boggledTools.printProjectResults(market, "habitable_condition_improvement", text);
+                boggledTools.printProjectRequirementsReportIfStalled(market, "habitable_condition_improvement",text);
             }
             else if(ruleId.equals("boggledAtmosphereDensityConditionImprovementYes") || ruleId.equals("boggledAtmosphereDensityConditionImprovementNo"))
             {
-                boggledTools.printProjectResults(market, "atmosphereDensityConditionImprovement", text);
-                boggledTools.printProjectRequirementsReportIfStalled(market, "atmosphereDensityConditionImprovement",text);
+                boggledTools.printProjectResults(market, "atmosphere_density_condition_improvement", text);
+                boggledTools.printProjectRequirementsReportIfStalled(market, "atmosphere_density_condition_improvement",text);
             }
             else if(ruleId.equals("boggledToxicAtmosphereConditionImprovementYes") || ruleId.equals("boggledToxicAtmosphereConditionImprovementNo"))
             {
-                boggledTools.printProjectResults(market, "toxicAtmosphereConditionImprovement", text);
-                boggledTools.printProjectRequirementsReportIfStalled(market, "toxicAtmosphereConditionImprovement",text);
+                boggledTools.printProjectResults(market, "toxic_atmosphere_condition_improvement", text);
+                boggledTools.printProjectRequirementsReportIfStalled(market, "toxic_atmosphere_condition_improvement",text);
             }
             else if(ruleId.equals("boggledIrradiatedConditionImprovementYes") || ruleId.equals("boggledIrradiatedConditionImprovementNo"))
             {
-                boggledTools.printProjectResults(market, "irradiatedConditionImprovement", text);
-                boggledTools.printProjectRequirementsReportIfStalled(market, "irradiatedConditionImprovement",text);
+                boggledTools.printProjectResults(market, "irradiated_condition_improvement", text);
+                boggledTools.printProjectRequirementsReportIfStalled(market, "irradiated_condition_improvement",text);
             }
             else if(ruleId.equals("boggledRemoveAtmosphereConditionImprovementYes") || ruleId.equals("boggledRemoveAtmosphereConditionImprovementNo"))
             {
-                boggledTools.printProjectResults(market, "removeAtmosphereConditionImprovement", text);
-                boggledTools.printProjectRequirementsReportIfStalled(market, "removeAtmosphereConditionImprovement",text);
+                boggledTools.printProjectResults(market, "remove_atmosphere_condition_improvement", text);
+                boggledTools.printProjectRequirementsReportIfStalled(market, "remove_atmosphere_condition_improvement",text);
             }
 
             if(!currentProject.equals("None"))

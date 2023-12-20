@@ -14,7 +14,7 @@ public class Boggled_Vast_Ruins_Overwrite extends BaseHazardCondition
     {
         super.createTooltipAfterDescription(tooltip, expanded);
 
-        if(boggledTools.getBooleanSetting("boggledDomainArchaeologyEnabled"))
+        if(boggledTools.getBooleanSetting(boggledTools.BoggledSettings.domainArchaeologyEnabled))
         {
             tooltip.addPara("%s to Domain-era artifact production (Domain Archaeology)", 10f, Misc.getHighlightColor(), "+2");
         }

@@ -5,6 +5,7 @@ import com.fs.starfarer.api.campaign.*;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import com.fs.starfarer.api.impl.campaign.*;
 import com.fs.starfarer.api.impl.campaign.econ.CommRelayCondition;
+import com.fs.starfarer.api.impl.campaign.ids.Commodities;
 import com.fs.starfarer.api.impl.campaign.rulecmd.BaseCommandPlugin;
 import com.fs.starfarer.api.loading.Description;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
@@ -86,13 +87,13 @@ public class boggledObjectivePrintDescription extends BaseCommandPlugin
 
     public String[] getResources()
     {
-        if(boggledTools.getBooleanSetting("boggledDomainArchaeologyEnabled"))
+        if(boggledTools.getBooleanSetting(boggledTools.BoggledSettings.domainArchaeologyEnabled))
         {
-            return new String[]{"heavy_machinery", "metals", "rare_metals", "domain_artifacts"};
+            return new String[]{Commodities.HEAVY_MACHINERY, Commodities.METALS, Commodities.RARE_METALS, boggledTools.BoggledCommodities.domainArtifacts};
         }
         else
         {
-            return new String[]{"heavy_machinery", "metals", "rare_metals"};
+            return new String[]{Commodities.HEAVY_MACHINERY, Commodities.METALS, Commodities.RARE_METALS};
         }
     }
 
@@ -137,11 +138,8 @@ public class boggledObjectivePrintDescription extends BaseCommandPlugin
         CustomEntitySpecAPI spec = Global.getSettings().getCustomEntitySpec(type);
         CustomCampaignEntityPlugin plugin = spec.getPlugin();
         SectorEntityToken temp = this.entity.getContainingLocation().createToken(0.0F, 0.0F);
-        Iterator var7 = spec.getTags().iterator();
 
-        while(var7.hasNext())
-        {
-            String tag = (String)var7.next();
+        for (String tag : spec.getTags()) {
             temp.addTag(tag);
         }
 
@@ -185,25 +183,15 @@ public class boggledObjectivePrintDescription extends BaseCommandPlugin
             o.printNonFunctionalAndHackDescription(text);
         }
 
-        Iterator var15 = this.entity.getContainingLocation().getEntitiesWithTag("objective").iterator();
-
-        while(var15.hasNext())
-        {
-            SectorEntityToken curr = (SectorEntityToken)var15.next();
-            if (curr.hasTag("objective") && curr.getFaction() != null && curr.getFaction().isPlayerFaction() && curr.getCustomEntitySpec() != null)
-            {
+        for (SectorEntityToken curr : this.entity.getContainingLocation().getEntitiesWithTag("objective")) {
+            if (curr.hasTag("objective") && curr.getFaction() != null && curr.getFaction().isPlayerFaction() && curr.getCustomEntitySpec() != null) {
                 CustomCampaignEntityPlugin ccep = curr.getCustomPlugin();
-                if (ccep instanceof CampaignObjective)
-                {
-                    CampaignObjective o = (CampaignObjective)ccep;
-                    if (c == o.getClass())
-                    {
-                        if (this.entity == curr)
-                        {
+                if (ccep instanceof CampaignObjective) {
+                    CampaignObjective o = (CampaignObjective) ccep;
+                    if (c == o.getClass()) {
+                        if (this.entity == curr) {
                             text.addPara("Another one in this star system would have no effect beyond providing redundancy in case this one is lost.");
-                        }
-                        else
-                        {
+                        } else {
                             text.addPara("There's already " + curr.getCustomEntitySpec().getAOrAn() + " " + curr.getCustomEntitySpec().getNameInText() + " under your control " + "in this star system. Another one would have no effect " + "beyond providing redundancy if one is lost.");
                         }
                         break;

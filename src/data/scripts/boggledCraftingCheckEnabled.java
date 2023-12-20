@@ -37,7 +37,7 @@ public class boggledCraftingCheckEnabled extends BaseCommandPlugin
         //  3. Domain-tech content is enabled
         //  4. Domain-tech crafting is enabled
         //  5. Domain Archeology is enabled
-        if(this.entity.getMarket() != null && this.entity.getMarket().isPlayerOwned() && boggledTools.getBooleanSetting("boggledDomainTechContentEnabled") && boggledTools.getBooleanSetting("boggledDomainTechCraftingEnabled") && boggledTools.getBooleanSetting("boggledDomainArchaeologyEnabled"))
+        if(this.entity.getMarket() != null && this.entity.getMarket().isPlayerOwned() && boggledTools.getBooleanSetting(boggledTools.BoggledSettings.domainTechContentEnabled) && boggledTools.getBooleanSetting("boggledDomainTechCraftingEnabled") && boggledTools.getBooleanSetting(boggledTools.BoggledSettings.domainArchaeologyEnabled))
         {
             return true;
         }

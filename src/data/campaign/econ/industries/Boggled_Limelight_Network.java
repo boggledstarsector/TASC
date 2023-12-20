@@ -8,6 +8,7 @@ import com.fs.starfarer.api.util.Misc;
 import com.fs.starfarer.api.util.Pair;
 import data.campaign.econ.boggledTools;
 import java.awt.*;
+import com.fs.starfarer.api.impl.campaign.ids.Commodities;
 
 public class Boggled_Limelight_Network extends BaseIndustry
 {
@@ -30,10 +31,10 @@ public class Boggled_Limelight_Network extends BaseIndustry
     {
         super.apply(true);
 
-        if(boggledTools.getBooleanSetting("boggledDomainArchaeologyEnabled"))
+        if(boggledTools.getBooleanSetting(boggledTools.BoggledSettings.domainArchaeologyEnabled))
         {
             int size = this.market.getSize();
-            this.demand("domain_artifacts", size - 2);
+            this.demand(boggledTools.BoggledCommodities.domainArtifacts, size - 2);
         }
 
         if(hasShortage())
@@ -66,14 +67,7 @@ public class Boggled_Limelight_Network extends BaseIndustry
             return false;
         }
 
-        if(boggledTools.getBooleanSetting("boggledDomainTechContentEnabled") && boggledTools.getBooleanSetting("boggledLimelightNetworkPlayerBuildEnabled"))
-        {
-            return true;
-        }
-        else
-        {
-            return false;
-        }
+        return boggledTools.getBooleanSetting(boggledTools.BoggledSettings.domainTechContentEnabled) && boggledTools.getBooleanSetting(boggledTools.BoggledSettings.limelightNetworkPlayerBuildEnabled);
     }
 
     @Override
@@ -84,14 +78,7 @@ public class Boggled_Limelight_Network extends BaseIndustry
             return false;
         }
 
-        if(boggledTools.getBooleanSetting("boggledDomainTechContentEnabled") && boggledTools.getBooleanSetting("boggledLimelightNetworkPlayerBuildEnabled"))
-        {
-            return true;
-        }
-        else
-        {
-            return false;
-        }
+        return boggledTools.getBooleanSetting(boggledTools.BoggledSettings.domainTechContentEnabled) && boggledTools.getBooleanSetting(boggledTools.BoggledSettings.limelightNetworkPlayerBuildEnabled);
     }
 
     @Override
@@ -112,10 +99,10 @@ public class Boggled_Limelight_Network extends BaseIndustry
         if (mode == AICoreDescriptionMode.INDUSTRY_TOOLTIP) {
             CommoditySpecAPI coreSpec = Global.getSettings().getCommoditySpec(this.aiCoreId);
             TooltipMakerAPI text = tooltip.beginImageWithText(coreSpec.getIconName(), 48.0F);
-            text.addPara(pre + "Reduces upkeep cost by %s. Reduces demand by %s unit. " + "Increases income by %s.", 0.0F, highlight, new String[]{(int)((1.0F - UPKEEP_MULT) * 100.0F) + "%", "" + DEMAND_REDUCTION, "50%"});
+            text.addPara(pre + "Reduces upkeep cost by %s. Reduces demand by %s unit. " + "Increases income by %s.", 0.0F, highlight, (int)((1.0F - UPKEEP_MULT) * 100.0F) + "%", "" + DEMAND_REDUCTION, "50%");
             tooltip.addImageWithText(opad);
         } else {
-            tooltip.addPara(pre + "Reduces upkeep cost by %s. Reduces demand by %s unit. " + "Increases income by %s.", opad, highlight, new String[]{(int)((1.0F - UPKEEP_MULT) * 100.0F) + "%", "" + DEMAND_REDUCTION, "50%"});
+            tooltip.addPara(pre + "Reduces upkeep cost by %s. Reduces demand by %s unit. " + "Increases income by %s.", opad, highlight, (int)((1.0F - UPKEEP_MULT) * 100.0F) + "%", "" + DEMAND_REDUCTION, "50%");
         }
     }
 
@@ -126,7 +113,7 @@ public class Boggled_Limelight_Network extends BaseIndustry
 
         float alpha_mult = 1.50f;
 
-        if(this.aiCoreId != null && this.aiCoreId.equals("alpha_core"))
+        if(this.aiCoreId != null && this.aiCoreId.equals(Commodities.ALPHA_CORE))
         {
             String name = "Alpha Core assigned";
             this.getIncome().modifyMult("ind_lln_alpha_core", alpha_mult, name);
@@ -195,13 +182,10 @@ public class Boggled_Limelight_Network extends BaseIndustry
 
     private boolean hasShortage()
     {
-        if(boggledTools.getBooleanSetting("boggledDomainArchaeologyEnabled"))
+        if(boggledTools.getBooleanSetting(boggledTools.BoggledSettings.domainArchaeologyEnabled))
         {
-            Pair<String, Integer> deficit = this.getMaxDeficit(new String[]{"domain_artifacts"});
-            if(deficit.two != 0)
-            {
-                return true;
-            }
+            Pair<String, Integer> deficit = this.getMaxDeficit(new String[]{boggledTools.BoggledCommodities.domainArtifacts});
+            return deficit.two != 0;
         }
 
         return false;

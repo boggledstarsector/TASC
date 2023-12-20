@@ -8,6 +8,7 @@ import com.fs.starfarer.api.campaign.econ.Industry;
 import com.fs.starfarer.api.characters.MarketConditionSpecAPI;
 import com.fs.starfarer.api.impl.campaign.econ.BaseMarketConditionPlugin;
 import com.fs.starfarer.api.impl.campaign.ids.Conditions;
+import com.fs.starfarer.api.impl.campaign.ids.Factions;
 import com.fs.starfarer.api.impl.campaign.ids.Industries;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
@@ -29,9 +30,9 @@ public class Boggled_Solar_Array_Overwrite extends BaseMarketConditionPlugin
     {
         super.advance(amount);
 
-        if(!this.market.getFactionId().equals("neutral") && boggledTools.getBooleanSetting("boggledTerraformingContentEnabled") && boggledTools.getBooleanSetting("boggledStellarReflectorArrayMarketAutoPlacementEnabled") && !this.market.hasIndustry("BOGGLED_STELLAR_REFLECTOR_ARRAY"))
+        if(!this.market.getFactionId().equals(Factions.NEUTRAL) && boggledTools.getBooleanSetting(boggledTools.BoggledSettings.terraformingContentEnabled) && boggledTools.getBooleanSetting("boggledStellarReflectorArrayMarketAutoPlacementEnabled") && !this.market.hasIndustry(boggledTools.BoggledIndustries.stellarReflectorArrayIndustryID))
         {
-            this.market.addIndustry("BOGGLED_STELLAR_REFLECTOR_ARRAY");
+            this.market.addIndustry(boggledTools.BoggledIndustries.stellarReflectorArrayIndustryID);
         }
     }
 
@@ -86,7 +87,7 @@ public class Boggled_Solar_Array_Overwrite extends BaseMarketConditionPlugin
         }
 
         String farmAqua = "Farming";
-        if(this.market.hasCondition("water_surface"))
+        if(this.market.hasCondition(Conditions.WATER_SURFACE))
         {
             farmAqua = "Aquaculture";
         }

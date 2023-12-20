@@ -308,7 +308,7 @@ public class boggledTerraformingDialogPlugin implements InteractionDialogPlugin
             market = dialog.getInteractionTarget().getMarket();
         }
         dialog.setInteractionTarget(market.getPlanetEntity());
-        Terraforming_Controller controller = (Terraforming_Controller) market.getCondition("terraforming_controller").getPlugin();
+        Terraforming_Controller controller = (Terraforming_Controller) market.getCondition(boggledTools.BoggledConditions.terraformingControllerConditionID).getPlugin();
 
         if(printStatus)
         {
@@ -460,7 +460,7 @@ public class boggledTerraformingDialogPlugin implements InteractionDialogPlugin
             ArrayList<MarketAPI> marketsWithNoOngoingProject = new ArrayList<>();
             for(MarketAPI market : allNonStationPlayerMarkets)
             {
-                if(!market.hasCondition("terraforming_controller") || ((Terraforming_Controller) market.getCondition("terraforming_controller").getPlugin()).getProject().equals("None"))
+                if(!market.hasCondition(boggledTools.BoggledConditions.terraformingControllerConditionID) || ((Terraforming_Controller) market.getCondition(boggledTools.BoggledConditions.terraformingControllerConditionID).getPlugin()).getProject().equals(boggledTools.noneProjectID))
                 {
                     marketsWithNoOngoingProject.add(market);
                 }

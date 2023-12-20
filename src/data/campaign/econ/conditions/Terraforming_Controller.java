@@ -5,19 +5,13 @@ import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.*;
 import com.fs.starfarer.api.campaign.comm.CommMessageAPI;
 import com.fs.starfarer.api.impl.campaign.econ.BaseHazardCondition;
-import com.fs.starfarer.api.impl.campaign.ids.Conditions;
 import com.fs.starfarer.api.impl.campaign.intel.BaseIntelPlugin;
 import com.fs.starfarer.api.impl.campaign.intel.MessageIntel;
 import com.fs.starfarer.api.util.Misc;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Map;
 
-import com.fs.starfarer.api.util.Pair;
 import data.campaign.econ.boggledTools;
-
-import static java.util.Arrays.asList;
 
 public class Terraforming_Controller extends BaseHazardCondition
 {
@@ -32,72 +26,6 @@ public class Terraforming_Controller extends BaseHazardCondition
         public static String terraformingControllerLastDayChecked = "boggledTerraformingControllerLastDayChecked_";
         public static String terraformingControllerCurrentProject = "boggledTerraformingControllerCurrentProject_";
     }
-
-    private static HashMap<String, Pair<ArrayList<String>, ArrayList<String>>> initialiseProjectChangeConditions() {
-        HashMap<String, Pair<ArrayList<String>, ArrayList<String>>> ret = new HashMap<>();
-        // one is conditions added, two is conditions removed
-        // Resource improvement and planet type change has to be handled separately for now, so they're not in here
-        ArrayList<String> extremeWeatherConditionsAdded = new ArrayList<>();
-        ArrayList<String> extremeWeatherConditionsRemoved = new ArrayList<>(asList(
-                Conditions.EXTREME_WEATHER
-        ));
-
-        ArrayList<String> mildClimateConditionsAdded = new ArrayList<>(asList(
-                Conditions.MILD_CLIMATE
-        ));
-        ArrayList<String> mildClimateConditionsRemoved = new ArrayList<>();
-
-        ArrayList<String> habitableConditionsAdded = new ArrayList<>(asList(
-                Conditions.HABITABLE
-        ));
-        ArrayList<String> habitableConditionsRemoved = new ArrayList<>();
-
-        ArrayList<String> atmosphereDensityConditionsAdded = new ArrayList<>(asList(
-                Conditions.NO_ATMOSPHERE,
-                Conditions.THIN_ATMOSPHERE,
-                Conditions.DENSE_ATMOSPHERE
-        ));
-        ArrayList<String> atmosphereDensityConditionsRemoved = new ArrayList<>();
-
-        ArrayList<String> toxicAtmosphereConditionsAdded = new ArrayList<>();
-        ArrayList<String> toxicAtmosphereConditionsRemoved = new ArrayList<>(asList(
-                Conditions.TOXIC_ATMOSPHERE
-        ));
-
-        ArrayList<String> irradiatedConditionsAdded = new ArrayList<>();
-        ArrayList<String> irradiatedConditionsRemoved = new ArrayList<>(asList(
-                Conditions.IRRADIATED
-        ));
-
-        ArrayList<String> removeAtmosphereConditionsAdded = new ArrayList<>(asList(
-                Conditions.NO_ATMOSPHERE
-        ));
-        ArrayList<String> removeAtmosphereConditionsRemoved = new ArrayList<>(asList(
-                Conditions.THIN_ATMOSPHERE,
-                Conditions.TOXIC_ATMOSPHERE,
-                Conditions.DENSE_ATMOSPHERE,
-                Conditions.POLLUTION,
-                Conditions.INIMICAL_BIOSPHERE,
-                Conditions.EXTREME_WEATHER,
-                Conditions.MILD_CLIMATE,
-                Conditions.HABITABLE
-        ));
-
-        ret.put(boggledTools.extremeWeatherConditionImprovementProjectID, new Pair<>(extremeWeatherConditionsAdded, extremeWeatherConditionsRemoved));
-        ret.put(boggledTools.mildClimateConditionImprovementProjectID, new Pair<>(mildClimateConditionsAdded, mildClimateConditionsRemoved));
-        ret.put(boggledTools.habitableConditionImprovementProjectID, new Pair<>(habitableConditionsAdded, habitableConditionsRemoved));
-        ret.put(boggledTools.atmosphereDensityConditionImprovementProjectID, new Pair<>(atmosphereDensityConditionsAdded, atmosphereDensityConditionsRemoved));
-        ret.put(boggledTools.toxicAtmosphereConditionImprovementProjectID, new Pair<>(toxicAtmosphereConditionsAdded, toxicAtmosphereConditionsRemoved));
-        ret.put(boggledTools.irradiatedConditionImprovementProjectID, new Pair<>(irradiatedConditionsAdded, irradiatedConditionsRemoved));
-        ret.put(boggledTools.removeAtmosphereConditionImprovementProjectID, new Pair<>(removeAtmosphereConditionsAdded, removeAtmosphereConditionsRemoved));
-
-        // Modded conditions go here, check for mod and then add to relevant section
-
-        return ret;
-    }
-
-    // one is conditions added, two is conditions removed
-    private final HashMap<String, Pair<ArrayList<String>, ArrayList<String>>> projectChangeConditions = initialiseProjectChangeConditions();
 
     public Terraforming_Controller() { }
 
@@ -120,11 +48,11 @@ public class Terraforming_Controller extends BaseHazardCondition
 
         if (currentProject != null)
         {
-            if (currentProject.contains("TypeChange")) {
+            if (currentProject.contains(boggledTools.typeChangeProjectKey)) {
                 daysRequiredForCurrentProject = daysRequiredForTypeChange;
-            } else if (currentProject.contains("ResourceImprovement")) {
+            } else if (currentProject.contains(boggledTools.resourceImprovementKey)) {
                 daysRequiredForCurrentProject = daysRequiredForResourceImprovement;
-            } else if (currentProject.contains("ConditionImprovement")) {
+            } else if (currentProject.contains(boggledTools.conditionImprovementKey)) {
                 daysRequiredForCurrentProject = daysRequiredForConditionImprovement;
             } else {
                 daysRequiredForCurrentProject = 0;
@@ -164,7 +92,7 @@ public class Terraforming_Controller extends BaseHazardCondition
 
         if(currentProject == null)
         {
-            return "None";
+            return boggledTools.noneProjectID;
         }
         else
         {
@@ -175,7 +103,7 @@ public class Terraforming_Controller extends BaseHazardCondition
     public void setProject(String project)
     {
         daysCompleted = 0;
-        lastDayChecked = 0;
+        lastDayChecked = Global.getSector().getClock().getDay();
         currentProject = project;
 
         if(market.isPlayerOwned() || market.getFaction().isPlayerFaction())
@@ -234,7 +162,7 @@ public class Terraforming_Controller extends BaseHazardCondition
 
         if(!(market.isPlayerOwned() || market.getFaction().isPlayerFaction()) || boggledTools.marketIsStation(market))
         {
-            boggledTools.removeCondition(market, boggledTools.terraformingControllerConditionID);
+            boggledTools.removeCondition(market, boggledTools.BoggledConditions.terraformingControllerConditionID);
             return;
         }
 
@@ -254,35 +182,11 @@ public class Terraforming_Controller extends BaseHazardCondition
                     lastDayChecked = clock.getDay();
 
                     if (daysCompleted >= daysRequiredForCurrentProject) {
-
-                        Pair<ArrayList<String>, ArrayList<String>> conditionsAddedRemoved = projectChangeConditions.get(currentProject);
-                        if (conditionsAddedRemoved != null) {
-                            for (String conditionAdded : conditionsAddedRemoved.one) {
-                                boggledTools.addCondition(market, conditionAdded);
-                            }
-                            for (String conditionRemoved : conditionsAddedRemoved.two) {
-                                boggledTools.removeCondition(market, conditionRemoved);
-                            }
+                        boggledTools.TerraformingProject terraformingProject = boggledTools.getProject(currentProject);
+                        if (terraformingProject != null) {
+                            terraformingProject.finishProject(market);
                         } else {
-                            switch (currentProject) {
-                                case boggledTools.aridTypeChangeProjectID:
-                                case boggledTools.frozenTypeChangeProjectID:
-                                case boggledTools.jungleTypeChangeProjectID:
-                                case boggledTools.terranTypeChangeProjectID:
-                                case boggledTools.tundraTypeChangeProjectID:
-                                case boggledTools.waterTypeChangeProjectID:
-                                    boggledTools.terraformVariantToVariant(market, currentProject);
-                                    break;
-                                case boggledTools.farmlandResourceImprovementProjectID:
-                                    boggledTools.incrementFarmland(market);
-                                    break;
-                                case boggledTools.organicsResourceImprovementProjectID:
-                                    boggledTools.incrementOrganics(market);
-                                    break;
-                                case boggledTools.volatilesResourceImprovementProjectID:
-                                    boggledTools.incrementVolatiles(market);
-                                    break;
-                            }
+                            Global.getLogger(Terraforming_Controller.class).error("Couldn't find TerraformingProject for project " + currentProject);
                         }
 
                         currentProject = null;

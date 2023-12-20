@@ -2,6 +2,7 @@ package data.campaign.econ.industries;
 
 import java.lang.String;
 import com.fs.starfarer.api.impl.campaign.econ.impl.BaseIndustry;
+import data.campaign.econ.boggledTools;
 
 public class Boggled_GPA extends BaseIndustry
 {
@@ -16,7 +17,7 @@ public class Boggled_GPA extends BaseIndustry
     {
         super.apply(true);
 
-        this.demand("domain_artifacts", 3);
+        this.demand(boggledTools.BoggledCommodities.domainArtifacts, 3);
     }
 
     @Override

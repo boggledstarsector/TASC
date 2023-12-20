@@ -6,11 +6,14 @@ import com.fs.starfarer.api.campaign.comm.CommMessageAPI;
 import com.fs.starfarer.api.campaign.econ.CommoditySpecAPI;
 import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.impl.campaign.econ.impl.BaseIndustry;
+import com.fs.starfarer.api.impl.campaign.ids.Submarkets;
 import com.fs.starfarer.api.impl.campaign.intel.BaseIntelPlugin;
 import com.fs.starfarer.api.impl.campaign.intel.MessageIntel;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
 import data.campaign.econ.boggledTools;
+import com.fs.starfarer.api.impl.campaign.ids.Conditions;
+import com.fs.starfarer.api.impl.campaign.ids.Commodities;
 
 import java.awt.*;
 
@@ -31,22 +34,22 @@ public class Boggled_Mesozoic_Park extends BaseIndustry
 
         // This check exists to remove Mesozoic Park if the planet was terraformed to a type that is incompatible with Mesozoic Park
         String planetType = boggledTools.getPlanetType(this.market.getPlanetEntity());
-        if(!(planetType.equals("terran") || planetType.equals("water") || planetType.equals("jungle") || planetType.equals("desert")))
+        if(!(planetType.equals(boggledTools.terranPlanetID) || planetType.equals(boggledTools.waterPlanetID) || planetType.equals(boggledTools.junglePlanetID) || planetType.equals(boggledTools.desertPlanetID)))
         {
             // If an AI core is installed, put one in storage so the player doesn't "lose" an AI core
             if (this.aiCoreId != null)
             {
-                CargoAPI cargo = this.market.getSubmarket("storage").getCargo();
+                CargoAPI cargo = this.market.getSubmarket(Submarkets.SUBMARKET_STORAGE).getCargo();
                 if (cargo != null)
                 {
                     cargo.addCommodity(this.aiCoreId, 1.0F);
                 }
             }
 
-            if (this.market.hasIndustry("BOGGLED_MESOZOIC_PARK"))
+            if (this.market.hasIndustry(boggledTools.BoggledIndustries.mesozoicParkIndustryID))
             {
                 // Pass in null for mode when calling this from API code.
-                this.market.removeIndustry("BOGGLED_MESOZOIC_PARK", (MarketAPI.MarketInteractionMode)null, false);
+                this.market.removeIndustry(boggledTools.BoggledIndustries.mesozoicParkIndustryID, (MarketAPI.MarketInteractionMode)null, false);
             }
 
             if (this.market.isPlayerOwned())
@@ -88,21 +91,15 @@ public class Boggled_Mesozoic_Park extends BaseIndustry
         String planetType = boggledTools.getPlanetType(market.getPlanetEntity());
 
         //Can only build on terran, water, jungle or desert planets
-        if(planetType.equals("terran"))
-        {
-            return Global.getSettings().getSpriteName("boggled", "mesozoic_park_terran");
-        }
-        else if(planetType.equals("water"))
-        {
-            return Global.getSettings().getSpriteName("boggled", "mesozoic_park_water");
-        }
-        else if(planetType.equals("jungle"))
-        {
-            return Global.getSettings().getSpriteName("boggled", "mesozoic_park_jungle");
-        }
-        else if(planetType.equals("desert"))
-        {
-            return Global.getSettings().getSpriteName("boggled", "mesozoic_park_desert");
+        switch (planetType) {
+            case boggledTools.terranPlanetID:
+                return Global.getSettings().getSpriteName("boggled", "mesozoic_park_terran");
+            case boggledTools.waterPlanetID:
+                return Global.getSettings().getSpriteName("boggled", "mesozoic_park_water");
+            case boggledTools.junglePlanetID:
+                return Global.getSettings().getSpriteName("boggled", "mesozoic_park_jungle");
+            case boggledTools.desertPlanetID:
+                return Global.getSettings().getSpriteName("boggled", "mesozoic_park_desert");
         }
 
         return this.getSpec().getImageName();
@@ -124,7 +121,7 @@ public class Boggled_Mesozoic_Park extends BaseIndustry
 
         MarketAPI market = this.market;
 
-        if(!boggledTools.getBooleanSetting("boggledMesozoicParkEnabled") || !boggledTools.getBooleanSetting("boggledTerraformingContentEnabled"))
+        if(!boggledTools.getBooleanSetting(boggledTools.BoggledSettings.mesozoicParkEnabled) || !boggledTools.getBooleanSetting(boggledTools.BoggledSettings.terraformingContentEnabled))
         {
             return false;
         }
@@ -138,25 +135,25 @@ public class Boggled_Mesozoic_Park extends BaseIndustry
         String planetType = boggledTools.getPlanetType(market.getPlanetEntity());
 
         //Can't build on unknown planet types
-        if(planetType.equals("unknown"))
+        if(planetType.equals(boggledTools.unknownPlanetID))
         {
             return false;
         }
 
         //Can only build on terran, water, jungle or desert planets
-        if(!planetType.equals("terran") && !planetType.equals("water") && !planetType.equals("jungle") && !planetType.equals("desert"))
+        if(!planetType.equals(boggledTools.terranPlanetID) && !planetType.equals(boggledTools.waterPlanetID) && !planetType.equals(boggledTools.junglePlanetID) && !planetType.equals(boggledTools.desertPlanetID))
         {
             return false;
         }
 
         //Market must be habitable
-        if(!market.hasCondition("habitable"))
+        if(!market.hasCondition(Conditions.HABITABLE))
         {
             return false;
         }
 
         //Certain market conditions preclude building
-        if(market.hasCondition("no_atmosphere") || market.hasCondition("thin_atmosphere") || market.hasCondition("dense_atmosphere") || market.hasCondition("toxic_atmosphere") || market.hasCondition("irradiated"))
+        if(market.hasCondition(Conditions.NO_ATMOSPHERE) || market.hasCondition(Conditions.THIN_ATMOSPHERE) || market.hasCondition(Conditions.DENSE_ATMOSPHERE) || market.hasCondition(Conditions.TOXIC_ATMOSPHERE) || market.hasCondition(Conditions.IRRADIATED))
         {
             return false;
         }
@@ -172,7 +169,7 @@ public class Boggled_Mesozoic_Park extends BaseIndustry
             return false;
         }
 
-        if(!boggledTools.getBooleanSetting("boggledMesozoicParkEnabled") || !boggledTools.getBooleanSetting("boggledTerraformingContentEnabled"))
+        if(!boggledTools.getBooleanSetting(boggledTools.BoggledSettings.mesozoicParkEnabled) || !boggledTools.getBooleanSetting(boggledTools.BoggledSettings.terraformingContentEnabled))
         {
             return false;
         }
@@ -190,7 +187,7 @@ public class Boggled_Mesozoic_Park extends BaseIndustry
     {
         MarketAPI market = this.market;
 
-        if(!boggledTools.getBooleanSetting("boggledMesozoicParkEnabled") || !boggledTools.getBooleanSetting("boggledTerraformingContentEnabled"))
+        if(!boggledTools.getBooleanSetting(boggledTools.BoggledSettings.mesozoicParkEnabled) || !boggledTools.getBooleanSetting(boggledTools.BoggledSettings.terraformingContentEnabled))
         {
             return "Error in getUnavailableReason() in Mesozoic Park. Please report this to boggled on the forums.";
         }
@@ -210,31 +207,31 @@ public class Boggled_Mesozoic_Park extends BaseIndustry
         }
 
         //Market must be habitable
-        if(!market.hasCondition("habitable"))
+        if(!market.hasCondition(Conditions.HABITABLE))
         {
             return "Old Earth megafauna can only survive on worlds with habitable surface conditions.";
         }
 
         //Can only build on terran, water, jungle or desert planets
-        if(!planetType.equals("terran") && !planetType.equals("water") && !planetType.equals("jungle") && !planetType.equals("desert"))
+        if(!planetType.equals(boggledTools.terranPlanetID) && !planetType.equals(boggledTools.waterPlanetID) && !planetType.equals(boggledTools.junglePlanetID) && !planetType.equals(boggledTools.desertPlanetID))
         {
             return "Old Earth megafauna can only survive on world types that feature a relatively similar environment to Old Earth during the Mesozoic Era.";
         }
 
         //Certain market conditions preclude building
-        if(market.hasCondition("no_atmosphere") || market.hasCondition("thin_atmosphere"))
+        if(market.hasCondition(Conditions.NO_ATMOSPHERE) || market.hasCondition(Conditions.THIN_ATMOSPHERE))
         {
             return "Surface conditions on " + market.getName() + " are unsuitable for Old Earth megafauna due to insufficient atmospheric pressure.";
         }
 
         //Certain market conditions preclude building
-        if(market.hasCondition("dense_atmosphere"))
+        if(market.hasCondition(Conditions.DENSE_ATMOSPHERE))
         {
             return "Surface conditions on " + market.getName() + " are unsuitable for Old Earth megafauna due to excessive atmospheric pressure.";
         }
 
         //Certain market conditions preclude building
-        if(market.hasCondition("toxic_atmosphere") || market.hasCondition("irradiated"))
+        if(market.hasCondition(Conditions.TOXIC_ATMOSPHERE) || market.hasCondition(Conditions.IRRADIATED))
         {
             return "Surface conditions on " + market.getName() + " are unsuitable for Old Earth megafauna due to atmospheric toxicity.";
         }
@@ -260,20 +257,19 @@ public class Boggled_Mesozoic_Park extends BaseIndustry
             float gamma_mult = 1.05f;
 
             String name = "AI Core assigned";
-            if(this.aiCoreId.equals("alpha_core"))
-            {
-                name = "Alpha Core assigned";
-                this.getIncome().modifyMult("ind_core", alpha_mult, name);
-            }
-            else if(this.aiCoreId.equals("beta_core"))
-            {
-                name = "Beta Core assigned";
-                this.getIncome().modifyMult("ind_core", beta_mult, name);
-            }
-            else if(this.aiCoreId.equals("gamma_core"))
-            {
-                name = "Gamma Core assigned";
-                this.getIncome().modifyMult("ind_core", gamma_mult, name);
+            switch (this.aiCoreId) {
+                case Commodities.ALPHA_CORE:
+                    name = "Alpha Core assigned";
+                    this.getIncome().modifyMult("ind_core", alpha_mult, name);
+                    break;
+                case Commodities.BETA_CORE:
+                    name = "Beta Core assigned";
+                    this.getIncome().modifyMult("ind_core", beta_mult, name);
+                    break;
+                case Commodities.GAMMA_CORE:
+                    name = "Gamma Core assigned";
+                    this.getIncome().modifyMult("ind_core", gamma_mult, name);
+                    break;
             }
         }
         else
@@ -282,14 +278,12 @@ public class Boggled_Mesozoic_Park extends BaseIndustry
         }
     }
 
-    @Override
-    public void addAlphaCoreDescription(TooltipMakerAPI tooltip, AICoreDescriptionMode mode)
-    {
+    private void addAICoreDescription(TooltipMakerAPI tooltip, AICoreDescriptionMode mode, String coreType, String highlights) {
         float opad = 10.0F;
         Color highlight = Misc.getHighlightColor();
-        String pre = "Alpha-level AI core currently assigned. ";
+        String pre = coreType + "-level AI core currently assigned. ";
         if (mode == AICoreDescriptionMode.MANAGE_CORE_DIALOG_LIST || mode == AICoreDescriptionMode.INDUSTRY_TOOLTIP) {
-            pre = "Alpha-level AI core. ";
+            pre = coreType + "-level AI core. ";
         }
 
         if (mode == AICoreDescriptionMode.INDUSTRY_TOOLTIP) {
@@ -303,43 +297,21 @@ public class Boggled_Mesozoic_Park extends BaseIndustry
     }
 
     @Override
+    public void addAlphaCoreDescription(TooltipMakerAPI tooltip, AICoreDescriptionMode mode)
+    {
+        addAICoreDescription(tooltip, mode, "Alpha", "20%");
+    }
+
+    @Override
     public void addBetaCoreDescription(TooltipMakerAPI tooltip, AICoreDescriptionMode mode)
     {
-        float opad = 10.0F;
-        Color highlight = Misc.getHighlightColor();
-        String pre = "Beta-level AI core currently assigned. ";
-        if (mode == AICoreDescriptionMode.MANAGE_CORE_DIALOG_LIST || mode == AICoreDescriptionMode.INDUSTRY_TOOLTIP) {
-            pre = "Beta-level AI core. ";
-        }
-
-        if (mode == AICoreDescriptionMode.INDUSTRY_TOOLTIP) {
-            CommoditySpecAPI coreSpec = Global.getSettings().getCommoditySpec(this.aiCoreId);
-            TooltipMakerAPI text = tooltip.beginImageWithText(coreSpec.getIconName(), 48.0F);
-            text.addPara(pre + "Increases income by %s.", opad, highlight, "10%");
-            tooltip.addImageWithText(opad);
-        } else {
-            tooltip.addPara(pre + "Increases income by %s.", opad, highlight, "10%");
-        }
+        addAICoreDescription(tooltip, mode, "Beta", "10%");
     }
 
     @Override
     public void addGammaCoreDescription(TooltipMakerAPI tooltip, AICoreDescriptionMode mode)
     {
-        float opad = 10.0F;
-        Color highlight = Misc.getHighlightColor();
-        String pre = "Gamma-level AI core currently assigned. ";
-        if (mode == AICoreDescriptionMode.MANAGE_CORE_DIALOG_LIST || mode == AICoreDescriptionMode.INDUSTRY_TOOLTIP) {
-            pre = "Gamma-level AI core. ";
-        }
-
-        if (mode == AICoreDescriptionMode.INDUSTRY_TOOLTIP) {
-            CommoditySpecAPI coreSpec = Global.getSettings().getCommoditySpec(this.aiCoreId);
-            TooltipMakerAPI text = tooltip.beginImageWithText(coreSpec.getIconName(), 48.0F);
-            text.addPara(pre + "Increases income by %s.", opad, highlight, "5%");
-            tooltip.addImageWithText(opad);
-        } else {
-            tooltip.addPara(pre + "Increases income by %s.", opad, highlight, "5%");
-        }
+        addAICoreDescription(tooltip, mode, "Gamma", "5%");
     }
 
     @Override
@@ -373,11 +345,11 @@ public class Boggled_Mesozoic_Park extends BaseIndustry
         String bonus = "20%";
         if (mode == ImprovementDescriptionMode.INDUSTRY_TOOLTIP)
         {
-            info.addPara("Income increased by %s.", 0.0F, highlight, new String[]{bonus});
+            info.addPara("Income increased by %s.", 0.0F, highlight, bonus);
         }
         else
         {
-            info.addPara("Increases income by %s.", 0.0F, highlight, new String[]{bonus});
+            info.addPara("Increases income by %s.", 0.0F, highlight, bonus);
         }
 
         info.addSpacer(opad);

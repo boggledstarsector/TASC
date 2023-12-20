@@ -4,12 +4,14 @@ import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.*;
 import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.impl.campaign.abilities.BaseDurationAbility;
+import com.fs.starfarer.api.impl.campaign.ids.Commodities;
+import com.fs.starfarer.api.impl.campaign.ids.Factions;
+import com.fs.starfarer.api.impl.campaign.ids.Submarkets;
 import com.fs.starfarer.api.ui.LabelAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
 import java.awt.Color;
 import java.util.ArrayList;
-import java.util.Iterator;
 import data.campaign.econ.boggledTools;
 import data.scripts.BoggledUnderConstructionEveryFrameScript;
 import data.scripts.PlayerCargoCalculations.bogglesDefaultCargo;
@@ -82,34 +84,24 @@ public class Construct_Mining_Station extends BaseDurationAbility
         CargoAPI cargo = null;
         ArrayList<SectorEntityToken> stationsToDelete = new ArrayList<SectorEntityToken>();
 
-        Iterator allEntitiesInSystem = playerFleet.getStarSystem().getAllEntities().iterator();
-        while(allEntitiesInSystem.hasNext())
-        {
-            SectorEntityToken entity = (SectorEntityToken)allEntitiesInSystem.next();
-            if(entity.hasTag("boggled_mining_station") && entity.getFaction().getId().equals("neutral"))
-            {
+        for (SectorEntityToken entity : playerFleet.getStarSystem().getAllEntities()) {
+            if (entity.hasTag("boggled_mining_station") && entity.getFaction().getId().equals(Factions.NEUTRAL)) {
                 stationsToDelete.add(entity);
             }
         }
-        allEntitiesInSystem = null;
 
-        for(int i = 0; i < stationsToDelete.size(); i++)
-        {
-            cargo = stationsToDelete.get(i).getMarket().getSubmarket("storage").getCargo();
-            if(!cargo.isEmpty())
-            {
+        for (SectorEntityToken sectorEntityToken : stationsToDelete) {
+            cargo = sectorEntityToken.getMarket().getSubmarket(Submarkets.SUBMARKET_STORAGE).getCargo();
+            if (!cargo.isEmpty()) {
                 //Put the deleted stations' cargo into the new station market if it was created
                 //Otherwise, if the station is still under construction, put it into the player cargo
-                if(market != null)
-                {
-                    market.getSubmarket("storage").getCargo().addAll(cargo);
-                }
-                else
-                {
+                if (market != null) {
+                    market.getSubmarket(Submarkets.SUBMARKET_STORAGE).getCargo().addAll(cargo);
+                } else {
                     playerCargo.addAll(cargo);
                 }
             }
-            playerFleet.getStarSystem().removeEntity(stationsToDelete.get(i));
+            playerFleet.getStarSystem().removeEntity(sectorEntityToken);
         }
     }
 
@@ -148,12 +140,8 @@ public class Construct_Mining_Station extends BaseDurationAbility
             return false;
         }
 
-        Iterator allEntitiesInSystem = playerFleet.getStarSystem().getAllEntities().iterator();
-        while(allEntitiesInSystem.hasNext())
-        {
-            SectorEntityToken entity = (SectorEntityToken)allEntitiesInSystem.next();
-            if(entity.hasTag("boggled_mining_station") && !entity.getFaction().getId().equals("neutral"))
-            {
+        for (SectorEntityToken entity : playerFleet.getStarSystem().getAllEntities()) {
+            if (entity.hasTag("boggled_mining_station") && !entity.getFaction().getId().equals(Factions.NEUTRAL)) {
                 miningStationsInSystem++;
             }
         }
@@ -271,12 +259,8 @@ public class Construct_Mining_Station extends BaseDurationAbility
 
         if (!playerFleet.isInHyperspace() && !Global.getSector().getPlayerFleet().isInHyperspaceTransition())
         {
-            Iterator allEntitiesInSystem = playerFleet.getStarSystem().getAllEntities().iterator();
-            while(allEntitiesInSystem.hasNext())
-            {
-                SectorEntityToken entity = (SectorEntityToken)allEntitiesInSystem.next();
-                if(entity.hasTag("boggled_mining_station") && !entity.getFaction().getId().equals("neutral"))
-                {
+            for (SectorEntityToken entity : playerFleet.getStarSystem().getAllEntities()) {
+                if (entity.hasTag("boggled_mining_station") && !entity.getFaction().getId().equals(Factions.NEUTRAL)) {
                     miningStationsInSystem++;
                 }
             }
@@ -289,12 +273,8 @@ public class Construct_Mining_Station extends BaseDurationAbility
 
         if (!playerFleet.isInHyperspace() && !Global.getSector().getPlayerFleet().isInHyperspaceTransition())
         {
-            Iterator allEntitiesInSystem = playerFleet.getStarSystem().getAllEntities().iterator();
-            while(allEntitiesInSystem.hasNext())
-            {
-                SectorEntityToken entity = (SectorEntityToken)allEntitiesInSystem.next();
-                if(entity.hasTag("boggled_mining_station") && entity.getFaction().getId().equals("neutral"))
-                {
+            for (SectorEntityToken entity : playerFleet.getStarSystem().getAllEntities()) {
+                if (entity.hasTag("boggled_mining_station") && entity.getFaction().getId().equals(Factions.NEUTRAL)) {
                     tooltip.addPara("There is at least one abandoned player-built mining station in this system. If you construct a new mining station, any abandoned stations will be destroyed and any cargo stored on them will be transferred to the new station.", pad, highlight, new String[]{});
                 }
             }

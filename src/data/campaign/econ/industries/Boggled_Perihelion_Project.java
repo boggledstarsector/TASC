@@ -1,7 +1,6 @@
 package data.campaign.econ.industries;
 import java.awt.*;
 import java.lang.String;
-import java.util.Iterator;
 import java.util.Random;
 
 import com.fs.starfarer.api.Global;
@@ -11,6 +10,7 @@ import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import com.fs.starfarer.api.impl.campaign.CoronalTapParticleScript;
 import com.fs.starfarer.api.impl.campaign.econ.impl.BaseIndustry;
+import com.fs.starfarer.api.impl.campaign.ids.Commodities;
 import com.fs.starfarer.api.impl.campaign.ids.Entities;
 import com.fs.starfarer.api.impl.campaign.ids.StarTypes;
 import com.fs.starfarer.api.impl.campaign.ids.Tags;
@@ -30,7 +30,7 @@ public class Boggled_Perihelion_Project extends BaseIndustry {
 
     private int daysWithoutShortageCoronalTap = 0;
     private int lastDayCheckedCoronalTap = 0;
-    private int requiredDaysToBuildCoronalTap = boggledTools.getIntSetting("boggledPerihelionProjectDaysToFinish");
+    private int requiredDaysToBuildCoronalTap = boggledTools.getIntSetting(boggledTools.BoggledSettings.perihelionProjectDaysToFinish);
 
     @Override
     public void advance(float amount)
@@ -51,7 +51,7 @@ public class Boggled_Perihelion_Project extends BaseIndustry {
             {
                 // Just in case the player changes the required days after building the structure. Without this, the required days will stay
                 // at the original value regardless of subsequent changes in the settings file for Perihelion Project buildings already constructed.
-                this.requiredDaysToBuildCoronalTap = boggledTools.getIntSetting("boggledPerihelionProjectDaysToFinish");
+                this.requiredDaysToBuildCoronalTap = boggledTools.getIntSetting(boggledTools.BoggledSettings.perihelionProjectDaysToFinish);
 
                 this.daysWithoutShortageCoronalTap++;
                 this.lastDayCheckedCoronalTap = clock.getDay();
@@ -75,7 +75,7 @@ public class Boggled_Perihelion_Project extends BaseIndustry {
                         this.createCoronalTapEntity(this.market.getStarSystem());
                     }
 
-                    this.market.removeIndustry("BOGGLED_PERIHELION_PROJECT", null, false);
+                    this.market.removeIndustry(boggledTools.BoggledIndustries.perihelionProjectIndustryID, null, false);
                 }
             }
         }
@@ -87,14 +87,14 @@ public class Boggled_Perihelion_Project extends BaseIndustry {
         super.apply(false);
         super.applyIncomeAndUpkeep(3);
 
-        if(boggledTools.getBooleanSetting("boggledDomainTechContentEnabled") && boggledTools.getBooleanSetting("boggledDomainArchaeologyEnabled"))
+        if(boggledTools.getBooleanSetting(boggledTools.BoggledSettings.domainTechContentEnabled) && boggledTools.getBooleanSetting(boggledTools.BoggledSettings.domainArchaeologyEnabled))
         {
-            this.demand("domain_artifacts", 7);
+            this.demand(boggledTools.BoggledCommodities.domainArtifacts, 7);
         }
 
-        this.demand("metals", 11);
-        this.demand("rare_metals", 9);
-        this.demand("heavy_machinery", 7);
+        this.demand(Commodities.METALS, 11);
+        this.demand(Commodities.RARE_METALS, 9);
+        this.demand(Commodities.HEAVY_MACHINERY, 7);
     }
 
     @Override
@@ -106,28 +106,28 @@ public class Boggled_Perihelion_Project extends BaseIndustry {
     public boolean perihelionProjectHasShortage()
     {
         boolean shortage = false;
-        if(boggledTools.getBooleanSetting("boggledDomainTechContentEnabled") && boggledTools.getBooleanSetting("boggledDomainArchaeologyEnabled"))
+        if(boggledTools.getBooleanSetting(boggledTools.BoggledSettings.domainTechContentEnabled) && boggledTools.getBooleanSetting(boggledTools.BoggledSettings.domainArchaeologyEnabled))
         {
-            Pair<String, Integer> deficit = this.getMaxDeficit(new String[]{"domain_artifacts"});
+            Pair<String, Integer> deficit = this.getMaxDeficit(boggledTools.BoggledCommodities.domainArtifacts);
             if(deficit.two != 0)
             {
                 shortage = true;
             }
         }
 
-        Pair<String, Integer> deficitMetal = this.getMaxDeficit(new String[]{"metals"});
+        Pair<String, Integer> deficitMetal = this.getMaxDeficit(Commodities.METALS);
         if(deficitMetal.two != 0)
         {
             shortage = true;
         }
 
-        Pair<String, Integer> deficitRareMetal = this.getMaxDeficit(new String[]{"rare_metals"});
+        Pair<String, Integer> deficitRareMetal = this.getMaxDeficit(Commodities.RARE_METALS);
         if(deficitRareMetal.two != 0)
         {
             shortage = true;
         }
 
-        Pair<String, Integer> deficitHeavyMachinery = this.getMaxDeficit(new String[]{"heavy_machinery"});
+        Pair<String, Integer> deficitHeavyMachinery = this.getMaxDeficit(Commodities.HEAVY_MACHINERY);
         if(deficitHeavyMachinery.two != 0)
         {
             shortage = true;
@@ -144,15 +144,10 @@ public class Boggled_Perihelion_Project extends BaseIndustry {
             tapToken = system.addCustomEntity("coronal_tap_" + this.market.getStarSystem().getName(), null, "coronal_tap", Global.getSector().getPlayerFaction().getId());
             float minDist = 3.4028235E38F;
             PlanetAPI closest = null;
-            Iterator var5 = tapToken.getContainingLocation().getPlanets().iterator();
-            while(var5.hasNext())
-            {
-                PlanetAPI star = (PlanetAPI)var5.next();
-                if (star.isStar())
-                {
+            for (PlanetAPI star : tapToken.getContainingLocation().getPlanets()) {
+                if (star.isStar()) {
                     float dist = Misc.getDistance(tapToken.getLocation(), star.getLocation());
-                    if (dist < minDist)
-                    {
+                    if (dist < minDist) {
                         minDist = dist;
                         closest = star;
                     }
@@ -166,8 +161,8 @@ public class Boggled_Perihelion_Project extends BaseIndustry {
         }
         else
         {
-            WeightedRandomPicker<PlanetAPI> picker = new WeightedRandomPicker<PlanetAPI>();
-            WeightedRandomPicker<PlanetAPI> fallback = new WeightedRandomPicker<PlanetAPI>();
+            WeightedRandomPicker<PlanetAPI> picker = new WeightedRandomPicker<>();
+            WeightedRandomPicker<PlanetAPI> fallback = new WeightedRandomPicker<>();
             for (PlanetAPI planet : system.getPlanets())
             {
                 if (!planet.isNormalStar()) continue;
@@ -240,7 +235,7 @@ public class Boggled_Perihelion_Project extends BaseIndustry {
             return false;
         }
 
-        if(!boggledTools.getBooleanSetting("boggledDomainTechContentEnabled") || !boggledTools.getBooleanSetting("boggledPerihelionProjectEnabled"))
+        if(!boggledTools.getBooleanSetting(boggledTools.BoggledSettings.domainTechContentEnabled) || !boggledTools.getBooleanSetting(boggledTools.BoggledSettings.perihelionProjectEnabled))
         {
             return false;
         }
@@ -266,7 +261,7 @@ public class Boggled_Perihelion_Project extends BaseIndustry {
             return false;
         }
 
-        if(!boggledTools.getBooleanSetting("boggledDomainTechContentEnabled") || !boggledTools.getBooleanSetting("boggledPerihelionProjectEnabled"))
+        if(!boggledTools.getBooleanSetting(boggledTools.BoggledSettings.domainTechContentEnabled) || !boggledTools.getBooleanSetting(boggledTools.BoggledSettings.perihelionProjectEnabled))
         {
             return false;
         }
@@ -314,7 +309,7 @@ public class Boggled_Perihelion_Project extends BaseIndustry {
                 percentComplete = 99;
             }
 
-            tooltip.addPara("Construction of the coronal hypershunt in the " + this.market.getStarSystem().getName() + " is approximately %s complete.", opad, highlight, new String[]{percentComplete + "%"});
+            tooltip.addPara("Construction of the coronal hypershunt in the " + this.market.getStarSystem().getName() + " is approximately %s complete.", opad, highlight, percentComplete + "%");
         }
 
         if(this.isDisrupted() && mode != IndustryTooltipMode.ADD_INDUSTRY && mode != IndustryTooltipMode.QUEUED && !isBuilding())

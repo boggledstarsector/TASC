@@ -144,7 +144,7 @@ public class boggledCraftingBuildItem extends BaseCommandPlugin
         {
             adjustedArtifactCost = artifactCost / 2;
         }
-        cargo.removeCommodity("domain_artifacts", adjustedArtifactCost);
+        cargo.removeCommodity(boggledTools.BoggledCommodities.domainArtifacts, adjustedArtifactCost);
     }
 
     private void subtractStoryPointsFromPlayer()

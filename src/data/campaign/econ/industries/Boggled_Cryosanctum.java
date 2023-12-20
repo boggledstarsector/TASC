@@ -10,10 +10,10 @@ public class Boggled_Cryosanctum extends Cryosanctum
     {
         super.apply();
 
-        if(boggledTools.getBooleanSetting("boggledDomainArchaeologyEnabled"))
+        if(boggledTools.getBooleanSetting(boggledTools.BoggledSettings.domainArchaeologyEnabled))
         {
             int size = this.market.getSize();
-            this.demand("domain_artifacts", size);
+            this.demand(boggledTools.BoggledCommodities.domainArtifacts, size);
         }
     }
 
@@ -26,7 +26,7 @@ public class Boggled_Cryosanctum extends Cryosanctum
     @Override
     public boolean isAvailableToBuild()
     {
-        if(boggledTools.getBooleanSetting("boggledDomainTechContentEnabled") && boggledTools.getBooleanSetting("boggledCryosanctumPlayerBuildEnabled"))
+        if(boggledTools.getBooleanSetting(boggledTools.BoggledSettings.domainTechContentEnabled) && boggledTools.getBooleanSetting(boggledTools.BoggledSettings.cryosanctumPlayerBuildEnabled))
         {
             return true;
         }
@@ -39,7 +39,7 @@ public class Boggled_Cryosanctum extends Cryosanctum
     @Override
     public boolean showWhenUnavailable()
     {
-        if(boggledTools.getBooleanSetting("boggledDomainTechContentEnabled") && boggledTools.getBooleanSetting("boggledCryosanctumPlayerBuildEnabled"))
+        if(boggledTools.getBooleanSetting(boggledTools.BoggledSettings.domainTechContentEnabled) && boggledTools.getBooleanSetting(boggledTools.BoggledSettings.cryosanctumPlayerBuildEnabled))
         {
             return true;
         }

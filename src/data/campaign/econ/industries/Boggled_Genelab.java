@@ -34,9 +34,9 @@ public class Boggled_Genelab extends BaseIndustry
     public boolean genelabHasShortage()
     {
         boolean shortage = false;
-        if(boggledTools.getBooleanSetting("boggledDomainTechContentEnabled") && boggledTools.getBooleanSetting("boggledDomainArchaeologyEnabled"))
+        if(boggledTools.getBooleanSetting(boggledTools.BoggledSettings.domainTechContentEnabled) && boggledTools.getBooleanSetting(boggledTools.BoggledSettings.domainArchaeologyEnabled))
         {
-            Pair<String, Integer> deficit = this.getMaxDeficit(new String[]{"domain_artifacts"});
+            Pair<String, Integer> deficit = this.getMaxDeficit(new String[]{boggledTools.BoggledCommodities.domainArtifacts});
             if(deficit.two != 0)
             {
                 shortage = true;
@@ -48,7 +48,7 @@ public class Boggled_Genelab extends BaseIndustry
 
     private boolean pollutionIsOngoing()
     {
-        if(this.market.hasCondition("habitable"))
+        if(this.market.hasCondition(Conditions.HABITABLE))
         {
             if(this.market.hasIndustry(Industries.HEAVYINDUSTRY) && this.market.getIndustry(Industries.HEAVYINDUSTRY).getSpecialItem() != null && (this.market.getIndustry(Industries.HEAVYINDUSTRY).getSpecialItem().getId().equals(Items.CORRUPTED_NANOFORGE) || this.market.getIndustry(Industries.HEAVYINDUSTRY).getSpecialItem().getId().equals(Items.PRISTINE_NANOFORGE)))
             {
@@ -82,7 +82,7 @@ public class Boggled_Genelab extends BaseIndustry
         // Pollution removal
         //
 
-        if(this.market.hasCondition("pollution") && this.isFunctional())
+        if(this.market.hasCondition(Conditions.POLLUTION) && this.isFunctional())
         {
             if(clock.getDay() != this.lastDayCheckedPollution && !shortage)
             {
@@ -109,9 +109,9 @@ public class Boggled_Genelab extends BaseIndustry
                     this.daysWithoutShortagePollution = 0;
                     this.lastDayCheckedPollution = clock.getDay();
 
-                    if(this.market.hasCondition("pollution"))
+                    if(this.market.hasCondition(Conditions.POLLUTION))
                     {
-                        this.market.removeCondition("pollution");
+                        this.market.removeCondition(Conditions.POLLUTION);
                     }
 
                     boggledTools.surveyAll(this.market);
@@ -125,7 +125,7 @@ public class Boggled_Genelab extends BaseIndustry
         // Lobster seeding
         //
 
-        if(this.market.hasCondition("water_surface") && !this.market.hasCondition("volturnian_lobster_pens") && this.isFunctional())
+        if(this.market.hasCondition(Conditions.WATER_SURFACE) && !this.market.hasCondition(Conditions.VOLTURNIAN_LOBSTER_PENS) && this.isFunctional())
         {
             if(clock.getDay() != this.lastDayCheckedLobsters && !shortage)
             {
@@ -146,7 +146,7 @@ public class Boggled_Genelab extends BaseIndustry
                     this.daysWithoutShortageLobsters = 0;
                     this.lastDayCheckedLobsters = clock.getDay();
 
-                    boggledTools.addCondition(this.market, "volturnian_lobster_pens");
+                    boggledTools.addCondition(this.market, Conditions.VOLTURNIAN_LOBSTER_PENS);
 
                     boggledTools.surveyAll(this.market);
                     boggledTools.refreshSupplyAndDemand(this.market);
@@ -161,20 +161,20 @@ public class Boggled_Genelab extends BaseIndustry
     {
         super.apply(true);
 
-        if(boggledTools.getBooleanSetting("boggledDomainTechContentEnabled") && boggledTools.getBooleanSetting("boggledDomainArchaeologyEnabled"))
+        if(boggledTools.getBooleanSetting(boggledTools.BoggledSettings.domainTechContentEnabled) && boggledTools.getBooleanSetting(boggledTools.BoggledSettings.domainArchaeologyEnabled))
         {
             if(!this.market.isPlayerOwned())
             {
-                this.demand("domain_artifacts", 4);
+                this.demand(boggledTools.BoggledCommodities.domainArtifacts, 4);
             }
             else
             {
                 int size = this.market.getSize();
-                this.demand("domain_artifacts", size);
+                this.demand(boggledTools.BoggledCommodities.domainArtifacts, size);
             }
         }
 
-        Boggled_Mesozoic_Park park = (Boggled_Mesozoic_Park) this.market.getIndustry("BOGGLED_MESOZOIC_PARK");
+        Boggled_Mesozoic_Park park = (Boggled_Mesozoic_Park) this.market.getIndustry(boggledTools.BoggledIndustries.mesozoicParkIndustryID);
         if(park != null && this.isFunctional() && !this.genelabHasShortage())
         {
             park.getIncome().modifyMult("ind_genelab", IMPROVE_BONUS, "Genelab");
@@ -184,9 +184,9 @@ public class Boggled_Genelab extends BaseIndustry
     @Override
     public void unapply()
     {
-        if(this.market.hasIndustry("BOGGLED_MESOZOIC_PARK"))
+        if(this.market.hasIndustry(boggledTools.BoggledIndustries.mesozoicParkIndustryID))
         {
-            Boggled_Mesozoic_Park park = (Boggled_Mesozoic_Park) this.market.getIndustry("BOGGLED_MESOZOIC_PARK");
+            Boggled_Mesozoic_Park park = (Boggled_Mesozoic_Park) this.market.getIndustry(boggledTools.BoggledIndustries.mesozoicParkIndustryID);
             park.getIncome().unmodifyMult("ind_genelab");
         }
 
@@ -201,7 +201,7 @@ public class Boggled_Genelab extends BaseIndustry
             return false;
         }
 
-        if(!boggledTools.getBooleanSetting("boggledTerraformingContentEnabled") || !boggledTools.getBooleanSetting("boggledGenelabEnabled"))
+        if(!boggledTools.getBooleanSetting(boggledTools.BoggledSettings.terraformingContentEnabled) || !boggledTools.getBooleanSetting(boggledTools.BoggledSettings.genelabEnabled))
         {
             return false;
         }
@@ -262,7 +262,7 @@ public class Boggled_Genelab extends BaseIndustry
         // Inserts pollution cleanup status
         //
 
-        if(this.market.hasCondition("pollution") && mode != IndustryTooltipMode.ADD_INDUSTRY && mode != IndustryTooltipMode.QUEUED && !isBuilding())
+        if(this.market.hasCondition(Conditions.POLLUTION) && mode != IndustryTooltipMode.ADD_INDUSTRY && mode != IndustryTooltipMode.QUEUED && !isBuilding())
         {
             //200 days to clean up; divide daysWithoutShortage by 2 to get the percent
             int percentComplete = this.daysWithoutShortagePollution / 2;
@@ -283,7 +283,7 @@ public class Boggled_Genelab extends BaseIndustry
             }
         }
 
-        if(this.isDisrupted() && this.market.hasCondition("pollution") && mode != IndustryTooltipMode.ADD_INDUSTRY && mode != IndustryTooltipMode.QUEUED && !isBuilding())
+        if(this.isDisrupted() && this.market.hasCondition(Conditions.POLLUTION) && mode != IndustryTooltipMode.ADD_INDUSTRY && mode != IndustryTooltipMode.QUEUED && !isBuilding())
         {
             tooltip.addPara("Pollution remediation progress is stalled while the Genelab is disrupted.", bad, opad);
         }
@@ -292,7 +292,7 @@ public class Boggled_Genelab extends BaseIndustry
         // Inserts lobster seeding status
         //
 
-        if(this.market.hasCondition("water_surface") && !this.market.hasCondition("volturnian_lobster_pens") && mode != IndustryTooltipMode.ADD_INDUSTRY && mode != IndustryTooltipMode.QUEUED && !isBuilding())
+        if(this.market.hasCondition(Conditions.WATER_SURFACE) && !this.market.hasCondition(Conditions.VOLTURNIAN_LOBSTER_PENS) && mode != IndustryTooltipMode.ADD_INDUSTRY && mode != IndustryTooltipMode.QUEUED && !isBuilding())
         {
             //200 days to seed; divide daysWithoutShortage by 2 to get the percent
             int percentComplete = this.daysWithoutShortageLobsters / 2;
@@ -307,7 +307,7 @@ public class Boggled_Genelab extends BaseIndustry
 
         }
 
-        if(this.isDisrupted() && this.market.hasCondition("water_surface") && !this.market.hasCondition("volturnian_lobster_pens") && mode != IndustryTooltipMode.ADD_INDUSTRY && mode != IndustryTooltipMode.QUEUED && !isBuilding())
+        if(this.isDisrupted() && this.market.hasCondition(Conditions.WATER_SURFACE) && !this.market.hasCondition(Conditions.VOLTURNIAN_LOBSTER_PENS) && mode != IndustryTooltipMode.ADD_INDUSTRY && mode != IndustryTooltipMode.QUEUED && !isBuilding())
         {
             tooltip.addPara("Lobster seeding progress is stalled while the Genelab is disrupted.", bad, opad);
         }
@@ -320,12 +320,12 @@ public class Boggled_Genelab extends BaseIndustry
         float opad = 10.0F;
         Color bad = Misc.getNegativeHighlightColor();
 
-        if(shortage && this.market.hasCondition("pollution") && mode != IndustryTooltipMode.ADD_INDUSTRY && mode != IndustryTooltipMode.QUEUED && !isBuilding())
+        if(shortage && this.market.hasCondition(Conditions.POLLUTION) && mode != IndustryTooltipMode.ADD_INDUSTRY && mode != IndustryTooltipMode.QUEUED && !isBuilding())
         {
             tooltip.addPara("Pollution remediation progress is stalled due to a shortage of Domain-era artifacts.", bad, opad);
         }
 
-        if(shortage && this.market.hasCondition("water_surface") && !this.market.hasCondition("volturnian_lobster_pens") && mode != IndustryTooltipMode.ADD_INDUSTRY && mode != IndustryTooltipMode.QUEUED && !isBuilding())
+        if(shortage && this.market.hasCondition(Conditions.WATER_SURFACE) && !this.market.hasCondition(Conditions.VOLTURNIAN_LOBSTER_PENS) && mode != IndustryTooltipMode.ADD_INDUSTRY && mode != IndustryTooltipMode.QUEUED && !isBuilding())
         {
             tooltip.addPara("Lobster seeding progress is stalled due to a shortage of Domain-era artifacts.", bad, opad);
         }

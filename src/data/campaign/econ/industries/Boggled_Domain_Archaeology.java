@@ -22,13 +22,13 @@ public class Boggled_Domain_Archaeology extends BaseIndustry
         MarketAPI market = this.market;
         int size = market.getSize();
 
-        supply("domain_artifacts", (size - 2));
+        supply(boggledTools.BoggledCommodities.domainArtifacts, (size - 2));
 
         // Modify production based on ruins.
         // This is usually done by the condition itself, but it's done here for this industry because vanilla ruins don't impact production.
         if(market.hasCondition(Conditions.RUINS_SCATTERED))
         {
-            this.supply("boggledRuinsMod", "domain_artifacts", -1, Misc.ucFirst("Scattered ruins"));
+            this.supply("boggledRuinsMod", boggledTools.BoggledCommodities.domainArtifacts, -1, Misc.ucFirst("Scattered ruins"));
         }
         else if(market.hasCondition(Conditions.RUINS_WIDESPREAD))
         {
@@ -36,11 +36,11 @@ public class Boggled_Domain_Archaeology extends BaseIndustry
         }
         else if(market.hasCondition(Conditions.RUINS_EXTENSIVE))
         {
-            this.supply("boggledRuinsMod", "domain_artifacts", 1, Misc.ucFirst("Extensive ruins"));
+            this.supply("boggledRuinsMod", boggledTools.BoggledCommodities.domainArtifacts, 1, Misc.ucFirst("Extensive ruins"));
         }
         else if(market.hasCondition(Conditions.RUINS_VAST))
         {
-            this.supply("boggledRuinsMod", "domain_artifacts", 2, Misc.ucFirst("Vast ruins"));
+            this.supply("boggledRuinsMod", boggledTools.BoggledCommodities.domainArtifacts, 2, Misc.ucFirst("Vast ruins"));
         }
 
         if (!this.isFunctional())
@@ -64,7 +64,7 @@ public class Boggled_Domain_Archaeology extends BaseIndustry
         }
 
         MarketAPI market = this.market;
-        if(boggledTools.getBooleanSetting("boggledDomainTechContentEnabled") && boggledTools.getBooleanSetting("boggledDomainArchaeologyEnabled") && (market.hasCondition(Conditions.RUINS_SCATTERED) || market.hasCondition(Conditions.RUINS_WIDESPREAD) || market.hasCondition(Conditions.RUINS_EXTENSIVE) || market.hasCondition(Conditions.RUINS_VAST)))
+        if(boggledTools.getBooleanSetting(boggledTools.BoggledSettings.domainTechContentEnabled) && boggledTools.getBooleanSetting(boggledTools.BoggledSettings.domainArchaeologyEnabled) && (market.hasCondition(Conditions.RUINS_SCATTERED) || market.hasCondition(Conditions.RUINS_WIDESPREAD) || market.hasCondition(Conditions.RUINS_EXTENSIVE) || market.hasCondition(Conditions.RUINS_VAST)))
         {
             return true;
         }
@@ -82,7 +82,7 @@ public class Boggled_Domain_Archaeology extends BaseIndustry
             return false;
         }
 
-        if(!boggledTools.getBooleanSetting("boggledDomainTechContentEnabled") || !boggledTools.getBooleanSetting("boggledDomainArchaeologyEnabled"))
+        if(!boggledTools.getBooleanSetting(boggledTools.BoggledSettings.domainTechContentEnabled) || !boggledTools.getBooleanSetting(boggledTools.BoggledSettings.domainArchaeologyEnabled))
         {
             return false;
         }
@@ -97,7 +97,7 @@ public class Boggled_Domain_Archaeology extends BaseIndustry
     {
         if(!(market.hasCondition(Conditions.RUINS_SCATTERED) || market.hasCondition(Conditions.RUINS_WIDESPREAD) || market.hasCondition(Conditions.RUINS_EXTENSIVE) || market.hasCondition(Conditions.RUINS_VAST)))
         {
-            return ("Requires ruins");
+            return "Requires ruins";
         }
         else
         {

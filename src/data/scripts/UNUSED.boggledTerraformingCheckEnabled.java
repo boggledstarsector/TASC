@@ -36,7 +36,7 @@ public class boggledTerraformingCheckEnabled extends BaseCommandPlugin
         //  2. The entity the player is interacting with has a market
         //  3. The market is not a station market
         //  4. The market is controlled by the player
-        if(boggledTools.getBooleanSetting("boggledTerraformingContentEnabled") && this.entity.getMarket() != null && !boggledTools.marketIsStation(this.entity.getMarket()) && this.entity.getMarket().isPlayerOwned())
+        if(boggledTools.getBooleanSetting(boggledTools.BoggledSettings.terraformingContentEnabled) && this.entity.getMarket() != null && !boggledTools.marketIsStation(this.entity.getMarket()) && this.entity.getMarket().isPlayerOwned())
         {
             return true;
         }

@@ -2,6 +2,7 @@ package data.campaign.econ.industries;
 
 import java.lang.String;
 import com.fs.starfarer.api.impl.campaign.econ.impl.BaseIndustry;
+import com.fs.starfarer.api.impl.campaign.ids.Tags;
 import data.campaign.econ.boggledTools;
 
 public class Boggled_Expand_Station extends BaseIndustry {
@@ -21,7 +22,7 @@ public class Boggled_Expand_Station extends BaseIndustry {
 
     public float getBuildCost()
     {
-        if(!boggledTools.getBooleanSetting("boggledStationProgressiveIncreaseInCostsToExpandStation"))
+        if(!boggledTools.getBooleanSetting(boggledTools.BoggledSettings.stationProgressIncreaseInCostsToExpandStation))
         {
             return this.getSpec().getCost();
         }
@@ -39,7 +40,7 @@ public class Boggled_Expand_Station extends BaseIndustry {
 
         boggledTools.incrementNumberOfStationExpansions(this.market);
 
-        this.market.removeIndustry("BOGGLED_STATION_EXPANSION",null,false);
+        this.market.removeIndustry(boggledTools.BoggledIndustries.stationExpansionIndustryID,null,false);
     }
 
     @Override
@@ -50,7 +51,7 @@ public class Boggled_Expand_Station extends BaseIndustry {
     @Override
     public boolean isAvailableToBuild()
     {
-        if(boggledTools.getBooleanSetting("boggledStationCrampedQuartersEnabled") && boggledTools.getBooleanSetting("boggledStationCrampedQuartersPlayerCanPayToIncreaseStationSize") && this.market.getPrimaryEntity().hasTag("station") && (11 > (boggledTools.getIntSetting("boggledStationCrampedQuartersSizeGrowthReductionStarts") + boggledTools.getNumberOfStationExpansions(this.market))))
+        if(boggledTools.getBooleanSetting(boggledTools.BoggledSettings.stationCrampedQuartersEnabled) && boggledTools.getBooleanSetting(boggledTools.BoggledSettings.stationCrampedQuartersPlayerCanPayToIncreaseStationSize) && this.market.getPrimaryEntity().hasTag(Tags.STATION) && (11 > (boggledTools.getIntSetting(boggledTools.BoggledSettings.stationCrampedQuartersSizeGrowthReductionStarts) + boggledTools.getNumberOfStationExpansions(this.market))))
         {
             return true;
         }

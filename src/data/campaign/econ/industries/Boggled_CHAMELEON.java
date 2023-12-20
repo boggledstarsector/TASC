@@ -7,6 +7,8 @@ import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.*;
 import com.fs.starfarer.api.campaign.comm.CommMessageAPI;
 import com.fs.starfarer.api.campaign.econ.*;
+import com.fs.starfarer.api.impl.campaign.ids.Commodities;
+import com.fs.starfarer.api.impl.campaign.ids.Conditions;
 import com.fs.starfarer.api.impl.campaign.intel.BaseIntelPlugin;
 import com.fs.starfarer.api.impl.campaign.intel.MessageIntel;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
@@ -40,14 +42,14 @@ public class Boggled_CHAMELEON extends BaseIndustry
     {
         super.advance(amount);
 
-        if((this.market.hasCondition("decivilized_subpop") || this.market.hasCondition("decivilized")) && this.isFunctional())
+        if((this.market.hasCondition(Conditions.DECIVILIZED_SUBPOP) || this.market.hasCondition(Conditions.DECIVILIZED)) && this.isFunctional())
         {
             CampaignClockAPI clock = Global.getSector().getClock();
 
             boolean shortage = false;
-            if(boggledTools.getBooleanSetting("boggledDomainArchaeologyEnabled"))
+            if(boggledTools.getBooleanSetting(boggledTools.BoggledSettings.domainArchaeologyEnabled))
             {
-                Pair<String, Integer> deficit = this.getMaxDeficit(new String[]{"domain_artifacts"});
+                Pair<String, Integer> deficit = this.getMaxDeficit(boggledTools.BoggledCommodities.domainArtifacts);
                 if(deficit.two != 0)
                 {
                     shortage = true;
@@ -70,11 +72,8 @@ public class Boggled_CHAMELEON extends BaseIndustry
                         Global.getSector().getCampaignUI().addMessage(intel, CommMessageAPI.MessageClickAction.COLONY_INFO, market);
                     }
 
-                    if(this.market.hasCondition("decivilized_subpop") || this.market.hasCondition("decivilized"))
-                    {
-                        boggledTools.removeCondition(this.market, "decivilized_subpop");
-                        boggledTools.removeCondition(this.market, "decivilized");
-                    }
+                    boggledTools.removeCondition(this.market, Conditions.DECIVILIZED_SUBPOP);
+                    boggledTools.removeCondition(this.market, Conditions.DECIVILIZED);
 
                     boggledTools.surveyAll(market);
                     boggledTools.refreshSupplyAndDemand(market);
@@ -83,14 +82,14 @@ public class Boggled_CHAMELEON extends BaseIndustry
             }
         }
 
-        if(this.market.hasCondition("rogue_ai_core") && this.isFunctional())
+        if(this.market.hasCondition(Conditions.ROGUE_AI_CORE) && this.isFunctional())
         {
             CampaignClockAPI clock = Global.getSector().getClock();
 
             boolean shortage = false;
-            if(boggledTools.getBooleanSetting("boggledDomainArchaeologyEnabled"))
+            if(boggledTools.getBooleanSetting(boggledTools.BoggledSettings.domainArchaeologyEnabled))
             {
-                Pair<String, Integer> deficit = this.getMaxDeficit(new String[]{"domain_artifacts"});
+                Pair<String, Integer> deficit = this.getMaxDeficit(boggledTools.BoggledCommodities.domainArtifacts);
                 if(deficit.two != 0)
                 {
                     shortage = true;
@@ -113,10 +112,7 @@ public class Boggled_CHAMELEON extends BaseIndustry
                         Global.getSector().getCampaignUI().addMessage(intel, CommMessageAPI.MessageClickAction.COLONY_INFO, market);
                     }
 
-                    if(this.market.hasCondition("rogue_ai_core"))
-                    {
-                        this.market.removeCondition("rogue_ai_core");
-                    }
+                    boggledTools.removeCondition(market, Conditions.ROGUE_AI_CORE);
 
                     boggledTools.surveyAll(market);
                     boggledTools.refreshSupplyAndDemand(market);
@@ -131,10 +127,10 @@ public class Boggled_CHAMELEON extends BaseIndustry
     {
         super.apply(true);
 
-        if(boggledTools.getBooleanSetting("boggledDomainArchaeologyEnabled"))
+        if(boggledTools.getBooleanSetting(boggledTools.BoggledSettings.domainArchaeologyEnabled))
         {
             int size = this.market.getSize();
-            this.demand("domain_artifacts", size);
+            this.demand(boggledTools.BoggledCommodities.domainArtifacts, size);
         }
     }
 
@@ -152,7 +148,7 @@ public class Boggled_CHAMELEON extends BaseIndustry
             return false;
         }
 
-        if(boggledTools.getBooleanSetting("boggledDomainTechContentEnabled") && boggledTools.getBooleanSetting("boggledCHAMELEONEnabled"))
+        if(boggledTools.getBooleanSetting(boggledTools.BoggledSettings.domainTechContentEnabled) && boggledTools.getBooleanSetting(boggledTools.BoggledSettings.CHAMELEONEnabled))
         {
             return true;
         }
@@ -165,10 +161,7 @@ public class Boggled_CHAMELEON extends BaseIndustry
     @Override
     public boolean showWhenUnavailable()
     {
-        if(!boggledTools.isResearched(this.getId()))
-        {
-            return false;
-        }
+        boggledTools.isResearched(this.getId());
 
         return false;
     }
@@ -197,7 +190,7 @@ public class Boggled_CHAMELEON extends BaseIndustry
         Color highlight = Misc.getHighlightColor();
 
         // Inserts pacification status after description
-        if((this.market.hasCondition("decivilized_subpop") || this.market.hasCondition("decivilized")) && mode != IndustryTooltipMode.ADD_INDUSTRY && mode != IndustryTooltipMode.QUEUED && !isBuilding())
+        if((this.market.hasCondition(Conditions.DECIVILIZED_SUBPOP) || this.market.hasCondition(Conditions.DECIVILIZED)) && mode != IndustryTooltipMode.ADD_INDUSTRY && mode != IndustryTooltipMode.QUEUED && !isBuilding())
         {
             // 200 days to recivilize; divide daysWithoutShortage by 2 to get the percent
             int percentComplete = this.daysWithoutShortageDeciv / 2;
@@ -212,7 +205,7 @@ public class Boggled_CHAMELEON extends BaseIndustry
         }
 
         // Inserts rogue AI core removal status after description
-        if(this.market.hasCondition("rogue_ai_core") && mode != IndustryTooltipMode.ADD_INDUSTRY && mode != IndustryTooltipMode.QUEUED && !isBuilding())
+        if(this.market.hasCondition(Conditions.ROGUE_AI_CORE) && mode != IndustryTooltipMode.ADD_INDUSTRY && mode != IndustryTooltipMode.QUEUED && !isBuilding())
         {
             // 200 days to remove rogue core; divide daysWithoutShortage by 2 to get the percent
             int percentComplete = this.daysWithoutShortageRogue / 2;
@@ -226,7 +219,7 @@ public class Boggled_CHAMELEON extends BaseIndustry
             tooltip.addPara("An investigation into the whereabouts of the rogue AI core on " + this.market.getName() + " is approximately %s complete.", opad, highlight, new String[]{percentComplete + "%"});
         }
 
-        if(this.isDisrupted() && ((this.market.hasCondition("decivilized_subpop") || this.market.hasCondition("decivilized")) || this.market.hasCondition("rogue_ai_core")) && mode != IndustryTooltipMode.ADD_INDUSTRY && mode != IndustryTooltipMode.QUEUED && !isBuilding())
+        if(this.isDisrupted() && ((this.market.hasCondition(Conditions.DECIVILIZED_SUBPOP) || this.market.hasCondition(Conditions.DECIVILIZED)) || this.market.hasCondition(Conditions.ROGUE_AI_CORE)) && mode != IndustryTooltipMode.ADD_INDUSTRY && mode != IndustryTooltipMode.QUEUED && !isBuilding())
         {
             Color bad = Misc.getNegativeHighlightColor();
             tooltip.addPara("Progress is stalled while CHAMELEON is disrupted.", bad, opad);
@@ -242,9 +235,9 @@ public class Boggled_CHAMELEON extends BaseIndustry
     protected void addPostDemandSection(TooltipMakerAPI tooltip, boolean hasDemand, IndustryTooltipMode mode)
     {
         boolean shortage = false;
-        if(boggledTools.getBooleanSetting("boggledDomainArchaeologyEnabled"))
+        if(boggledTools.getBooleanSetting(boggledTools.BoggledSettings.domainArchaeologyEnabled))
         {
-            Pair<String, Integer> deficit = this.getMaxDeficit(new String[]{"domain_artifacts"});
+            Pair<String, Integer> deficit = this.getMaxDeficit(boggledTools.BoggledCommodities.domainArtifacts);
             if(deficit.two != 0)
             {
                 shortage = true;
@@ -256,7 +249,7 @@ public class Boggled_CHAMELEON extends BaseIndustry
             float opad = 10.0F;
             Color bad = Misc.getNegativeHighlightColor();
 
-            Pair<String, Integer> deficit = this.getMaxDeficit(new String[]{"domain_artifacts"});
+            Pair<String, Integer> deficit = this.getMaxDeficit(boggledTools.BoggledCommodities.domainArtifacts);
             if(deficit.two != 0)
             {
                 tooltip.addPara("CHAMELEON is inactive due to a shortage of Domain-era artifacts.", bad, opad);
@@ -268,16 +261,16 @@ public class Boggled_CHAMELEON extends BaseIndustry
     public float getPatherInterest()
     {
         boolean shortage = false;
-        if(boggledTools.getBooleanSetting("boggledDomainArchaeologyEnabled"))
+        if(boggledTools.getBooleanSetting(boggledTools.BoggledSettings.domainArchaeologyEnabled))
         {
-            Pair<String, Integer> deficit = this.getMaxDeficit(new String[]{"domain_artifacts"});
+            Pair<String, Integer> deficit = this.getMaxDeficit(boggledTools.BoggledCommodities.domainArtifacts);
             if(deficit.two != 0)
             {
                 shortage = true;
             }
         }
 
-        if(isFunctional() && !isBuilding() && this.aiCoreId != null && this.aiCoreId.equals("alpha_core") && !shortage)
+        if(isFunctional() && !isBuilding() && this.aiCoreId != null && this.aiCoreId.equals(Commodities.ALPHA_CORE) && !shortage)
         {
             // Neutralizes Pather interest to zero.
             // Previously this just returned -1000, but with the 0.96a event system the large negative amount would be subtracted from the hostile event progress.
@@ -290,12 +283,12 @@ public class Boggled_CHAMELEON extends BaseIndustry
 
             for(Industry industry : market.getIndustries())
             {
-                if(!industry.isHidden() && !industry.getId().equals("BOGGLED_CHAMELEON"))
+                if(!industry.isHidden() && !industry.getId().equals(boggledTools.BoggledIndustries.CHAMELEONIndustryID))
                 {
                     float industryPatherInterest = industry.getPatherInterest();
                     if(industryPatherInterest >= 0.0)
                     {
-                        totalPatherInterest += industryPatherInterest;
+                        totalPatherInterest += (int) industryPatherInterest;
                     }
                 }
             }
@@ -320,10 +313,10 @@ public class Boggled_CHAMELEON extends BaseIndustry
         if (mode == AICoreDescriptionMode.INDUSTRY_TOOLTIP) {
             CommoditySpecAPI coreSpec = Global.getSettings().getCommoditySpec(this.aiCoreId);
             TooltipMakerAPI text = tooltip.beginImageWithText(coreSpec.getIconName(), 48.0F);
-            text.addPara(pre + "Reduces upkeep cost by %s. Reduces demand by %s unit. " + "Pather cells on " + this.market.getName() + " are eliminated.", 0.0F, highlight, new String[]{(int)((1.0F - UPKEEP_MULT) * 100.0F) + "%", "" + DEMAND_REDUCTION});
+            text.addPara(pre + "Reduces upkeep cost by %s. Reduces demand by %s unit. " + "Pather cells on " + this.market.getName() + " are eliminated.", 0.0F, highlight, (int)((1.0F - UPKEEP_MULT) * 100.0F) + "%", "" + DEMAND_REDUCTION);
             tooltip.addImageWithText(opad);
         } else {
-            tooltip.addPara(pre + "Reduces upkeep cost by %s. Reduces demand by %s unit. " + "Pather cells on " + this.market.getName() + " are eliminated.", opad, highlight, new String[]{(int)((1.0F - UPKEEP_MULT) * 100.0F) + "%", "" + DEMAND_REDUCTION});
+            tooltip.addPara(pre + "Reduces upkeep cost by %s. Reduces demand by %s unit. " + "Pather cells on " + this.market.getName() + " are eliminated.", opad, highlight, (int)((1.0F - UPKEEP_MULT) * 100.0F) + "%", "" + DEMAND_REDUCTION);
         }
     }
 

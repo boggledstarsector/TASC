@@ -52,15 +52,15 @@ public class Boggled_Harmonic_Damper extends BaseIndustry
         {
             this.market.getStats().getDynamic().getMod(Stats.GROUND_DEFENSES_MOD).unmodifyMult("boggled_harmonic_damper_ai_bonus");
         }
-        else if (this.aiCoreId.equals("gamma_core"))
+        else if (this.aiCoreId.equals(Commodities.GAMMA_CORE))
         {
             this.market.getStats().getDynamic().getMod(Stats.GROUND_DEFENSES_MOD).modifyMult("boggled_harmonic_damper_ai_bonus", GAMMA_DEFENSE_BONUS, "Gamma core (Harmonic damper)");
         }
-        else if (this.aiCoreId.equals("beta_core"))
+        else if (this.aiCoreId.equals(Commodities.BETA_CORE))
         {
             this.market.getStats().getDynamic().getMod(Stats.GROUND_DEFENSES_MOD).modifyMult("boggled_harmonic_damper_ai_bonus", BETA_DEFENSE_BONUS, "Beta core (Harmonic damper)");
         }
-        else if (this.aiCoreId.equals("alpha_core"))
+        else if (this.aiCoreId.equals(Commodities.ALPHA_CORE))
         {
             this.market.getStats().getDynamic().getMod(Stats.GROUND_DEFENSES_MOD).modifyMult("boggled_harmonic_damper_ai_bonus", ALPHA_DEFENSE_BONUS, "Alpha core (Harmonic damper)");
         }
@@ -90,7 +90,7 @@ public class Boggled_Harmonic_Damper extends BaseIndustry
 
         MarketAPI market = this.market;
 
-        if(!boggledTools.getBooleanSetting("boggledHarmonicDamperEnabled") || !boggledTools.getBooleanSetting("boggledTerraformingContentEnabled"))
+        if(!boggledTools.getBooleanSetting(boggledTools.BoggledSettings.harmonicDamperEnabled) || !boggledTools.getBooleanSetting(boggledTools.BoggledSettings.terraformingContentEnabled))
         {
             return false;
         }
@@ -112,7 +112,7 @@ public class Boggled_Harmonic_Damper extends BaseIndustry
             return false;
         }
 
-        if(!boggledTools.getBooleanSetting("boggledHarmonicDamperEnabled") || !boggledTools.getBooleanSetting("boggledTerraformingContentEnabled"))
+        if(!boggledTools.getBooleanSetting(boggledTools.BoggledSettings.harmonicDamperEnabled) || !boggledTools.getBooleanSetting(boggledTools.BoggledSettings.terraformingContentEnabled))
         {
             return false;
         }
@@ -130,7 +130,7 @@ public class Boggled_Harmonic_Damper extends BaseIndustry
     {
         MarketAPI market = this.market;
 
-        if(!boggledTools.getBooleanSetting("boggledHarmonicDamperEnabled") || !boggledTools.getBooleanSetting("boggledTerraformingContentEnabled"))
+        if(!boggledTools.getBooleanSetting(boggledTools.BoggledSettings.harmonicDamperEnabled) || !boggledTools.getBooleanSetting(boggledTools.BoggledSettings.terraformingContentEnabled))
         {
             return "Error in getUnavailableReason() in Harmonic Damper. Please report this to boggled on the forums.";
         }
@@ -156,17 +156,15 @@ public class Boggled_Harmonic_Damper extends BaseIndustry
         //Prevents AI cores from modifying supply and demand
     }
 
-    @Override
-    public void addAlphaCoreDescription(TooltipMakerAPI tooltip, AICoreDescriptionMode mode) {
+    private void addAICoreDescription(TooltipMakerAPI tooltip, AICoreDescriptionMode mode, String coreType, float defenseBonus) {
         float opad = 10.0F;
         Color highlight = Misc.getHighlightColor();
-        String pre = "Alpha-level AI core currently assigned. ";
+        String pre = coreType + "-level AI core currently assigned. ";
         if (mode == AICoreDescriptionMode.MANAGE_CORE_DIALOG_LIST || mode == AICoreDescriptionMode.INDUSTRY_TOOLTIP) {
-            pre = "Alpha-level AI core. ";
+            pre = coreType + "-level AI core. ";
         }
 
-        float a = ALPHA_DEFENSE_BONUS;
-        String str = Strings.X + (a) + "";
+        String str = Strings.X + defenseBonus;
 
         if (mode == AICoreDescriptionMode.INDUSTRY_TOOLTIP) {
             CommoditySpecAPI coreSpec = Global.getSettings().getCommoditySpec(this.aiCoreId);
@@ -179,47 +177,18 @@ public class Boggled_Harmonic_Damper extends BaseIndustry
     }
 
     @Override
+    public void addAlphaCoreDescription(TooltipMakerAPI tooltip, AICoreDescriptionMode mode) {
+        addAICoreDescription(tooltip, mode, "Alpha", ALPHA_DEFENSE_BONUS);
+    }
+
+    @Override
     public void addBetaCoreDescription(TooltipMakerAPI tooltip, AICoreDescriptionMode mode) {
-        float opad = 10.0F;
-        Color highlight = Misc.getHighlightColor();
-        String pre = "Beta-level AI core currently assigned. ";
-        if (mode == AICoreDescriptionMode.MANAGE_CORE_DIALOG_LIST || mode == AICoreDescriptionMode.INDUSTRY_TOOLTIP) {
-            pre = "Beta-level AI core. ";
-        }
-
-        float a = BETA_DEFENSE_BONUS;
-        String str = Strings.X + (a) + "";
-
-        if (mode == AICoreDescriptionMode.INDUSTRY_TOOLTIP) {
-            CommoditySpecAPI coreSpec = Global.getSettings().getCommoditySpec(this.aiCoreId);
-            TooltipMakerAPI text = tooltip.beginImageWithText(coreSpec.getIconName(), 48.0F);
-            text.addPara(pre + "Increases ground defenses by %s.", opad, highlight, str);
-            tooltip.addImageWithText(opad);
-        } else {
-            tooltip.addPara(pre + "Increases ground defenses by %s.", opad, highlight, str);
-        }
+        addAICoreDescription(tooltip, mode, "Beta", BETA_DEFENSE_BONUS);
     }
 
     @Override
     public void addGammaCoreDescription(TooltipMakerAPI tooltip, AICoreDescriptionMode mode) {
-        float opad = 10.0F;
-        Color highlight = Misc.getHighlightColor();
-        String pre = "Gamma-level AI core currently assigned. ";
-        if (mode == AICoreDescriptionMode.MANAGE_CORE_DIALOG_LIST || mode == AICoreDescriptionMode.INDUSTRY_TOOLTIP) {
-            pre = "Gamma-level AI core. ";
-        }
-
-        float a = GAMMA_DEFENSE_BONUS;
-        String str = Strings.X + (a) + "";
-
-        if (mode == AICoreDescriptionMode.INDUSTRY_TOOLTIP) {
-            CommoditySpecAPI coreSpec = Global.getSettings().getCommoditySpec(this.aiCoreId);
-            TooltipMakerAPI text = tooltip.beginImageWithText(coreSpec.getIconName(), 48.0F);
-            text.addPara(pre + "Increases ground defenses by %s.", opad, highlight, str);
-            tooltip.addImageWithText(opad);
-        } else {
-            tooltip.addPara(pre + "Increases ground defenses by %s.", opad, highlight, str);
-        }
+        addAICoreDescription(tooltip, mode, "Gamma", GAMMA_DEFENSE_BONUS);
     }
 
     @Override
@@ -246,7 +215,7 @@ public class Boggled_Harmonic_Damper extends BaseIndustry
         Color highlight = Misc.getHighlightColor();
 
         float a = IMPROVE_DEFENSE_BONUS;
-        String str = Strings.X + (a) + "";
+        String str = Strings.X + (a);
 
         if (mode == ImprovementDescriptionMode.INDUSTRY_TOOLTIP) {
             info.addPara("Ground defenses increased by %s.", 0f, highlight, str);
@@ -288,7 +257,7 @@ public class Boggled_Harmonic_Damper extends BaseIndustry
 
         if(mode != IndustryTooltipMode.ADD_INDUSTRY && mode != IndustryTooltipMode.QUEUED && isFunctional())
         {
-            tooltip.addPara("Countering the effects of:", opad, Misc.getHighlightColor(), "");
+            tooltip.addPara("Countering the effects of:", opad);
             int numCondsCountered = 0;
             for (String id : SUPPRESSED_CONDITIONS)
             {

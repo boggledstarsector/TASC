@@ -54,7 +54,7 @@ public class Boggled_Magnetoshield extends BaseIndustry
 
         MarketAPI market = this.market;
 
-        if(!boggledTools.getBooleanSetting("boggledMagnetoshieldEnabled") || !boggledTools.getBooleanSetting("boggledTerraformingContentEnabled") || !this.market.hasCondition("irradiated"))
+        if(!boggledTools.getBooleanSetting(boggledTools.BoggledSettings.magnetoshieldEnabled) || !boggledTools.getBooleanSetting(boggledTools.BoggledSettings.terraformingContentEnabled) || !this.market.hasCondition(Conditions.IRRADIATED))
         {
             return false;
         }
@@ -70,7 +70,7 @@ public class Boggled_Magnetoshield extends BaseIndustry
             return false;
         }
 
-        if(!boggledTools.getBooleanSetting("boggledMagnetoshieldEnabled") || !boggledTools.getBooleanSetting("boggledTerraformingContentEnabled"))
+        if(!boggledTools.getBooleanSetting(boggledTools.BoggledSettings.magnetoshieldEnabled) || !boggledTools.getBooleanSetting(boggledTools.BoggledSettings.terraformingContentEnabled))
         {
             return false;
         }
@@ -83,7 +83,7 @@ public class Boggled_Magnetoshield extends BaseIndustry
     @Override
     public String getUnavailableReason()
     {
-        if(!this.market.hasCondition("irradiated"))
+        if(!this.market.hasCondition(Conditions.IRRADIATED))
         {
             return this.market.getName() + " is not irradiated. There is no reason to build a magnetoshield.";
         }
