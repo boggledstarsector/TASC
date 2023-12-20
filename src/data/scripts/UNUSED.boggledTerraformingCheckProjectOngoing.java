@@ -47,7 +47,7 @@ public class boggledTerraformingCheckProjectOngoing extends BaseCommandPlugin
 
             MarketAPI market = this.entity.getMarket();
             PlanetAPI planet = market.getPlanetEntity();
-            Terraforming_Controller terraformingController = (Terraforming_Controller) market.getCondition("terraforming_controller").getPlugin();
+            Terraforming_Controller terraformingController = (Terraforming_Controller) market.getCondition(boggledTools.BoggledConditions.terraformingControllerConditionID).getPlugin();
             String currentProject = terraformingController.getProject();
 
             return currentProject.equals("None");

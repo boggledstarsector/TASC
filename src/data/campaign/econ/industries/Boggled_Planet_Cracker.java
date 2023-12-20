@@ -7,6 +7,7 @@ import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.*;
 import com.fs.starfarer.api.campaign.comm.CommMessageAPI;
 import com.fs.starfarer.api.campaign.econ.*;
+import com.fs.starfarer.api.impl.campaign.ids.Conditions;
 import com.fs.starfarer.api.impl.campaign.intel.BaseIntelPlugin;
 import com.fs.starfarer.api.impl.campaign.intel.MessageIntel;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
@@ -52,20 +53,20 @@ public class Boggled_Planet_Cracker extends BaseIndustry
             return false;
         }
 
-        if(orbitFocus.getMarket() == null || orbitFocus.getMarket().getPlanetEntity() == null || boggledTools.getPlanetType(orbitFocus.getMarket().getPlanetEntity()).equals("gas_giant"))
+        if(orbitFocus.getMarket() == null || orbitFocus.getMarket().getPlanetEntity() == null || boggledTools.getPlanetType(orbitFocus.getMarket().getPlanetEntity()).equals(boggledTools.gasGiantPlanetID))
         {
             return false;
         }
 
         // Can't already have tectonic activity
         MarketAPI focusMarket = getFocusMarket();
-        if(focusMarket.hasCondition("tectonic_activity") || focusMarket.hasCondition("extreme_tectonic_activity"))
+        if(focusMarket.hasCondition(Conditions.TECTONIC_ACTIVITY) || focusMarket.hasCondition(Conditions.EXTREME_TECTONIC_ACTIVITY))
         {
             return false;
         }
 
         // Can't already have maxed out resources
-        if(focusMarket.hasCondition("ore_ultrarich") && focusMarket.hasCondition("rare_ore_ultrarich"))
+        if(focusMarket.hasCondition(Conditions.ORE_ULTRARICH) && focusMarket.hasCondition(Conditions.RARE_ORE_ULTRARICH))
         {
             return false;
         }
@@ -100,7 +101,7 @@ public class Boggled_Planet_Cracker extends BaseIndustry
 
                     boggledTools.incrementOreForPlanetCracking(getFocusMarket());
 
-                    boggledTools.addCondition(getFocusMarket(), "tectonic_activity");
+                    boggledTools.addCondition(getFocusMarket(), Conditions.TECTONIC_ACTIVITY);
 
                     boggledTools.surveyAll(getFocusMarket());
                     boggledTools.refreshSupplyAndDemand(getFocusMarket());
@@ -123,7 +124,7 @@ public class Boggled_Planet_Cracker extends BaseIndustry
     @Override
     public boolean isAvailableToBuild()
     {
-        if(boggledTools.getBooleanSetting("boggledTerraformingContentEnabled") && boggledTools.getBooleanSetting("boggledPlanetCrackerEnabled"))
+        if(boggledTools.getBooleanSetting(boggledTools.BoggledSettings.terraformingContentEnabled) && boggledTools.getBooleanSetting(boggledTools.BoggledSettings.planetCrackerEnabled))
         {
             if(this.marketSuitableForCracker())
             {
@@ -143,7 +144,7 @@ public class Boggled_Planet_Cracker extends BaseIndustry
     @Override
     public boolean showWhenUnavailable()
     {
-        if(boggledTools.getBooleanSetting("boggledTerraformingContentEnabled") && boggledTools.getBooleanSetting("boggledPlanetCrackerEnabled") && boggledTools.marketIsStation(this.market))
+        if(boggledTools.getBooleanSetting(boggledTools.BoggledSettings.terraformingContentEnabled) && boggledTools.getBooleanSetting(boggledTools.BoggledSettings.planetCrackerEnabled) && boggledTools.marketIsStation(this.market))
         {
             return true;
         }
@@ -156,7 +157,7 @@ public class Boggled_Planet_Cracker extends BaseIndustry
     @Override
     public String getUnavailableReason()
     {
-        if(boggledTools.getBooleanSetting("boggledTerraformingContentEnabled") && boggledTools.getBooleanSetting("boggledPlanetCrackerEnabled"))
+        if(boggledTools.getBooleanSetting(boggledTools.BoggledSettings.terraformingContentEnabled) && boggledTools.getBooleanSetting(boggledTools.BoggledSettings.planetCrackerEnabled))
         {
             // Station needs to obit a non-gas giant planet
             SectorEntityToken orbitFocus = getOrbitFocus();
@@ -165,30 +166,26 @@ public class Boggled_Planet_Cracker extends BaseIndustry
                 return this.market.getName() + " is not in orbit around a planet.";
             }
 
-            if (orbitFocus.getMarket() == null || orbitFocus.getMarket().getPlanetEntity() == null || boggledTools.getPlanetType(orbitFocus.getMarket().getPlanetEntity()).equals("gas_giant"))
+            if (orbitFocus.getMarket() == null || orbitFocus.getMarket().getPlanetEntity() == null || boggledTools.getPlanetType(orbitFocus.getMarket().getPlanetEntity()).equals(boggledTools.gasGiantPlanetID))
             {
                 return "Gas giants cannot be cracked.";
             }
 
             // Can't already have tectonic activity
             MarketAPI focusMarket = getFocusMarket();
-            if (focusMarket.hasCondition("tectonic_activity") || focusMarket.hasCondition("extreme_tectonic_activity"))
+            if (focusMarket.hasCondition(Conditions.TECTONIC_ACTIVITY) || focusMarket.hasCondition(Conditions.EXTREME_TECTONIC_ACTIVITY))
             {
                 return getFocusMarket().getName() + " already has tectonic activity - making it worse won't increase ore availability.";
             }
 
             // Can't already have maxed out resources
-            if (focusMarket.hasCondition("ore_ultrarich") && focusMarket.hasCondition("rare_ore_ultrarich"))
+            if (focusMarket.hasCondition(Conditions.ORE_ULTRARICH) && focusMarket.hasCondition(Conditions.RARE_ORE_ULTRARICH))
             {
                 return getFocusMarket().getName() + " already has easily accessible ore deposits. Cracking the planet would serve no purpose.";
             }
 
-            return "Error in getUnavailableReason() in Planet Cracker. Please tell Boggled about this on the forums.";
         }
-        else
-        {
-            return "Error in getUnavailableReason() in Planet Cracker. Please tell Boggled about this on the forums.";
-        }
+        return "Error in getUnavailableReason() in Planet Cracker. Please tell Boggled about this on the forums.";
     }
 
     @Override

@@ -3,6 +3,8 @@ package data.campaign.econ.abilities;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.*;
 import com.fs.starfarer.api.campaign.econ.MarketAPI;
+import com.fs.starfarer.api.impl.campaign.ids.Commodities;
+import com.fs.starfarer.api.impl.campaign.ids.Factions;
 import com.fs.starfarer.api.impl.campaign.abilities.BaseDurationAbility;
 import com.fs.starfarer.api.ui.LabelAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
@@ -280,7 +282,7 @@ public class Construct_Astropolis_Station extends BaseDurationAbility
         }
 
         SectorEntityToken targetPlanet = boggledTools.getClosestPlanetToken(playerFleet);
-        if(targetPlanet == null || targetPlanet.getMarket() == null || (!targetPlanet.getMarket().isPlayerOwned() && targetPlanet.getMarket().getFaction() != Global.getSector().getFaction("neutral") && targetPlanet.getMarket().getFaction() != Global.getSector().getFaction("player")))
+        if(targetPlanet == null || targetPlanet.getMarket() == null || (!targetPlanet.getMarket().isPlayerOwned() && targetPlanet.getMarket().getFaction() != Global.getSector().getFaction(Factions.NEUTRAL) && targetPlanet.getMarket().getFaction() != Global.getSector().getFaction(Factions.PLAYER)))
         {
             return false;
         }
@@ -388,7 +390,7 @@ public class Construct_Astropolis_Station extends BaseDurationAbility
                 tooltip.addPara("Target host world: %s", pad, highlight, new String[]{targetPlanet.getName()});
             }
 
-            if(targetPlanet.getMarket() != null && (!targetPlanet.getMarket().isPlayerOwned() && targetPlanet.getMarket().getFaction() != Global.getSector().getFaction("neutral") && targetPlanet.getMarket().getFaction() != Global.getSector().getFaction("player")))
+            if(targetPlanet.getMarket() != null && (!targetPlanet.getMarket().isPlayerOwned() && targetPlanet.getMarket().getFaction() != Global.getSector().getFaction(Factions.NEUTRAL) && targetPlanet.getMarket().getFaction() != Global.getSector().getFaction(Factions.PLAYER)))
             {
                 tooltip.addPara("You cannot construct an astropolis station in orbit around a world already controlled by another faction.", bad, pad);
             }

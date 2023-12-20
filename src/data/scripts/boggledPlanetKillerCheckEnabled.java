@@ -31,7 +31,7 @@ public class boggledPlanetKillerCheckEnabled extends BaseCommandPlugin
 
         this.entity = dialog.getInteractionTarget();
 
-        if(boggledTools.getBooleanSetting("boggledDomainTechContentEnabled") && boggledTools.getBooleanSetting("boggledPlanetKillerEnabled"))
+        if(boggledTools.getBooleanSetting(boggledTools.BoggledSettings.domainTechContentEnabled) && boggledTools.getBooleanSetting("boggledPlanetKillerEnabled"))
         {
             return true;
         }

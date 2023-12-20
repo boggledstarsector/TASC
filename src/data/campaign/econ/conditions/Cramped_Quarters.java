@@ -25,7 +25,7 @@ public class Cramped_Quarters extends BaseHazardCondition implements MarketImmig
 
     private int getStationCrampedThreshold(MarketAPI market)
     {
-        return boggledTools.getIntSetting("boggledStationCrampedQuartersSizeGrowthReductionStarts") + boggledTools.getNumberOfStationExpansions(market);
+        return boggledTools.getIntSetting(boggledTools.BoggledSettings.stationCrampedQuartersSizeGrowthReductionStarts) + boggledTools.getNumberOfStationExpansions(market);
     }
 
     protected float getImmigrationBonus()
@@ -61,7 +61,7 @@ public class Cramped_Quarters extends BaseHazardCondition implements MarketImmig
             this.market.getTariff().modifyFlat("base_tariff_for_station", 0.30f);
         }
 
-        if(boggledTools.getBooleanSetting("boggledStationCrampedQuartersEnabled"))
+        if(boggledTools.getBooleanSetting(boggledTools.BoggledSettings.stationCrampedQuartersEnabled))
         {
             // Market growth modifier
             this.market.addTransientImmigrationModifier(this);
@@ -95,7 +95,7 @@ public class Cramped_Quarters extends BaseHazardCondition implements MarketImmig
 
         this.market.getTariff().unmodifyFlat("base_tariff_for_station");
 
-        if(boggledTools.getBooleanSetting("boggledStationCrampedQuartersEnabled"))
+        if(boggledTools.getBooleanSetting(boggledTools.BoggledSettings.stationCrampedQuartersEnabled))
         {
             this.market.removeTransientImmigrationModifier(this);
         }
@@ -115,7 +115,7 @@ public class Cramped_Quarters extends BaseHazardCondition implements MarketImmig
 
     public boolean showIcon()
     {
-        if(boggledTools.getBooleanSetting("boggledStationCrampedQuartersEnabled"))
+        if(boggledTools.getBooleanSetting(boggledTools.BoggledSettings.stationCrampedQuartersEnabled))
         {
             return true;
         }
@@ -131,12 +131,12 @@ public class Cramped_Quarters extends BaseHazardCondition implements MarketImmig
 
         tooltip.addPara("Population growth reduction at this station begins at market size %s and gets worse if the station continues to grow further beyond that limit.", 10.0F, Misc.getHighlightColor(), new String[]{getStationCrampedThreshold(this.market) + ""});
 
-        if(boggledTools.getBooleanSetting("boggledStationCrampedQuartersPlayerCanPayToIncreaseStationSize"))
+        if(boggledTools.getBooleanSetting(boggledTools.BoggledSettings.stationCrampedQuartersPlayerCanPayToIncreaseStationSize))
         {
             tooltip.addPara("Stations can be expanded to increase the maximum number of residents. Number of times this station has been expanded: %s", 10.0F, Misc.getHighlightColor(), new String[]{boggledTools.getNumberOfStationExpansions(this.market) + ""});
         }
 
-        if(boggledTools.getBooleanSetting("boggledStationCrampedQuartersPlayerCanPayToIncreaseStationSize") && boggledTools.getBooleanSetting("boggledStationProgressiveIncreaseInCostsToExpandStation"))
+        if(boggledTools.getBooleanSetting(boggledTools.BoggledSettings.stationCrampedQuartersPlayerCanPayToIncreaseStationSize) && boggledTools.getBooleanSetting(boggledTools.BoggledSettings.stationProgressIncreaseInCostsToExpandStation))
         {
             tooltip.addPara("Station expansions become more progressively more expensive as the size of the station grows. Each new expansion is twice the cost of the previous one.", 10.0F, Misc.getHighlightColor(), new String[]{boggledTools.getNumberOfStationExpansions(this.market) + ""});
         }

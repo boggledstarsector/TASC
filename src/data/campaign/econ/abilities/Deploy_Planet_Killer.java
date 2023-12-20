@@ -4,6 +4,7 @@ import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.*;
 import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.impl.campaign.abilities.BaseDurationAbility;
+import com.fs.starfarer.api.impl.campaign.ids.Factions;
 import com.fs.starfarer.api.ui.LabelAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
@@ -47,7 +48,7 @@ public class Deploy_Planet_Killer extends BaseDurationAbility
         {
             return false;
         }
-        else if(closestMarket.getFactionId().equals("neutral") || closestMarket.getFactionId().equals("player"))
+        else if(closestMarket.getFactionId().equals(Factions.NEUTRAL) || closestMarket.getFactionId().equals(Factions.PLAYER))
         {
             return false;
         }
@@ -109,7 +110,7 @@ public class Deploy_Planet_Killer extends BaseDurationAbility
             {
                 tooltip.addPara("There are no colonies in this system.", bad, pad);
             }
-            else if(targetMarket.getFactionId().equals("player"))
+            else if(targetMarket.getFactionId().equals(Factions.PLAYER))
             {
                 tooltip.addPara("The colony closest to your location is " + targetMarket.getName() + ". You cannot destroy your own colony with a planet-killer device.", bad, pad);
             }

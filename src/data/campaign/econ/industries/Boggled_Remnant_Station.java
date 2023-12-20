@@ -191,7 +191,7 @@ public class Boggled_Remnant_Station extends OrbitalStation implements RouteMana
                 MilitaryBase.PatrolFleetData custom = (MilitaryBase.PatrolFleetData) route.getCustom();
                 if (custom.spawnFP > 0)
                 {
-                    float fraction  = fleet.getFleetPoints() / custom.spawnFP;
+                    float fraction = (float) fleet.getFleetPoints() / custom.spawnFP;
                     returningPatrolValue += fraction;
                 }
             }
@@ -302,7 +302,7 @@ public class Boggled_Remnant_Station extends OrbitalStation implements RouteMana
     }
 
     public String getRouteSourceId() {
-        return getMarket().getId() + "_" + "boggled_remnant_station";
+        return getMarket().getId() + "_" + boggledTools.BoggledIndustries.remnantStationIndustryID;
     }
 
     @Override
@@ -341,7 +341,7 @@ public class Boggled_Remnant_Station extends OrbitalStation implements RouteMana
             return false;
         }
 
-        if(boggledTools.getBooleanSetting("boggledRemnantStationEnabled") && super.isAvailableToBuild() && Global.getSector().getPlayerStats().getSkillLevel(Skills.AUTOMATED_SHIPS) != 0)
+        if(boggledTools.getBooleanSetting(boggledTools.BoggledSettings.remnantStationEnabled) && super.isAvailableToBuild() && Global.getSector().getPlayerStats().getSkillLevel(Skills.AUTOMATED_SHIPS) != 0)
         {
             return true;
         }
@@ -359,20 +359,13 @@ public class Boggled_Remnant_Station extends OrbitalStation implements RouteMana
             return false;
         }
 
-        if(boggledTools.getBooleanSetting("boggledRemnantStationEnabled") && Global.getSector().getPlayerStats().getSkillLevel(Skills.AUTOMATED_SHIPS) == 0)
-        {
-            return true;
-        }
-        else
-        {
-            return false;
-        }
+        return boggledTools.getBooleanSetting(boggledTools.BoggledSettings.remnantStationEnabled) && Global.getSector().getPlayerStats().getSkillLevel(Skills.AUTOMATED_SHIPS) == 0;
     }
 
     @Override
     public String getUnavailableReason()
     {
-        if(boggledTools.getBooleanSetting("boggledRemnantStationEnabled") && Global.getSector().getPlayerStats().getSkillLevel(Skills.AUTOMATED_SHIPS) == 0)
+        if(boggledTools.getBooleanSetting(boggledTools.BoggledSettings.remnantStationEnabled) && Global.getSector().getPlayerStats().getSkillLevel(Skills.AUTOMATED_SHIPS) == 0)
         {
             return "You lack the Automated Ships skill.";
         }
@@ -450,7 +443,7 @@ public class Boggled_Remnant_Station extends OrbitalStation implements RouteMana
 
     @Override
     protected float getCR() {
-        float deficit = (float)(Integer)this.getMaxDeficit(new String[]{"supplies"}).two;
+        float deficit = (float)(Integer)this.getMaxDeficit("supplies").two;
         float demand = (float)Math.max(0, this.getDemand("supplies").getQuantity().getModifiedInt());
         if (deficit < 0.0F) {
             deficit = 0.0F;
@@ -490,7 +483,7 @@ public class Boggled_Remnant_Station extends OrbitalStation implements RouteMana
     @Override
     protected Pair<String, Integer> getStabilityAffectingDeficit()
     {
-        return this.getMaxDeficit(new String[]{"supplies"});
+        return this.getMaxDeficit("supplies");
     }
 
     @Override
@@ -501,11 +494,11 @@ public class Boggled_Remnant_Station extends OrbitalStation implements RouteMana
             Color h = Misc.getHighlightColor();
             float opad = 10.0F;
             float cr = this.getCR();
-            tooltip.addPara("Station combat readiness: %s", opad, h, new String[]{Math.round(cr * 100.0F) + "%"});
+            tooltip.addPara("Station combat readiness: %s", opad, h, Math.round(cr * 100.0F) + "%");
             this.addStabilityPostDemandSectionBoggledRemnantStation(tooltip, hasDemand, mode);
             float bonus = 2.0f;
 
-            this.addGroundDefensesImpactSectionBoggledRemnantStation(tooltip, bonus, new String[]{"supplies"});
+            this.addGroundDefensesImpactSectionBoggledRemnantStation(tooltip, bonus, "supplies");
         }
     }
 
@@ -536,9 +529,9 @@ public class Boggled_Remnant_Station extends OrbitalStation implements RouteMana
 
         float pad = 3.0F;
         if (total >= 0) {
-            tooltip.addPara("Stability bonus: %s", opad, h, new String[]{totalStr});
+            tooltip.addPara("Stability bonus: %s", opad, h, totalStr);
         } else {
-            tooltip.addPara("Stability penalty: %s", opad, h, new String[]{totalStr});
+            tooltip.addPara("Stability penalty: %s", opad, h, totalStr);
         }
 
         tooltip.addStatModGrid(400.0F, 35.0F, opad, pad, fake, new TooltipMakerAPI.StatModValueGetter() {
@@ -584,7 +577,7 @@ public class Boggled_Remnant_Station extends OrbitalStation implements RouteMana
         }
 
         float pad = 3.0F;
-        tooltip.addPara("Ground defense strength: %s", opad, h, new String[]{totalStr});
+        tooltip.addPara("Ground defense strength: %s", opad, h, totalStr);
         tooltip.addStatModGrid(400.0F, 35.0F, opad, pad, fake, new TooltipMakerAPI.StatModValueGetter() {
             public String getPercentValue(MutableStat.StatMod mod) {
                 return null;

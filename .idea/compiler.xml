@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <excludeFromCompile>
+      <file url="file://$PROJECT_DIR$/src/data/scripts/UNUSED.boggledTerraformingDialogPlugin.java" />
+      <file url="file://$PROJECT_DIR$/src/data/campaign/econ/abilities/UNUSED.Open_Terraforming_Control_Panel.java" />
+      <file url="file://$PROJECT_DIR$/src/data/scripts/UNUSED.boggledTerraformingInitiateProject.java" />
+      <file url="file://$PROJECT_DIR$/src/data/scripts/UNUSED.boggledTerraformingCheckEnabled.java" />
+      <file url="file://$PROJECT_DIR$/src/data/scripts/UNUSED.boggledTerraformingCheckEnabledIrradiatedProject.java" />
+      <file url="file://$PROJECT_DIR$/src/data/scripts/UNUSED.boggledTerraformingProjectRequirementsMet.java" />
+      <file url="file://$PROJECT_DIR$/src/data/scripts/UNUSED.boggledTerraformingPrintStatus.java" />
+      <file url="file://$PROJECT_DIR$/src/data/scripts/UNUSED.boggledTerraformingPrintResultsAndRequirements.java" />
+      <file url="file://$PROJECT_DIR$/src/data/scripts/UNUSED.boggledTerraformingCheckProjectOngoing.java" />
+    </excludeFromCompile>
+  </component>
+</project>

@@ -4,6 +4,7 @@ package data.campaign.econ.conditions;
 import com.fs.starfarer.api.campaign.*;
 import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.impl.campaign.econ.BaseHazardCondition;
+import com.fs.starfarer.api.impl.campaign.ids.Factions;
 import java.util.Map;
 import data.campaign.econ.boggledTools;
 
@@ -29,7 +30,7 @@ public class Sprite_Controller extends BaseHazardCondition
         {
             if(entity.getCustomEntityType().contains("boggled_astropolis_station_alpha"))
             {
-                if(market.getFactionId().equals("neutral"))
+                if(market.getFactionId().equals(Factions.NEUTRAL))
                 {
                     boggledTools.deleteOldLightsOverlay(entity, "astropolis", "alpha");
                 }
@@ -47,7 +48,7 @@ public class Sprite_Controller extends BaseHazardCondition
             }
             else if(entity.getCustomEntityType().contains("boggled_astropolis_station_beta"))
             {
-                if(market.getFactionId().equals("neutral"))
+                if(market.getFactionId().equals(Factions.NEUTRAL))
                 {
                     boggledTools.deleteOldLightsOverlay(entity, "astropolis", "beta");
                 }
@@ -65,7 +66,7 @@ public class Sprite_Controller extends BaseHazardCondition
             }
             else if(entity.getCustomEntityType().contains("boggled_astropolis_station_gamma"))
             {
-                if(market.getFactionId().equals("neutral"))
+                if(market.getFactionId().equals(Factions.NEUTRAL))
                 {
                     boggledTools.deleteOldLightsOverlay(entity, "astropolis", "gamma");
                 }
@@ -84,7 +85,7 @@ public class Sprite_Controller extends BaseHazardCondition
         }
         else if(entity.hasTag("boggled_mining_station"))
         {
-            if(market.getFactionId().equals("neutral"))
+            if(market.getFactionId().equals(Factions.NEUTRAL))
             {
                 //Remember that we can't identify the correct mining station lights overlay because there could be
                 //an unknown number of mining stations in the system in an unknown orbital configuration.
@@ -104,7 +105,7 @@ public class Sprite_Controller extends BaseHazardCondition
         }
         else if(entity.hasTag("boggled_siphon_station"))
         {
-            if(market.getFactionId().equals("neutral"))
+            if(market.getFactionId().equals(Factions.NEUTRAL))
             {
                 boggledTools.deleteOldLightsOverlay(entity, "siphon", null);
             }

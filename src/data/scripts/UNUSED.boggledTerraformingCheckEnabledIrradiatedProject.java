@@ -37,7 +37,7 @@ public class boggledTerraformingCheckEnabledIrradiatedProject extends BaseComman
         //  3. The market is not a station market
         //  4. The market is controlled by the player
         //  5. The radiation removal terraforming project is enabled
-        if(boggledTools.getBooleanSetting("boggledTerraformingContentEnabled") && this.entity.getMarket() != null && !boggledTools.marketIsStation(this.entity.getMarket()) && this.entity.getMarket().isPlayerOwned() && boggledTools.getBooleanSetting("boggledTerraformingRemoveRadiationProjectEnabled"))
+        if(boggledTools.getBooleanSetting(boggledTools.BoggledSettings.terraformingContentEnabled) && this.entity.getMarket() != null && !boggledTools.marketIsStation(this.entity.getMarket()) && this.entity.getMarket().isPlayerOwned() && boggledTools.getBooleanSetting("boggledTerraformingRemoveRadiationProjectEnabled"))
         {
             return true;
         }

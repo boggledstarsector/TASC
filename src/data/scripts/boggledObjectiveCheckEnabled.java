@@ -31,7 +31,7 @@ public class boggledObjectiveCheckEnabled extends BaseCommandPlugin
     {
         if(dialog == null) return false;
 
-        if(boggledTools.getBooleanSetting("boggledDomainTechContentEnabled") && boggledTools.getBooleanSetting("boggledDomainTechObjectivesEnabled"))
+        if(boggledTools.getBooleanSetting(boggledTools.BoggledSettings.domainTechContentEnabled) && boggledTools.getBooleanSetting("boggledDomainTechObjectivesEnabled"))
         {
             return true;
         }

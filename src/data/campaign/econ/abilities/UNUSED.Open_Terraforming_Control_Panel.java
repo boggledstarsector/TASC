@@ -19,7 +19,7 @@ public class Open_Terraforming_Control_Panel extends BaseDurationAbility
     @Override
     public boolean isUsable()
     {
-        if(!boggledTools.getBooleanSetting("boggledTerraformingContentEnabled"))
+        if(!boggledTools.getBooleanSetting(boggledTools.BoggledSettings.terraformingContentEnabled))
         {
             return false;
         }

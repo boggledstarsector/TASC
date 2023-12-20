@@ -11,6 +11,7 @@ import com.fs.starfarer.api.util.Misc;
 import com.fs.starfarer.api.impl.campaign.econ.impl.BaseIndustry;
 import com.fs.starfarer.api.util.Pair;
 import data.campaign.econ.boggledTools;
+import com.fs.starfarer.api.impl.campaign.ids.Commodities;
 
 public class Boggled_Kletka_Simulator extends BaseIndustry
 {
@@ -24,9 +25,9 @@ public class Boggled_Kletka_Simulator extends BaseIndustry
     public CargoAPI generateCargoForGatheringPoint(Random random)
     {
         boolean shortage = false;
-        if(boggledTools.getBooleanSetting("boggledDomainArchaeologyEnabled"))
+        if(boggledTools.getBooleanSetting(boggledTools.BoggledSettings.domainArchaeologyEnabled))
         {
-            Pair<String, Integer> deficit = this.getMaxDeficit(new String[]{"domain_artifacts"});
+            Pair<String, Integer> deficit = this.getMaxDeficit(new String[]{boggledTools.BoggledCommodities.domainArtifacts});
             if(deficit.two != 0)
             {
                 shortage = true;
@@ -49,56 +50,56 @@ public class Boggled_Kletka_Simulator extends BaseIndustry
                 {
                     if(roll > 70f)
                     {
-                        result.addCommodity("beta_core", 1f);
+                        result.addCommodity(Commodities.BETA_CORE, 1f);
                     }
                     else if(roll > 45f)
                     {
-                        result.addCommodity("gamma_core", 1f);
+                        result.addCommodity(Commodities.GAMMA_CORE, 1f);
                     }
                 }
-                else if(this.aiCoreId.equals("alpha_core"))
+                else if(this.aiCoreId.equals(Commodities.ALPHA_CORE))
                 {
                     if(roll > 65f)
                     {
-                        result.addCommodity("alpha_core", 1f);
+                        result.addCommodity(Commodities.ALPHA_CORE, 1f);
                     }
                     else if(roll > 40f)
                     {
-                        result.addCommodity("beta_core", 1f);
+                        result.addCommodity(Commodities.BETA_CORE, 1f);
                     }
                     else if(roll > 15f)
                     {
-                        result.addCommodity("gamma_core", 1f);
+                        result.addCommodity(Commodities.GAMMA_CORE, 1f);
                     }
                 }
-                else if(this.aiCoreId.equals("beta_core"))
+                else if(this.aiCoreId.equals(Commodities.BETA_CORE))
                 {
                     if(roll > 75f)
                     {
-                        result.addCommodity("alpha_core", 1f);
+                        result.addCommodity(Commodities.ALPHA_CORE, 1f);
                     }
                     else if(roll > 50f)
                     {
-                        result.addCommodity("beta_core", 1f);
+                        result.addCommodity(Commodities.BETA_CORE, 1f);
                     }
                     else if(roll > 25f)
                     {
-                        result.addCommodity("gamma_core", 1f);
+                        result.addCommodity(Commodities.GAMMA_CORE, 1f);
                     }
                 }
-                else if(this.aiCoreId.equals("gamma_core"))
+                else if(this.aiCoreId.equals(Commodities.GAMMA_CORE))
                 {
                     if(roll > 85f)
                     {
-                        result.addCommodity("alpha_core", 1f);
+                        result.addCommodity(Commodities.ALPHA_CORE, 1f);
                     }
                     else if(roll > 60f)
                     {
-                        result.addCommodity("beta_core", 1f);
+                        result.addCommodity(Commodities.BETA_CORE, 1f);
                     }
                     else if(roll > 35f)
                     {
-                        result.addCommodity("gamma_core", 1f);
+                        result.addCommodity(Commodities.GAMMA_CORE, 1f);
                     }
                 }
             }
@@ -108,56 +109,56 @@ public class Boggled_Kletka_Simulator extends BaseIndustry
                 {
                     if(roll > 80f)
                     {
-                        result.addCommodity("beta_core", 1f);
+                        result.addCommodity(Commodities.BETA_CORE, 1f);
                     }
                     else if(roll > 55f)
                     {
-                        result.addCommodity("gamma_core", 1f);
+                        result.addCommodity(Commodities.GAMMA_CORE, 1f);
                     }
                 }
-                else if(this.aiCoreId.equals("alpha_core"))
+                else if(this.aiCoreId.equals(Commodities.ALPHA_CORE))
                 {
                     if(roll > 75f)
                     {
-                        result.addCommodity("alpha_core", 1f);
+                        result.addCommodity(Commodities.ALPHA_CORE, 1f);
                     }
                     else if(roll > 50f)
                     {
-                        result.addCommodity("beta_core", 1f);
+                        result.addCommodity(Commodities.BETA_CORE, 1f);
                     }
                     else if(roll > 25f)
                     {
-                        result.addCommodity("gamma_core", 1f);
+                        result.addCommodity(Commodities.GAMMA_CORE, 1f);
                     }
                 }
-                else if(this.aiCoreId.equals("beta_core"))
+                else if(this.aiCoreId.equals(Commodities.BETA_CORE))
                 {
                     if(roll > 85f)
                     {
-                        result.addCommodity("alpha_core", 1f);
+                        result.addCommodity(Commodities.ALPHA_CORE, 1f);
                     }
                     else if(roll > 60f)
                     {
-                        result.addCommodity("beta_core", 1f);
+                        result.addCommodity(Commodities.BETA_CORE, 1f);
                     }
                     else if(roll > 35f)
                     {
-                        result.addCommodity("gamma_core", 1f);
+                        result.addCommodity(Commodities.GAMMA_CORE, 1f);
                     }
                 }
-                else if(this.aiCoreId.equals("gamma_core"))
+                else if(this.aiCoreId.equals(Commodities.GAMMA_CORE))
                 {
                     if(roll > 95f)
                     {
-                        result.addCommodity("alpha_core", 1f);
+                        result.addCommodity(Commodities.ALPHA_CORE, 1f);
                     }
                     else if(roll > 70f)
                     {
-                        result.addCommodity("beta_core", 1f);
+                        result.addCommodity(Commodities.BETA_CORE, 1f);
                     }
                     else if(roll > 45f)
                     {
-                        result.addCommodity("gamma_core", 1f);
+                        result.addCommodity(Commodities.GAMMA_CORE, 1f);
                     }
                 }
             }
@@ -238,15 +239,15 @@ public class Boggled_Kletka_Simulator extends BaseIndustry
     @Override
     public void apply()
     {
-        if(boggledTools.getBooleanSetting("boggledDomainArchaeologyEnabled"))
+        if(boggledTools.getBooleanSetting(boggledTools.BoggledSettings.domainArchaeologyEnabled))
         {
-            this.demand("domain_artifacts", 4);
+            this.demand(boggledTools.BoggledCommodities.domainArtifacts, 4);
         }
 
         super.apply(false);
         super.applyIncomeAndUpkeep(3);
 
-        if(boggledTools.getBooleanSetting("boggledKletkaSimulatorTemperatureBasedUpkeep"))
+        if(boggledTools.getBooleanSetting(boggledTools.BoggledSettings.kletkaSimulatorTemperatureBasedUpkeep))
         {
             MarketAPI market = this.market;
             if(boggledTools.marketIsStation(market))
@@ -278,7 +279,7 @@ public class Boggled_Kletka_Simulator extends BaseIndustry
         // This version will cause suppression of temperature conditions to remove the temperature-based
         // upkeep bonus.
         /*
-        if(boggledTools.getBooleanSetting("boggledKletkaSimulatorTemperatureBasedUpkeep"))
+        if(boggledTools.getBooleanSetting(boggledTools.BoggledSettings.kletkaSimulatorTemperatureBasedUpkeep))
         {
             MarketAPI market = this.market;
             LinkedHashSet<String> suppCond = market.getSuppressedConditions();
@@ -353,12 +354,7 @@ public class Boggled_Kletka_Simulator extends BaseIndustry
             return false;
         }
 
-        if(boggledTools.getBooleanSetting("boggledDomainTechContentEnabled") && boggledTools.getBooleanSetting("boggledKletkaSimulatorEnabled"))
-        {
-            return true;
-        }
-
-        return false;
+        return boggledTools.getBooleanSetting(boggledTools.BoggledSettings.domainTechContentEnabled) && boggledTools.getBooleanSetting(boggledTools.BoggledSettings.kletkaSimulatorEnabled);
     }
 
     @Override
@@ -382,15 +378,15 @@ public class Boggled_Kletka_Simulator extends BaseIndustry
         Color highlight = Misc.getHighlightColor();
         Color bad = Misc.getNegativeHighlightColor();
 
-        if(boggledTools.getBooleanSetting("boggledKletkaSimulatorTemperatureBasedUpkeep"))
+        if(boggledTools.getBooleanSetting(boggledTools.BoggledSettings.kletkaSimulatorTemperatureBasedUpkeep))
         {
-            tooltip.addPara("Supercomputers will melt themselves without adequate cooling. Operating costs are lowest on very cold worlds and highest on stations.", opad, highlight, new String[]{""});
+            tooltip.addPara("Supercomputers will melt themselves without adequate cooling. Operating costs are lowest on very cold worlds and highest on stations.", opad);
         }
 
         boolean shortage = false;
-        if(boggledTools.getBooleanSetting("boggledDomainArchaeologyEnabled"))
+        if(boggledTools.getBooleanSetting(boggledTools.BoggledSettings.domainArchaeologyEnabled))
         {
-            Pair<String, Integer> deficit = this.getMaxDeficit(new String[]{"domain_artifacts"});
+            Pair<String, Integer> deficit = this.getMaxDeficit(boggledTools.BoggledCommodities.domainArtifacts);
             if(deficit.two != 0)
             {
                 shortage = true;
@@ -403,12 +399,12 @@ public class Boggled_Kletka_Simulator extends BaseIndustry
         }
         else if(isDisrupted())
         {
-            tooltip.addPara("Current chances to produce an AI core at the end of the month: %s", opad, bad, new String[]{"           None (disrupted)"});
+            tooltip.addPara("Current chances to produce an AI core at the end of the month: %s", opad, bad, "           None (disrupted)");
             return;
         }
         else if(shortage)
         {
-            tooltip.addPara("Current chances to produce an AI core at the end of the month: %s", opad, bad, new String[]{"           None (shortage of Domain-era artifacts)"});
+            tooltip.addPara("Current chances to produce an AI core at the end of the month: %s", opad, bad, "           None (shortage of Domain-era artifacts)");
             return;
         }
 
@@ -416,42 +412,42 @@ public class Boggled_Kletka_Simulator extends BaseIndustry
         {
             if((this.aiCoreId == null))
             {
-                tooltip.addPara("Current chances to produce an AI core at the end of the month:\n" + "Beta Core: %s\n" + "Gamma Core: %s\n"  + "Nothing: %s", opad, highlight, new String[]{"30%","25%","45%"});
+                tooltip.addPara("Current chances to produce an AI core at the end of the month:\n" + "Beta Core: %s\n" + "Gamma Core: %s\n"  + "Nothing: %s", opad, highlight, "30%","25%","45%");
 
-                tooltip.addPara("Install an AI core to improve production chances.", opad, highlight, new String[]{""});
+                tooltip.addPara("Install an AI core to improve production chances.", opad);
             }
-            else if(this.aiCoreId.equals("gamma_core"))
+            else if(this.aiCoreId.equals(Commodities.GAMMA_CORE))
             {
-                tooltip.addPara("Current chances to produce an AI core at the end of the month:\n" + "Alpha Core: %s\n" + "Beta Core: %s\n" + "Gamma Core: %s\n"  + "Nothing: %s", opad, highlight, new String[]{"15%","25%","25%","35%"});
+                tooltip.addPara("Current chances to produce an AI core at the end of the month:\n" + "Alpha Core: %s\n" + "Beta Core: %s\n" + "Gamma Core: %s\n"  + "Nothing: %s", opad, highlight, "15%","25%","25%","35%");
             }
-            else if(this.aiCoreId.equals("beta_core"))
+            else if(this.aiCoreId.equals(Commodities.BETA_CORE))
             {
-                tooltip.addPara("Current chances to produce an AI core at the end of the month:\n" + "Alpha Core: %s\n" + "Beta Core: %s\n" + "Gamma Core: %s\n"  + "Nothing: %s", opad, highlight, new String[]{"25%","25%","25%","25%"});
+                tooltip.addPara("Current chances to produce an AI core at the end of the month:\n" + "Alpha Core: %s\n" + "Beta Core: %s\n" + "Gamma Core: %s\n"  + "Nothing: %s", opad, highlight, "25%","25%","25%","25%");
             }
-            else if(this.aiCoreId.equals("alpha_core"))
+            else if(this.aiCoreId.equals(Commodities.ALPHA_CORE))
             {
-                tooltip.addPara("Current chances to produce an AI core at the end of the month:\n" + "Alpha Core: %s\n" + "Beta Core: %s\n" + "Gamma Core: %s\n"  + "Nothing: %s", opad, highlight, new String[]{"35%","25%","25%","15%"});
+                tooltip.addPara("Current chances to produce an AI core at the end of the month:\n" + "Alpha Core: %s\n" + "Beta Core: %s\n" + "Gamma Core: %s\n"  + "Nothing: %s", opad, highlight, "35%","25%","25%","15%");
             }
         }
         else
         {
             if((this.aiCoreId == null))
             {
-                tooltip.addPara("Current chances to produce an AI core at the end of the month:\n" + "Beta Core: %s\n" + "Gamma Core: %s\n"  + "Nothing: %s", opad, highlight, new String[]{"20%","25%","55%"});
+                tooltip.addPara("Current chances to produce an AI core at the end of the month:\n" + "Beta Core: %s\n" + "Gamma Core: %s\n"  + "Nothing: %s", opad, highlight, "20%","25%","55%");
 
-                tooltip.addPara("Install an AI core to improve production chances.", opad, highlight, new String[]{""});
+                tooltip.addPara("Install an AI core to improve production chances.", opad);
             }
-            else if(this.aiCoreId.equals("gamma_core"))
+            else if(this.aiCoreId.equals(Commodities.GAMMA_CORE))
             {
-                tooltip.addPara("Current chances to produce an AI core at the end of the month:\n" + "Alpha Core: %s\n" + "Beta Core: %s\n" + "Gamma Core: %s\n"  + "Nothing: %s", opad, highlight, new String[]{"5%","25%","25%","45%"});
+                tooltip.addPara("Current chances to produce an AI core at the end of the month:\n" + "Alpha Core: %s\n" + "Beta Core: %s\n" + "Gamma Core: %s\n"  + "Nothing: %s", opad, highlight, "5%","25%","25%","45%");
             }
-            else if(this.aiCoreId.equals("beta_core"))
+            else if(this.aiCoreId.equals(Commodities.BETA_CORE))
             {
-                tooltip.addPara("Current chances to produce an AI core at the end of the month:\n" + "Alpha Core: %s\n" + "Beta Core: %s\n" + "Gamma Core: %s\n"  + "Nothing: %s", opad, highlight, new String[]{"15%","25%","25%","35%"});
+                tooltip.addPara("Current chances to produce an AI core at the end of the month:\n" + "Alpha Core: %s\n" + "Beta Core: %s\n" + "Gamma Core: %s\n"  + "Nothing: %s", opad, highlight, "15%","25%","25%","35%");
             }
-            else if(this.aiCoreId.equals("alpha_core"))
+            else if(this.aiCoreId.equals(Commodities.ALPHA_CORE))
             {
-                tooltip.addPara("Current chances to produce an AI core at the end of the month:\n" + "Alpha Core: %s\n" + "Beta Core: %s\n" + "Gamma Core: %s\n"  + "Nothing: %s", opad, highlight, new String[]{"25%","25%","25%","25%"});
+                tooltip.addPara("Current chances to produce an AI core at the end of the month:\n" + "Alpha Core: %s\n" + "Beta Core: %s\n" + "Gamma Core: %s\n"  + "Nothing: %s", opad, highlight, "25%","25%","25%","25%");
             }
         }
     }
@@ -459,25 +455,18 @@ public class Boggled_Kletka_Simulator extends BaseIndustry
     @Override
     protected boolean hasPostDemandSection(boolean hasDemand, IndustryTooltipMode mode)
     {
-        if(boggledTools.getBooleanSetting("boggledDomainArchaeologyEnabled"))
-        {
-            return true;
-        }
-        else
-        {
-            return false;
-        }
+        return boggledTools.getBooleanSetting(boggledTools.BoggledSettings.domainArchaeologyEnabled);
     }
 
     @Override
     protected void addPostDemandSection(TooltipMakerAPI tooltip, boolean hasDemand, IndustryTooltipMode mode)
     {
-        if(boggledTools.getBooleanSetting("boggledDomainArchaeologyEnabled"))
+        if(boggledTools.getBooleanSetting(boggledTools.BoggledSettings.domainArchaeologyEnabled))
         {
             float opad = 10.0F;
             Color highlight = Misc.getHighlightColor();
 
-            tooltip.addPara("Kletka Simulators always demand %s Domain-era artifacts regardless of market size.", opad, highlight, new String[]{"4"});
+            tooltip.addPara("Kletka Simulators always demand %s Domain-era artifacts regardless of market size.", opad, highlight, "4");
         }
     }
 
@@ -495,15 +484,13 @@ public class Boggled_Kletka_Simulator extends BaseIndustry
     @Override
     public void addImproveDesc(TooltipMakerAPI info, ImprovementDescriptionMode mode) {
         float opad = 10f;
-        Color highlight = Misc.getHighlightColor();
-
         if (mode == ImprovementDescriptionMode.INDUSTRY_TOOLTIP)
         {
-            info.addPara("AI core training methodology improved.", 0f, highlight, "");
+            info.addPara("AI core training methodology improved.", 0f);
         }
         else
         {
-            info.addPara("Improves AI core training methodology.", 0f, highlight, "");
+            info.addPara("Improves AI core training methodology.", 0f);
         }
 
         info.addSpacer(opad);

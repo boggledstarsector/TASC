@@ -47,26 +47,26 @@ public class boggledTerraformingPrintStatus extends BaseCommandPlugin
 
             MarketAPI market = this.entity.getMarket();
             PlanetAPI planet = market.getPlanetEntity();
-            if(!market.hasCondition("terraforming_controller"))
+            if(!market.hasCondition(boggledTools.BoggledConditions.terraformingControllerConditionID))
             {
-                market.addCondition("terraforming_controller");
+                market.addCondition(boggledTools.BoggledConditions.terraformingControllerConditionID);
             }
 
-            Terraforming_Controller terraformingController = (Terraforming_Controller) market.getCondition("terraforming_controller").getPlugin();
+            Terraforming_Controller terraformingController = (Terraforming_Controller) market.getCondition(boggledTools.BoggledConditions.terraformingControllerConditionID).getPlugin();
             String currentProject = terraformingController.getProject();
 
-            text.addPara("Current terraforming project: %s", highlight, new String[]{boggledTools.getTooltipProjectName(currentProject)});
+            text.addPara("Current terraforming project: %s", highlight, boggledTools.getTooltipProjectName(currentProject));
 
-            if(currentProject != null && !currentProject.equals("None"))
+            if(currentProject != null && !currentProject.equals(boggledTools.noneProjectID))
             {
-                text.addPara("%s days remaining (%s complete)", highlight, new String[]{terraformingController.getDaysRemaining() + "", terraformingController.getPercentComplete() + "%"});
+                text.addPara("%s days remaining (%s complete)", highlight, terraformingController.getDaysRemaining() + "", terraformingController.getPercentComplete() + "%");
             }
 
             // printProjectRequirementsReportIfStalled will return true if one or more requirements are not met. If so,
             // tell the player about same.
             if(boggledTools.printProjectRequirementsReportIfStalled(market, currentProject, text))
             {
-                text.addPara("%s", bad, new String[]{"Terraforming is stalled because one or more project requirements are not met!"});
+                text.addPara("%s", bad, "Terraforming is stalled because one or more project requirements are not met!");
             }
         }
 

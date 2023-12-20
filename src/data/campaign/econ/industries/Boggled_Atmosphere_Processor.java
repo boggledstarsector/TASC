@@ -3,6 +3,7 @@ package data.campaign.econ.industries;
 import java.awt.*;
 import java.lang.String;
 
+import com.fs.starfarer.api.impl.campaign.ids.Commodities;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
 import com.fs.starfarer.api.impl.campaign.econ.impl.BaseIndustry;
@@ -23,7 +24,7 @@ public class Boggled_Atmosphere_Processor extends BaseIndustry
         super.apply(true);
 
         int size = this.market.getSize();
-        this.demand("heavy_machinery", size);
+        this.demand(Commodities.HEAVY_MACHINERY, size);
     }
 
     @Override
@@ -40,7 +41,7 @@ public class Boggled_Atmosphere_Processor extends BaseIndustry
             return false;
         }
 
-        if(boggledTools.getBooleanSetting("boggledTerraformingContentEnabled"))
+        if(boggledTools.getBooleanSetting(boggledTools.BoggledSettings.terraformingContentEnabled))
         {
             if(!boggledTools.marketIsStation(this.market) && boggledTools.marketHasAtmoProblem(this.market) && boggledTools.terraformingPossibleOnMarket(this.market))
             {
@@ -65,7 +66,7 @@ public class Boggled_Atmosphere_Processor extends BaseIndustry
             return false;
         }
 
-        if(boggledTools.getBooleanSetting("boggledTerraformingContentEnabled") && !boggledTools.marketIsStation(this.market))
+        if(boggledTools.getBooleanSetting(boggledTools.BoggledSettings.terraformingContentEnabled) && !boggledTools.marketIsStation(this.market))
         {
             return true;
         }
@@ -80,7 +81,7 @@ public class Boggled_Atmosphere_Processor extends BaseIndustry
     {
         if(!boggledTools.terraformingPossibleOnMarket(this.market))
         {
-            if(boggledTools.getPlanetType(this.market.getPlanetEntity()).equals("unknown"))
+            if(boggledTools.getPlanetType(this.market.getPlanetEntity()).equals(boggledTools.unknownPlanetID))
             {
                 return "This planet type is unsupported by TASC. Please report this to boggled on the forums so he can add support. The planet type is: " + market.getPlanetEntity().getTypeId();
             }
@@ -122,7 +123,7 @@ public class Boggled_Atmosphere_Processor extends BaseIndustry
     protected void addPostDemandSection(TooltipMakerAPI tooltip, boolean hasDemand, IndustryTooltipMode mode)
     {
         boolean shortage = false;
-        Pair<String, Integer> deficit = this.getMaxDeficit(new String[]{"heavy_machinery"});
+        Pair<String, Integer> deficit = this.getMaxDeficit(Commodities.HEAVY_MACHINERY);
         if(deficit.two != 0)
         {
             shortage = true;

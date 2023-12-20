@@ -47,17 +47,16 @@ public class boggledStationUnderConstructionPrintDescription extends BaseCommand
             dayOrDays = "day";
         }
 
-        if(type.equals("mining"))
-        {
-            dialog.getTextPanel().addParagraph("This mining station is currently under construction. It will be completed in approximately " + daysRemaining + " " + dayOrDays + ".");
-        }
-        else if(type.equals("siphon"))
-        {
-            dialog.getTextPanel().addParagraph("This siphon station is currently under construction. It will be completed in approximately " + daysRemaining + " " + dayOrDays + ".");
-        }
-        else if(type.equals("astropolis"))
-        {
-            dialog.getTextPanel().addParagraph("This astropolis station is currently under construction. It will be completed in approximately " + daysRemaining + " " + dayOrDays + ".");
+        switch (type) {
+            case "mining":
+                dialog.getTextPanel().addParagraph("This mining station is currently under construction. It will be completed in approximately " + daysRemaining + " " + dayOrDays + ".");
+                break;
+            case "siphon":
+                dialog.getTextPanel().addParagraph("This siphon station is currently under construction. It will be completed in approximately " + daysRemaining + " " + dayOrDays + ".");
+                break;
+            case "astropolis":
+                dialog.getTextPanel().addParagraph("This astropolis station is currently under construction. It will be completed in approximately " + daysRemaining + " " + dayOrDays + ".");
+                break;
         }
     }
 }

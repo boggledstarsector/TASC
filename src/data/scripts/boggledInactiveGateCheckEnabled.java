@@ -33,7 +33,7 @@ public class boggledInactiveGateCheckEnabled extends BaseCommandPlugin
     {
         if(dialog == null) return false;
 
-        if(boggledTools.getBooleanSetting("boggledDomainTechContentEnabled") && boggledTools.getBooleanSetting("boggledDomainTechInactiveGateConstructionEnabled"))
+        if(boggledTools.getBooleanSetting(boggledTools.BoggledSettings.domainTechContentEnabled) && boggledTools.getBooleanSetting("boggledDomainTechInactiveGateConstructionEnabled"))
         {
             if(boggledTools.getBooleanSetting("boggledDomainTechInactiveGateConstructionMainQuestCompletionRequired"))
             {
