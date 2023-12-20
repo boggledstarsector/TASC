@@ -1,0 +1,3 @@
+id,tooltip,requirements_added,requirements_removed,planet_type_change_override,conditions_added,conditions_removed,conditions_option,option_name,condition_progress_added,condition_progress_removed
+# This file is just here to provide structure, it should be empty in the Terraforming & Station Construction mod
+# Other mods add their stuff here

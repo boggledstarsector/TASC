@@ -293,19 +293,27 @@ public class boggledTools
     public static final String craftBiofactoryEmbryoProjectTooltip = "Craft Biofactory Embryo";
     public static final String craftDealmakerHolosuiteProjectTooltip = "Craft Dealmaker Holosuite";
 
+    public static final HashMap<String, TerraformingRequirementFactory> terraformingRequirementFactories = new HashMap<>();
+
+    public static void initialiseDefaultTerraformingRequirementFactories() {
+        addTerraformingRequirementFactory("PlanetTypeRequirement", new PlanetTypeRequirementFactory());
+        addTerraformingRequirementFactory("MarketHasCondition", new MarketHasConditionFactory());
+        addTerraformingRequirementFactory("MarketHasIndustry", new MarketHasIndustryFactory());
+        addTerraformingRequirementFactory("MarketHasIndustryWithItem", new MarketHasIndustryWithItemFactory());
+        addTerraformingRequirementFactory("MarketHasWaterPresent", new MarketHasWaterPresentFactory());
+        addTerraformingRequirementFactory("MarketIsAtLeastSize", new MarketIsAtLeastSizeFactory());
+        addTerraformingRequirementFactory("FleetCargoContainsAtLeast", new FleetCargoContainsAtLeastFactory());
+        addTerraformingRequirementFactory("PlayerHasStoryPointsAtLeast", new PlayerHasStoryPointsAtLeastFactory());
+        addTerraformingRequirementFactory("WorldTypeSupportsResourceImprovement", new WorldTypeSupportsResourceImprovementFactory());
+    }
+
+    public static void addTerraformingRequirementFactory(String key, TerraformingRequirementFactory value) {
+        Global.getLogger(boggledTools.class).info("Adding factory " + key);
+        terraformingRequirementFactories.put(key, value);
+    }
+
     public static void initialiseTerraformingRequirementFromJSON(JSONArray terraformingRequirementJSON) {
         Logger log = Global.getLogger(boggledTools.class);
-
-        HashMap<String, TerraformingRequirementFactory> terraformingRequirementFactories = new HashMap<>();
-        terraformingRequirementFactories.put("PlanetTypeRequirement", new PlanetTypeRequirementFactory());
-        terraformingRequirementFactories.put("MarketHasCondition", new MarketHasConditionFactory());
-        terraformingRequirementFactories.put("MarketHasIndustry", new MarketHasIndustryFactory());
-        terraformingRequirementFactories.put("MarketHasIndustryWithItem", new MarketHasIndustryWithItemFactory());
-        terraformingRequirementFactories.put("MarketHasWaterPresent", new MarketHasWaterPresentFactory());
-        terraformingRequirementFactories.put("MarketIsAtLeastSize", new MarketIsAtLeastSizeFactory());
-        terraformingRequirementFactories.put("FleetCargoContainsAtLeast", new FleetCargoContainsAtLeastFactory());
-        terraformingRequirementFactories.put("PlayerHasStoryPointsAtLeast", new PlayerHasStoryPointsAtLeastFactory());
-        terraformingRequirementFactories.put("WorldTypeSupportsResourceImprovement", new WorldTypeSupportsResourceImprovementFactory());
 
         HashMap<String, TerraformingRequirement> terraformingReqs = new HashMap<>();
 
@@ -313,7 +321,7 @@ public class boggledTools
             try {
                 JSONObject row = terraformingRequirementJSON.getJSONObject(i);
 
-                String terraformingId = row.getString("id");
+                String id = row.getString("id");
                 String requirementType = row.getString("requirement_type");
                 boolean invert = row.getBoolean("invert");
                 String data = row.getString("data");
@@ -321,7 +329,11 @@ public class boggledTools
                 TerraformingRequirementFactory factory = terraformingRequirementFactories.get(requirementType);
                 if (factory != null) {
                     TerraformingRequirement req = factory.constructFromJSON(invert, data);
-                    terraformingReqs.put(terraformingId, req);
+                    if (req != null) {
+                        terraformingReqs.put(id, req);
+                    } else {
+                        log.error("Requirement " + id + " of type " + requirementType + " was null when created with data " + data);
+                    }
                 } else {
                     log.info("No factory for requirement type " + requirementType);
                 }
@@ -391,7 +403,7 @@ public class boggledTools
                 }
 
                 String tooltip = row.getString("tooltip");
-                String[] requirements = row.getString("requirements").split(";");
+                String[] requirementsStrings = row.getString("requirements").split(";");
                 String planetTypeChange = row.getString("planet_type_change");
                 ArrayList<String> conditionsAdded = arrayListFromJSON(row, "conditions_added", ";");
                 ArrayList<String> conditionsRemoved = arrayListFromJSON(row, "conditions_removed", ";");
@@ -400,10 +412,10 @@ public class boggledTools
                 String optionName = row.getString("option_name");
                 if (!optionName.isEmpty() && getBooleanSetting(optionName)) {
                     conditionsAdded.addAll(conditionsOption);
-                    log.info("Setting " + optionName + " is true, adding options " + conditionsOption);
+                    log.info("Setting " + optionName + " is true, adding options " + conditionsOption + " to " + id);
                 } else if (!optionName.isEmpty()){
                     conditionsRemoved.addAll(conditionsOption);
-                    log.info("Setting " + optionName + " is false, removing options " + conditionsOption);
+                    log.info("Setting " + optionName + " is false, removing options " + conditionsOption + " to " + id);
                 }
 
                 ArrayList<String> conditionsProgress = arrayListFromJSON(row, "condition_progress", ";");
@@ -413,8 +425,11 @@ public class boggledTools
                 }
 
                 ArrayList<TerraformingRequirements> reqs = new ArrayList<>();
-                for (String req : requirements) {
-                    reqs.add(terraformingRequirements.get(req));
+                for (String requirementsString : requirementsStrings) {
+                    TerraformingRequirements req = terraformingRequirements.get(requirementsString);
+                    if (req != null) {
+                        reqs.add(req);
+                    }
                 }
 
                 TerraformingProject terraformingProj = new TerraformingProject(id, tooltip, reqs, a, planetTypeChange, conditionsAdded, conditionsRemoved, conditionsOption, conditionsProgress);
@@ -425,6 +440,40 @@ public class boggledTools
             }
         }
         boggledTools.terraformingProjects = terraformingProjects;
+    }
+
+    public static void initialiseTerraformingProjectOverrides(JSONArray terraformingProjectsOverrideJSON) {
+        Logger log = Global.getLogger(boggledTools.class);
+
+        try {
+            for (int i = 0; i < terraformingProjectsOverrideJSON.length(); ++i) {
+                JSONObject row = terraformingProjectsOverrideJSON.getJSONObject(i);
+
+                log.info(row);
+
+                String id = row.getString("id");
+                TerraformingProject proj = terraformingProjects.get(id);
+                if (proj == null) {
+                    log.error("Terraforming project " + id + " not found, ignoring");
+                    continue;
+                }
+
+                String[] requirementsAddedStrings = row.getString("requirements_added").split(";");
+                ArrayList<String> requirementsRemovedStrings = arrayListFromJSON(row, "requirements_removed", ";");
+
+                ArrayList<TerraformingRequirements> requirementsAdded = new ArrayList<>();
+                for (String requirementAddedString : requirementsAddedStrings) {
+                    TerraformingRequirements req = terraformingRequirements.get(requirementAddedString);
+                    if (req != null) {
+                        requirementsAdded.add(terraformingRequirements.get(requirementAddedString));
+                    }
+                }
+
+                proj.addRemoveProjectRequirements(requirementsAdded, requirementsRemovedStrings);
+            }
+        } catch (JSONException e) {
+            log.error(e);
+        }
     }
 
     private static ArrayList<TerraformingProject> initialiseCraftingProjects() {
@@ -2247,6 +2296,22 @@ public class boggledTools
         }
 
         public ArrayList<TerraformingRequirements> getProjectRequirements() { return projectRequirements; }
+
+        public void addRemoveProjectRequirements(ArrayList<TerraformingRequirements> add, ArrayList<String> remove) {
+            for (String r : remove) {
+                for (int i = 0; i < projectRequirements.size(); ++i)
+                {
+                    TerraformingRequirements projectReqs = projectRequirements.get(i);
+                    if (r.equals(projectReqs.requirementId)) {
+                        Global.getLogger(TerraformingProject.class).info("Removeing project requirement " + r);
+                        projectRequirements.remove(i);
+                        break;
+                    }
+                }
+            }
+
+            projectRequirements.addAll(add);
+        }
 
         TerraformingProject(String projectId, String projectTooltip, ArrayList<TerraformingRequirements> projectRequirements, ArrayList<String> projectResults, String planetTypeChange, ArrayList<String> conditionsAdded, ArrayList<String> conditionsRemoved, ArrayList<String> conditionsOption, ArrayList<String> conditionsProgress) {
             this.projectId = projectId;

@@ -313,11 +313,17 @@ public class BoggledTascPlugin extends BaseModPlugin
             JSONArray terraformingRequirements = Global.getSettings().getMergedSpreadsheetDataForMod("id", "data/campaign/terraforming_requirements.csv", boggledTools.BoggledMods.tascModID);
             JSONArray terraformingProjects = Global.getSettings().getMergedSpreadsheetDataForMod("id", "data/campaign/terraforming_projects.csv", boggledTools.BoggledMods.tascModID);
 
+            // Thinking we need one more step in here
+            // A "Load additions" thing
+            JSONArray terraformingProjectsOverrides = Global.getSettings().getMergedSpreadsheetDataForMod("id", "data/campaign/terraforming_projects_mods.csv", boggledTools.BoggledMods.tascModID);
+
             boggledTools.initialiseTerraformingRequirementFromJSON(terraformingRequirement);
 
             boggledTools.initialiseTerraformingRequirementsFromJSON(terraformingRequirements);
 
             boggledTools.initialiseTerraformingProjectsFromJSON(terraformingProjects);
+
+            boggledTools.initialiseTerraformingProjectOverrides(terraformingProjectsOverrides);
 
         } catch (IOException | JSONException ex) {
             log.error(ex);
@@ -340,6 +346,7 @@ public class BoggledTascPlugin extends BaseModPlugin
 
     @Override
     public void onApplicationLoad()  {
+        boggledTools.initialiseDefaultTerraformingRequirementFactories();
         if (Global.getSettings().getModManager().isModEnabled("aaacrew_replacer")){
             bogglesDefaultCargo.active = new booglesCrewReplacerCargo();
         }else{
