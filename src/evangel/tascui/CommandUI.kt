@@ -10,9 +10,6 @@ import com.fs.starfarer.api.ui.TooltipMakerAPI.TooltipCreator
 import com.fs.starfarer.api.util.Misc
 import data.campaign.econ.boggledTools
 import data.campaign.econ.conditions.Terraforming_Controller
-import data.kaysaar.aotd.vok.scripts.research.AoTDMainResearchManager
-//import lunalib.backend.ui.components.base.LunaUIPlaceholder
-//import lunalib.backend.ui.components.base.LunaUISprite
 import lunalib.lunaUI.elements.LunaElement
 import lunalib.lunaUI.elements.LunaSpriteElement
 import lunalib.lunaUI.panel.LunaBaseCustomPanelPlugin
@@ -97,16 +94,6 @@ class ProjectRequirementsTooltip(terraformingProject : boggledTools.Terraforming
             val color = if (requirementMet) Misc.getPositiveHighlightColor() else Misc.getNegativeHighlightColor()
             tooltip.addPara(projectRequirement.tooltip, color, 0f)
         }
-
-//        if (aotdEnabled) {
-//            val good = Misc.getPositiveHighlightColor()
-//            val bad = Misc.getNegativeHighlightColor()
-//            val researchManager = AoTDMainResearchManager.getInstance()
-//            val researchReqPara = CommandUIIntelK.getRequiredResearchParaFromProjectName(terraformingOptionID)
-//            val researchReq = CommandUIIntelK.getRequiredResearchFromProjectName(terraformingOptionID)
-//            val color = if (researchManager.isResearchedForPlayer(researchReq)) good else bad
-//            tooltip.addPara(researchReqPara, color, 0f)
-//        }
     }
 }
 
@@ -542,7 +529,6 @@ class CommandUIIntelK : LunaBaseCustomPanelPlugin() {
         var conditionHorizontalSpacing = 2f
         var conditionVerticalSpacing = PLANET_CARD_HEIGHT / 2
         val planetaryConditionsCount = market.conditions.filter { it.isPlanetary }.size
-        val rows = ((planetaryConditionsCount * CONDITION_SPRITE_SIZE_W_SPACING) / CONDITIONS_WIDTH).toInt() + 1
 
         var conditionSpriteSize = CONDITION_SPRITE_SIZE
         val conditionSpriteCapacity = PLANET_CARD_HEIGHT / 2

@@ -2149,53 +2149,6 @@ public class boggledTools
         return new String[]{"You should never see this text. If you do, tell Boggled about it on the forums."};
     }
 
-                "mildClimateConditionImprovement",
-                "habitableConditionImprovement",
-                "atmosphereDensityConditionImprovement",
-                "toxicAtmosphereConditionImprovement",
-                "irradiatedConditionImprovement",
-                "removeAtmosphereConditionImprovement"
-        };
-    }
-
-    public static String[] getEnabledTerraformingProjects()
-    {
-        ArrayList<String> enabledProjects = new ArrayList<>();
-        String[] allProjects = getAllTerraformingProjects();
-        for(String project : allProjects)
-        {
-            // Only add radiation project if it's enabled in settings
-            if(project.equals("irradiatedConditionImprovement"))
-            {
-                if(getBooleanSetting("boggledTerraformingRemoveRadiationProjectEnabled"))
-                {
-                    enabledProjects.add(project);
-                }
-            }
-            // Only add atmosphere removal project if it's enabled in settings
-            else if(project.equals("removeAtmosphereConditionImprovement"))
-            {
-                if(getBooleanSetting("boggledTerraformingRemoveAtmosphereProjectEnabled"))
-                {
-                    enabledProjects.add(project);
-                }
-            }
-            else
-            {
-                enabledProjects.add(project);
-            }
-        }
-
-        return enabledProjects.toArray(new String[0]);
-    }
-
-    public static String[] getProjectRequirementsStrings(String project)
-    {
-        reinitialiseInfo();
-        TerraformingProject terraformingProject = getProject(project);
-        return getProjectRequirementsStrings(terraformingProject);
-    }
-
     public static class TerraformingProject {
         private final String projectId;
         private final String projectTooltip;
@@ -2697,7 +2650,6 @@ public class boggledTools
         if (terraformingProject != null) {
             return terraformingProject.projectTooltip;
         } else {
-                return "Remove atmospheric radiation";
             return "ERROR";
         }
     }

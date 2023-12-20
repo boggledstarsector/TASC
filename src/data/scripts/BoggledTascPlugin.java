@@ -22,21 +22,6 @@ public class BoggledTascPlugin extends BaseModPlugin
 {
     private static final Logger log = Global.getLogger(BoggledTascPlugin.class);
 
-    public void debugActionsPleaseIgnore()
-    {
-        String[] allProjects = boggledTools.getAllTerraformingProjects();
-        for(String project : allProjects)
-        {
-            boggledTools.writeMessageToLog("All: " + project);
-        }
-
-        String[] enabledProjects = boggledTools.getEnabledTerraformingProjects();
-        for(String project : enabledProjects)
-        {
-            boggledTools.writeMessageToLog("Enabled: " + project);
-        }
-    }
-
     public void applyStationSettingsToAllStationsInSector()
     {
         if(boggledTools.getBooleanSetting("boggledApplyStationSettingsToAllStationsInSector"))

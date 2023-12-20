@@ -270,21 +270,6 @@ FireAll PopulateOptions","Dealmaker Holosuite crafted successfully.",,,
 ,,,,,,
 #Terraforming controls at planet
 ,,,,,,
-#boggledMarketAddTerraformingControlPanel,PopulateOptions,"boggledTerraformingCheckEnabled
-#$menuState == main",,,"20:boggledOpenTerraformingPanel:Examine terraforming options",
-boggledOpenTerraformingControlPanel,DialogOptionSelected,$option == boggledOpenTerraformingPanel,"boggledAddTerraformingController
-boggledTerraformingPrintStatus
-FireAll boggledTerraformingPopulateSubmenus",,,
-boggledAddTypeTransformationMenu,boggledTerraformingPopulateSubmenus,,,,0:boggledMoveToTypeTransformationList:Planet type change options,
-boggledAddResourceModificationMenu,boggledTerraformingPopulateSubmenus,,,,1:boggledMoveToResourceImprovementList:Resource deposit improvement options,
-boggledAddConditionModificationMenu,boggledTerraformingPopulateSubmenus,,,,2:boggledMoveToConditionImprovementList:Atmospheric conditions improvement options,
-boggledAddCancelOptionToSubmenuSelection,boggledTerraformingPopulateSubmenus,,SetShortcut boggledGoBackToMainColonyInteractionMenu ""ESCAPE"",,50:boggledGoBackToMainColonyInteractionMenu:Cancel,
-boggledGoBackToMainColonyInteractionMenuFromTerraformingControlPanel,DialogOptionSelected,$option == boggledGoBackToMainColonyInteractionMenu,"$menuState = main 0
-FireAll PopulateOptions",,,,
-boggledTypeTransformationSubmenu,DialogOptionSelected,$option == boggledMoveToTypeTransformationList,FireAll boggledTerraformingPopulateTypeChangeSubmenus,,,
-boggledResourceImprovementSubmenu,DialogOptionSelected,$option == boggledMoveToResourceImprovementList,FireAll boggledTerraformingPopulateResourceImprovementSubmenus,,,
-boggledConditionImprovementSubmenu,DialogOptionSelected,$option == boggledMoveToConditionImprovementList,FireAll boggledTerraformingPopulateConditionImprovementSubmenus,,,
-,,,,,,
 #Cancel current project
 
 #Arid type change logic
