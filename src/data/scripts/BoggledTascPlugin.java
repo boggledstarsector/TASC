@@ -355,6 +355,7 @@ public class BoggledTascPlugin extends BaseModPlugin
     @Override
     public void onApplicationLoad()  {
         boggledTools.initialiseDefaultTerraformingRequirementFactories();
+        boggledTools.initialiseDefaultTerraformingDurationModifierFactories();
         if (Global.getSettings().getModManager().isModEnabled("aaacrew_replacer")){
             bogglesDefaultCargo.active = new booglesCrewReplacerCargo();
         }else{

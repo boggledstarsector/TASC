@@ -281,6 +281,7 @@ public class boggledTools
     public static final String craftDealmakerHolosuiteProjectTooltip = "Craft Dealmaker Holosuite";
 
     public static final HashMap<String, TerraformingRequirementFactory> terraformingRequirementFactories = new HashMap<>();
+    public static final HashMap<String, TerraformingDurationModifierFactory> terraformingDurationModifierFactories = new HashMap<>();
 
     public static void initialiseDefaultTerraformingRequirementFactories() {
         addTerraformingRequirementFactory("PlanetTypeRequirement", new PlanetTypeRequirementFactory());
@@ -295,8 +296,17 @@ public class boggledTools
     }
 
     public static void addTerraformingRequirementFactory(String key, TerraformingRequirementFactory value) {
-        Global.getLogger(boggledTools.class).info("Adding factory " + key);
+        Global.getLogger(boggledTools.class).info("Adding terraforming requirement factory " + key);
         terraformingRequirementFactories.put(key, value);
+    }
+
+    public static void initialiseDefaultTerraformingDurationModifierFactories() {
+        addTerraformingDurationModifierFactory("PlanetSize", new PlanetSizeDurationModifierFactory());
+    }
+
+    public static void addTerraformingDurationModifierFactory(String key, TerraformingDurationModifierFactory value) {
+        Global.getLogger(boggledTools.class).info("Adding terraforming duration modifier factory " + key);
+        terraformingDurationModifierFactories.put(key, value);
     }
 
     private static ArrayList<String> arrayListFromJSON(JSONObject data, String key, String regex) throws JSONException {
@@ -356,14 +366,14 @@ public class boggledTools
         boggledTools.resourceProgressions = resourceProgressionsMap;
     }
 
-    public static void initialiseResourceLimitsFromJSON(JSONArray resourceLImitsJSON) {
+    public static void initialiseResourceLimitsFromJSON(JSONArray resourceLimitsJSON) {
         Logger log = Global.getLogger(boggledTools.class);
 
         HashMap<Pair<String, String>, String> resourceLimits = new HashMap<>();
 
-        for (int i = 0; i < resourceLImitsJSON.length(); ++i) {
+        for (int i = 0; i < resourceLimitsJSON.length(); ++i) {
             try {
-                JSONObject row = resourceLImitsJSON.getJSONObject(i);
+                JSONObject row = resourceLimitsJSON.getJSONObject(i);
 
                 String[] id = row.getString("id").split("\\|");
                 String resourceMax = row.getString("resource_max");
@@ -458,6 +468,10 @@ public class boggledTools
 
                 String id = row.getString("id");
 
+                if (id == null || id.isEmpty()) {
+                    continue;
+                }
+
                 String enableSetting = row.getString("enable_setting");
                 if (!enableSetting.isEmpty() && !getBooleanSetting(enableSetting)) {
                     log.info("Setting " + enableSetting + " is false, disabling project " + id);
@@ -489,8 +503,19 @@ public class boggledTools
 
                 int baseProjectDuration = row.getInt("base_project_duration");
 
-                if (id == null || id.isEmpty()) {
-                    continue;
+                String[] projectDurationModifiers = row.getString("dynamic_project_duration_modifiers").split("\\|");
+                ArrayList<TerraformingDurationModifier> terraformingDurationModifiers = new ArrayList<>();
+                for (String projectDurationModifier : projectDurationModifiers) {
+                    TerraformingDurationModifierFactory factory = terraformingDurationModifierFactories.get(projectDurationModifier);
+                    if (factory != null) {
+                        String data = "";
+                        TerraformingDurationModifier durationModifier = factory.constructFromJSON(data);
+                        if (durationModifier != null) {
+                            terraformingDurationModifiers.add(durationModifier);
+                        } else {
+                            log.error("Project " + id + " duration modifier " + projectDurationModifier + " was null when created with data " + data);
+                        }
+                    }
                 }
 
                 ArrayList<TerraformingRequirements> reqs = new ArrayList<>();
@@ -501,7 +526,7 @@ public class boggledTools
                     }
                 }
 
-                TerraformingProject terraformingProj = new TerraformingProject(id, tooltip, reqs, planetTypeChange, conditionsAdded, conditionsRemoved, conditionsProgress, baseProjectDuration);
+                TerraformingProject terraformingProj = new TerraformingProject(id, tooltip, reqs, planetTypeChange, conditionsAdded, conditionsRemoved, conditionsProgress, baseProjectDuration, terraformingDurationModifiers);
                 terraformingProjects.put(id, terraformingProj);
 
             } catch (JSONException e) {
@@ -614,36 +639,37 @@ public class boggledTools
         }
 
         ArrayList<String> emptyList = new ArrayList<>();
+        ArrayList<TerraformingDurationModifier> emptyList2 = new ArrayList<>();
 
-        ret.add(new TerraformingProject(craftCorruptedNanoforgeProjectId, craftCorruptedNanoforgeProjectTooltip, craftingProjectReqsEasy, "", emptyList, emptyList, emptyList, 0));
+        ret.add(new TerraformingProject(craftCorruptedNanoforgeProjectId, craftCorruptedNanoforgeProjectTooltip, craftingProjectReqsEasy, "", emptyList, emptyList, emptyList, 0, emptyList2));
 
-        ret.add(new TerraformingProject(craftPristineNanoforgeProjectId, craftPristineNanoforgeProjectTooltip, craftingProjectReqsHard, "", emptyList, emptyList, emptyList, 0));
+        ret.add(new TerraformingProject(craftPristineNanoforgeProjectId, craftPristineNanoforgeProjectTooltip, craftingProjectReqsHard, "", emptyList, emptyList, emptyList, 0, emptyList2));
 
-        ret.add(new TerraformingProject(craftSynchrotronProjectId, craftSynchrotronProjectTooltip, craftingProjectReqsMedium, "", emptyList, emptyList, emptyList, 0));
+        ret.add(new TerraformingProject(craftSynchrotronProjectId, craftSynchrotronProjectTooltip, craftingProjectReqsMedium, "", emptyList, emptyList, emptyList, 0, emptyList2));
 
-        ret.add(new TerraformingProject(craftHypershuntTapProjectId, craftHypershuntTapProjectTooltip, craftingProjectReqsHard, "", emptyList, emptyList, emptyList, 0));
+        ret.add(new TerraformingProject(craftHypershuntTapProjectId, craftHypershuntTapProjectTooltip, craftingProjectReqsHard, "", emptyList, emptyList, emptyList, 0, emptyList2));
 
-        ret.add(new TerraformingProject(craftCryoarithmeticEngineProjectId, craftCryoarithmeticEngineProjectTooltip, craftingProjectReqsMedium, "", emptyList, emptyList, emptyList, 0));
+        ret.add(new TerraformingProject(craftCryoarithmeticEngineProjectId, craftCryoarithmeticEngineProjectTooltip, craftingProjectReqsMedium, "", emptyList, emptyList, emptyList, 0, emptyList2));
 
-        ret.add(new TerraformingProject(craftPlanetKillerDeviceProjectId, craftPlanetKillerDeviceProjectTooltip, craftingProjectReqsHard, "", emptyList, emptyList, emptyList, 0));
+        ret.add(new TerraformingProject(craftPlanetKillerDeviceProjectId, craftPlanetKillerDeviceProjectTooltip, craftingProjectReqsHard, "", emptyList, emptyList, emptyList, 0, emptyList2));
 
-        ret.add(new TerraformingProject(craftFusionLampProjectId, craftFusionLampProjectTooltip, craftingProjectReqsHard, "", emptyList, emptyList, emptyList, 0));
+        ret.add(new TerraformingProject(craftFusionLampProjectId, craftFusionLampProjectTooltip, craftingProjectReqsHard, "", emptyList, emptyList, emptyList, 0, emptyList2));
 
-        ret.add(new TerraformingProject(craftFullereneSpoolProjectId, craftFullereneSpoolProjectTooltip, craftingProjectReqsMedium, "", emptyList, emptyList, emptyList, 0));
+        ret.add(new TerraformingProject(craftFullereneSpoolProjectId, craftFullereneSpoolProjectTooltip, craftingProjectReqsMedium, "", emptyList, emptyList, emptyList, 0, emptyList2));
 
-        ret.add(new TerraformingProject(craftPlasmaDynamoProjectId, craftPlasmaDynamoProjectTooltip, craftingProjectReqsMedium, "", emptyList, emptyList, emptyList, 0));
+        ret.add(new TerraformingProject(craftPlasmaDynamoProjectId, craftPlasmaDynamoProjectTooltip, craftingProjectReqsMedium, "", emptyList, emptyList, emptyList, 0, emptyList2));
 
-        ret.add(new TerraformingProject(craftAutonomousMantleBoreProjectId, craftAutonomousMantleBoreProjectTooltip, craftingProjectReqsMedium, "", emptyList, emptyList, emptyList, 0));
+        ret.add(new TerraformingProject(craftAutonomousMantleBoreProjectId, craftAutonomousMantleBoreProjectTooltip, craftingProjectReqsMedium, "", emptyList, emptyList, emptyList, 0, emptyList2));
 
-        ret.add(new TerraformingProject(craftSoilNanitesProjectId, craftSoilNanitesProjectTooltip, craftingProjectReqsMedium, "", emptyList, emptyList, emptyList, 0));
+        ret.add(new TerraformingProject(craftSoilNanitesProjectId, craftSoilNanitesProjectTooltip, craftingProjectReqsMedium, "", emptyList, emptyList, emptyList, 0, emptyList2));
 
-        ret.add(new TerraformingProject(craftCatalyticCoreProjectId, craftCatalyticCoreProjectTooltip, craftingProjectReqsMedium, "", emptyList, emptyList, emptyList, 0));
+        ret.add(new TerraformingProject(craftCatalyticCoreProjectId, craftCatalyticCoreProjectTooltip, craftingProjectReqsMedium, "", emptyList, emptyList, emptyList, 0, emptyList2));
 
-        ret.add(new TerraformingProject(craftCombatDroneReplicatorProjectId, craftCombatDroneReplicatorProjectTooltip, craftingProjectReqsEasy, "", emptyList, emptyList, emptyList, 0));
+        ret.add(new TerraformingProject(craftCombatDroneReplicatorProjectId, craftCombatDroneReplicatorProjectTooltip, craftingProjectReqsEasy, "", emptyList, emptyList, emptyList, 0, emptyList2));
 
-        ret.add(new TerraformingProject(craftBiofactoryEmbryoProjectId, craftBiofactoryEmbryoProjectTooltip, craftingProjectReqsMedium, "", emptyList, emptyList, emptyList, 0));
+        ret.add(new TerraformingProject(craftBiofactoryEmbryoProjectId, craftBiofactoryEmbryoProjectTooltip, craftingProjectReqsMedium, "", emptyList, emptyList, emptyList, 0, emptyList2));
 
-        ret.add(new TerraformingProject(craftDealmakerHolosuiteProjectId, craftDealmakerHolosuiteProjectTooltip, craftingProjectReqsEasy, "", emptyList, emptyList, emptyList, 0));
+        ret.add(new TerraformingProject(craftDealmakerHolosuiteProjectId, craftDealmakerHolosuiteProjectTooltip, craftingProjectReqsEasy, "", emptyList, emptyList, emptyList, 0, emptyList2));
 
         return ret;
     }
@@ -2011,11 +2037,18 @@ public class boggledTools
         private final ArrayList<String> resourcesToProgress;
 
         private final int baseProjectDuration;
+        private final ArrayList<TerraformingDurationModifier> durationModifiers;
 
         public String getProjectId() { return projectId; }
         public String getProjectTooltip() { return projectTooltip; }
         public ArrayList<TerraformingRequirements> getProjectRequirements() { return projectRequirements; }
-        public int getBaseProjectDuration() { return baseProjectDuration; }
+        public int getModifiedProjectDuration(MarketAPI market) {
+            float projectDuration = baseProjectDuration;
+            for (TerraformingDurationModifier durationModifier : durationModifiers) {
+                projectDuration += durationModifier.getDurationModifier(market, baseProjectDuration);
+            }
+            return Math.max((int) projectDuration, 0);
+        }
         public String getPlanetTypeChange() { return planetTypeChange; }
         public ArrayList<String> getConditionsAdded() { return conditionsAdded; }
 
@@ -2027,6 +2060,15 @@ public class boggledTools
             surveyAll(market);
             refreshSupplyAndDemand(market);
             refreshAquacultureAndFarming(market);
+
+            if (market.isPlayerOwned())
+            {
+                MessageIntel intel = new MessageIntel(projectTooltip + " on " + market.getName(), Misc.getBasePlayerColor());
+                intel.addLine("    - Completed");
+                intel.setIcon(Global.getSector().getPlayerFaction().getCrest());
+                intel.setSound(BaseIntelPlugin.getSoundStandardUpdate());
+                Global.getSector().getCampaignUI().addMessage(intel, CommMessageAPI.MessageClickAction.COLONY_INFO, market);
+            }
         }
 
         private void addRemoveConditions(MarketAPI market) {
@@ -2047,15 +2089,6 @@ public class boggledTools
             Global.getLogger(TerraformingProject.class).info("Terraforming planet type to " + planetTypeChange);
 
             market.getPlanetEntity().changeType(planetTypeChange, null);
-
-            if (market.isPlayerOwned())
-            {
-                MessageIntel intel = new MessageIntel("Terraforming of " + market.getName(), Misc.getBasePlayerColor());
-                intel.addLine("    - Completed");
-                intel.setIcon(Global.getSector().getPlayerFaction().getCrest());
-                intel.setSound(BaseIntelPlugin.getSoundStandardUpdate());
-                Global.getSector().getCampaignUI().addMessage(intel, CommMessageAPI.MessageClickAction.COLONY_INFO, market);
-            }
         }
 
         private void incrementResource(MarketAPI market) {
@@ -2071,7 +2104,6 @@ public class boggledTools
                     continue;
                 }
 
-                log.info("Project " + projectId + " incrementing resource " + resourceType);
                 boolean marketHadCondition = false;
                 for (int i = 0; i < resourcesProgression.size() - 1; ++i) {
                     String condition = resourcesProgression.get(i);
@@ -2085,18 +2117,8 @@ public class boggledTools
                 }
 
                 if (!marketHadCondition) {
-                    log.info("Project " + projectId + " market did not have resource " + resourceType + ", giving it basic version");
                     boggledTools.addCondition(market, resourcesProgression.get(0));
                 }
-            }
-
-            if (market.isPlayerOwned())
-            {
-                MessageIntel intel = new MessageIntel(projectTooltip + " on " + market.getName(), Misc.getBasePlayerColor());
-                intel.addLine("    - Completed");
-                intel.setIcon(Global.getSector().getPlayerFaction().getCrest());
-                intel.setSound(BaseIntelPlugin.getSoundStandardUpdate());
-                Global.getSector().getCampaignUI().addMessage(intel, CommMessageAPI.MessageClickAction.COLONY_INFO, market);
             }
         }
 
@@ -2131,7 +2153,7 @@ public class boggledTools
 
         }
 
-        TerraformingProject(String projectId, String projectTooltip, ArrayList<TerraformingRequirements> projectRequirements, String planetTypeChange, ArrayList<String> conditionsAdded, ArrayList<String> conditionsRemoved, ArrayList<String> conditionsToProgress, int baseProjectDuration) {
+        TerraformingProject(String projectId, String projectTooltip, ArrayList<TerraformingRequirements> projectRequirements, String planetTypeChange, ArrayList<String> conditionsAdded, ArrayList<String> conditionsRemoved, ArrayList<String> conditionsToProgress, int baseProjectDuration, ArrayList<TerraformingDurationModifier> durationModifiers) {
             this.projectId = projectId;
             this.projectTooltip = projectTooltip;
             this.projectRequirements = projectRequirements;
@@ -2140,7 +2162,9 @@ public class boggledTools
             this.conditionsAdded = conditionsAdded;
             this.conditionsRemoved = conditionsRemoved;
             this.resourcesToProgress = conditionsToProgress;
+
             this.baseProjectDuration = baseProjectDuration;
+            this.durationModifiers = durationModifiers;
         }
     }
 
@@ -2168,6 +2192,28 @@ public class boggledTools
                 requirementsMet = !requirementsMet;
             }
             return requirementsMet;
+        }
+    }
+
+    public interface TerraformingDurationModifierFactory {
+        TerraformingDurationModifier constructFromJSON(String data);
+    }
+
+    public static class PlanetSizeDurationModifierFactory implements TerraformingDurationModifierFactory {
+        @Override
+        public TerraformingDurationModifier constructFromJSON(String data) {
+            return new PlanetSizeDurationModifier();
+        }
+    }
+
+    public interface TerraformingDurationModifier {
+        float getDurationModifier(MarketAPI market, int baseDuration);
+    }
+
+    public static class PlanetSizeDurationModifier implements TerraformingDurationModifier {
+        @Override
+        public float getDurationModifier(MarketAPI market, int baseDuration) {
+            return market.getPlanetEntity().getRadius();
         }
     }
 

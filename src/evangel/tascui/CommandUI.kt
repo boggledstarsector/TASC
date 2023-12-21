@@ -87,7 +87,7 @@ class ProjectRequirementsTooltip(terraformingProject : boggledTools.Terraforming
 
     override fun createTooltip(tooltip : TooltipMakerAPI, expanded : Boolean, tooltipParam : Any?) {
 
-        tooltip.addPara("Project duration: %s days", 0f, Misc.getHighlightColor(), terraformingProject.baseProjectDuration.toString());
+        tooltip.addPara("Project duration: %s days", 0f, Misc.getHighlightColor(), terraformingProject.getModifiedProjectDuration(market!!).toString());
 
         tooltip.addSpacer(5f);
 

@@ -37,7 +37,7 @@ public class Terraforming_Controller extends BaseHazardCondition
         {
             boggledTools.TerraformingProject terraformingProject = boggledTools.getProject(currentProject);
             if (terraformingProject != null) {
-                daysRequiredForCurrentProject = terraformingProject.getBaseProjectDuration();
+                daysRequiredForCurrentProject = terraformingProject.getModifiedProjectDuration(market);
             }
         }
 
