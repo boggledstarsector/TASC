@@ -2139,6 +2139,23 @@ public class boggledTools
         public String getPlanetTypeChange() { return planetTypeChange; }
         public ArrayList<String> getConditionsAdded() { return conditionsAdded; }
 
+        public boolean requirementsMet(MarketAPI market) {
+            Logger log = Global.getLogger(boggledTools.class);
+            log.info("Checking project requirements for project " + getProjectId() + " for market " + market.getName());
+
+            if (projectRequirements == null) {
+                log.error("Terraforming project requirements is null for project " + getProjectId() + " and market " + market.getName());
+                return false;
+            }
+
+            for (TerraformingRequirements requirements : projectRequirements) {
+                if (!requirements.checkRequirement(market)) {
+                    return false;
+                }
+            }
+            return true;
+        }
+
         public void finishProject(MarketAPI market) {
             addRemoveConditions(market);
             incrementResource(market);
@@ -2576,34 +2593,6 @@ public class boggledTools
 
             return true;
         }
-    }
-
-    public static boolean projectRequirementsMet(MarketAPI market, TerraformingProject terraformingProject) {
-        if (terraformingProject == null) {
-            Logger log = Global.getLogger(boggledTools.class);
-            log.error("Terraforming project is null for market " + market.getName());
-            return false;
-        }
-        if (terraformingProject.projectRequirements == null) {
-            Logger log = Global.getLogger(boggledTools.class);
-            log.error("Terraforming project requirements is null for project " + terraformingProject.getProjectId() + " and market " + market.getName());
-            return false;
-        }
-
-        for (TerraformingRequirements requirements : terraformingProject.projectRequirements) {
-            if (!requirements.checkRequirement(market)) {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    public static boolean projectRequirementsMet(MarketAPI market, String project)
-    {
-        Global.getLogger(boggledTools.class).info("Checking project requirements for project " + project + " for market " + market.getName());
-        TerraformingProject terraformingProject = getProject(project);
-        return projectRequirementsMet(market, terraformingProject);
     }
 
     public static Boolean printProjectRequirementsReportIfStalled(MarketAPI market, String project, TextPanelAPI text)

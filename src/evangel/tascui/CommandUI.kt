@@ -380,7 +380,7 @@ class CommandUIIntelK : LunaBaseCustomPanelPlugin() {
             val validTerraformingOptions : ArrayList<boggledTools.TerraformingProject> = ArrayList()
             val invalidTerraformingOptions : ArrayList<boggledTools.TerraformingProject> = ArrayList()
             for (terraformingProject in boggledTools.getTerraformingProjects()) {
-                if (boggledTools.projectRequirementsMet(selectedPlanet!!.market, terraformingProject.value.projectId)) {
+                if (terraformingProject.value.requirementsMet(selectedPlanet!!.market)) {
                     validTerraformingOptions.add(terraformingProject.value)
                 } else {
                     invalidTerraformingOptions.add(terraformingProject.value)
@@ -438,7 +438,7 @@ class CommandUIIntelK : LunaBaseCustomPanelPlugin() {
 
     private fun handleTerraformingOptionButtonPress() {
         val terraformingProject = (selectedProject?.customData as ProjectRequirementsTooltip).terraformingProject
-        if (boggledTools.projectRequirementsMet(selectedPlanet?.market, terraformingProject)) {
+        if (terraformingProject.requirementsMet(selectedPlanet?.market)) {
             moveButtonsOffscreen(startProjectButton!!.position::inTL, requirementsNotMetButton!!, inactiveStartProjectButton!!)
         } else {
             moveButtonsOffscreen(requirementsNotMetButton!!.position::inTL, startProjectButton!!, inactiveStartProjectButton!!)
