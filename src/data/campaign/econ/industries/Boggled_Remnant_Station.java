@@ -302,7 +302,7 @@ public class Boggled_Remnant_Station extends OrbitalStation implements RouteMana
     }
 
     public String getRouteSourceId() {
-        return getMarket().getId() + "_" + boggledTools.BoggledIndustries.remnantStationIndustryID;
+        return getMarket().getId() + "_" + boggledTools.BoggledIndustries.remnantStationIndustryId;
     }
 
     @Override

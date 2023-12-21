@@ -174,7 +174,7 @@ public class Boggled_Genelab extends BaseIndustry
             }
         }
 
-        Boggled_Mesozoic_Park park = (Boggled_Mesozoic_Park) this.market.getIndustry(boggledTools.BoggledIndustries.mesozoicParkIndustryID);
+        Boggled_Mesozoic_Park park = (Boggled_Mesozoic_Park) this.market.getIndustry(boggledTools.BoggledIndustries.mesozoicParkIndustryId);
         if(park != null && this.isFunctional() && !this.genelabHasShortage())
         {
             park.getIncome().modifyMult("ind_genelab", IMPROVE_BONUS, "Genelab");
@@ -184,9 +184,9 @@ public class Boggled_Genelab extends BaseIndustry
     @Override
     public void unapply()
     {
-        if(this.market.hasIndustry(boggledTools.BoggledIndustries.mesozoicParkIndustryID))
+        if(this.market.hasIndustry(boggledTools.BoggledIndustries.mesozoicParkIndustryId))
         {
-            Boggled_Mesozoic_Park park = (Boggled_Mesozoic_Park) this.market.getIndustry(boggledTools.BoggledIndustries.mesozoicParkIndustryID);
+            Boggled_Mesozoic_Park park = (Boggled_Mesozoic_Park) this.market.getIndustry(boggledTools.BoggledIndustries.mesozoicParkIndustryId);
             park.getIncome().unmodifyMult("ind_genelab");
         }
 

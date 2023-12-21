@@ -2,6 +2,7 @@ package data.scripts;
 
 import com.fs.starfarer.api.BaseModPlugin;
 import com.fs.starfarer.api.Global;
+import com.fs.starfarer.api.SettingsAPI;
 import com.fs.starfarer.api.campaign.*;
 import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Factions;
@@ -32,8 +33,8 @@ public class BoggledTascPlugin extends BaseModPlugin
                     if (primaryEntity != null && primaryEntity.hasTag(Tags.STATION)) {
                         //Cramped Quarters also controls global hazard and accessibility modifications
                         //even if Cramped Quarters itself is disabled
-                        if (!market.hasCondition(boggledTools.BoggledConditions.crampedQuartersConditionID)) {
-                            market.addCondition(boggledTools.BoggledConditions.crampedQuartersConditionID);
+                        if (!market.hasCondition(boggledTools.BoggledConditions.crampedQuartersConditionId)) {
+                            market.addCondition(boggledTools.BoggledConditions.crampedQuartersConditionId);
                         }
 
                         //Some special items require "no_atmosphere" condition on market to be installed
@@ -161,12 +162,12 @@ public class BoggledTascPlugin extends BaseModPlugin
                 if(agreusPlanet != null)
                 {
                     MarketAPI agreusMarket = agreusPlanet.getMarket();
-                    if(agreusMarket != null && agreusMarket.hasIndustry(Industries.TECHMINING) && !agreusMarket.hasIndustry(boggledTools.BoggledIndustries.domainArchaeologyIndustryID) && !agreusMarket.isPlayerOwned())
+                    if(agreusMarket != null && agreusMarket.hasIndustry(Industries.TECHMINING) && !agreusMarket.hasIndustry(boggledTools.BoggledIndustries.domainArchaeologyIndustryId) && !agreusMarket.isPlayerOwned())
                     {
                         // See boggledAgreusTechMiningEveryFrameScript for solution to Agreus Everybody loves KoC Techmining/Domain Archaeology issue
                         if(!Global.getSettings().getModManager().isModEnabled("Everybody loves KoC"))
                         {
-                            agreusMarket.addIndustry(boggledTools.BoggledIndustries.domainArchaeologyIndustryID);
+                            agreusMarket.addIndustry(boggledTools.BoggledIndustries.domainArchaeologyIndustryId);
                             agreusMarket.removeIndustry(Industries.TECHMINING, null, false);
                         }
                         else
@@ -202,9 +203,9 @@ public class BoggledTascPlugin extends BaseModPlugin
                 if(volturnPlanet != null)
                 {
                     MarketAPI volturnMarket = volturnPlanet.getMarket();
-                    if(volturnMarket != null && !volturnMarket.hasIndustry(boggledTools.BoggledIndustries.genelabIndustryID))
+                    if(volturnMarket != null && !volturnMarket.hasIndustry(boggledTools.BoggledIndustries.genelabIndustryId))
                     {
-                        volturnMarket.addIndustry(boggledTools.BoggledIndustries.genelabIndustryID);
+                        volturnMarket.addIndustry(boggledTools.BoggledIndustries.genelabIndustryId);
                     }
                 }
 
@@ -242,10 +243,10 @@ public class BoggledTascPlugin extends BaseModPlugin
             {
                 for(MarketAPI market : Global.getSector().getEconomy().getMarkets(system))
                 {
-                    if(market != null && market.hasIndustry(Industries.CRYOSANCTUM) && !market.hasIndustry(boggledTools.BoggledIndustries.cryosanctumIndustryID))
+                    if(market != null && market.hasIndustry(Industries.CRYOSANCTUM) && !market.hasIndustry(boggledTools.BoggledIndustries.cryosanctumIndustryId))
                     {
                         market.removeIndustry(Industries.CRYOSANCTUM, null, false);
-                        market.addIndustry(boggledTools.BoggledIndustries.cryosanctumIndustryID);
+                        market.addIndustry(boggledTools.BoggledIndustries.cryosanctumIndustryId);
                     }
                 }
             }
@@ -308,19 +309,26 @@ public class BoggledTascPlugin extends BaseModPlugin
     public void onGameLoad(boolean newGame)
     {
         try {
-//            JSONArray planetTypesMap = Global.getSettings().getMergedSpreadsheetDataForMod("id", "data/campaign/planet_types.csv", boggledTools.BoggledMods.tascModID);
-            JSONArray terraformingRequirement = Global.getSettings().getMergedSpreadsheetDataForMod("id", "data/campaign/terraforming_requirement.csv", boggledTools.BoggledMods.tascModID);
-            JSONArray terraformingRequirements = Global.getSettings().getMergedSpreadsheetDataForMod("id", "data/campaign/terraforming_requirements.csv", boggledTools.BoggledMods.tascModID);
-            JSONArray terraformingProjects = Global.getSettings().getMergedSpreadsheetDataForMod("id", "data/campaign/terraforming_projects.csv", boggledTools.BoggledMods.tascModID);
+            SettingsAPI settings = Global.getSettings();
+            // Utility stuff first, planet types, max planet resources, resource progressions, etc
+            JSONArray planetTypes = settings.getMergedSpreadsheetDataForMod("id", "data/campaign/terraforming/planet_types.csv", boggledTools.BoggledMods.tascModId);
+            JSONArray resourceProgressions = settings.getMergedSpreadsheetDataForMod("id", "data/campaign/terraforming/resource_progression.csv", boggledTools.BoggledMods.tascModId);
+            JSONArray resourceLimits = settings.getMergedSpreadsheetDataForMod("id", "data/campaign/terraforming/planet_max_resource.csv", boggledTools.BoggledMods.tascModId);
 
-            // Thinking we need one more step in here
-            // A "Load additions" thing
-            JSONArray terraformingProjectsOverrides = Global.getSettings().getMergedSpreadsheetDataForMod("id", "data/campaign/terraforming_projects_mods.csv", boggledTools.BoggledMods.tascModID);
+            // Terraforming requirement, requirements, and projects next
+            JSONArray terraformingRequirement = settings.getMergedSpreadsheetDataForMod("id", "data/campaign/terraforming/terraforming_requirement.csv", boggledTools.BoggledMods.tascModId);
+            JSONArray terraformingRequirements = settings.getMergedSpreadsheetDataForMod("id", "data/campaign/terraforming/terraforming_requirements.csv", boggledTools.BoggledMods.tascModId);
+            JSONArray terraformingProjects = settings.getMergedSpreadsheetDataForMod("id", "data/campaign/terraforming/terraforming_projects.csv", boggledTools.BoggledMods.tascModId);
+
+            // And finally mods
+            JSONArray terraformingProjectsOverrides = settings.getMergedSpreadsheetDataForMod("id", "data/campaign/terraforming/terraforming_projects_mods.csv", boggledTools.BoggledMods.tascModId);
+
+            boggledTools.initialisePlanetTypesFromJSON(planetTypes);
+            boggledTools.initialiseResourceProgressionsFromJSON(resourceProgressions);
+            boggledTools.initialiseResourceLimitsFromJSON(resourceLimits);
 
             boggledTools.initialiseTerraformingRequirementFromJSON(terraformingRequirement);
-
             boggledTools.initialiseTerraformingRequirementsFromJSON(terraformingRequirements);
-
             boggledTools.initialiseTerraformingProjectsFromJSON(terraformingProjects);
 
             boggledTools.initialiseTerraformingProjectOverrides(terraformingProjectsOverrides);

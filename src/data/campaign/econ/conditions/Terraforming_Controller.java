@@ -92,7 +92,7 @@ public class Terraforming_Controller extends BaseHazardCondition
 
         if(currentProject == null)
         {
-            return boggledTools.noneProjectID;
+            return boggledTools.noneProjectId;
         }
         else
         {
@@ -109,7 +109,7 @@ public class Terraforming_Controller extends BaseHazardCondition
         if(market.isPlayerOwned() || market.getFaction().isPlayerFaction())
         {
             MessageIntel intel = new MessageIntel("Terraforming of " + market.getName(), Misc.getBasePlayerColor());
-            if(project.equals(boggledTools.noneProjectID))
+            if(project.equals(boggledTools.noneProjectId))
             {
                 intel.addLine("    - Canceled");
             }
@@ -162,11 +162,11 @@ public class Terraforming_Controller extends BaseHazardCondition
 
         if(!(market.isPlayerOwned() || market.getFaction().isPlayerFaction()) || boggledTools.marketIsStation(market))
         {
-            boggledTools.removeCondition(market, boggledTools.BoggledConditions.terraformingControllerConditionID);
+            boggledTools.removeCondition(market, boggledTools.BoggledConditions.terraformingControllerConditionId);
             return;
         }
 
-        if(currentProject == null || currentProject.equals(boggledTools.noneProjectID))
+        if(currentProject == null || currentProject.equals(boggledTools.noneProjectId))
         {
             daysCompleted = 0;
             lastDayChecked = 0;

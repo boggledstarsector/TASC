@@ -283,7 +283,7 @@ public class Boggled_CHAMELEON extends BaseIndustry
 
             for(Industry industry : market.getIndustries())
             {
-                if(!industry.isHidden() && !industry.getId().equals(boggledTools.BoggledIndustries.CHAMELEONIndustryID))
+                if(!industry.isHidden() && !industry.getId().equals(boggledTools.BoggledIndustries.CHAMELEONIndustryId))
                 {
                     float industryPatherInterest = industry.getPatherInterest();
                     if(industryPatherInterest >= 0.0)

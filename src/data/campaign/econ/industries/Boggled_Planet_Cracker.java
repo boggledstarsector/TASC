@@ -53,7 +53,7 @@ public class Boggled_Planet_Cracker extends BaseIndustry
             return false;
         }
 
-        if(orbitFocus.getMarket() == null || orbitFocus.getMarket().getPlanetEntity() == null || boggledTools.getPlanetType(orbitFocus.getMarket().getPlanetEntity()).equals(boggledTools.gasGiantPlanetID))
+        if(orbitFocus.getMarket() == null || orbitFocus.getMarket().getPlanetEntity() == null || boggledTools.getPlanetType(orbitFocus.getMarket().getPlanetEntity()).equals(boggledTools.gasGiantPlanetId))
         {
             return false;
         }
@@ -166,7 +166,7 @@ public class Boggled_Planet_Cracker extends BaseIndustry
                 return this.market.getName() + " is not in orbit around a planet.";
             }
 
-            if (orbitFocus.getMarket() == null || orbitFocus.getMarket().getPlanetEntity() == null || boggledTools.getPlanetType(orbitFocus.getMarket().getPlanetEntity()).equals(boggledTools.gasGiantPlanetID))
+            if (orbitFocus.getMarket() == null || orbitFocus.getMarket().getPlanetEntity() == null || boggledTools.getPlanetType(orbitFocus.getMarket().getPlanetEntity()).equals(boggledTools.gasGiantPlanetId))
             {
                 return "Gas giants cannot be cracked.";
             }

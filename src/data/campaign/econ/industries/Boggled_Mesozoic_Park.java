@@ -34,7 +34,7 @@ public class Boggled_Mesozoic_Park extends BaseIndustry
 
         // This check exists to remove Mesozoic Park if the planet was terraformed to a type that is incompatible with Mesozoic Park
         String planetType = boggledTools.getPlanetType(this.market.getPlanetEntity());
-        if(!(planetType.equals(boggledTools.terranPlanetID) || planetType.equals(boggledTools.waterPlanetID) || planetType.equals(boggledTools.junglePlanetID) || planetType.equals(boggledTools.desertPlanetID)))
+        if(!(planetType.equals(boggledTools.terranPlanetId) || planetType.equals(boggledTools.waterPlanetId) || planetType.equals(boggledTools.junglePlanetId) || planetType.equals(boggledTools.desertPlanetId)))
         {
             // If an AI core is installed, put one in storage so the player doesn't "lose" an AI core
             if (this.aiCoreId != null)
@@ -46,10 +46,10 @@ public class Boggled_Mesozoic_Park extends BaseIndustry
                 }
             }
 
-            if (this.market.hasIndustry(boggledTools.BoggledIndustries.mesozoicParkIndustryID))
+            if (this.market.hasIndustry(boggledTools.BoggledIndustries.mesozoicParkIndustryId))
             {
                 // Pass in null for mode when calling this from API code.
-                this.market.removeIndustry(boggledTools.BoggledIndustries.mesozoicParkIndustryID, (MarketAPI.MarketInteractionMode)null, false);
+                this.market.removeIndustry(boggledTools.BoggledIndustries.mesozoicParkIndustryId, (MarketAPI.MarketInteractionMode)null, false);
             }
 
             if (this.market.isPlayerOwned())
@@ -92,13 +92,13 @@ public class Boggled_Mesozoic_Park extends BaseIndustry
 
         //Can only build on terran, water, jungle or desert planets
         switch (planetType) {
-            case boggledTools.terranPlanetID:
+            case boggledTools.terranPlanetId:
                 return Global.getSettings().getSpriteName("boggled", "mesozoic_park_terran");
-            case boggledTools.waterPlanetID:
+            case boggledTools.waterPlanetId:
                 return Global.getSettings().getSpriteName("boggled", "mesozoic_park_water");
-            case boggledTools.junglePlanetID:
+            case boggledTools.junglePlanetId:
                 return Global.getSettings().getSpriteName("boggled", "mesozoic_park_jungle");
-            case boggledTools.desertPlanetID:
+            case boggledTools.desertPlanetId:
                 return Global.getSettings().getSpriteName("boggled", "mesozoic_park_desert");
         }
 
@@ -135,13 +135,13 @@ public class Boggled_Mesozoic_Park extends BaseIndustry
         String planetType = boggledTools.getPlanetType(market.getPlanetEntity());
 
         //Can't build on unknown planet types
-        if(planetType.equals(boggledTools.unknownPlanetID))
+        if(planetType.equals(boggledTools.unknownPlanetId))
         {
             return false;
         }
 
         //Can only build on terran, water, jungle or desert planets
-        if(!planetType.equals(boggledTools.terranPlanetID) && !planetType.equals(boggledTools.waterPlanetID) && !planetType.equals(boggledTools.junglePlanetID) && !planetType.equals(boggledTools.desertPlanetID))
+        if(!planetType.equals(boggledTools.terranPlanetId) && !planetType.equals(boggledTools.waterPlanetId) && !planetType.equals(boggledTools.junglePlanetId) && !planetType.equals(boggledTools.desertPlanetId))
         {
             return false;
         }
@@ -213,7 +213,7 @@ public class Boggled_Mesozoic_Park extends BaseIndustry
         }
 
         //Can only build on terran, water, jungle or desert planets
-        if(!planetType.equals(boggledTools.terranPlanetID) && !planetType.equals(boggledTools.waterPlanetID) && !planetType.equals(boggledTools.junglePlanetID) && !planetType.equals(boggledTools.desertPlanetID))
+        if(!planetType.equals(boggledTools.terranPlanetId) && !planetType.equals(boggledTools.waterPlanetId) && !planetType.equals(boggledTools.junglePlanetId) && !planetType.equals(boggledTools.desertPlanetId))
         {
             return "Old Earth megafauna can only survive on world types that feature a relatively similar environment to Old Earth during the Mesozoic Era.";
         }

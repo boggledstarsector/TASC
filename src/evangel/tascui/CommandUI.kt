@@ -72,8 +72,6 @@ class ProjectRequirementsTooltip(terraformingProject : boggledTools.Terraforming
     private val width : Float
     var market : MarketAPI? = null
 
-    val aotdEnabled : Boolean = Global.getSettings().modManager.isModEnabled("aotd_vok")
-
     init {
         this.terraformingProject = terraformingProject
         this.width = width
@@ -177,8 +175,6 @@ class CommandUIIntelK : LunaBaseCustomPanelPlugin() {
     private var selectedPlanet : CommandUIButtonData? = null
 
     private var terraformingPanelData : CommandUITerraformingButtonPanelData? = null
-
-//    private var aotdEnabled : Boolean = Global.getSettings().modManager.isModEnabled("aotd_vok")
 
     companion object {
         private const val HEADER_HEIGHT = 20f

@@ -40,7 +40,7 @@ public class Boggled_Expand_Station extends BaseIndustry {
 
         boggledTools.incrementNumberOfStationExpansions(this.market);
 
-        this.market.removeIndustry(boggledTools.BoggledIndustries.stationExpansionIndustryID,null,false);
+        this.market.removeIndustry(boggledTools.BoggledIndustries.stationExpansionIndustryId,null,false);
     }
 
     @Override

@@ -169,13 +169,13 @@ public class Boggled_Domed_Cities extends BaseIndustry implements MarketImmigrat
 
         // Tectonic activity precludes building unless Harmonic Damper is built and functional.
         // There's no check to automatically remove Domed Cities if Harmonic Damper is deconstructed or disrupted.
-        if(market.hasCondition(Conditions.EXTREME_TECTONIC_ACTIVITY) && (market.getIndustry(boggledTools.BoggledIndustries.harmonicDamperIndustryID) == null || !market.getIndustry(boggledTools.BoggledIndustries.harmonicDamperIndustryID).isFunctional()))
+        if(market.hasCondition(Conditions.EXTREME_TECTONIC_ACTIVITY) && (market.getIndustry(boggledTools.BoggledIndustries.harmonicDamperIndustryId) == null || !market.getIndustry(boggledTools.BoggledIndustries.harmonicDamperIndustryId).isFunctional()))
         {
             return false;
         }
 
         // Certain planet types preclude building unless they have the US condition Floating Continent (US_floating)
-        if(boggledTools.getPlanetType(market.getPlanetEntity()).equals(boggledTools.gasGiantPlanetID) && !market.hasCondition("US_floating"))
+        if(boggledTools.getPlanetType(market.getPlanetEntity()).equals(boggledTools.gasGiantPlanetId) && !market.hasCondition("US_floating"))
         {
             return false;
         }
@@ -220,7 +220,7 @@ public class Boggled_Domed_Cities extends BaseIndustry implements MarketImmigrat
 
         // Tectonic activity precludes building unless Harmonic Damper is built and functional.
         // There's no check to automatically remove Domed Cities if Harmonic Damper is deconstructed or disrupted.
-        if(market.hasCondition(Conditions.EXTREME_TECTONIC_ACTIVITY) && (market.getIndustry(boggledTools.BoggledIndustries.harmonicDamperIndustryID) == null || !market.getIndustry(boggledTools.BoggledIndustries.harmonicDamperIndustryID).isFunctional()))
+        if(market.hasCondition(Conditions.EXTREME_TECTONIC_ACTIVITY) && (market.getIndustry(boggledTools.BoggledIndustries.harmonicDamperIndustryId) == null || !market.getIndustry(boggledTools.BoggledIndustries.harmonicDamperIndustryId).isFunctional()))
         {
             return market.getName() + " experiences frequent seismic events that could destroy megastructures. It would be too dangerous to construct one here.";
         }
@@ -232,7 +232,7 @@ public class Boggled_Domed_Cities extends BaseIndustry implements MarketImmigrat
         }
 
         // Can't build on gas giants
-        if(planetType.equals(boggledTools.gasGiantPlanetID) && !market.hasCondition("US_floating"))
+        if(planetType.equals(boggledTools.gasGiantPlanetId) && !market.hasCondition("US_floating"))
         {
             return "There is no solid ground on " + market.getName() + " upon which to build a dome.";
         }

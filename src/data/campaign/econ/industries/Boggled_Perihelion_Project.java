@@ -75,7 +75,7 @@ public class Boggled_Perihelion_Project extends BaseIndustry {
                         this.createCoronalTapEntity(this.market.getStarSystem());
                     }
 
-                    this.market.removeIndustry(boggledTools.BoggledIndustries.perihelionProjectIndustryID, null, false);
+                    this.market.removeIndustry(boggledTools.BoggledIndustries.perihelionProjectIndustryId, null, false);
                 }
             }
         }

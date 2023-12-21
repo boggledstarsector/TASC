@@ -31,7 +31,7 @@ public class Boggled_Planetary_Agrav_Field extends BaseIndustry
     {
         super.apply(true);
 
-        if(isFunctional() && (this.market.hasIndustry(boggledTools.BoggledIndustries.domedCitiesIndustryID) || boggledTools.getPlanetType(this.market.getPlanetEntity()).equals(boggledTools.gasGiantPlanetID)))
+        if(isFunctional() && (this.market.hasIndustry(boggledTools.BoggledIndustries.domedCitiesIndustryId) || boggledTools.getPlanetType(this.market.getPlanetEntity()).equals(boggledTools.gasGiantPlanetId)))
         {
             for (String cid : SUPPRESSED_CONDITIONS)
             {
@@ -65,7 +65,7 @@ public class Boggled_Planetary_Agrav_Field extends BaseIndustry
             return false;
         }
 
-        if(!this.market.hasIndustry(boggledTools.BoggledIndustries.domedCitiesIndustryID) && !boggledTools.getPlanetType(this.market.getPlanetEntity()).equals(boggledTools.gasGiantPlanetID))
+        if(!this.market.hasIndustry(boggledTools.BoggledIndustries.domedCitiesIndustryId) && !boggledTools.getPlanetType(this.market.getPlanetEntity()).equals(boggledTools.gasGiantPlanetId))
         {
             return false;
         }
@@ -110,7 +110,7 @@ public class Boggled_Planetary_Agrav_Field extends BaseIndustry
             return "Gravity on " + this.market.getName() + " is within the optimal range for humans. Building agrav generators here would serve little purpose.";
         }
 
-        if(!this.market.hasIndustry(boggledTools.BoggledIndustries.domedCitiesIndustryID))
+        if(!this.market.hasIndustry(boggledTools.BoggledIndustries.domedCitiesIndustryId))
         {
             return "It is not economically feasible to blanket an entire world with agrav generators. The population must be housed within a few centralized domed cities for a colony-wide agrav field to be practical.";
         }
@@ -144,7 +144,7 @@ public class Boggled_Planetary_Agrav_Field extends BaseIndustry
         float opad = 10.0F;
         Color bad = Misc.getNegativeHighlightColor();
 
-        if(mode == IndustryTooltipMode.ADD_INDUSTRY || mode == IndustryTooltipMode.QUEUED ||!isFunctional() || !this.market.hasIndustry(boggledTools.BoggledIndustries.domedCitiesIndustryID))
+        if(mode == IndustryTooltipMode.ADD_INDUSTRY || mode == IndustryTooltipMode.QUEUED ||!isFunctional() || !this.market.hasIndustry(boggledTools.BoggledIndustries.domedCitiesIndustryId))
         {
             tooltip.addPara("If operational, would counter the effects of:", opad, Misc.getHighlightColor(), "");
             int numCondsCountered = 0;
@@ -164,7 +164,7 @@ public class Boggled_Planetary_Agrav_Field extends BaseIndustry
             }
         }
 
-        if(mode != IndustryTooltipMode.ADD_INDUSTRY && mode != IndustryTooltipMode.QUEUED && isFunctional() && this.market.hasIndustry(boggledTools.BoggledIndustries.domedCitiesIndustryID))
+        if(mode != IndustryTooltipMode.ADD_INDUSTRY && mode != IndustryTooltipMode.QUEUED && isFunctional() && this.market.hasIndustry(boggledTools.BoggledIndustries.domedCitiesIndustryId))
         {
             tooltip.addPara("Countering the effects of:", opad, Misc.getHighlightColor(), "");
             int numCondsCountered = 0;

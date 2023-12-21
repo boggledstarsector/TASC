@@ -88,7 +88,7 @@ public class Colonize_Abandoned_Station extends BaseDurationAbility
         else if(targetEntityForMarket.hasTag("boggled_siphon_station") || targetEntityForMarket.getFullName().contains("Abandoned Siphon Station"))
         {
             SectorEntityToken hostGasGiant = null;
-            if(targetEntityForMarket.getOrbitFocus() != null && targetEntityForMarket.getOrbitFocus() instanceof PlanetAPI && targetEntityForMarket.getOrbitFocus().getMarket() != null && boggledTools.getPlanetType((PlanetAPI)targetEntityForMarket.getOrbitFocus()).equals(boggledTools.gasGiantPlanetID))
+            if(targetEntityForMarket.getOrbitFocus() != null && targetEntityForMarket.getOrbitFocus() instanceof PlanetAPI && targetEntityForMarket.getOrbitFocus().getMarket() != null && boggledTools.getPlanetType((PlanetAPI)targetEntityForMarket.getOrbitFocus()).equals(boggledTools.gasGiantPlanetId))
             {
                 hostGasGiant = targetEntityForMarket.getOrbitFocus();
             }

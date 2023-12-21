@@ -117,10 +117,10 @@ public class Construct_Astropolis_Station extends BaseDurationAbility
         float orbitRadius = targetPlanet.getRadius() + 375.0F;
 
         FactionAPI playerFaction = Global.getSector().getPlayerFaction();
-        String playerFactionID = playerFaction.getId();
+        String playerFactionId = playerFaction.getId();
 
-        SectorEntityToken newAstropolis = system.addCustomEntity("boggled_astropolis" + numAstro, targetPlanet.getName() + " Astropolis " + getColonyNameString(numAstro), "boggled_astropolis_station_" + getGreekLetter(numAstro) + "_small", playerFactionID);
-        SectorEntityToken newAstropolisLights = system.addCustomEntity("boggled_astropolisLights", targetPlanet.getName() + " Astropolis " + getColonyNameString(numAstro) + " Lights Overlay", "boggled_astropolis_station_" + getGreekLetter(numAstro) + "_small_lights_overlay", playerFactionID);
+        SectorEntityToken newAstropolis = system.addCustomEntity("boggled_astropolis" + numAstro, targetPlanet.getName() + " Astropolis " + getColonyNameString(numAstro), "boggled_astropolis_station_" + getGreekLetter(numAstro) + "_small", playerFactionId);
+        SectorEntityToken newAstropolisLights = system.addCustomEntity("boggled_astropolisLights", targetPlanet.getName() + " Astropolis " + getColonyNameString(numAstro) + " Lights Overlay", "boggled_astropolis_station_" + getGreekLetter(numAstro) + "_small_lights_overlay", playerFactionId);
 
         boggledTools.writeMessageToLog("ASTROPOLIS STATION ACTIVATEIMPL: Entering build logic.");
         if(numAstro == 0)

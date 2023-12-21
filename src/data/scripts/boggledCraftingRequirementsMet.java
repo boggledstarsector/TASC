@@ -44,63 +44,63 @@ public class boggledCraftingRequirementsMet extends BaseCommandPlugin
             String craftingProjectId = null;
             if(ruleId.contains("CorruptedNanoforge"))
             {
-                craftingProjectId = boggledTools.craftCorruptedNanoforgeProjectID;
+                craftingProjectId = boggledTools.craftCorruptedNanoforgeProjectId;
             }
             else if(ruleId.contains("PristineNanoforge"))
             {
-                craftingProjectId = boggledTools.craftPristineNanoforgeProjectID;
+                craftingProjectId = boggledTools.craftPristineNanoforgeProjectId;
             }
             else if(ruleId.contains("SynchrotronCore"))
             {
-                craftingProjectId = boggledTools.craftSynchrotronProjectID;
+                craftingProjectId = boggledTools.craftSynchrotronProjectId;
             }
             else if(ruleId.contains("HypershuntTap"))
             {
-                craftingProjectId = boggledTools.craftHypershuntTapProjectID;
+                craftingProjectId = boggledTools.craftHypershuntTapProjectId;
             }
             else if(ruleId.contains("CryoarithmeticEngine"))
             {
-                craftingProjectId = boggledTools.craftCryoarithmeticEngineProjectID;
+                craftingProjectId = boggledTools.craftCryoarithmeticEngineProjectId;
             }
             else if(ruleId.contains("PlanetKillerDevice"))
             {
-                craftingProjectId = boggledTools.craftPlanetKillerDeviceProjectID;
+                craftingProjectId = boggledTools.craftPlanetKillerDeviceProjectId;
             }
             else if(ruleId.contains("FusionLamp"))
             {
-                craftingProjectId = boggledTools.craftFusionLampProjectID;
+                craftingProjectId = boggledTools.craftFusionLampProjectId;
             }
             else if(ruleId.contains("FullereneSpool"))
             {
-                craftingProjectId = boggledTools.craftFullereneSpoolProjectID;
+                craftingProjectId = boggledTools.craftFullereneSpoolProjectId;
             }
             else if(ruleId.contains("PlasmaDynamo"))
             {
-                craftingProjectId = boggledTools.craftPlasmaDynamoProjectID;
+                craftingProjectId = boggledTools.craftPlasmaDynamoProjectId;
             }
             else if(ruleId.contains("AutonomousMantleBore"))
             {
-                craftingProjectId = boggledTools.craftAutonomousMantleBoreProjectID;
+                craftingProjectId = boggledTools.craftAutonomousMantleBoreProjectId;
             }
             else if(ruleId.contains("SoilNanites"))
             {
-                craftingProjectId = boggledTools.craftSoilNanitesProjectID;
+                craftingProjectId = boggledTools.craftSoilNanitesProjectId;
             }
             else if(ruleId.contains("CatalyticCore"))
             {
-                craftingProjectId = boggledTools.craftCatalyticCoreProjectID;
+                craftingProjectId = boggledTools.craftCatalyticCoreProjectId;
             }
             else if(ruleId.contains("CombatDroneReplicator"))
             {
-                craftingProjectId = boggledTools.craftCombatDroneReplicatorProjectID;
+                craftingProjectId = boggledTools.craftCombatDroneReplicatorProjectId;
             }
             else if(ruleId.contains("BiofactoryEmbryo"))
             {
-                craftingProjectId = boggledTools.craftBiofactoryEmbryoProjectID;
+                craftingProjectId = boggledTools.craftBiofactoryEmbryoProjectId;
             }
             else if(ruleId.contains("DealmakerHolosuite"))
             {
-                craftingProjectId = boggledTools.craftDealmakerHolosuiteProjectID;
+                craftingProjectId = boggledTools.craftDealmakerHolosuiteProjectId;
             }
 
             boggledTools.TerraformingProject craftingProject = boggledTools.getCraftingProject(craftingProjectId);

@@ -52,77 +52,77 @@ public class boggledCraftingPrintRequirements extends BaseCommandPlugin
             if(ruleId.contains("CorruptedNanoforge"))
             {
                 itemToCraftString = "a corrupted nanoforge";
-                craftingProjectId = boggledTools.craftCorruptedNanoforgeProjectID;
+                craftingProjectId = boggledTools.craftCorruptedNanoforgeProjectId;
             }
             else if(ruleId.contains("PristineNanoforge"))
             {
                 itemToCraftString = "a pristine nanoforge";
-                craftingProjectId = boggledTools.craftPristineNanoforgeProjectID;
+                craftingProjectId = boggledTools.craftPristineNanoforgeProjectId;
             }
             else if(ruleId.contains("SynchrotronCore"))
             {
                 itemToCraftString = "a synchrotron core";
-                craftingProjectId = boggledTools.craftSynchrotronProjectID;
+                craftingProjectId = boggledTools.craftSynchrotronProjectId;
             }
             else if(ruleId.contains("HypershuntTap"))
             {
                 itemToCraftString = "hypershunt tap";
-                craftingProjectId = boggledTools.craftHypershuntTapProjectID;
+                craftingProjectId = boggledTools.craftHypershuntTapProjectId;
             }
             else if(ruleId.contains("CryoarithmeticEngine"))
             {
                 itemToCraftString = "a cryoarithmetic engine";
-                craftingProjectId = boggledTools.craftCryoarithmeticEngineProjectID;
+                craftingProjectId = boggledTools.craftCryoarithmeticEngineProjectId;
             }
             else if(ruleId.contains("PlanetKillerDevice"))
             {
                 itemToCraftString = "a planet-killer device";
-                craftingProjectId = boggledTools.craftPlanetKillerDeviceProjectID;
+                craftingProjectId = boggledTools.craftPlanetKillerDeviceProjectId;
             }
             else if(ruleId.contains("FusionLamp"))
             {
                 itemToCraftString = "a fusion lamp";
-                craftingProjectId = boggledTools.craftFusionLampProjectID;
+                craftingProjectId = boggledTools.craftFusionLampProjectId;
             }
             else if(ruleId.contains("FullereneSpool"))
             {
                 itemToCraftString = "a fullerene spool";
-                craftingProjectId = boggledTools.craftFullereneSpoolProjectID;
+                craftingProjectId = boggledTools.craftFullereneSpoolProjectId;
             }
             else if(ruleId.contains("PlasmaDynamo"))
             {
                 itemToCraftString = "a plasma dynamo";
-                craftingProjectId = boggledTools.craftPlasmaDynamoProjectID;
+                craftingProjectId = boggledTools.craftPlasmaDynamoProjectId;
             }
             else if(ruleId.contains("AutonomousMantleBore"))
             {
                 itemToCraftString = "an autonomous mantle bore";
-                craftingProjectId = boggledTools.craftAutonomousMantleBoreProjectID;
+                craftingProjectId = boggledTools.craftAutonomousMantleBoreProjectId;
             }
             else if(ruleId.contains("SoilNanites"))
             {
                 itemToCraftString = "soil nanites";
-                craftingProjectId = boggledTools.craftSoilNanitesProjectID;
+                craftingProjectId = boggledTools.craftSoilNanitesProjectId;
             }
             else if(ruleId.contains("CatalyticCore"))
             {
                 itemToCraftString = "a catalytic core";
-                craftingProjectId = boggledTools.craftCatalyticCoreProjectID;
+                craftingProjectId = boggledTools.craftCatalyticCoreProjectId;
             }
             else if(ruleId.contains("CombatDroneReplicator"))
             {
                 itemToCraftString = "a combat drone replicator";
-                craftingProjectId = boggledTools.craftCombatDroneReplicatorProjectID;
+                craftingProjectId = boggledTools.craftCombatDroneReplicatorProjectId;
             }
             else if(ruleId.contains("BiofactoryEmbryo"))
             {
                 itemToCraftString = "a biofactory embryo";
-                craftingProjectId = boggledTools.craftBiofactoryEmbryoProjectID;
+                craftingProjectId = boggledTools.craftBiofactoryEmbryoProjectId;
             }
             else if(ruleId.contains("DealmakerHolosuite"))
             {
                 itemToCraftString = "a dealmaker holosuite";
-                craftingProjectId = boggledTools.craftDealmakerHolosuiteProjectID;
+                craftingProjectId = boggledTools.craftDealmakerHolosuiteProjectId;
             }
 
             text.addPara("Requirements to craft " +  itemToCraftString + ":");

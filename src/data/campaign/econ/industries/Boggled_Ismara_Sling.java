@@ -29,7 +29,7 @@ public class Boggled_Ismara_Sling extends BaseIndustry
         super.advance(amount);
 
         // This check exists to remove Ismara's Sling if the planet was terraformed to a type that is incompatible with it.
-        if(!boggledTools.marketIsStation(this.market) && (!boggledTools.getPlanetType(this.market.getPlanetEntity()).equals(boggledTools.waterPlanetID) && !boggledTools.getPlanetType(this.market.getPlanetEntity()).equals(boggledTools.frozenPlanetID)))
+        if(!boggledTools.marketIsStation(this.market) && (!boggledTools.getPlanetType(this.market.getPlanetEntity()).equals(boggledTools.waterPlanetId) && !boggledTools.getPlanetType(this.market.getPlanetEntity()).equals(boggledTools.frozenPlanetId)))
         {
             // If an AI core is installed, put one in storage so the player doesn't "lose" an AI core
             if (this.aiCoreId != null)
@@ -41,10 +41,10 @@ public class Boggled_Ismara_Sling extends BaseIndustry
                 }
             }
 
-            if (this.market.hasIndustry(boggledTools.BoggledIndustries.ismaraSlingIndustryID))
+            if (this.market.hasIndustry(boggledTools.BoggledIndustries.ismaraSlingIndustryId))
             {
                 // Pass in null for mode when calling this from API code.
-                this.market.removeIndustry(boggledTools.BoggledIndustries.ismaraSlingIndustryID, null, false);
+                this.market.removeIndustry(boggledTools.BoggledIndustries.ismaraSlingIndustryId, null, false);
             }
 
             if (this.market.isPlayerOwned())
@@ -143,7 +143,7 @@ public class Boggled_Ismara_Sling extends BaseIndustry
             return true;
         }
 
-        return boggledTools.getPlanetType(this.market.getPlanetEntity()).equals(boggledTools.waterPlanetID) || boggledTools.getPlanetType(this.market.getPlanetEntity()).equals(boggledTools.frozenPlanetID);
+        return boggledTools.getPlanetType(this.market.getPlanetEntity()).equals(boggledTools.waterPlanetId) || boggledTools.getPlanetType(this.market.getPlanetEntity()).equals(boggledTools.frozenPlanetId);
     }
 
     @Override
@@ -160,7 +160,7 @@ public class Boggled_Ismara_Sling extends BaseIndustry
     @Override
     public String getUnavailableReason()
     {
-        if(!boggledTools.getPlanetType(this.market.getPlanetEntity()).equals(boggledTools.waterPlanetID) && !boggledTools.getPlanetType(this.market.getPlanetEntity()).equals(boggledTools.frozenPlanetID))
+        if(!boggledTools.getPlanetType(this.market.getPlanetEntity()).equals(boggledTools.waterPlanetId) && !boggledTools.getPlanetType(this.market.getPlanetEntity()).equals(boggledTools.frozenPlanetId))
         {
             return "Ismara's Sling can only be built on cryovolcanic, frozen and water-covered worlds.";
         }
