@@ -28,6 +28,8 @@ market_dense_atmosphere,MarketHasCondition,false,"dense_atmosphere"
 market_toxic_atmosphere,MarketHasCondition,false,"toxic_atmosphere"
 market_irradiated,MarketHasCondition,false,"irradiated"
 
+market_any_atmosphere,MarketHasCondition,true,"no_atmosphere"
+
 market_very_cold,MarketHasCondition,false,"very_cold"
 market_cold,MarketHasCondition,false,"cold"
 market_hot,MarketHasCondition,false,"hot"

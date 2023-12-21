@@ -216,7 +216,7 @@ public class Boggled_Domed_Cities extends BaseIndustry implements MarketImmigrat
             return "Error in getUnavailableReason() in Domed Cities. Please report this to boggled on the forums.";
         }
 
-        String planetType = boggledTools.getPlanetType(market.getPlanetEntity());
+        String planetType = boggledTools.getPlanetType(market.getPlanetEntity()).getPlanetId();
 
         // Tectonic activity precludes building unless Harmonic Damper is built and functional.
         // There's no check to automatically remove Domed Cities if Harmonic Damper is deconstructed or disrupted.

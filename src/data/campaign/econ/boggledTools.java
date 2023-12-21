@@ -238,9 +238,9 @@ public class boggledTools
     }
     // A mistyped string compiles fine and leads to plenty of debugging. A mistyped constant gives an error.
 
-    public static final String typeChangeProjectKey = "type_change";
-    public static final String resourceImprovementKey = "resource_improvement";
-    public static final String conditionImprovementKey = "condition_improvement";
+//    public static final String typeChangeProjectKey = "type_change";
+//    public static final String resourceImprovementKey = "resource_improvement";
+//    public static final String conditionImprovementKey = "condition_improvement";
 
     public static final String noneProjectId = "None";
 
@@ -320,8 +320,10 @@ public class boggledTools
     public static void initialisePlanetTypesFromJSON(JSONArray planetTypesJSON) {
         Logger log = Global.getLogger(boggledTools.class);
 
-        HashMap<String, String> planetTypesMap = new HashMap<>();
+        HashMap<String, PlanetType> planetTypesMap = new HashMap<>();
         LinkedHashMap<String, String> planetConditionsMap = new LinkedHashMap<>();
+
+        planetTypesMap.put(unknownPlanetId, new PlanetType(unknownPlanetId, false, 0, new ArrayList<TerraformingRequirements>(), 0));
 
         for (int i = 0; i < planetTypesJSON.length(); ++i) {
             try {
@@ -329,11 +331,28 @@ public class boggledTools
 
                 String id = row.getString("id");
                 String[] conditions = row.getString("conditions").split("\\|");
-                String planetType = row.getString("terraforming_type_id");
+                String planetTypeId = row.getString("terraforming_type_id");
+                boolean terraformingPossible = row.getBoolean("terraforming_possible");
+
+                int baseWaterLevel = row.getInt("base_water_level");
+                String[] conditionalWaterRequirementsString = row.getString("conditional_water_requirements").split("\\|");
+                int conditionalWaterLevel = row.optInt("conditional_water_level", 0);
+
+                ArrayList<TerraformingRequirements> conditionalWaterRequirements = new ArrayList<>();
+                for (String conditionalWaterRequirement : conditionalWaterRequirementsString) {
+                    TerraformingRequirements waterReq = terraformingRequirements.get(conditionalWaterRequirement);
+                    if (waterReq != null) {
+                        conditionalWaterRequirements.add(waterReq);
+                    } else {
+                        log.error("Conditional water requirement " + id + " failed to get conditional water requirement " + conditionalWaterRequirement);
+                    }
+                }
+
+                PlanetType planetType = new PlanetType(planetTypeId, terraformingPossible, baseWaterLevel, conditionalWaterRequirements, conditionalWaterLevel);
 
                 planetTypesMap.put(id, planetType);
                 for (String condition : conditions) {
-                    planetConditionsMap.put(condition, planetType);
+                    planetConditionsMap.put(condition, planetTypeId);
                 }
 
             } catch (JSONException e) {
@@ -694,7 +713,7 @@ public class boggledTools
     private static HashMap<String, ArrayList<String>> resourceProgressions;
     private static HashMap<Pair<String, String>, String> resourceLimits;
 
-    private static HashMap<String, String> planetTypesMap;
+    private static HashMap<String, PlanetType> planetTypesMap;
     private static LinkedHashMap<String, String> planetConditionsMap;
 
     private static ArrayList<TerraformingProject> craftingProjects = initialiseCraftingProjects();
@@ -1014,30 +1033,31 @@ public class boggledTools
         return closestMarket;
     }
 
-    public static String getPlanetType(PlanetAPI planet) {
+    public static PlanetType getPlanetType(PlanetAPI planet) {
         // Sets the spec planet type, but not the actual planet type. Need the API fix from Alex to correct this.
         // All code should rely on this function to get the planet type so it should work without bugs.
         // String planetType = planet.getTypeId();
 
         if(planet == null || planet.getSpec() == null || planet.getSpec().getPlanetType() == null)
         {
-            return unknownPlanetId;
+            return planetTypesMap.get(unknownPlanetId); // Guaranteed to be there
         }
 
-        if (planet.getMarket() != null) {
-            MarketAPI market = planet.getMarket();
-            for (String condition : planetConditionsMap.keySet()) {
-                if (market.hasCondition(condition)) {
-                    return planetConditionsMap.get(condition);
-                }
-            }
-        }
+//        if (planet.getMarket() != null) {
+//            MarketAPI market = planet.getMarket();
+//            for (String condition : planetConditionsMap.keySet()) {
+//                if (market.hasCondition(condition)) {
+//                    return planetConditionsMap.get(condition);
+//                }
+//            }
+//        }
 
-        String planetType = planetTypesMap.get(planet.getTypeId());
+        PlanetType planetType = planetTypesMap.get(planet.getTypeId());
         if (planetType != null) {
             return planetType;
         }
-        return unknownPlanetId;
+//        Global.getLogger(boggledTools.class).info("Planet " + planet.getName() + " typeID " + planet.getTypeId() + " has unknown planet type");
+        return planetTypesMap.get(unknownPlanetId); // Guaranteed to be there
     }
 
     public static ArrayList<MarketAPI> getNonStationMarketsPlayerControls()
@@ -1072,23 +1092,21 @@ public class boggledTools
             return false;
         }
 
-        String planetType = boggledTools.getPlanetType(market.getPlanetEntity());
-        return !planetType.equals(starPlanetId) && !planetType.equals(gasGiantPlanetId) && !planetType.equals(volcanicPlanetId) && !planetType.equals(unknownPlanetId);
+        return boggledTools.getPlanetType(market.getPlanetEntity()).getTerraformingPossible();
     }
 
     public static boolean getCreateMirrorsOrShades(MarketAPI market) {
         // Return true for mirrors, false for shades
         // Go by temperature first. If not triggered, will check planet type. Otherwise, just return true.
-
         if (market.hasCondition(Conditions.POOR_LIGHT) || market.hasCondition(Conditions.VERY_COLD) || market.hasCondition(Conditions.COLD)) {
             return true;
         } else if (market.hasCondition(Conditions.VERY_HOT) || market.hasCondition(Conditions.HOT)) {
             return false;
         }
 
-        if (boggledTools.getPlanetType(market.getPlanetEntity()).equals(desertPlanetId) || boggledTools.getPlanetType(market.getPlanetEntity()).equals(junglePlanetId)) {
+        if (boggledTools.getPlanetType(market.getPlanetEntity()).getPlanetId().equals(desertPlanetId) || boggledTools.getPlanetType(market.getPlanetEntity()).getPlanetId().equals(junglePlanetId)) {
             return false;
-        } else if (boggledTools.getPlanetType(market.getPlanetEntity()).equals(tundraPlanetId) || boggledTools.getPlanetType(market.getPlanetEntity()).equals(frozenPlanetId)) {
+        } else if (boggledTools.getPlanetType(market.getPlanetEntity()).getPlanetId().equals(tundraPlanetId) || boggledTools.getPlanetType(market.getPlanetEntity()).getPlanetId().equals(frozenPlanetId)) {
             return true;
         }
 
@@ -1886,7 +1904,7 @@ public class boggledTools
 
     public static void changePlanetTypeWithPlanetKiller(MarketAPI market)
     {
-        String planetType = getPlanetType(market.getPlanetEntity());
+        String planetType = getPlanetType(market.getPlanetEntity()).getPlanetId();
         if(!planetType.equals(starPlanetId) && !planetType.equals(gasGiantPlanetId) && !planetType.equals(volcanicPlanetId) && !planetType.equals(unknownPlanetId))
         {
             changePlanetType(market.getPlanetEntity(), Conditions.IRRADIATED);
@@ -1911,7 +1929,7 @@ public class boggledTools
         removeCondition(market, Conditions.FARMLAND_RICH);
         removeCondition(market, Conditions.FARMLAND_BOUNTIFUL);
 
-        String planetType = getPlanetType(market.getPlanetEntity());
+        String planetType = getPlanetType(market.getPlanetEntity()).getPlanetId();
         if(!planetType.equals(gasGiantPlanetId) && !planetType.equals(unknownPlanetId))
         {
             removeCondition(market, Conditions.ORGANICS_TRACE);
@@ -2447,7 +2465,7 @@ public class boggledTools
 
         @Override
         protected boolean checkRequirementImpl(MarketAPI market) {
-            Pair<String, String> key = new Pair<>(getPlanetType(market.getPlanetEntity()), resourceId);
+            Pair<String, String> key = new Pair<>(getPlanetType(market.getPlanetEntity()).getPlanetId(), resourceId);
             String maxResource = resourceLimits.get(key);
 
             if (maxResource == null || maxResource.isEmpty()) {
@@ -2545,25 +2563,48 @@ public class boggledTools
         }
     }
 
+    public static class PlanetType {
+        private final String planetId;
+        private final boolean terraformingPossible;
+        private final int baseWaterLevel;
+        private final ArrayList<TerraformingRequirements> conditionalWaterRequirements;
+        private final int conditionalWaterLevel;
+
+        public String getPlanetId() { return planetId; }
+        public boolean getTerraformingPossible() { return terraformingPossible; }
+        public int getWaterLevel(MarketAPI market) {
+            if (conditionalWaterRequirements.isEmpty()) {
+                return baseWaterLevel;
+            }
+
+            for (TerraformingRequirements conditionalWaterRequirement : conditionalWaterRequirements) {
+                if (!conditionalWaterRequirement.checkRequirement(market)) {
+                    return baseWaterLevel;
+                }
+            }
+            return conditionalWaterLevel;
+        }
+
+        public PlanetType(String planetId, boolean terraformingPossible, int baseWaterLevel, ArrayList<TerraformingRequirements> conditionalWaterRequirements, int conditionalWaterLevel) {
+            this.planetId = planetId;
+            this.terraformingPossible = terraformingPossible;
+            this.baseWaterLevel = baseWaterLevel;
+            this.conditionalWaterRequirements = conditionalWaterRequirements;
+            this.conditionalWaterLevel = conditionalWaterLevel;
+        }
+    }
+
     public static int getPlanetWaterLevel(MarketAPI market)
     {
         // There are checks present elsewhere that will prevent passing in a station market.
         // If that happens anyway, it's best to just throw an exception.
-
-        PlanetAPI planet = market.getPlanetEntity();
-        String planetType = getPlanetType(planet);
-        if(planetType.equals(waterPlanetId) || planetType.equals(frozenPlanetId) || planetType.equals("US_water") || planetType.equals("US_waterB") || hasIsmaraSling(market) || market.hasCondition(Conditions.WATER_SURFACE))
-        {
+        if (hasIsmaraSling(market)) {
             return 2;
         }
-        else if(planetType.equals(desertPlanetId) || planetType.equals(terranPlanetId) || planetType.equals(tundraPlanetId) || planetType.equals(junglePlanetId) || (planetType.contains("US_") && market.hasCondition(Conditions.HABITABLE) && !market.hasCondition(Conditions.NO_ATMOSPHERE)))
-        {
-            return 1;
-        }
-        else
-        {
-            return 0;
-        }
+
+        PlanetAPI planet = market.getPlanetEntity();
+        PlanetType planetType = getPlanetType(planet);
+        return planetType.getWaterLevel(market);
     }
 
     public static boolean marketHasAtmoProblem(MarketAPI market)

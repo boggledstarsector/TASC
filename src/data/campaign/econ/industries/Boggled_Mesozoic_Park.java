@@ -33,7 +33,7 @@ public class Boggled_Mesozoic_Park extends BaseIndustry
         super.advance(amount);
 
         // This check exists to remove Mesozoic Park if the planet was terraformed to a type that is incompatible with Mesozoic Park
-        String planetType = boggledTools.getPlanetType(this.market.getPlanetEntity());
+        String planetType = boggledTools.getPlanetType(this.market.getPlanetEntity()).getPlanetId();
         if(!(planetType.equals(boggledTools.terranPlanetId) || planetType.equals(boggledTools.waterPlanetId) || planetType.equals(boggledTools.junglePlanetId) || planetType.equals(boggledTools.desertPlanetId)))
         {
             // If an AI core is installed, put one in storage so the player doesn't "lose" an AI core
@@ -88,7 +88,7 @@ public class Boggled_Mesozoic_Park extends BaseIndustry
             return this.getSpec().getImageName();
         }
 
-        String planetType = boggledTools.getPlanetType(market.getPlanetEntity());
+        String planetType = boggledTools.getPlanetType(market.getPlanetEntity()).getPlanetId();
 
         //Can only build on terran, water, jungle or desert planets
         switch (planetType) {
@@ -132,7 +132,7 @@ public class Boggled_Mesozoic_Park extends BaseIndustry
             return false;
         }
 
-        String planetType = boggledTools.getPlanetType(market.getPlanetEntity());
+        String planetType = boggledTools.getPlanetType(market.getPlanetEntity()).getPlanetId();
 
         //Can't build on unknown planet types
         if(planetType.equals(boggledTools.unknownPlanetId))
@@ -198,10 +198,10 @@ public class Boggled_Mesozoic_Park extends BaseIndustry
             return "Error in getUnavailableReason() in Mesozoic Park. Please report this to boggled on the forums.";
         }
 
-        String planetType = boggledTools.getPlanetType(market.getPlanetEntity());
+        String planetType = boggledTools.getPlanetType(market.getPlanetEntity()).getPlanetId();
 
         //Can't build on unknown planet types
-        if(planetType.equals("unknown"))
+        if(planetType.equals(boggledTools.unknownPlanetId))
         {
             return "This planet type is unsupported by TASC. Please report this to boggled on the forums so he can add support. The planet type is: " + market.getPlanetEntity().getTypeId();
         }

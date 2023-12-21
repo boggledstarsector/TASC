@@ -34,3 +34,5 @@ world_type_supports_volatiles_improvement,"World type supports further volatiles
 world_type_allows_terraforming,"World type allows further terraforming",true,"planet_star|planet_gas_giant|planet_volcanic|planet_unknown"
 world_type_allows_mild_climate,"World type allows for mild climate",false,"planet_jungle|planet_arid|planet_terran|planet_water|planet_tundra"
 world_type_allows_human_habitability,"World type allows for human habitability",false,"planet_jungle|planet_arid|planet_terran|planet_water|planet_tundra"
+
+colony_habitable_with_atmosphere,"Colony is habitable and has an atmosphere",false,"market_habitable|market_any_atmosphere"
