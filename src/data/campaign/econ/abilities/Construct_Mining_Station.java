@@ -237,7 +237,7 @@ public class Construct_Mining_Station extends BaseDurationAbility
                     resourceLevel = "ultrarich";
                     break;
             }
-            tooltip.addPara("Mining stations have %s ore and rare ore resources.", pad, highlight, new String[]{resourceLevel});
+            tooltip.addPara("Mining stations have %s ore and rare ore resources.", pad, highlight, resourceLevel);
         }
 
         if (playerFleet.isInHyperspace() || Global.getSector().getPlayerFleet().isInHyperspaceTransition())

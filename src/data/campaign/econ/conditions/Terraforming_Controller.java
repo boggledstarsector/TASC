@@ -15,12 +15,6 @@ import data.campaign.econ.boggledTools;
 
 public class Terraforming_Controller extends BaseHazardCondition
 {
-    private static class BoggledSettings {
-        public static String terraformingTime = "boggledTerraformingTime";
-        public static String resourceImprovementTime = "boggledResourceImprovementTime";
-        public static String conditionImprovementTime = resourceImprovementTime;
-    }
-
     private static class BoggledTags {
         public static String terraformingControllerDaysCompleted = "boggledTerraformingControllerDaysCompleted_";
         public static String terraformingControllerLastDayChecked = "boggledTerraformingControllerLastDayChecked_";
@@ -28,10 +22,6 @@ public class Terraforming_Controller extends BaseHazardCondition
     }
 
     public Terraforming_Controller() { }
-
-    public int daysRequiredForTypeChange = boggledTools.getIntSetting(BoggledSettings.terraformingTime);
-    public int daysRequiredForResourceImprovement = boggledTools.getIntSetting(BoggledSettings.resourceImprovementTime);
-    public int daysRequiredForConditionImprovement = boggledTools.getIntSetting(BoggledSettings.conditionImprovementTime);
 
     private int daysRequiredForCurrentProject;
 
@@ -42,20 +32,12 @@ public class Terraforming_Controller extends BaseHazardCondition
 
     private void loadVariables()
     {
-        daysRequiredForTypeChange = boggledTools.getIntSetting(BoggledSettings.terraformingTime);
-        daysRequiredForResourceImprovement = boggledTools.getIntSetting(BoggledSettings.resourceImprovementTime);
-        daysRequiredForConditionImprovement = boggledTools.getIntSetting(BoggledSettings.conditionImprovementTime);
-
+        daysRequiredForCurrentProject = 0;
         if (currentProject != null)
         {
-            if (currentProject.contains(boggledTools.typeChangeProjectKey)) {
-                daysRequiredForCurrentProject = daysRequiredForTypeChange;
-            } else if (currentProject.contains(boggledTools.resourceImprovementKey)) {
-                daysRequiredForCurrentProject = daysRequiredForResourceImprovement;
-            } else if (currentProject.contains(boggledTools.conditionImprovementKey)) {
-                daysRequiredForCurrentProject = daysRequiredForConditionImprovement;
-            } else {
-                daysRequiredForCurrentProject = 0;
+            boggledTools.TerraformingProject terraformingProject = boggledTools.getProject(currentProject);
+            if (terraformingProject != null) {
+                daysRequiredForCurrentProject = terraformingProject.getBaseProjectDuration();
             }
         }
 

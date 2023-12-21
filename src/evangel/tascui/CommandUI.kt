@@ -87,10 +87,20 @@ class ProjectRequirementsTooltip(terraformingProject : boggledTools.Terraforming
 
     override fun createTooltip(tooltip : TooltipMakerAPI, expanded : Boolean, tooltipParam : Any?) {
 
+        tooltip.addPara("Project duration: %s days", 0f, Misc.getHighlightColor(), terraformingProject.baseProjectDuration.toString());
+
+        tooltip.addSpacer(5f);
+
         for (projectRequirement in terraformingProject.projectRequirements) {
             val requirementMet = projectRequirement.checkRequirement(market!!);
             val color = if (requirementMet) Misc.getPositiveHighlightColor() else Misc.getNegativeHighlightColor()
             tooltip.addPara(projectRequirement.tooltip, color, 0f)
+        }
+
+        tooltip.addSpacer(5f);
+
+        if (terraformingProject.planetTypeChange.isNotEmpty()) {
+            tooltip.addPara("Planet becomes a ${terraformingProject.planetTypeChange} planet", 0f)
         }
     }
 }
