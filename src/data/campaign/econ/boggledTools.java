@@ -330,6 +330,10 @@ public class boggledTools
                 JSONObject row = planetTypesJSON.getJSONObject(i);
 
                 String id = row.getString("id");
+                if (id == null || id.isEmpty()) {
+                    continue;
+                }
+
                 String[] conditions = row.getString("conditions").split("\\|");
                 String planetTypeId = row.getString("terraforming_type_id");
                 boolean terraformingPossible = row.getBoolean("terraforming_possible");
@@ -340,6 +344,10 @@ public class boggledTools
 
                 ArrayList<TerraformingRequirements> conditionalWaterRequirements = new ArrayList<>();
                 for (String conditionalWaterRequirement : conditionalWaterRequirementsString) {
+                    if (conditionalWaterRequirement.isEmpty()) {
+                        continue;
+                    }
+
                     TerraformingRequirements waterReq = terraformingRequirements.get(conditionalWaterRequirement);
                     if (waterReq != null) {
                         conditionalWaterRequirements.add(waterReq);
@@ -374,6 +382,10 @@ public class boggledTools
                 JSONObject row = resourceProgressionsJSON.getJSONObject(i);
 
                 String id = row.getString("id");
+                if (id.isEmpty()) {
+                    continue;
+                }
+
                 ArrayList<String> resource_progression = arrayListFromJSON(row, "resource_progression", "\\|");
 
                 resourceProgressionsMap.put(id, resource_progression);
@@ -395,6 +407,10 @@ public class boggledTools
                 JSONObject row = resourceLimitsJSON.getJSONObject(i);
 
                 String[] id = row.getString("id").split("\\|");
+                if (id[0].isEmpty()) {
+                    continue;
+                }
+
                 String resourceMax = row.getString("resource_max");
 
                 assert(id.length == 2);
@@ -420,17 +436,25 @@ public class boggledTools
                 JSONObject row = terraformingRequirementJSON.getJSONObject(i);
 
                 String id = row.getString("id");
+                if (id == null || id.isEmpty()) {
+                    continue;
+                }
+
                 String requirementType = row.getString("requirement_type");
                 boolean invert = row.getBoolean("invert");
                 String data = row.getString("data");
 
                 TerraformingRequirementFactory factory = terraformingRequirementFactories.get(requirementType);
                 if (factory != null) {
-                    TerraformingRequirement req = factory.constructFromJSON(invert, data);
-                    if (req != null) {
-                        terraformingReqs.put(id, req);
-                    } else {
-                        log.error("Requirement " + id + " of type " + requirementType + " was null when created with data " + data);
+                    try {
+                        TerraformingRequirement req = factory.constructFromJSON(id, invert, data);
+                        if (req != null) {
+                            terraformingReqs.put(id, req);
+                        } else {
+                            log.error("Requirement " + id + " of type " + requirementType + " was null when created with data " + data);
+                        }
+                    } catch (AbstractMethodError e) {
+                        log.error("Requirement " + id + " of type " + requirementType + " has incorrect constructFromJSON function signature");
                     }
                 } else {
                     log.info("No factory for requirement type " + requirementType);
@@ -453,6 +477,10 @@ public class boggledTools
                 JSONObject row = terraformingRequirementsJSON.getJSONObject(i);
 
                 String id = row.getString("id");
+                if (id.isEmpty()) {
+                    continue;
+                }
+
                 String tooltip = row.getString("tooltip");
                 boolean invertAll = row.getBoolean("invert_all");
                 String[] requirements = row.getString("requirements").split("\\|");
@@ -486,7 +514,6 @@ public class boggledTools
                 JSONObject row = terraformingProjectsJSON.getJSONObject(i);
 
                 String id = row.getString("id");
-
                 if (id == null || id.isEmpty()) {
                     continue;
                 }
@@ -555,6 +582,44 @@ public class boggledTools
         boggledTools.terraformingProjects = terraformingProjects;
     }
 
+    public static void initialiseTerraformingRequirementsOverrides(JSONArray terraformingRequirementsOverrideJSON) {
+        Logger log = Global.getLogger(boggledTools.class);
+
+        try {
+            for (int i = 0; i < terraformingRequirementsOverrideJSON.length(); ++i) {
+                JSONObject row = terraformingRequirementsOverrideJSON.getJSONObject(i);
+
+                String id = row.getString("id");
+                if (id == null || id.isEmpty()) {
+                    continue;
+                }
+
+                String requirementsId = row.getString("requirements_id");
+                TerraformingRequirements reqs = terraformingRequirements.get(requirementsId);
+                if (reqs == null) {
+                    log.error("Mod " + id + " terraforming requirements " + requirementsId + " not found, ignoring");
+                    continue;
+                }
+
+                String[] requirementAddedStrings = row.getString("requirement_added").split("\\|");
+                String[] requirementRemovedStrings = row.getString("requirement_removed").split("\\|");
+
+                ArrayList<TerraformingRequirement> requirementAdded = new ArrayList<>();
+                for (String requirementAddedString : requirementAddedStrings) {
+                    TerraformingRequirement req = terraformingRequirement.get(requirementAddedString);
+                    if (req != null) {
+                        requirementAdded.add(req);
+                    }
+                }
+
+                reqs.addRemoveProjectRequirement(requirementAdded, requirementRemovedStrings);
+
+            }
+        } catch (JSONException e) {
+            log.error(e);
+        }
+    }
+
     public static void initialiseTerraformingProjectOverrides(JSONArray terraformingProjectsOverrideJSON) {
         Logger log = Global.getLogger(boggledTools.class);
 
@@ -563,6 +628,10 @@ public class boggledTools
                 JSONObject row = terraformingProjectsOverrideJSON.getJSONObject(i);
 
                 String id = row.getString("id");
+                if (id == null || id.isEmpty()) {
+                    continue;
+                }
+
                 String projectId = row.getString("project_id");
                 TerraformingProject proj = terraformingProjects.get(projectId);
                 if (proj == null) {
@@ -574,7 +643,7 @@ public class boggledTools
                 String tooltipAddition = row.getString("tooltip_addition");
 
                 String[] requirementsAddedStrings = row.getString("requirements_added").split("\\|");
-                ArrayList<String> requirementsRemovedStrings = arrayListFromJSON(row, "requirements_removed", "\\|");
+                String[] requirementsRemovedStrings = row.getString("requirements_removed").split("\\|");
                 String planetTypeChangeOverride = row.getString("planet_type_change_override");
                 ArrayList<String> conditionsAdded = arrayListFromJSON(row, "conditions_added", "\\|");
                 ArrayList<String> conditionsRemoved = arrayListFromJSON(row, "conditions_removed", "\\|");
@@ -606,31 +675,31 @@ public class boggledTools
         ArrayList<TerraformingProject> ret = new ArrayList<>();
 
         TerraformingRequirements colonyHasAtLeast100kInhabitants = new TerraformingRequirements(BoggledProjectRequirements.colonyHasAtLeast100kInhabitantsRequirementId, BoggledProjectRequirements.colonyHasAtLeast100kInhabitants, false, new ArrayList<TerraformingRequirement>(asList(
-                new MarketIsAtLeastSize(false, 5)
+                new MarketIsAtLeastSize("market_is_at_least_size_5", false, 5)
         )));
 
         TerraformingRequirements colonyHasOrbitalWorksWPristineNanoforge = new TerraformingRequirements(BoggledProjectRequirements.colonyHasOrbitalWorksWPristineNanoforgeRequirementId, BoggledProjectRequirements.colonyHasOrbitalWorksWPristineNanoforge, false, new ArrayList<TerraformingRequirement>(asList(
-                new MarketHasIndustryWithItem(false, Industries.ORBITALWORKS, Items.PRISTINE_NANOFORGE)
+                new MarketHasIndustryWithItem("market_has_orbital_works_with_pristine_nanoforge",false, Industries.ORBITALWORKS, Items.PRISTINE_NANOFORGE)
         )));
 
         int domainArtifactCostMedium = boggledTools.getIntSetting(BoggledSettings.domainTechCraftingArtifactCost);
         int domainArtifactCostHard = domainArtifactCostMedium * 2;
         int domainArtifactCostEasy = domainArtifactCostMedium / 2;
         TerraformingRequirements fleetCargoContainsAtLeastDomainArtifactsEasy = new TerraformingRequirements(BoggledProjectRequirements.fleetCargoContainsAtLeastEasyDomainArtifactsRequirementId, "Fleet cargo contains at least " + domainArtifactCostEasy + " Domain-era artifacts", false, new ArrayList<TerraformingRequirement>(asList(
-                new FleetCargoContainsAtLeast(false, BoggledCommodities.domainArtifacts, domainArtifactCostEasy)
+                new FleetCargoContainsAtLeast("fleet_cargo_contains_at_least_easy_domain_artifacts",false, BoggledCommodities.domainArtifacts, domainArtifactCostEasy)
         )));
 
         TerraformingRequirements fleetCargoContainsAtLeastDomainArtifactsMedium = new TerraformingRequirements(BoggledProjectRequirements.fleetCargoContainsAtLeastMediumDomainArtifactsRequirementId, "Fleet cargo contains at least " + domainArtifactCostMedium + " Domain-era artifacts", false, new ArrayList<TerraformingRequirement>(asList(
-                new FleetCargoContainsAtLeast(false, BoggledCommodities.domainArtifacts, domainArtifactCostMedium)
+                new FleetCargoContainsAtLeast("fleet_cargo_contains_at_least_medium_domain_artifacts", false, BoggledCommodities.domainArtifacts, domainArtifactCostMedium)
         )));
 
         TerraformingRequirements fleetCargoContainsAtLeastDomainArtifactsHard = new TerraformingRequirements(BoggledProjectRequirements.fleetCargoContainsAtLeastHardDomainArtifactsRequirementId, "Fleet cargo contains at least " + domainArtifactCostHard + " Domain-era artifacts", false, new ArrayList<TerraformingRequirement>(asList(
-                new FleetCargoContainsAtLeast(false, BoggledCommodities.domainArtifacts, domainArtifactCostHard)
+                new FleetCargoContainsAtLeast("fleet_cargo_contains_at_least_hard_domain_artifacts", false, BoggledCommodities.domainArtifacts, domainArtifactCostHard)
         )));
 
         int storyPointCost = boggledTools.getIntSetting(BoggledSettings.domainTechCraftingStoryPointCost);
         TerraformingRequirements playerHasStoryPointsAtLeast = new TerraformingRequirements(BoggledProjectRequirements.playerHasStoryPointsRequirementId, storyPointCost + " story points available to spend", false, new ArrayList<TerraformingRequirement>(asList(
-                new PlayerHasStoryPointsAtLeast(false, storyPointCost)
+                new PlayerHasStoryPointsAtLeast("player_has_at_least_cost_story_points", false, storyPointCost)
         )));
 
         ArrayList<TerraformingRequirements> craftingProjectReqsEasy = new ArrayList<>(asList(
@@ -2146,11 +2215,10 @@ public class boggledTools
             }
             projectTooltip += tooltipAddition;
         }
-        public void addRemoveProjectRequirements(ArrayList<TerraformingRequirements> add, ArrayList<String> remove) {
+        public void addRemoveProjectRequirements(ArrayList<TerraformingRequirements> add, String[] remove) {
             Logger log = Global.getLogger(TerraformingProject.class);
             for (String r : remove) {
-                for (int i = 0; i < projectRequirements.size(); ++i)
-                {
+                for (int i = 0; i < projectRequirements.size(); ++i) {
                     TerraformingRequirements projectReqs = projectRequirements.get(i);
                     if (r.equals(projectReqs.requirementId)) {
                         log.info("Project " + projectId + " removing project requirement " + r);
@@ -2191,6 +2259,22 @@ public class boggledTools
         private final String requirementTooltip;
         private final boolean invertAll;
         private final ArrayList<TerraformingRequirement> terraformingRequirements;
+
+        public void addRemoveProjectRequirement(ArrayList<TerraformingRequirement> add, String[] remove) {
+            Logger log = Global.getLogger(TerraformingRequirements.class);
+            for (String r : remove) {
+                for (int i = 0; i < terraformingRequirements.size(); ++i) {
+                    TerraformingRequirement terraformingReq = terraformingRequirements.get(i);
+                    if (r.equals(terraformingReq.requirementId)) {
+                        log.info("Terraforming requirements " + requirementId + " removing requirement " + r);
+                        terraformingRequirements.remove(i);
+                        break;
+                    }
+                }
+            }
+
+            terraformingRequirements.addAll(add);
+        }
 
         TerraformingRequirements(String requirementId, String requirementTooltip, boolean invertAll, ArrayList<TerraformingRequirement> terraformingRequirements) {
             this.requirementId = requirementId;
@@ -2236,89 +2320,91 @@ public class boggledTools
     }
 
     public interface TerraformingRequirementFactory {
-        TerraformingRequirement constructFromJSON(boolean invert, String data);
+        TerraformingRequirement constructFromJSON(String requirementId, boolean invert, String data);
     }
 
     public static class PlanetTypeRequirementFactory implements TerraformingRequirementFactory {
         @Override
-        public TerraformingRequirement constructFromJSON(boolean invert, String data) {
-            return new PlanetTypeRequirement(invert, data);
+        public TerraformingRequirement constructFromJSON(String requirementId, boolean invert, String data) {
+            return new PlanetTypeRequirement(requirementId, invert, data);
         }
     }
 
     public static class MarketHasConditionFactory implements TerraformingRequirementFactory {
         @Override
-        public TerraformingRequirement constructFromJSON(boolean invert, String data) {
-            return new MarketHasCondition(invert, data);
+        public TerraformingRequirement constructFromJSON(String requirementId, boolean invert, String data) {
+            return new MarketHasCondition(requirementId, invert, data);
         }
     }
 
     public static class MarketHasIndustryFactory implements TerraformingRequirementFactory {
         @Override
-        public TerraformingRequirement constructFromJSON(boolean invert, String data) {
-            return new MarketHasIndustry(invert, data);
+        public TerraformingRequirement constructFromJSON(String requirementId, boolean invert, String data) {
+            return new MarketHasIndustry(requirementId, invert, data);
         }
     }
 
     public static class MarketHasIndustryWithItemFactory implements TerraformingRequirementFactory {
         @Override
-        public TerraformingRequirement constructFromJSON(boolean invert, String data) {
+        public TerraformingRequirement constructFromJSON(String requirementId, boolean invert, String data) {
             String[] industryAndItem = data.split("\\|");
             assert(industryAndItem.length == 2);
-            return new MarketHasIndustryWithItem(invert, industryAndItem[0], industryAndItem[1]);
+            return new MarketHasIndustryWithItem(requirementId, invert, industryAndItem[0], industryAndItem[1]);
         }
     }
 
     public static class MarketHasWaterPresentFactory implements TerraformingRequirementFactory {
         @Override
-        public TerraformingRequirement constructFromJSON(boolean invert, String data) {
+        public TerraformingRequirement constructFromJSON(String requirementId, boolean invert, String data) {
             String[] waterLevelStrings = data.split("\\|");
             assert(waterLevelStrings.length == 2);
             int[] waterLevels = new int[waterLevelStrings.length];
             for (int i = 0; i < waterLevels.length; ++i) {
                 waterLevels[i] = Integer.parseInt(waterLevelStrings[i]);
             }
-            return new MarketHasWaterPresent(invert, waterLevels[0], waterLevels[1]);
+            return new MarketHasWaterPresent(requirementId, invert, waterLevels[0], waterLevels[1]);
         }
     }
 
     public static class MarketIsAtLeastSizeFactory implements TerraformingRequirementFactory {
         @Override
-        public TerraformingRequirement constructFromJSON(boolean invert, String data) {
+        public TerraformingRequirement constructFromJSON(String requirementId, boolean invert, String data) {
             int colonySize = Integer.parseInt(data);
-            return new MarketIsAtLeastSize(invert, colonySize);
+            return new MarketIsAtLeastSize(requirementId, invert, colonySize);
         }
     }
 
     public static class FleetCargoContainsAtLeastFactory implements TerraformingRequirementFactory {
         @Override
-        public TerraformingRequirement constructFromJSON(boolean invert, String data) {
+        public TerraformingRequirement constructFromJSON(String requirementId, boolean invert, String data) {
             String[] cargoIdAndQuantityStrings = data.split("\\|");
             assert(cargoIdAndQuantityStrings.length == 2);
             int quantity = Integer.parseInt(cargoIdAndQuantityStrings[1]);
-            return new FleetCargoContainsAtLeast(invert, cargoIdAndQuantityStrings[0], quantity);
+            return new FleetCargoContainsAtLeast(requirementId, invert, cargoIdAndQuantityStrings[0], quantity);
         }
     }
 
     public static class PlayerHasStoryPointsAtLeastFactory implements TerraformingRequirementFactory {
         @Override
-        public TerraformingRequirement constructFromJSON(boolean invert, String data) {
+        public TerraformingRequirement constructFromJSON(String requirementId, boolean invert, String data) {
             int quantity = Integer.parseInt(data);
-            return new PlayerHasStoryPointsAtLeast(invert, quantity);
+            return new PlayerHasStoryPointsAtLeast(requirementId, invert, quantity);
         }
     }
 
     public static class WorldTypeSupportsResourceImprovementFactory implements TerraformingRequirementFactory {
         @Override
-        public TerraformingRequirement constructFromJSON(boolean invert, String data) {
-            return new WorldTypeSupportsResourceImprovement(invert, data);
+        public TerraformingRequirement constructFromJSON(String requirementId, boolean invert, String data) {
+            return new WorldTypeSupportsResourceImprovement(requirementId, invert, data);
         }
     }
 
     public abstract static class TerraformingRequirement {
+        private final String requirementId;
         private final boolean invert;
 
-        protected TerraformingRequirement(boolean invert) {
+        protected TerraformingRequirement(String requirementId, boolean invert) {
+            this.requirementId = requirementId;
             this.invert = invert;
         }
 
@@ -2336,21 +2422,21 @@ public class boggledTools
     public static class PlanetTypeRequirement extends TerraformingRequirement {
         String planetTypeId;
 
-        PlanetTypeRequirement(Boolean invert, String planetTypeId) {
-            super(invert);
+        PlanetTypeRequirement(String requirementId, boolean invert, String planetTypeId) {
+            super(requirementId, invert);
             this.planetTypeId = planetTypeId;
         }
 
         @Override
         protected final boolean checkRequirementImpl(MarketAPI market) {
-            return planetTypeId.equals(getPlanetType(market.getPlanetEntity()));
+            return planetTypeId.equals(getPlanetType(market.getPlanetEntity()).planetId);
         }
     }
 
     public static class MarketHasCondition extends TerraformingRequirement {
         String conditionId;
-        MarketHasCondition(boolean invert, String conditionId) {
-            super(invert);
+        MarketHasCondition(String requirementId, boolean invert, String conditionId) {
+            super(requirementId, invert);
             this.conditionId = conditionId;
         }
 
@@ -2362,8 +2448,8 @@ public class boggledTools
 
     public static class MarketHasIndustry extends TerraformingRequirement {
         String industryId;
-        MarketHasIndustry(boolean invert, String industryId) {
-            super(invert);
+        MarketHasIndustry(String requirementId, boolean invert, String industryId) {
+            super(requirementId, invert);
             this.industryId = industryId;
         }
 
@@ -2377,8 +2463,8 @@ public class boggledTools
     public static class MarketHasIndustryWithItem extends TerraformingRequirement {
         String industryId;
         String itemId;
-        MarketHasIndustryWithItem(boolean invert, String industryId, String itemId) {
-            super(invert);
+        MarketHasIndustryWithItem(String requirementId, boolean invert, String industryId, String itemId) {
+            super(requirementId, invert);
             this.industryId = industryId;
             this.itemId = itemId;
         }
@@ -2401,8 +2487,8 @@ public class boggledTools
     public static class MarketHasWaterPresent extends TerraformingRequirement {
         int minWaterLevel;
         int maxWaterLevel;
-        MarketHasWaterPresent(boolean invert, int minWaterLevel, int maxWaterLevel) {
-            super(invert);
+        MarketHasWaterPresent(String requirementId, boolean invert, int minWaterLevel, int maxWaterLevel) {
+            super(requirementId, invert);
             this.minWaterLevel = minWaterLevel;
             this.maxWaterLevel = maxWaterLevel;
         }
@@ -2417,8 +2503,8 @@ public class boggledTools
 
     public static class MarketIsAtLeastSize extends TerraformingRequirement {
         int colonySize;
-        MarketIsAtLeastSize(boolean invert, int colonySize) {
-            super(invert);
+        MarketIsAtLeastSize(String requirementId, boolean invert, int colonySize) {
+            super(requirementId, invert);
             this.colonySize = colonySize;
         }
 
@@ -2431,8 +2517,8 @@ public class boggledTools
     public static class FleetCargoContainsAtLeast extends TerraformingRequirement {
         String cargoId;
         int quantity;
-        FleetCargoContainsAtLeast(boolean invert, String cargoId, int quantity) {
-            super(invert);
+        FleetCargoContainsAtLeast(String requirementId, boolean invert, String cargoId, int quantity) {
+            super(requirementId, invert);
             this.cargoId = cargoId;
             this.quantity = quantity;
         }
@@ -2445,8 +2531,8 @@ public class boggledTools
 
     public static class PlayerHasStoryPointsAtLeast extends TerraformingRequirement {
         int quantity;
-        PlayerHasStoryPointsAtLeast(boolean invert, int quantity) {
-            super(invert);
+        PlayerHasStoryPointsAtLeast(String requirementId, boolean invert, int quantity) {
+            super(requirementId, invert);
             this.quantity = quantity;
         }
 
@@ -2458,8 +2544,8 @@ public class boggledTools
 
     public static class WorldTypeSupportsResourceImprovement extends TerraformingRequirement {
         String resourceId;
-        WorldTypeSupportsResourceImprovement(boolean invert, String resourceId) {
-            super(invert);
+        WorldTypeSupportsResourceImprovement(String requirementId, boolean invert, String resourceId) {
+            super(requirementId, invert);
             this.resourceId = resourceId;
         }
 
@@ -2609,14 +2695,12 @@ public class boggledTools
 
     public static boolean marketHasAtmoProblem(MarketAPI market)
     {
-        if(!market.hasCondition(Conditions.MILD_CLIMATE) || !market.hasCondition(Conditions.HABITABLE) || market.hasCondition(Conditions.NO_ATMOSPHERE) || market.hasCondition(Conditions.THIN_ATMOSPHERE) || market.hasCondition(Conditions.DENSE_ATMOSPHERE) || market.hasCondition(Conditions.TOXIC_ATMOSPHERE) || market.hasCondition("US_storm"))
-        {
-            return true;
-        }
-        else
-        {
+        TerraformingRequirements reqs = terraformingRequirements.get("market_has_atmo_problem");
+        if (reqs == null) {
+            // Abundance of caution
             return false;
         }
+        return reqs.checkRequirement(market);
     }
 
     public static String getTooltipProjectName(String currentProject)

@@ -41,6 +41,7 @@ market_habitable,MarketHasCondition,false,"habitable"
 market_not_habitable,MarketHasCondition,true,"habitable"
 market_has_extreme_weather,MarketHasCondition,false,"extreme_weather"
 market_has_mild_climate,MarketHasCondition,false,"mild_climate"
+market_not_has_mild_climate,MarketHasCondition,true,"mild_climate"
 
 market_has_moderate_water_present,MarketHasWaterPresent,false,1|2
 market_has_large_water_present,MarketHasWaterPresent,false,2|2

@@ -36,3 +36,4 @@ world_type_allows_mild_climate,"World type allows for mild climate",false,"plane
 world_type_allows_human_habitability,"World type allows for human habitability",false,"planet_jungle|planet_arid|planet_terran|planet_water|planet_tundra"
 
 colony_habitable_with_atmosphere,"Colony is habitable and has an atmosphere",false,"market_habitable|market_any_atmosphere"
+market_has_atmo_problem,"Colony has an atmosphere problem",false,"market_not_has_mild_climate|market_not_habitable|market_no_atmosphere|market_thin_atmosphere|market_dense_atmosphere|market_toxic_atmosphere"
