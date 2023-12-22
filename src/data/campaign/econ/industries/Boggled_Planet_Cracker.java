@@ -39,7 +39,7 @@ public class Boggled_Planet_Cracker extends BaseIndustry
 
         requirementsSuitable = new ArrayList<>();
 
-        String[] requirementsSuitableStrings = data.getString("requirement_suitable").split("\\|");
+        String[] requirementsSuitableStrings = data.getString("requirement_suitable").split(boggledTools.csvOptionSeparator);
         for (String requirementsSuitableString : requirementsSuitableStrings) {
             boggledTools.TerraformingRequirements requirementSuitable = boggledTools.getTerraformingRequirements().get(requirementsSuitableString);
             if (requirementSuitable == null) {
@@ -49,7 +49,7 @@ public class Boggled_Planet_Cracker extends BaseIndustry
             requirementsSuitable.add(requirementSuitable);
         }
 
-        conditionsAddedOnCompletion = new ArrayList<>(Arrays.asList(data.getString("conditions_added_on_completion").split("\\|")));
+        conditionsAddedOnCompletion = new ArrayList<>(Arrays.asList(data.getString("conditions_added_on_completion").split(boggledTools.csvOptionSeparator)));
     }
 
     private SectorEntityToken getOrbitFocus()

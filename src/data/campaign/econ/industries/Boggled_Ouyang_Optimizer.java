@@ -38,8 +38,8 @@ public class Boggled_Ouyang_Optimizer extends BaseIndustry
 
         requirementsSuitable = new ArrayList<>();
 
-        String[] requirementsUnsuitableStrings = data.getString("requirement_suitable").split("\\|");
-        for (String requirementsSuitableString : requirementsUnsuitableStrings) {
+        String[] requirementsSuitableStrings = data.getString("requirement_suitable").split(boggledTools.csvOptionSeparator);
+        for (String requirementsSuitableString : requirementsSuitableStrings) {
             boggledTools.TerraformingRequirements requirementSuitable = boggledTools.getTerraformingRequirements().get(requirementsSuitableString);
             if (requirementSuitable == null) {
                 log.error("Industry Ouyang Optimizer has invalid requirement " + requirementsSuitableString);
@@ -48,7 +48,7 @@ public class Boggled_Ouyang_Optimizer extends BaseIndustry
             requirementsSuitable.add(requirementSuitable);
         }
 
-        conditionsAddedOnCompletion = new ArrayList<>(Arrays.asList(data.getString("conditions_added_on_completion").split("\\|")));
+        conditionsAddedOnCompletion = new ArrayList<>(Arrays.asList(data.getString("conditions_added_on_completion").split(boggledTools.csvOptionSeparator)));
     }
 
     private SectorEntityToken getOrbitFocus()

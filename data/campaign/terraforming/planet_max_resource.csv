@@ -1,50 +1,50 @@
 id,resource_max
 # id is a pair of | separated values, left side is planet type, right is resource
 # If planet doesn't support a resource, leave resource_max blank for that field
-star|farmland,
-star|organics,
-star|volatiles,
+"star | farmland",
+"star | organics",
+"star | volatiles",
 
-gas_giant|farmland,
-gas_giant|organics,
-gas_giant|volatiles,
+"gas_giant | farmland",
+"gas_giant | organics",
+"gas_giant | volatiles",
 
-barren|farmland,
-barren|organics,
-barren|volatiles,
+"barren | farmland",
+"barren | organics",
+"barren | volatiles",
 
-toxic|farmland,
-toxic|organics,
-toxic|volatiles,
+"toxic | farmland",
+"toxic | organics",
+"toxic | volatiles",
 
-volcanic|farmland,
-volcanic|organics,
-volcanic|volatiles,
+"volcanic | farmland",
+"volcanic | organics",
+"volcanic | volatiles",
 
-frozen|farmland,
-frozen|organics,
-frozen|volatiles,volatiles_plentiful
+"frozen | farmland",
+"frozen | organics",
+"frozen | volatiles",volatiles_plentiful
 
-water|farmland,
-water|organics,organics_plentiful
-water|volatiles,volatiles_plentiful
+"water | farmland",
+"water | organics",organics_plentiful
+"water | volatiles",volatiles_plentiful
 
-unknown|farmland,
-unknown|organics,
-unknown|volatiles,
+"unknown | farmland",
+"unknown | organics",
+"unknown | volatiles",
 
-jungle|farmland,farmland_bountiful
-jungle|organics,organics_plentiful
-jungle|volatiles,
+"jungle | farmland",farmland_bountiful
+"jungle | organics",organics_plentiful
+"jungle | volatiles",
 
-desert|farmland,farmland_bountiful
-desert|organics,organics_abundant
-desert|volatiles,volatiles_trace
+"desert | farmland",farmland_bountiful
+"desert | organics",organics_abundant
+"desert | volatiles",volatiles_trace
 
-terran|farmland,farmland_bountiful
-terran|organics,organics_plentiful
-terran|volatiles,volatiles_trace
+"terran | farmland",farmland_bountiful
+"terran | organics",organics_plentiful
+"terran | volatiles",volatiles_trace
 
-tundra|farmland,farmland_bountiful
-tundra|organics,organics_trace
-tundra|volatiles,volatiles_plentiful
+"tundra | farmland",farmland_bountiful
+"tundra | organics",organics_trace
+"tundra | volatiles",volatiles_plentiful

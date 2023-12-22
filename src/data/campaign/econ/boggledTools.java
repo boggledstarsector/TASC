@@ -239,15 +239,8 @@ public class boggledTools
     }
     // A mistyped string compiles fine and leads to plenty of debugging. A mistyped constant gives an error.
 
-//    public static final String typeChangeProjectKey = "type_change";
-//    public static final String resourceImprovementKey = "resource_improvement";
-//    public static final String conditionImprovementKey = "condition_improvement";
-
+    public static final String csvOptionSeparator = "\\s*\\|\\s*";
     public static final String noneProjectId = "None";
-
-//    public static final String farmlandResourceImprovementProjectId = "farmland_resource_improvement";
-//    public static final String organicsResourceImprovementProjectId = "organics_resource_improvement";
-//    public static final String volatilesResourceImprovementProjectId = "volatiles_resource_improvement";
 
     public static final String craftCorruptedNanoforgeProjectId = "craftCorruptedNanoforge";
     public static final String craftPristineNanoforgeProjectId = "craftPristineNanoforge";
@@ -351,12 +344,12 @@ public class boggledTools
                     continue;
                 }
 
-                String[] conditions = row.getString("conditions").split("\\|");
+                String[] conditions = row.getString("conditions").split(boggledTools.csvOptionSeparator);
                 String planetTypeId = row.getString("terraforming_type_id");
                 boolean terraformingPossible = row.getBoolean("terraforming_possible");
 
                 int baseWaterLevel = row.getInt("base_water_level");
-                String[] conditionalWaterRequirementsString = row.getString("conditional_water_requirements").split("\\|");
+                String[] conditionalWaterRequirementsString = row.getString("conditional_water_requirements").split(boggledTools.csvOptionSeparator);
                 int conditionalWaterLevel = row.optInt("conditional_water_level", 0);
 
                 ArrayList<TerraformingRequirements> conditionalWaterRequirements = new ArrayList<>();
@@ -403,7 +396,7 @@ public class boggledTools
                     continue;
                 }
 
-                ArrayList<String> resource_progression = arrayListFromJSON(row, "resource_progression", "\\|");
+                ArrayList<String> resource_progression = arrayListFromJSON(row, "resource_progression", boggledTools.csvOptionSeparator);
 
                 resourceProgressionsMap.put(id, resource_progression);
             } catch (JSONException e) {
@@ -423,7 +416,7 @@ public class boggledTools
             try {
                 JSONObject row = resourceLimitsJSON.getJSONObject(i);
 
-                String[] id = row.getString("id").split("\\|");
+                String[] id = row.getString("id").split(boggledTools.csvOptionSeparator);
                 if (id[0].isEmpty()) {
                     continue;
                 }
@@ -524,7 +517,7 @@ public class boggledTools
 
                 String tooltip = row.getString("tooltip");
                 boolean invertAll = row.getBoolean("invert_all");
-                String[] requirements = row.getString("requirements").split("\\|");
+                String[] requirements = row.getString("requirements").split(boggledTools.csvOptionSeparator);
 
                 ArrayList<TerraformingRequirement> reqs = new ArrayList<>();
                 for (String requirement : requirements) {
@@ -568,12 +561,12 @@ public class boggledTools
                 }
 
                 String tooltip = row.getString("tooltip");
-                String[] requirementsStrings = row.getString("requirements").split("\\|");
+                String[] requirementsStrings = row.getString("requirements").split(boggledTools.csvOptionSeparator);
                 String planetTypeChange = row.getString("planet_type_change");
-                ArrayList<String> conditionsAdded = arrayListFromJSON(row, "conditions_added", "\\|");
-                ArrayList<String> conditionsRemoved = arrayListFromJSON(row, "conditions_removed", "\\|");
+                ArrayList<String> conditionsAdded = arrayListFromJSON(row, "conditions_added", boggledTools.csvOptionSeparator);
+                ArrayList<String> conditionsRemoved = arrayListFromJSON(row, "conditions_removed", boggledTools.csvOptionSeparator);
 
-                ArrayList<String> optionalConditions = arrayListFromJSON(row, "optional_conditions", "\\|");
+                ArrayList<String> optionalConditions = arrayListFromJSON(row, "optional_conditions", boggledTools.csvOptionSeparator);
                 assert(optionalConditions.size() % 2 == 0);
                 for (int j = 0; j < optionalConditions.size(); j += 2) {
                     Pair<String, String> optionalCondition = new Pair<>(optionalConditions.get(j), optionalConditions.get(j + 1));
@@ -586,11 +579,11 @@ public class boggledTools
                     }
                 }
 
-                ArrayList<String> conditionsProgress = arrayListFromJSON(row, "conditions_to_progress", "\\|");
+                ArrayList<String> conditionsProgress = arrayListFromJSON(row, "conditions_to_progress", boggledTools.csvOptionSeparator);
 
                 int baseProjectDuration = row.getInt("base_project_duration");
 
-                String[] projectDurationModifiers = row.getString("dynamic_project_duration_modifiers").split("\\|");
+                String[] projectDurationModifiers = row.getString("dynamic_project_duration_modifiers").split(boggledTools.csvOptionSeparator);
                 ArrayList<TerraformingDurationModifier> terraformingDurationModifiers = new ArrayList<>();
                 for (String projectDurationModifier : projectDurationModifiers) {
                     TerraformingDurationModifierFactory factory = terraformingDurationModifierFactories.get(projectDurationModifier);
@@ -642,8 +635,8 @@ public class boggledTools
                     continue;
                 }
 
-                String[] requirementAddedStrings = row.getString("requirement_added").split("\\|");
-                String[] requirementRemovedStrings = row.getString("requirement_removed").split("\\|");
+                String[] requirementAddedStrings = row.getString("requirement_added").split(boggledTools.csvOptionSeparator);
+                String[] requirementRemovedStrings = row.getString("requirement_removed").split(boggledTools.csvOptionSeparator);
 
                 ArrayList<TerraformingRequirement> requirementAdded = new ArrayList<>();
                 for (String requirementAddedString : requirementAddedStrings) {
@@ -683,15 +676,15 @@ public class boggledTools
                 String tooltipOverride = row.getString("tooltip_override");
                 String tooltipAddition = row.getString("tooltip_addition");
 
-                String[] requirementsAddedStrings = row.getString("requirements_added").split("\\|");
-                String[] requirementsRemovedStrings = row.getString("requirements_removed").split("\\|");
+                String[] requirementsAddedStrings = row.getString("requirements_added").split(boggledTools.csvOptionSeparator);
+                String[] requirementsRemovedStrings = row.getString("requirements_removed").split(boggledTools.csvOptionSeparator);
                 String planetTypeChangeOverride = row.getString("planet_type_change_override");
-                ArrayList<String> conditionsAdded = arrayListFromJSON(row, "conditions_added", "\\|");
-                ArrayList<String> conditionsRemoved = arrayListFromJSON(row, "conditions_removed", "\\|");
-                ArrayList<String> conditionsOption = arrayListFromJSON(row, "conditions_option", "\\|");
+                ArrayList<String> conditionsAdded = arrayListFromJSON(row, "conditions_added", boggledTools.csvOptionSeparator);
+                ArrayList<String> conditionsRemoved = arrayListFromJSON(row, "conditions_removed", boggledTools.csvOptionSeparator);
+                ArrayList<String> conditionsOption = arrayListFromJSON(row, "conditions_option", boggledTools.csvOptionSeparator);
                 String optionName = row.getString("option_name");
-                ArrayList<String> conditionProgressAdded = arrayListFromJSON(row, "condition_progress_added", "\\|");
-                ArrayList<String> conditionProgressRemoved = arrayListFromJSON(row, "condition_progress_removed", "\\|");
+                ArrayList<String> conditionProgressAdded = arrayListFromJSON(row, "condition_progress_added", boggledTools.csvOptionSeparator);
+                ArrayList<String> conditionProgressRemoved = arrayListFromJSON(row, "condition_progress_removed", boggledTools.csvOptionSeparator);
 
                 ArrayList<TerraformingRequirements> requirementsAdded = new ArrayList<>();
                 for (String requirementAddedString : requirementsAddedStrings) {
@@ -2376,7 +2369,7 @@ public class boggledTools
     public static class MarketHasIndustryWithItemFactory implements TerraformingRequirementFactory {
         @Override
         public TerraformingRequirement constructFromJSON(String requirementId, boolean invert, String data) {
-            String[] industryAndItem = data.split("\\|");
+            String[] industryAndItem = data.split(boggledTools.csvOptionSeparator);
             assert(industryAndItem.length == 2);
             return new MarketHasIndustryWithItem(requirementId, invert, industryAndItem[0], industryAndItem[1]);
         }
@@ -2385,7 +2378,7 @@ public class boggledTools
     public static class MarketHasWaterPresentFactory implements TerraformingRequirementFactory {
         @Override
         public TerraformingRequirement constructFromJSON(String requirementId, boolean invert, String data) {
-            String[] waterLevelStrings = data.split("\\|");
+            String[] waterLevelStrings = data.split(boggledTools.csvOptionSeparator);
             assert(waterLevelStrings.length == 2);
             int[] waterLevels = new int[waterLevelStrings.length];
             for (int i = 0; i < waterLevels.length; ++i) {
@@ -2398,7 +2391,7 @@ public class boggledTools
     public static class TerraformingPossibleOnMarketFactory implements TerraformingRequirementFactory {
         @Override
         public TerraformingRequirement constructFromJSON(String requirementId, boolean invert, String data) {
-            ArrayList<String> invalidatingConditions = new ArrayList<>(Arrays.asList(data.split("\\|")));
+            ArrayList<String> invalidatingConditions = new ArrayList<>(Arrays.asList(data.split(boggledTools.csvOptionSeparator)));
 
             return new TerraformingPossibleOnMarket(requirementId, invert, invalidatingConditions);
         }
@@ -2407,7 +2400,7 @@ public class boggledTools
     public static class MarketHasTagsFactory implements TerraformingRequirementFactory {
         @Override
         public TerraformingRequirement constructFromJSON(String requirementId, boolean invert, String data) {
-            ArrayList<String> tags = new ArrayList<>(Arrays.asList(data.split("\\|")));
+            ArrayList<String> tags = new ArrayList<>(Arrays.asList(data.split(boggledTools.csvOptionSeparator)));
 
             return new MarketHasTags(requirementId, invert, tags);
         }
@@ -2424,7 +2417,7 @@ public class boggledTools
     public static class FleetCargoContainsAtLeastFactory implements TerraformingRequirementFactory {
         @Override
         public TerraformingRequirement constructFromJSON(String requirementId, boolean invert, String data) {
-            String[] cargoIdAndQuantityStrings = data.split("\\|");
+            String[] cargoIdAndQuantityStrings = data.split(boggledTools.csvOptionSeparator);
             assert(cargoIdAndQuantityStrings.length == 2);
             int quantity = Integer.parseInt(cargoIdAndQuantityStrings[1]);
             return new FleetCargoContainsAtLeast(requirementId, invert, cargoIdAndQuantityStrings[0], quantity);
