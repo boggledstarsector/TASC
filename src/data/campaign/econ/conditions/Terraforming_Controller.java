@@ -158,7 +158,9 @@ public class Terraforming_Controller extends BaseHazardCondition
             CampaignClockAPI clock = Global.getSector().getClock();
             if(clock.getDay() != lastDayChecked)
             {
-                if(boggledTools.getProject(currentProject).requirementsMet(market))
+                boggledTools.TerraformingProject project = boggledTools.getProject(currentProject);
+                // Null check so it doesn't crash when updating with an active project
+                if(project != null && project.requirementsMet(market))
                 {
                     daysCompleted++;
                     lastDayChecked = clock.getDay();

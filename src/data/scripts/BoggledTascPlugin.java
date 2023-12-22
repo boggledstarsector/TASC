@@ -314,6 +314,7 @@ public class BoggledTascPlugin extends BaseModPlugin
             JSONArray planetTypes = settings.getMergedSpreadsheetDataForMod("id", "data/campaign/terraforming/planet_types.csv", boggledTools.BoggledMods.tascModId);
             JSONArray resourceProgressions = settings.getMergedSpreadsheetDataForMod("id", "data/campaign/terraforming/resource_progression.csv", boggledTools.BoggledMods.tascModId);
             JSONArray resourceLimits = settings.getMergedSpreadsheetDataForMod("id", "data/campaign/terraforming/planet_max_resource.csv", boggledTools.BoggledMods.tascModId);
+            JSONArray industryOptions = settings.getMergedSpreadsheetDataForMod("id", "data/campaign/terraforming/industry_options.csv", boggledTools.BoggledMods.tascModId);
 
             // Terraforming requirement, requirements, and projects next
             JSONArray terraformingRequirement = settings.getMergedSpreadsheetDataForMod("id", "data/campaign/terraforming/terraforming_requirement.csv", boggledTools.BoggledMods.tascModId);
@@ -334,6 +335,7 @@ public class BoggledTascPlugin extends BaseModPlugin
             boggledTools.initialisePlanetTypesFromJSON(planetTypes);
             boggledTools.initialiseResourceProgressionsFromJSON(resourceProgressions);
             boggledTools.initialiseResourceLimitsFromJSON(resourceLimits);
+            boggledTools.initialiseIndustryOptionsFromJSON(industryOptions);
 
         } catch (IOException | JSONException ex) {
             log.error(ex);
@@ -358,6 +360,7 @@ public class BoggledTascPlugin extends BaseModPlugin
     public void onApplicationLoad()  {
         boggledTools.initialiseDefaultTerraformingRequirementFactories();
         boggledTools.initialiseDefaultTerraformingDurationModifierFactories();
+        boggledTools.initialiseDefaultIndustryOptionsTrampolines();
         if (Global.getSettings().getModManager().isModEnabled("aaacrew_replacer")){
             bogglesDefaultCargo.active = new booglesCrewReplacerCargo();
         }else{

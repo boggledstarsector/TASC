@@ -1,0 +1,5 @@
+id,duration,dynamic_project_duration_modifiers,dynamic_project_duration_modifiers_data,resource,resource_step,requirement_needed,requirement_suitable,conditions_added_on_completion
+# Resource step is how much the resource should increase, per resource
+ai_mining_drones,,,,,,market_has_mining_industry,,
+ouyang_optimizer,2,,,volatiles,2,,colony_is_station|orbited_planet_is_gas_giant|orbited_planet_not_has_extreme_weather|orbited_planet_not_has_volatiles_plentiful,extreme_weather
+planet_cracker,2,,,ore|rare_ore,1|1,,colony_is_station|orbited_planet_is_not_gas_giant|orbited_planet_not_has_tectonic_or_extreme_tectonic_activity|orbited_planet_not_has_ore_and_rare_ore_ultrarich,tectonic_activity

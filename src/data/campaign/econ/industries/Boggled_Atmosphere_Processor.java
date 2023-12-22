@@ -81,7 +81,7 @@ public class Boggled_Atmosphere_Processor extends BaseIndustry
     {
         if(!boggledTools.terraformingPossibleOnMarket(this.market))
         {
-            if(boggledTools.getPlanetType(this.market.getPlanetEntity()).equals(boggledTools.unknownPlanetId))
+            if(boggledTools.getPlanetType(this.market.getPlanetEntity()).getPlanetId().equals(boggledTools.unknownPlanetId))
             {
                 return "This planet type is unsupported by TASC. Please report this to boggled on the forums so he can add support. The planet type is: " + market.getPlanetEntity().getTypeId();
             }

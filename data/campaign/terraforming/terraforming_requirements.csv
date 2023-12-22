@@ -28,12 +28,25 @@ colony_atmosphere_toxic,"Colony atmosphere is toxic",false,"market_toxic_atmosph
 colony_irradiated,"Colony atmosphere is irradiated",false,"market_irradiated"
 colony_has_atmosphere,"Colony has an atmosphere",false,"market_no_atmosphere"
 colony_atmosphere_suboptimal_density,"Colony atmosphere has suboptimal density",false,"market_no_atmosphere|market_thin_atmosphere|market_dense_atmosphere"
+
 world_type_supports_farmland_improvement,"World type supports further farmland improvement",false,"world_type_supports_farmland_improvement"
 world_type_supports_organics_improvement,"World type supports further organics improvement",false,"world_type_supports_organics_improvement"
 world_type_supports_volatiles_improvement,"World type supports further volatiles improvement",false,"world_type_supports_volatiles_improvement"
+
 world_type_allows_terraforming,"World type allows further terraforming",true,"planet_star|planet_gas_giant|planet_volcanic|planet_unknown"
 world_type_allows_mild_climate,"World type allows for mild climate",false,"planet_jungle|planet_arid|planet_terran|planet_water|planet_tundra"
 world_type_allows_human_habitability,"World type allows for human habitability",false,"planet_jungle|planet_arid|planet_terran|planet_water|planet_tundra"
 
 colony_habitable_with_atmosphere,"Colony is habitable and has an atmosphere",false,"market_habitable|market_any_atmosphere"
 market_has_atmo_problem,"Colony has an atmosphere problem",false,"market_not_has_mild_climate|market_not_habitable|market_no_atmosphere|market_thin_atmosphere|market_dense_atmosphere|market_toxic_atmosphere"
+
+colony_is_station,"Colony is a station",false,"market_is_station"
+
+orbited_planet_is_gas_giant,"Orbited planet is a gas giant",false,"focus_planet_gas_giant"
+orbited_planet_is_not_gas_giant,"Orbited planet is not a gas giant",false,"focus_planet_not_gas_giant"
+
+orbited_planet_not_has_extreme_weather,"Orbited planet does not have extreme weather",true,"focus_market_has_extreme_weather"
+orbited_planet_not_has_tectonic_or_extreme_tectonic_activity,"Orbited planet does not have tectonic or extreme tectonic activity",true,"focus_market_has_tectonic_activity|focus_market_has_extreme_tectonic_activity"
+
+orbited_planet_not_has_volatiles_plentiful,"Orbited planet does not have plentiful volatiles",true,"focus_market_has_volatiles_plentiful"
+orbited_planet_not_has_ore_and_rare_ore_ultrarich,"Orbited planet does not have ultrarich ore and rare ore",true,"focus_market_has_ore_ultrarich|focus_market_has_rare_ore_ultrarich"

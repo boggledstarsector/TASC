@@ -25,6 +25,8 @@ import com.fs.starfarer.campaign.CircularOrbit;
 import com.fs.starfarer.campaign.CircularOrbitPointDown;
 import com.fs.starfarer.campaign.CircularOrbitWithSpin;
 import com.fs.starfarer.loading.specs.PlanetSpec;
+import data.campaign.econ.industries.Boggled_Ouyang_Optimizer;
+import data.campaign.econ.industries.Boggled_Planet_Cracker;
 import illustratedEntities.helper.ImageHandler;
 import illustratedEntities.helper.Settings;
 import illustratedEntities.helper.TextHandler;
@@ -37,7 +39,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.awt.*;
 import java.util.*;
 import java.util.List;
 import java.util.ArrayList;
@@ -282,6 +283,7 @@ public class boggledTools
 
     public static final HashMap<String, TerraformingRequirementFactory> terraformingRequirementFactories = new HashMap<>();
     public static final HashMap<String, TerraformingDurationModifierFactory> terraformingDurationModifierFactories = new HashMap<>();
+    public static final HashMap<String, IndustryOptionTrampoline> industryOptionTrampolines = new HashMap<>();
 
     public static void initialiseDefaultTerraformingRequirementFactories() {
         addTerraformingRequirementFactory("PlanetTypeRequirement", new PlanetTypeRequirementFactory());
@@ -290,9 +292,14 @@ public class boggledTools
         addTerraformingRequirementFactory("MarketHasIndustryWithItem", new MarketHasIndustryWithItemFactory());
         addTerraformingRequirementFactory("MarketHasWaterPresent", new MarketHasWaterPresentFactory());
         addTerraformingRequirementFactory("MarketIsAtLeastSize", new MarketIsAtLeastSizeFactory());
+        addTerraformingRequirementFactory("TerraformingPossibleOnMarket", new TerraformingPossibleOnMarketFactory());
+        addTerraformingRequirementFactory("MarketHasTags", new MarketHasTagsFactory());
         addTerraformingRequirementFactory("FleetCargoContainsAtLeast", new FleetCargoContainsAtLeastFactory());
         addTerraformingRequirementFactory("PlayerHasStoryPointsAtLeast", new PlayerHasStoryPointsAtLeastFactory());
         addTerraformingRequirementFactory("WorldTypeSupportsResourceImprovement", new WorldTypeSupportsResourceImprovementFactory());
+
+        addTerraformingRequirementFactory("FocusPlanetTypeRequirement", new FocusPlanetTypeRequirementFactory());
+        addTerraformingRequirementFactory("FocusMarketHasCondition", new FocusMarketHasConditionFactory());
     }
 
     public static void addTerraformingRequirementFactory(String key, TerraformingRequirementFactory value) {
@@ -307,6 +314,16 @@ public class boggledTools
     public static void addTerraformingDurationModifierFactory(String key, TerraformingDurationModifierFactory value) {
         Global.getLogger(boggledTools.class).info("Adding terraforming duration modifier factory " + key);
         terraformingDurationModifierFactories.put(key, value);
+    }
+
+    public static void initialiseDefaultIndustryOptionsTrampolines() {
+        addIndustryOptionsTrampoline("ouyang_optimizer", new OuyangOptimizerIndustryTrampoline());
+        addIndustryOptionsTrampoline("planet_cracker", new PlanetCrackerIndustryTrampoline());
+    }
+
+    public static void addIndustryOptionsTrampoline(String key, IndustryOptionTrampoline value) {
+        Global.getLogger(boggledTools.class).info("Adding industry option trampoline " + key);
+        industryOptionTrampolines.put(key, value);
     }
 
     private static ArrayList<String> arrayListFromJSON(JSONObject data, String key, String regex) throws JSONException {
@@ -424,6 +441,30 @@ public class boggledTools
         }
 
         boggledTools.resourceLimits = resourceLimits;
+    }
+
+    public static void initialiseIndustryOptionsFromJSON(JSONArray industryOptionsJSON) {
+        Logger log = Global.getLogger(boggledTools.class);
+
+        for (int i = 0; i < industryOptionsJSON.length(); ++i) {
+            try {
+                JSONObject row = industryOptionsJSON.getJSONObject(i);
+
+                String id = row.getString("id");
+                if (id == null || id.isEmpty()) {
+                    continue;
+                }
+
+                IndustryOptionTrampoline trampoline = industryOptionTrampolines.get(id);
+                if (trampoline == null) {
+                    log.error("Industry option " + id + " doesn't have a corresponding trampoline, ignoring");
+                    continue;
+                }
+                trampoline.initialiseOptionsFromJSON(row);
+            } catch (JSONException e) {
+                log.error(e);
+            }
+        }
     }
 
     public static void initialiseTerraformingRequirementFromJSON(JSONArray terraformingRequirementJSON) {
@@ -778,6 +819,10 @@ public class boggledTools
     private static HashMap<String, TerraformingRequirement> terraformingRequirement;
     private static HashMap<String, TerraformingRequirements> terraformingRequirements;
     private static HashMap<String, TerraformingProject> terraformingProjects;
+
+    public static HashMap<String, TerraformingRequirements> getTerraformingRequirements() {
+        return terraformingRequirements;
+    }
 
     private static HashMap<String, ArrayList<String>> resourceProgressions;
     private static HashMap<Pair<String, String>, String> resourceLimits;
@@ -1776,65 +1821,28 @@ public class boggledTools
         return false;
     }
 
-    public static void incrementOreForPlanetCracking(MarketAPI market)
-    {
-        if(market.hasCondition(Conditions.ORE_SPARSE))
-        {
-            boggledTools.removeCondition(market, Conditions.ORE_SPARSE);
-            boggledTools.addCondition(market, Conditions.ORE_MODERATE);
-        }
-        else if(market.hasCondition(Conditions.ORE_MODERATE))
-        {
-            boggledTools.removeCondition(market, Conditions.ORE_MODERATE);
-            boggledTools.addCondition(market, Conditions.ORE_ABUNDANT);
-        }
-        else if(market.hasCondition(Conditions.ORE_ABUNDANT))
-        {
-            boggledTools.removeCondition(market, Conditions.ORE_ABUNDANT);
-            boggledTools.addCondition(market, Conditions.ORE_RICH);
-        }
-        else if(market.hasCondition(Conditions.ORE_RICH))
-        {
-            boggledTools.removeCondition(market, Conditions.ORE_RICH);
-            boggledTools.addCondition(market, Conditions.ORE_ULTRARICH);
-        }
-        else if(market.hasCondition(Conditions.ORE_ULTRARICH))
-        {
-            //Do Nothing
-        }
-        else
-        {
-            boggledTools.addCondition(market, Conditions.ORE_SPARSE);
+    private static void incrementResourceWithDefault(MarketAPI market, String resourceType, String defaultResource, int step) {
+        // Step because OuyangOptimization goes volatiles_trace (0) to volatiles_abundant (2), etc
+        ArrayList<String> volatilesResourceProgression = resourceProgressions.get(resourceType);
+        boolean resourceFound = false;
+        for (int i = 0; i < volatilesResourceProgression.size() - 1; i += step) {
+            if (market.hasCondition(volatilesResourceProgression.get(i))) {
+                boggledTools.removeCondition(market, volatilesResourceProgression.get(i));
+                boggledTools.addCondition(market, volatilesResourceProgression.get(Math.min(i + step, volatilesResourceProgression.size() - 1)));
+                resourceFound = true;
+                break;
+            }
         }
 
-        if(market.hasCondition(Conditions.RARE_ORE_SPARSE))
-        {
-            boggledTools.removeCondition(market, Conditions.RARE_ORE_SPARSE);
-            boggledTools.addCondition(market, Conditions.RARE_ORE_MODERATE);
+        if (!resourceFound && defaultResource != null && !defaultResource.isEmpty()) {
+            boggledTools.addCondition(market, defaultResource);
         }
-        else if(market.hasCondition(Conditions.RARE_ORE_MODERATE))
-        {
-            boggledTools.removeCondition(market, Conditions.RARE_ORE_MODERATE);
-            boggledTools.addCondition(market, Conditions.RARE_ORE_ABUNDANT);
-        }
-        else if(market.hasCondition(Conditions.RARE_ORE_ABUNDANT))
-        {
-            boggledTools.removeCondition(market, Conditions.RARE_ORE_ABUNDANT);
-            boggledTools.addCondition(market, Conditions.RARE_ORE_RICH);
-        }
-        else if(market.hasCondition(Conditions.RARE_ORE_RICH))
-        {
-            boggledTools.removeCondition(market, Conditions.RARE_ORE_RICH);
-            boggledTools.addCondition(market, Conditions.RARE_ORE_ULTRARICH);
-        }
-        else if(market.hasCondition(Conditions.RARE_ORE_ULTRARICH))
-        {
-            //Do Nothing
-        }
-        else
-        {
-            boggledTools.addCondition(market, Conditions.RARE_ORE_SPARSE);
-        }
+    }
+
+    public static void incrementOreForPlanetCracking(MarketAPI market)
+    {
+        incrementResourceWithDefault(market, "ore", Conditions.ORE_SPARSE, 1);
+        incrementResourceWithDefault(market, "rare_ore", Conditions.RARE_ORE_SPARSE, 1);
 
         boggledTools.surveyAll(market);
         boggledTools.refreshSupplyAndDemand(market);
@@ -1843,29 +1851,7 @@ public class boggledTools
 
     public static void incrementVolatilesForOuyangOptimization(MarketAPI market)
     {
-        if(market.hasCondition(Conditions.VOLATILES_TRACE))
-        {
-            boggledTools.removeCondition(market, Conditions.VOLATILES_TRACE);
-            boggledTools.addCondition(market, Conditions.VOLATILES_ABUNDANT);
-        }
-        else if(market.hasCondition(Conditions.VOLATILES_DIFFUSE))
-        {
-            boggledTools.removeCondition(market, Conditions.VOLATILES_DIFFUSE);
-            boggledTools.addCondition(market, Conditions.VOLATILES_PLENTIFUL);
-        }
-        else if(market.hasCondition(Conditions.VOLATILES_ABUNDANT))
-        {
-            boggledTools.removeCondition(market, Conditions.VOLATILES_ABUNDANT);
-            boggledTools.addCondition(market, Conditions.VOLATILES_PLENTIFUL);
-        }
-        else if(market.hasCondition(Conditions.VOLATILES_PLENTIFUL))
-        {
-            //Do nothing
-        }
-        else
-        {
-            boggledTools.addCondition(market, Conditions.VOLATILES_DIFFUSE);
-        }
+        incrementResourceWithDefault(market, "volatiles", Conditions.VOLATILES_DIFFUSE, 2);
 
         SectorEntityToken closestGasGiantToken = market.getPrimaryEntity();
         if(closestGasGiantToken != null)
@@ -1874,16 +1860,7 @@ public class boggledTools
                 if (entity.hasTag(Tags.STATION) && entity.getOrbitFocus() != null && entity.getOrbitFocus().equals(closestGasGiantToken) && (entity.getCustomEntitySpec().getDefaultName().equals("Side Station") || entity.getCustomEntitySpec().getDefaultName().equals("Siphon Station")) && !entity.getId().equals("beholder_station")) {
                     if (entity.getMarket() != null) {
                         market = entity.getMarket();
-                        if (market.hasCondition(Conditions.VOLATILES_TRACE)) {
-                            boggledTools.removeCondition(market, Conditions.VOLATILES_TRACE);
-                            boggledTools.addCondition(market, Conditions.VOLATILES_ABUNDANT);
-                        } else if (market.hasCondition(Conditions.VOLATILES_DIFFUSE)) {
-                            boggledTools.removeCondition(market, Conditions.VOLATILES_DIFFUSE);
-                            boggledTools.addCondition(market, Conditions.VOLATILES_PLENTIFUL);
-                        } else if (market.hasCondition(Conditions.VOLATILES_ABUNDANT)) {
-                            boggledTools.removeCondition(market, Conditions.VOLATILES_ABUNDANT);
-                            boggledTools.addCondition(market, Conditions.VOLATILES_PLENTIFUL);
-                        }
+                        incrementResourceWithDefault(market,"volatiles", null, 2);
 
                         boggledTools.surveyAll(market);
                         boggledTools.refreshSupplyAndDemand(market);
@@ -2108,6 +2085,16 @@ public class boggledTools
         }
     }
 
+    public static void showProjectCompleteIntelMessage(String project, String marketName, MarketAPI market) {
+        if (market.isPlayerOwned()) {
+            MessageIntel intel = new MessageIntel(project + " on " + marketName, Misc.getBasePlayerColor());
+            intel.addLine("    - Completed");
+            intel.setIcon(Global.getSector().getPlayerFaction().getCrest());
+            intel.setSound(BaseIntelPlugin.getSoundStandardUpdate());
+            Global.getSector().getCampaignUI().addMessage(intel, CommMessageAPI.MessageClickAction.COLONY_INFO, market);
+        }
+    }
+
     public static class TerraformingProject {
         private final String projectId;
         private String projectTooltip;
@@ -2165,14 +2152,7 @@ public class boggledTools
             refreshSupplyAndDemand(market);
             refreshAquacultureAndFarming(market);
 
-            if (market.isPlayerOwned())
-            {
-                MessageIntel intel = new MessageIntel(projectTooltip + " on " + market.getName(), Misc.getBasePlayerColor());
-                intel.addLine("    - Completed");
-                intel.setIcon(Global.getSector().getPlayerFaction().getCrest());
-                intel.setSound(BaseIntelPlugin.getSoundStandardUpdate());
-                Global.getSector().getCampaignUI().addMessage(intel, CommMessageAPI.MessageClickAction.COLONY_INFO, market);
-            }
+            showProjectCompleteIntelMessage(projectTooltip, market.getName(), market);
         }
 
         private void addRemoveConditions(MarketAPI market) {
@@ -2325,6 +2305,24 @@ public class boggledTools
         }
     }
 
+    public interface IndustryOptionTrampoline {
+        void initialiseOptionsFromJSON(JSONObject data) throws JSONException;
+    }
+
+    public static class OuyangOptimizerIndustryTrampoline implements IndustryOptionTrampoline {
+        @Override
+        public void initialiseOptionsFromJSON(JSONObject data) throws JSONException {
+            Boggled_Ouyang_Optimizer.settingsFromJSON(data);
+        }
+    }
+
+    public static class PlanetCrackerIndustryTrampoline implements IndustryOptionTrampoline {
+        @Override
+        public void initialiseOptionsFromJSON(JSONObject data) throws JSONException {
+            Boggled_Planet_Cracker.settingsFromJSON(data);
+        }
+    }
+
     public interface TerraformingDurationModifier {
         float getDurationModifier(MarketAPI market, int baseDuration);
     }
@@ -2347,10 +2345,24 @@ public class boggledTools
         }
     }
 
+    public static class FocusPlanetTypeRequirementFactory implements TerraformingRequirementFactory {
+        @Override
+        public TerraformingRequirement constructFromJSON(String requirementId, boolean invert, String data) {
+            return new FocusPlanetTypeRequirement(requirementId, invert, data);
+        }
+    }
+
     public static class MarketHasConditionFactory implements TerraformingRequirementFactory {
         @Override
         public TerraformingRequirement constructFromJSON(String requirementId, boolean invert, String data) {
             return new MarketHasCondition(requirementId, invert, data);
+        }
+    }
+
+    public static class FocusMarketHasConditionFactory implements TerraformingRequirementFactory {
+        @Override
+        public TerraformingRequirement constructFromJSON(String requirementId, boolean invert, String data) {
+            return new FocusMarketHasCondition(requirementId, invert, data);
         }
     }
 
@@ -2380,6 +2392,24 @@ public class boggledTools
                 waterLevels[i] = Integer.parseInt(waterLevelStrings[i]);
             }
             return new MarketHasWaterPresent(requirementId, invert, waterLevels[0], waterLevels[1]);
+        }
+    }
+
+    public static class TerraformingPossibleOnMarketFactory implements TerraformingRequirementFactory {
+        @Override
+        public TerraformingRequirement constructFromJSON(String requirementId, boolean invert, String data) {
+            ArrayList<String> invalidatingConditions = new ArrayList<>(Arrays.asList(data.split("\\|")));
+
+            return new TerraformingPossibleOnMarket(requirementId, invert, invalidatingConditions);
+        }
+    }
+
+    public static class MarketHasTagsFactory implements TerraformingRequirementFactory {
+        @Override
+        public TerraformingRequirement constructFromJSON(String requirementId, boolean invert, String data) {
+            ArrayList<String> tags = new ArrayList<>(Arrays.asList(data.split("\\|")));
+
+            return new MarketHasTags(requirementId, invert, tags);
         }
     }
 
@@ -2445,8 +2475,19 @@ public class boggledTools
         }
 
         @Override
-        protected final boolean checkRequirementImpl(MarketAPI market) {
+        protected boolean checkRequirementImpl(MarketAPI market) {
             return planetTypeId.equals(getPlanetType(market.getPlanetEntity()).planetId);
+        }
+    }
+
+    public static class FocusPlanetTypeRequirement extends PlanetTypeRequirement {
+        FocusPlanetTypeRequirement(String requirementId, boolean invert, String planetTypeId) {
+            super(requirementId, invert, planetTypeId);
+        }
+
+        @Override
+        protected boolean checkRequirementImpl(MarketAPI market) {
+            return super.checkRequirementImpl(market.getPrimaryEntity().getOrbitFocus().getMarket());
         }
     }
 
@@ -2458,8 +2499,19 @@ public class boggledTools
         }
 
         @Override
-        protected final boolean checkRequirementImpl(MarketAPI market) {
+        protected boolean checkRequirementImpl(MarketAPI market) {
             return market.hasCondition(conditionId);
+        }
+    }
+
+    public static class FocusMarketHasCondition extends MarketHasCondition {
+        FocusMarketHasCondition(String requirementId, boolean invert, String conditionId) {
+            super(requirementId, invert, conditionId);
+        }
+
+        @Override
+        protected boolean checkRequirementImpl(MarketAPI market) {
+            return super.checkRequirementImpl(market.getPrimaryEntity().getOrbitFocus().getMarket());
         }
     }
 
@@ -2517,6 +2569,36 @@ public class boggledTools
         }
     }
 
+    public static class TerraformingPossibleOnMarket extends TerraformingRequirement {
+        ArrayList<String> invalidatingConditions;
+        TerraformingPossibleOnMarket(String requirementId, boolean invert, ArrayList<String> invalidatingConditions) {
+            super(requirementId, invert);
+            this.invalidatingConditions = invalidatingConditions;
+        }
+
+        @Override
+        protected boolean checkRequirementImpl(MarketAPI market) {
+            return false;
+        }
+    }
+
+    public static class MarketHasTags extends TerraformingRequirement {
+        ArrayList<String> tags;
+        MarketHasTags(String requirementId, boolean invert, ArrayList<String> tags) {
+            super(requirementId, invert);
+            this.tags = tags;
+        }
+
+        @Override
+        protected boolean checkRequirementImpl(MarketAPI market) {
+            for (String tag : tags) {
+                if (!market.hasTag(tag) && !market.getPrimaryEntity().hasTag(tag)) {
+                    return false;
+                }
+            }
+            return true;
+        }
+    }
 
     public static class MarketIsAtLeastSize extends TerraformingRequirement {
         int colonySize;
@@ -2592,49 +2674,6 @@ public class boggledTools
             }
 
             return true;
-        }
-    }
-
-    public static Boolean printProjectRequirementsReportIfStalled(MarketAPI market, String project, TextPanelAPI text)
-    {
-        Color good = Misc.getPositiveHighlightColor();
-        Color bad = Misc.getNegativeHighlightColor();
-
-        if(project != null && !project.equals(noneProjectId))
-        {
-            // Print requirements, and if not met, print terraforming is stalled
-            text.addPara("Project Requirements:");
-
-            TerraformingProject terraformingProject = getProject(project);
-            if (terraformingProject != null) {
-                boolean foundUnmetRequirement = false;
-                for (TerraformingRequirements terraformingRequirements : terraformingProject.projectRequirements) {
-                    if (terraformingRequirements.checkRequirement(market)) {
-                        text.addPara("      - %s", good, terraformingRequirements.requirementTooltip);
-                    }
-                    else {
-                        text.addPara("      - %s", bad, terraformingRequirements.requirementTooltip);
-                        foundUnmetRequirement = true;
-                    }
-                }
-                return foundUnmetRequirement;
-            }
-        }
-
-        return false;
-    }
-
-    public static void printProjectResults(MarketAPI market, String project, TextPanelAPI text)
-    {
-        Color highlight = Misc.getHighlightColor();
-
-        TerraformingProject terraformingProject = getProject(project);
-
-        if (terraformingProject != null) {
-            text.addPara("Prospective project: %s", highlight, terraformingProject.getProjectTooltip());
-//            for (String result : terraformingProject.projectResults) {
-//                text.addPara(result);
-//            }
         }
     }
 

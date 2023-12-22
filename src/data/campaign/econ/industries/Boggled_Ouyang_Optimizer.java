@@ -2,19 +2,21 @@ package data.campaign.econ.industries;
 
 import java.awt.*;
 import java.lang.String;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.*;
-import com.fs.starfarer.api.campaign.comm.CommMessageAPI;
 import com.fs.starfarer.api.campaign.econ.*;
 import com.fs.starfarer.api.impl.campaign.ids.Conditions;
-import com.fs.starfarer.api.impl.campaign.intel.BaseIntelPlugin;
-import com.fs.starfarer.api.impl.campaign.intel.MessageIntel;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
 import com.fs.starfarer.api.impl.campaign.econ.impl.BaseIndustry;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
 import data.campaign.econ.boggledTools;
+import org.apache.log4j.Logger;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class Boggled_Ouyang_Optimizer extends BaseIndustry
 {
@@ -27,6 +29,27 @@ public class Boggled_Ouyang_Optimizer extends BaseIndustry
     private int daysWithoutShortage = 0;
     private int lastDayChecked = 0;
     public static int requiredDaysToOptimize = 200;
+    public static ArrayList<boggledTools.TerraformingRequirements> requirementsSuitable;
+    public static ArrayList<String> conditionsAddedOnCompletion;
+
+    public static void settingsFromJSON(JSONObject data) throws JSONException {
+        Logger log = Global.getLogger(Boggled_Ouyang_Optimizer.class);
+        requiredDaysToOptimize = data.getInt("duration");
+
+        requirementsSuitable = new ArrayList<>();
+
+        String[] requirementsUnsuitableStrings = data.getString("requirement_suitable").split("\\|");
+        for (String requirementsSuitableString : requirementsUnsuitableStrings) {
+            boggledTools.TerraformingRequirements requirementSuitable = boggledTools.getTerraformingRequirements().get(requirementsSuitableString);
+            if (requirementSuitable == null) {
+                log.error("Industry Ouyang Optimizer has invalid requirement " + requirementsSuitableString);
+                continue;
+            }
+            requirementsSuitable.add(requirementSuitable);
+        }
+
+        conditionsAddedOnCompletion = new ArrayList<>(Arrays.asList(data.getString("conditions_added_on_completion").split("\\|")));
+    }
 
     private SectorEntityToken getOrbitFocus()
     {
@@ -40,37 +63,11 @@ public class Boggled_Ouyang_Optimizer extends BaseIndustry
 
     private boolean marketSuitableForOptimizer()
     {
-        // Only buildable on stations
-        if(!boggledTools.marketIsStation(this.market))
-        {
-            return false;
+        for (boggledTools.TerraformingRequirements terraformingRequirements : requirementsSuitable) {
+            if (!terraformingRequirements.checkRequirement(market)) {
+                return false;
+            }
         }
-
-        // Station needs to obit a gas giant planet
-        SectorEntityToken orbitFocus = getOrbitFocus();
-        if(orbitFocus == null)
-        {
-            return false;
-        }
-
-        if(orbitFocus.getMarket() == null || orbitFocus.getMarket().getPlanetEntity() == null || !boggledTools.getPlanetType(orbitFocus.getMarket().getPlanetEntity()).equals(boggledTools.gasGiantPlanetId))
-        {
-            return false;
-        }
-
-        // Can't already have extreme weather
-        MarketAPI focusMarket = getFocusMarket();
-        if(focusMarket.hasCondition("extreme_weather"))
-        {
-            return false;
-        }
-
-        // Can't already have maxed out volatiles
-        if(focusMarket.hasCondition("organics_plentiful"))
-        {
-            return false;
-        }
-
         return true;
     }
 
@@ -90,18 +87,13 @@ public class Boggled_Ouyang_Optimizer extends BaseIndustry
 
                 if(daysWithoutShortage >= requiredDaysToOptimize)
                 {
-                    if (this.market.isPlayerOwned())
-                    {
-                        MessageIntel intel = new MessageIntel("Ouyang Optimization on " + getFocusMarket().getName(), Misc.getBasePlayerColor());
-                        intel.addLine("    - Completed");
-                        intel.setIcon(Global.getSector().getPlayerFaction().getCrest());
-                        intel.setSound(BaseIntelPlugin.getSoundStandardUpdate());
-                        Global.getSector().getCampaignUI().addMessage(intel, CommMessageAPI.MessageClickAction.COLONY_INFO, market);
-                    }
+                    boggledTools.showProjectCompleteIntelMessage("Ouyang Optimization", getFocusMarket().getName(), market);
 
                     boggledTools.incrementVolatilesForOuyangOptimization(getFocusMarket());
 
-                    boggledTools.addCondition(getFocusMarket(), "extreme_weather");
+                    for (String conditionAddedOnCompletion : conditionsAddedOnCompletion) {
+                        boggledTools.addCondition(getFocusMarket(), conditionAddedOnCompletion);
+                    }
 
                     boggledTools.surveyAll(getFocusMarket());
                     boggledTools.refreshSupplyAndDemand(getFocusMarket());
@@ -161,7 +153,7 @@ public class Boggled_Ouyang_Optimizer extends BaseIndustry
                 return this.market.getName() + " is not in orbit around a planet.";
             }
 
-            if (orbitFocus.getMarket() == null || orbitFocus.getMarket().getPlanetEntity() == null || !boggledTools.getPlanetType(orbitFocus.getMarket().getPlanetEntity()).equals(boggledTools.gasGiantPlanetId))
+            if (orbitFocus.getMarket() == null || orbitFocus.getMarket().getPlanetEntity() == null || !boggledTools.getPlanetType(orbitFocus.getMarket().getPlanetEntity()).getPlanetId().equals(boggledTools.gasGiantPlanetId))
             {
                 return "Only gas giants can undergo Ouyang optimization.";
             }
@@ -200,14 +192,10 @@ public class Boggled_Ouyang_Optimizer extends BaseIndustry
         //Inserts optimization status after description
         if(this.marketSuitableForOptimizer() && mode != IndustryTooltipMode.ADD_INDUSTRY && mode != IndustryTooltipMode.QUEUED && !isBuilding())
         {
-            //200 days; divide daysWithoutShortage by 2 to get the percent
-            int percentComplete = daysWithoutShortage / 2;
+            int percentComplete = (int)((float)daysWithoutShortage / requiredDaysToOptimize) * 100;
 
             //Makes sure the tooltip doesn't say "100% complete" on the last day due to rounding up 99.5 to 100
-            if(percentComplete > 99)
-            {
-                percentComplete = 99;
-            }
+            percentComplete = Math.min(percentComplete, 99);
 
             tooltip.addPara("Ouyang optimization is approximately %s complete on " + getFocusMarket().getName() + ".", opad, highlight, percentComplete + "%");
         }
