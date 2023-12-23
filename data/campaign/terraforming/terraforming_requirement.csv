@@ -14,9 +14,16 @@ planet_water,PlanetTypeRequirement,false,"water"
 planet_tundra,PlanetTypeRequirement,false,"tundra"
 planet_frozen,PlanetTypeRequirement,false,"frozen"
 
+planet_not_star,PlanetTypeRequirement,true,"star"
+planet_not_gas_giant,PlanetTypeRequirement,true,"gas_giant"
+planet_not_volcanic,PlanetTypeRequirement,true,"volcanic"
+planet_not_irradiated,PlanetTypeRequirement,true,"irradiated"
+planet_not_unknown,PlanetTypeRequirement,true,"unknown"
+
 planet_star,PlanetTypeRequirement,false,"star"
 planet_gas_giant,PlanetTypeRequirement,false,"gas_giant"
 planet_volcanic,PlanetTypeRequirement,false,"volcanic"
+planet_irradiated,PlanetTypeRequirement,false,"irradiated"
 planet_unknown,PlanetTypeRequirement,false,"unknown"
 
 planet_barren,PlanetTypeRequirement,false,"barren"

@@ -1,21 +1,51 @@
 package data.campaign.econ.industries;
 
 import java.awt.Color;
+import java.util.LinkedHashMap;
+
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.econ.CommoditySpecAPI;
 import com.fs.starfarer.api.campaign.econ.Industry;
 import com.fs.starfarer.api.campaign.econ.MutableCommodityQuantity;
+import com.fs.starfarer.api.impl.campaign.econ.impl.BaseIndustry;
 import com.fs.starfarer.api.impl.campaign.ids.Commodities;
+import com.fs.starfarer.api.impl.campaign.ids.Industries;
 import com.fs.starfarer.api.impl.campaign.ids.Tags;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.*;
-import com.fs.starfarer.api.impl.campaign.econ.impl.BaseIndustry;
 import com.fs.starfarer.api.util.Misc;
-import data.campaign.econ.boggledTools;
+import org.json.JSONException;
+import org.json.JSONObject;
 
-public class Boggled_AI_Mining_Drones extends BaseIndustry
+public class Boggled_AI_Mining_Drones extends BaseIndustry implements BoggledCommonIndustryInterface
 {
     public static float IMPROVE_BONUS = .20F;
+
+    private static BoggledCommonIndustry commonIndustry;
+
+    public static void settingsFromJSON(JSONObject data) throws JSONException {
+        commonIndustry = new BoggledCommonIndustry(data, "AI Mining Drones");
+    }
+
+    @Override
+    public LinkedHashMap<String, String> getTokenReplacements() {
+        return new LinkedHashMap<>();
+    }
+
+    @Override
+    public boolean isAvailableToBuild() {
+        return commonIndustry.isAvailableToBuild(getMarket());
+    }
+
+    @Override
+    public boolean showWhenUnavailable() {
+        return commonIndustry.showWhenUnavailable(getMarket());
+    }
+
+    @Override
+    public String getUnavailableReason() {
+        return commonIndustry.getUnavailableReason(getMarket(), getTokenReplacements());
+    }
 
     @Override
     public boolean canBeDisrupted() {
@@ -65,14 +95,10 @@ public class Boggled_AI_Mining_Drones extends BaseIndustry
             this.demand(Commodities.SHIPS, size);
 
             //Increased production
-            for(Industry i : market.getIndustries())
-            {
-                if(i.getCurrentName().equals("Mining"))
-                {
-                    for(MutableCommodityQuantity c : i.getAllSupply())
-                    {
-                        i.getSupply(c.getCommodityId()).getQuantity().modifyFlat(id, getProductionBonusFromMiningDrones(), "AI Mining Drones");
-                    }
+            Industry i = market.getIndustry(Industries.MINING);
+            if (i != null) {
+                for (MutableCommodityQuantity c : i.getAllSupply()) {
+                    i.getSupply(c.getCommodityId()).getQuantity().modifyFlat(id, getProductionBonusFromMiningDrones(), "AI Mining Drones");
                 }
             }
         }
@@ -94,41 +120,6 @@ public class Boggled_AI_Mining_Drones extends BaseIndustry
         this.market.getAccessibilityMod().unmodifyFlat(this.getModId(5));
 
         super.unapply();
-    }
-
-    @Override
-    public boolean isAvailableToBuild()
-    {
-        if(!boggledTools.isResearched(this.getId()))
-        {
-            return false;
-        }
-
-        if(boggledTools.getBooleanSetting(boggledTools.BoggledSettings.stationConstructionContentEnabled) && boggledTools.getBooleanSetting(boggledTools.BoggledSettings.enableAIMiningDronesStructure) && this.market.getPrimaryEntity() != null && this.market.getPrimaryEntity().hasTag(Tags.STATION))
-        {
-            return true;
-        }
-        else
-        {
-            return false;
-        }
-    }
-
-    @Override
-    public boolean showWhenUnavailable()
-    {
-        if(!boggledTools.isResearched(this.getId()))
-        {
-            return false;
-        }
-
-        return false;
-    }
-
-    @Override
-    public String getUnavailableReason()
-    {
-        return "Error in getUnavailableReason() in the AI Mining Drones structure. Please tell Boggled about this on the forums.";
     }
 
     @Override

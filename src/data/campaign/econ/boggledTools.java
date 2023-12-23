@@ -25,6 +25,8 @@ import com.fs.starfarer.campaign.CircularOrbit;
 import com.fs.starfarer.campaign.CircularOrbitPointDown;
 import com.fs.starfarer.campaign.CircularOrbitWithSpin;
 import com.fs.starfarer.loading.specs.PlanetSpec;
+import data.campaign.econ.industries.Boggled_AI_Mining_Drones;
+import data.campaign.econ.industries.Boggled_Atmosphere_Processor;
 import data.campaign.econ.industries.Boggled_Ouyang_Optimizer;
 import data.campaign.econ.industries.Boggled_Planet_Cracker;
 import illustratedEntities.helper.ImageHandler;
@@ -240,6 +242,7 @@ public class boggledTools
     // A mistyped string compiles fine and leads to plenty of debugging. A mistyped constant gives an error.
 
     public static final String csvOptionSeparator = "\\s*\\|\\s*";
+    public static final String csvSubOptionSeparator = "\\s*;\\s*";
     public static final String noneProjectId = "None";
 
     public static final String craftCorruptedNanoforgeProjectId = "craftCorruptedNanoforge";
@@ -278,6 +281,73 @@ public class boggledTools
     public static final HashMap<String, TerraformingDurationModifierFactory> terraformingDurationModifierFactories = new HashMap<>();
     public static final HashMap<String, IndustryOptionTrampoline> industryOptionTrampolines = new HashMap<>();
 
+    public static boolean optionsAllowThis(String... options) {
+        if (!boggledTools.getBooleanSetting(BoggledSettings.terraformingContentEnabled)) {
+            return false;
+        }
+        for (String option : options) {
+            if (option.isEmpty()) {
+                continue;
+            }
+            if (!boggledTools.getBooleanSetting(option)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public static ArrayList<Pair<TerraformingRequirements, String>> getRequirementsSuitable(JSONObject data, String key, String industry) throws JSONException {
+        Logger log = Global.getLogger(boggledTools.class);
+
+        ArrayList<Pair<TerraformingRequirements, String>> ret = new ArrayList<>();
+
+        String stringData = data.getString(key);
+        if (stringData.isEmpty()) {
+            return ret;
+        }
+        String[] stringDataArray = stringData.split(boggledTools.csvOptionSeparator);
+
+        for (String stringDataArrayEntry : stringDataArray) {
+            String[] reqStringAndReason = stringDataArrayEntry.split(boggledTools.csvSubOptionSeparator);
+            assert(reqStringAndReason.length == 2);
+            boggledTools.TerraformingRequirements requirementSuitable = boggledTools.getTerraformingRequirements().get(reqStringAndReason[0]);
+            if (requirementSuitable == null) {
+                log.error("Industry " + industry + " has invalid requirement " + stringDataArrayEntry);
+                continue;
+            }
+            ret.add(new Pair<>(requirementSuitable, reqStringAndReason[1]));
+        }
+
+        return ret;
+    }
+
+    private static void buildUnavailableReason(StringBuilder builder, ArrayList<Pair<TerraformingRequirements, String>> req, MarketAPI market, LinkedHashMap<String, String> tokenReplacements) {
+        for (Pair<boggledTools.TerraformingRequirements, String> reqAndReason : req) {
+            if (!reqAndReason.one.checkRequirement(market)) {
+                if (builder.length() != 0) {
+                    builder.append("\n");
+                }
+                String replaced = reqAndReason.two;
+                for (Map.Entry<String, String> replacement : tokenReplacements.entrySet()) {
+                    replaced = replaced.replace(replacement.getKey(), replacement.getValue());
+                }
+                builder.append(replaced);
+            }
+        }
+    }
+    public static String getUnavailableReason(ArrayList<Pair<TerraformingRequirements, String>> requirementsSuitable, ArrayList<Pair<TerraformingRequirements, String>> requirementsSuitableHidden, String industry, MarketAPI market, LinkedHashMap<String, String> tokenReplacements, String... requiredOptions) {
+        if (!boggledTools.optionsAllowThis(requiredOptions)) {
+            return "Error in getUnavailableReason() in " + industry + ". Please tell Boggled about this on the forums.";
+        }
+
+        StringBuilder ret = new StringBuilder();
+
+        buildUnavailableReason(ret, requirementsSuitable, market, tokenReplacements);
+        buildUnavailableReason(ret, requirementsSuitableHidden, market, tokenReplacements);
+
+        return ret.toString();
+    }
+
     public static void initialiseDefaultTerraformingRequirementFactories() {
         addTerraformingRequirementFactory("PlanetTypeRequirement", new PlanetTypeRequirementFactory());
         addTerraformingRequirementFactory("MarketHasCondition", new MarketHasConditionFactory());
@@ -310,6 +380,8 @@ public class boggledTools
     }
 
     public static void initialiseDefaultIndustryOptionsTrampolines() {
+        addIndustryOptionsTrampoline("ai_mining_drones", new AIMiningDronesIndustryTrampoline());
+        addIndustryOptionsTrampoline("atmosphere_processor", new AtmosphereProcessorIndustryTrampoline());
         addIndustryOptionsTrampoline("ouyang_optimizer", new OuyangOptimizerIndustryTrampoline());
         addIndustryOptionsTrampoline("planet_cracker", new PlanetCrackerIndustryTrampoline());
     }
@@ -2302,6 +2374,20 @@ public class boggledTools
         void initialiseOptionsFromJSON(JSONObject data) throws JSONException;
     }
 
+    public static class AIMiningDronesIndustryTrampoline implements IndustryOptionTrampoline {
+        @Override
+        public void initialiseOptionsFromJSON(JSONObject data) throws JSONException {
+            Boggled_AI_Mining_Drones.settingsFromJSON(data);
+        }
+    }
+
+    public static class AtmosphereProcessorIndustryTrampoline implements IndustryOptionTrampoline {
+        @Override
+        public void initialiseOptionsFromJSON(JSONObject data) throws JSONException {
+            Boggled_Atmosphere_Processor.settingsFromJSON(data);
+        }
+    }
+
     public static class OuyangOptimizerIndustryTrampoline implements IndustryOptionTrampoline {
         @Override
         public void initialiseOptionsFromJSON(JSONObject data) throws JSONException {
@@ -2480,6 +2566,9 @@ public class boggledTools
 
         @Override
         protected boolean checkRequirementImpl(MarketAPI market) {
+            if (market.getPrimaryEntity().getOrbitFocus().getMarket() == null) {
+                return false;
+            }
             return super.checkRequirementImpl(market.getPrimaryEntity().getOrbitFocus().getMarket());
         }
     }
@@ -2504,6 +2593,9 @@ public class boggledTools
 
         @Override
         protected boolean checkRequirementImpl(MarketAPI market) {
+            if (market.getPrimaryEntity().getOrbitFocus().getMarket() == null) {
+                return false;
+            }
             return super.checkRequirementImpl(market.getPrimaryEntity().getOrbitFocus().getMarket());
         }
     }
@@ -2716,7 +2808,7 @@ public class boggledTools
 
     public static boolean marketHasAtmoProblem(MarketAPI market)
     {
-        TerraformingRequirements reqs = terraformingRequirements.get("market_has_atmo_problem");
+        TerraformingRequirements reqs = terraformingRequirements.get("colony_has_atmo_problem");
         if (reqs == null) {
             // Abundance of caution
             return false;

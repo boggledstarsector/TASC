@@ -2,6 +2,7 @@ package data.campaign.econ.industries;
 
 import java.awt.*;
 import java.lang.String;
+import java.util.LinkedHashMap;
 
 import com.fs.starfarer.api.impl.campaign.ids.Commodities;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
@@ -9,13 +10,43 @@ import com.fs.starfarer.api.util.Misc;
 import com.fs.starfarer.api.impl.campaign.econ.impl.BaseIndustry;
 import com.fs.starfarer.api.util.Pair;
 import data.campaign.econ.boggledTools;
+import org.json.JSONException;
+import org.json.JSONObject;
 
-public class Boggled_Atmosphere_Processor extends BaseIndustry
+public class Boggled_Atmosphere_Processor extends BaseIndustry implements BoggledCommonIndustryInterface
 {
     @Override
     public boolean canBeDisrupted()
     {
         return true;
+    }
+
+    private static BoggledCommonIndustry commonIndustry;
+
+    public static void settingsFromJSON(JSONObject data) throws JSONException {
+        commonIndustry = new BoggledCommonIndustry(data, "Atmosphere Processor");
+    }
+
+    @Override
+    public LinkedHashMap<String, String> getTokenReplacements() {
+        LinkedHashMap<String, String> tokenReplacements = new LinkedHashMap<>();
+        tokenReplacements.put("market", commonIndustry.getFocusMarketOrMarket(getMarket()).getName());
+        return tokenReplacements;
+    }
+
+    @Override
+    public boolean isAvailableToBuild() {
+        return commonIndustry.isAvailableToBuild(getMarket());
+    }
+
+    @Override
+    public boolean showWhenUnavailable() {
+        return commonIndustry.showWhenUnavailable(getMarket());
+    }
+
+    @Override
+    public String getUnavailableReason() {
+        return commonIndustry.getUnavailableReason(getMarket(), getTokenReplacements());
     }
 
     @Override
@@ -31,73 +62,6 @@ public class Boggled_Atmosphere_Processor extends BaseIndustry
     public void unapply()
     {
         super.unapply();
-    }
-
-    @Override
-    public boolean isAvailableToBuild()
-    {
-        if(!boggledTools.isResearched(this.getId()))
-        {
-            return false;
-        }
-
-        if(boggledTools.getBooleanSetting(boggledTools.BoggledSettings.terraformingContentEnabled))
-        {
-            if(!boggledTools.marketIsStation(this.market) && boggledTools.marketHasAtmoProblem(this.market) && boggledTools.terraformingPossibleOnMarket(this.market))
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        }
-        else
-        {
-            return false;
-        }
-    }
-
-    @Override
-    public boolean showWhenUnavailable()
-    {
-        if(!boggledTools.isResearched(this.getId()))
-        {
-            return false;
-        }
-
-        if(boggledTools.getBooleanSetting(boggledTools.BoggledSettings.terraformingContentEnabled) && !boggledTools.marketIsStation(this.market))
-        {
-            return true;
-        }
-        else
-        {
-            return false;
-        }
-    }
-
-    @Override
-    public String getUnavailableReason()
-    {
-        if(!boggledTools.terraformingPossibleOnMarket(this.market))
-        {
-            if(boggledTools.getPlanetType(this.market.getPlanetEntity()).getPlanetId().equals(boggledTools.unknownPlanetId))
-            {
-                return "This planet type is unsupported by TASC. Please report this to boggled on the forums so he can add support. The planet type is: " + market.getPlanetEntity().getTypeId();
-            }
-            else
-            {
-                return "Stars, gas giants, volcanic worlds and irradiated worlds cannot be terraformed.";
-            }
-        }
-        if(!boggledTools.marketHasAtmoProblem(this.market))
-        {
-            return "Atmospheric conditions on " + this.market.getName() + " are already optimal. There is no reason to build an atmosphere processor here.";
-        }
-        else
-        {
-            return "Error in getUnavailableReason() in Atmosphere Processor. Please tell Boggled about this on the forums.";
-        }
     }
 
     @Override
