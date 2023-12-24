@@ -431,12 +431,12 @@ public class Boggled_Domed_Cities extends BaseIndustry implements MarketImmigrat
         {
             if(boggledTools.getBooleanSetting(boggledTools.BoggledSettings.domedCitiesDefensePenaltyEnabled))
             {
-                tooltip.addPara("Ground defense strength: %s", opad, Misc.getNegativeHighlightColor(), new String[]{"x" + DEFENSE_MALUS});
+                tooltip.addPara("Ground defense strength: %s", opad, Misc.getNegativeHighlightColor(), "x" + DEFENSE_MALUS);
             }
         }
         else
         {
-            tooltip.addPara("Ground defense strength: %s", opad, Misc.getHighlightColor(), new String[]{"x" + DEFENSE_BONUS});
+            tooltip.addPara("Ground defense strength: %s", opad, Misc.getHighlightColor(), "x" + DEFENSE_BONUS);
         }
 
         if(this.market.hasCondition(Conditions.WATER_SURFACE))

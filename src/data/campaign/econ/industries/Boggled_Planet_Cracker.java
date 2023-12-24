@@ -27,16 +27,16 @@ public class Boggled_Planet_Cracker extends BaseIndustry implements BoggledCommo
     private int daysWithoutShortage = 0;
     private int lastDayChecked = 0;
 
-    public static int requiredDaysToCrack = 200;
-
     private static BoggledCommonIndustry commonIndustry;
 
     public static ArrayList<String> conditionsAddedOnCompletion;
 
+    public static int requiredDaysToCrack = 200;
+
     public static void settingsFromJSON(JSONObject data) throws JSONException {
         commonIndustry = new BoggledCommonIndustry(data, "Planet Cracker");
 
-        requiredDaysToCrack = data.getInt("duration");
+        requiredDaysToCrack = commonIndustry.getDurations()[0];
 
         conditionsAddedOnCompletion = new ArrayList<>(Arrays.asList(data.getString("conditions_added_on_completion").split(boggledTools.csvOptionSeparator)));
     }
@@ -79,7 +79,7 @@ public class Boggled_Planet_Cracker extends BaseIndustry implements BoggledCommo
 
                 if(daysWithoutShortage >= requiredDaysToCrack)
                 {
-                    boggledTools.showProjectCompleteIntelMessage("Planet cracking", commonIndustry.getFocusMarketOrMarket(getMarket()).getName(), market);
+                    boggledTools.showProjectCompleteIntelMessage("Planet cracking", "Completed", commonIndustry.getFocusMarketOrMarket(getMarket()).getName(), market);
 
                     boggledTools.incrementOreForPlanetCracking(commonIndustry.getFocusMarketOrMarket(getMarket()));
 
@@ -120,28 +120,11 @@ public class Boggled_Planet_Cracker extends BaseIndustry implements BoggledCommo
         float opad = 10.0F;
         Color highlight = Misc.getHighlightColor();
 
-        //Inserts cracking status after description
-        if(commonIndustry.marketSuitableBoth(getMarket()) && mode != IndustryTooltipMode.ADD_INDUSTRY && mode != IndustryTooltipMode.QUEUED && !isBuilding())
-        {
-            int percentComplete = (int)((float)daysWithoutShortage / requiredDaysToCrack) * 100;
+        commonIndustry.tooltipIncomplete(this, tooltip, mode, "Planet cracking is approximately %s complete on " + commonIndustry.getFocusMarketOrMarket(getMarket()).getName() + ".", opad, highlight, commonIndustry.getPercentComplete(daysWithoutShortage, requiredDaysToCrack) + "%");
 
-            //Makes sure the tooltip doesn't say "100% complete" on the last day due to rounding up 99.5 to 100
-            percentComplete = Math.min(percentComplete, 99);
+        commonIndustry.tooltipComplete(this, tooltip, mode, "Further planet cracking operations would serve no purpose on " + commonIndustry.getFocusMarketOrMarket(getMarket()).getName() + ". The Planet Cracker can now be deconstructed without any risk of regression.", opad, highlight);
 
-            tooltip.addPara("Planet cracking is approximately %s complete on " + commonIndustry.getFocusMarketOrMarket(getMarket()).getName() + ".", opad, highlight, percentComplete + "%");
-        }
-
-        // Tell the player they can remove it
-        if(!commonIndustry.marketSuitableBoth(getMarket()) && mode != IndustryTooltipMode.ADD_INDUSTRY && mode != IndustryTooltipMode.QUEUED && !isBuilding())
-        {
-            tooltip.addPara("Further planet cracking operations would serve no purpose on " + commonIndustry.getFocusMarketOrMarket(getMarket()).getName() + ". The Planet Cracker can now be deconstructed without any risk of regression.", opad);
-        }
-
-        if(this.isDisrupted() && commonIndustry.marketSuitableBoth(getMarket()) && mode != IndustryTooltipMode.ADD_INDUSTRY && mode != IndustryTooltipMode.QUEUED && !isBuilding())
-        {
-            Color bad = Misc.getNegativeHighlightColor();
-            tooltip.addPara("Progress is stalled while the planet cracker is disrupted.", bad, opad);
-        }
+        commonIndustry.tooltipDisrupted(this, tooltip, mode, "Progress is stalled while the planet cracker is disrupted.", opad, Misc.getNegativeHighlightColor());
     }
 
     @Override

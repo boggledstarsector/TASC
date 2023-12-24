@@ -78,7 +78,7 @@ public class Boggled_Ouyang_Optimizer extends BaseIndustry implements BoggledCom
 
                 if(daysWithoutShortage >= requiredDaysToOptimize)
                 {
-                    boggledTools.showProjectCompleteIntelMessage("Ouyang Optimization", commonIndustry.getFocusMarketOrMarket(getMarket()).getName(), market);
+                    boggledTools.showProjectCompleteIntelMessage("Ouyang Optimization", "Completed", commonIndustry.getFocusMarketOrMarket(getMarket()).getName(), market);
 
                     boggledTools.incrementVolatilesForOuyangOptimization(commonIndustry.getFocusMarketOrMarket(getMarket()));
 

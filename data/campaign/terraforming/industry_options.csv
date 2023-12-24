@@ -1,18 +1,20 @@
-id,required_options,duration,dynamic_project_duration_modifiers,dynamic_project_duration_modifiers_data,resource,resource_step,requirement_needed,requirement_suitable,requirement_suitable_hidden,conditions_added_on_completion
+id,required_options,duration,dynamic_project_duration_modifiers,dynamic_project_duration_modifiers_data,resource,resource_step,requirement_needed,requirement_suitable,requirement_suitable_hidden,conditions_added_on_completion,conditions_removed_on_completion,tooltip_incomplete,tooltip_complete,tooltip_disrupted
 # Resource step is how much the resource should increase, per resource
-ai_mining_drones,boggledStationConstructionContentEnabled | boggledEnableAIMiningDronesStructure,,,,,,market_has_mining_industry,"colony_is_station ; Colony must be a station.",,
+ai_mining_drones,boggledStationConstructionContentEnabled | boggledEnableAIMiningDronesStructure,,,,,,market_has_mining_industry,"colony_is_station ; Colony must be a station.",,,
 atmosphere_processor,,,,,,,,"colony_is_not_station ; Colony must be on a planet. |
 colony_not_unknown_world ; This planet type cannot be terraformed. |
 colony_not_star ; Stars cannot be terraformed. |
 colony_not_gas_giant ; Gas giants cannot be terraformed. |
 colony_not_volcanic ; Volcanic worlds cannot be terraformed. |
 colony_not_irradiated ; Irradiated worlds cannot be terraformed. |
-colony_has_atmo_problem ; Atmospheric conditions on $market are already optimal. There is no reason to build an atmosphere processor here.",
+colony_has_atmo_problem ; Atmospheric conditions on $market are already optimal. There is no reason to build an atmosphere processor here.",,,
+chameleon,boggledDomainTechContentEnabled | boggledCHAMELEONEnabled,200 | 200,,,,,,,,,
+,,,,,,,,,,,
 ouyang_optimizer,boggledOuyangOptimizerEnabled,2,,,volatiles,2,,"colony_is_station ; Colony must be a station. |
 orbited_planet_is_gas_giant ; Only gas giants can undergo Ouyang optimization. |
 orbited_planet_not_has_extreme_weather ; $focusMarket already has extreme weather. Making it worse won't increase volatiles availability. |
-orbited_planet_not_has_volatiles_plentiful ; $focusMarket is already extremely rich in volatiles. An Ouyang optimization would not yield any improvement.",,extreme_weather
+orbited_planet_not_has_volatiles_plentiful ; $focusMarket is already extremely rich in volatiles. An Ouyang optimization would not yield any improvement.",,extreme_weather,
 planet_cracker,boggledPlanetCrackerEnabled,2,,,"ore | rare_ore","1 | 1",,"colony_is_station ; Colony must be a station. |
 orbited_planet_is_not_gas_giant ; Gas giants cannot be cracked. |
 orbited_planet_not_has_tectonic_or_extreme_tectonic_activity ; $focusMarket already has tectonic activity. Making it worse won't increase ore availability. |
-orbited_planet_not_has_ore_and_rare_ore_ultrarich ; $focusMarket already has easily accessible ore deposits. Cracking the planet would not yield any improvement.",,tectonic_activity
+orbited_planet_not_has_ore_and_rare_ore_ultrarich ; $focusMarket already has easily accessible ore deposits. Cracking the planet would not yield any improvement.",,tectonic_activity,

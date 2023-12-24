@@ -25,10 +25,7 @@ import com.fs.starfarer.campaign.CircularOrbit;
 import com.fs.starfarer.campaign.CircularOrbitPointDown;
 import com.fs.starfarer.campaign.CircularOrbitWithSpin;
 import com.fs.starfarer.loading.specs.PlanetSpec;
-import data.campaign.econ.industries.Boggled_AI_Mining_Drones;
-import data.campaign.econ.industries.Boggled_Atmosphere_Processor;
-import data.campaign.econ.industries.Boggled_Ouyang_Optimizer;
-import data.campaign.econ.industries.Boggled_Planet_Cracker;
+import data.campaign.econ.industries.*;
 import illustratedEntities.helper.ImageHandler;
 import illustratedEntities.helper.Settings;
 import illustratedEntities.helper.TextHandler;
@@ -382,6 +379,7 @@ public class boggledTools
     public static void initialiseDefaultIndustryOptionsTrampolines() {
         addIndustryOptionsTrampoline("ai_mining_drones", new AIMiningDronesIndustryTrampoline());
         addIndustryOptionsTrampoline("atmosphere_processor", new AtmosphereProcessorIndustryTrampoline());
+        addIndustryOptionsTrampoline("chameleon", new CHAMELEONIndustryTrampoline());
         addIndustryOptionsTrampoline("ouyang_optimizer", new OuyangOptimizerIndustryTrampoline());
         addIndustryOptionsTrampoline("planet_cracker", new PlanetCrackerIndustryTrampoline());
     }
@@ -2150,10 +2148,10 @@ public class boggledTools
         }
     }
 
-    public static void showProjectCompleteIntelMessage(String project, String marketName, MarketAPI market) {
+    public static void showProjectCompleteIntelMessage(String project, String completedMessage, String marketName, MarketAPI market) {
         if (market.isPlayerOwned()) {
             MessageIntel intel = new MessageIntel(project + " on " + marketName, Misc.getBasePlayerColor());
-            intel.addLine("    - Completed");
+            intel.addLine("    - " + completedMessage);
             intel.setIcon(Global.getSector().getPlayerFaction().getCrest());
             intel.setSound(BaseIntelPlugin.getSoundStandardUpdate());
             Global.getSector().getCampaignUI().addMessage(intel, CommMessageAPI.MessageClickAction.COLONY_INFO, market);
@@ -2217,7 +2215,7 @@ public class boggledTools
             refreshSupplyAndDemand(market);
             refreshAquacultureAndFarming(market);
 
-            showProjectCompleteIntelMessage(projectTooltip, market.getName(), market);
+            showProjectCompleteIntelMessage(projectTooltip, "Completed", market.getName(), market);
         }
 
         private void addRemoveConditions(MarketAPI market) {
@@ -2385,6 +2383,13 @@ public class boggledTools
         @Override
         public void initialiseOptionsFromJSON(JSONObject data) throws JSONException {
             Boggled_Atmosphere_Processor.settingsFromJSON(data);
+        }
+    }
+
+    public static class CHAMELEONIndustryTrampoline implements IndustryOptionTrampoline {
+        @Override
+        public void initialiseOptionsFromJSON(JSONObject data) throws JSONException {
+            Boggled_CHAMELEON.settingsFromJSON(data);
         }
     }
 
