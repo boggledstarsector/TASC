@@ -36,7 +36,7 @@ public class Boggled_Planet_Cracker extends BaseIndustry implements BoggledCommo
     public static void settingsFromJSON(JSONObject data) throws JSONException {
         commonIndustry = new BoggledCommonIndustry(data, "Planet Cracker");
 
-        requiredDaysToCrack = commonIndustry.getDurations()[0];
+//        requiredDaysToCrack = commonIndustry.getDurations()[0];
 
         conditionsAddedOnCompletion = new ArrayList<>(Arrays.asList(data.getString("conditions_added_on_completion").split(boggledTools.csvOptionSeparator)));
     }

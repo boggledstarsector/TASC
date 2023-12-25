@@ -42,9 +42,8 @@ public class Boggled_CHAMELEON extends BaseIndustry implements BoggledCommonIndu
     public static void settingsFromJSON(JSONObject data) throws JSONException {
         commonIndustry = new BoggledCommonIndustry(data, "CHAMELEON");
 
-        String[] duration = data.getString("duration").split(boggledTools.csvOptionSeparator);
-        requiredDaysToRemoveDeciv = Integer.parseInt(duration[0]);
-        requiredDaysToRemoveRogue = Integer.parseInt(duration[1]);
+//        requiredDaysToRemoveDeciv = commonIndustry.durations.getDuration(Conditions.DECIVILIZED);
+//        requiredDaysToRemoveRogue = commonIndustry.durations.getDuration(Conditions.ROGUE_AI_CORE);
     }
 
     @Override
@@ -193,13 +192,9 @@ public class Boggled_CHAMELEON extends BaseIndustry implements BoggledCommonIndu
             tooltip.addPara("An investigation into the whereabouts of the rogue AI core on " + this.market.getName() + " is approximately %s complete.", opad, highlight, percentComplete + "%");
         }
 
-        commonIndustry.tooltipDisrupted(this, tooltip, mode, "Progress is stalled while CHAMELEON is disrupted.", opad, Misc.getNegativeHighlightColor());
-
-//        if(this.isDisrupted() && ((this.market.hasCondition(Conditions.DECIVILIZED_SUBPOP) || this.market.hasCondition(Conditions.DECIVILIZED)) || this.market.hasCondition(Conditions.ROGUE_AI_CORE)) && mode != IndustryTooltipMode.ADD_INDUSTRY && mode != IndustryTooltipMode.QUEUED && !isBuilding())
-//        {
-//            Color bad = Misc.getNegativeHighlightColor();
-//            tooltip.addPara("Progress is stalled while CHAMELEON is disrupted.", bad, opad);
-//        }
+        if (this.getMarket().hasCondition(Conditions.DECIVILIZED) || this.getMarket().hasCondition(Conditions.DECIVILIZED_SUBPOP) || this.getMarket().hasCondition(Conditions.ROGUE_AI_CORE)) {
+            commonIndustry.tooltipDisrupted(this, tooltip, mode, "Progress is stalled while CHAMELEON is disrupted.", opad, Misc.getNegativeHighlightColor());
+        }
     }
 
     @Override

@@ -17,39 +17,52 @@ public class BoggledCommonIndustry {
 
     private String industry;
 
-    private String[] requiredOptions;
+//    private String[] requiredOptions;
     private ArrayList<Pair<boggledTools.TerraformingRequirements, String>> requirementsSuitable;
     private ArrayList<Pair<boggledTools.TerraformingRequirements, String>> requirementsSuitableHidden;
 
-    private int[] durations;
+    private boggledTools.TerraformingProject project;
+    private String[][] conditionsAddedOnCompletion;
+    private String[][] conditionsRemovedOnCompletion;
 
-    private String[] conditionsAddedOnCompletion;
-    private String[] conditionsRemovedOnCompletion;
+    private String[][] parseSubstrings(String[] data, String regex) {
+        if (data.length == 1 && data[0].isEmpty()) {
+            return new String[0][];
+        }
+        String[][] ret = new String[data.length][];
+        for (int i = 0; i < data.length; ++i) {
+            String[] subStrings = data[i].split(regex);
+            ret[i] = new String[subStrings.length];
+            System.arraycopy(subStrings, 0, ret[i], 0, subStrings.length);
+        }
+        return ret;
+    }
 
     BoggledCommonIndustry(JSONObject data, String industry) throws JSONException {
         this.industry = industry;
-        this.requiredOptions = data.getString("required_options").split(boggledTools.csvOptionSeparator);
+//        this.requiredOptions = data.getString("required_options").split(boggledTools.csvOptionSeparator);
 
         this.requirementsSuitable = boggledTools.getRequirementsSuitable(data, "requirement_suitable", industry);
         this.requirementsSuitableHidden = boggledTools.getRequirementsSuitable(data, "requirement_suitable_hidden", industry);
 
-        String[] durationStrings = data.getString("duration").split(boggledTools.csvOptionSeparator);
-        this.durations = new int[durationStrings.length];
-        for (int i = 0; i < durationStrings.length; ++i) {
-            this.durations[i] = Integer.parseInt(durationStrings[i]);
-        }
+//        String[] durationsWithConditions = data.getString("durations_with_conditions").split(boggledTools.csvOptionSeparator);
+//        String[] durationModifiers = data.getString("dynamic_project_duration_modifiers").split(boggledTools.csvOptionSeparator);
+//        this.durations = new DurationWithConditions(durationsWithConditions, durationModifiers);
 
-        this.conditionsAddedOnCompletion = data.getString("conditions_added_on_completion").split(boggledTools.csvOptionSeparator);
-        this.conditionsRemovedOnCompletion = data.getString("conditions_removed_on_completion").split(boggledTools.csvOptionSeparator);
+//        String[] conditionsAddedOnCompletion = data.getString("conditions_added_on_completion").split(boggledTools.csvOptionSeparator);
+//        String[] conditionsRemovedOnCompletion = data.getString("conditions_removed_on_completion").split(boggledTools.csvOptionSeparator);
+
+//        this.conditionsAddedOnCompletion = parseSubstrings(conditionsAddedOnCompletion, boggledTools.csvSubOptionSeparator);
+//        this.conditionsRemovedOnCompletion = parseSubstrings(conditionsRemovedOnCompletion, boggledTools.csvSubOptionSeparator);
     }
 
     public void overridesFromJSON(JSONObject data) throws JSONException {
 
     }
 
-    public int[] getDurations() {
-        return durations;
-    }
+//    public int[] getDurations() {
+//        return durations;
+//    }
 
     public int getPercentComplete(int daysComplete, int daysRequired) {
         return (int) Math.min(99, ((float)daysComplete / daysRequired) * 100);
@@ -102,7 +115,7 @@ public class BoggledCommonIndustry {
     Throw an instance of this on a type and just delegate to it for handling these three BaseIndustry functions
      */
     public boolean isAvailableToBuild(MarketAPI market) {
-        if (!boggledTools.optionsAllowThis(requiredOptions)) {
+        if (!project.isEnabled()) {
             return false;
         }
 
@@ -110,7 +123,7 @@ public class BoggledCommonIndustry {
     }
 
     public boolean showWhenUnavailable(MarketAPI market) {
-        if (!boggledTools.optionsAllowThis(requiredOptions)) {
+        if (!project.isEnabled()) {
             return false;
         }
 
@@ -118,6 +131,6 @@ public class BoggledCommonIndustry {
     }
 
     public String getUnavailableReason(MarketAPI market, LinkedHashMap<String, String> tokenReplacements) {
-        return boggledTools.getUnavailableReason(requirementsSuitable, requirementsSuitableHidden, industry, market, tokenReplacements, requiredOptions);
+        return boggledTools.getUnavailableReason(requirementsSuitable, requirementsSuitableHidden, industry, market, tokenReplacements, project.getEnableSettings());
     }
 }

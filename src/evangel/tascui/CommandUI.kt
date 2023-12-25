@@ -67,14 +67,17 @@ class StaticTooltip(title : String?, condition : MarketConditionAPI?, vararg str
     }
 }
 
-class ProjectRequirementsTooltip(terraformingProject : boggledTools.TerraformingProject, width : Float) : TooltipCreator {
-    val terraformingProject : boggledTools.TerraformingProject
+class ProjectRequirementsTooltip(width : Float) : TooltipCreator {
+    var terraformingProject : boggledTools.TerraformingProject? = null
     private val width : Float
     var market : MarketAPI? = null
 
     init {
-        this.terraformingProject = terraformingProject
         this.width = width
+    }
+
+    fun setProject(terraformingProject : boggledTools.TerraformingProject) {
+        this.terraformingProject = terraformingProject;
     }
 
     override fun isTooltipExpandable(tooltipParam : Any?): Boolean {
@@ -87,11 +90,11 @@ class ProjectRequirementsTooltip(terraformingProject : boggledTools.Terraforming
 
     override fun createTooltip(tooltip : TooltipMakerAPI, expanded : Boolean, tooltipParam : Any?) {
 
-        tooltip.addPara("Project duration: %s days", 0f, Misc.getHighlightColor(), terraformingProject.getModifiedProjectDuration(market!!).toString());
+        tooltip.addPara("Project duration: %s days", 0f, Misc.getHighlightColor(), terraformingProject!!.getModifiedProjectDuration(market!!).toString());
 
         tooltip.addSpacer(5f);
 
-        for (projectRequirement in terraformingProject.projectRequirements) {
+        for (projectRequirement in terraformingProject!!.projectRequirements) {
             val requirementMet = projectRequirement.checkRequirement(market!!);
             val color = if (requirementMet) Misc.getPositiveHighlightColor() else Misc.getNegativeHighlightColor()
             tooltip.addPara(projectRequirement.tooltip, color, 0f)
@@ -99,8 +102,8 @@ class ProjectRequirementsTooltip(terraformingProject : boggledTools.Terraforming
 
         tooltip.addSpacer(5f);
 
-        if (terraformingProject.planetTypeChange.isNotEmpty()) {
-            tooltip.addPara("Planet becomes a ${terraformingProject.planetTypeChange} planet", 0f)
+        if (terraformingProject!!.planetTypeChange.isNotEmpty()) {
+            tooltip.addPara("Planet becomes a ${terraformingProject!!.planetTypeChange} planet", 0f)
         }
     }
 }
@@ -221,9 +224,9 @@ class CommandUIIntelK : LunaBaseCustomPanelPlugin() {
         private const val PLANET_CARD_HOLDER_MAGIC_X_PAD = 3f
         private const val PLANET_TYPE_LABEL_MAGIC_X_PAD = 4f
 
-        private fun getTerraformingOptionPair(projectName : String) : Pair<String, String> {
-            return Pair(projectName, boggledTools.getTooltipProjectName(projectName))
-        }
+//        private fun getTerraformingOptionPair(projectName : String) : Pair<String, String> {
+//            return Pair(projectName, boggledTools.getTooltipProjectName(projectName))
+//        }
 
         private const val BUTTON_OFF_SCREEN_POSITION = 100000f
 
@@ -291,11 +294,11 @@ class CommandUIIntelK : LunaBaseCustomPanelPlugin() {
 
 //        buttonsHolder.innerElement.addAreaCheckbox(null, null, Global.getSector().playerFaction.baseUIColor, Color(122,122,122,255), Global.getSector().playerFaction.brightUIColor, width, height, 0f).position.inTL(0f, 0f)
 
-        for (terraformingProject in boggledTools.getTerraformingProjects()) {
-            val projectRequirementsTooltip = ProjectRequirementsTooltip(terraformingProject.value, width)
+        for (i in 0 until boggledTools.getNumTerraformingProjects()) {
+            val projectRequirementsTooltip = ProjectRequirementsTooltip(width)
 
-            val validButton = buttonsHolder.innerElement.addButton(terraformingProject.value.projectTooltip, projectRequirementsTooltip, faction.baseUIColor, faction.darkUIColor, Alignment.LMID, CutStyle.ALL, width, HEADER_HEIGHT, 0f)
-            val invalidButton = buttonsHolder.innerElement.addButton(terraformingProject.value.projectTooltip, projectRequirementsTooltip, faction.baseUIColor.darker(), faction.darkUIColor.darker(), Alignment.LMID, CutStyle.ALL, width, HEADER_HEIGHT, 0f)
+            val validButton = buttonsHolder.innerElement.addButton("", projectRequirementsTooltip, faction.baseUIColor, faction.darkUIColor, Alignment.LMID, CutStyle.ALL, width, HEADER_HEIGHT, 0f)
+            val invalidButton = buttonsHolder.innerElement.addButton("", projectRequirementsTooltip, faction.baseUIColor.darker(), faction.darkUIColor.darker(), Alignment.LMID, CutStyle.ALL, width, HEADER_HEIGHT, 0f)
 
             buttonsHolder.innerElement.addTooltipTo(projectRequirementsTooltip, validButton, TooltipMakerAPI.TooltipLocation.RIGHT)
             buttonsHolder.innerElement.addTooltipTo(projectRequirementsTooltip, invalidButton, TooltipMakerAPI.TooltipLocation.RIGHT)
@@ -379,7 +382,7 @@ class CommandUIIntelK : LunaBaseCustomPanelPlugin() {
 
             val validTerraformingOptions : ArrayList<boggledTools.TerraformingProject> = ArrayList()
             val invalidTerraformingOptions : ArrayList<boggledTools.TerraformingProject> = ArrayList()
-            for (terraformingProject in boggledTools.getTerraformingProjects()) {
+            for (terraformingProject in boggledTools.getVisibleTerraformingProjects(selectedPlanet!!.market)) {
                 if (terraformingProject.value.requirementsMet(selectedPlanet!!.market)) {
                     validTerraformingOptions.add(terraformingProject.value)
                 } else {
@@ -388,20 +391,22 @@ class CommandUIIntelK : LunaBaseCustomPanelPlugin() {
             }
 
             var buttonVerticalSpacing = 0f
-            val positionButtons = { terraformingOptions : ArrayList<boggledTools.TerraformingProject>, buttons : ArrayList<ButtonAPI> ->
-                for (terraformingOption in terraformingOptions) {
-                    val button = buttons.find { (it.customData as ProjectRequirementsTooltip).terraformingProject.projectId == terraformingOption.projectId }
-                    if (button != null) {
-                        val projectRequirementsTooltip = button.customData as ProjectRequirementsTooltip
-                        button.position.inTL(0f, buttonVerticalSpacing)
-                        projectRequirementsTooltip.market = selectedPlanet?.market
-                    }
+            val positionButtons = fun(terraformingOptions : ArrayList<boggledTools.TerraformingProject>, buttons : ArrayList<ButtonAPI>, buttonsStart : Int) : Int {
+                for (i in 0 until terraformingOptions.size) {
+                    val button = buttons[i + buttonsStart]
+
+                    val projectRequirementsTooltip = button.customData as ProjectRequirementsTooltip
+                    button.text = terraformingOptions[i].projectTooltip
+                    button.position.inTL(0f, buttonVerticalSpacing)
+                    projectRequirementsTooltip.market = selectedPlanet?.market
+                    projectRequirementsTooltip.setProject(terraformingOptions[i])
 
                     buttonVerticalSpacing += HEADER_HEIGHT + SORT_SPACING
                 }
+                return terraformingOptions.size
             }
-            positionButtons(validTerraformingOptions, requirementsMetButtons)
-            positionButtons(invalidTerraformingOptions, requirementsNotMetButtons)
+            val validEnd = positionButtons(validTerraformingOptions, requirementsMetButtons, 0)
+            positionButtons(invalidTerraformingOptions, requirementsNotMetButtons, validEnd)
         }
     }
 
@@ -437,7 +442,7 @@ class CommandUIIntelK : LunaBaseCustomPanelPlugin() {
     }
 
     private fun handleTerraformingOptionButtonPress() {
-        val terraformingProject = (selectedProject?.customData as ProjectRequirementsTooltip).terraformingProject
+        val terraformingProject = (selectedProject?.customData as ProjectRequirementsTooltip).terraformingProject!!
         if (terraformingProject.requirementsMet(selectedPlanet?.market)) {
             moveButtonsOffscreen(startProjectButton!!.position::inTL, requirementsNotMetButton!!, inactiveStartProjectButton!!)
         } else {
@@ -448,7 +453,7 @@ class CommandUIIntelK : LunaBaseCustomPanelPlugin() {
     private fun handleTerraformingStartProjectButtonPress() {
         val terraformingController = getTerraformingControllerFromMarket(selectedPlanet!!.market)
 
-        val terraformingProject = (selectedProject?.customData as ProjectRequirementsTooltip).terraformingProject
+        val terraformingProject = (selectedProject?.customData as ProjectRequirementsTooltip).terraformingProject!!
 
         terraformingController.project = terraformingProject.projectId
 

@@ -1,4 +1,8 @@
 id,tooltip,invert_all,requirements
+# id is a string to identify the project, unique to 'terraforming_requirements.csv'
+# tooltip is the user displayed string shown to display the requirement conditions
+# invert_all is whether the result of checking all the requirements will be inverted
+# requirements is a | separated list of requirement IDs as specified in 'terraforming_requirement.csv'. These are checked in an OR manner, ie only one of the requirements has to be true for this check to return true
 colony_not_arid_world,"Colony is not already an arid world",false,"planet_not_arid"
 colony_not_jungle_world,"Colony is not already a jungle world",false,"planet_not_jungle"
 colony_not_terran_world,"Colony is not already a Terran world",false,"planet_not_terran"
@@ -59,3 +63,6 @@ orbited_planet_not_has_tectonic_or_extreme_tectonic_activity,"Orbited planet doe
 
 orbited_planet_not_has_volatiles_plentiful,"Orbited planet does not have plentiful volatiles",true,"focus_market_has_volatiles_plentiful"
 orbited_planet_not_has_ore_and_rare_ore_ultrarich,"Orbited planet does not have ultrarich ore and rare ore",true,"focus_market_has_ore_ultrarich | focus_market_has_rare_ore_ultrarich"
+
+colony_decivilized,"Colony has a decivilized population",false,"market_decivilized | market_decivilized_subpop"
+colony_rogue_ai_core,"Colony has a rogue AI core",false,"market_rogue_ai_core"

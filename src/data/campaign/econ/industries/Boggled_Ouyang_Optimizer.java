@@ -35,8 +35,6 @@ public class Boggled_Ouyang_Optimizer extends BaseIndustry implements BoggledCom
     public static void settingsFromJSON(JSONObject data) throws JSONException {
         commonIndustry = new BoggledCommonIndustry(data, "Ouyang Optimizer");
 
-        requiredDaysToOptimize = data.getInt("duration");
-
         conditionsAddedOnCompletion = new ArrayList<>(Arrays.asList(data.getString("conditions_added_on_completion").split(boggledTools.csvOptionSeparator)));
     }
 
