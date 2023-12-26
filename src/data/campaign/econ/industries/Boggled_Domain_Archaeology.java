@@ -1,6 +1,8 @@
 package data.campaign.econ.industries;
 
 import java.lang.String;
+import java.util.LinkedHashMap;
+
 import com.fs.starfarer.api.campaign.econ.*;
 import com.fs.starfarer.api.util.Misc;
 import com.fs.starfarer.api.impl.campaign.econ.impl.BaseIndustry;
@@ -105,14 +107,15 @@ public class Boggled_Domain_Archaeology extends BaseIndustry
     @Override
     public String getUnavailableReason()
     {
-        if(!(market.hasCondition(Conditions.RUINS_SCATTERED) || market.hasCondition(Conditions.RUINS_WIDESPREAD) || market.hasCondition(Conditions.RUINS_EXTENSIVE) || market.hasCondition(Conditions.RUINS_VAST)))
-        {
-            return "Requires ruins";
-        }
-        else
-        {
-            return "Error in getUnavailableReason() in the domain archaeology structure. Please tell Boggled about this on the forums.";
-        }
+        return commonindustry.getUnavailableReason(getMarket(), new LinkedHashMap<String, String>());
+//        if(!(market.hasCondition(Conditions.RUINS_SCATTERED) || market.hasCondition(Conditions.RUINS_WIDESPREAD) || market.hasCondition(Conditions.RUINS_EXTENSIVE) || market.hasCondition(Conditions.RUINS_VAST)))
+//        {
+//            return "Requires ruins";
+//        }
+//        else
+//        {
+//            return "Error in getUnavailableReason() in the domain archaeology structure. Please tell Boggled about this on the forums.";
+//        }
     }
 
     @Override

@@ -126,9 +126,9 @@ public class boggledCraftingPrintRequirements extends BaseCommandPlugin
             }
 
             text.addPara("Requirements to craft " +  itemToCraftString + ":");
-            boggledTools.TerraformingProject craftingProject = boggledTools.getCraftingProject(craftingProjectId);
+            BoggledTerraformingProject craftingProject = boggledTools.getCraftingProject(craftingProjectId);
             if (craftingProject != null) {
-                for (boggledTools.TerraformingRequirements craftingRequirements : craftingProject.getProjectRequirements()) {
+                for (BoggledTerraformingRequirements craftingRequirements : craftingProject.getProjectRequirements()) {
                     if (craftingRequirements.checkRequirement(market)) {
                         text.addPara("      - %s", good, craftingRequirements.getTooltip());
                     } else {

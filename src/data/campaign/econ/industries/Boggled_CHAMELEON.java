@@ -12,6 +12,7 @@ import com.fs.starfarer.api.util.Misc;
 import com.fs.starfarer.api.impl.campaign.econ.impl.BaseIndustry;
 import com.fs.starfarer.api.util.Pair;
 import data.campaign.econ.boggledTools;
+import data.scripts.BoggledTerraformingProject;
 import kotlin.Triple;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -101,7 +102,7 @@ public class Boggled_CHAMELEON extends BaseIndustry implements BoggledCommonIndu
         if (commonIndustry.projects.get(1).component1().requirementsMet(getMarket())) {
             commonIndustry.tooltipIncomplete(this, tooltip, mode, "An investigation into the whereabouts of the rogue AI core on " + getMarket().getName() + " is approximately %s complete.", opad, highlight, commonIndustry.getPercentComplete(1, this) + "%");
         }
-        for (Triple<boggledTools.TerraformingProject, String, String> project : commonIndustry.projects) {
+        for (Triple<BoggledTerraformingProject, String, String> project : commonIndustry.projects) {
             if (project.component1().requirementsMet(getMarket())) {
                 commonIndustry.tooltipDisrupted(this, tooltip, mode, "Progress is stalled while CHAMELEON is disrupted.", opad, Misc.getNegativeHighlightColor());
             }

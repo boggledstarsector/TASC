@@ -3,7 +3,6 @@ package data.campaign.econ.industries;
 import com.fs.starfarer.api.impl.campaign.econ.impl.BaseIndustry;
 import com.fs.starfarer.api.impl.campaign.ids.Commodities;
 import com.fs.starfarer.api.util.Pair;
-import data.campaign.econ.boggledTools;
 import org.json.JSONException;
 import org.json.JSONObject;
 

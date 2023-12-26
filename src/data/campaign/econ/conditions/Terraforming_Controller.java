@@ -12,6 +12,7 @@ import com.fs.starfarer.api.util.Misc;
 import java.util.Map;
 
 import data.campaign.econ.boggledTools;
+import data.scripts.BoggledTerraformingProject;
 
 public class Terraforming_Controller extends BaseHazardCondition
 {
@@ -35,7 +36,7 @@ public class Terraforming_Controller extends BaseHazardCondition
         daysRequiredForCurrentProject = 0;
         if (currentProject != null)
         {
-            boggledTools.TerraformingProject terraformingProject = boggledTools.getProject(currentProject);
+            BoggledTerraformingProject terraformingProject = boggledTools.getProject(currentProject);
             if (terraformingProject != null) {
                 daysRequiredForCurrentProject = terraformingProject.getModifiedProjectDuration(market);
             }
@@ -158,7 +159,7 @@ public class Terraforming_Controller extends BaseHazardCondition
             CampaignClockAPI clock = Global.getSector().getClock();
             if(clock.getDay() != lastDayChecked)
             {
-                boggledTools.TerraformingProject project = boggledTools.getProject(currentProject);
+                BoggledTerraformingProject project = boggledTools.getProject(currentProject);
                 // Null check so it doesn't crash when updating with an active project
                 if(project != null && project.requirementsMet(market))
                 {
@@ -166,7 +167,7 @@ public class Terraforming_Controller extends BaseHazardCondition
                     lastDayChecked = clock.getDay();
 
                     if (daysCompleted >= daysRequiredForCurrentProject) {
-                        boggledTools.TerraformingProject terraformingProject = boggledTools.getProject(currentProject);
+                        BoggledTerraformingProject terraformingProject = boggledTools.getProject(currentProject);
                         if (terraformingProject != null) {
                             terraformingProject.finishProject(market);
                         } else {

@@ -1,0 +1,254 @@
+package data.scripts;
+
+import com.fs.starfarer.api.Global;
+import com.fs.starfarer.api.campaign.SpecialItemData;
+import com.fs.starfarer.api.campaign.econ.Industry;
+import com.fs.starfarer.api.campaign.econ.MarketAPI;
+import com.fs.starfarer.api.util.Pair;
+import data.campaign.econ.boggledTools;
+
+import java.util.ArrayList;
+
+public class BoggledTerraformingRequirement {
+    public abstract static class TerraformingRequirement {
+        private final String requirementId;
+        private final boolean invert;
+
+        public String getRequirementId() { return requirementId; }
+
+        protected TerraformingRequirement(String requirementId, boolean invert) {
+            this.requirementId = requirementId;
+            this.invert = invert;
+        }
+
+        protected abstract boolean checkRequirementImpl(MarketAPI market);
+
+        public final boolean checkRequirement(MarketAPI market) {
+            boolean ret = checkRequirementImpl(market);
+            if (invert) {
+                ret = !ret;
+            }
+            return ret;
+        }
+    }
+
+    public static class PlanetType extends TerraformingRequirement {
+        String planetTypeId;
+
+        public PlanetType(String requirementId, boolean invert, String planetTypeId) {
+            super(requirementId, invert);
+            this.planetTypeId = planetTypeId;
+        }
+
+        @Override
+        protected boolean checkRequirementImpl(MarketAPI market) {
+            return planetTypeId.equals(boggledTools.getPlanetType(market.getPlanetEntity()).getPlanetId());
+        }
+    }
+
+    public static class FocusPlanetType extends PlanetType {
+        public FocusPlanetType(String requirementId, boolean invert, String planetTypeId) {
+            super(requirementId, invert, planetTypeId);
+        }
+
+        @Override
+        protected boolean checkRequirementImpl(MarketAPI market) {
+            if (market.getPrimaryEntity().getOrbitFocus().getMarket() == null) {
+                return false;
+            }
+            return super.checkRequirementImpl(market.getPrimaryEntity().getOrbitFocus().getMarket());
+        }
+    }
+
+    public static class MarketHasCondition extends TerraformingRequirement {
+        String conditionId;
+        public MarketHasCondition(String requirementId, boolean invert, String conditionId) {
+            super(requirementId, invert);
+            this.conditionId = conditionId;
+        }
+
+        @Override
+        protected boolean checkRequirementImpl(MarketAPI market) {
+            return market.hasCondition(conditionId);
+        }
+    }
+
+    public static class FocusMarketHasCondition extends MarketHasCondition {
+        public FocusMarketHasCondition(String requirementId, boolean invert, String conditionId) {
+            super(requirementId, invert, conditionId);
+        }
+
+        @Override
+        protected boolean checkRequirementImpl(MarketAPI market) {
+            if (market.getPrimaryEntity().getOrbitFocus().getMarket() == null) {
+                return false;
+            }
+            return super.checkRequirementImpl(market.getPrimaryEntity().getOrbitFocus().getMarket());
+        }
+    }
+
+    public static class MarketHasIndustry extends TerraformingRequirement {
+        String industryId;
+        public MarketHasIndustry(String requirementId, boolean invert, String industryId) {
+            super(requirementId, invert);
+            this.industryId = industryId;
+        }
+
+        @Override
+        protected boolean checkRequirementImpl(MarketAPI market) {
+            Industry industry = market.getIndustry(industryId);
+            return industry != null && industry.isFunctional() && market.hasIndustry(industryId);
+        }
+    }
+
+    public static class MarketHasIndustryWithItem extends MarketHasIndustry {
+        String itemId;
+        public MarketHasIndustryWithItem(String requirementId, boolean invert, String industryId, String itemId) {
+            super(requirementId, invert, industryId);
+            this.itemId = itemId;
+        }
+
+        @Override
+        protected boolean checkRequirementImpl(MarketAPI market) {
+            if (!super.checkRequirementImpl(market)) {
+                return false;
+            }
+            Industry industry = market.getIndustry(industryId);
+            for (SpecialItemData specialItemData : industry.getVisibleInstalledItems()) {
+                if (itemId.equals(specialItemData.getId())) {
+                    return true;
+                }
+            }
+            return false;
+        }
+    }
+
+    public static class MarketHasWaterPresent extends TerraformingRequirement {
+        int minWaterLevel;
+        int maxWaterLevel;
+        public MarketHasWaterPresent(String requirementId, boolean invert, int minWaterLevel, int maxWaterLevel) {
+            super(requirementId, invert);
+            this.minWaterLevel = minWaterLevel;
+            this.maxWaterLevel = maxWaterLevel;
+        }
+
+        @Override
+        protected boolean checkRequirementImpl(MarketAPI market) {
+            int waterLevel = boggledTools.getPlanetWaterLevel(market);
+            return minWaterLevel <= waterLevel && waterLevel <= maxWaterLevel;
+        }
+    }
+
+    public static class TerraformingPossibleOnMarket extends TerraformingRequirement {
+        ArrayList<String> invalidatingConditions;
+        public TerraformingPossibleOnMarket(String requirementId, boolean invert, ArrayList<String> invalidatingConditions) {
+            super(requirementId, invert);
+            this.invalidatingConditions = invalidatingConditions;
+        }
+
+        @Override
+        protected boolean checkRequirementImpl(MarketAPI market) {
+            for (String invalidatingCondition : invalidatingConditions) {
+                if (market.hasCondition(invalidatingCondition)) {
+                    return false;
+                }
+            }
+            return boggledTools.getPlanetType(market.getPlanetEntity()).getTerraformingPossible();
+        }
+    }
+
+    public static class MarketHasTags extends TerraformingRequirement {
+        ArrayList<String> tags;
+        public MarketHasTags(String requirementId, boolean invert, ArrayList<String> tags) {
+            super(requirementId, invert);
+            this.tags = tags;
+        }
+
+        @Override
+        protected boolean checkRequirementImpl(MarketAPI market) {
+            for (String tag : tags) {
+                if (!market.hasTag(tag) && !market.getPrimaryEntity().hasTag(tag)) {
+                    return false;
+                }
+            }
+            return true;
+        }
+    }
+
+    public static class MarketIsAtLeastSize extends TerraformingRequirement {
+        int colonySize;
+        public MarketIsAtLeastSize(String requirementId, boolean invert, int colonySize) {
+            super(requirementId, invert);
+            this.colonySize = colonySize;
+        }
+
+        @Override
+        protected boolean checkRequirementImpl(MarketAPI market) {
+            return market.getSize() >= colonySize;
+        }
+    }
+
+    public static class FleetCargoContainsAtLeast extends TerraformingRequirement {
+        String cargoId;
+        int quantity;
+        public FleetCargoContainsAtLeast(String requirementId, boolean invert, String cargoId, int quantity) {
+            super(requirementId, invert);
+            this.cargoId = cargoId;
+            this.quantity = quantity;
+        }
+
+        @Override
+        protected boolean checkRequirementImpl(MarketAPI market) {
+            return Global.getSector().getPlayerFleet().getCargo().getCommodityQuantity(cargoId) >= quantity;
+        }
+    }
+
+    public static class PlayerHasStoryPointsAtLeast extends TerraformingRequirement {
+        int quantity;
+        public PlayerHasStoryPointsAtLeast(String requirementId, boolean invert, int quantity) {
+            super(requirementId, invert);
+            this.quantity = quantity;
+        }
+
+        @Override
+        protected boolean checkRequirementImpl(MarketAPI market) {
+            return Global.getSector().getPlayerStats().getStoryPoints() >= quantity;
+        }
+    }
+
+    public static class WorldTypeSupportsResourceImprovement extends TerraformingRequirement {
+        String resourceId;
+        public WorldTypeSupportsResourceImprovement(String requirementId, boolean invert, String resourceId) {
+            super(requirementId, invert);
+            this.resourceId = resourceId;
+        }
+
+        @Override
+        protected boolean checkRequirementImpl(MarketAPI market) {
+            Pair<String, String> key = new Pair<>(boggledTools.getPlanetType(market.getPlanetEntity()).getPlanetId(), resourceId);
+            String maxResource = boggledTools.getResourceLimits().get(key);
+
+            if (maxResource == null || maxResource.isEmpty()) {
+                return false;
+            }
+
+            if (market.hasCondition(maxResource)) {
+                return false;
+            }
+
+            ArrayList<String> resourceProgression = boggledTools.getResourceProgressions().get(resourceId);
+
+            boolean maxResourcePassed = false;
+            for (String resource : resourceProgression) {
+                if (resource.equals(maxResource)) {
+                    maxResourcePassed = true;
+                }
+                if (market.hasCondition(resource) && maxResourcePassed) {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+    }
+}

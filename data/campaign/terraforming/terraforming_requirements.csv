@@ -42,6 +42,7 @@ colony_atmosphere_toxic,"Colony atmosphere is toxic",false,"market_toxic_atmosph
 colony_irradiated,"Colony atmosphere is irradiated",false,"market_irradiated"
 colony_has_atmosphere,"Colony has an atmosphere",false,"market_no_atmosphere"
 colony_atmosphere_suboptimal_density,"Colony atmosphere has suboptimal density",false,"market_no_atmosphere | market_thin_atmosphere | market_dense_atmosphere"
+colony_not_has_meteor_impacts,"Colony does not have meteor impacts",false,"market_not_has_meteor_impacts"
 
 world_type_supports_farmland_improvement,"World type supports further farmland improvement",false,"world_type_supports_farmland_improvement"
 world_type_supports_organics_improvement,"World type supports further organics improvement",false,"world_type_supports_organics_improvement"

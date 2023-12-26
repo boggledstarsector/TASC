@@ -66,7 +66,7 @@ industry_chameleon_rogue_ai,boggledDomainTechContentEnabled | boggledCHAMELEONEn
 industry_cloning,boggledCloningEnabled,industry,,,,,,
 industry_cryosanctum,boggledDomainTechContentEnabled | boggledCryosanctumPlayerBuildEnabled,industry,,,,,,
 industry_domain_archaeology,boggledDomainTechContentEnabled | boggledDomainArchaeologyEnabled,industry,,"colony_has_ruins",,,,
-industry_domed_cities,,industry,,,,,,
+industry_domed_cities,boggledDomedCitiesEnabled,industry,,"colony_is_not_station | colony_not_has_meteor_impacts",,,,
 industry_expand_station,,industry,,,,,,
 industry_genelab,,industry,,,,,,
 industry_gpa,,industry,,,,,,

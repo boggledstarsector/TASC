@@ -103,9 +103,9 @@ public class boggledCraftingRequirementsMet extends BaseCommandPlugin
                 craftingProjectId = boggledTools.craftDealmakerHolosuiteProjectId;
             }
 
-            boggledTools.TerraformingProject craftingProject = boggledTools.getCraftingProject(craftingProjectId);
+            BoggledTerraformingProject craftingProject = boggledTools.getCraftingProject(craftingProjectId);
             if (craftingProject != null) {
-                for (boggledTools.TerraformingRequirements craftingRequirements : craftingProject.getProjectRequirements()) {
+                for (BoggledTerraformingRequirements craftingRequirements : craftingProject.getProjectRequirements()) {
                     if (!craftingRequirements.checkRequirement(market)) {
                         return false;
                     }

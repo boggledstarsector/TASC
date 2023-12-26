@@ -12,7 +12,7 @@ colony_has_atmo_problem ; Atmospheric conditions on $market are already optimal.
 chameleon,industry_chameleon_decivilized ; Decivilized subpopulation ; Eradicated | industry_chameleon_rogue_ai ; Rogue AI core ; Terminated,,
 cloning,industry_cloning,,,,,
 cryosanctum,industry_cryosanctum,,,,,
-domain_archaeology,industry_domain_archaeology,,,,,
+domain_archaeology,industry_domain_archaeology,"colony_has_ruins ; Requires ruins",,,,
 domed_cities,industry_domed_cities,,,,,
 expand_station,industry_expand_station,,,,,
 genelab,industry_genelab,,,,,

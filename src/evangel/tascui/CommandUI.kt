@@ -10,6 +10,7 @@ import com.fs.starfarer.api.ui.TooltipMakerAPI.TooltipCreator
 import com.fs.starfarer.api.util.Misc
 import data.campaign.econ.boggledTools
 import data.campaign.econ.conditions.Terraforming_Controller
+import data.scripts.BoggledTerraformingProject
 import lunalib.lunaUI.elements.LunaElement
 import lunalib.lunaUI.elements.LunaSpriteElement
 import lunalib.lunaUI.panel.LunaBaseCustomPanelPlugin
@@ -68,7 +69,7 @@ class StaticTooltip(title : String?, condition : MarketConditionAPI?, vararg str
 }
 
 class ProjectRequirementsTooltip(width : Float) : TooltipCreator {
-    var terraformingProject : boggledTools.TerraformingProject? = null
+    var terraformingProject : BoggledTerraformingProject? = null
     private val width : Float
     var market : MarketAPI? = null
 
@@ -76,7 +77,7 @@ class ProjectRequirementsTooltip(width : Float) : TooltipCreator {
         this.width = width
     }
 
-    fun setProject(terraformingProject : boggledTools.TerraformingProject) {
+    fun setProject(terraformingProject : BoggledTerraformingProject) {
         this.terraformingProject = terraformingProject;
     }
 
@@ -376,8 +377,8 @@ class CommandUIIntelK : LunaBaseCustomPanelPlugin() {
             startProjectButton!!.position.inTL(BUTTON_OFF_SCREEN_POSITION, BUTTON_OFF_SCREEN_POSITION)
             requirementsNotMetButton!!.position.inTL(BUTTON_OFF_SCREEN_POSITION, BUTTON_OFF_SCREEN_POSITION)
 
-            val validTerraformingOptions : ArrayList<boggledTools.TerraformingProject> = ArrayList()
-            val invalidTerraformingOptions : ArrayList<boggledTools.TerraformingProject> = ArrayList()
+            val validTerraformingOptions : ArrayList<BoggledTerraformingProject> = ArrayList()
+            val invalidTerraformingOptions : ArrayList<BoggledTerraformingProject> = ArrayList()
             for (terraformingProject in boggledTools.getVisibleTerraformingProjects(selectedPlanet!!.market)) {
                 if (terraformingProject.value.requirementsMet(selectedPlanet!!.market)) {
                     validTerraformingOptions.add(terraformingProject.value)
@@ -387,7 +388,7 @@ class CommandUIIntelK : LunaBaseCustomPanelPlugin() {
             }
 
             var buttonVerticalSpacing = 0f
-            val positionButtons = fun(terraformingOptions : ArrayList<boggledTools.TerraformingProject>, buttons : ArrayList<ButtonAPI>, buttonsStart : Int) : Int {
+            val positionButtons = fun(terraformingOptions : ArrayList<BoggledTerraformingProject>, buttons : ArrayList<ButtonAPI>, buttonsStart : Int) : Int {
                 for (i in 0 until terraformingOptions.size) {
                     val button = buttons[i + buttonsStart]
 

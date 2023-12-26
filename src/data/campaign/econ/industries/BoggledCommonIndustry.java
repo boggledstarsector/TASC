@@ -8,6 +8,8 @@ import com.fs.starfarer.api.impl.campaign.econ.impl.BaseIndustry;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Pair;
 import data.campaign.econ.boggledTools;
+import data.scripts.BoggledTerraformingProject;
+import data.scripts.BoggledTerraformingRequirements;
 import kotlin.Triple;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -21,12 +23,12 @@ public class BoggledCommonIndustry {
 
     private String industry;
 
-    private ArrayList<Pair<boggledTools.TerraformingRequirements, String>> requirementsSuitable;
-    private ArrayList<Pair<boggledTools.TerraformingRequirements, String>> requirementsSuitableHidden;
+    private ArrayList<Pair<BoggledTerraformingRequirements, String>> requirementsSuitable;
+    private ArrayList<Pair<BoggledTerraformingRequirements, String>> requirementsSuitableHidden;
 
 //    private ArrayList<Pair<String, Integer> commodityDemands;
 
-    public ArrayList<Triple<boggledTools.TerraformingProject, String, String>> projects;
+    public ArrayList<Triple<BoggledTerraformingProject, String, String>> projects;
 
     public ArrayList<Integer> lastDayChecked;
     public ArrayList<Integer> daysWithoutShortage;
@@ -39,7 +41,7 @@ public class BoggledCommonIndustry {
         this.projects = new ArrayList<>();
         for (String project : projects) {
             String[] projectWithTooltips = project.split(boggledTools.csvSubOptionSeparator);
-            boggledTools.TerraformingProject p = boggledTools.getProject(projectWithTooltips[0]);
+            BoggledTerraformingProject p = boggledTools.getProject(projectWithTooltips[0]);
             if (p != null) {
                 String intelTooltip = "";
                 String intelCompleteMessage = "";
@@ -90,7 +92,7 @@ public class BoggledCommonIndustry {
                 continue;
             }
 
-            boggledTools.TerraformingProject project = projects.get(i).component1();
+            BoggledTerraformingProject project = projects.get(i).component1();
             if (!project.requirementsMet(industry.getMarket())) {
                 continue;
             }
@@ -132,8 +134,8 @@ public class BoggledCommonIndustry {
         tooltip.addPara(format, pad, hl, highlights);
     }
 
-    public boolean marketSuitable(MarketAPI market, ArrayList<Pair<boggledTools.TerraformingRequirements, String>> requirements) {
-        for (Pair<boggledTools.TerraformingRequirements, String> terraformingRequirements : requirements) {
+    public boolean marketSuitable(MarketAPI market, ArrayList<Pair<BoggledTerraformingRequirements, String>> requirements) {
+        for (Pair<BoggledTerraformingRequirements, String> terraformingRequirements : requirements) {
             if (!terraformingRequirements.one.checkRequirement(market)) {
                 return false;
             }
@@ -159,14 +161,14 @@ public class BoggledCommonIndustry {
      */
     public boolean isAvailableToBuild(MarketAPI market) {
         if (!projects.isEmpty()) {
-            for (Triple<boggledTools.TerraformingProject, String, String> project : projects) {
+            for (Triple<BoggledTerraformingProject, String, String> project : projects) {
                 if (!project.component1().isEnabled()) {
                     return false;
                 }
             }
 
             boolean noneMet = true;
-            for (Triple<boggledTools.TerraformingProject, String, String> project : projects) {
+            for (Triple<BoggledTerraformingProject, String, String> project : projects) {
                 if (project.component1().requirementsMet(market)) {
                     noneMet = false;
                     break;
@@ -182,14 +184,14 @@ public class BoggledCommonIndustry {
 
     public boolean showWhenUnavailable(MarketAPI market) {
         if (!projects.isEmpty()) {
-            for (Triple<boggledTools.TerraformingProject, String, String> project : projects) {
+            for (Triple<BoggledTerraformingProject, String, String> project : projects) {
                 if (!project.component1().isEnabled()) {
                     return false;
                 }
             }
 
             boolean allHidden = true;
-            for (Triple<boggledTools.TerraformingProject, String, String> project : projects) {
+            for (Triple<BoggledTerraformingProject, String, String> project : projects) {
                 if (project.component1().requirementsHiddenMet(market)) {
                     allHidden = false;
                     break;
