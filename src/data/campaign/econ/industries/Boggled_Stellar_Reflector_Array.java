@@ -13,9 +13,17 @@ import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.campaign.StarSystemAPI;
 import com.fs.starfarer.api.util.Pair;
 import data.campaign.econ.boggledTools;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class Boggled_Stellar_Reflector_Array extends BaseIndustry
 {
+    private static BoggledCommonIndustry commonindustry;
+
+    public static void settingsFromJSON(JSONObject data) throws JSONException {
+        commonindustry = new BoggledCommonIndustry(data, "Stellar Reflector Array");
+    }
+
     // The "solar_array" condition handles suppressing hot, cold and poor light conditions.
     // This is here merely to allow the tooltip to say which conditions are/would be suppressed.
     public static List<String> SUPPRESSED_CONDITIONS = new ArrayList<String>();

@@ -1,39 +1,87 @@
-id,enable_setting,project_type,tooltip,requirements,requirements_hidden,planet_type_change,conditions_added,conditions_removed,optional_conditions,resources_to_progress,base_project_duration,dynamic_project_duration_modifiers
+id,enable_setting,project_type,tooltip,requirements,requirements_hidden,base_project_duration,dynamic_project_duration_modifiers,project_effects
 # id is a string to identify the project
 # enable_setting is a | separated list of settings that must be true for this project to be enabled. All projects require boggledTerraformingContentEnabled, so you don't need to specify it
 # project_type is the type of the project. Currently supported ones are 'terraforming' and 'industry'
 # tooltip is how this project is displayed on the buttons on the UI. Sorry it's a terrible name
 # requirements is a | separated list of requirement IDs as specified in 'terraforming_requirements.csv'. These are checked in an AND manner, ie all of the requirements have to be true for this check to return true
 # requirements_hidden is the same as requirements, but they must be met for the project to be visible. Both this and requirements must be met for the project to be started
-# planet_type_change is what the planet type should change to upon project completion
-# conditions_added is a | separated list of conditions that will be added to the planet upon project completion
-# conditions_removed is a | separated list of conditions that will be removed from the planet upon project completion
-# optional_conditions is a | separated list of 'option ; condition' pairs. If the option is true, the condition will be included in conditions_added, otherwise it will be included in conditions_removed
-# resources_to_progress is a | separated list of 'resource ; step' pairs. Upon project completion, the resource will be improved by step amounts along the progression specified in 'resource_progression.csv'
 # base_project_duration is the base number of days the project takes to complete
 # dynamic_project_duration_modifiers is a | separated list of duration modifier IDs that are specified in 'duration_modifiers.csv'
-arid_type_change,,terraforming,"Arid type change","world_type_allows_terraforming | colony_not_arid_world | colony_atmospheric_density_normal | colony_atmosphere_not_toxic_or_irradiated | colony_temperate_or_hot | colony_has_stellar_reflectors | colony_has_moderate_water_present",,desert,"habitable | farmland_adequate | organics_common","water_surface | volturnian_lobster_pens | farmland_poor | farmland_rich | farmland_bountiful | organics_trace | organics_abundant | organics_plentiful | volatiles_trace | volatiles_diffuse | volatiles_abundant | volatiles_plentiful",,,2,
-jungle_type_change,,terraforming,"Jungle type change","world_type_allows_terraforming | colony_not_jungle_world | colony_atmospheric_density_normal | colony_atmosphere_not_toxic_or_irradiated | colony_temperate_or_hot | colony_has_stellar_reflectors | colony_has_moderate_water_present",,jungle,"habitable | farmland_adequate | organics_common","water_surface | volturnian_lobster_pens | farmland_poor | farmland_rich | farmland_bountiful | organics_trace | organics_abundant | organics_plentiful | volatiles_trace | volatiles_diffuse | volatiles_abundant | volatiles_plentiful",,,2,planet_size
-terran_type_change,,terraforming,"Terran type change","world_type_allows_terraforming | colony_not_terran_world | colony_atmospheric_density_normal | colony_atmosphere_not_toxic_or_irradiated | colony_not_very_cold_or_very_hot | colony_has_stellar_reflectors | colony_has_moderate_water_present",,terran,"habitable | farmland_adequate | organics_trace","water_surface | volturnian_lobster_pens | farmland_poor | farmland_rich | farmland_bountiful | organics_common | organics_abundant | organics_plentiful | volatiles_diffuse | volatiles_abundant | volatiles_plentiful","boggledTerraformingTypeChangeAddVolatiles ; volatiles_trace",,2,
-water_type_change,,terraforming,"Water type change","world_type_allows_terraforming | colony_not_water_world | colony_atmospheric_density_normal | colony_atmosphere_not_toxic_or_irradiated | colony_not_very_cold_or_very_hot | colony_has_stellar_reflectors | colony_has_large_water_present",,water,"habitable | water_surface","farmland_poor | farmland_adequate | farmland_rich | farmland_bountiful | organics_trace | organics_common | organics_abundant | organics_plentiful | volatiles_trace | volatiles_diffuse | volatiles_abundant | volatiles_plentiful",,,2,
-tundra_type_change,,terraforming,"Tundra type change","world_type_allows_terraforming | colony_not_tundra_world | colony_atmospheric_density_normal | colony_atmosphere_not_toxic_or_irradiated | colony_temperate_or_cold | colony_has_stellar_reflectors | colony_has_moderate_water_present",,tundra,"habitable | farmland_adequate | organics_trace","water_surface | volturnian_lobster_pens | farmland_poor | farmland_rich | farmland_bountiful | organics_common | organics_abundant | organics_plentiful | volatiles_diffuse | volatiles_abundant | volatiles_plentiful","boggledTerraformingTypeChangeAddVolatiles ; volatiles_trace",,2,
-frozen_type_change,,terraforming,"Frozen type change","world_type_allows_terraforming | colony_not_frozen_world | colony_atmospheric_density_normal | colony_very_cold | colony_has_large_water_present",,frozen,"volatiles_abundant","habitable | water_surface | volturnian_lobster_pens | farmland_poor | farmland_adequate | farmland_rich | farmland_bountiful | organics_trace | organics_common | organics_abundant | organics_plentiful | volatiles_trace | volatiles_diffuse | volatiles_plentiful",,,2,
-,,,,,,,,,,,,
-farmland_resource_improvement,,terraforming,"Farmland resource improvement","world_type_supports_farmland_improvement | colony_atmospheric_density_normal | colony_atmosphere_not_toxic_or_irradiated | colony_has_large_water_present",,,,,,farmland ; 1,2,
-organics_resource_improvement,,terraforming,"Organics resource improvement","world_type_supports_organics_improvement",,,,,,organics ; 1,2,
-volatiles_resource_improvement,,terraforming,"Volatiles resource improvement","world_type_supports_volatiles_improvement",,,,,,volatiles ; 1,2,
-,,,,,,,,,,,,
-extreme_weather_condition_improvement,,terraforming,"Stabilize weather patterns","world_type_allows_terraforming | colony_has_extreme_weather | colony_atmospheric_density_normal | colony_has_atmosphere_processor",,,,"extreme_weather",,,2,
-mild_climate_condition_improvement,,terraforming,"Make climate mild","colony_has_normal_climate | colony_habitable | world_type_allows_mild_climate | colony_atmospheric_density_normal | colony_has_atmosphere_processor",,,"mild_climate",,,,2,
-habitable_condition_improvement,,terraforming,"Make atmosphere habitable","colony_not_already_habitable | world_type_allows_human_habitability | colony_atmospheric_density_normal | colony_not_very_cold_or_very_hot | colony_atmosphere_not_toxic_or_irradiated | colony_has_atmosphere_processor",,,"habitable",,,,2,
-atmosphere_density_condition_improvement,,terraforming,"Normalize atmospheric density","colony_atmosphere_suboptimal_density | world_type_allows_terraforming | colony_has_atmosphere_processor",,,,"no_atmosphere | thin_atmosphere | dense_atmosphere",,,2,
-toxic_atmosphere_condition_improvement,,terraforming,"Reduce atmospheric toxicity","colony_atmosphere_toxic | world_type_allows_terraforming | colony_has_atmosphere_processor",,,,"toxic_atmosphere",,,2,
-irradiated_condition_improvement,boggledTerraformingRemoveRadiationProjectEnabled,terraforming,"Remove atmospheric radiation","colony_irradiated | colony_has_genelab",,,,"irradiated",,,2,
-remove_atmosphere_condition_improvement,boggledTerraformingRemoveAtmosphereProjectEnabled,terraforming,"Remove the atmosphere","colony_has_atmosphere | colony_barren_or_frozen | colony_has_atmosphere_processor",,,"no_atmosphere","thin_atmosphere | toxic_atmosphere | dense_atmosphere | pollution | inimical_biosphere | extreme_weather | mild_climate | habitable",,,2,
-,,,,
-industry_ai_mining_drones,boggledStationConstructionContentEnabled | boggledEnableAIMiningDronesStructure,industry,,"market_has_mining_industry",,,,,,,,
-industry_atmosphere_processor,,industry,,,,,,,,,,
-industry_chameleon_decivilized,boggledDomainTechContentEnabled | boggledCHAMELEONEnabled,industry,,"colony_decivilized",,,,"decivilized | decivilized_subpop",,,200,
-industry_chameleon_rogue_ai,boggledDomainTechContentEnabled | boggledCHAMELEONEnabled,industry,,"colony_rogue_ai_core",,,,"rogue_ai_core",,,200,
-industry_ouyang_optimizer,boggledOuyangOptimizerEnabled,industry,,,,,extreme_weather,,,"volatiles ; 2",2,
-industry_planet_cracker,boggledPlanetCrackerEnabled,industry,,,,,tectonic_activity,,,"ore ; 1 | rare_ore ; 1",2,
+# project_effects is a | separated list of project effect IDs that are specified in 'project_effects.csv'
+arid_type_change,,terraforming,"Arid type change","world_type_allows_terraforming | colony_not_arid_world | colony_atmospheric_density_normal | colony_atmosphere_not_toxic_or_irradiated | colony_temperate_or_hot | colony_has_stellar_reflectors | colony_has_moderate_water_present",,2,,"arid_type_change |
+market_add_habitable | market_add_farmland_adequate | market_add_organics_common |
+market_remove_water_surface | market_remove_volturnian_lobster_pens |
+market_remove_farmland_poor | market_remove_farmland_rich | market_remove_farmland_bountiful |
+market_remove_organics_trace | market_remove_organics_abundant | market_remove_organics_plentiful |
+market_remove_volatiles_trace | market_remove_volatiles_diffuse | market_remove_volatiles_abundant | market_remove_volatiles_plentiful"
+jungle_type_change,,terraforming,"Jungle type change","world_type_allows_terraforming | colony_not_jungle_world | colony_atmospheric_density_normal | colony_atmosphere_not_toxic_or_irradiated | colony_temperate_or_hot | colony_has_stellar_reflectors | colony_has_moderate_water_present",,2,planet_size,"jungle_type_change |
+market_add_habitable | market_add_farmland_adequate | market_add_organics_common |
+market_remove_water_surface | market_remove_volturnian_lobster_pens |
+market_remove_farmland_poor | market_remove_farmland_rich | market_remove_farmland_bountiful |
+market_remove_organics_trace | market_remove_organics_abundant | market_remove_organics_plentiful |
+market_remove_volatiles_trace | market_remove_volatiles_diffuse | market_remove_volatiles_abundant | market_remove_volatiles_plentiful"
+terran_type_change,,terraforming,"Terran type change","world_type_allows_terraforming | colony_not_terran_world | colony_atmospheric_density_normal | colony_atmosphere_not_toxic_or_irradiated | colony_not_very_cold_or_very_hot | colony_has_stellar_reflectors | colony_has_moderate_water_present",,2,,"terran_type_change |
+market_add_habitable | market_add_farmland_adequate | market_add_organics_trace |
+market_optional_volatiles_trace |
+market_remove_water_surface | market_remove_volturnian_lobster_pens |
+market_remove_farmland_poor | market_remove_farmland_rich | market_remove_farmland_bountiful |
+market_remove_organics_common | market_remove_organics_abundant | market_remove_organics_plentiful |
+market_remove_volatiles_diffuse | market_remove_volatiles_abundant | market_remove_volatiles_plentiful"
+water_type_change,,terraforming,"Water type change","world_type_allows_terraforming | colony_not_water_world | colony_atmospheric_density_normal | colony_atmosphere_not_toxic_or_irradiated | colony_not_very_cold_or_very_hot | colony_has_stellar_reflectors | colony_has_large_water_present",,2,,"water_type_change |
+market_add_habitable | market_add_water_surface |
+market_remove_farmland_poor | market_remove_farmland_adequate | market_remove_farmland_rich | market_remove_farmland_bountiful |
+market_remove_organics_trace | market_remove_organics_common | market_remove_organics_abundant | market_remove_organics_plentiful |
+market_remove_volatiles_trace | market_remove_volatiles_diffuse | market_remove_volatiles_abundant | market_remove_volatiles_plentiful"
+tundra_type_change,,terraforming,"Tundra type change","world_type_allows_terraforming | colony_not_tundra_world | colony_atmospheric_density_normal | colony_atmosphere_not_toxic_or_irradiated | colony_temperate_or_cold | colony_has_stellar_reflectors | colony_has_moderate_water_present",,2,,"tundra_type_change |
+market_add_habitable | market_add_farmland_adequate | market_add_organics_trace |
+market_optional_volatiles_trace |
+market_remove_water_surface | market_remove_volturnian_lobster_pens |
+market_remove_farmland_poor | market_remove_farmland_rich | market_remove_farmland_bountiful |
+market_remove_organics_common | market_remove_organics_abundant | market_remove_organics_plentiful |
+market_remove_volatiles_diffuse | market_remove_volatiles_abundant | market_remove_volatiles_plentiful"
+frozen_type_change,,terraforming,"Frozen type change","world_type_allows_terraforming | colony_not_frozen_world | colony_atmospheric_density_normal | colony_very_cold | colony_has_large_water_present",,2,,"frozen_type_change |
+market_add_volatiles_abundant |
+market_remove_habitable | market_remove_water_surface | market_remove_volturnian_lobster_pens |
+market_remove_farmland_poor | market_remove_farmland_adequate | market_remove_farmland_rich | market_remove_farmland_bountiful |
+market_remove_organics_trace | market_remove_organics_common | market_remove_organics_abundant | market_remove_organics_plentiful |
+market_remove_volatiles_trace | market_remove_volatiles_diffuse | market_remove_volatiles_plentiful"
+,,,,,,,,
+farmland_resource_improvement,,terraforming,"Farmland resource improvement","world_type_supports_farmland_improvement | colony_atmospheric_density_normal | colony_atmosphere_not_toxic_or_irradiated | colony_has_large_water_present",,2,,"market_progress_farmland"
+organics_resource_improvement,,terraforming,"Organics resource improvement","world_type_supports_organics_improvement",,2,,"market_progress_organics"
+volatiles_resource_improvement,,terraforming,"Volatiles resource improvement","world_type_supports_volatiles_improvement",,2,,"market_progress_volatiles"
+,,,,,,,,
+extreme_weather_condition_improvement,,terraforming,"Stabilize weather patterns","world_type_allows_terraforming | colony_has_extreme_weather | colony_atmospheric_density_normal | colony_has_atmosphere_processor",,2,,"market_remove_extreme_weather"
+mild_climate_condition_improvement,,terraforming,"Make climate mild","colony_has_normal_climate | colony_habitable | world_type_allows_mild_climate | colony_atmospheric_density_normal | colony_has_atmosphere_processor",,2,,"market_add_mild_climate"
+habitable_condition_improvement,,terraforming,"Make atmosphere habitable","colony_not_already_habitable | world_type_allows_human_habitability | colony_atmospheric_density_normal | colony_not_very_cold_or_very_hot | colony_atmosphere_not_toxic_or_irradiated | colony_has_atmosphere_processor",,2,,"market_add_habitable"
+atmosphere_density_condition_improvement,,terraforming,"Normalize atmospheric density","colony_atmosphere_suboptimal_density | world_type_allows_terraforming | colony_has_atmosphere_processor",,2,,"market_remove_no_atmosphere | market_remove_thin_atmosphere | market_remove_dense_atmosphere"
+toxic_atmosphere_condition_improvement,,terraforming,"Reduce atmospheric toxicity","colony_atmosphere_toxic | world_type_allows_terraforming | colony_has_atmosphere_processor",,2,,"market_remove_toxic_atmosphere"
+irradiated_condition_improvement,boggledTerraformingRemoveRadiationProjectEnabled,terraforming,"Remove atmospheric radiation","colony_irradiated | colony_has_genelab",,2,,"market_remove_irradiated"
+remove_atmosphere_condition_improvement,boggledTerraformingRemoveAtmosphereProjectEnabled,terraforming,"Remove the atmosphere","colony_has_atmosphere | colony_barren_or_frozen | colony_has_atmosphere_processor",,2,,"market_add_no_atmosphere |
+market_remove_thin_atmosphere | market_remove_toxic_atmosphere | market_remove_dense_atmosphere | market_remove_pollution | market_remove_inimical_biosphere | market_remove_extreme_weather | market_remove_mild_climate | market_remove_habitable"
+,,,,,,,
+industry_ai_mining_drones,boggledStationConstructionContentEnabled | boggledEnableAIMiningDronesStructure,industry,,"market_has_mining_industry",,,,
+industry_atmosphere_processor,,industry,,,,,,
+industry_chameleon_decivilized,boggledDomainTechContentEnabled | boggledCHAMELEONEnabled,industry,,"colony_decivilized",,2,,"market_remove_decivilized | market_remove_decivilized_subpop"
+industry_chameleon_rogue_ai,boggledDomainTechContentEnabled | boggledCHAMELEONEnabled,industry,,"colony_rogue_ai_core",,2,,"market_remove_rogue_ai_core"
+industry_cloning,boggledCloningEnabled,industry,,,,,,
+industry_cryosanctum,boggledDomainTechContentEnabled | boggledCryosanctumPlayerBuildEnabled,industry,,,,,,
+industry_domain_archaeology,boggledDomainTechContentEnabled | boggledDomainArchaeologyEnabled,industry,,"colony_has_ruins",,,,
+industry_domed_cities,,industry,,,,,,
+industry_expand_station,,industry,,,,,,
+industry_genelab,,industry,,,,,,
+industry_gpa,,industry,,,,,,
+industry_harmonic_damper,,industry,,,,,,
+industry_hydroponics,boggledHydroponicsEnabled,industry,,,,,,
+industry_ismara_sling,,industry,,"colony_water_or_frozen | colony_is_station",,,,
+industry_kletka_simulator,,industry,,,,,,
+industry_limelight_network,,industry,,,,,,
+industry_magnetoshield,,industry,,,,,,
+industry_mesozoic_park,,industry,,,,,,
+industry_ouyang_optimizer,boggledOuyangOptimizerEnabled,industry,,,,2,,"focus_market_progress_volatiles_ouyang_optimizer |
+focus_market_add_extreme_weather"
+industry_perihelion_project,,industry,,,,,,
+industry_planet_cracker,boggledPlanetCrackerEnabled,industry,,,,2,,"focus_market_progress_ore_planet_cracker | focus_market_progress_rare_ore_planet_cracker |
+focus_market_add_tectonic_activity"
+industry_planetary_agrav_field,,industry,,,,,,
+industry_stellar_reflector_array,,industry,,,,,,
+,,,,,,,,

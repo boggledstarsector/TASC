@@ -101,10 +101,6 @@ class ProjectRequirementsTooltip(width : Float) : TooltipCreator {
         }
 
         tooltip.addSpacer(5f);
-
-        if (terraformingProject!!.planetTypeChange.isNotEmpty()) {
-            tooltip.addPara("Planet becomes a ${terraformingProject!!.planetTypeChange} planet", 0f)
-        }
     }
 }
 

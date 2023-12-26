@@ -5,6 +5,7 @@ import java.awt.Color;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.*;
 import com.fs.starfarer.api.campaign.comm.CommMessageAPI;
+import com.fs.starfarer.api.impl.campaign.ids.Conditions;
 import com.fs.starfarer.api.impl.campaign.ids.Submarkets;
 import com.fs.starfarer.api.impl.campaign.ids.Commodities;
 import com.fs.starfarer.api.impl.campaign.intel.BaseIntelPlugin;
@@ -14,9 +15,17 @@ import com.fs.starfarer.api.util.Misc;
 import com.fs.starfarer.api.impl.campaign.econ.impl.BaseIndustry;
 import com.fs.starfarer.api.util.Pair;
 import data.campaign.econ.boggledTools;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class Boggled_Ismara_Sling extends BaseIndustry
 {
+    private static BoggledCommonIndustry commonindustry;
+
+    public static void settingsFromJSON(JSONObject data) throws JSONException {
+        commonindustry = new BoggledCommonIndustry(data, "Ismara Sling");
+    }
+
     @Override
     public boolean canBeDisrupted()
     {
@@ -128,33 +137,35 @@ public class Boggled_Ismara_Sling extends BaseIndustry
     @Override
     public boolean isAvailableToBuild()
     {
-        if(!boggledTools.isResearched(this.getId()))
-        {
-            return false;
-        }
-
-        if(!boggledTools.getBooleanSetting(boggledTools.BoggledSettings.terraformingContentEnabled))
-        {
-            return false;
-        }
-
-        if(boggledTools.marketIsStation(this.market))
-        {
-            return true;
-        }
-
-        return boggledTools.getPlanetType(this.market.getPlanetEntity()).equals(boggledTools.waterPlanetId) || boggledTools.getPlanetType(this.market.getPlanetEntity()).equals(boggledTools.frozenPlanetId);
+        return commonindustry.isAvailableToBuild(getMarket());
+//        if(!boggledTools.isResearched(this.getId()))
+//        {
+//            return false;
+//        }
+//
+//        if(!boggledTools.getBooleanSetting(boggledTools.BoggledSettings.terraformingContentEnabled))
+//        {
+//            return false;
+//        }
+//
+//        if(boggledTools.marketIsStation(this.market))
+//        {
+//            return true;
+//        }
+//
+//        return boggledTools.getPlanetType(this.market.getPlanetEntity()).equals(boggledTools.waterPlanetId) || boggledTools.getPlanetType(this.market.getPlanetEntity()).equals(boggledTools.frozenPlanetId);
     }
 
     @Override
     public boolean showWhenUnavailable()
     {
-        if(!boggledTools.isResearched(this.getId()))
-        {
-            return false;
-        }
+        return commonindustry.showWhenUnavailable(getMarket());
+//        if(!boggledTools.isResearched(this.getId()))
+//        {
+//            return false;
+//        }
 
-        return boggledTools.getBooleanSetting(boggledTools.BoggledSettings.terraformingContentEnabled);
+//        return boggledTools.getBooleanSetting(boggledTools.BoggledSettings.terraformingContentEnabled);
     }
 
     @Override

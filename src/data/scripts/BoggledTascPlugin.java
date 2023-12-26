@@ -319,6 +319,7 @@ public class BoggledTascPlugin extends BaseModPlugin
             JSONArray terraformingRequirement = settings.getMergedSpreadsheetDataForMod("id", "data/campaign/terraforming/terraforming_requirement.csv", boggledTools.BoggledMods.tascModId);
             JSONArray terraformingRequirements = settings.getMergedSpreadsheetDataForMod("id", "data/campaign/terraforming/terraforming_requirements.csv", boggledTools.BoggledMods.tascModId);
             JSONArray terraformingDurationModifiers = settings.getMergedSpreadsheetDataForMod("id", "data/campaign/terraforming/duration_modifiers.csv", boggledTools.BoggledMods.tascModId);
+            JSONArray terraformingProjectEffects = settings.getMergedSpreadsheetDataForMod("id", "data/campaign/terraforming/project_effects.csv", boggledTools.BoggledMods.tascModId);
 
             // Projects and industries both require requirements and duration modifiers
             JSONArray terraformingProjects = settings.getMergedSpreadsheetDataForMod("id", "data/campaign/terraforming/terraforming_projects.csv", boggledTools.BoggledMods.tascModId);
@@ -331,6 +332,7 @@ public class BoggledTascPlugin extends BaseModPlugin
             boggledTools.initialiseTerraformingRequirementFromJSON(terraformingRequirement);
             boggledTools.initialiseTerraformingRequirementsFromJSON(terraformingRequirements);
             boggledTools.initialiseTerraformingDurationModifiersFromJSON(terraformingDurationModifiers);
+            boggledTools.initialiseTerraformingProjectEffectsFromJSON(terraformingProjectEffects);
 
             boggledTools.initialiseTerraformingProjectsFromJSON(terraformingProjects);
             boggledTools.initialiseIndustryOptionsFromJSON(industryOptions);
@@ -365,6 +367,7 @@ public class BoggledTascPlugin extends BaseModPlugin
     public void onApplicationLoad()  {
         boggledTools.initialiseDefaultTerraformingRequirementFactories();
         boggledTools.initialiseDefaultTerraformingDurationModifierFactories();
+        boggledTools.initialiseDefaultTerraformingProjectEffectFactories();
         boggledTools.initialiseDefaultIndustryOptionsTrampolines();
         if (Global.getSettings().getModManager().isModEnabled("aaacrew_replacer")){
             bogglesDefaultCargo.active = new booglesCrewReplacerCargo();

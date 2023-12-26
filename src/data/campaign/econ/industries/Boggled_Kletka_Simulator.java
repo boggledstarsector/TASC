@@ -12,9 +12,17 @@ import com.fs.starfarer.api.impl.campaign.econ.impl.BaseIndustry;
 import com.fs.starfarer.api.util.Pair;
 import data.campaign.econ.boggledTools;
 import com.fs.starfarer.api.impl.campaign.ids.Commodities;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class Boggled_Kletka_Simulator extends BaseIndustry
 {
+    private static BoggledCommonIndustry commonindustry;
+
+    public static void settingsFromJSON(JSONObject data) throws JSONException {
+        commonindustry = new BoggledCommonIndustry(data, "Kletka Simulator");
+    }
+
     @Override
     public boolean canBeDisrupted()
     {
@@ -27,7 +35,7 @@ public class Boggled_Kletka_Simulator extends BaseIndustry
         boolean shortage = false;
         if(boggledTools.getBooleanSetting(boggledTools.BoggledSettings.domainArchaeologyEnabled))
         {
-            Pair<String, Integer> deficit = this.getMaxDeficit(new String[]{boggledTools.BoggledCommodities.domainArtifacts});
+            Pair<String, Integer> deficit = this.getMaxDeficit(boggledTools.BoggledCommodities.domainArtifacts);
             if(deficit.two != 0)
             {
                 shortage = true;

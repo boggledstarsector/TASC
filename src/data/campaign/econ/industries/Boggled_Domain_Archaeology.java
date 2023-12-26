@@ -6,9 +6,17 @@ import com.fs.starfarer.api.util.Misc;
 import com.fs.starfarer.api.impl.campaign.econ.impl.BaseIndustry;
 import com.fs.starfarer.api.impl.campaign.ids.Conditions;
 import data.campaign.econ.boggledTools;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class Boggled_Domain_Archaeology extends BaseIndustry
 {
+    private static BoggledCommonIndustry commonindustry;
+
+    public static void settingsFromJSON(JSONObject data) throws JSONException {
+        commonindustry = new BoggledCommonIndustry(data, "Domain Archaeology");
+    }
+
     @Override
     public boolean canBeDisrupted() {
         return true;
@@ -58,38 +66,40 @@ public class Boggled_Domain_Archaeology extends BaseIndustry
     @Override
     public boolean isAvailableToBuild()
     {
-        if(!boggledTools.isResearched(this.getId()))
-        {
-            return false;
-        }
+        return commonindustry.isAvailableToBuild(getMarket());
+//        if(!boggledTools.isResearched(this.getId()))
+//        {
+//            return false;
+//        }
 
-        MarketAPI market = this.market;
-        if(boggledTools.getBooleanSetting(boggledTools.BoggledSettings.domainTechContentEnabled) && boggledTools.getBooleanSetting(boggledTools.BoggledSettings.domainArchaeologyEnabled) && (market.hasCondition(Conditions.RUINS_SCATTERED) || market.hasCondition(Conditions.RUINS_WIDESPREAD) || market.hasCondition(Conditions.RUINS_EXTENSIVE) || market.hasCondition(Conditions.RUINS_VAST)))
-        {
-            return true;
-        }
-        else
-        {
-            return false;
-        }
+//        MarketAPI market = this.market;
+//        if(boggledTools.getBooleanSetting(boggledTools.BoggledSettings.domainTechContentEnabled) && boggledTools.getBooleanSetting(boggledTools.BoggledSettings.domainArchaeologyEnabled) && (market.hasCondition(Conditions.RUINS_SCATTERED) || market.hasCondition(Conditions.RUINS_WIDESPREAD) || market.hasCondition(Conditions.RUINS_EXTENSIVE) || market.hasCondition(Conditions.RUINS_VAST)))
+//        {
+//            return true;
+//        }
+//        else
+//        {
+//            return false;
+//        }
     }
 
     @Override
     public boolean showWhenUnavailable()
     {
-        if(!boggledTools.isResearched(this.getId()))
-        {
-            return false;
-        }
+        return commonindustry.showWhenUnavailable(getMarket());
+//        if(!boggledTools.isResearched(this.getId()))
+//        {
+//            return false;
+//        }
 
-        if(!boggledTools.getBooleanSetting(boggledTools.BoggledSettings.domainTechContentEnabled) || !boggledTools.getBooleanSetting(boggledTools.BoggledSettings.domainArchaeologyEnabled))
-        {
-            return false;
-        }
-        else
-        {
-            return true;
-        }
+//        if(!boggledTools.getBooleanSetting(boggledTools.BoggledSettings.domainTechContentEnabled) || !boggledTools.getBooleanSetting(boggledTools.BoggledSettings.domainArchaeologyEnabled))
+//        {
+//            return false;
+//        }
+//        else
+//        {
+//            return true;
+//        }
     }
 
     @Override

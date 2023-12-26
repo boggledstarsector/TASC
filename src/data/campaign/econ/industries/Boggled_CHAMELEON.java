@@ -5,15 +5,14 @@ import java.lang.String;
 import java.util.LinkedHashMap;
 
 import com.fs.starfarer.api.Global;
-import com.fs.starfarer.api.campaign.*;
 import com.fs.starfarer.api.campaign.econ.*;
 import com.fs.starfarer.api.impl.campaign.ids.Commodities;
-import com.fs.starfarer.api.impl.campaign.ids.Conditions;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
 import com.fs.starfarer.api.impl.campaign.econ.impl.BaseIndustry;
 import com.fs.starfarer.api.util.Pair;
 import data.campaign.econ.boggledTools;
+import kotlin.Triple;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -26,14 +25,6 @@ public class Boggled_CHAMELEON extends BaseIndustry implements BoggledCommonIndu
 
     public static float IMPROVE_STABILITY_BONUS = 1f;
 
-    private int daysWithoutShortageDeciv = 0;
-    private int lastDayCheckedDeciv = 0;
-    public static int requiredDaysToRemoveDeciv = 200;
-
-    private int daysWithoutShortageRogue = 0;
-    private int lastDayCheckedRogue = 0;
-    public static int requiredDaysToRemoveRogue = 200;
-
     public static float UPKEEP_MULT = 0.75F;
     public static int DEMAND_REDUCTION = 1;
 
@@ -41,9 +32,6 @@ public class Boggled_CHAMELEON extends BaseIndustry implements BoggledCommonIndu
 
     public static void settingsFromJSON(JSONObject data) throws JSONException {
         commonIndustry = new BoggledCommonIndustry(data, "CHAMELEON");
-
-//        requiredDaysToRemoveDeciv = commonIndustry.durations.getDuration(Conditions.DECIVILIZED);
-//        requiredDaysToRemoveRogue = commonIndustry.durations.getDuration(Conditions.ROGUE_AI_CORE);
     }
 
     @Override
@@ -73,70 +61,7 @@ public class Boggled_CHAMELEON extends BaseIndustry implements BoggledCommonIndu
     {
         super.advance(amount);
 
-        if((this.market.hasCondition(Conditions.DECIVILIZED_SUBPOP) || this.market.hasCondition(Conditions.DECIVILIZED)) && this.isFunctional())
-        {
-            CampaignClockAPI clock = Global.getSector().getClock();
-
-            boolean shortage = false;
-            if(boggledTools.getBooleanSetting(boggledTools.BoggledSettings.domainArchaeologyEnabled))
-            {
-                Pair<String, Integer> deficit = this.getMaxDeficit(boggledTools.BoggledCommodities.domainArtifacts);
-                if(deficit.two != 0)
-                {
-                    shortage = true;
-                }
-            }
-
-            if(clock.getDay() != this.lastDayCheckedDeciv && !shortage)
-            {
-                this.daysWithoutShortageDeciv++;
-                this.lastDayCheckedDeciv = clock.getDay();
-
-                if(this.daysWithoutShortageDeciv >= requiredDaysToRemoveDeciv)
-                {
-                    boggledTools.showProjectCompleteIntelMessage("Decivilized subpopulation", "Eradicated", market.getName(), market);
-
-                    boggledTools.removeCondition(this.market, Conditions.DECIVILIZED_SUBPOP);
-                    boggledTools.removeCondition(this.market, Conditions.DECIVILIZED);
-
-                    boggledTools.surveyAll(market);
-                    boggledTools.refreshSupplyAndDemand(market);
-                    boggledTools.refreshAquacultureAndFarming(market);
-                }
-            }
-        }
-
-        if(this.market.hasCondition(Conditions.ROGUE_AI_CORE) && this.isFunctional())
-        {
-            CampaignClockAPI clock = Global.getSector().getClock();
-
-            boolean shortage = false;
-            if(boggledTools.getBooleanSetting(boggledTools.BoggledSettings.domainArchaeologyEnabled))
-            {
-                Pair<String, Integer> deficit = this.getMaxDeficit(boggledTools.BoggledCommodities.domainArtifacts);
-                if(deficit.two != 0)
-                {
-                    shortage = true;
-                }
-            }
-
-            if(clock.getDay() != this.lastDayCheckedRogue && !shortage)
-            {
-                this.daysWithoutShortageRogue++;
-                this.lastDayCheckedRogue = clock.getDay();
-
-                if(this.daysWithoutShortageRogue >= requiredDaysToRemoveRogue)
-                {
-                    boggledTools.showProjectCompleteIntelMessage("Rogue AI core", "Terminated", market.getName(), market);
-
-                    boggledTools.removeCondition(market, Conditions.ROGUE_AI_CORE);
-
-                    boggledTools.surveyAll(market);
-                    boggledTools.refreshSupplyAndDemand(market);
-                    boggledTools.refreshAquacultureAndFarming(market);
-                }
-            }
-        }
+        commonIndustry.advance(amount, this);
     }
 
     @Override
@@ -160,11 +85,6 @@ public class Boggled_CHAMELEON extends BaseIndustry implements BoggledCommonIndu
     @Override
     public void notifyBeingRemoved(MarketAPI.MarketInteractionMode mode, boolean forUpgrade)
     {
-        this.daysWithoutShortageDeciv = 0;
-        this.lastDayCheckedDeciv = 0;
-        this.daysWithoutShortageRogue = 0;
-        this.lastDayCheckedRogue = 0;
-
         super.notifyBeingRemoved(mode, forUpgrade);
     }
 
@@ -174,26 +94,17 @@ public class Boggled_CHAMELEON extends BaseIndustry implements BoggledCommonIndu
         float opad = 10.0F;
         Color highlight = Misc.getHighlightColor();
 
-        // Inserts pacification status after description
-        if((this.market.hasCondition(Conditions.DECIVILIZED_SUBPOP) || this.market.hasCondition(Conditions.DECIVILIZED)) && mode != IndustryTooltipMode.ADD_INDUSTRY && mode != IndustryTooltipMode.QUEUED && !isBuilding())
-        {
-            // 200 days to recivilize; divide daysWithoutShortage by 2 to get the percent
-            int percentComplete = commonIndustry.getPercentComplete(daysWithoutShortageDeciv, requiredDaysToRemoveDeciv);
-
-            tooltip.addPara("Approximately %s of the decivilized subpopulation on " + this.market.getName() + " has been eradicated.", opad, highlight, percentComplete + "%");
+        // TODO: Hardcoded indices, hate it, fix it
+        if (commonIndustry.projects.get(0).component1().requirementsMet(getMarket())) {
+            commonIndustry.tooltipIncomplete(this, tooltip, mode, "Approximately %s of the decivilized subpopulation on " + this.getMarket().getName() + " has been eradicated.", opad, highlight, commonIndustry.getPercentComplete(0, this) + "%");
         }
-
-        // Inserts rogue AI core removal status after description
-        if(this.market.hasCondition(Conditions.ROGUE_AI_CORE) && mode != IndustryTooltipMode.ADD_INDUSTRY && mode != IndustryTooltipMode.QUEUED && !isBuilding())
-        {
-            // 200 days to remove rogue core; divide daysWithoutShortage by 2 to get the percent
-            int percentComplete = commonIndustry.getPercentComplete(daysWithoutShortageRogue, requiredDaysToRemoveRogue);
-
-            tooltip.addPara("An investigation into the whereabouts of the rogue AI core on " + this.market.getName() + " is approximately %s complete.", opad, highlight, percentComplete + "%");
+        if (commonIndustry.projects.get(1).component1().requirementsMet(getMarket())) {
+            commonIndustry.tooltipIncomplete(this, tooltip, mode, "An investigation into the whereabouts of the rogue AI core on " + getMarket().getName() + " is approximately %s complete.", opad, highlight, commonIndustry.getPercentComplete(1, this) + "%");
         }
-
-        if (this.getMarket().hasCondition(Conditions.DECIVILIZED) || this.getMarket().hasCondition(Conditions.DECIVILIZED_SUBPOP) || this.getMarket().hasCondition(Conditions.ROGUE_AI_CORE)) {
-            commonIndustry.tooltipDisrupted(this, tooltip, mode, "Progress is stalled while CHAMELEON is disrupted.", opad, Misc.getNegativeHighlightColor());
+        for (Triple<boggledTools.TerraformingProject, String, String> project : commonIndustry.projects) {
+            if (project.component1().requirementsMet(getMarket())) {
+                commonIndustry.tooltipDisrupted(this, tooltip, mode, "Progress is stalled while CHAMELEON is disrupted.", opad, Misc.getNegativeHighlightColor());
+            }
         }
     }
 

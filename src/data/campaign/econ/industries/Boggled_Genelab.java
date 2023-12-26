@@ -15,9 +15,17 @@ import com.fs.starfarer.api.util.Misc;
 import com.fs.starfarer.api.impl.campaign.econ.impl.BaseIndustry;
 import com.fs.starfarer.api.util.Pair;
 import data.campaign.econ.boggledTools;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class Boggled_Genelab extends BaseIndustry
 {
+    private static BoggledCommonIndustry commonindustry;
+
+    public static void settingsFromJSON(JSONObject data) throws JSONException {
+        commonindustry = new BoggledCommonIndustry(data, "Genelab");
+    }
+
     public static float IMPROVE_BONUS = 1.50f;
 
     private int daysWithoutShortagePollution = 0;

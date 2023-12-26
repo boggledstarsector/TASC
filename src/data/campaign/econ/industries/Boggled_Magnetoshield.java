@@ -5,9 +5,17 @@ import com.fs.starfarer.api.campaign.econ.*;
 import com.fs.starfarer.api.impl.campaign.ids.*;
 import com.fs.starfarer.api.impl.campaign.econ.impl.BaseIndustry;
 import data.campaign.econ.boggledTools;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class Boggled_Magnetoshield extends BaseIndustry
 {
+    private static BoggledCommonIndustry commonindustry;
+
+    public static void settingsFromJSON(JSONObject data) throws JSONException {
+        commonindustry = new BoggledCommonIndustry(data, "Magnetoshield");
+    }
+
     @Override
     public boolean canBeDisrupted() {
         return true;

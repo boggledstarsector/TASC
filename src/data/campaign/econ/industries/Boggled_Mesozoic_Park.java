@@ -14,11 +14,19 @@ import com.fs.starfarer.api.util.Misc;
 import data.campaign.econ.boggledTools;
 import com.fs.starfarer.api.impl.campaign.ids.Conditions;
 import com.fs.starfarer.api.impl.campaign.ids.Commodities;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.awt.*;
 
 public class Boggled_Mesozoic_Park extends BaseIndustry
 {
+    private static BoggledCommonIndustry commonindustry;
+
+    public static void settingsFromJSON(JSONObject data) throws JSONException {
+        commonindustry = new BoggledCommonIndustry(data, "Mesozoic Park");
+    }
+
     //Need to update string in addImproveDesc if value changed
     private final float IMPROVE_BONUS = 1.20f;
 

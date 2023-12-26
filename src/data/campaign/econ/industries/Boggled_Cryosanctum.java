@@ -2,9 +2,17 @@ package data.campaign.econ.industries;
 
 import com.fs.starfarer.api.impl.campaign.econ.impl.Cryosanctum;
 import data.campaign.econ.boggledTools;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class Boggled_Cryosanctum extends Cryosanctum
 {
+    private static BoggledCommonIndustry commonindustry;
+
+    public static void settingsFromJSON(JSONObject data) throws JSONException {
+        commonindustry = new BoggledCommonIndustry(data, "Cryosanctum");
+    }
+
     @Override
     public void apply()
     {

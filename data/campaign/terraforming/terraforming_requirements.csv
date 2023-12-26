@@ -10,6 +10,8 @@ colony_not_water_world,"Colony is not already a water world",false,"planet_not_w
 colony_not_tundra_world,"Colony is not already a tundra world",false,"planet_not_tundra"
 colony_not_frozen_world,"Colony is not already a frozen world",false,"planet_not_frozen"
 
+colony_water_or_frozen,"Colony is a water or frozen world",false,"planet_water | planet_frozen"
+
 colony_not_gas_giant,"Colony is not a gas giant",false,"planet_not_gas_giant"
 colony_not_volcanic,"Colony is not a volcanic world",false,"planet_not_volcanic"
 colony_not_irradiated,"Colony is not an irradiated world",false,"planet_not_irradiated"
@@ -66,3 +68,4 @@ orbited_planet_not_has_ore_and_rare_ore_ultrarich,"Orbited planet does not have 
 
 colony_decivilized,"Colony has a decivilized population",false,"market_decivilized | market_decivilized_subpop"
 colony_rogue_ai_core,"Colony has a rogue AI core",false,"market_rogue_ai_core"
+colony_has_ruins,"Colony has Domain era ruins",false,"market_ruins_scattered | market_ruins_widespread | market_ruins_extensive | market_ruins_vast"

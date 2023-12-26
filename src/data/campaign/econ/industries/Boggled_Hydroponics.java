@@ -4,10 +4,19 @@ import com.fs.starfarer.api.impl.campaign.econ.impl.BaseIndustry;
 import com.fs.starfarer.api.impl.campaign.ids.Commodities;
 import com.fs.starfarer.api.util.Pair;
 import data.campaign.econ.boggledTools;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.lang.String;
 
 public class Boggled_Hydroponics extends BaseIndustry
 {
+    private static BoggledCommonIndustry commonindustry;
+
+    public static void settingsFromJSON(JSONObject data) throws JSONException {
+        commonindustry = new BoggledCommonIndustry(data, "Hydroponics");
+    }
+
     @Override
     public boolean canBeDisrupted() {
         return true;
@@ -39,15 +48,13 @@ public class Boggled_Hydroponics extends BaseIndustry
     }
 
     @Override
-    public boolean isAvailableToBuild()
-    {
-        return boggledTools.getBooleanSetting(boggledTools.BoggledSettings.hydroponicsEnabled);
+    public boolean isAvailableToBuild() {
+        return commonindustry.isAvailableToBuild(getMarket());
     }
 
     @Override
-    public boolean showWhenUnavailable()
-    {
-        return false;
+    public boolean showWhenUnavailable() {
+        return commonindustry.showWhenUnavailable(getMarket());
     }
 
     @Override

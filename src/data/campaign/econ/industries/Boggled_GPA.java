@@ -3,9 +3,17 @@ package data.campaign.econ.industries;
 import java.lang.String;
 import com.fs.starfarer.api.impl.campaign.econ.impl.BaseIndustry;
 import data.campaign.econ.boggledTools;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class Boggled_GPA extends BaseIndustry
 {
+    private static BoggledCommonIndustry commonindustry;
+
+    public static void settingsFromJSON(JSONObject data) throws JSONException {
+        commonindustry = new BoggledCommonIndustry(data, "GPA");
+    }
+
     @Override
     public boolean canBeDisrupted()
     {

@@ -8,10 +8,19 @@ import com.fs.starfarer.api.util.Misc;
 import com.fs.starfarer.api.impl.campaign.econ.impl.BaseIndustry;
 import com.fs.starfarer.api.util.Pair;
 import data.campaign.econ.boggledTools;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.lang.String;
 
 public class Boggled_Cloning extends BaseIndustry implements MarketImmigrationModifier
 {
+    private static BoggledCommonIndustry commonindustry;
+
+    public static void settingsFromJSON(JSONObject data) throws JSONException {
+        commonindustry = new BoggledCommonIndustry(data, "Cloning");
+    }
+
     @Override
     public boolean canBeDisrupted() {
         return true;
@@ -61,30 +70,13 @@ public class Boggled_Cloning extends BaseIndustry implements MarketImmigrationMo
     @Override
     public boolean isAvailableToBuild()
     {
-        if(!boggledTools.isResearched(this.getId()))
-        {
-            return false;
-        }
-
-        if(boggledTools.getBooleanSetting(boggledTools.BoggledSettings.cloningEnabled))
-        {
-            return true;
-        }
-        else
-        {
-            return false;
-        }
+        return commonindustry.isAvailableToBuild(getMarket());
     }
 
     @Override
     public boolean showWhenUnavailable()
     {
-        if(!boggledTools.isResearched(this.getId()))
-        {
-            return false;
-        }
-
-        return false;
+        return commonindustry.showWhenUnavailable(getMarket());
     }
 
     @Override

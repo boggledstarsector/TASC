@@ -2,43 +2,27 @@ package data.campaign.econ.industries;
 
 import java.awt.*;
 import java.lang.String;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.LinkedHashMap;
 
-import com.fs.starfarer.api.Global;
-import com.fs.starfarer.api.campaign.*;
 import com.fs.starfarer.api.campaign.econ.*;
 import com.fs.starfarer.api.impl.campaign.econ.impl.BaseIndustry;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
-import data.campaign.econ.boggledTools;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 public class Boggled_Planet_Cracker extends BaseIndustry implements BoggledCommonIndustryInterface
 {
+    private static BoggledCommonIndustry commonIndustry;
+
+    public static void settingsFromJSON(JSONObject data) throws JSONException {
+        commonIndustry = new BoggledCommonIndustry(data, "Planet Cracker");
+    }
+
     @Override
     public boolean canBeDisrupted()
     {
         return true;
-    }
-
-    private int daysWithoutShortage = 0;
-    private int lastDayChecked = 0;
-
-    private static BoggledCommonIndustry commonIndustry;
-
-    public static ArrayList<String> conditionsAddedOnCompletion;
-
-    public static int requiredDaysToCrack = 200;
-
-    public static void settingsFromJSON(JSONObject data) throws JSONException {
-        commonIndustry = new BoggledCommonIndustry(data, "Planet Cracker");
-
-//        requiredDaysToCrack = commonIndustry.getDurations()[0];
-
-        conditionsAddedOnCompletion = new ArrayList<>(Arrays.asList(data.getString("conditions_added_on_completion").split(boggledTools.csvOptionSeparator)));
     }
 
     @Override
@@ -68,38 +52,16 @@ public class Boggled_Planet_Cracker extends BaseIndustry implements BoggledCommo
     {
         super.advance(amount);
 
-        if(commonIndustry.marketSuitableBoth(getMarket()) && this.isFunctional())
-        {
-            CampaignClockAPI clock = Global.getSector().getClock();
-
-            if(clock.getDay() != lastDayChecked)
-            {
-                daysWithoutShortage++;
-                lastDayChecked = clock.getDay();
-
-                if(daysWithoutShortage >= requiredDaysToCrack)
-                {
-                    boggledTools.showProjectCompleteIntelMessage("Planet cracking", "Completed", commonIndustry.getFocusMarketOrMarket(getMarket()).getName(), market);
-
-                    boggledTools.incrementOreForPlanetCracking(commonIndustry.getFocusMarketOrMarket(getMarket()));
-
-                    for (String conditionAddedOnCompletion : conditionsAddedOnCompletion) {
-                        boggledTools.addCondition(commonIndustry.getFocusMarketOrMarket(getMarket()), conditionAddedOnCompletion);
-                    }
-
-                    boggledTools.surveyAll(commonIndustry.getFocusMarketOrMarket(getMarket()));
-                    boggledTools.refreshSupplyAndDemand(commonIndustry.getFocusMarketOrMarket(getMarket()));
-                    boggledTools.refreshAquacultureAndFarming(commonIndustry.getFocusMarketOrMarket(getMarket()));
-                }
-            }
-        }
+        commonIndustry.advance(amount, this);
     }
 
+    @Override
     public void apply()
     {
         super.apply(true);
     }
 
+    @Override
     public void unapply()
     {
         super.unapply();
@@ -108,9 +70,6 @@ public class Boggled_Planet_Cracker extends BaseIndustry implements BoggledCommo
     @Override
     public void notifyBeingRemoved(MarketAPI.MarketInteractionMode mode, boolean forUpgrade)
     {
-        daysWithoutShortage = 0;
-        lastDayChecked = 0;
-
         super.notifyBeingRemoved(mode, forUpgrade);
     }
 
@@ -120,7 +79,7 @@ public class Boggled_Planet_Cracker extends BaseIndustry implements BoggledCommo
         float opad = 10.0F;
         Color highlight = Misc.getHighlightColor();
 
-        commonIndustry.tooltipIncomplete(this, tooltip, mode, "Planet cracking is approximately %s complete on " + commonIndustry.getFocusMarketOrMarket(getMarket()).getName() + ".", opad, highlight, commonIndustry.getPercentComplete(daysWithoutShortage, requiredDaysToCrack) + "%");
+        commonIndustry.tooltipIncomplete(this, tooltip, mode, "Planet cracking is approximately %s complete on " + commonIndustry.getFocusMarketOrMarket(getMarket()).getName() + ".", opad, highlight, commonIndustry.getPercentComplete(0, this) + "%");
 
         commonIndustry.tooltipComplete(this, tooltip, mode, "Further planet cracking operations would serve no purpose on " + commonIndustry.getFocusMarketOrMarket(getMarket()).getName() + ". The Planet Cracker can now be deconstructed without any risk of regression.", opad, highlight);
 

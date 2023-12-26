@@ -9,9 +9,17 @@ import com.fs.starfarer.api.util.Pair;
 import data.campaign.econ.boggledTools;
 import java.awt.*;
 import com.fs.starfarer.api.impl.campaign.ids.Commodities;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class Boggled_Limelight_Network extends BaseIndustry
 {
+    private static BoggledCommonIndustry commonindustry;
+
+    public static void settingsFromJSON(JSONObject data) throws JSONException {
+        commonindustry = new BoggledCommonIndustry(data, "Limelight Network");
+    }
+
     //Need to update string in addImproveDesc if value changed
     private final float IMPROVE_BONUS = 1.20f;
 

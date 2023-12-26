@@ -1,27 +1,38 @@
-id,projects,enable_setting,durations_with_conditions,dynamic_project_duration_modifiers,resource,resource_step,requirement_needed,requirement_suitable,requirement_suitable_hidden,conditions_added_on_completion,conditions_removed_on_completion,tooltip_incomplete,tooltip_complete,tooltip_disrupted
-# project is a | separated list of projects as specified in 'terraforming_projects.csv'. They contain requirements, duration, duration modifiers, etc that control what this industry does
-# enable_setting handled by projects' enable_setting
-# durations_with_conditions and dynamic_project_duration_modifiers both handled by projects' base_project_duration and dynamic_project_duration_modifiers
-# resource and resource_step handled by projects' resources_to_progress
-# requirement_needed handled by projects' requirements
-# requirement_suitable and requirement_suitable_hidden not handled by projects, these are whether the building can be made and needs two, one for buildable, the other for in the list
-# conditions_added_on_completion and conditions_removed_on_completion handled by projects' conditions_added and conditions_removed
-# Resource step is how much the resource should increase, per resource
-ai_mining_drones,industry_ai_mining_drones,boggledStationConstructionContentEnabled | boggledEnableAIMiningDronesStructure,,,,,market_has_mining_industry,"colony_is_station ; Colony must be a station.",,,,,,
-atmosphere_processor,,,,,,,,"colony_is_not_station ; Colony must be on a planet. |
+id,projects,requirements,requirements_hidden,tooltip_incomplete,tooltip_complete,tooltip_disrupted
+# project is a | separated list of 'project ; intelTooltip ; intelCompletedMessage' with project as specified in 'terraforming_projects.csv'. They contain requirements, duration, duration modifiers, etc that control what this industry does. intelTooltip and intelCompletedMessage are optional, but intelTooltip must be specified for intelCompletedMessage to be specified
+# requirements and requirements_hidden not handled by projects, these are only whether the building can be built. They also need a reason paired with it for display purposes. May be able to change it in the future, but for now, no
+ai_mining_drones,industry_ai_mining_drones,"colony_is_station ; Colony must be a station.",,,,
+atmosphere_processor,,"colony_is_not_station ; Colony must be on a planet. |
 colony_not_unknown_world ; This planet type cannot be terraformed. |
 colony_not_star ; Stars cannot be terraformed. |
 colony_not_gas_giant ; Gas giants cannot be terraformed. |
 colony_not_volcanic ; Volcanic worlds cannot be terraformed. |
 colony_not_irradiated ; Irradiated worlds cannot be terraformed. |
-colony_has_atmo_problem ; Atmospheric conditions on $market are already optimal. There is no reason to build an atmosphere processor here.",,,
-chameleon,industry_chameleon_decivilized | industry_chameleon_rogue_ai,boggledDomainTechContentEnabled | boggledCHAMELEONEnabled,200 ; colony_decivilized | 200 ; colony_rogue_ai_core,,,,,,,,decivilized ; decivilized_subpop | rogue_ai_core
-,,,,,,,,,,,,,,
-ouyang_optimizer,industry_ouyang_optimizer,,,,,,,"colony_is_station ; Colony must be a station. |
+colony_has_atmo_problem ; Atmospheric conditions on $market are already optimal. There is no reason to build an atmosphere processor here.",
+chameleon,industry_chameleon_decivilized ; Decivilized subpopulation ; Eradicated | industry_chameleon_rogue_ai ; Rogue AI core ; Terminated,,
+cloning,industry_cloning,,,,,
+cryosanctum,industry_cryosanctum,,,,,
+domain_archaeology,industry_domain_archaeology,,,,,
+domed_cities,industry_domed_cities,,,,,
+expand_station,industry_expand_station,,,,,
+genelab,industry_genelab,,,,,
+gpa,industry_gpa,,,,,
+harmonic_damper,industry_harmonic_damper,,,,,
+hydroponics,industry_hydroponics,,,,,
+ismara_sling,industry_ismara_sling,,,,,
+kletka_simulator,industry_kletka_simulator,,,,,
+limelight_network,industry_limelight_network,,,,,
+magnetoshield,industry_magnetoshield,,,,,
+mesozoic_park,industry_mesozoic_park,,,,,
+ouyang_optimizer,industry_ouyang_optimizer ; Ouyang optimization ; Completed,"colony_is_station ; Colony must be a station. |
 orbited_planet_is_gas_giant ; Only gas giants can undergo Ouyang optimization. |
 orbited_planet_not_has_extreme_weather ; $focusMarket already has extreme weather. Making it worse won't increase volatiles availability. |
-orbited_planet_not_has_volatiles_plentiful ; $focusMarket is already extremely rich in volatiles. An Ouyang optimization would not yield any improvement.",,,,,,
-planet_cracker,industry_planet_cracker,,,,,,,"colony_is_station ; Colony must be a station. |
+orbited_planet_not_has_volatiles_plentiful ; $focusMarket is already extremely rich in volatiles. An Ouyang optimization would not yield any improvement.",,,,
+perihelion_project,industry_perihelion_project,,,,,
+planet_cracker,industry_planet_cracker ; Planet cracking ; Completed,"colony_is_station ; Colony must be a station. |
 orbited_planet_is_not_gas_giant ; Gas giants cannot be cracked. |
 orbited_planet_not_has_tectonic_or_extreme_tectonic_activity ; $focusMarket already has tectonic activity. Making it worse won't increase ore availability. |
-orbited_planet_not_has_ore_and_rare_ore_ultrarich ; $focusMarket already has easily accessible ore deposits. Cracking the planet would not yield any improvement.",,,,,,
+orbited_planet_not_has_ore_and_rare_ore_ultrarich ; $focusMarket already has easily accessible ore deposits. Cracking the planet would not yield any improvement.",,,,
+planetary_agrav_field,industry_planetary_agrav_field,,,,,
+remnant_station,industry_remnant_station,,,,,
+stellar_reflect_array,industry_stellar_reflector_array,,,,,

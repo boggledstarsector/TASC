@@ -17,6 +17,8 @@ import com.fs.starfarer.api.util.Misc;
 import com.fs.starfarer.api.util.Pair;
 import com.fs.starfarer.api.util.WeightedRandomPicker;
 import data.campaign.econ.boggledTools;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.awt.*;
 import java.util.List;
@@ -24,6 +26,12 @@ import java.util.Random;
 
 public class Boggled_Remnant_Station extends OrbitalStation implements RouteManager.RouteFleetSpawner, FleetEventListener
 {
+    private static BoggledCommonIndustry commonindustry;
+
+    public static void settingsFromJSON(JSONObject data) throws JSONException {
+        commonindustry = new BoggledCommonIndustry(data, "Remnant Station");
+    }
+
     protected IntervalUtil tracker = new IntervalUtil(Global.getSettings().getFloat("averagePatrolSpawnInterval") * 0.7f, Global.getSettings().getFloat("averagePatrolSpawnInterval") * 1.3f);
 
     protected float returningPatrolValue = 0f;

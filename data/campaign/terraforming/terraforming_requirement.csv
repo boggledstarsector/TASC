@@ -6,7 +6,7 @@ id,requirement_type,invert,data
 # data is a string that specifies options for the requirement type
 # PlanetTypeRequirement requires the planet to be the type specified in data. Planet types are in 'planet_types.csv'
 # MarketHasCondition requires the planet to have the condition specified in data
-# MarketHasWaterPresent requires the planet to have a certain amount of water. Water amounts are specified in 'planet_types.csv'
+# MarketHasWaterPresent requires the planet to have a certain amount of water, min and max separated by a ;. Water amounts are specified in 'planet_types.csv'
 # MarketHasIndustry requires the planet to have a certain industry.
 # WorldTypeSupportsResourceImprovement requires the planet's specified resource to be below the maximum specified in 'planet_types.csv'
 # TerraformingPossibleOnMarket requires the planet to be able to be terraformed, as specified in 'planet_types.csv'
@@ -65,8 +65,13 @@ market_decivilized,MarketHasCondition,false,"decivilized_population"
 market_decivilized_subpop,MarketHasCondition,false,"decivilized_subpop"
 market_rogue_ai_core,MarketHasCondition,false,"rogue_ai_core"
 
-market_has_moderate_water_present,MarketHasWaterPresent,false,1 | 2
-market_has_large_water_present,MarketHasWaterPresent,false,2 | 2
+market_ruins_scattered,MarketHasCondition,false,"ruins_scattered"
+market_ruins_widespread,MarketHasCondition,false,"ruins_widespread"
+market_ruins_extensive,MarketHasCondition,false,"ruins_extensive"
+market_ruins_vast,MarketHasCondition,false,"ruins_vast"
+
+market_has_moderate_water_present,MarketHasWaterPresent,false,1 ; 2
+market_has_large_water_present,MarketHasWaterPresent,false,2 ; 2
 
 market_has_atmosphere_processor,MarketHasIndustry,false,"BOGGLED_ATMOSPHERE_PROCESSOR"
 market_has_genelab,MarketHasIndustry,false,"BOGGLED_GENELAB"
