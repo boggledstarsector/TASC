@@ -399,15 +399,12 @@ public class boggledTools
             if (builder.length() != 0) {
                 builder.append("\n");
             }
-            for (Pair<BoggledTerraformingRequirements, String> req : project.component1().getProjectRequirements()) {
-                if (!req.one.checkRequirement(market)) {
+            for (BoggledTerraformingProject.RequirementWithTooltipOverride req : project.component1().getProjectRequirements()) {
+                if (!req.checkRequirement(market)) {
                     if (builder.length() != 0) {
                         builder.append("\n");
                     }
-                    String replaced = req.two;
-                    if (replaced.isEmpty()) {
-                        replaced = req.one.getTooltip();
-                    }
+                    String replaced = req.getTooltip();
                     for (Map.Entry<String, String> replacement : tokenReplacements.entrySet()) {
                         replaced = replaced.replace(replacement.getKey(), replacement.getValue());
                     }
@@ -528,9 +525,9 @@ public class boggledTools
         return new ArrayList<>(Arrays.asList(toSplit.split(regex)));
     }
 
-    private static ArrayList<Pair<BoggledTerraformingRequirements, String>> requirementsFromRequirementsStrings(String[] requirementsStrings, String id, String requirementType) {
+    private static ArrayList<BoggledTerraformingProject.RequirementWithTooltipOverride> requirementsFromRequirementsStrings(String[] requirementsStrings, String id, String requirementType) {
         Logger log = Global.getLogger(boggledTools.class);
-        ArrayList<Pair<BoggledTerraformingRequirements, String>> ret = new ArrayList<>();
+        ArrayList<BoggledTerraformingProject.RequirementWithTooltipOverride> ret = new ArrayList<>();
         if (requirementsStrings.length == 1 && requirementsStrings[0].isEmpty()) {
             return ret;
         }
@@ -538,15 +535,15 @@ public class boggledTools
         for (String requirementsAndReasonString : requirementsStrings) {
             String[] requirementsStringAndReason = requirementsAndReasonString.split(csvSubOptionSeparator);
             String requirementsString = requirementsStringAndReason[0];
-            String descriptionOverride = "";
+            String tooltipOverride = "";
             if (requirementsStringAndReason.length > 1) {
-                descriptionOverride = requirementsStringAndReason[1];
+                tooltipOverride = requirementsStringAndReason[1];
             }
             BoggledTerraformingRequirements req = terraformingRequirements.get(requirementsString);
             if (req == null) {
                 log.info("Project " + id + " has invalid " + requirementType + " " + requirementsString);
             } else {
-                ret.add(new Pair<BoggledTerraformingRequirements, String>(req, descriptionOverride));
+                ret.add(new BoggledTerraformingProject.RequirementWithTooltipOverride(req, tooltipOverride));
             }
         }
         return ret;
@@ -868,8 +865,8 @@ public class boggledTools
                     }
                 }
 
-                ArrayList<Pair<BoggledTerraformingRequirements, String>> reqs = requirementsFromRequirementsStrings(requirementsStrings, id, "requirements");
-                ArrayList<Pair<BoggledTerraformingRequirements, String>> reqsHidden = requirementsFromRequirementsStrings(requirementsHiddenStrings, id, "requirements_hidden");
+                ArrayList<BoggledTerraformingProject.RequirementWithTooltipOverride> reqs = requirementsFromRequirementsStrings(requirementsStrings, id, "requirements");
+                ArrayList<BoggledTerraformingProject.RequirementWithTooltipOverride> reqsHidden = requirementsFromRequirementsStrings(requirementsHiddenStrings, id, "requirements_hidden");
 
                 BoggledTerraformingProject terraformingProj = new BoggledTerraformingProject(id, enableSettings, projectType, tooltip, reqs, reqsHidden, baseProjectDuration, terraformingDurationModifiers, terraformingProjectEffects);
                 terraformingProjects.put(id, terraformingProj);
@@ -1001,35 +998,35 @@ public class boggledTools
                 new BoggledTerraformingRequirement.PlayerHasStoryPointsAtLeast("player_has_at_least_cost_story_points", false, storyPointCost)
         )));
 
-        ArrayList<Pair<BoggledTerraformingRequirements, String>> craftingProjectReqsEasy = new ArrayList<>(asList(
-                new Pair<>(colonyHasAtLeast100kInhabitants, ""),
-                new Pair<>(colonyHasOrbitalWorksWPristineNanoforge, ""),
-                new Pair<>(fleetCargoContainsAtLeastDomainArtifactsEasy, "")
+        ArrayList<BoggledTerraformingProject.RequirementWithTooltipOverride> craftingProjectReqsEasy = new ArrayList<>(asList(
+                new BoggledTerraformingProject.RequirementWithTooltipOverride(colonyHasAtLeast100kInhabitants, ""),
+                new BoggledTerraformingProject.RequirementWithTooltipOverride(colonyHasOrbitalWorksWPristineNanoforge, ""),
+                new BoggledTerraformingProject.RequirementWithTooltipOverride(fleetCargoContainsAtLeastDomainArtifactsEasy, "")
         ));
 
-        ArrayList<Pair<BoggledTerraformingRequirements, String>> craftingProjectReqsMedium = new ArrayList<>(asList(
-                new Pair<>(colonyHasAtLeast100kInhabitants, ""),
-                new Pair<>(colonyHasOrbitalWorksWPristineNanoforge, ""),
-                new Pair<>(fleetCargoContainsAtLeastDomainArtifactsMedium, "")
+        ArrayList<BoggledTerraformingProject.RequirementWithTooltipOverride> craftingProjectReqsMedium = new ArrayList<>(asList(
+                new BoggledTerraformingProject.RequirementWithTooltipOverride(colonyHasAtLeast100kInhabitants, ""),
+                new BoggledTerraformingProject.RequirementWithTooltipOverride(colonyHasOrbitalWorksWPristineNanoforge, ""),
+                new BoggledTerraformingProject.RequirementWithTooltipOverride(fleetCargoContainsAtLeastDomainArtifactsMedium, "")
         ));
 
-        ArrayList<Pair<BoggledTerraformingRequirements, String>> craftingProjectReqsHard = new ArrayList<>(asList(
-                new Pair<>(colonyHasAtLeast100kInhabitants, ""),
-                new Pair<>(colonyHasOrbitalWorksWPristineNanoforge, ""),
-                new Pair<>(fleetCargoContainsAtLeastDomainArtifactsHard, "")
+        ArrayList<BoggledTerraformingProject.RequirementWithTooltipOverride> craftingProjectReqsHard = new ArrayList<>(asList(
+                new BoggledTerraformingProject.RequirementWithTooltipOverride(colonyHasAtLeast100kInhabitants, ""),
+                new BoggledTerraformingProject.RequirementWithTooltipOverride(colonyHasOrbitalWorksWPristineNanoforge, ""),
+                new BoggledTerraformingProject.RequirementWithTooltipOverride(fleetCargoContainsAtLeastDomainArtifactsHard, "")
         ));
 
         if (storyPointCost > 0) {
-            craftingProjectReqsEasy.add(new Pair<>(playerHasStoryPointsAtLeast, ""));
-            craftingProjectReqsMedium.add(new Pair<>(playerHasStoryPointsAtLeast, ""));
-            craftingProjectReqsHard.add(new Pair<>(playerHasStoryPointsAtLeast, ""));
+            craftingProjectReqsEasy.add(new BoggledTerraformingProject.RequirementWithTooltipOverride(playerHasStoryPointsAtLeast, ""));
+            craftingProjectReqsMedium.add(new BoggledTerraformingProject.RequirementWithTooltipOverride(playerHasStoryPointsAtLeast, ""));
+            craftingProjectReqsHard.add(new BoggledTerraformingProject.RequirementWithTooltipOverride(playerHasStoryPointsAtLeast, ""));
         }
 
         String[] enableSettings = {BoggledSettings.domainTechContentEnabled, "boggledDomainTechCraftingEnabled", BoggledSettings.domainArchaeologyEnabled};
         String projectType = "crafting";
         ArrayList<String> emptyList = new ArrayList<>();
         ArrayList<BoggledTerraformingDurationModifier.TerraformingDurationModifier> emptyList2 = new ArrayList<>();
-        ArrayList<Pair<BoggledTerraformingRequirements, String>> emptyList4 = new ArrayList<>();
+        ArrayList<BoggledTerraformingProject.RequirementWithTooltipOverride> emptyList4 = new ArrayList<>();
         ArrayList<BoggledTerraformingProjectEffect.TerraformingProjectEffect> emptyList3 = new ArrayList<>();
 
         ret.add(new BoggledTerraformingProject(craftCorruptedNanoforgeProjectId, enableSettings, projectType, craftCorruptedNanoforgeProjectTooltip, craftingProjectReqsEasy, emptyList4, 0, emptyList2, emptyList3));

@@ -5,7 +5,6 @@ import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import com.fs.starfarer.api.impl.campaign.rulecmd.BaseCommandPlugin;
 import com.fs.starfarer.api.util.Misc;
-import com.fs.starfarer.api.util.Pair;
 import data.campaign.econ.boggledTools;
 
 import java.awt.*;
@@ -129,11 +128,11 @@ public class boggledCraftingPrintRequirements extends BaseCommandPlugin
             text.addPara("Requirements to craft " +  itemToCraftString + ":");
             BoggledTerraformingProject craftingProject = boggledTools.getCraftingProject(craftingProjectId);
             if (craftingProject != null) {
-                for (Pair<BoggledTerraformingRequirements, String> craftingRequirements : craftingProject.getProjectRequirements()) {
-                    if (craftingRequirements.one.checkRequirement(market)) {
-                        text.addPara("      - %s", good, craftingRequirements.one.getTooltip());
+                for (BoggledTerraformingProject.RequirementWithTooltipOverride craftingRequirements : craftingProject.getProjectRequirements()) {
+                    if (craftingRequirements.checkRequirement(market)) {
+                        text.addPara("      - %s", good, craftingRequirements.getTooltip());
                     } else {
-                        text.addPara("      - %s", bad, craftingRequirements.one.getTooltip());
+                        text.addPara("      - %s", bad, craftingRequirements.getTooltip());
                     }
                 }
             }
