@@ -6,10 +6,8 @@ import com.fs.starfarer.api.campaign.econ.Industry;
 import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.impl.campaign.econ.impl.BaseIndustry;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
-import com.fs.starfarer.api.util.Pair;
 import data.campaign.econ.boggledTools;
 import data.scripts.BoggledTerraformingProject;
-import data.scripts.BoggledTerraformingRequirements;
 import kotlin.Triple;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -24,9 +22,6 @@ import static data.campaign.econ.boggledTools.getPlanetType;
 public class BoggledCommonIndustry {
 
     private String industry;
-
-    private ArrayList<Pair<BoggledTerraformingRequirements, String>> requirementsSuitable;
-    private ArrayList<Pair<BoggledTerraformingRequirements, String>> requirementsSuitableHidden;
 
 //    private ArrayList<Pair<String, Integer> commodityDemands;
 
@@ -59,9 +54,6 @@ public class BoggledCommonIndustry {
         }
         this.lastDayChecked = new ArrayList<>(Collections.nCopies(this.projects.size(), 0));
         this.daysWithoutShortage = new ArrayList<>(Collections.nCopies(this.projects.size(), 0));
-
-        this.requirementsSuitable = boggledTools.getRequirementsSuitable(data, "requirements", industry);
-        this.requirementsSuitableHidden = boggledTools.getRequirementsSuitable(data, "requirements_hidden", industry);
 
 //        this.commodityDemands = new ArrayList<>();
 //        String[] commodityDemands = data.getString("commodity_demand").split(boggledTools.csvOptionSeparator);
@@ -136,17 +128,24 @@ public class BoggledCommonIndustry {
         tooltip.addPara(format, pad, hl, highlights);
     }
 
-    public boolean marketSuitable(MarketAPI market, ArrayList<Pair<BoggledTerraformingRequirements, String>> requirements) {
-        for (Pair<BoggledTerraformingRequirements, String> terraformingRequirements : requirements) {
-            if (!terraformingRequirements.one.checkRequirement(market)) {
-                return false;
-            }
+    private boolean marketSuitableVisible(MarketAPI market) {
+        boolean anyProjectValid = false;
+        for (Triple<BoggledTerraformingProject, String, String> project : projects) {
+            anyProjectValid = anyProjectValid || project.component1().requirementsMet(market);
         }
-        return true;
+        return anyProjectValid;
+    }
+
+    private boolean marketSuitableHidden(MarketAPI market) {
+        boolean anyProjectValid = false;
+        for (Triple<BoggledTerraformingProject, String, String> project : projects) {
+            anyProjectValid = anyProjectValid || project.component1().requirementsHiddenMet(market);
+        }
+        return anyProjectValid;
     }
 
     public boolean marketSuitableBoth(MarketAPI market) {
-        return marketSuitable(market, requirementsSuitable) && marketSuitable(market, requirementsSuitableHidden);
+        return marketSuitableHidden(market) && marketSuitableVisible(market);
     }
 
     public static MarketAPI getFocusMarketOrMarket(MarketAPI market) {
@@ -181,7 +180,7 @@ public class BoggledCommonIndustry {
             }
         }
 
-        return marketSuitable(market, requirementsSuitable) && marketSuitable(market, requirementsSuitableHidden);
+        return marketSuitableVisible(market) && marketSuitableHidden(market);
     }
 
     public boolean showWhenUnavailable(MarketAPI market) {
@@ -204,7 +203,7 @@ public class BoggledCommonIndustry {
             }
         }
 
-        return marketSuitable(market, requirementsSuitableHidden);
+        return marketSuitableHidden(market);
     }
 
     private LinkedHashMap<String, String> getTokenReplacements(MarketAPI market) {
@@ -217,6 +216,6 @@ public class BoggledCommonIndustry {
     }
 
     public String getUnavailableReason(MarketAPI market) {
-        return boggledTools.getUnavailableReason(requirementsSuitable, requirementsSuitableHidden, industry, market, getTokenReplacements(market), projects);
+        return boggledTools.getUnavailableReason(projects, industry, market, getTokenReplacements(market));
     }
 }

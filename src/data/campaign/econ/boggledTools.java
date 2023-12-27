@@ -379,34 +379,45 @@ public class boggledTools
 
         for (String stringDataArrayEntry : stringDataArray) {
             String[] reqStringAndReason = stringDataArrayEntry.split(boggledTools.csvSubOptionSeparator);
-            assert(reqStringAndReason.length == 2);
             BoggledTerraformingRequirements requirementSuitable = boggledTools.getTerraformingRequirements().get(reqStringAndReason[0]);
             if (requirementSuitable == null) {
                 log.error("Industry " + industry + " has invalid requirement " + stringDataArrayEntry);
                 continue;
             }
-            ret.add(new Pair<>(requirementSuitable, reqStringAndReason[1]));
+            String reason = requirementSuitable.getTooltip();
+            if (reqStringAndReason.length > 1) {
+                reason = reqStringAndReason[1];
+            }
+            ret.add(new Pair<>(requirementSuitable, reason));
         }
 
         return ret;
     }
 
-    private static void buildUnavailableReason(StringBuilder builder, @NotNull ArrayList<Pair<BoggledTerraformingRequirements, String>> req, MarketAPI market, LinkedHashMap<String, String> tokenReplacements) {
-        for (Pair<BoggledTerraformingRequirements, String> reqAndReason : req) {
-            if (!reqAndReason.one.checkRequirement(market)) {
-                if (builder.length() != 0) {
-                    builder.append("\n");
+    private static void buildUnavailableReason(StringBuilder builder, @NotNull ArrayList<Triple<BoggledTerraformingProject, String, String>> projects, MarketAPI market, LinkedHashMap<String, String> tokenReplacements) {
+        for (Triple<BoggledTerraformingProject, String, String> project : projects) {
+            if (builder.length() != 0) {
+                builder.append("\n");
+            }
+            for (Pair<BoggledTerraformingRequirements, String> req : project.component1().getProjectRequirements()) {
+                if (!req.one.checkRequirement(market)) {
+                    if (builder.length() != 0) {
+                        builder.append("\n");
+                    }
+                    String replaced = req.two;
+                    if (replaced.isEmpty()) {
+                        replaced = req.one.getTooltip();
+                    }
+                    for (Map.Entry<String, String> replacement : tokenReplacements.entrySet()) {
+                        replaced = replaced.replace(replacement.getKey(), replacement.getValue());
+                    }
+                    builder.append(replaced);
                 }
-                String replaced = reqAndReason.two;
-                for (Map.Entry<String, String> replacement : tokenReplacements.entrySet()) {
-                    replaced = replaced.replace(replacement.getKey(), replacement.getValue());
-                }
-                builder.append(replaced);
             }
         }
     }
     @NotNull
-    public static String getUnavailableReason(ArrayList<Pair<BoggledTerraformingRequirements, String>> requirementsSuitable, ArrayList<Pair<BoggledTerraformingRequirements, String>> requirementsSuitableHidden, String industry, MarketAPI market, LinkedHashMap<String, String> tokenReplacements, ArrayList<Triple<BoggledTerraformingProject, String, String>> projects) {
+    public static String getUnavailableReason(ArrayList<Triple<BoggledTerraformingProject, String, String>> projects, String industry, MarketAPI market, LinkedHashMap<String, String> tokenReplacements) {
         for (Triple<BoggledTerraformingProject, String, String> project : projects) {
             if (!boggledTools.optionsAllowThis(project.component1().getEnableSettings())) {
                 return "Error in getUnavailableReason() in " + industry + ". Please tell Boggled about this on the forums.";
@@ -415,8 +426,7 @@ public class boggledTools
 
         StringBuilder ret = new StringBuilder();
 
-        buildUnavailableReason(ret, requirementsSuitable, market, tokenReplacements);
-        buildUnavailableReason(ret, requirementsSuitableHidden, market, tokenReplacements);
+        buildUnavailableReason(ret, projects, market, tokenReplacements);
 
         return ret.toString();
     }
@@ -518,19 +528,25 @@ public class boggledTools
         return new ArrayList<>(Arrays.asList(toSplit.split(regex)));
     }
 
-    private static ArrayList<BoggledTerraformingRequirements> requirementsFromRequirementsStrings(String[] requirementsStrings, String id, String requirementType) {
+    private static ArrayList<Pair<BoggledTerraformingRequirements, String>> requirementsFromRequirementsStrings(String[] requirementsStrings, String id, String requirementType) {
         Logger log = Global.getLogger(boggledTools.class);
-        ArrayList<BoggledTerraformingRequirements> ret = new ArrayList<>();
+        ArrayList<Pair<BoggledTerraformingRequirements, String>> ret = new ArrayList<>();
         if (requirementsStrings.length == 1 && requirementsStrings[0].isEmpty()) {
             return ret;
         }
 
-        for (String requirementsString : requirementsStrings) {
+        for (String requirementsAndReasonString : requirementsStrings) {
+            String[] requirementsStringAndReason = requirementsAndReasonString.split(csvSubOptionSeparator);
+            String requirementsString = requirementsStringAndReason[0];
+            String descriptionOverride = "";
+            if (requirementsStringAndReason.length > 1) {
+                descriptionOverride = requirementsStringAndReason[1];
+            }
             BoggledTerraformingRequirements req = terraformingRequirements.get(requirementsString);
             if (req == null) {
                 log.info("Project " + id + " has invalid " + requirementType + " " + requirementsString);
             } else {
-                ret.add(req);
+                ret.add(new Pair<BoggledTerraformingRequirements, String>(req, descriptionOverride));
             }
         }
         return ret;
@@ -852,8 +868,8 @@ public class boggledTools
                     }
                 }
 
-                ArrayList<BoggledTerraformingRequirements> reqs = requirementsFromRequirementsStrings(requirementsStrings, id, "requirements");
-                ArrayList<BoggledTerraformingRequirements> reqsHidden = requirementsFromRequirementsStrings(requirementsHiddenStrings, id, "requirements_hidden");
+                ArrayList<Pair<BoggledTerraformingRequirements, String>> reqs = requirementsFromRequirementsStrings(requirementsStrings, id, "requirements");
+                ArrayList<Pair<BoggledTerraformingRequirements, String>> reqsHidden = requirementsFromRequirementsStrings(requirementsHiddenStrings, id, "requirements_hidden");
 
                 BoggledTerraformingProject terraformingProj = new BoggledTerraformingProject(id, enableSettings, projectType, tooltip, reqs, reqsHidden, baseProjectDuration, terraformingDurationModifiers, terraformingProjectEffects);
                 terraformingProjects.put(id, terraformingProj);
@@ -943,8 +959,8 @@ public class boggledTools
                     }
                 }
 
-                proj.overrideAddTooltip(tooltipOverride, tooltipAddition);
-                proj.addRemoveProjectRequirements(requirementsAdded, requirementsRemovedStrings);
+//                proj.overrideAddTooltip(tooltipOverride, tooltipAddition);
+//                proj.addRemoveProjectRequirements(requirementsAdded, requirementsRemovedStrings);
 //                proj.overridePlanetTypeChange(planetTypeChangeOverride);
 //                proj.addRemoveConditionsAddedRemoved(conditionsAdded, conditionsRemoved);
 //                proj.addRemoveConditionProgress(conditionProgressAdded, conditionProgressRemoved);
@@ -985,35 +1001,35 @@ public class boggledTools
                 new BoggledTerraformingRequirement.PlayerHasStoryPointsAtLeast("player_has_at_least_cost_story_points", false, storyPointCost)
         )));
 
-        ArrayList<BoggledTerraformingRequirements> craftingProjectReqsEasy = new ArrayList<>(asList(
-                colonyHasAtLeast100kInhabitants,
-                colonyHasOrbitalWorksWPristineNanoforge,
-                fleetCargoContainsAtLeastDomainArtifactsEasy
+        ArrayList<Pair<BoggledTerraformingRequirements, String>> craftingProjectReqsEasy = new ArrayList<>(asList(
+                new Pair<>(colonyHasAtLeast100kInhabitants, ""),
+                new Pair<>(colonyHasOrbitalWorksWPristineNanoforge, ""),
+                new Pair<>(fleetCargoContainsAtLeastDomainArtifactsEasy, "")
         ));
 
-        ArrayList<BoggledTerraformingRequirements> craftingProjectReqsMedium = new ArrayList<>(asList(
-                colonyHasAtLeast100kInhabitants,
-                colonyHasOrbitalWorksWPristineNanoforge,
-                fleetCargoContainsAtLeastDomainArtifactsMedium
+        ArrayList<Pair<BoggledTerraformingRequirements, String>> craftingProjectReqsMedium = new ArrayList<>(asList(
+                new Pair<>(colonyHasAtLeast100kInhabitants, ""),
+                new Pair<>(colonyHasOrbitalWorksWPristineNanoforge, ""),
+                new Pair<>(fleetCargoContainsAtLeastDomainArtifactsMedium, "")
         ));
 
-        ArrayList<BoggledTerraformingRequirements> craftingProjectReqsHard = new ArrayList<>(asList(
-                colonyHasAtLeast100kInhabitants,
-                colonyHasOrbitalWorksWPristineNanoforge,
-                fleetCargoContainsAtLeastDomainArtifactsHard
+        ArrayList<Pair<BoggledTerraformingRequirements, String>> craftingProjectReqsHard = new ArrayList<>(asList(
+                new Pair<>(colonyHasAtLeast100kInhabitants, ""),
+                new Pair<>(colonyHasOrbitalWorksWPristineNanoforge, ""),
+                new Pair<>(fleetCargoContainsAtLeastDomainArtifactsHard, "")
         ));
 
         if (storyPointCost > 0) {
-            craftingProjectReqsEasy.add(playerHasStoryPointsAtLeast);
-            craftingProjectReqsMedium.add(playerHasStoryPointsAtLeast);
-            craftingProjectReqsHard.add(playerHasStoryPointsAtLeast);
+            craftingProjectReqsEasy.add(new Pair<>(playerHasStoryPointsAtLeast, ""));
+            craftingProjectReqsMedium.add(new Pair<>(playerHasStoryPointsAtLeast, ""));
+            craftingProjectReqsHard.add(new Pair<>(playerHasStoryPointsAtLeast, ""));
         }
 
         String[] enableSettings = {BoggledSettings.domainTechContentEnabled, "boggledDomainTechCraftingEnabled", BoggledSettings.domainArchaeologyEnabled};
         String projectType = "crafting";
         ArrayList<String> emptyList = new ArrayList<>();
         ArrayList<BoggledTerraformingDurationModifier.TerraformingDurationModifier> emptyList2 = new ArrayList<>();
-        ArrayList<BoggledTerraformingRequirements> emptyList4 = new ArrayList<>();
+        ArrayList<Pair<BoggledTerraformingRequirements, String>> emptyList4 = new ArrayList<>();
         ArrayList<BoggledTerraformingProjectEffect.TerraformingProjectEffect> emptyList3 = new ArrayList<>();
 
         ret.add(new BoggledTerraformingProject(craftCorruptedNanoforgeProjectId, enableSettings, projectType, craftCorruptedNanoforgeProjectTooltip, craftingProjectReqsEasy, emptyList4, 0, emptyList2, emptyList3));
