@@ -98,3 +98,6 @@ station_construction_num_expansions,,false,"station_construction_num_expansions"
 colony_water_or_frozen_or_station,,false,"planet_water | planet_frozen | market_is_station"
 
 player_has_skill_automated_ships,,false,"player_has_skill_automated_ships"
+
+system_star_not_has_coronal_tap,,false,"system_star_has_coronal_tap"
+system_star_coronal_tap_viable,,false,"system_star_blue_giant | system_star_blue_supergiant"

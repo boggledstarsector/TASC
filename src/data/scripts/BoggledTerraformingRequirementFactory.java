@@ -140,4 +140,20 @@ public class BoggledTerraformingRequirementFactory {
             return new BoggledTerraformingRequirement.PlayerHasSkill(requirementId, invert, data);
         }
     }
+
+    public static class SystemStarHasTags implements TerraformingRequirementFactory {
+        @Override
+        public BoggledTerraformingRequirement.TerraformingRequirement constructFromJSON(String requirementId, boolean invert, String data) {
+            ArrayList<String> tags = new ArrayList<>(Arrays.asList(data.split(boggledTools.csvOptionSeparator)));
+
+            return new BoggledTerraformingRequirement.SystemStarHasTags(requirementId, invert, tags);
+        }
+    }
+
+    public static class SystemStarType implements TerraformingRequirementFactory {
+        @Override
+        public BoggledTerraformingRequirement.TerraformingRequirement constructFromJSON(String requirementId, boolean invert, String data) {
+            return new BoggledTerraformingRequirement.SystemStarType(requirementId, invert, data);
+        }
+    }
 }

@@ -1,7 +1,9 @@
 package data.scripts;
 
 import com.fs.starfarer.api.Global;
+import com.fs.starfarer.api.campaign.PlanetAPI;
 import com.fs.starfarer.api.campaign.SpecialItemData;
+import com.fs.starfarer.api.campaign.StarSystemAPI;
 import com.fs.starfarer.api.campaign.econ.Industry;
 import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.util.Pair;
@@ -289,6 +291,60 @@ public class BoggledTerraformingRequirement {
         @Override
         protected boolean checkRequirementImpl(MarketAPI market) {
             return Global.getSector().getPlayerStats().getSkillLevel(skill) != 0;
+        }
+    }
+
+    public static class SystemStarHasTags extends TerraformingRequirement {
+        ArrayList<String> tags;
+        public SystemStarHasTags(String requirementId, boolean invert, ArrayList<String> tags) {
+            super(requirementId, invert);
+            this.tags = tags;
+        }
+
+        private boolean starHasTag(PlanetAPI star, String tag) {
+            return star != null && star.hasTag(tag);
+        }
+
+        @Override
+        protected boolean checkRequirementImpl(MarketAPI market) {
+            StarSystemAPI system = market.getStarSystem();
+            PlanetAPI primary = system.getStar();
+            PlanetAPI secondary = system.getSecondary();
+            PlanetAPI tertiary = system.getTertiary();
+            for (String tag : tags) {
+                boolean hasTag = starHasTag(primary, tag) || starHasTag(secondary, tag) || starHasTag(tertiary, tag);
+                if (!hasTag) {
+                    return false;
+                }
+            }
+            return true;
+        }
+    }
+
+    public static class SystemStarType extends TerraformingRequirement {
+        String starType;
+        public SystemStarType(String requirementId, boolean invert, String starType) {
+            super(requirementId, invert);
+            this.starType = starType;
+        }
+
+        private boolean starEquals(PlanetAPI star) {
+            return star != null && star.getTypeId().equals(starType);
+        }
+        @Override
+        protected boolean checkRequirementImpl(MarketAPI market) {
+            StarSystemAPI system = market.getStarSystem();
+            PlanetAPI primary = system.getStar();
+            PlanetAPI secondary = system.getSecondary();
+            PlanetAPI tertiary = system.getTertiary();
+
+            if (starEquals(primary)) {
+                return true;
+            }
+            else if (starEquals(secondary)) {
+                return true;
+            }
+            return starEquals(tertiary);
         }
     }
 }

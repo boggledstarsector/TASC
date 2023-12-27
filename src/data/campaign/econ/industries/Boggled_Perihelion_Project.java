@@ -236,44 +236,13 @@ public class Boggled_Perihelion_Project extends BaseIndustry {
     }
 
     @Override
-    public boolean isAvailableToBuild()
-    {
-        if(!boggledTools.isResearched(this.getId()))
-        {
-            return false;
-        }
-
-        if(!boggledTools.getBooleanSetting(boggledTools.BoggledSettings.domainTechContentEnabled) || !boggledTools.getBooleanSetting(boggledTools.BoggledSettings.perihelionProjectEnabled))
-        {
-            return false;
-        }
-
-        if(this.market.getStarSystem().hasTag(Tags.HAS_CORONAL_TAP))
-        {
-            return false;
-        }
-
-        if(!this.canBuildCoronalTapInSystem(this.market.getStarSystem()))
-        {
-            return false;
-        }
-
-        return true;
-    }
+    public boolean isAvailableToBuild() { return commonindustry.isAvailableToBuild(getMarket()); }
 
     @Override
     public boolean showWhenUnavailable()  { return commonindustry.showWhenUnavailable(getMarket()); }
 
     @Override
-    public String getUnavailableReason()
-    {
-        if(this.market.getStarSystem().hasTag(Tags.HAS_CORONAL_TAP))
-        {
-            return "The " + this.market.getStarSystem().getName() + " already has a coronal tap.";
-        }
-
-        return "Coronal hypershunts can only function if they orbit a blue giant star. There is no blue giant star in the " + this.market.getStarSystem().getName() + ".";
-    }
+    public String getUnavailableReason() { return commonindustry.getUnavailableReason(getMarket()); }
 
     @Override
     protected void addRightAfterDescriptionSection(TooltipMakerAPI tooltip, IndustryTooltipMode mode)

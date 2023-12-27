@@ -79,7 +79,7 @@ industry_magnetoshield,boggledTerraformingContentEnabled | boggledMagnetoshieldE
 industry_mesozoic_park,boggledTerraformingContentEnabled | boggledMesozoicParkEnabled,industry,,"colony_is_not_station | colony_terran_or_water_or_jungle_or_desert | colony_habitable | colony_not_no_or_thin_atmosphere | colony_not_dense_atmosphere | colony_not_toxic_or_irradiated",,,,
 industry_ouyang_optimizer,boggledTerraformingContentEnabled | boggledOuyangOptimizerEnabled,industry,,,,2,,"focus_market_progress_volatiles_ouyang_optimizer |
 focus_market_add_extreme_weather"
-industry_perihelion_project,boggledDomainTechContentEnabled | boggledPerihelionProjectEnabled,industry,,,,,,
+industry_perihelion_project,boggledDomainTechContentEnabled | boggledPerihelionProjectEnabled,industry,,"system_star_coronal_tap_viable",,2,,"system_add_coronal_tap"
 industry_planet_cracker,boggledTerraformingContentEnabled | boggledPlanetCrackerEnabled,industry,,,,2,,"focus_market_progress_ore_planet_cracker | focus_market_progress_rare_ore_planet_cracker |
 focus_market_add_tectonic_activity"
 industry_planetary_agrav_field,boggledTerraformingContentEnabled | boggledPlanetaryAgravFieldEnabled,industry,,"colony_is_not_station | colony_not_gas_giant | colony_has_low_or_high_gravity | colony_has_domed_cities",,,,

@@ -57,7 +57,7 @@ market_cold,MarketHasCondition,false,"cold"
 market_hot,MarketHasCondition,false,"hot"
 market_very_hot,MarketHasCondition,false,"very_hot"
 
-market_low_light,MarketHasCondition,false,"poor_light"
+market_poor_light,MarketHasCondition,false,"poor_light"
 market_dark,MarketHasCondition,false,"dark"
 
 market_not_dark,MarketHasCondition,true,"dark"
@@ -114,6 +114,8 @@ focus_market_has_volatiles_plentiful,FocusMarketHasCondition,false,"volatiles_pl
 
 station_construction_num_expansions,IntegerFromTagSubstring,false,"boggled_station_construction_numExpansions_ ; 11 | boggledStationCrampedQuartersSizeGrowthReductionStarts"
 
-system_star_has_coronal_tap,SystemStarHasTags,false,"has_coronal_tap"
+system_star_not_has_coronal_tap,SystemStarHasTags,true,"has_coronal_tap"
+system_star_blue_giant,SystemStarType,false,"star_blue_giant"
+system_star_blue_supergiant,SystemStarType,false,"star_blue_supergiant"
 
 player_has_skill_automated_ships,PlayerHasSkill,false,"automated_ships"

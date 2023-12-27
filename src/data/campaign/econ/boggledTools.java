@@ -440,6 +440,9 @@ public class boggledTools
         addTerraformingRequirementFactory("IntegerFromTagSubstring", new BoggledTerraformingRequirementFactory.IntegerFromTagSubstring());
 
         addTerraformingRequirementFactory("PlayerHasSkill", new BoggledTerraformingRequirementFactory.PlayerHasSkill());
+
+        addTerraformingRequirementFactory("SystemStarHasTags", new BoggledTerraformingRequirementFactory.SystemStarHasTags());
+        addTerraformingRequirementFactory("SystemStarType", new BoggledTerraformingRequirementFactory.SystemStarType());
     }
 
     public static void addTerraformingRequirementFactory(String key, BoggledTerraformingRequirementFactory.TerraformingRequirementFactory value) {

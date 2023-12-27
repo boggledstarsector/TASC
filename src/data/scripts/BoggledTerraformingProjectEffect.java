@@ -1,8 +1,20 @@
 package data.scripts;
 
+import com.fs.starfarer.api.Global;
+import com.fs.starfarer.api.campaign.CustomEntitySpecAPI;
+import com.fs.starfarer.api.campaign.PlanetAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
+import com.fs.starfarer.api.campaign.StarSystemAPI;
 import com.fs.starfarer.api.campaign.econ.MarketAPI;
+import com.fs.starfarer.api.campaign.rules.MemoryAPI;
+import com.fs.starfarer.api.impl.campaign.CoronalTapParticleScript;
+import com.fs.starfarer.api.impl.campaign.ids.Entities;
+import com.fs.starfarer.api.impl.campaign.ids.StarTypes;
 import com.fs.starfarer.api.impl.campaign.ids.Tags;
+import com.fs.starfarer.api.impl.campaign.procgen.StarSystemGenerator;
+import com.fs.starfarer.api.impl.campaign.rulecmd.salvage.FleetAdvanceScript;
+import com.fs.starfarer.api.util.Misc;
+import com.fs.starfarer.api.util.WeightedRandomPicker;
 import data.campaign.econ.boggledTools;
 import data.campaign.econ.industries.BoggledCommonIndustry;
 
@@ -152,6 +164,84 @@ public class BoggledTerraformingProjectEffect {
                 {
                     super.applyProjectEffect(entity.getMarket());
                 }
+            }
+        }
+    }
+
+    public static class SystemAddCoronalTap implements TerraformingProjectEffect {
+        public SystemAddCoronalTap() {
+        }
+        @Override
+        public void applyProjectEffect(MarketAPI market) {
+            StarSystemAPI system = market.getStarSystem();
+            SectorEntityToken tapToken = null;
+
+            if (system.getType() == StarSystemGenerator.StarSystemType.TRINARY_2CLOSE) {
+                tapToken = system.addCustomEntity("coronal_tap_" + market.getStarSystem().getName(), null, "coronal_tap", Global.getSector().getPlayerFaction().getId());
+
+                float minDist = Float.MAX_VALUE;
+                PlanetAPI closest = null;
+                for (PlanetAPI star : tapToken.getContainingLocation().getPlanets()) {
+                    if (!star.isNormalStar()) {
+                        continue;
+                    }
+
+                    float dist = Misc.getDistance(tapToken.getLocation(), star.getLocation());
+                    if (dist < minDist) {
+                        minDist = dist;
+                        closest = star;
+                    }
+                }
+
+                if (closest != null) {
+                    tapToken.setFacing(Misc.getAngleInDegrees(tapToken.getLocation(), closest.getLocation()) + 180.0f);
+                }
+
+            } else {
+                WeightedRandomPicker<PlanetAPI> picker = new WeightedRandomPicker<>();
+                WeightedRandomPicker<PlanetAPI> fallback = new WeightedRandomPicker<>();
+
+                for (PlanetAPI planet : system.getPlanets()) {
+                    if (!planet.isNormalStar()) {
+                        continue;
+                    }
+
+                    if (planet.getTypeId().equals(StarTypes.BLUE_GIANT) || planet.getTypeId().equals(StarTypes.BLUE_SUPERGIANT)) {
+                        picker.add(planet);
+                    } else {
+                        fallback.add(planet);
+                    }
+                }
+                if (picker.isEmpty()) {
+                    picker.addAll(fallback);
+                }
+
+                PlanetAPI star = picker.pick();
+                if (star != null) {
+                    CustomEntitySpecAPI spec = Global.getSettings().getCustomEntitySpec(Entities.CORONAL_TAP);
+
+                    float orbitRadius = star.getRadius() + spec.getDefaultRadius() + 100f;
+                    float orbitDays = orbitRadius / 20f;
+
+                    tapToken = system.addCustomEntity("coronal_tap_" + market.getStarSystem().getName(), null, "coronal_tap", Global.getSector().getPlayerFaction().getId());
+
+                    tapToken.setCircularOrbitPointingDown(star, boggledTools.getAngleFromEntity(market.getPrimaryEntity(), star), orbitRadius, orbitDays);
+                }
+            }
+
+            if (tapToken != null) {
+                tapToken.addTag("BOGGLED_BUILT_BY_PERIHELION_PROJECT");
+                tapToken.removeScriptsOfClass(FleetAdvanceScript.class);
+
+                system.addScript(new CoronalTapParticleScript(tapToken));
+                system.addTag(Tags.HAS_CORONAL_TAP);
+
+                MemoryAPI memory = tapToken.getMemory();
+                memory.set("$usable", true);
+                memory.set("$defenderFleetDefeated", true);
+
+                memory.unset("$hasDefenders");
+                memory.unset("$defenderFleet");
             }
         }
     }
