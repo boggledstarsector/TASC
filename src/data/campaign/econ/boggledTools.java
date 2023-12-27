@@ -354,9 +354,6 @@ public class boggledTools
     }
 
     public static boolean optionsAllowThis(String... options) {
-        if (!boggledTools.getBooleanSetting(BoggledSettings.terraformingContentEnabled)) {
-            return false;
-        }
         for (String option : options) {
             if (option.isEmpty()) {
                 continue;
@@ -439,6 +436,10 @@ public class boggledTools
 
         addTerraformingRequirementFactory("FocusPlanetType", new BoggledTerraformingRequirementFactory.FocusPlanetType());
         addTerraformingRequirementFactory("FocusMarketHasCondition", new BoggledTerraformingRequirementFactory.FocusMarketHasCondition());
+
+        addTerraformingRequirementFactory("IntegerFromTagSubstring", new BoggledTerraformingRequirementFactory.IntegerFromTagSubstring());
+
+        addTerraformingRequirementFactory("PlayerHasSkill", new BoggledTerraformingRequirementFactory.PlayerHasSkill());
     }
 
     public static void addTerraformingRequirementFactory(String key, BoggledTerraformingRequirementFactory.TerraformingRequirementFactory value) {
@@ -495,6 +496,7 @@ public class boggledTools
         addIndustryOptionsTrampoline("perihelion_project", new BoggledIndustryOptionTrampoline.PerihelionProject());
         addIndustryOptionsTrampoline("planet_cracker", new BoggledIndustryOptionTrampoline.PlanetCracker());
         addIndustryOptionsTrampoline("planetary_agrav_field", new BoggledIndustryOptionTrampoline.PlanetaryAgravField());
+        addIndustryOptionsTrampoline("remnant_station", new BoggledIndustryOptionTrampoline.RemnantStation());
         addIndustryOptionsTrampoline("stellar_reflector_array", new BoggledIndustryOptionTrampoline.StellarReflectorArray());
     }
 
@@ -537,7 +539,7 @@ public class boggledTools
         HashMap<String, PlanetType> planetTypesMap = new HashMap<>();
         LinkedHashMap<String, String> planetConditionsMap = new LinkedHashMap<>();
 
-        planetTypesMap.put(unknownPlanetId, new PlanetType(unknownPlanetId, false, 0, new ArrayList<Pair<BoggledTerraformingRequirements, Integer>>()));
+        planetTypesMap.put(unknownPlanetId, new PlanetType(unknownPlanetId, "unknown", false, 0, new ArrayList<Pair<BoggledTerraformingRequirements, Integer>>()));
 
         for (int i = 0; i < planetTypesJSON.length(); ++i) {
             try {
@@ -549,6 +551,7 @@ public class boggledTools
                 }
 
                 String[] conditions = row.getString("conditions").split(boggledTools.csvOptionSeparator);
+                String planetTypeName = row.getString("name");
                 String planetTypeId = row.getString("terraforming_type_id");
                 boolean terraformingPossible = row.getBoolean("terraforming_possible");
 
@@ -577,7 +580,7 @@ public class boggledTools
                     }
                 }
 
-                PlanetType planetType = new PlanetType(planetTypeId, terraformingPossible, baseWaterLevel, conditionalWaterRequirements);
+                PlanetType planetType = new PlanetType(planetTypeId, planetTypeName, terraformingPossible, baseWaterLevel, conditionalWaterRequirements);
 
                 planetTypesMap.put(id, planetType);
                 for (String condition : conditions) {
@@ -2316,11 +2319,13 @@ public class boggledTools
 
     public static class PlanetType {
         private final String planetId;
+        private final String planetTypeName;
         private final boolean terraformingPossible;
         private final int baseWaterLevel;
         private final ArrayList<Pair<BoggledTerraformingRequirements, Integer>> conditionalWaterRequirements;
 
         public String getPlanetId() { return planetId; }
+        public String getPlanetTypeName() { return planetTypeName; }
         public boolean getTerraformingPossible() { return terraformingPossible; }
         public int getWaterLevel(MarketAPI market) {
             if (conditionalWaterRequirements.isEmpty()) {
@@ -2335,8 +2340,9 @@ public class boggledTools
             return baseWaterLevel;
         }
 
-        public PlanetType(String planetId, boolean terraformingPossible, int baseWaterLevel, ArrayList<Pair<BoggledTerraformingRequirements, Integer>> conditionalWaterRequirements) {
+        public PlanetType(String planetId, String planetTypeName, boolean terraformingPossible, int baseWaterLevel, ArrayList<Pair<BoggledTerraformingRequirements, Integer>> conditionalWaterRequirements) {
             this.planetId = planetId;
+            this.planetTypeName = planetTypeName;
             this.terraformingPossible = terraformingPossible;
             this.baseWaterLevel = baseWaterLevel;
             this.conditionalWaterRequirements = conditionalWaterRequirements;

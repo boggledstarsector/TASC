@@ -1,7 +1,6 @@
 package data.campaign.econ.industries;
 
 import java.lang.String;
-import java.util.LinkedHashMap;
 
 import com.fs.starfarer.api.campaign.econ.*;
 import com.fs.starfarer.api.util.Misc;
@@ -66,57 +65,13 @@ public class Boggled_Domain_Archaeology extends BaseIndustry
     }
 
     @Override
-    public boolean isAvailableToBuild()
-    {
-        return commonindustry.isAvailableToBuild(getMarket());
-//        if(!boggledTools.isResearched(this.getId()))
-//        {
-//            return false;
-//        }
-
-//        MarketAPI market = this.market;
-//        if(boggledTools.getBooleanSetting(boggledTools.BoggledSettings.domainTechContentEnabled) && boggledTools.getBooleanSetting(boggledTools.BoggledSettings.domainArchaeologyEnabled) && (market.hasCondition(Conditions.RUINS_SCATTERED) || market.hasCondition(Conditions.RUINS_WIDESPREAD) || market.hasCondition(Conditions.RUINS_EXTENSIVE) || market.hasCondition(Conditions.RUINS_VAST)))
-//        {
-//            return true;
-//        }
-//        else
-//        {
-//            return false;
-//        }
-    }
+    public boolean isAvailableToBuild() { return commonindustry.isAvailableToBuild(getMarket()); }
 
     @Override
-    public boolean showWhenUnavailable()
-    {
-        return commonindustry.showWhenUnavailable(getMarket());
-//        if(!boggledTools.isResearched(this.getId()))
-//        {
-//            return false;
-//        }
-
-//        if(!boggledTools.getBooleanSetting(boggledTools.BoggledSettings.domainTechContentEnabled) || !boggledTools.getBooleanSetting(boggledTools.BoggledSettings.domainArchaeologyEnabled))
-//        {
-//            return false;
-//        }
-//        else
-//        {
-//            return true;
-//        }
-    }
+    public boolean showWhenUnavailable() { return commonindustry.showWhenUnavailable(getMarket()); }
 
     @Override
-    public String getUnavailableReason()
-    {
-        return commonindustry.getUnavailableReason(getMarket(), new LinkedHashMap<String, String>());
-//        if(!(market.hasCondition(Conditions.RUINS_SCATTERED) || market.hasCondition(Conditions.RUINS_WIDESPREAD) || market.hasCondition(Conditions.RUINS_EXTENSIVE) || market.hasCondition(Conditions.RUINS_VAST)))
-//        {
-//            return "Requires ruins";
-//        }
-//        else
-//        {
-//            return "Error in getUnavailableReason() in the domain archaeology structure. Please tell Boggled about this on the forums.";
-//        }
-    }
+    public String getUnavailableReason() { return commonindustry.getUnavailableReason(getMarket()); }
 
     @Override
     public float getPatherInterest()

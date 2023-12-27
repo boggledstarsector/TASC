@@ -6,13 +6,13 @@ import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.*;
 import com.fs.starfarer.api.campaign.comm.CommMessageAPI;
 import com.fs.starfarer.api.campaign.econ.*;
+import com.fs.starfarer.api.impl.campaign.econ.impl.BaseIndustry;
 import com.fs.starfarer.api.impl.campaign.ids.*;
 import com.fs.starfarer.api.impl.campaign.intel.BaseIntelPlugin;
 import com.fs.starfarer.api.impl.campaign.intel.MessageIntel;
 
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
-import com.fs.starfarer.api.impl.campaign.econ.impl.BaseIndustry;
 import com.fs.starfarer.api.util.Pair;
 import data.campaign.econ.boggledTools;
 import org.json.JSONException;
@@ -202,37 +202,13 @@ public class Boggled_Genelab extends BaseIndustry
     }
 
     @Override
-    public boolean isAvailableToBuild()
-    {
-        if(!boggledTools.isResearched(this.getId()))
-        {
-            return false;
-        }
-
-        if(!boggledTools.getBooleanSetting(boggledTools.BoggledSettings.terraformingContentEnabled) || !boggledTools.getBooleanSetting(boggledTools.BoggledSettings.genelabEnabled))
-        {
-            return false;
-        }
-
-        // Station markets can't build
-        if(boggledTools.marketIsStation(this.market))
-        {
-            return false;
-        }
-
-        return true;
-    }
+    public boolean isAvailableToBuild() { return commonindustry.isAvailableToBuild(getMarket()); }
 
     @Override
-    public boolean showWhenUnavailable()
-    {
-        if(!boggledTools.isResearched(this.getId()))
-        {
-            return false;
-        }
+    public boolean showWhenUnavailable() { return commonindustry.showWhenUnavailable(getMarket()); }
 
-        return false;
-    }
+    @Override
+    public String getUnavailableReason() { return commonindustry.getUnavailableReason(getMarket()); }
 
     @Override
     public void notifyBeingRemoved(MarketAPI.MarketInteractionMode mode, boolean forUpgrade)

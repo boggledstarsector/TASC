@@ -12,7 +12,6 @@ import com.fs.starfarer.api.impl.campaign.intel.MessageIntel;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
 import data.campaign.econ.boggledTools;
-import com.fs.starfarer.api.impl.campaign.ids.Conditions;
 import com.fs.starfarer.api.impl.campaign.ids.Commodities;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -120,132 +119,13 @@ public class Boggled_Mesozoic_Park extends BaseIndustry
     }
 
     @Override
-    public boolean isAvailableToBuild()
-    {
-        if(!boggledTools.isResearched(this.getId()))
-        {
-            return false;
-        }
-
-        MarketAPI market = this.market;
-
-        if(!boggledTools.getBooleanSetting(boggledTools.BoggledSettings.mesozoicParkEnabled) || !boggledTools.getBooleanSetting(boggledTools.BoggledSettings.terraformingContentEnabled))
-        {
-            return false;
-        }
-
-        //Can't build on stations
-        if(boggledTools.marketIsStation(market))
-        {
-            return false;
-        }
-
-        String planetType = boggledTools.getPlanetType(market.getPlanetEntity()).getPlanetId();
-
-        //Can't build on unknown planet types
-        if(planetType.equals(boggledTools.unknownPlanetId))
-        {
-            return false;
-        }
-
-        //Can only build on terran, water, jungle or desert planets
-        if(!planetType.equals(boggledTools.terranPlanetId) && !planetType.equals(boggledTools.waterPlanetId) && !planetType.equals(boggledTools.junglePlanetId) && !planetType.equals(boggledTools.desertPlanetId))
-        {
-            return false;
-        }
-
-        //Market must be habitable
-        if(!market.hasCondition(Conditions.HABITABLE))
-        {
-            return false;
-        }
-
-        //Certain market conditions preclude building
-        if(market.hasCondition(Conditions.NO_ATMOSPHERE) || market.hasCondition(Conditions.THIN_ATMOSPHERE) || market.hasCondition(Conditions.DENSE_ATMOSPHERE) || market.hasCondition(Conditions.TOXIC_ATMOSPHERE) || market.hasCondition(Conditions.IRRADIATED))
-        {
-            return false;
-        }
-
-        return true;
-    }
+    public boolean isAvailableToBuild()  { return commonindustry.isAvailableToBuild(getMarket()); }
 
     @Override
-    public boolean showWhenUnavailable()
-    {
-        if(!boggledTools.isResearched(this.getId()))
-        {
-            return false;
-        }
-
-        if(!boggledTools.getBooleanSetting(boggledTools.BoggledSettings.mesozoicParkEnabled) || !boggledTools.getBooleanSetting(boggledTools.BoggledSettings.terraformingContentEnabled))
-        {
-            return false;
-        }
-
-        if(boggledTools.marketIsStation(this.market))
-        {
-            return false;
-        }
-
-        return true;
-    }
+    public boolean showWhenUnavailable() { return commonindustry.showWhenUnavailable(getMarket()); }
 
     @Override
-    public String getUnavailableReason()
-    {
-        MarketAPI market = this.market;
-
-        if(!boggledTools.getBooleanSetting(boggledTools.BoggledSettings.mesozoicParkEnabled) || !boggledTools.getBooleanSetting(boggledTools.BoggledSettings.terraformingContentEnabled))
-        {
-            return "Error in getUnavailableReason() in Mesozoic Park. Please report this to boggled on the forums.";
-        }
-
-        //Can't build on stations
-        if(boggledTools.marketIsStation(market))
-        {
-            return "Error in getUnavailableReason() in Mesozoic Park. Please report this to boggled on the forums.";
-        }
-
-        String planetType = boggledTools.getPlanetType(market.getPlanetEntity()).getPlanetId();
-
-        //Can't build on unknown planet types
-        if(planetType.equals(boggledTools.unknownPlanetId))
-        {
-            return "This planet type is unsupported by TASC. Please report this to boggled on the forums so he can add support. The planet type is: " + market.getPlanetEntity().getTypeId();
-        }
-
-        //Market must be habitable
-        if(!market.hasCondition(Conditions.HABITABLE))
-        {
-            return "Old Earth megafauna can only survive on worlds with habitable surface conditions.";
-        }
-
-        //Can only build on terran, water, jungle or desert planets
-        if(!planetType.equals(boggledTools.terranPlanetId) && !planetType.equals(boggledTools.waterPlanetId) && !planetType.equals(boggledTools.junglePlanetId) && !planetType.equals(boggledTools.desertPlanetId))
-        {
-            return "Old Earth megafauna can only survive on world types that feature a relatively similar environment to Old Earth during the Mesozoic Era.";
-        }
-
-        //Certain market conditions preclude building
-        if(market.hasCondition(Conditions.NO_ATMOSPHERE) || market.hasCondition(Conditions.THIN_ATMOSPHERE))
-        {
-            return "Surface conditions on " + market.getName() + " are unsuitable for Old Earth megafauna due to insufficient atmospheric pressure.";
-        }
-
-        //Certain market conditions preclude building
-        if(market.hasCondition(Conditions.DENSE_ATMOSPHERE))
-        {
-            return "Surface conditions on " + market.getName() + " are unsuitable for Old Earth megafauna due to excessive atmospheric pressure.";
-        }
-
-        //Certain market conditions preclude building
-        if(market.hasCondition(Conditions.TOXIC_ATMOSPHERE) || market.hasCondition(Conditions.IRRADIATED))
-        {
-            return "Surface conditions on " + market.getName() + " are unsuitable for Old Earth megafauna due to atmospheric toxicity.";
-        }
-
-        return "Error in getUnavailableReason() in Mesozoic Park. Please report this to boggled on the forums.";
-    }
+    public String getUnavailableReason() { return commonindustry.getUnavailableReason(getMarket()); }
 
 
     @Override

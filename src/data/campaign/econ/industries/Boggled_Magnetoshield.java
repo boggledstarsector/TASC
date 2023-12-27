@@ -1,10 +1,8 @@
 package data.campaign.econ.industries;
 
 import java.util.*;
-import com.fs.starfarer.api.campaign.econ.*;
 import com.fs.starfarer.api.impl.campaign.ids.*;
 import com.fs.starfarer.api.impl.campaign.econ.impl.BaseIndustry;
-import data.campaign.econ.boggledTools;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -21,7 +19,7 @@ public class Boggled_Magnetoshield extends BaseIndustry
         return true;
     }
 
-    public static List<String> SUPPRESSED_CONDITIONS = new ArrayList<String>();
+    public static List<String> SUPPRESSED_CONDITIONS = new ArrayList<>();
     static
     {
         SUPPRESSED_CONDITIONS.add(Conditions.IRRADIATED);
@@ -53,53 +51,13 @@ public class Boggled_Magnetoshield extends BaseIndustry
     }
 
     @Override
-    public boolean isAvailableToBuild()
-    {
-        if(!boggledTools.isResearched(this.getId()))
-        {
-            return false;
-        }
-
-        MarketAPI market = this.market;
-
-        if(!boggledTools.getBooleanSetting(boggledTools.BoggledSettings.magnetoshieldEnabled) || !boggledTools.getBooleanSetting(boggledTools.BoggledSettings.terraformingContentEnabled) || !this.market.hasCondition(Conditions.IRRADIATED))
-        {
-            return false;
-        }
-
-        return true;
-    }
+    public boolean isAvailableToBuild() { return commonindustry.isAvailableToBuild(getMarket()); }
 
     @Override
-    public boolean showWhenUnavailable()
-    {
-        if(!boggledTools.isResearched(this.getId()))
-        {
-            return false;
-        }
-
-        if(!boggledTools.getBooleanSetting(boggledTools.BoggledSettings.magnetoshieldEnabled) || !boggledTools.getBooleanSetting(boggledTools.BoggledSettings.terraformingContentEnabled))
-        {
-            return false;
-        }
-        else
-        {
-            return true;
-        }
-    }
+    public boolean showWhenUnavailable() { return commonindustry.showWhenUnavailable(getMarket()); }
 
     @Override
-    public String getUnavailableReason()
-    {
-        if(!this.market.hasCondition(Conditions.IRRADIATED))
-        {
-            return this.market.getName() + " is not irradiated. There is no reason to build a magnetoshield.";
-        }
-        else
-        {
-            return "Error in getUnavailableReason() in magnetoshield. Tell Boggled about this on the forums.";
-        }
-    }
+    public String getUnavailableReason() { return commonindustry.getUnavailableReason(getMarket()); }
 
     @Override
     public boolean canImprove()

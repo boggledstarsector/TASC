@@ -117,4 +117,27 @@ public class BoggledTerraformingRequirementFactory {
             return new BoggledTerraformingRequirement.WorldTypeSupportsResourceImprovement(requirementId, invert, data);
         }
     }
+
+    public static class IntegerFromTagSubstring implements TerraformingRequirementFactory {
+        @Override
+        public BoggledTerraformingRequirement.TerraformingRequirement constructFromJSON(String requirementId, boolean invert, String data) {
+            String[] substringWithOption = data.split(boggledTools.csvOptionSeparator);
+            String option = "";
+            if (substringWithOption.length > 1) {
+                option = substringWithOption[1];
+            }
+            String[] substringWithValue = substringWithOption[0].split(boggledTools.csvSubOptionSeparator);
+            String substring = substringWithValue[0];
+            int value = Integer.parseInt(substringWithValue[1]);
+
+            return new BoggledTerraformingRequirement.IntegerFromTagSubstring(requirementId, invert, substring, value, option);
+        }
+    }
+
+    public static class PlayerHasSkill implements TerraformingRequirementFactory {
+        @Override
+        public BoggledTerraformingRequirement.TerraformingRequirement constructFromJSON(String requirementId, boolean invert, String data) {
+            return new BoggledTerraformingRequirement.PlayerHasSkill(requirementId, invert, data);
+        }
+    }
 }

@@ -251,4 +251,44 @@ public class BoggledTerraformingRequirement {
             return true;
         }
     }
+
+    public static class IntegerFromTagSubstring extends TerraformingRequirement {
+        String tagSubstring;
+        int value;
+        String option;
+        public IntegerFromTagSubstring(String requirementId, boolean invert, String tagSubstring, int value, String option) {
+            super(requirementId, invert);
+            this.tagSubstring = tagSubstring;
+            this.value = value;
+            this.option = option;
+        }
+
+        @Override
+        protected boolean checkRequirementImpl(MarketAPI market) {
+            int testValue = 0;
+            if (!option.isEmpty()) {
+                testValue += boggledTools.getIntSetting(option);
+            }
+            for (String tag : market.getTags()) {
+                if (tag.contains(tagSubstring)) {
+                    testValue += Integer.parseInt(tag.substring(tagSubstring.length()));
+                    break;
+                }
+            }
+            return value > testValue;
+        }
+    }
+
+    public static class PlayerHasSkill extends TerraformingRequirement {
+        String skill;
+        public PlayerHasSkill(String requirementId, boolean invert, String skill) {
+            super(requirementId, invert);
+            this.skill = skill;
+        }
+
+        @Override
+        protected boolean checkRequirementImpl(MarketAPI market) {
+            return Global.getSector().getPlayerStats().getSkillLevel(skill) != 0;
+        }
+    }
 }

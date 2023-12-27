@@ -7,7 +7,6 @@ import java.lang.String;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
 import com.fs.starfarer.api.Global;
-import com.fs.starfarer.api.campaign.econ.*;
 import com.fs.starfarer.api.impl.campaign.econ.impl.BaseIndustry;
 import com.fs.starfarer.api.impl.campaign.ids.Conditions;
 import data.campaign.econ.boggledTools;
@@ -60,71 +59,13 @@ public class Boggled_Planetary_Agrav_Field extends BaseIndustry
     }
 
     @Override
-    public boolean isAvailableToBuild()
-    {
-        if(!boggledTools.getBooleanSetting(boggledTools.BoggledSettings.planetaryAgravFieldEnabled) || !boggledTools.getBooleanSetting(boggledTools.BoggledSettings.terraformingContentEnabled))
-        {
-            return false;
-        }
-
-        //Can't build on stations
-        if(boggledTools.marketIsStation(this.market))
-        {
-            return false;
-        }
-
-        if(!this.market.hasIndustry(boggledTools.BoggledIndustries.domedCitiesIndustryId) && !boggledTools.getPlanetType(this.market.getPlanetEntity()).equals(boggledTools.gasGiantPlanetId))
-        {
-            return false;
-        }
-
-        if(!this.market.hasCondition(Conditions.HIGH_GRAVITY) && !this.market.hasCondition(Conditions.LOW_GRAVITY))
-        {
-            return false;
-        }
-
-        return true;
-    }
+    public boolean isAvailableToBuild() { return commonindustry.isAvailableToBuild(getMarket()); }
 
     @Override
-    public boolean showWhenUnavailable()
-    {
-        if(!boggledTools.getBooleanSetting(boggledTools.BoggledSettings.planetaryAgravFieldEnabled) || !boggledTools.getBooleanSetting(boggledTools.BoggledSettings.terraformingContentEnabled))
-        {
-            return false;
-        }
-
-        if(boggledTools.marketIsStation(this.market))
-        {
-            return false;
-        }
-
-        return true;
-    }
+    public boolean showWhenUnavailable() { return commonindustry.showWhenUnavailable(getMarket()); }
 
     @Override
-    public String getUnavailableReason()
-    {
-        MarketAPI market = this.market;
-
-        //Can't build on stations
-        if(boggledTools.marketIsStation(this.market))
-        {
-            return "Error in getUnavailableReason() in Planetary Agrav Field. Please report this to boggled on the forums.";
-        }
-
-        if(!this.market.hasCondition(Conditions.HIGH_GRAVITY) && !this.market.hasCondition(Conditions.LOW_GRAVITY))
-        {
-            return "Gravity on " + this.market.getName() + " is within the optimal range for humans. Building agrav generators here would serve little purpose.";
-        }
-
-        if(!this.market.hasIndustry(boggledTools.BoggledIndustries.domedCitiesIndustryId))
-        {
-            return "It is not economically feasible to blanket an entire world with agrav generators. The population must be housed within a few centralized domed cities for a colony-wide agrav field to be practical.";
-        }
-
-        return "Error in getUnavailableReason() in Planetary Agrav Field. Please report this to boggled on the forums.";
-    }
+    public String getUnavailableReason() { return commonindustry.getUnavailableReason(getMarket()); }
 
     @Override
     public void applyAICoreToIncomeAndUpkeep()

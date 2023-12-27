@@ -355,26 +355,13 @@ public class Boggled_Kletka_Simulator extends BaseIndustry
 
 
     @Override
-    public boolean isAvailableToBuild()
-    {
-        if(!boggledTools.isResearched(this.getId()))
-        {
-            return false;
-        }
-
-        return boggledTools.getBooleanSetting(boggledTools.BoggledSettings.domainTechContentEnabled) && boggledTools.getBooleanSetting(boggledTools.BoggledSettings.kletkaSimulatorEnabled);
-    }
+    public boolean isAvailableToBuild() { return commonindustry.isAvailableToBuild(getMarket()); }
 
     @Override
-    public boolean showWhenUnavailable()
-    {
-        if(!boggledTools.isResearched(this.getId()))
-        {
-            return false;
-        }
+    public boolean showWhenUnavailable() { return commonindustry.showWhenUnavailable(getMarket()); }
 
-        return false;
-    }
+    @Override
+    public String getUnavailableReason() { return commonindustry.getUnavailableReason(getMarket()); }
 
     @Override
     public float getPatherInterest() { return 10.0F; }

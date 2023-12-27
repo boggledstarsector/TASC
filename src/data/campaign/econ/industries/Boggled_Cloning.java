@@ -1,11 +1,11 @@
 package data.campaign.econ.industries;
 
 import com.fs.starfarer.api.campaign.econ.*;
+import com.fs.starfarer.api.impl.campaign.econ.impl.BaseIndustry;
 import com.fs.starfarer.api.impl.campaign.ids.Commodities;
 import com.fs.starfarer.api.impl.campaign.population.PopulationComposition;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
-import com.fs.starfarer.api.impl.campaign.econ.impl.BaseIndustry;
 import com.fs.starfarer.api.util.Pair;
 import data.campaign.econ.boggledTools;
 import org.json.JSONException;
@@ -68,16 +68,13 @@ public class Boggled_Cloning extends BaseIndustry implements MarketImmigrationMo
     }
 
     @Override
-    public boolean isAvailableToBuild()
-    {
-        return commonindustry.isAvailableToBuild(getMarket());
-    }
+    public boolean isAvailableToBuild() { return commonindustry.isAvailableToBuild(getMarket()); }
 
     @Override
-    public boolean showWhenUnavailable()
-    {
-        return commonindustry.showWhenUnavailable(getMarket());
-    }
+    public boolean showWhenUnavailable() { return commonindustry.showWhenUnavailable(getMarket()); }
+
+    @Override
+    public String getUnavailableReason() { return commonindustry.getUnavailableReason(getMarket()); }
 
     @Override
     public float getPatherInterest() {

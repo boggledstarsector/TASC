@@ -47,14 +47,13 @@ public class Boggled_Hydroponics extends BaseIndustry
     }
 
     @Override
-    public boolean isAvailableToBuild() {
-        return commonindustry.isAvailableToBuild(getMarket());
-    }
+    public boolean isAvailableToBuild() { return commonindustry.isAvailableToBuild(getMarket()); }
 
     @Override
-    public boolean showWhenUnavailable() {
-        return commonindustry.showWhenUnavailable(getMarket());
-    }
+    public boolean showWhenUnavailable() { return commonindustry.showWhenUnavailable(getMarket()); }
+
+    @Override
+    public String getUnavailableReason() { return commonindustry.getUnavailableReason(getMarket()); }
 
     @Override
     protected boolean canImproveToIncreaseProduction() {

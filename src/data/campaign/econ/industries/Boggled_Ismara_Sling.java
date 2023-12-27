@@ -134,51 +134,13 @@ public class Boggled_Ismara_Sling extends BaseIndustry
     }
 
     @Override
-    public boolean isAvailableToBuild()
-    {
-        return commonindustry.isAvailableToBuild(getMarket());
-//        if(!boggledTools.isResearched(this.getId()))
-//        {
-//            return false;
-//        }
-//
-//        if(!boggledTools.getBooleanSetting(boggledTools.BoggledSettings.terraformingContentEnabled))
-//        {
-//            return false;
-//        }
-//
-//        if(boggledTools.marketIsStation(this.market))
-//        {
-//            return true;
-//        }
-//
-//        return boggledTools.getPlanetType(this.market.getPlanetEntity()).equals(boggledTools.waterPlanetId) || boggledTools.getPlanetType(this.market.getPlanetEntity()).equals(boggledTools.frozenPlanetId);
-    }
+    public boolean isAvailableToBuild() { return commonindustry.isAvailableToBuild(getMarket()); }
 
     @Override
-    public boolean showWhenUnavailable()
-    {
-        return commonindustry.showWhenUnavailable(getMarket());
-//        if(!boggledTools.isResearched(this.getId()))
-//        {
-//            return false;
-//        }
-
-//        return boggledTools.getBooleanSetting(boggledTools.BoggledSettings.terraformingContentEnabled);
-    }
+    public boolean showWhenUnavailable() { return commonindustry.showWhenUnavailable(getMarket()); }
 
     @Override
-    public String getUnavailableReason()
-    {
-        if(!boggledTools.getPlanetType(this.market.getPlanetEntity()).equals(boggledTools.waterPlanetId) && !boggledTools.getPlanetType(this.market.getPlanetEntity()).equals(boggledTools.frozenPlanetId))
-        {
-            return "Ismara's Sling can only be built on cryovolcanic, frozen and water-covered worlds.";
-        }
-        else
-        {
-            return "Error in getUnavailableReason() in the Ismara's Sling structure. Please tell Boggled about this on the forums.";
-        }
-    }
+    public String getUnavailableReason() { return commonindustry.getUnavailableReason(getMarket()); }
 
     @Override
     public float getPatherInterest() { return 10.0F; }

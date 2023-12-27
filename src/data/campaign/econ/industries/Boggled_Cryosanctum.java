@@ -32,31 +32,14 @@ public class Boggled_Cryosanctum extends Cryosanctum
     }
 
     @Override
-    public boolean isAvailableToBuild()
-    {
-        return commonindustry.isAvailableToBuild(getMarket());
-//        if(boggledTools.getBooleanSetting(boggledTools.BoggledSettings.domainTechContentEnabled) && boggledTools.getBooleanSetting(boggledTools.BoggledSettings.cryosanctumPlayerBuildEnabled))
-//        {
-//            return true;
-//        }
-//        else
-//        {
-//            return false;
-//        }
-    }
+    public boolean isAvailableToBuild() { return commonindustry.isAvailableToBuild(getMarket()); }
 
     @Override
-    public boolean showWhenUnavailable()
-    {
-        return commonindustry.showWhenUnavailable(getMarket());
-//        if(boggledTools.getBooleanSetting(boggledTools.BoggledSettings.domainTechContentEnabled) && boggledTools.getBooleanSetting(boggledTools.BoggledSettings.cryosanctumPlayerBuildEnabled))
-//        {
-//            return true;
-//        }
-//        else
-//        {
-//            return false;
-//        }
+    public boolean showWhenUnavailable() { return commonindustry.showWhenUnavailable(getMarket()); }
+
+    @Override
+    public String getUnavailableReason() {
+        return commonindustry.getUnavailableReason(getMarket());
     }
 }
 

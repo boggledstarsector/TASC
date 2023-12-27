@@ -288,50 +288,13 @@ public class Boggled_Stellar_Reflector_Array extends BaseIndustry
     }
 
     @Override
-    public boolean isAvailableToBuild()
-    {
-        if(!boggledTools.isResearched(this.getId()))
-        {
-            return false;
-        }
-
-        if(!boggledTools.getBooleanSetting(boggledTools.BoggledSettings.terraformingContentEnabled) || !boggledTools.getBooleanSetting(boggledTools.BoggledSettings.stellarReflectorArrayEnabled))
-        {
-            return false;
-        }
-
-        //Can't be built by station markets
-        if(boggledTools.marketIsStation(this.market)) { return false; }
-
-        //Can't be built on dark planets. All planets in nebulas and orbiting black holes have dark condition.
-        return !this.market.hasCondition(Conditions.DARK);
-    }
+    public boolean isAvailableToBuild() { return commonindustry.isAvailableToBuild(getMarket()); }
 
     @Override
-    public boolean showWhenUnavailable()
-    {
-        if(!boggledTools.isResearched(this.getId()))
-        {
-            return false;
-        }
-
-        if(!boggledTools.getBooleanSetting(boggledTools.BoggledSettings.terraformingContentEnabled) || !boggledTools.getBooleanSetting(boggledTools.BoggledSettings.stellarReflectorArrayEnabled))
-        {
-            return false;
-        }
-
-        //Can't be built by station markets
-        return !boggledTools.marketIsStation(this.market);
-    }
+    public boolean showWhenUnavailable() { return commonindustry.showWhenUnavailable(getMarket()); }
 
     @Override
-    public String getUnavailableReason()
-    {
-        //Can't be built on dark planets. All planets in nebulas and orbiting black holes have dark condition.
-        if(this.market.hasCondition(Conditions.DARK)) { return "Stellar reflectors won't have any effect on a world that receives no light."; }
-
-        return "Error in getUnavailableReason() in the Stellar Reflector Array. Please tell Boggled about this on the forums.";
-    }
+    public String getUnavailableReason() { return commonindustry.getUnavailableReason(getMarket()); }
 
     @Override
     public float getPatherInterest()

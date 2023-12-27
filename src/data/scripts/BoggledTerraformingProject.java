@@ -75,6 +75,10 @@ public class BoggledTerraformingProject {
             return false;
         }
 
+        if (projectRequirementsHidden.isEmpty()) {
+            return true;
+        }
+
         return requirementsMet(market, projectRequirementsHidden);
     }
 

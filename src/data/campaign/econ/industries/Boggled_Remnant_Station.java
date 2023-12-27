@@ -342,44 +342,13 @@ public class Boggled_Remnant_Station extends OrbitalStation implements RouteMana
     }
 
     @Override
-    public boolean isAvailableToBuild()
-    {
-        if(!boggledTools.isResearched(this.getId()))
-        {
-            return false;
-        }
-
-        if(boggledTools.getBooleanSetting(boggledTools.BoggledSettings.remnantStationEnabled) && super.isAvailableToBuild() && Global.getSector().getPlayerStats().getSkillLevel(Skills.AUTOMATED_SHIPS) != 0)
-        {
-            return true;
-        }
-        else
-        {
-            return false;
-        }
-    }
+    public boolean isAvailableToBuild() { return commonindustry.isAvailableToBuild(getMarket()); }
 
     @Override
-    public boolean showWhenUnavailable()
-    {
-        if(!boggledTools.isResearched(this.getId()))
-        {
-            return false;
-        }
-
-        return boggledTools.getBooleanSetting(boggledTools.BoggledSettings.remnantStationEnabled) && Global.getSector().getPlayerStats().getSkillLevel(Skills.AUTOMATED_SHIPS) == 0;
-    }
+    public boolean showWhenUnavailable() { return commonindustry.showWhenUnavailable(getMarket()); }
 
     @Override
-    public String getUnavailableReason()
-    {
-        if(boggledTools.getBooleanSetting(boggledTools.BoggledSettings.remnantStationEnabled) && Global.getSector().getPlayerStats().getSkillLevel(Skills.AUTOMATED_SHIPS) == 0)
-        {
-            return "You lack the Automated Ships skill.";
-        }
-
-        return "Error in getUnavailableReason() in Remnant Station. Please report this to boggled on the forums.";
-    }
+    public String getUnavailableReason() { return commonindustry.getUnavailableReason(getMarket()); }
 
     @Override
     public void apply()

@@ -13,26 +13,33 @@ chameleon,industry_chameleon_decivilized ; Decivilized subpopulation ; Eradicate
 cloning,industry_cloning,,,,,
 cryosanctum,industry_cryosanctum,,,,,
 domain_archaeology,industry_domain_archaeology,"colony_has_ruins ; Requires ruins",,,,
-domed_cities,industry_domed_cities,,,,,
-expand_station,industry_expand_station,,,,,
-genelab,industry_genelab,,,,,
+domed_cities,industry_domed_cities,"colony_is_not_station ; Colony must be on a planet. |
+colony_not_has_tectonic_activity_unless_has_harmonic_damper ; $market experiences frequent seismic events that could destroy megastructures. It would be too dangerous to construct one here. |
+colony_not_has_meteor_impacts ; $market experiences frequent meteor impacts that could destroy megastructures. It would be too dangerous to construct one here |
+colony_not_gas_giant ; There is no solid ground on $market upon which to build a dome.",,,,
+expand_station,industry_expand_station,"station_construction_num_expansions ; $market is too large to expand further",,,,
+genelab,industry_genelab,"colony_is_not_station ; Colony must be on a planet.",,,,
 gpa,industry_gpa,,,,,
-harmonic_damper,industry_harmonic_damper,,,,,
+harmonic_damper,industry_harmonic_damper,"colony_is_not_station ; Colony must be on a planet.",,,,
 hydroponics,industry_hydroponics,,,,,
-ismara_sling,industry_ismara_sling,,,,,
+ismara_sling,industry_ismara_sling,"colony_water_or_frozen_or_station ; Ismara's Sling can only be built on cryovolcanic, frozen, and water covered world. $market is on a $planetTypeName.",,,,
 kletka_simulator,industry_kletka_simulator,,,,,
 limelight_network,industry_limelight_network,,,,,
-magnetoshield,industry_magnetoshield,,,,,
-mesozoic_park,industry_mesozoic_park,,,,,
+magnetoshield,industry_magnetoshield,"colony_irradiated ; $market is not irradiated. There is no reason to build a magnetoshield.",,,,
+mesozoic_park,industry_mesozoic_park,"colony_habitable ; Old Earth megafauna can only survive on worlds with habitable surface conditions |
+colony_not_no_or_thin_atmosphere ; Surface conditions on $market are unsuitable for Old Earth megafauna due to insufficient atmospheric pressure. |
+colony_not_dense_atmosphere ; Surface conditions on $market are unsuitable for Old Earth megafauna due to excessive atmospheric pressure. |
+colony_not_toxic_or_irradiated ; Surface conditions on $market are unsuitable for Old Earth megafauna due to atmospheric toxicity.",,,,
 ouyang_optimizer,industry_ouyang_optimizer ; Ouyang optimization ; Completed,"colony_is_station ; Colony must be a station. |
 orbited_planet_is_gas_giant ; Only gas giants can undergo Ouyang optimization. |
 orbited_planet_not_has_extreme_weather ; $focusMarket already has extreme weather. Making it worse won't increase volatiles availability. |
 orbited_planet_not_has_volatiles_plentiful ; $focusMarket is already extremely rich in volatiles. An Ouyang optimization would not yield any improvement.",,,,
-perihelion_project,industry_perihelion_project,,,,,
+perihelion_project,industry_perihelion_project,"system_star_has_coronal_tap ; The $system system already has a coronal tap",,,,
 planet_cracker,industry_planet_cracker ; Planet cracking ; Completed,"colony_is_station ; Colony must be a station. |
 orbited_planet_is_not_gas_giant ; Gas giants cannot be cracked. |
 orbited_planet_not_has_tectonic_or_extreme_tectonic_activity ; $focusMarket already has tectonic activity. Making it worse won't increase ore availability. |
 orbited_planet_not_has_ore_and_rare_ore_ultrarich ; $focusMarket already has easily accessible ore deposits. Cracking the planet would not yield any improvement.",,,,
-planetary_agrav_field,industry_planetary_agrav_field,,,,,
-remnant_station,industry_remnant_station,,,,,
-stellar_reflect_array,industry_stellar_reflector_array,,,,,
+planetary_agrav_field,industry_planetary_agrav_field,"colony_has_low_or_high_gravity ; Gravity on $market is within the optimal range for humans. Building agrav generators here would serve little purpose. |
+colony_has_domed_cities ; It is not economically feasible to blanket an entire world with agrav generators. The population must be housed within a few centralized domed cities for a colony-wide agrav field to be practical.",,,,
+remnant_station,industry_remnant_station,"player_has_skill_automated_ships ; You lack the Automated Ships skill",,,,
+stellar_reflector_array,industry_stellar_reflector_array,"colony_not_dark ; Stellar reflectors won't have any effect on a world that receives no light",,,,

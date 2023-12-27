@@ -1,18 +1,18 @@
 package data.campaign.econ.industries;
 
 import java.lang.String;
+
 import com.fs.starfarer.api.impl.campaign.econ.impl.BaseIndustry;
-import com.fs.starfarer.api.impl.campaign.ids.Tags;
 import data.campaign.econ.boggledTools;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 public class Boggled_Expand_Station extends BaseIndustry {
 
-    private static BoggledCommonIndustry commonindustry;
+    private static BoggledCommonIndustry commonIndustry;
 
     public static void settingsFromJSON(JSONObject data) throws JSONException {
-        commonindustry = new BoggledCommonIndustry(data, "Expand Station");
+        commonIndustry = new BoggledCommonIndustry(data, "Expand Station");
     }
 
     @Override
@@ -57,29 +57,13 @@ public class Boggled_Expand_Station extends BaseIndustry {
     }
 
     @Override
-    public boolean isAvailableToBuild()
-    {
-        if(boggledTools.getBooleanSetting(boggledTools.BoggledSettings.stationCrampedQuartersEnabled) && boggledTools.getBooleanSetting(boggledTools.BoggledSettings.stationCrampedQuartersPlayerCanPayToIncreaseStationSize) && this.market.getPrimaryEntity().hasTag(Tags.STATION) && (11 > (boggledTools.getIntSetting(boggledTools.BoggledSettings.stationCrampedQuartersSizeGrowthReductionStarts) + boggledTools.getNumberOfStationExpansions(this.market))))
-        {
-            return true;
-        }
-        else
-        {
-            return false;
-        }
-    }
+    public boolean isAvailableToBuild() { return commonIndustry.isAvailableToBuild(getMarket()); }
 
     @Override
-    public boolean showWhenUnavailable()
-    {
-        return false;
-    }
+    public boolean showWhenUnavailable() { return commonIndustry.showWhenUnavailable(getMarket()); }
 
     @Override
-    public String getUnavailableReason()
-    {
-        return "This text should never be seen. Tell Boggled about this on the forums and mention 'getUnavailableReason() in Expand_station'";
-    }
+    public String getUnavailableReason() { return commonIndustry.getUnavailableReason(getMarket()); }
 
     public boolean canInstallAICores() {
         return false;

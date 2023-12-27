@@ -30,14 +30,7 @@ public class Boggled_Domed_Cities extends BaseIndustry implements MarketImmigrat
     @Override
     public boolean canBeDisrupted()
     {
-        if(!this.market.hasCondition(Conditions.WATER_SURFACE))
-        {
-            return true;
-        }
-        else
-        {
-            return false;
-        }
+        return !this.market.hasCondition(Conditions.WATER_SURFACE);
     }
 
     public static float IMPROVE_STABILITY_BONUS = 1f;
@@ -154,99 +147,13 @@ public class Boggled_Domed_Cities extends BaseIndustry implements MarketImmigrat
     }
 
     @Override
-    public boolean isAvailableToBuild()
-    {
-        MarketAPI market = this.market;
-
-        if(!boggledTools.getBooleanSetting(boggledTools.BoggledSettings.domedCitiesEnabled) || !boggledTools.getBooleanSetting(boggledTools.BoggledSettings.terraformingContentEnabled))
-        {
-            return false;
-        }
-
-        //Can't build on stations
-        if(boggledTools.marketIsStation(this.market))
-        {
-            return false;
-        }
-
-        // Meteor impacts preclude building
-        if(market.hasCondition(Conditions.METEOR_IMPACTS))
-        {
-            return false;
-        }
-
-        // Tectonic activity precludes building unless Harmonic Damper is built and functional.
-        // There's no check to automatically remove Domed Cities if Harmonic Damper is deconstructed or disrupted.
-        if(market.hasCondition(Conditions.EXTREME_TECTONIC_ACTIVITY) && (market.getIndustry(boggledTools.BoggledIndustries.harmonicDamperIndustryId) == null || !market.getIndustry(boggledTools.BoggledIndustries.harmonicDamperIndustryId).isFunctional()))
-        {
-            return false;
-        }
-
-        // Certain planet types preclude building unless they have the US condition Floating Continent (US_floating)
-        if(boggledTools.getPlanetType(market.getPlanetEntity()).equals(boggledTools.gasGiantPlanetId) && !market.hasCondition("US_floating"))
-        {
-            return false;
-        }
-
-        return true;
-    }
+    public boolean isAvailableToBuild() { return commonindustry.isAvailableToBuild(getMarket()); }
 
     @Override
-    public boolean showWhenUnavailable()
-    {
-        if(!boggledTools.getBooleanSetting(boggledTools.BoggledSettings.domedCitiesEnabled) || !boggledTools.getBooleanSetting(boggledTools.BoggledSettings.terraformingContentEnabled))
-        {
-            return false;
-        }
-
-        if(boggledTools.marketIsStation(this.market))
-        {
-            return false;
-        }
-
-        return true;
-    }
+    public boolean showWhenUnavailable() { return commonindustry.showWhenUnavailable(getMarket()); }
 
     @Override
-    public String getUnavailableReason()
-    {
-        MarketAPI market = this.market;
-
-        // Should never be seen because showWhenAvailable() will be false if either condition is true.
-        if(!boggledTools.getBooleanSetting(boggledTools.BoggledSettings.domedCitiesEnabled) || !boggledTools.getBooleanSetting(boggledTools.BoggledSettings.terraformingContentEnabled))
-        {
-            return "Error in getUnavailableReason() in Domed Cities. Please report this to boggled on the forums.";
-        }
-
-        // Should never be seen because showWhenAvailable() will be false if the market is a station.
-        if(boggledTools.marketIsStation(this.market))
-        {
-            return "Error in getUnavailableReason() in Domed Cities. Please report this to boggled on the forums.";
-        }
-
-        String planetType = boggledTools.getPlanetType(market.getPlanetEntity()).getPlanetId();
-
-        // Tectonic activity precludes building unless Harmonic Damper is built and functional.
-        // There's no check to automatically remove Domed Cities if Harmonic Damper is deconstructed or disrupted.
-        if(market.hasCondition(Conditions.EXTREME_TECTONIC_ACTIVITY) && (market.getIndustry(boggledTools.BoggledIndustries.harmonicDamperIndustryId) == null || !market.getIndustry(boggledTools.BoggledIndustries.harmonicDamperIndustryId).isFunctional()))
-        {
-            return market.getName() + " experiences frequent seismic events that could destroy megastructures. It would be too dangerous to construct one here.";
-        }
-
-        // Meteor impacts preclude building
-        if(market.hasCondition(Conditions.METEOR_IMPACTS))
-        {
-            return market.getName() + " experiences frequent meteor impacts that could destroy megastructures. It would be too dangerous to construct one here.";
-        }
-
-        // Can't build on gas giants
-        if(planetType.equals(boggledTools.gasGiantPlanetId) && !market.hasCondition("US_floating"))
-        {
-            return "There is no solid ground on " + market.getName() + " upon which to build a dome.";
-        }
-
-        return "Error in getUnavailableReason() in Domed Cities. Please report this to boggled on the forums.";
-    }
+    public String getUnavailableReason() { return commonindustry.getUnavailableReason(getMarket()); }
 
 
     @Override
@@ -386,69 +293,54 @@ public class Boggled_Domed_Cities extends BaseIndustry implements MarketImmigrat
     }
 
     @Override
-    protected void addPostDemandSection(TooltipMakerAPI tooltip, boolean hasDemand, IndustryTooltipMode mode)
-    {
+    protected void addPostDemandSection(TooltipMakerAPI tooltip, boolean hasDemand, IndustryTooltipMode mode) {
         float opad = 10.0F;
 
-        if(mode == IndustryTooltipMode.ADD_INDUSTRY || mode == IndustryTooltipMode.QUEUED || !isFunctional())
-        {
+        if (mode == IndustryTooltipMode.ADD_INDUSTRY || mode == IndustryTooltipMode.QUEUED || !isFunctional()) {
             tooltip.addPara("If operational, would counter the effects of:", opad, Misc.getHighlightColor(), "");
             int numCondsCountered = 0;
-            for (String id : SUPPRESSED_CONDITIONS)
-            {
-                if(this.market.hasCondition(id))
-                {
+            for (String id : SUPPRESSED_CONDITIONS) {
+                if (this.market.hasCondition(id)) {
                     String condName = Global.getSettings().getMarketConditionSpec(id).getName();
                     tooltip.addPara("           %s", 2f, Misc.getHighlightColor(), condName);
                     numCondsCountered++;
                 }
             }
 
-            if(numCondsCountered == 0)
-            {
+            if (numCondsCountered == 0) {
                 tooltip.addPara("           %s", 2f, Misc.getGrayColor(), "(none)");
             }
         }
 
-        if(mode != IndustryTooltipMode.ADD_INDUSTRY && mode != IndustryTooltipMode.QUEUED && isFunctional())
-        {
+        if (mode != IndustryTooltipMode.ADD_INDUSTRY && mode != IndustryTooltipMode.QUEUED && isFunctional()) {
             tooltip.addPara("Countering the effects of:", opad, Misc.getHighlightColor(), "");
             int numCondsCountered = 0;
-            for (String id : SUPPRESSED_CONDITIONS)
-            {
-                if(this.market.hasCondition(id))
-                {
+            for (String id : SUPPRESSED_CONDITIONS) {
+                if (this.market.hasCondition(id)) {
                     String condName = Global.getSettings().getMarketConditionSpec(id).getName();
                     tooltip.addPara("           %s", 2f, Misc.getHighlightColor(), condName);
                     numCondsCountered++;
                 }
             }
 
-            if(numCondsCountered == 0)
-            {
+            if (numCondsCountered == 0) {
                 tooltip.addPara("           %s", 2f, Misc.getGrayColor(), "(none)");
             }
         }
 
-        if(isFunctional())
-        {
+        if (isFunctional()) {
             tooltip.addPara("%s population growth (based on colony size)", 10f, Misc.getHighlightColor(), "+" + (int) getImmigrationBonus());
         }
 
-        if(!this.market.hasCondition(Conditions.WATER_SURFACE))
-        {
-            if(boggledTools.getBooleanSetting(boggledTools.BoggledSettings.domedCitiesDefensePenaltyEnabled))
-            {
+        if (!this.market.hasCondition(Conditions.WATER_SURFACE)) {
+            if (boggledTools.getBooleanSetting(boggledTools.BoggledSettings.domedCitiesDefensePenaltyEnabled)) {
                 tooltip.addPara("Ground defense strength: %s", opad, Misc.getNegativeHighlightColor(), "x" + DEFENSE_MALUS);
             }
-        }
-        else
-        {
+        } else {
             tooltip.addPara("Ground defense strength: %s", opad, Misc.getHighlightColor(), "x" + DEFENSE_BONUS);
         }
 
-        if(this.market.hasCondition(Conditions.WATER_SURFACE))
-        {
+        if (this.market.hasCondition(Conditions.WATER_SURFACE)) {
             tooltip.addPara("Accessibility penalty: %s", opad, Misc.getNegativeHighlightColor(), "-10%");
         }
     }

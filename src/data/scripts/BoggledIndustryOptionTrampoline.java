@@ -156,6 +156,13 @@ public class BoggledIndustryOptionTrampoline {
         }
     }
 
+    public static class RemnantStation implements IndustryOptionTrampoline {
+        @Override
+        public void initialiseOptionsFromJSON(JSONObject data) throws JSONException {
+            Boggled_Remnant_Station.settingsFromJSON(data);
+        }
+    }
+
     public static class StellarReflectorArray implements IndustryOptionTrampoline {
         @Override
         public void initialiseOptionsFromJSON(JSONObject data) throws JSONException {

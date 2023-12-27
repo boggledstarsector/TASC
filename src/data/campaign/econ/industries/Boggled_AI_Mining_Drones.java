@@ -1,7 +1,6 @@
 package data.campaign.econ.industries;
 
 import java.awt.Color;
-import java.util.LinkedHashMap;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.econ.CommoditySpecAPI;
@@ -17,7 +16,7 @@ import com.fs.starfarer.api.util.Misc;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class Boggled_AI_Mining_Drones extends BaseIndustry implements BoggledCommonIndustryInterface
+public class Boggled_AI_Mining_Drones extends BaseIndustry
 {
     public static float IMPROVE_BONUS = .20F;
 
@@ -28,24 +27,13 @@ public class Boggled_AI_Mining_Drones extends BaseIndustry implements BoggledCom
     }
 
     @Override
-    public LinkedHashMap<String, String> getTokenReplacements() {
-        return new LinkedHashMap<>();
-    }
+    public boolean isAvailableToBuild() { return commonIndustry.isAvailableToBuild(getMarket()); }
 
     @Override
-    public boolean isAvailableToBuild() {
-        return commonIndustry.isAvailableToBuild(getMarket());
-    }
+    public boolean showWhenUnavailable() { return commonIndustry.showWhenUnavailable(getMarket()); }
 
     @Override
-    public boolean showWhenUnavailable() {
-        return commonIndustry.showWhenUnavailable(getMarket());
-    }
-
-    @Override
-    public String getUnavailableReason() {
-        return commonIndustry.getUnavailableReason(getMarket(), getTokenReplacements());
-    }
+    public String getUnavailableReason() { return commonIndustry.getUnavailableReason(getMarket()); }
 
     @Override
     public boolean canBeDisrupted() {

@@ -19,6 +19,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 
+import static data.campaign.econ.boggledTools.getPlanetType;
+
 public class BoggledCommonIndustry {
 
     private String industry;
@@ -205,7 +207,16 @@ public class BoggledCommonIndustry {
         return marketSuitable(market, requirementsSuitableHidden);
     }
 
-    public String getUnavailableReason(MarketAPI market, LinkedHashMap<String, String> tokenReplacements) {
-        return boggledTools.getUnavailableReason(requirementsSuitable, requirementsSuitableHidden, industry, market, tokenReplacements, projects);
+    private LinkedHashMap<String, String> getTokenReplacements(MarketAPI market) {
+        LinkedHashMap<String, String> ret = new LinkedHashMap<>();
+        ret.put("$market", market.getName());
+        ret.put("$focusMarket", getFocusMarketOrMarket(market).getName());
+        ret.put("$planetTypeName", getPlanetType(market.getPlanetEntity()).getPlanetTypeName());
+        ret.put("$system", market.getStarSystem().getName());
+        return ret;
+    }
+
+    public String getUnavailableReason(MarketAPI market) {
+        return boggledTools.getUnavailableReason(requirementsSuitable, requirementsSuitableHidden, industry, market, getTokenReplacements(market), projects);
     }
 }

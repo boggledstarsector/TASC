@@ -2,18 +2,17 @@ package data.campaign.econ.industries;
 
 import java.awt.*;
 import java.lang.String;
-import java.util.LinkedHashMap;
 
+import com.fs.starfarer.api.impl.campaign.econ.impl.BaseIndustry;
 import com.fs.starfarer.api.impl.campaign.ids.Commodities;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
-import com.fs.starfarer.api.impl.campaign.econ.impl.BaseIndustry;
 import com.fs.starfarer.api.util.Pair;
 import data.campaign.econ.boggledTools;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class Boggled_Atmosphere_Processor extends BaseIndustry implements BoggledCommonIndustryInterface
+public class Boggled_Atmosphere_Processor extends BaseIndustry
 {
     @Override
     public boolean canBeDisrupted()
@@ -28,26 +27,13 @@ public class Boggled_Atmosphere_Processor extends BaseIndustry implements Boggle
     }
 
     @Override
-    public LinkedHashMap<String, String> getTokenReplacements() {
-        LinkedHashMap<String, String> tokenReplacements = new LinkedHashMap<>();
-        tokenReplacements.put("market", commonIndustry.getFocusMarketOrMarket(getMarket()).getName());
-        return tokenReplacements;
-    }
+    public boolean isAvailableToBuild() { return commonIndustry.isAvailableToBuild(getMarket()); }
 
     @Override
-    public boolean isAvailableToBuild() {
-        return commonIndustry.isAvailableToBuild(getMarket());
-    }
+    public boolean showWhenUnavailable() { return commonIndustry.showWhenUnavailable(getMarket()); }
 
     @Override
-    public boolean showWhenUnavailable() {
-        return commonIndustry.showWhenUnavailable(getMarket());
-    }
-
-    @Override
-    public String getUnavailableReason() {
-        return commonIndustry.getUnavailableReason(getMarket(), getTokenReplacements());
-    }
+    public String getUnavailableReason() { return commonIndustry.getUnavailableReason(getMarket()); }
 
     @Override
     public void apply()

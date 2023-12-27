@@ -262,22 +262,7 @@ public class Boggled_Perihelion_Project extends BaseIndustry {
     }
 
     @Override
-    public boolean showWhenUnavailable()
-    {
-        if(!boggledTools.isResearched(this.getId()))
-        {
-            return false;
-        }
-
-        if(!boggledTools.getBooleanSetting(boggledTools.BoggledSettings.domainTechContentEnabled) || !boggledTools.getBooleanSetting(boggledTools.BoggledSettings.perihelionProjectEnabled))
-        {
-            return false;
-        }
-        else
-        {
-            return true;
-        }
-    }
+    public boolean showWhenUnavailable()  { return commonindustry.showWhenUnavailable(getMarket()); }
 
     @Override
     public String getUnavailableReason()
