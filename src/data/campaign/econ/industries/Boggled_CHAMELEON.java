@@ -88,17 +88,17 @@ public class Boggled_CHAMELEON extends BaseIndustry
         Color highlight = Misc.getHighlightColor();
 
         // TODO: Hardcoded indices, hate it, fix it
-//        if (thisIndustry.projects.get(0).component1().requirementsMet(getMarket())) {
-//            thisIndustry.tooltipIncomplete(this, tooltip, mode, "Approximately %s of the decivilized subpopulation on " + this.getMarket().getName() + " has been eradicated.", opad, highlight, thisIndustry.getPercentComplete(0, this) + "%");
-//        }
-//        if (thisIndustry.projects.get(1).component1().requirementsMet(getMarket())) {
-//            thisIndustry.tooltipIncomplete(this, tooltip, mode, "An investigation into the whereabouts of the rogue AI core on " + getMarket().getName() + " is approximately %s complete.", opad, highlight, thisIndustry.getPercentComplete(1, this) + "%");
-//        }
-//        for (Triple<BoggledTerraformingProject, String, String> project : thisIndustry.projects) {
-//            if (project.component1().requirementsMet(getMarket())) {
-//                thisIndustry.tooltipDisrupted(this, tooltip, mode, "Progress is stalled while CHAMELEON is disrupted.", opad, Misc.getNegativeHighlightColor());
-//            }
-//        }
+        if (thisIndustry.projects.get(0).component1().requirementsMet(getMarket())) {
+            thisIndustry.tooltipIncomplete(this, tooltip, mode, "Approximately %s of the decivilized subpopulation on " + this.getMarket().getName() + " has been eradicated.", opad, highlight, thisIndustry.getPercentComplete(0, this) + "%");
+        }
+        if (thisIndustry.projects.get(1).component1().requirementsMet(getMarket())) {
+            thisIndustry.tooltipIncomplete(this, tooltip, mode, "An investigation into the whereabouts of the rogue AI core on " + getMarket().getName() + " is approximately %s complete.", opad, highlight, thisIndustry.getPercentComplete(1, this) + "%");
+        }
+        for (Triple<BoggledTerraformingProject, String, String> project : thisIndustry.projects) {
+            if (project.component1().requirementsMet(getMarket())) {
+                thisIndustry.tooltipDisrupted(this, tooltip, mode, "Progress is stalled while CHAMELEON is disrupted.", opad, Misc.getNegativeHighlightColor());
+            }
+        }
     }
 
     @Override

@@ -15,9 +15,6 @@ public class Boggled_Planet_Cracker extends BaseIndustry
     private static BoggledCommonIndustry sharedIndustry;
     private BoggledCommonIndustry thisIndustry;
 
-    private BoggledCommonIndustry<Integer> testCI = new BoggledCommonIndustry<>();
-    private BoggledCommonIndustry<Float> testCI2 = new BoggledCommonIndustry<>();
-
     public static void settingsFromJSON(JSONObject data) throws JSONException {
         sharedIndustry = new BoggledCommonIndustry(data);
     }

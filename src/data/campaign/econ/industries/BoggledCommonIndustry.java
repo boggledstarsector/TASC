@@ -19,9 +19,7 @@ import java.util.LinkedHashMap;
 
 import static data.campaign.econ.boggledTools.getPlanetType;
 
-public class BoggledCommonIndustry<T> {
-
-    private static final String testString = "T";
+public class BoggledCommonIndustry {
 
     private String industry;
 //    private ArrayList<Pair<String, Integer> commodityDemands;
