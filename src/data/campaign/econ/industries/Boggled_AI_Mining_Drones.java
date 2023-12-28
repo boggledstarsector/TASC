@@ -20,20 +20,26 @@ public class Boggled_AI_Mining_Drones extends BaseIndustry
 {
     public static float IMPROVE_BONUS = .20F;
 
-    private static BoggledCommonIndustry commonIndustry;
+    private static BoggledCommonIndustry sharedIndustry;
+    private final BoggledCommonIndustry thisIndustry;
 
     public static void settingsFromJSON(JSONObject data) throws JSONException {
-        commonIndustry = new BoggledCommonIndustry(data, "AI Mining Drones");
+        sharedIndustry = new BoggledCommonIndustry(data);
+    }
+
+    public Boggled_AI_Mining_Drones() {
+        super();
+        thisIndustry = new BoggledCommonIndustry(sharedIndustry);
     }
 
     @Override
-    public boolean isAvailableToBuild() { return commonIndustry.isAvailableToBuild(getMarket()); }
+    public boolean isAvailableToBuild() { return thisIndustry.isAvailableToBuild(getMarket()); }
 
     @Override
-    public boolean showWhenUnavailable() { return commonIndustry.showWhenUnavailable(getMarket()); }
+    public boolean showWhenUnavailable() { return thisIndustry.showWhenUnavailable(getMarket()); }
 
     @Override
-    public String getUnavailableReason() { return commonIndustry.getUnavailableReason(getMarket()); }
+    public String getUnavailableReason() { return thisIndustry.getUnavailableReason(getMarket()); }
 
     @Override
     public boolean canBeDisrupted() {

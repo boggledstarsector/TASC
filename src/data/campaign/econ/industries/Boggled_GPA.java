@@ -11,7 +11,7 @@ public class Boggled_GPA extends BaseIndustry
     private static BoggledCommonIndustry commonindustry;
 
     public static void settingsFromJSON(JSONObject data) throws JSONException {
-        commonindustry = new BoggledCommonIndustry(data, "GPA");
+        commonindustry = new BoggledCommonIndustry(data);
     }
 
     @Override

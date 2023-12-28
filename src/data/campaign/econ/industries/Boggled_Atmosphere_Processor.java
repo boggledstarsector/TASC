@@ -14,26 +14,32 @@ import org.json.JSONObject;
 
 public class Boggled_Atmosphere_Processor extends BaseIndustry
 {
+    private static BoggledCommonIndustry sharedIndustry;
+    private final BoggledCommonIndustry thisIndustry;
+
+    public static void settingsFromJSON(JSONObject data) throws JSONException {
+        sharedIndustry = new BoggledCommonIndustry(data);
+    }
+
+    public Boggled_Atmosphere_Processor() {
+        super();
+        thisIndustry = new BoggledCommonIndustry(sharedIndustry);
+    }
+
     @Override
     public boolean canBeDisrupted()
     {
         return true;
     }
 
-    private static BoggledCommonIndustry commonIndustry;
-
-    public static void settingsFromJSON(JSONObject data) throws JSONException {
-        commonIndustry = new BoggledCommonIndustry(data, "Atmosphere Processor");
-    }
+    @Override
+    public boolean isAvailableToBuild() { return thisIndustry.isAvailableToBuild(getMarket()); }
 
     @Override
-    public boolean isAvailableToBuild() { return commonIndustry.isAvailableToBuild(getMarket()); }
+    public boolean showWhenUnavailable() { return thisIndustry.showWhenUnavailable(getMarket()); }
 
     @Override
-    public boolean showWhenUnavailable() { return commonIndustry.showWhenUnavailable(getMarket()); }
-
-    @Override
-    public String getUnavailableReason() { return commonIndustry.getUnavailableReason(getMarket()); }
+    public String getUnavailableReason() { return thisIndustry.getUnavailableReason(getMarket()); }
 
     @Override
     public void apply()

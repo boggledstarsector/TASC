@@ -85,4 +85,11 @@ public class BoggledTerraformingProjectEffectFactory {
             return new BoggledTerraformingProjectEffect.FocusMarketAndSiphonStationProgressResourceProjectEffect(resource, step);
         }
     }
+
+    public static class SystemAddCoronalTap implements TerraformingProjectEffectFactory {
+        @Override
+        public BoggledTerraformingProjectEffect.TerraformingProjectEffect constructFromJSON(String data) {
+            return new BoggledTerraformingProjectEffect.SystemAddCoronalTap();
+        }
+    }
 }

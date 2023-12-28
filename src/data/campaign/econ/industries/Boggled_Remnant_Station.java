@@ -26,10 +26,16 @@ import java.util.Random;
 
 public class Boggled_Remnant_Station extends OrbitalStation implements RouteManager.RouteFleetSpawner, FleetEventListener
 {
-    private static BoggledCommonIndustry commonindustry;
+    private static BoggledCommonIndustry sharedIndustry;
+    private final BoggledCommonIndustry thisIndustry;
 
     public static void settingsFromJSON(JSONObject data) throws JSONException {
-        commonindustry = new BoggledCommonIndustry(data, "Remnant Station");
+        sharedIndustry = new BoggledCommonIndustry(data);
+    }
+
+    public Boggled_Remnant_Station() {
+        super();
+        thisIndustry = new BoggledCommonIndustry(sharedIndustry);
     }
 
     protected IntervalUtil tracker = new IntervalUtil(Global.getSettings().getFloat("averagePatrolSpawnInterval") * 0.7f, Global.getSettings().getFloat("averagePatrolSpawnInterval") * 1.3f);
@@ -342,13 +348,13 @@ public class Boggled_Remnant_Station extends OrbitalStation implements RouteMana
     }
 
     @Override
-    public boolean isAvailableToBuild() { return commonindustry.isAvailableToBuild(getMarket()); }
+    public boolean isAvailableToBuild() { return thisIndustry.isAvailableToBuild(getMarket()); }
 
     @Override
-    public boolean showWhenUnavailable() { return commonindustry.showWhenUnavailable(getMarket()); }
+    public boolean showWhenUnavailable() { return thisIndustry.showWhenUnavailable(getMarket()); }
 
     @Override
-    public String getUnavailableReason() { return commonindustry.getUnavailableReason(getMarket()); }
+    public String getUnavailableReason() { return thisIndustry.getUnavailableReason(getMarket()); }
 
     @Override
     public void apply()

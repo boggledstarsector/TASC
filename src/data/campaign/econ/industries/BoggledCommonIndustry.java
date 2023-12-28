@@ -19,19 +19,22 @@ import java.util.LinkedHashMap;
 
 import static data.campaign.econ.boggledTools.getPlanetType;
 
-public class BoggledCommonIndustry {
+public class BoggledCommonIndustry<T> {
+
+    private static final String testString = "T";
 
     private String industry;
-
 //    private ArrayList<Pair<String, Integer> commodityDemands;
 
     public ArrayList<Triple<BoggledTerraformingProject, String, String>> projects;
 
+    private boolean building = false;
+    private boolean built = false;
     public ArrayList<Integer> lastDayChecked;
     public ArrayList<Integer> daysWithoutShortage;
 
-    BoggledCommonIndustry(JSONObject data, String industry) throws JSONException {
-        this.industry = industry;
+    BoggledCommonIndustry(JSONObject data) throws JSONException {
+        this.industry = data.getString("tooltip");
 
         String[] projects = data.getString("projects").split(boggledTools.csvOptionSeparator);
 
@@ -52,19 +55,17 @@ public class BoggledCommonIndustry {
                 this.projects.add(new Triple<>(p, intelTooltip, intelCompleteMessage));
             }
         }
-        this.lastDayChecked = new ArrayList<>(Collections.nCopies(this.projects.size(), 0));
-        this.daysWithoutShortage = new ArrayList<>(Collections.nCopies(this.projects.size(), 0));
+    }
 
-//        this.commodityDemands = new ArrayList<>();
-//        String[] commodityDemands = data.getString("commodity_demand").split(boggledTools.csvOptionSeparator);
-//        for (String commodityDemand : commodityDemands) {
-//            String[] commodityDemandAndCount = commodityDemand.split(boggledTools.csvSubOptionSeparator);
-//            if (commodityDemandAndCount.length == 1) {
-//                this.commodityDemands.add(new Pair<>(commodityDemandAndCount[0], -1));
-//            } else {
-//                this.commodityDemands.add(new Pair<>(commodityDemandAndCount[0], Integer.parseInt(commodityDemandAndCount[1])));
-//            }
-//        }
+    BoggledCommonIndustry(BoggledCommonIndustry that) {
+        this.industry = that.industry;
+        this.projects = that.projects;
+        lastDayChecked = new ArrayList<>(Collections.nCopies(projects.size(), 0));
+        daysWithoutShortage = new ArrayList<>(Collections.nCopies(projects.size(), 0));
+    }
+
+    BoggledCommonIndustry() {
+
     }
 
     public void overridesFromJSON(JSONObject data) throws JSONException {
@@ -72,17 +73,17 @@ public class BoggledCommonIndustry {
     }
 
     public void advance(float amount, BaseIndustry industry) {
-        if (!(industry.isFunctional() && marketSuitableBoth(industry.getMarket()))) {
+        if (!built) {
+            return;
+        }
+
+        if (industry.isDisrupted() || !marketSuitableBoth(industry.getMarket())) {
             return;
         }
 
         CampaignClockAPI clock = Global.getSector().getClock();
         for (int i = 0; i < projects.size(); ++i) {
             if (clock.getDay() == lastDayChecked.get(i)) {
-                continue;
-            }
-
-            if (!(industry.isFunctional() && marketSuitableBoth(industry.getMarket()))) {
                 continue;
             }
 
@@ -105,6 +106,90 @@ public class BoggledCommonIndustry {
 
     public int getPercentComplete(int projectIndex, BaseIndustry industry) {
         return (int) Math.min(99, ((float)daysWithoutShortage.get(projectIndex) / projects.get(projectIndex).component1().getModifiedProjectDuration(getFocusMarketOrMarket(industry.getMarket()))) * 100);
+    }
+
+    public int getDaysRemaining(int projectIndex, BaseIndustry industry) {
+        return projects.get(projectIndex).component1().getModifiedProjectDuration(getFocusMarketOrMarket(industry.getMarket())) - daysWithoutShortage.get(projectIndex);
+    }
+
+    public void startBuilding(BaseIndustry industry) {
+        building = true;
+        built = false;
+    }
+
+    public void finishBuildingOrUpgrading(BaseIndustry industry) {
+        building = false;
+        built = true;
+    }
+
+    public boolean isBuilding(BaseIndustry industry) {
+        if (building) {
+            return true;
+        }
+        if (!built) {
+            // Stupid as hell but needs to be here for the industry to work same as vanilla structures
+            return false;
+        }
+        for (int i = 0; i < projects.size(); ++i) {
+            if (getDaysRemaining(i, industry) > 0) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean isUpgrading(BaseIndustry industry) {
+        if (!built) {
+            return false;
+        }
+        for (int i = 0; i < projects.size(); ++i) {
+            if (getDaysRemaining(i, industry) > 0) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public float getBuildOrUpgradeProgress(BaseIndustry industry) {
+        if (industry.isDisrupted()) {
+            return 0.0f;
+        } else if (building || !built) {
+            return Math.min(1.0f, industry.getBuildProgress() / industry.getBuildTime());
+        }
+
+        float progress = 0f;
+        for (int i = 0; i < projects.size(); ++i) {
+            progress = Math.max(getPercentComplete(i, industry) / 100f, progress);
+        }
+        return progress;
+    }
+
+    public String getBuildOrUpgradeDaysText(BaseIndustry industry) {
+        int daysRemain;
+        if (industry.isDisrupted()) {
+            daysRemain = (int)(industry.getDisruptedDays());
+        } else if (building || !built) {
+            daysRemain = (int)(industry.getBuildTime() - industry.getBuildProgress());
+        } else {
+            daysRemain = Integer.MAX_VALUE;
+            for (int i = 0; i < projects.size(); ++i) {
+                daysRemain = Math.min(getDaysRemaining(i, industry), daysRemain);
+            }
+        }
+        String dayOrDays = daysRemain == 1 ? "day" : "days";
+        return daysRemain + " " + dayOrDays;
+    }
+
+    public String getBuildOrUpgradeProgressText(BaseIndustry industry) {
+        String prefix;
+        if (industry.isDisrupted()) {
+            prefix = "Disrupted";
+        } else if (building || !built) {
+            prefix = "Building";
+        } else {
+            prefix = this.industry;
+        }
+        return prefix + ": " + getBuildOrUpgradeDaysText(industry) + " left";
     }
 
     public void tooltipIncomplete(BaseIndustry industry, TooltipMakerAPI tooltip, Industry.IndustryTooltipMode mode, String format, float pad, Color hl, String... highlights) {

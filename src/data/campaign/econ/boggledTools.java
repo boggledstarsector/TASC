@@ -305,7 +305,7 @@ public class boggledTools
         return null;
     }
 
-    public static BoggledTerraformingRequirements getTerraformingRequirements(String terraformingRequirementId) {
+    public static BoggledProjectRequirementsOR getTerraformingRequirements(String terraformingRequirementId) {
         return terraformingRequirements.get(terraformingRequirementId);
     }
 
@@ -366,10 +366,10 @@ public class boggledTools
     }
 
     @NotNull
-    public static ArrayList<Pair<BoggledTerraformingRequirements, String>> getRequirementsSuitable(@NotNull JSONObject data, String key, String industry) throws JSONException {
+    public static ArrayList<Pair<BoggledProjectRequirementsOR, String>> getRequirementsSuitable(@NotNull JSONObject data, String key, String industry) throws JSONException {
         Logger log = Global.getLogger(boggledTools.class);
 
-        ArrayList<Pair<BoggledTerraformingRequirements, String>> ret = new ArrayList<>();
+        ArrayList<Pair<BoggledProjectRequirementsOR, String>> ret = new ArrayList<>();
 
         String stringData = data.getString(key);
         if (stringData.isEmpty()) {
@@ -379,7 +379,7 @@ public class boggledTools
 
         for (String stringDataArrayEntry : stringDataArray) {
             String[] reqStringAndReason = stringDataArrayEntry.split(boggledTools.csvSubOptionSeparator);
-            BoggledTerraformingRequirements requirementSuitable = boggledTools.getTerraformingRequirements().get(reqStringAndReason[0]);
+            BoggledProjectRequirementsOR requirementSuitable = boggledTools.getTerraformingRequirements().get(reqStringAndReason[0]);
             if (requirementSuitable == null) {
                 log.error("Industry " + industry + " has invalid requirement " + stringDataArrayEntry);
                 continue;
@@ -399,7 +399,7 @@ public class boggledTools
             if (builder.length() != 0) {
                 builder.append("\n");
             }
-            for (BoggledTerraformingProject.RequirementWithTooltipOverride req : project.component1().getProjectRequirements()) {
+            for (BoggledProjectRequirementsAND.RequirementWithTooltipOverride req : project.component1().getProjectRequirements()) {
                 if (!req.checkRequirement(market)) {
                     if (builder.length() != 0) {
                         builder.append("\n");
@@ -477,6 +477,8 @@ public class boggledTools
         addTerraformingProjectEffectFactory("FocusMarketRemoveCondition", new BoggledTerraformingProjectEffectFactory.FocusMarketRemoveCondition());
         addTerraformingProjectEffectFactory("FocusMarketProgressResource", new BoggledTerraformingProjectEffectFactory.FocusMarketProgressResource());
         addTerraformingProjectEffectFactory("FocusMarketAndSiphonStationProgressResource", new BoggledTerraformingProjectEffectFactory.FocusMarketAndSiphonStationProgressResource());
+
+        addTerraformingProjectEffectFactory("SystemAddCoronalTap", new BoggledTerraformingProjectEffectFactory.SystemAddCoronalTap());
     }
 
     public static void addTerraformingProjectEffectFactory(String key, BoggledTerraformingProjectEffectFactory.TerraformingProjectEffectFactory value) {
@@ -525,28 +527,32 @@ public class boggledTools
         return new ArrayList<>(Arrays.asList(toSplit.split(regex)));
     }
 
-    private static ArrayList<BoggledTerraformingProject.RequirementWithTooltipOverride> requirementsFromRequirementsStrings(String[] requirementsStrings, String id, String requirementType) {
+    private static BoggledProjectRequirementsAND requirementsFromRequirementsStrings(String[] requirementsStrings, String id, String requirementType) {
         Logger log = Global.getLogger(boggledTools.class);
-        ArrayList<BoggledTerraformingProject.RequirementWithTooltipOverride> ret = new ArrayList<>();
+        ArrayList<BoggledProjectRequirementsAND.RequirementWithTooltipOverride> ret = new ArrayList<>();
         if (requirementsStrings.length == 1 && requirementsStrings[0].isEmpty()) {
-            return ret;
+            new BoggledProjectRequirementsAND(ret);
         }
 
         for (String requirementsAndReasonString : requirementsStrings) {
             String[] requirementsStringAndReason = requirementsAndReasonString.split(csvSubOptionSeparator);
             String requirementsString = requirementsStringAndReason[0];
+            if (requirementsString.isEmpty()) {
+                continue;
+            }
+
             String tooltipOverride = "";
             if (requirementsStringAndReason.length > 1) {
                 tooltipOverride = requirementsStringAndReason[1];
             }
-            BoggledTerraformingRequirements req = terraformingRequirements.get(requirementsString);
+            BoggledProjectRequirementsOR req = terraformingRequirements.get(requirementsString);
             if (req == null) {
                 log.info("Project " + id + " has invalid " + requirementType + " " + requirementsString);
             } else {
-                ret.add(new BoggledTerraformingProject.RequirementWithTooltipOverride(req, tooltipOverride));
+                ret.add(new BoggledProjectRequirementsAND.RequirementWithTooltipOverride(req, tooltipOverride));
             }
         }
-        return ret;
+        return new BoggledProjectRequirementsAND(ret);
     }
 
     public static void initialisePlanetTypesFromJSON(@NotNull JSONArray planetTypesJSON) {
@@ -555,7 +561,7 @@ public class boggledTools
         HashMap<String, PlanetType> planetTypesMap = new HashMap<>();
         LinkedHashMap<String, String> planetConditionsMap = new LinkedHashMap<>();
 
-        planetTypesMap.put(unknownPlanetId, new PlanetType(unknownPlanetId, "unknown", false, 0, new ArrayList<Pair<BoggledTerraformingRequirements, Integer>>()));
+        planetTypesMap.put(unknownPlanetId, new PlanetType(unknownPlanetId, "unknown", false, 0, new ArrayList<Pair<BoggledProjectRequirementsOR, Integer>>()));
 
         for (int i = 0; i < planetTypesJSON.length(); ++i) {
             try {
@@ -574,7 +580,7 @@ public class boggledTools
                 int baseWaterLevel = row.getInt("base_water_level");
                 String[] conditionalWaterRequirementsString = row.getString("conditional_water_requirements").split(boggledTools.csvOptionSeparator);
 
-                ArrayList<Pair<BoggledTerraformingRequirements, Integer>> conditionalWaterRequirements = new ArrayList<>();
+                ArrayList<Pair<BoggledProjectRequirementsOR, Integer>> conditionalWaterRequirements = new ArrayList<>();
 
                 for (String conditionalWaterRequirement : conditionalWaterRequirementsString) {
                     if (conditionalWaterRequirement.isEmpty()) {
@@ -588,7 +594,7 @@ public class boggledTools
                     }
 
                     int waterLevel = Integer.parseInt(conditionalWaterRequirementAndLevel[1]);
-                    BoggledTerraformingRequirements waterReq = terraformingRequirements.get(conditionalWaterRequirementAndLevel[0]);
+                    BoggledProjectRequirementsOR waterReq = terraformingRequirements.get(conditionalWaterRequirementAndLevel[0]);
                     if (waterReq != null) {
                         conditionalWaterRequirements.add(new Pair<>(waterReq, waterLevel));
                     } else {
@@ -723,7 +729,7 @@ public class boggledTools
     public static void initialiseTerraformingRequirementsFromJSON(@NotNull JSONArray terraformingRequirementsJSON) {
         Logger log = Global.getLogger(boggledTools.class);
 
-        HashMap<String, BoggledTerraformingRequirements> terraformingReqss = new HashMap<>();
+        HashMap<String, BoggledProjectRequirementsOR> terraformingReqss = new HashMap<>();
         for (int i = 0; i < terraformingRequirementsJSON.length(); ++i) {
             try {
                 JSONObject row = terraformingRequirementsJSON.getJSONObject(i);
@@ -747,7 +753,7 @@ public class boggledTools
                     }
                 }
 
-                BoggledTerraformingRequirements terraformingReqs = new BoggledTerraformingRequirements(id, tooltip, invertAll, reqs);
+                BoggledProjectRequirementsOR terraformingReqs = new BoggledProjectRequirementsOR(id, tooltip, invertAll, reqs);
                 terraformingReqss.put(id, terraformingReqs);
 
             } catch (JSONException e) {
@@ -865,8 +871,8 @@ public class boggledTools
                     }
                 }
 
-                ArrayList<BoggledTerraformingProject.RequirementWithTooltipOverride> reqs = requirementsFromRequirementsStrings(requirementsStrings, id, "requirements");
-                ArrayList<BoggledTerraformingProject.RequirementWithTooltipOverride> reqsHidden = requirementsFromRequirementsStrings(requirementsHiddenStrings, id, "requirements_hidden");
+                BoggledProjectRequirementsAND reqs = requirementsFromRequirementsStrings(requirementsStrings, id, "requirements");
+                BoggledProjectRequirementsAND reqsHidden = requirementsFromRequirementsStrings(requirementsHiddenStrings, id, "requirements_hidden");
 
                 BoggledTerraformingProject terraformingProj = new BoggledTerraformingProject(id, enableSettings, projectType, tooltip, reqs, reqsHidden, baseProjectDuration, terraformingDurationModifiers, terraformingProjectEffects);
                 terraformingProjects.put(id, terraformingProj);
@@ -891,7 +897,7 @@ public class boggledTools
                 }
 
                 String requirementsId = row.getString("requirements_id");
-                BoggledTerraformingRequirements reqs = terraformingRequirements.get(requirementsId);
+                BoggledProjectRequirementsOR reqs = terraformingRequirements.get(requirementsId);
                 if (reqs == null) {
                     log.error("Mod " + id + " terraforming requirements " + requirementsId + " not found, ignoring");
                     continue;
@@ -948,9 +954,9 @@ public class boggledTools
                 ArrayList<String> conditionProgressAdded = arrayListFromJSON(row, "condition_progress_added", boggledTools.csvOptionSeparator);
                 ArrayList<String> conditionProgressRemoved = arrayListFromJSON(row, "condition_progress_removed", boggledTools.csvOptionSeparator);
 
-                ArrayList<BoggledTerraformingRequirements> requirementsAdded = new ArrayList<>();
+                ArrayList<BoggledProjectRequirementsOR> requirementsAdded = new ArrayList<>();
                 for (String requirementAddedString : requirementsAddedStrings) {
-                    BoggledTerraformingRequirements req = terraformingRequirements.get(requirementAddedString);
+                    BoggledProjectRequirementsOR req = terraformingRequirements.get(requirementAddedString);
                     if (req != null) {
                         requirementsAdded.add(terraformingRequirements.get(requirementAddedString));
                     }
@@ -970,63 +976,63 @@ public class boggledTools
     private static ArrayList<BoggledTerraformingProject> initialiseCraftingProjects() {
         ArrayList<BoggledTerraformingProject> ret = new ArrayList<>();
 
-        BoggledTerraformingRequirements colonyHasAtLeast100kInhabitants = new BoggledTerraformingRequirements(BoggledProjectRequirements.colonyHasAtLeast100kInhabitantsRequirementId, BoggledProjectRequirements.colonyHasAtLeast100kInhabitants, false, new ArrayList<BoggledTerraformingRequirement.TerraformingRequirement>(asList(
+        BoggledProjectRequirementsOR colonyHasAtLeast100kInhabitants = new BoggledProjectRequirementsOR(BoggledProjectRequirements.colonyHasAtLeast100kInhabitantsRequirementId, BoggledProjectRequirements.colonyHasAtLeast100kInhabitants, false, new ArrayList<BoggledTerraformingRequirement.TerraformingRequirement>(asList(
                 new BoggledTerraformingRequirement.MarketIsAtLeastSize("market_is_at_least_size_5", false, 5)
         )));
 
-        BoggledTerraformingRequirements colonyHasOrbitalWorksWPristineNanoforge = new BoggledTerraformingRequirements(BoggledProjectRequirements.colonyHasOrbitalWorksWPristineNanoforgeRequirementId, BoggledProjectRequirements.colonyHasOrbitalWorksWPristineNanoforge, false, new ArrayList<BoggledTerraformingRequirement.TerraformingRequirement>(asList(
+        BoggledProjectRequirementsOR colonyHasOrbitalWorksWPristineNanoforge = new BoggledProjectRequirementsOR(BoggledProjectRequirements.colonyHasOrbitalWorksWPristineNanoforgeRequirementId, BoggledProjectRequirements.colonyHasOrbitalWorksWPristineNanoforge, false, new ArrayList<BoggledTerraformingRequirement.TerraformingRequirement>(asList(
                 new BoggledTerraformingRequirement.MarketHasIndustryWithItem("market_has_orbital_works_with_pristine_nanoforge",false, Industries.ORBITALWORKS, Items.PRISTINE_NANOFORGE)
         )));
 
         int domainArtifactCostMedium = boggledTools.getIntSetting(BoggledSettings.domainTechCraftingArtifactCost);
         int domainArtifactCostHard = domainArtifactCostMedium * 2;
         int domainArtifactCostEasy = domainArtifactCostMedium / 2;
-        BoggledTerraformingRequirements fleetCargoContainsAtLeastDomainArtifactsEasy = new BoggledTerraformingRequirements(BoggledProjectRequirements.fleetCargoContainsAtLeastEasyDomainArtifactsRequirementId, "Fleet cargo contains at least " + domainArtifactCostEasy + " Domain-era artifacts", false, new ArrayList<BoggledTerraformingRequirement.TerraformingRequirement>(asList(
+        BoggledProjectRequirementsOR fleetCargoContainsAtLeastDomainArtifactsEasy = new BoggledProjectRequirementsOR(BoggledProjectRequirements.fleetCargoContainsAtLeastEasyDomainArtifactsRequirementId, "Fleet cargo contains at least " + domainArtifactCostEasy + " Domain-era artifacts", false, new ArrayList<BoggledTerraformingRequirement.TerraformingRequirement>(asList(
                 new BoggledTerraformingRequirement.FleetCargoContainsAtLeast("fleet_cargo_contains_at_least_easy_domain_artifacts",false, BoggledCommodities.domainArtifacts, domainArtifactCostEasy)
         )));
 
-        BoggledTerraformingRequirements fleetCargoContainsAtLeastDomainArtifactsMedium = new BoggledTerraformingRequirements(BoggledProjectRequirements.fleetCargoContainsAtLeastMediumDomainArtifactsRequirementId, "Fleet cargo contains at least " + domainArtifactCostMedium + " Domain-era artifacts", false, new ArrayList<BoggledTerraformingRequirement.TerraformingRequirement>(asList(
+        BoggledProjectRequirementsOR fleetCargoContainsAtLeastDomainArtifactsMedium = new BoggledProjectRequirementsOR(BoggledProjectRequirements.fleetCargoContainsAtLeastMediumDomainArtifactsRequirementId, "Fleet cargo contains at least " + domainArtifactCostMedium + " Domain-era artifacts", false, new ArrayList<BoggledTerraformingRequirement.TerraformingRequirement>(asList(
                 new BoggledTerraformingRequirement.FleetCargoContainsAtLeast("fleet_cargo_contains_at_least_medium_domain_artifacts", false, BoggledCommodities.domainArtifacts, domainArtifactCostMedium)
         )));
 
-        BoggledTerraformingRequirements fleetCargoContainsAtLeastDomainArtifactsHard = new BoggledTerraformingRequirements(BoggledProjectRequirements.fleetCargoContainsAtLeastHardDomainArtifactsRequirementId, "Fleet cargo contains at least " + domainArtifactCostHard + " Domain-era artifacts", false, new ArrayList<BoggledTerraformingRequirement.TerraformingRequirement>(asList(
+        BoggledProjectRequirementsOR fleetCargoContainsAtLeastDomainArtifactsHard = new BoggledProjectRequirementsOR(BoggledProjectRequirements.fleetCargoContainsAtLeastHardDomainArtifactsRequirementId, "Fleet cargo contains at least " + domainArtifactCostHard + " Domain-era artifacts", false, new ArrayList<BoggledTerraformingRequirement.TerraformingRequirement>(asList(
                 new BoggledTerraformingRequirement.FleetCargoContainsAtLeast("fleet_cargo_contains_at_least_hard_domain_artifacts", false, BoggledCommodities.domainArtifacts, domainArtifactCostHard)
         )));
 
         int storyPointCost = boggledTools.getIntSetting(BoggledSettings.domainTechCraftingStoryPointCost);
-        BoggledTerraformingRequirements playerHasStoryPointsAtLeast = new BoggledTerraformingRequirements(BoggledProjectRequirements.playerHasStoryPointsRequirementId, storyPointCost + " story points available to spend", false, new ArrayList<BoggledTerraformingRequirement.TerraformingRequirement>(asList(
+        BoggledProjectRequirementsOR playerHasStoryPointsAtLeast = new BoggledProjectRequirementsOR(BoggledProjectRequirements.playerHasStoryPointsRequirementId, storyPointCost + " story points available to spend", false, new ArrayList<BoggledTerraformingRequirement.TerraformingRequirement>(asList(
                 new BoggledTerraformingRequirement.PlayerHasStoryPointsAtLeast("player_has_at_least_cost_story_points", false, storyPointCost)
         )));
 
-        ArrayList<BoggledTerraformingProject.RequirementWithTooltipOverride> craftingProjectReqsEasy = new ArrayList<>(asList(
-                new BoggledTerraformingProject.RequirementWithTooltipOverride(colonyHasAtLeast100kInhabitants, ""),
-                new BoggledTerraformingProject.RequirementWithTooltipOverride(colonyHasOrbitalWorksWPristineNanoforge, ""),
-                new BoggledTerraformingProject.RequirementWithTooltipOverride(fleetCargoContainsAtLeastDomainArtifactsEasy, "")
-        ));
+        BoggledProjectRequirementsAND craftingProjectReqsEasy = new BoggledProjectRequirementsAND(new ArrayList<>(asList(
+                new BoggledProjectRequirementsAND.RequirementWithTooltipOverride(colonyHasAtLeast100kInhabitants, ""),
+                new BoggledProjectRequirementsAND.RequirementWithTooltipOverride(colonyHasOrbitalWorksWPristineNanoforge, ""),
+                new BoggledProjectRequirementsAND.RequirementWithTooltipOverride(fleetCargoContainsAtLeastDomainArtifactsEasy, "")
+        )));
 
-        ArrayList<BoggledTerraformingProject.RequirementWithTooltipOverride> craftingProjectReqsMedium = new ArrayList<>(asList(
-                new BoggledTerraformingProject.RequirementWithTooltipOverride(colonyHasAtLeast100kInhabitants, ""),
-                new BoggledTerraformingProject.RequirementWithTooltipOverride(colonyHasOrbitalWorksWPristineNanoforge, ""),
-                new BoggledTerraformingProject.RequirementWithTooltipOverride(fleetCargoContainsAtLeastDomainArtifactsMedium, "")
-        ));
+        BoggledProjectRequirementsAND craftingProjectReqsMedium = new BoggledProjectRequirementsAND(new ArrayList<>(asList(
+                new BoggledProjectRequirementsAND.RequirementWithTooltipOverride(colonyHasAtLeast100kInhabitants, ""),
+                new BoggledProjectRequirementsAND.RequirementWithTooltipOverride(colonyHasOrbitalWorksWPristineNanoforge, ""),
+                new BoggledProjectRequirementsAND.RequirementWithTooltipOverride(fleetCargoContainsAtLeastDomainArtifactsMedium, "")
+        )));
 
-        ArrayList<BoggledTerraformingProject.RequirementWithTooltipOverride> craftingProjectReqsHard = new ArrayList<>(asList(
-                new BoggledTerraformingProject.RequirementWithTooltipOverride(colonyHasAtLeast100kInhabitants, ""),
-                new BoggledTerraformingProject.RequirementWithTooltipOverride(colonyHasOrbitalWorksWPristineNanoforge, ""),
-                new BoggledTerraformingProject.RequirementWithTooltipOverride(fleetCargoContainsAtLeastDomainArtifactsHard, "")
-        ));
+        BoggledProjectRequirementsAND craftingProjectReqsHard = new BoggledProjectRequirementsAND(new ArrayList<>(asList(
+                new BoggledProjectRequirementsAND.RequirementWithTooltipOverride(colonyHasAtLeast100kInhabitants, ""),
+                new BoggledProjectRequirementsAND.RequirementWithTooltipOverride(colonyHasOrbitalWorksWPristineNanoforge, ""),
+                new BoggledProjectRequirementsAND.RequirementWithTooltipOverride(fleetCargoContainsAtLeastDomainArtifactsHard, "")
+        )));
 
         if (storyPointCost > 0) {
-            craftingProjectReqsEasy.add(new BoggledTerraformingProject.RequirementWithTooltipOverride(playerHasStoryPointsAtLeast, ""));
-            craftingProjectReqsMedium.add(new BoggledTerraformingProject.RequirementWithTooltipOverride(playerHasStoryPointsAtLeast, ""));
-            craftingProjectReqsHard.add(new BoggledTerraformingProject.RequirementWithTooltipOverride(playerHasStoryPointsAtLeast, ""));
+            craftingProjectReqsEasy.add(new BoggledProjectRequirementsAND.RequirementWithTooltipOverride(playerHasStoryPointsAtLeast, ""));
+            craftingProjectReqsMedium.add(new BoggledProjectRequirementsAND.RequirementWithTooltipOverride(playerHasStoryPointsAtLeast, ""));
+            craftingProjectReqsHard.add(new BoggledProjectRequirementsAND.RequirementWithTooltipOverride(playerHasStoryPointsAtLeast, ""));
         }
 
         String[] enableSettings = {BoggledSettings.domainTechContentEnabled, "boggledDomainTechCraftingEnabled", BoggledSettings.domainArchaeologyEnabled};
         String projectType = "crafting";
         ArrayList<String> emptyList = new ArrayList<>();
         ArrayList<BoggledTerraformingDurationModifier.TerraformingDurationModifier> emptyList2 = new ArrayList<>();
-        ArrayList<BoggledTerraformingProject.RequirementWithTooltipOverride> emptyList4 = new ArrayList<>();
+        BoggledProjectRequirementsAND emptyList4 = new BoggledProjectRequirementsAND(new ArrayList<BoggledProjectRequirementsAND.RequirementWithTooltipOverride>());
         ArrayList<BoggledTerraformingProjectEffect.TerraformingProjectEffect> emptyList3 = new ArrayList<>();
 
         ret.add(new BoggledTerraformingProject(craftCorruptedNanoforgeProjectId, enableSettings, projectType, craftCorruptedNanoforgeProjectTooltip, craftingProjectReqsEasy, emptyList4, 0, emptyList2, emptyList3));
@@ -1079,12 +1085,12 @@ public class boggledTools
     public static HashMap<String, ArrayList<String>> getResourceProgressions() { return resourceProgressions; }
 
     private static HashMap<String, BoggledTerraformingRequirement.TerraformingRequirement> terraformingRequirement;
-    private static HashMap<String, BoggledTerraformingRequirements> terraformingRequirements;
+    private static HashMap<String, BoggledProjectRequirementsOR> terraformingRequirements;
     private static HashMap<String, BoggledTerraformingDurationModifier.TerraformingDurationModifier> durationModifiers;
     private static HashMap<String, BoggledTerraformingProjectEffect.TerraformingProjectEffect> terraformingProjectEffects;
     private static LinkedHashMap<String, BoggledTerraformingProject> terraformingProjects;
 
-    public static HashMap<String, BoggledTerraformingRequirements> getTerraformingRequirements() {
+    public static HashMap<String, BoggledProjectRequirementsOR> getTerraformingRequirements() {
         return terraformingRequirements;
     }
 
@@ -2338,7 +2344,7 @@ public class boggledTools
         private final String planetTypeName;
         private final boolean terraformingPossible;
         private final int baseWaterLevel;
-        private final ArrayList<Pair<BoggledTerraformingRequirements, Integer>> conditionalWaterRequirements;
+        private final ArrayList<Pair<BoggledProjectRequirementsOR, Integer>> conditionalWaterRequirements;
 
         public String getPlanetId() { return planetId; }
         public String getPlanetTypeName() { return planetTypeName; }
@@ -2348,7 +2354,7 @@ public class boggledTools
                 return baseWaterLevel;
             }
 
-            for (Pair<BoggledTerraformingRequirements, Integer> conditionalWaterRequirement : conditionalWaterRequirements) {
+            for (Pair<BoggledProjectRequirementsOR, Integer> conditionalWaterRequirement : conditionalWaterRequirements) {
                 if (conditionalWaterRequirement.one.checkRequirement(market)) {
                     return conditionalWaterRequirement.two;
                 }
@@ -2356,15 +2362,15 @@ public class boggledTools
             return baseWaterLevel;
         }
 
-        public PlanetType(String planetId, String planetTypeName, boolean terraformingPossible, int baseWaterLevel, ArrayList<Pair<BoggledTerraformingRequirements, Integer>> conditionalWaterRequirements) {
+        public PlanetType(String planetId, String planetTypeName, boolean terraformingPossible, int baseWaterLevel, ArrayList<Pair<BoggledProjectRequirementsOR, Integer>> conditionalWaterRequirements) {
             this.planetId = planetId;
             this.planetTypeName = planetTypeName;
             this.terraformingPossible = terraformingPossible;
             this.baseWaterLevel = baseWaterLevel;
             this.conditionalWaterRequirements = conditionalWaterRequirements;
-            Collections.sort(this.conditionalWaterRequirements, new Comparator<Pair<BoggledTerraformingRequirements, Integer>>() {
+            Collections.sort(this.conditionalWaterRequirements, new Comparator<Pair<BoggledProjectRequirementsOR, Integer>>() {
                 @Override
-                public int compare(Pair<BoggledTerraformingRequirements, Integer> p1, Pair<BoggledTerraformingRequirements, Integer> p2) {
+                public int compare(Pair<BoggledProjectRequirementsOR, Integer> p1, Pair<BoggledProjectRequirementsOR, Integer> p2) {
                     return p1.two.compareTo(p2.two);
                 }
             });
@@ -2386,7 +2392,7 @@ public class boggledTools
 
     public static boolean marketHasAtmoProblem(MarketAPI market)
     {
-        BoggledTerraformingRequirements reqs = terraformingRequirements.get("colony_has_atmo_problem");
+        BoggledProjectRequirementsOR reqs = terraformingRequirements.get("colony_has_atmo_problem");
         if (reqs == null) {
             // Abundance of caution
             return false;

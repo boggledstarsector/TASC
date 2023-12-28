@@ -7,10 +7,16 @@ import org.json.JSONObject;
 
 public class Boggled_Cryosanctum extends Cryosanctum
 {
-    private static BoggledCommonIndustry commonindustry;
+    private static BoggledCommonIndustry sharedIndustry;
+    private final BoggledCommonIndustry thisIndustry;
 
     public static void settingsFromJSON(JSONObject data) throws JSONException {
-        commonindustry = new BoggledCommonIndustry(data, "Cryosanctum");
+        sharedIndustry = new BoggledCommonIndustry(data);
+    }
+
+    public Boggled_Cryosanctum() {
+        super();
+        thisIndustry = new BoggledCommonIndustry(sharedIndustry);
     }
 
     @Override
@@ -32,14 +38,14 @@ public class Boggled_Cryosanctum extends Cryosanctum
     }
 
     @Override
-    public boolean isAvailableToBuild() { return commonindustry.isAvailableToBuild(getMarket()); }
+    public boolean isAvailableToBuild() { return thisIndustry.isAvailableToBuild(getMarket()); }
 
     @Override
-    public boolean showWhenUnavailable() { return commonindustry.showWhenUnavailable(getMarket()); }
+    public boolean showWhenUnavailable() { return thisIndustry.showWhenUnavailable(getMarket()); }
 
     @Override
     public String getUnavailableReason() {
-        return commonindustry.getUnavailableReason(getMarket());
+        return thisIndustry.getUnavailableReason(getMarket());
     }
 }
 

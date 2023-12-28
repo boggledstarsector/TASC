@@ -12,33 +12,65 @@ import org.json.JSONObject;
 
 public class Boggled_Ouyang_Optimizer extends BaseIndustry
 {
-    @Override
-    public boolean canBeDisrupted()
-    {
-        return true;
-    }
-
-    private static BoggledCommonIndustry commonIndustry;
+    private static BoggledCommonIndustry sharedIndustry;
+    private final BoggledCommonIndustry thisIndustry;
 
     public static void settingsFromJSON(JSONObject data) throws JSONException {
-        commonIndustry = new BoggledCommonIndustry(data, "Ouyang Optimizer");
+        sharedIndustry = new BoggledCommonIndustry(data);
+    }
+
+    public Boggled_Ouyang_Optimizer() {
+        super();
+        thisIndustry = new BoggledCommonIndustry(sharedIndustry);
     }
 
     @Override
-    public boolean isAvailableToBuild() { return commonIndustry.isAvailableToBuild(getMarket()); }
+    public boolean canBeDisrupted() { return true; }
 
     @Override
-    public boolean showWhenUnavailable() { return commonIndustry.showWhenUnavailable(getMarket()); }
+    public void startBuilding() {
+        super.startBuilding();
+        thisIndustry.startBuilding(this);
+    }
 
     @Override
-    public String getUnavailableReason() { return commonIndustry.getUnavailableReason(getMarket()); }
+    public void finishBuildingOrUpgrading() {
+        super.finishBuildingOrUpgrading();
+        thisIndustry.finishBuildingOrUpgrading(this);
+    }
 
     @Override
-    public void advance(float amount)
-    {
+    public boolean isBuilding() { return thisIndustry.isBuilding(this); }
+
+    @Override
+    public boolean isUpgrading() { return thisIndustry.isUpgrading(this); }
+
+    @Override
+    public float getBuildOrUpgradeProgress() { return thisIndustry.getBuildOrUpgradeProgress(this); }
+
+    @Override
+    public String getBuildOrUpgradeDaysText() {
+        return thisIndustry.getBuildOrUpgradeDaysText(this);
+    }
+
+    @Override
+    public String getBuildOrUpgradeProgressText() {
+        return thisIndustry.getBuildOrUpgradeProgressText(this);
+    }
+
+    @Override
+    public boolean isAvailableToBuild() { return thisIndustry.isAvailableToBuild(getMarket()); }
+
+    @Override
+    public boolean showWhenUnavailable() { return thisIndustry.showWhenUnavailable(getMarket()); }
+
+    @Override
+    public String getUnavailableReason() { return thisIndustry.getUnavailableReason(getMarket()); }
+
+    @Override
+    public void advance(float amount) {
         super.advance(amount);
-
-        commonIndustry.advance(amount, this);
+        thisIndustry.advance(amount, this);
     }
 
     @Override
@@ -56,9 +88,6 @@ public class Boggled_Ouyang_Optimizer extends BaseIndustry
     @Override
     public void notifyBeingRemoved(MarketAPI.MarketInteractionMode mode, boolean forUpgrade)
     {
-//        commonIndustry.daysWithoutShortage = 0;
-//        commonIndustry.lastDayChecked = 0;
-
         super.notifyBeingRemoved(mode, forUpgrade);
     }
 
@@ -68,11 +97,11 @@ public class Boggled_Ouyang_Optimizer extends BaseIndustry
         float opad = 10.0F;
         Color highlight = Misc.getHighlightColor();
 
-        commonIndustry.tooltipIncomplete(this, tooltip, mode, "Ouyang optimization is approximately %s complete on " + commonIndustry.getFocusMarketOrMarket(getMarket()).getName() + ".", opad, highlight, commonIndustry.getPercentComplete(0, this) + "%");
+        thisIndustry.tooltipIncomplete(this, tooltip, mode, "Ouyang optimization is approximately %s complete on " + thisIndustry.getFocusMarketOrMarket(getMarket()).getName() + ".", opad, highlight, thisIndustry.getPercentComplete(0, this) + "%");
 
-        commonIndustry.tooltipComplete(this, tooltip, mode, "Further Ouyang optimization would yield no improvements on " + commonIndustry.getFocusMarketOrMarket(getMarket()).getName() + ". The Ouyang Optimizer can now be deconstructed without any risk of regression.", opad, highlight);
+        thisIndustry.tooltipComplete(this, tooltip, mode, "Further Ouyang optimization would yield no improvements on " + thisIndustry.getFocusMarketOrMarket(getMarket()).getName() + ". The Ouyang Optimizer can now be deconstructed without any risk of regression.", opad, highlight);
 
-        commonIndustry.tooltipDisrupted(this, tooltip, mode, "Progress is stalled while the Ouyang optimizer is disrupted.", opad, Misc.getNegativeHighlightColor());
+        thisIndustry.tooltipDisrupted(this, tooltip, mode, "Progress is stalled while the Ouyang optimizer is disrupted.", opad, Misc.getNegativeHighlightColor());
         //Inserts optimization status after description
 //        if(commonIndustry.marketSuitableBoth(getMarket()) && mode != IndustryTooltipMode.ADD_INDUSTRY && mode != IndustryTooltipMode.QUEUED && !isBuilding())
 //        {

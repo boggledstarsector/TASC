@@ -1,4 +1,4 @@
-id,enable_setting,project_type,tooltip,requirements,requirements_hidden,base_project_duration,dynamic_project_duration_modifiers,project_effects
+id,enable_setting,project_type,tooltip,requirements,requirements_hidden,base_project_duration,dynamic_project_duration_modifiers,project_effects,requirements_incomplete,requirements_complete,requirements_disrupted
 # id is a string to identify the project
 # enable_setting is a | separated list of settings that must be true for this project to be enabled.
 # project_type is the type of the project. Currently supported ones are 'terraforming' and 'industry'
@@ -8,6 +8,7 @@ id,enable_setting,project_type,tooltip,requirements,requirements_hidden,base_pro
 # base_project_duration is the base number of days the project takes to complete
 # dynamic_project_duration_modifiers is a | separated list of duration modifier IDs that are specified in 'duration_modifiers.csv'
 # project_effects is a | separated list of project effect IDs that are specified in 'project_effects.csv'
+# requirements_{incomplete,complete,disrupted} is a list of requirement IDs same as requirements. They're for determining whether the project is incomplete, complete, or disrupted, as well as the tooltip to show for each requirement
 arid_type_change,boggledTerraformingContentEnabled,terraforming,"Arid type change","world_type_allows_terraforming | colony_not_arid_world | colony_atmospheric_density_normal | colony_atmosphere_not_toxic_or_irradiated | colony_temperate_or_hot | colony_has_stellar_reflectors | colony_has_moderate_water_present",,2,,"arid_type_change |
 market_add_habitable | market_add_farmland_adequate | market_add_organics_common |
 market_remove_water_surface | market_remove_volturnian_lobster_pens |
@@ -94,9 +95,9 @@ colony_not_toxic_or_irradiated ; Surface conditions on $market are unsuitable fo
 industry_ouyang_optimizer,boggledTerraformingContentEnabled | boggledOuyangOptimizerEnabled,industry,,"colony_is_station ; Colony must be a station. |
 orbited_planet_is_gas_giant ; Only gas giants can undergo Ouyang optimization. |
 orbited_planet_not_has_extreme_weather ; $focusMarket already has extreme weather. Making it worse won't increase volatiles availability. |
-orbited_planet_not_has_volatiles_plentiful ; $focusMarket is already extremely rich in volatiles. An Ouyang optimization would not yield any improvement.",,2,,"focus_market_progress_volatiles_ouyang_optimizer |
+orbited_planet_not_has_volatiles_plentiful ; $focusMarket is already extremely rich in volatiles. An Ouyang optimization would not yield any improvement.",,200,,"focus_market_progress_volatiles_ouyang_optimizer |
 focus_market_add_extreme_weather"
-industry_perihelion_project,boggledDomainTechContentEnabled | boggledPerihelionProjectEnabled,industry,,"system_star_has_coronal_tap ; The $system system already has a coronal tap |
+industry_perihelion_project,boggledDomainTechContentEnabled | boggledPerihelionProjectEnabled,industry,,"system_star_not_has_coronal_tap ; The $system system already has a coronal tap |
 system_star_coronal_tap_viable ; Coronal hypershunts can only function if they orbit a blue giant star. There is no blue giant star in the $system.",,2,,"system_add_coronal_tap"
 industry_planet_cracker,boggledTerraformingContentEnabled | boggledPlanetCrackerEnabled,industry,,"colony_is_station ; Colony must be a station. |
 orbited_planet_is_not_gas_giant ; Gas giants cannot be cracked. |

@@ -6,14 +6,14 @@ import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
 
-public class BoggledTerraformingRequirements {
+public class BoggledProjectRequirementsOR {
     private final String requirementId;
     private final String requirementTooltip;
     private final boolean invertAll;
     private final ArrayList<BoggledTerraformingRequirement.TerraformingRequirement> terraformingRequirements;
 
     public void addRemoveProjectRequirement(ArrayList<BoggledTerraformingRequirement.TerraformingRequirement> add, String[] remove) {
-        Logger log = Global.getLogger(BoggledTerraformingRequirements.class);
+        Logger log = Global.getLogger(BoggledProjectRequirementsOR.class);
         for (String r : remove) {
             for (int i = 0; i < terraformingRequirements.size(); ++i) {
                 BoggledTerraformingRequirement.TerraformingRequirement terraformingReq = terraformingRequirements.get(i);
@@ -28,7 +28,7 @@ public class BoggledTerraformingRequirements {
         terraformingRequirements.addAll(add);
     }
 
-    public BoggledTerraformingRequirements(String requirementId, String requirementTooltip, boolean invertAll, ArrayList<BoggledTerraformingRequirement.TerraformingRequirement> terraformingRequirements) {
+    public BoggledProjectRequirementsOR(String requirementId, String requirementTooltip, boolean invertAll, ArrayList<BoggledTerraformingRequirement.TerraformingRequirement> terraformingRequirements) {
         this.requirementId = requirementId;
         this.requirementTooltip = requirementTooltip;
         this.invertAll = invertAll;

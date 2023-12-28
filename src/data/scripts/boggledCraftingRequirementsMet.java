@@ -105,7 +105,7 @@ public class boggledCraftingRequirementsMet extends BaseCommandPlugin
 
             BoggledTerraformingProject craftingProject = boggledTools.getCraftingProject(craftingProjectId);
             if (craftingProject != null) {
-                for (BoggledTerraformingProject.RequirementWithTooltipOverride craftingRequirements : craftingProject.getProjectRequirements()) {
+                for (BoggledProjectRequirementsAND.RequirementWithTooltipOverride craftingRequirements : craftingProject.getProjectRequirements()) {
                     if (!craftingRequirements.checkRequirement(market)) {
                         return false;
                     }

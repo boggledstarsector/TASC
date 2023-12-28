@@ -9,10 +9,16 @@ import org.json.JSONObject;
 
 public class Boggled_Expand_Station extends BaseIndustry {
 
-    private static BoggledCommonIndustry commonIndustry;
+    private static BoggledCommonIndustry sharedIndustry;
+    private final BoggledCommonIndustry thisIndustry;
 
     public static void settingsFromJSON(JSONObject data) throws JSONException {
-        commonIndustry = new BoggledCommonIndustry(data, "Expand Station");
+        sharedIndustry = new BoggledCommonIndustry(data);
+    }
+
+    public Boggled_Expand_Station() {
+        super();
+        thisIndustry = new BoggledCommonIndustry(sharedIndustry);
     }
 
     @Override
@@ -57,13 +63,13 @@ public class Boggled_Expand_Station extends BaseIndustry {
     }
 
     @Override
-    public boolean isAvailableToBuild() { return commonIndustry.isAvailableToBuild(getMarket()); }
+    public boolean isAvailableToBuild() { return thisIndustry.isAvailableToBuild(getMarket()); }
 
     @Override
-    public boolean showWhenUnavailable() { return commonIndustry.showWhenUnavailable(getMarket()); }
+    public boolean showWhenUnavailable() { return thisIndustry.showWhenUnavailable(getMarket()); }
 
     @Override
-    public String getUnavailableReason() { return commonIndustry.getUnavailableReason(getMarket()); }
+    public String getUnavailableReason() { return thisIndustry.getUnavailableReason(getMarket()); }
 
     public boolean canInstallAICores() {
         return false;

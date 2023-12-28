@@ -28,10 +28,16 @@ import org.json.JSONObject;
 
 public class Boggled_Perihelion_Project extends BaseIndustry {
 
-    private static BoggledCommonIndustry commonindustry;
+    private static BoggledCommonIndustry sharedIndustry;
+    private final BoggledCommonIndustry thisIndustry;
 
     public static void settingsFromJSON(JSONObject data) throws JSONException {
-        commonindustry = new BoggledCommonIndustry(data, "Perihelion Project");
+        sharedIndustry = new BoggledCommonIndustry(data);
+    }
+
+    public Boggled_Perihelion_Project() {
+        super();
+        thisIndustry = new BoggledCommonIndustry(sharedIndustry);
     }
 
     protected Random random;
@@ -236,13 +242,13 @@ public class Boggled_Perihelion_Project extends BaseIndustry {
     }
 
     @Override
-    public boolean isAvailableToBuild() { return commonindustry.isAvailableToBuild(getMarket()); }
+    public boolean isAvailableToBuild() { return thisIndustry.isAvailableToBuild(getMarket()); }
 
     @Override
-    public boolean showWhenUnavailable()  { return commonindustry.showWhenUnavailable(getMarket()); }
+    public boolean showWhenUnavailable()  { return thisIndustry.showWhenUnavailable(getMarket()); }
 
     @Override
-    public String getUnavailableReason() { return commonindustry.getUnavailableReason(getMarket()); }
+    public String getUnavailableReason() { return thisIndustry.getUnavailableReason(getMarket()); }
 
     @Override
     protected void addRightAfterDescriptionSection(TooltipMakerAPI tooltip, IndustryTooltipMode mode)

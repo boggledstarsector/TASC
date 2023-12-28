@@ -18,29 +18,8 @@ public class BoggledTerraformingProject {
     // But then all the TerraformingRequirements must be fulfilled for the project to be allowed
     // two is an optional description override
 
-    public static class RequirementWithTooltipOverride {
-        private BoggledTerraformingRequirements requirements;
-        private String tooltipOverride;
-
-        public RequirementWithTooltipOverride(BoggledTerraformingRequirements requirements, String tooltipOverride) {
-            this.requirements = requirements;
-            this.tooltipOverride = tooltipOverride;
-        }
-
-//        public BoggledTerraformingRequirements getRequirements() { return requirements; }
-        public boolean checkRequirement(MarketAPI market) {
-            return requirements.checkRequirement(market);
-        }
-        public String getTooltip() {
-            if (tooltipOverride.isEmpty()) {
-                return requirements.getTooltip();
-            }
-            return tooltipOverride;
-        }
-    }
-
-    private final ArrayList<RequirementWithTooltipOverride> projectRequirements;
-    private final ArrayList<RequirementWithTooltipOverride> projectRequirementsHidden;
+    private final BoggledProjectRequirementsAND projectRequirements;
+    private final BoggledProjectRequirementsAND projectRequirementsHidden;
 
     private final ArrayList<BoggledTerraformingProjectEffect.TerraformingProjectEffect> projectEffects;
 
@@ -67,7 +46,7 @@ public class BoggledTerraformingProject {
         return projectTooltip;
     }
 
-    public ArrayList<RequirementWithTooltipOverride> getProjectRequirements() {
+    public BoggledProjectRequirementsAND getProjectRequirements() {
         return projectRequirements;
     }
 
@@ -77,15 +56,6 @@ public class BoggledTerraformingProject {
             projectDuration += durationModifier.getDurationModifier(market, baseProjectDuration);
         }
         return Math.max((int) projectDuration, 0);
-    }
-
-    private boolean requirementsMet(MarketAPI market, ArrayList<RequirementWithTooltipOverride> reqs) {
-        for (RequirementWithTooltipOverride req : reqs) {
-            if (!req.checkRequirement(market)) {
-                return false;
-            }
-        }
-        return true;
     }
 
     public boolean requirementsHiddenMet(MarketAPI market) {
@@ -98,11 +68,7 @@ public class BoggledTerraformingProject {
             return false;
         }
 
-        if (projectRequirementsHidden.isEmpty()) {
-            return true;
-        }
-
-        return requirementsMet(market, projectRequirementsHidden);
+        return projectRequirementsHidden.requirementsMet(market);
     }
 
     public boolean requirementsMet(MarketAPI market) {
@@ -113,10 +79,7 @@ public class BoggledTerraformingProject {
             log.error("Terraforming project requirements is null for project " + getProjectId() + " and market " + market.getName());
             return false;
         }
-        if (!requirementsHiddenMet(market)) {
-            return false;
-        }
-        return requirementsMet(market, projectRequirements);
+        return requirementsHiddenMet(market) && projectRequirements.requirementsMet(market);
     }
 
     public void finishProject(MarketAPI market, String intelTooltip, String intelCompletedMessage) {
@@ -136,30 +99,30 @@ public class BoggledTerraformingProject {
         finishProject(market, getProjectTooltip(), "Completed");
     }
 
-    public void overrideAddTooltip(String tooltipOverride, String tooltipAddition) {
-        if (!tooltipOverride.isEmpty()) {
-            projectTooltip = tooltipOverride;
-        }
-        projectTooltip += tooltipAddition;
-    }
+//    public void overrideAddTooltip(String tooltipOverride, String tooltipAddition) {
+//        if (!tooltipOverride.isEmpty()) {
+//            projectTooltip = tooltipOverride;
+//        }
+//        projectTooltip += tooltipAddition;
+//    }
 
-    public void addRemoveProjectRequirements(ArrayList<RequirementWithTooltipOverride> add, String[] remove) {
-        Logger log = Global.getLogger(BoggledTerraformingProject.class);
-        for (String r : remove) {
-            for (int i = 0; i < projectRequirements.size(); ++i) {
-                BoggledTerraformingRequirements projectReqs = projectRequirements.get(i).requirements;
-                if (r.equals(projectReqs.getRequirementId())) {
-                    log.info("Project " + projectId + " removing project requirement " + r);
-                    projectRequirements.remove(i);
-                    break;
-                }
-            }
-        }
+//    public void addRemoveProjectRequirements(ArrayList<BoggledProjectRequirementsAND.RequirementWithTooltipOverride> add, String[] remove) {
+//        Logger log = Global.getLogger(BoggledTerraformingProject.class);
+//        for (String r : remove) {
+//            for (int i = 0; i < projectRequirements.size(); ++i) {
+//                BoggledProjectRequirementsOR projectReqs = projectRequirements.get(i).requirements;
+//                if (r.equals(projectReqs.getRequirementId())) {
+//                    log.info("Project " + projectId + " removing project requirement " + r);
+//                    projectRequirements.remove(i);
+//                    break;
+//                }
+//            }
+//        }
+//
+//        projectRequirements.addAll(add);
+//    }
 
-        projectRequirements.addAll(add);
-    }
-
-    public BoggledTerraformingProject(String projectId, String[] enableSettings, String projectType, String projectTooltip, ArrayList<RequirementWithTooltipOverride> projectRequirements, ArrayList<RequirementWithTooltipOverride> projectRequirementsHidden, int baseProjectDuration, ArrayList<BoggledTerraformingDurationModifier.TerraformingDurationModifier> durationModifiers, ArrayList<BoggledTerraformingProjectEffect.TerraformingProjectEffect> projectEffects) {
+    public BoggledTerraformingProject(String projectId, String[] enableSettings, String projectType, String projectTooltip, BoggledProjectRequirementsAND projectRequirements, BoggledProjectRequirementsAND projectRequirementsHidden, int baseProjectDuration, ArrayList<BoggledTerraformingDurationModifier.TerraformingDurationModifier> durationModifiers, ArrayList<BoggledTerraformingProjectEffect.TerraformingProjectEffect> projectEffects) {
         this.projectId = projectId;
         this.enableSettings = enableSettings;
         this.projectType = projectType;

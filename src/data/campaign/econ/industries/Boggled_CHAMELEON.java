@@ -18,6 +18,18 @@ import org.json.JSONObject;
 
 public class Boggled_CHAMELEON extends BaseIndustry
 {
+    private static BoggledCommonIndustry sharedIndustry;
+    private final BoggledCommonIndustry thisIndustry;
+
+    public static void settingsFromJSON(JSONObject data) throws JSONException {
+        sharedIndustry = new BoggledCommonIndustry(data);
+    }
+
+    public Boggled_CHAMELEON() {
+        super();
+        thisIndustry = new BoggledCommonIndustry(sharedIndustry);
+    }
+
     @Override
     public boolean canBeDisrupted() {
         return true;
@@ -28,27 +40,21 @@ public class Boggled_CHAMELEON extends BaseIndustry
     public static float UPKEEP_MULT = 0.75F;
     public static int DEMAND_REDUCTION = 1;
 
-    private static BoggledCommonIndustry commonIndustry;
-
-    public static void settingsFromJSON(JSONObject data) throws JSONException {
-        commonIndustry = new BoggledCommonIndustry(data, "CHAMELEON");
-    }
+    @Override
+    public boolean isAvailableToBuild() { return thisIndustry.isAvailableToBuild(getMarket()); }
 
     @Override
-    public boolean isAvailableToBuild() { return commonIndustry.isAvailableToBuild(getMarket()); }
+    public boolean showWhenUnavailable() { return thisIndustry.showWhenUnavailable(getMarket()); }
 
     @Override
-    public boolean showWhenUnavailable() { return commonIndustry.showWhenUnavailable(getMarket()); }
-
-    @Override
-    public String getUnavailableReason() { return commonIndustry.getUnavailableReason(getMarket()); }
+    public String getUnavailableReason() { return thisIndustry.getUnavailableReason(getMarket()); }
 
     @Override
     public void advance(float amount)
     {
         super.advance(amount);
 
-        commonIndustry.advance(amount, this);
+        thisIndustry.advance(amount, this);
     }
 
     @Override
@@ -82,17 +88,17 @@ public class Boggled_CHAMELEON extends BaseIndustry
         Color highlight = Misc.getHighlightColor();
 
         // TODO: Hardcoded indices, hate it, fix it
-        if (commonIndustry.projects.get(0).component1().requirementsMet(getMarket())) {
-            commonIndustry.tooltipIncomplete(this, tooltip, mode, "Approximately %s of the decivilized subpopulation on " + this.getMarket().getName() + " has been eradicated.", opad, highlight, commonIndustry.getPercentComplete(0, this) + "%");
-        }
-        if (commonIndustry.projects.get(1).component1().requirementsMet(getMarket())) {
-            commonIndustry.tooltipIncomplete(this, tooltip, mode, "An investigation into the whereabouts of the rogue AI core on " + getMarket().getName() + " is approximately %s complete.", opad, highlight, commonIndustry.getPercentComplete(1, this) + "%");
-        }
-        for (Triple<BoggledTerraformingProject, String, String> project : commonIndustry.projects) {
-            if (project.component1().requirementsMet(getMarket())) {
-                commonIndustry.tooltipDisrupted(this, tooltip, mode, "Progress is stalled while CHAMELEON is disrupted.", opad, Misc.getNegativeHighlightColor());
-            }
-        }
+//        if (thisIndustry.projects.get(0).component1().requirementsMet(getMarket())) {
+//            thisIndustry.tooltipIncomplete(this, tooltip, mode, "Approximately %s of the decivilized subpopulation on " + this.getMarket().getName() + " has been eradicated.", opad, highlight, thisIndustry.getPercentComplete(0, this) + "%");
+//        }
+//        if (thisIndustry.projects.get(1).component1().requirementsMet(getMarket())) {
+//            thisIndustry.tooltipIncomplete(this, tooltip, mode, "An investigation into the whereabouts of the rogue AI core on " + getMarket().getName() + " is approximately %s complete.", opad, highlight, thisIndustry.getPercentComplete(1, this) + "%");
+//        }
+//        for (Triple<BoggledTerraformingProject, String, String> project : thisIndustry.projects) {
+//            if (project.component1().requirementsMet(getMarket())) {
+//                thisIndustry.tooltipDisrupted(this, tooltip, mode, "Progress is stalled while CHAMELEON is disrupted.", opad, Misc.getNegativeHighlightColor());
+//            }
+//        }
     }
 
     @Override

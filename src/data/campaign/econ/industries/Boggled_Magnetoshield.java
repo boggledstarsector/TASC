@@ -8,10 +8,16 @@ import org.json.JSONObject;
 
 public class Boggled_Magnetoshield extends BaseIndustry
 {
-    private static BoggledCommonIndustry commonindustry;
+    private static BoggledCommonIndustry sharedIndustry;
+    private final BoggledCommonIndustry thisIndustry;
 
     public static void settingsFromJSON(JSONObject data) throws JSONException {
-        commonindustry = new BoggledCommonIndustry(data, "Magnetoshield");
+        sharedIndustry = new BoggledCommonIndustry(data);
+    }
+
+    public Boggled_Magnetoshield() {
+        super();
+        thisIndustry = new BoggledCommonIndustry(sharedIndustry);
     }
 
     @Override
@@ -51,13 +57,13 @@ public class Boggled_Magnetoshield extends BaseIndustry
     }
 
     @Override
-    public boolean isAvailableToBuild() { return commonindustry.isAvailableToBuild(getMarket()); }
+    public boolean isAvailableToBuild() { return thisIndustry.isAvailableToBuild(getMarket()); }
 
     @Override
-    public boolean showWhenUnavailable() { return commonindustry.showWhenUnavailable(getMarket()); }
+    public boolean showWhenUnavailable() { return thisIndustry.showWhenUnavailable(getMarket()); }
 
     @Override
-    public String getUnavailableReason() { return commonindustry.getUnavailableReason(getMarket()); }
+    public String getUnavailableReason() { return thisIndustry.getUnavailableReason(getMarket()); }
 
     @Override
     public boolean canImprove()
