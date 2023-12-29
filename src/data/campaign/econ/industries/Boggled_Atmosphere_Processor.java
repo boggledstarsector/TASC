@@ -3,27 +3,85 @@ package data.campaign.econ.industries;
 import java.awt.*;
 import java.lang.String;
 
+import com.fs.starfarer.api.campaign.econ.Industry;
 import com.fs.starfarer.api.impl.campaign.econ.impl.BaseIndustry;
 import com.fs.starfarer.api.impl.campaign.ids.Commodities;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
 import com.fs.starfarer.api.util.Pair;
 import data.campaign.econ.boggledTools;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 public class Boggled_Atmosphere_Processor extends BaseIndustry
 {
-    private static BoggledCommonIndustry sharedIndustry;
     private final BoggledCommonIndustry thisIndustry;
-
-    public static void settingsFromJSON(JSONObject data) throws JSONException {
-        sharedIndustry = new BoggledCommonIndustry(data);
-    }
 
     public Boggled_Atmosphere_Processor() {
         super();
-        thisIndustry = new BoggledCommonIndustry(sharedIndustry);
+        thisIndustry = boggledTools.getIndustryProject("atmosphere_processor");
+    }
+
+    @Override
+    public void startBuilding() {
+        super.startBuilding();
+        thisIndustry.startBuilding(this);
+    }
+
+    @Override
+    public void startUpgrading() {
+        super.startUpgrading();
+        thisIndustry.startUpgrading(this);
+    }
+
+    @Override
+    protected void buildingFinished() {
+        super.buildingFinished();
+        thisIndustry.buildingFinished(this);
+    }
+
+    @Override
+    protected void upgradeFinished(Industry previous) {
+        super.upgradeFinished(previous);
+        thisIndustry.upgradeFinished(this, previous);
+    }
+
+    @Override
+    public void finishBuildingOrUpgrading() {
+        super.finishBuildingOrUpgrading();
+        thisIndustry.finishBuildingOrUpgrading(this);
+    }
+
+    @Override
+    public boolean isBuilding() { return thisIndustry.isBuilding(this); }
+
+    @Override
+    public boolean isUpgrading() { return thisIndustry.isUpgrading(this); }
+
+    @Override
+    public float getBuildOrUpgradeProgress() { return thisIndustry.getBuildOrUpgradeProgress(this); }
+
+    @Override
+    public String getBuildOrUpgradeDaysText() {
+        return thisIndustry.getBuildOrUpgradeDaysText(this);
+    }
+
+    @Override
+    public String getBuildOrUpgradeProgressText() {
+        return thisIndustry.getBuildOrUpgradeProgressText(this);
+    }
+
+    @Override
+    public boolean isAvailableToBuild() { return thisIndustry.isAvailableToBuild(this); }
+
+    @Override
+    public boolean showWhenUnavailable() { return thisIndustry.showWhenUnavailable(this); }
+
+    @Override
+    public String getUnavailableReason() { return thisIndustry.getUnavailableReason(this); }
+
+    @Override
+    public void advance(float amount) {
+        super.advance(amount);
+        thisIndustry.advance(amount, this);
     }
 
     @Override
@@ -31,15 +89,6 @@ public class Boggled_Atmosphere_Processor extends BaseIndustry
     {
         return true;
     }
-
-    @Override
-    public boolean isAvailableToBuild() { return thisIndustry.isAvailableToBuild(getMarket()); }
-
-    @Override
-    public boolean showWhenUnavailable() { return thisIndustry.showWhenUnavailable(getMarket()); }
-
-    @Override
-    public String getUnavailableReason() { return thisIndustry.getUnavailableReason(getMarket()); }
 
     @Override
     public void apply()

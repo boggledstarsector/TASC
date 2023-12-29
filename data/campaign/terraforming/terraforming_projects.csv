@@ -1,4 +1,4 @@
-id,enable_setting,project_type,tooltip,requirements,requirements_hidden,base_project_duration,dynamic_project_duration_modifiers,project_effects,requirements_incomplete,requirements_complete,requirements_disrupted
+id,enable_settings,project_type,tooltip,requirements,requirements_hidden,base_project_duration,dynamic_project_duration_modifiers,project_effects,requirements_incomplete,requirements_complete,requirements_disrupted
 # id is a string to identify the project
 # enable_setting is a | separated list of settings that must be true for this project to be enabled.
 # project_type is the type of the project. Currently supported ones are 'terraforming' and 'industry'
@@ -62,13 +62,14 @@ market_remove_thin_atmosphere | market_remove_toxic_atmosphere | market_remove_d
 ,,,,,,,
 industry_ai_mining_drones,boggledStationConstructionContentEnabled | boggledEnableAIMiningDronesStructure,industry,,"colony_is_station ; Colony must be a station. |
 market_has_mining_industry",,,,
-industry_atmosphere_processor,,industry,,"colony_is_not_station ; Colony must be on a planet. |
+industry_atmosphere_processor,boggledTerraformingContentEnabled,industry,,"colony_is_not_station ; Colony must be on a planet. |
 colony_not_unknown_world ; This planet type cannot be terraformed. |
 colony_not_star ; Stars cannot be terraformed. |
 colony_not_gas_giant ; Gas giants cannot be terraformed. |
 colony_not_volcanic ; Volcanic worlds cannot be terraformed. |
 colony_not_irradiated ; Irradiated worlds cannot be terraformed. |
 colony_has_atmo_problem ; Atmospheric conditions on $market are already optimal. There is no reason to build an atmosphere processor here.",,,,
+industry_chameleon,boggledDomainTechContentEnabled | boggledCHAMELEONEnabled,industry,,,,,,,
 industry_chameleon_decivilized,boggledDomainTechContentEnabled | boggledCHAMELEONEnabled,industry,,"colony_decivilized",,2,,"market_remove_decivilized | market_remove_decivilized_subpop"
 industry_chameleon_rogue_ai,boggledDomainTechContentEnabled | boggledCHAMELEONEnabled,industry,,"colony_rogue_ai_core",,2,,"market_remove_rogue_ai_core"
 industry_cloning,boggledCloningEnabled,industry,,,,,,
@@ -80,7 +81,9 @@ colony_not_has_meteor_impacts ; $market experiences frequent meteor impacts that
 colony_not_gas_giant ; There is no solid ground on $market upon which to build a dome.",,,,
 industry_expand_station,boggledStationCrampedQuartersEnabled | boggledStationCrampedQuartersPlayerCanPayToIncreaseStationSize,industry,,"colony_is_station |
 station_construction_num_expansions ; $market is too large to expand further",,,,
-industry_genelab,boggledGenelabEnabled,industry,,"colony_is_not_station ; Colony must be on a planet.",,,,
+industry_genelab_pollution,boggledTerraformingContentEnabled | boggledGenelabEnabled,industry,,"colony_is_not_station ; Colony must be on a planet.",,,,
+industry_genelab_lobster,boggledTerraformingContentEnabled | boggledGenelabEnabled,industry,"Lobster seeding","colony_has_water_surface |
+colony_not_has_heavy_industry_or_orbital_works_with_nanoforge"
 industry_gpa,,industry,,,,,,
 industry_harmonic_damper,boggledHarmonicDamperEnabled,industry,,"colony_is_not_station ; Colony must be on a planet.",,,,
 industry_hydroponics,boggledHydroponicsEnabled,industry,,,,,,

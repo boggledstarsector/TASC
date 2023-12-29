@@ -2,6 +2,7 @@ package data.campaign.econ.industries;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.econ.CommoditySpecAPI;
+import com.fs.starfarer.api.campaign.econ.Industry;
 import com.fs.starfarer.api.impl.campaign.econ.impl.BaseIndustry;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
@@ -9,21 +10,77 @@ import com.fs.starfarer.api.util.Pair;
 import data.campaign.econ.boggledTools;
 import java.awt.*;
 import com.fs.starfarer.api.impl.campaign.ids.Commodities;
-import org.json.JSONException;
-import org.json.JSONObject;
 
-public class Boggled_Limelight_Network extends BaseIndustry
-{
-    private static BoggledCommonIndustry sharedIndustry;
+public class Boggled_Limelight_Network extends BaseIndustry {
     private final BoggledCommonIndustry thisIndustry;
-
-    public static void settingsFromJSON(JSONObject data) throws JSONException {
-        sharedIndustry = new BoggledCommonIndustry(data);
-    }
 
     public Boggled_Limelight_Network() {
         super();
-        thisIndustry = new BoggledCommonIndustry(sharedIndustry);
+        thisIndustry = boggledTools.getIndustryProject("limelight_network");
+    }
+
+    @Override
+    public void startBuilding() {
+        super.startBuilding();
+        thisIndustry.startBuilding(this);
+    }
+
+    @Override
+    public void startUpgrading() {
+        super.startUpgrading();
+        thisIndustry.startUpgrading(this);
+    }
+
+    @Override
+    protected void buildingFinished() {
+        super.buildingFinished();
+        thisIndustry.buildingFinished(this);
+    }
+
+    @Override
+    protected void upgradeFinished(Industry previous) {
+        super.upgradeFinished(previous);
+        thisIndustry.upgradeFinished(this, previous);
+    }
+
+    @Override
+    public void finishBuildingOrUpgrading() {
+        super.finishBuildingOrUpgrading();
+        thisIndustry.finishBuildingOrUpgrading(this);
+    }
+
+    @Override
+    public boolean isBuilding() { return thisIndustry.isBuilding(this); }
+
+    @Override
+    public boolean isUpgrading() { return thisIndustry.isUpgrading(this); }
+
+    @Override
+    public float getBuildOrUpgradeProgress() { return thisIndustry.getBuildOrUpgradeProgress(this); }
+
+    @Override
+    public String getBuildOrUpgradeDaysText() {
+        return thisIndustry.getBuildOrUpgradeDaysText(this);
+    }
+
+    @Override
+    public String getBuildOrUpgradeProgressText() {
+        return thisIndustry.getBuildOrUpgradeProgressText(this);
+    }
+
+    @Override
+    public boolean isAvailableToBuild() { return thisIndustry.isAvailableToBuild(this); }
+
+    @Override
+    public boolean showWhenUnavailable() { return thisIndustry.showWhenUnavailable(this); }
+
+    @Override
+    public String getUnavailableReason() { return thisIndustry.getUnavailableReason(this); }
+
+    @Override
+    public void advance(float amount) {
+        super.advance(amount);
+        thisIndustry.advance(amount, this);
     }
 
     //Need to update string in addImproveDesc if value changed
@@ -32,12 +89,6 @@ public class Boggled_Limelight_Network extends BaseIndustry
     @Override
     public boolean canBeDisrupted() {
         return true;
-    }
-
-    @Override
-    public void advance(float amount)
-    {
-        super.advance(amount);
     }
 
     @Override
@@ -66,21 +117,6 @@ public class Boggled_Limelight_Network extends BaseIndustry
     {
         super.unapply();
     }
-
-    @Override
-    protected void buildingFinished()
-    {
-        super.buildingFinished();
-    }
-
-    @Override
-    public boolean isAvailableToBuild() { return thisIndustry.isAvailableToBuild(getMarket()); }
-
-    @Override
-    public boolean showWhenUnavailable() { return thisIndustry.showWhenUnavailable(getMarket()); }
-
-    @Override
-    public String getUnavailableReason() { return thisIndustry.getUnavailableReason(getMarket()); }
 
     @Override
     public void addAlphaCoreDescription(TooltipMakerAPI tooltip, AICoreDescriptionMode mode) {

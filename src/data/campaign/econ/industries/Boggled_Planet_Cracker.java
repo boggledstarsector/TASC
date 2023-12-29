@@ -7,27 +7,38 @@ import com.fs.starfarer.api.campaign.econ.*;
 import com.fs.starfarer.api.impl.campaign.econ.impl.BaseIndustry;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
-import org.json.JSONException;
-import org.json.JSONObject;
+import data.campaign.econ.boggledTools;
 
-public class Boggled_Planet_Cracker extends BaseIndustry
-{
-    private static BoggledCommonIndustry sharedIndustry;
-    private BoggledCommonIndustry thisIndustry;
-
-    public static void settingsFromJSON(JSONObject data) throws JSONException {
-        sharedIndustry = new BoggledCommonIndustry(data);
-    }
+public class Boggled_Planet_Cracker extends BaseIndustry {
+    private final BoggledCommonIndustry thisIndustry;
 
     public Boggled_Planet_Cracker() {
         super();
-        thisIndustry = new BoggledCommonIndustry(sharedIndustry);
+        thisIndustry = boggledTools.getIndustryProject("planet_cracker");
     }
 
     @Override
     public void startBuilding() {
         super.startBuilding();
         thisIndustry.startBuilding(this);
+    }
+
+    @Override
+    public void startUpgrading() {
+        super.startUpgrading();
+        thisIndustry.startUpgrading(this);
+    }
+
+    @Override
+    protected void buildingFinished() {
+        super.buildingFinished();
+        thisIndustry.buildingFinished(this);
+    }
+
+    @Override
+    protected void upgradeFinished(Industry previous) {
+        super.upgradeFinished(previous);
+        thisIndustry.upgradeFinished(this, previous);
     }
 
     @Override
@@ -56,19 +67,17 @@ public class Boggled_Planet_Cracker extends BaseIndustry
     }
 
     @Override
-    public boolean isAvailableToBuild() { return thisIndustry.isAvailableToBuild(getMarket()); }
+    public boolean isAvailableToBuild() { return thisIndustry.isAvailableToBuild(this); }
 
     @Override
-    public boolean showWhenUnavailable() { return thisIndustry.showWhenUnavailable(getMarket()); }
+    public boolean showWhenUnavailable() { return thisIndustry.showWhenUnavailable(this); }
 
     @Override
-    public String getUnavailableReason() { return thisIndustry.getUnavailableReason(getMarket()); }
+    public String getUnavailableReason() { return thisIndustry.getUnavailableReason(this); }
 
     @Override
-    public void advance(float amount)
-    {
+    public void advance(float amount) {
         super.advance(amount);
-
         thisIndustry.advance(amount, this);
     }
 

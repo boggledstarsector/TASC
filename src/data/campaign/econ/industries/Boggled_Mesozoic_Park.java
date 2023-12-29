@@ -4,6 +4,7 @@ import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CargoAPI;
 import com.fs.starfarer.api.campaign.comm.CommMessageAPI;
 import com.fs.starfarer.api.campaign.econ.CommoditySpecAPI;
+import com.fs.starfarer.api.campaign.econ.Industry;
 import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.impl.campaign.econ.impl.BaseIndustry;
 import com.fs.starfarer.api.impl.campaign.ids.Submarkets;
@@ -13,24 +14,81 @@ import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
 import data.campaign.econ.boggledTools;
 import com.fs.starfarer.api.impl.campaign.ids.Commodities;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.awt.*;
 
-public class Boggled_Mesozoic_Park extends BaseIndustry
-{
-    private static BoggledCommonIndustry sharedIndustry;
+public class Boggled_Mesozoic_Park extends BaseIndustry {
     private final BoggledCommonIndustry thisIndustry;
-
-    public static void settingsFromJSON(JSONObject data) throws JSONException {
-        sharedIndustry = new BoggledCommonIndustry(data);
-    }
 
     public Boggled_Mesozoic_Park() {
         super();
-        thisIndustry = new BoggledCommonIndustry(sharedIndustry);
+        thisIndustry = boggledTools.getIndustryProject("mesozoic_park");
     }
+
+    @Override
+    public void startBuilding() {
+        super.startBuilding();
+        thisIndustry.startBuilding(this);
+    }
+
+    @Override
+    public void startUpgrading() {
+        super.startUpgrading();
+        thisIndustry.startUpgrading(this);
+    }
+
+    @Override
+    protected void buildingFinished() {
+        super.buildingFinished();
+        thisIndustry.buildingFinished(this);
+        boggledTools.addCondition(this.market, "inimical_biosphere");
+    }
+
+    @Override
+    protected void upgradeFinished(Industry previous) {
+        super.upgradeFinished(previous);
+        thisIndustry.upgradeFinished(this, previous);
+    }
+
+    @Override
+    public void finishBuildingOrUpgrading() {
+        super.finishBuildingOrUpgrading();
+        thisIndustry.finishBuildingOrUpgrading(this);
+    }
+
+    @Override
+    public boolean isBuilding() { return thisIndustry.isBuilding(this); }
+
+    @Override
+    public boolean isUpgrading() { return thisIndustry.isUpgrading(this); }
+
+    @Override
+    public float getBuildOrUpgradeProgress() { return thisIndustry.getBuildOrUpgradeProgress(this); }
+
+    @Override
+    public String getBuildOrUpgradeDaysText() {
+        return thisIndustry.getBuildOrUpgradeDaysText(this);
+    }
+
+    @Override
+    public String getBuildOrUpgradeProgressText() {
+        return thisIndustry.getBuildOrUpgradeProgressText(this);
+    }
+
+    @Override
+    public boolean isAvailableToBuild() { return thisIndustry.isAvailableToBuild(this); }
+
+    @Override
+    public boolean showWhenUnavailable() { return thisIndustry.showWhenUnavailable(this); }
+
+    @Override
+    public String getUnavailableReason() { return thisIndustry.getUnavailableReason(this); }
+
+//    @Override
+//    public void advance(float amount) {
+//        super.advance(amount);
+//        thisIndustry.advance(amount, this);
+//    }
 
     //Need to update string in addImproveDesc if value changed
     private final float IMPROVE_BONUS = 1.20f;
@@ -83,14 +141,6 @@ public class Boggled_Mesozoic_Park extends BaseIndustry
     }
 
     @Override
-    protected void buildingFinished()
-    {
-        super.buildingFinished();
-
-        boggledTools.addCondition(this.market, "inimical_biosphere");
-    }
-
-    @Override
     public String getCurrentImage()
     {
         MarketAPI market = this.market;
@@ -123,15 +173,6 @@ public class Boggled_Mesozoic_Park extends BaseIndustry
     {
         super.unapply();
     }
-
-    @Override
-    public boolean isAvailableToBuild()  { return thisIndustry.isAvailableToBuild(getMarket()); }
-
-    @Override
-    public boolean showWhenUnavailable() { return thisIndustry.showWhenUnavailable(getMarket()); }
-
-    @Override
-    public String getUnavailableReason() { return thisIndustry.getUnavailableReason(getMarket()); }
 
 
     @Override

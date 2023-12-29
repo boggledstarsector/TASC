@@ -12,21 +12,77 @@ import com.fs.starfarer.api.impl.campaign.econ.impl.BaseIndustry;
 import com.fs.starfarer.api.util.Pair;
 import data.campaign.econ.boggledTools;
 import com.fs.starfarer.api.impl.campaign.ids.Commodities;
-import org.json.JSONException;
-import org.json.JSONObject;
 
-public class Boggled_Kletka_Simulator extends BaseIndustry
-{
-    private static BoggledCommonIndustry sharedIndustry;
+public class Boggled_Kletka_Simulator extends BaseIndustry {
     private final BoggledCommonIndustry thisIndustry;
-
-    public static void settingsFromJSON(JSONObject data) throws JSONException {
-        sharedIndustry = new BoggledCommonIndustry(data);
-    }
 
     public Boggled_Kletka_Simulator() {
         super();
-        thisIndustry = new BoggledCommonIndustry(sharedIndustry);
+        thisIndustry = boggledTools.getIndustryProject("kletka_simulator");
+    }
+
+    @Override
+    public void startBuilding() {
+        super.startBuilding();
+        thisIndustry.startBuilding(this);
+    }
+
+    @Override
+    public void startUpgrading() {
+        super.startUpgrading();
+        thisIndustry.startUpgrading(this);
+    }
+
+    @Override
+    protected void buildingFinished() {
+        super.buildingFinished();
+        thisIndustry.buildingFinished(this);
+    }
+
+    @Override
+    protected void upgradeFinished(Industry previous) {
+        super.upgradeFinished(previous);
+        thisIndustry.upgradeFinished(this, previous);
+    }
+
+    @Override
+    public void finishBuildingOrUpgrading() {
+        super.finishBuildingOrUpgrading();
+        thisIndustry.finishBuildingOrUpgrading(this);
+    }
+
+    @Override
+    public boolean isBuilding() { return thisIndustry.isBuilding(this); }
+
+    @Override
+    public boolean isUpgrading() { return thisIndustry.isUpgrading(this); }
+
+    @Override
+    public float getBuildOrUpgradeProgress() { return thisIndustry.getBuildOrUpgradeProgress(this); }
+
+    @Override
+    public String getBuildOrUpgradeDaysText() {
+        return thisIndustry.getBuildOrUpgradeDaysText(this);
+    }
+
+    @Override
+    public String getBuildOrUpgradeProgressText() {
+        return thisIndustry.getBuildOrUpgradeProgressText(this);
+    }
+
+    @Override
+    public boolean isAvailableToBuild() { return thisIndustry.isAvailableToBuild(this); }
+
+    @Override
+    public boolean showWhenUnavailable() { return thisIndustry.showWhenUnavailable(this); }
+
+    @Override
+    public String getUnavailableReason() { return thisIndustry.getUnavailableReason(this); }
+
+    @Override
+    public void advance(float amount) {
+        super.advance(amount);
+        thisIndustry.advance(amount, this);
     }
 
     @Override
@@ -253,10 +309,7 @@ public class Boggled_Kletka_Simulator extends BaseIndustry
     @Override
     public void apply()
     {
-        if(boggledTools.getBooleanSetting(boggledTools.BoggledSettings.domainArchaeologyEnabled))
-        {
-            this.demand(boggledTools.BoggledCommodities.domainArtifacts, 4);
-        }
+        thisIndustry.apply(this);
 
         super.apply(false);
         super.applyIncomeAndUpkeep(3);
@@ -358,16 +411,6 @@ public class Boggled_Kletka_Simulator extends BaseIndustry
     {
         super.unapply();
     }
-
-
-    @Override
-    public boolean isAvailableToBuild() { return thisIndustry.isAvailableToBuild(getMarket()); }
-
-    @Override
-    public boolean showWhenUnavailable() { return thisIndustry.showWhenUnavailable(getMarket()); }
-
-    @Override
-    public String getUnavailableReason() { return thisIndustry.getUnavailableReason(getMarket()); }
 
     @Override
     public float getPatherInterest() { return 10.0F; }

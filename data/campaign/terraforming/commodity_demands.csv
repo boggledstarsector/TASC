@@ -1,0 +1,11 @@
+id,enable_settings,commodity_demand_type,commodity,data
+# id is a unique identifier for each demand
+# enable_settings is the settings that have to be enabled for this demand to be active
+# commodity_demand_type is the type of this commodity demand
+# commodity is the commodity that will be demanded
+# data is demand type specific data
+# FlatCommodityDemand will always require the same amount of the commodity, data specifies how much as a single integer
+# MarketSizeDemand will demand more of the commodity as the market grows, data specifies modifier to the market size as a signed integer
+flat_1_domain_artifacts,boggledDomainTechContentEnabled | boggledDomainArchaeologyEnabled,FlatCommodityDemand,domain_artifacts,1
+flat_4_domain_artifacts,boggledDomainTechContentEnabled | boggledDomainArchaeologyEnabled,FlatCommodityDemand,domain_artifacts,4
+market_size_heavy_machinery,,MarketSizeDemand,heavy_machinery,0

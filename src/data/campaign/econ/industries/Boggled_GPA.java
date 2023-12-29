@@ -3,15 +3,67 @@ package data.campaign.econ.industries;
 import java.lang.String;
 import com.fs.starfarer.api.impl.campaign.econ.impl.BaseIndustry;
 import data.campaign.econ.boggledTools;
-import org.json.JSONException;
-import org.json.JSONObject;
 
-public class Boggled_GPA extends BaseIndustry
-{
-    private static BoggledCommonIndustry commonindustry;
+public class Boggled_GPA extends BaseIndustry {
+    private final BoggledCommonIndustry thisIndustry;
 
-    public static void settingsFromJSON(JSONObject data) throws JSONException {
-        commonindustry = new BoggledCommonIndustry(data);
+    public Boggled_GPA() {
+        super();
+        thisIndustry = boggledTools.getIndustryProject("gpa");
+    }
+
+    @Override
+    public void startBuilding() {
+        super.startBuilding();
+        thisIndustry.startBuilding(this);
+    }
+
+    @Override
+    public void finishBuildingOrUpgrading() {
+        super.finishBuildingOrUpgrading();
+        thisIndustry.finishBuildingOrUpgrading(this);
+    }
+
+    @Override
+    public boolean isBuilding() { return thisIndustry.isBuilding(this); }
+
+    @Override
+    public boolean isUpgrading() { return thisIndustry.isUpgrading(this); }
+
+    @Override
+    public float getBuildOrUpgradeProgress() { return thisIndustry.getBuildOrUpgradeProgress(this); }
+
+    @Override
+    public String getBuildOrUpgradeDaysText() {
+        return thisIndustry.getBuildOrUpgradeDaysText(this);
+    }
+
+    @Override
+    public String getBuildOrUpgradeProgressText() {
+        return thisIndustry.getBuildOrUpgradeProgressText(this);
+    }
+
+    @Override
+    public boolean isAvailableToBuild()
+    {
+        return false;
+    }
+
+    @Override
+    public boolean showWhenUnavailable()
+    {
+        return false;
+    }
+
+    @Override
+    public String getUnavailableReason() {
+        return "Error in getUnavailableReason() in Boggled GPA. Please tell Boggled about this on the forums.";
+    }
+
+    @Override
+    public void advance(float amount) {
+        super.advance(amount);
+        thisIndustry.advance(amount, this);
     }
 
     @Override
@@ -32,24 +84,6 @@ public class Boggled_GPA extends BaseIndustry
     public void unapply()
     {
         super.unapply();
-    }
-
-    @Override
-    public boolean isAvailableToBuild()
-    {
-        return false;
-    }
-
-    @Override
-    public boolean showWhenUnavailable()
-    {
-        return false;
-    }
-
-    @Override
-    public String getUnavailableReason()
-    {
-        return "Error in getUnavailableReason() in Boggled GPA. Please tell Boggled about this on the forums.";
     }
 
     @Override

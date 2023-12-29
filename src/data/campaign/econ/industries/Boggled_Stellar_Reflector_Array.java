@@ -13,22 +13,74 @@ import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.campaign.StarSystemAPI;
 import com.fs.starfarer.api.util.Pair;
 import data.campaign.econ.boggledTools;
-import org.json.JSONException;
-import org.json.JSONObject;
 
-public class Boggled_Stellar_Reflector_Array extends BaseIndustry
-{
-    private static BoggledCommonIndustry sharedIndustry;
-    private BoggledCommonIndustry thisIndustry;
-
-    public static void settingsFromJSON(JSONObject data) throws JSONException {
-        sharedIndustry = new BoggledCommonIndustry(data);
-    }
+public class Boggled_Stellar_Reflector_Array extends BaseIndustry {
+    private final BoggledCommonIndustry thisIndustry;
 
     public Boggled_Stellar_Reflector_Array() {
         super();
-        thisIndustry = new BoggledCommonIndustry(sharedIndustry);
+        thisIndustry = boggledTools.getIndustryProject("stellar_reflector_array");
     }
+
+    @Override
+    public void startBuilding() {
+        super.startBuilding();
+        thisIndustry.startBuilding(this);
+    }
+
+    @Override
+    public void startUpgrading() {
+        super.startUpgrading();
+        thisIndustry.startUpgrading(this);
+    }
+
+//    @Override
+//    protected void buildingFinished() {
+//        super.buildingFinished();
+//        thisIndustry.buildingFinished(this);
+//    }
+
+    @Override
+    protected void upgradeFinished(Industry previous) {
+        super.upgradeFinished(previous);
+        thisIndustry.upgradeFinished(this, previous);
+    }
+
+    @Override
+    public void finishBuildingOrUpgrading() {
+        super.finishBuildingOrUpgrading();
+        thisIndustry.finishBuildingOrUpgrading(this);
+    }
+
+    @Override
+    public boolean isBuilding() { return thisIndustry.isBuilding(this); }
+
+    @Override
+    public boolean isUpgrading() { return thisIndustry.isUpgrading(this); }
+
+    @Override
+    public float getBuildOrUpgradeProgress() { return thisIndustry.getBuildOrUpgradeProgress(this); }
+
+    @Override
+    public String getBuildOrUpgradeDaysText() { return thisIndustry.getBuildOrUpgradeDaysText(this); }
+
+    @Override
+    public String getBuildOrUpgradeProgressText() { return thisIndustry.getBuildOrUpgradeProgressText(this); }
+
+    @Override
+    public boolean isAvailableToBuild() { return thisIndustry.isAvailableToBuild(this); }
+
+    @Override
+    public boolean showWhenUnavailable() { return thisIndustry.showWhenUnavailable(this); }
+
+    @Override
+    public String getUnavailableReason() { return thisIndustry.getUnavailableReason(this); }
+
+//    @Override
+//    public void advance(float amount) {
+//        super.advance(amount);
+//        thisIndustry.advance(amount, this);
+//    }
 
     // The "solar_array" condition handles suppressing hot, cold and poor light conditions.
     // This is here merely to allow the tooltip to say which conditions are/would be suppressed.
@@ -46,19 +98,14 @@ public class Boggled_Stellar_Reflector_Array extends BaseIndustry
     }
 
     @Override
-    public void apply()
-    {
+    public void apply() {
         super.apply(true);
-
-        if(boggledTools.getBooleanSetting(boggledTools.BoggledSettings.domainTechContentEnabled) && boggledTools.getBooleanSetting(boggledTools.BoggledSettings.domainArchaeologyEnabled))
-        {
-            this.demand(boggledTools.BoggledCommodities.domainArtifacts, 1);
-        }
+        thisIndustry.apply(this);
 
         boolean shortage = false;
         if(boggledTools.getBooleanSetting(boggledTools.BoggledSettings.domainTechContentEnabled) && boggledTools.getBooleanSetting(boggledTools.BoggledSettings.domainArchaeologyEnabled))
         {
-            Pair<String, Integer> deficit = this.getMaxDeficit(new String[]{boggledTools.BoggledCommodities.domainArtifacts});
+            Pair<String, Integer> deficit = this.getMaxDeficit(boggledTools.BoggledCommodities.domainArtifacts);
             if(deficit.two != 0)
             {
                 shortage = true;
@@ -109,120 +156,82 @@ public class Boggled_Stellar_Reflector_Array extends BaseIndustry
         boggledTools.addCondition(this.market, Conditions.SOLAR_ARRAY);
     }
 
-    @Override
-    protected void buildingFinished()
-    {
-        super.buildingFinished();
-
-        MarketAPI market = this.market;
-        boggledTools.addCondition(market, Conditions.SOLAR_ARRAY);
-
+    void createMirrorsOrShades(MarketAPI market) {
         if(boggledTools.numReflectorsInOrbit(market) >= 3)
         {
             return;
         }
 
-        boolean mirrorsOrShades = boggledTools.getCreateMirrorsOrShades(market);
         boggledTools.clearReflectorsInOrbit(market);
 
         //True is mirrors, false is shades
-        if(mirrorsOrShades)
-        {
-            SectorEntityToken orbitFocus = market.getPrimaryEntity().getOrbitFocus();
-            float orbitRadius = market.getPrimaryEntity().getRadius() + 80.0F;
-            if (orbitFocus != null && orbitFocus.isStar())
-            {
-                // Create the mirrors in a 90 degree arc opposite the star to suggest that light is being reflected onto the surface.
-                // The orbital period of the mirrors is the same as the planet's orbital period around the star - this ensures the mirrors are always
-                // in the same position on the far side of the planet relative to the star.
+        boolean mirrorsOrShades = boggledTools.getCreateMirrorsOrShades(market);
+        StarSystemAPI system = market.getStarSystem();
 
-                StarSystemAPI system = market.getStarSystem();
+        ArrayList<Pair<String, String>> mirrorIdNamePairs = new ArrayList<>(Arrays.asList(
+                new Pair<>("stellar_mirror_alpha", "Stellar Mirror Alpha"),
+                new Pair<>("stellar_mirror_beta", "Stellar Mirror Beta"),
+                new Pair<>("stellar_mirror_gamma", "Stellar Mirror Gamma")
+        ));
 
-                //First mirror
-                SectorEntityToken mirrorAlpha = system.addCustomEntity("stellar_mirror_alpha", ("Stellar Mirror Alpha"), "stellar_mirror", market.getFactionId());
-                mirrorAlpha.setCircularOrbitPointingDown(market.getPrimaryEntity(), market.getPrimaryEntity().getCircularOrbitAngle() - 30, orbitRadius, market.getPrimaryEntity().getCircularOrbitPeriod());
-                mirrorAlpha.setCustomDescriptionId("stellar_mirror");
+        ArrayList<Pair<String, String>> shadeIdNamePairs = new ArrayList<>(Arrays.asList(
+                new Pair<>("stellar_shade_alpha", "Stellar Shade Alpha"),
+                new Pair<>("stellar_shade_beta", "Stellar Shade Beta"),
+                new Pair<>("stellar_shade_gamma", "Stellar Shade Gamma")
+        ));
 
-                //Second mirror
-                SectorEntityToken mirrorBeta = system.addCustomEntity("stellar_mirror_beta", ("Stellar Mirror Beta"), "stellar_mirror", market.getFactionId());
-                mirrorBeta.setCircularOrbitPointingDown(market.getPrimaryEntity(), market.getPrimaryEntity().getCircularOrbitAngle(), orbitRadius, market.getPrimaryEntity().getCircularOrbitPeriod());
-                mirrorBeta.setCustomDescriptionId("stellar_mirror");
+        float baseAngle = market.getPrimaryEntity().getCircularOrbitAngle();
+        ArrayList<Float> mirrorAnglesOrbitingStar = new ArrayList<>(Arrays.asList(
+                baseAngle - 30,
+                baseAngle,
+                baseAngle + 30
+        ));
 
-                //Third mirror
-                SectorEntityToken mirrorGamma = system.addCustomEntity("stellar_mirror_gamma", ("Stellar Mirror Gamma"), "stellar_mirror", market.getFactionId());
-                mirrorGamma.setCircularOrbitPointingDown(market.getPrimaryEntity(), market.getPrimaryEntity().getCircularOrbitAngle() + 30, orbitRadius, market.getPrimaryEntity().getCircularOrbitPeriod());
-                mirrorGamma.setCustomDescriptionId("stellar_mirror");
-            }
-            else
-            {
-                // If the planet isn't orbiting a star, set up the mirrors at 120 degree intervals around the planet.
+        ArrayList<Float> shadeAnglesOrbitingStar = new ArrayList<>(Arrays.asList(
+                baseAngle + 154,
+                baseAngle + 180,
+                baseAngle + 206
+        ));
 
-                StarSystemAPI system = market.getStarSystem();
+        ArrayList<Float> mirrorAndShadeAnglesOrbitingNotStar = new ArrayList<>(Arrays.asList(
+                0f,
+                120f,
+                240f
+        ));
 
-                //First mirror
-                SectorEntityToken mirrorAlpha = system.addCustomEntity("stellar_mirror_alpha", ("Stellar Mirror Alpha"), "stellar_mirror", market.getFactionId());
-                mirrorAlpha.setCircularOrbitPointingDown(market.getPrimaryEntity(), 0, orbitRadius, orbitRadius / 10.0F);
-                mirrorAlpha.setCustomDescriptionId("stellar_mirror");
+        float orbitRadius = market.getPrimaryEntity().getRadius() + 80f;
+        float orbitDays = market.getPrimaryEntity().getCircularOrbitPeriod();
+        float orbitDaysNotStar = market.getPrimaryEntity().getCircularOrbitPeriod() / 10;
 
-                //Second mirror
-                SectorEntityToken mirrorBeta = system.addCustomEntity("stellar_mirror_beta", ("Stellar Mirror Beta"), "stellar_mirror", market.getFactionId());
-                mirrorBeta.setCircularOrbitPointingDown(market.getPrimaryEntity(), 120, orbitRadius, orbitRadius / 10.0F);
-                mirrorBeta.setCustomDescriptionId("stellar_mirror");
+        SectorEntityToken orbitFocus = market.getPrimaryEntity().getOrbitFocus();
 
-                //Third mirror
-                SectorEntityToken mirrorGamma = system.addCustomEntity("stellar_mirror_gamma", ("Stellar Mirror Gamma"), "stellar_mirror", market.getFactionId());
-                mirrorGamma.setCircularOrbitPointingDown(market.getPrimaryEntity(), 240, orbitRadius, orbitRadius / 10.0F);
-                mirrorGamma.setCustomDescriptionId("stellar_mirror");
-            }
+        ArrayList<Pair<String, String>> idNamePairs = mirrorsOrShades ? mirrorIdNamePairs : shadeIdNamePairs;
+        String entityType = mirrorsOrShades ? "stellar_mirror" : "stellar_shade";
+        String customDescriptionId = mirrorsOrShades ? "stellar_mirror" : "stellar_shade";
+        ArrayList<Float> orbitAngles = mirrorsOrShades ? mirrorAnglesOrbitingStar : shadeAnglesOrbitingStar;
+        float orbitPeriod = orbitDays;
+        if (!(orbitFocus != null && orbitFocus.isStar())) {
+            orbitAngles = mirrorAndShadeAnglesOrbitingNotStar;
+            orbitPeriod = orbitDaysNotStar;
         }
-        else
-        {
-            SectorEntityToken orbitFocus = market.getPrimaryEntity().getOrbitFocus();
-            float orbitRadius = market.getPrimaryEntity().getRadius() + 80.0F;
-            if (orbitFocus != null && orbitFocus.isStar())
-            {
-                // Same as above, except the shades are between the planet and the star to suggest that they're blocking some light. Uses
-                // a slightly tighter arc than above, which I think I copied from the existing solar shade arrays in vanilla.
 
-                StarSystemAPI system = market.getStarSystem();
-
-                //First shade
-                SectorEntityToken shadeAlpha = system.addCustomEntity("stellar_shade_alpha", ("Stellar Shade Alpha"), "stellar_shade", market.getFactionId());
-                shadeAlpha.setCircularOrbitPointingDown(market.getPrimaryEntity(), market.getPrimaryEntity().getCircularOrbitAngle() + 154, orbitRadius, market.getPrimaryEntity().getCircularOrbitPeriod());
-                shadeAlpha.setCustomDescriptionId("stellar_shade");
-
-                //Second shade
-                SectorEntityToken shadeBeta = system.addCustomEntity("stellar_shade_beta", ("Stellar Shade Beta"), "stellar_shade", market.getFactionId());
-                shadeBeta.setCircularOrbitPointingDown(market.getPrimaryEntity(), market.getPrimaryEntity().getCircularOrbitAngle() + 180, orbitRadius, market.getPrimaryEntity().getCircularOrbitPeriod());
-                shadeBeta.setCustomDescriptionId("stellar_shade");
-
-                //Third shade
-                SectorEntityToken shadeGamma = system.addCustomEntity("stellar_shade_gamma", ("Stellar Shade Gamma"), "stellar_shade", market.getFactionId());
-                shadeGamma.setCircularOrbitPointingDown(market.getPrimaryEntity(), market.getPrimaryEntity().getCircularOrbitAngle() + 206, orbitRadius, market.getPrimaryEntity().getCircularOrbitPeriod());
-                shadeGamma.setCustomDescriptionId("stellar_shade");
-            }
-            else
-            {
-                // Same as above for a planet not orbiting a star, except with shades instead of mirrors.
-
-                StarSystemAPI system = market.getStarSystem();
-
-                //First shade
-                SectorEntityToken shadeAlpha = system.addCustomEntity("stellar_shade_alpha", ("Stellar Shade Alpha"), "stellar_shade", market.getFactionId());
-                shadeAlpha.setCircularOrbitPointingDown(market.getPrimaryEntity(), 0, orbitRadius, orbitRadius / 10.0F);
-                shadeAlpha.setCustomDescriptionId("stellar_shade");
-
-                //Second shade
-                SectorEntityToken shadeBeta = system.addCustomEntity("stellar_shade_beta", ("Stellar Shade Beta"), "stellar_shade", market.getFactionId());
-                shadeBeta.setCircularOrbitPointingDown(market.getPrimaryEntity(), 120, orbitRadius, orbitRadius / 10.0F);
-                shadeBeta.setCustomDescriptionId("stellar_shade");
-
-                //Third shade
-                SectorEntityToken shadeGamma = system.addCustomEntity("stellar_shade_gamma", ("Stellar Shade Gamma"), "stellar_shade", market.getFactionId());
-                shadeGamma.setCircularOrbitPointingDown(market.getPrimaryEntity(), 240, orbitRadius, orbitRadius / 10.0F);
-                shadeGamma.setCustomDescriptionId("stellar_shade");
-            }
+        for (int i = 0; i < 3; ++i) {
+            SectorEntityToken reflector = system.addCustomEntity(idNamePairs.get(i).one, idNamePairs.get(i).two, entityType, market.getFactionId());
+            reflector.setCircularOrbitPointingDown(market.getPrimaryEntity(), orbitAngles.get(i), orbitRadius, orbitPeriod);
+            reflector.setCustomDescriptionId(customDescriptionId);
         }
+    }
+
+    @Override
+    protected void buildingFinished()
+    {
+        super.buildingFinished();
+        thisIndustry.buildingFinished(this);
+
+        MarketAPI market = this.market;
+        boggledTools.addCondition(market, Conditions.SOLAR_ARRAY);
+
+        createMirrorsOrShades(market);
     }
 
     @Override
@@ -250,6 +259,7 @@ public class Boggled_Stellar_Reflector_Array extends BaseIndustry
     @Override
     protected void addPostDemandSection(TooltipMakerAPI tooltip, boolean hasDemand, IndustryTooltipMode mode)
     {
+        thisIndustry.addPostDemandSection(this, tooltip, hasDemand, mode);
         float opad = 10.0F;
 
         if(mode == IndustryTooltipMode.ADD_INDUSTRY || mode == IndustryTooltipMode.QUEUED || !isFunctional())
@@ -292,15 +302,6 @@ public class Boggled_Stellar_Reflector_Array extends BaseIndustry
             }
         }
     }
-
-    @Override
-    public boolean isAvailableToBuild() { return thisIndustry.isAvailableToBuild(getMarket()); }
-
-    @Override
-    public boolean showWhenUnavailable() { return thisIndustry.showWhenUnavailable(getMarket()); }
-
-    @Override
-    public String getUnavailableReason() { return thisIndustry.getUnavailableReason(getMarket()); }
 
     @Override
     public float getPatherInterest()

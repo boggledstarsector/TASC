@@ -267,9 +267,55 @@ public class BoggledTascPlugin extends BaseModPlugin
         }
     }
 
+    private void loadSettingsFromJSON() {
+        try {
+            SettingsAPI settings = Global.getSettings();
+            // Utility stuff first, planet types, max planet resources, resource progressions, etc
+            JSONArray planetTypes = settings.getMergedSpreadsheetDataForMod("id", "data/campaign/terraforming/planet_types.csv", boggledTools.BoggledMods.tascModId);
+            JSONArray resourceProgressions = settings.getMergedSpreadsheetDataForMod("id", "data/campaign/terraforming/resource_progression.csv", boggledTools.BoggledMods.tascModId);
+            JSONArray resourceLimits = settings.getMergedSpreadsheetDataForMod("id", "data/campaign/terraforming/planet_max_resource.csv", boggledTools.BoggledMods.tascModId);
+            JSONArray commodityDemands = settings.getMergedSpreadsheetDataForMod("id", "data/campaign/terraforming/commodity_demands.csv", boggledTools.BoggledMods.tascModId);
+
+            // Terraforming requirement, requirements, and project duration modifiers next
+            JSONArray terraformingRequirement = settings.getMergedSpreadsheetDataForMod("id", "data/campaign/terraforming/terraforming_requirement.csv", boggledTools.BoggledMods.tascModId);
+            JSONArray terraformingRequirements = settings.getMergedSpreadsheetDataForMod("id", "data/campaign/terraforming/terraforming_requirements.csv", boggledTools.BoggledMods.tascModId);
+            JSONArray terraformingDurationModifiers = settings.getMergedSpreadsheetDataForMod("id", "data/campaign/terraforming/duration_modifiers.csv", boggledTools.BoggledMods.tascModId);
+            JSONArray terraformingProjectEffects = settings.getMergedSpreadsheetDataForMod("id", "data/campaign/terraforming/project_effects.csv", boggledTools.BoggledMods.tascModId);
+
+            // Projects and industries both require requirements and duration modifiers
+            JSONArray terraformingProjects = settings.getMergedSpreadsheetDataForMod("id", "data/campaign/terraforming/terraforming_projects.csv", boggledTools.BoggledMods.tascModId);
+            JSONArray industryOptions = settings.getMergedSpreadsheetDataForMod("id", "data/campaign/terraforming/industry_options.csv", boggledTools.BoggledMods.tascModId);
+
+            // And finally mods
+            JSONArray terraformingRequirementsOverrides = settings.getMergedSpreadsheetDataForMod("id", "data/campaign/terraforming/terraforming_requirements_mods.csv", boggledTools.BoggledMods.tascModId);
+            JSONArray terraformingProjectsOverrides = settings.getMergedSpreadsheetDataForMod("id", "data/campaign/terraforming/terraforming_projects_mods.csv", boggledTools.BoggledMods.tascModId);
+
+            boggledTools.initialiseTerraformingRequirementFromJSON(terraformingRequirement);
+            boggledTools.initialiseTerraformingRequirementsFromJSON(terraformingRequirements);
+            boggledTools.initialiseTerraformingDurationModifiersFromJSON(terraformingDurationModifiers);
+            boggledTools.initialiseCommodityDemandsFromJSON(commodityDemands);
+            boggledTools.initialiseTerraformingProjectEffectsFromJSON(terraformingProjectEffects);
+
+            boggledTools.initialiseTerraformingProjectsFromJSON(terraformingProjects);
+            boggledTools.initialiseIndustryOptionsFromJSON(industryOptions);
+
+            boggledTools.initialiseTerraformingRequirementsOverrides(terraformingRequirementsOverrides);
+            boggledTools.initialiseTerraformingProjectOverrides(terraformingProjectsOverrides);
+
+            boggledTools.initialisePlanetTypesFromJSON(planetTypes);
+            boggledTools.initialiseResourceProgressionsFromJSON(resourceProgressions);
+            boggledTools.initialiseResourceLimitsFromJSON(resourceLimits);
+
+        } catch (IOException | JSONException ex) {
+            log.error(ex);
+        }
+    }
+
     @Override
     public void onNewGame()
     {
+        loadSettingsFromJSON();
+
         applyStationSettingsToAllStationsInSector();
     }
 
@@ -308,45 +354,7 @@ public class BoggledTascPlugin extends BaseModPlugin
 
     public void onGameLoad(boolean newGame)
     {
-        try {
-            SettingsAPI settings = Global.getSettings();
-            // Utility stuff first, planet types, max planet resources, resource progressions, etc
-            JSONArray planetTypes = settings.getMergedSpreadsheetDataForMod("id", "data/campaign/terraforming/planet_types.csv", boggledTools.BoggledMods.tascModId);
-            JSONArray resourceProgressions = settings.getMergedSpreadsheetDataForMod("id", "data/campaign/terraforming/resource_progression.csv", boggledTools.BoggledMods.tascModId);
-            JSONArray resourceLimits = settings.getMergedSpreadsheetDataForMod("id", "data/campaign/terraforming/planet_max_resource.csv", boggledTools.BoggledMods.tascModId);
-
-            // Terraforming requirement, requirements, and project duration modifiers next
-            JSONArray terraformingRequirement = settings.getMergedSpreadsheetDataForMod("id", "data/campaign/terraforming/terraforming_requirement.csv", boggledTools.BoggledMods.tascModId);
-            JSONArray terraformingRequirements = settings.getMergedSpreadsheetDataForMod("id", "data/campaign/terraforming/terraforming_requirements.csv", boggledTools.BoggledMods.tascModId);
-            JSONArray terraformingDurationModifiers = settings.getMergedSpreadsheetDataForMod("id", "data/campaign/terraforming/duration_modifiers.csv", boggledTools.BoggledMods.tascModId);
-            JSONArray terraformingProjectEffects = settings.getMergedSpreadsheetDataForMod("id", "data/campaign/terraforming/project_effects.csv", boggledTools.BoggledMods.tascModId);
-
-            // Projects and industries both require requirements and duration modifiers
-            JSONArray terraformingProjects = settings.getMergedSpreadsheetDataForMod("id", "data/campaign/terraforming/terraforming_projects.csv", boggledTools.BoggledMods.tascModId);
-            JSONArray industryOptions = settings.getMergedSpreadsheetDataForMod("id", "data/campaign/terraforming/industry_options.csv", boggledTools.BoggledMods.tascModId);
-
-            // And finally mods
-            JSONArray terraformingRequirementsOverrides = settings.getMergedSpreadsheetDataForMod("id", "data/campaign/terraforming/terraforming_requirements_mods.csv", boggledTools.BoggledMods.tascModId);
-            JSONArray terraformingProjectsOverrides = settings.getMergedSpreadsheetDataForMod("id", "data/campaign/terraforming/terraforming_projects_mods.csv", boggledTools.BoggledMods.tascModId);
-
-            boggledTools.initialiseTerraformingRequirementFromJSON(terraformingRequirement);
-            boggledTools.initialiseTerraformingRequirementsFromJSON(terraformingRequirements);
-            boggledTools.initialiseTerraformingDurationModifiersFromJSON(terraformingDurationModifiers);
-            boggledTools.initialiseTerraformingProjectEffectsFromJSON(terraformingProjectEffects);
-
-            boggledTools.initialiseTerraformingProjectsFromJSON(terraformingProjects);
-            boggledTools.initialiseIndustryOptionsFromJSON(industryOptions);
-
-            boggledTools.initialiseTerraformingRequirementsOverrides(terraformingRequirementsOverrides);
-            boggledTools.initialiseTerraformingProjectOverrides(terraformingProjectsOverrides);
-
-            boggledTools.initialisePlanetTypesFromJSON(planetTypes);
-            boggledTools.initialiseResourceProgressionsFromJSON(resourceProgressions);
-            boggledTools.initialiseResourceLimitsFromJSON(resourceLimits);
-
-        } catch (IOException | JSONException ex) {
-            log.error(ex);
-        }
+        loadSettingsFromJSON();
 
         enablePlanetKiller();
 
@@ -367,8 +375,10 @@ public class BoggledTascPlugin extends BaseModPlugin
     public void onApplicationLoad()  {
         boggledTools.initialiseDefaultTerraformingRequirementFactories();
         boggledTools.initialiseDefaultTerraformingDurationModifierFactories();
+        boggledTools.initialiseDefaultCommodityDemandFactories();
         boggledTools.initialiseDefaultTerraformingProjectEffectFactories();
-        boggledTools.initialiseDefaultIndustryOptionsTrampolines();
+
+        loadSettingsFromJSON();
         if (Global.getSettings().getModManager().isModEnabled("aaacrew_replacer")){
             bogglesDefaultCargo.active = new booglesCrewReplacerCargo();
         }else{

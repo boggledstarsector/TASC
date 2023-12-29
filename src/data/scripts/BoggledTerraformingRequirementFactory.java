@@ -48,7 +48,7 @@ public class BoggledTerraformingRequirementFactory {
     public static class MarketHasIndustryWithItem implements TerraformingRequirementFactory {
         @Override
         public BoggledTerraformingRequirement.TerraformingRequirement constructFromJSON(String requirementId, boolean invert, String data) {
-            String[] industryAndItem = data.split(boggledTools.csvOptionSeparator);
+            String[] industryAndItem = data.split(boggledTools.csvSubOptionSeparator);
             assert(industryAndItem.length == 2);
             return new BoggledTerraformingRequirement.MarketHasIndustryWithItem(requirementId, invert, industryAndItem[0], industryAndItem[1]);
         }

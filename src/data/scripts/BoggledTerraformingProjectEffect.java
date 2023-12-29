@@ -245,4 +245,15 @@ public class BoggledTerraformingProjectEffect {
             }
         }
     }
+
+    public static class MarketAddStellarReflectors implements TerraformingProjectEffect {
+        public MarketAddStellarReflectors() {
+
+        }
+
+        @Override
+        public void applyProjectEffect(MarketAPI market) {
+
+        }
+    }
 }

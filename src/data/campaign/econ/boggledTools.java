@@ -25,6 +25,7 @@ import com.fs.starfarer.campaign.CircularOrbit;
 import com.fs.starfarer.campaign.CircularOrbitPointDown;
 import com.fs.starfarer.campaign.CircularOrbitWithSpin;
 import com.fs.starfarer.loading.specs.PlanetSpec;
+import data.campaign.econ.industries.BoggledCommonIndustry;
 import data.scripts.*;
 import illustratedEntities.helper.ImageHandler;
 import illustratedEntities.helper.Settings;
@@ -281,28 +282,27 @@ public class boggledTools
     public static final HashMap<String, BoggledTerraformingRequirementFactory.TerraformingRequirementFactory> terraformingRequirementFactories = new HashMap<>();
     public static final HashMap<String, BoggledTerraformingDurationModifierFactory.TerraformingDurationModifierFactory> terraformingDurationModifierFactories = new HashMap<>();
     public static final HashMap<String, BoggledTerraformingProjectEffectFactory.TerraformingProjectEffectFactory> terraformingProjectEffectFactories = new HashMap<>();
-    public static final HashMap<String, BoggledIndustryOptionTrampoline.IndustryOptionTrampoline> industryOptionTrampolines = new HashMap<>();
+    public static final HashMap<String, BoggledCommodityDemandFactory.CommodityDemandFactory> commodityDemandFactories = new HashMap<>();
 
     @Nullable
     public static BoggledTerraformingRequirement.TerraformingRequirement getTerraformingRequirement(String terraformingRequirementType, String id, boolean invert, String data) {
         Logger log = Global.getLogger(boggledTools.class);
 
         BoggledTerraformingRequirementFactory.TerraformingRequirementFactory factory = terraformingRequirementFactories.get(terraformingRequirementType);
-        if (factory != null) {
-            try {
-                BoggledTerraformingRequirement.TerraformingRequirement req = factory.constructFromJSON(id, invert, data);
-                if (req != null) {
-                    return req;
-                } else {
-                    log.error("Requirement " + id + " of type " + terraformingRequirementType + " was null when created with data " + data);
-                }
-            } catch (AbstractMethodError e) {
-                log.error("Requirement " + id + " of type " + terraformingRequirementType + " has incorrect constructFromJSON function signature");
-            }
-        } else {
+        if (factory == null) {
             log.error("Requirement " + id + " of type " + terraformingRequirementType + " has no assigned factory");
+            return null;
         }
-        return null;
+        try {
+            BoggledTerraformingRequirement.TerraformingRequirement req = factory.constructFromJSON(id, invert, data);
+            if (req == null) {
+                log.error("Requirement " + id + " of type " + terraformingRequirementType + " was null when created with data " + data);
+            }
+            return req;
+        } catch (AbstractMethodError e) {
+            log.error("Requirement " + id + " of type " + terraformingRequirementType + " has incorrect constructFromJSON function signature");
+            return null;
+        }
     }
 
     public static BoggledProjectRequirementsOR getTerraformingRequirements(String terraformingRequirementId) {
@@ -314,21 +314,43 @@ public class boggledTools
         Logger log = Global.getLogger(boggledTools.class);
 
         BoggledTerraformingDurationModifierFactory.TerraformingDurationModifierFactory factory = terraformingDurationModifierFactories.get(durationModifierType);
-        if (factory != null) {
-            try {
-                BoggledTerraformingDurationModifier.TerraformingDurationModifier mod = factory.constructFromJSON(data);
-                if (mod != null) {
-                    return mod;
-                } else {
-                    log.error("Duration modifier " + id + " of type " + durationModifierType + " was null when created with data " + data);
-                }
-            } catch (AbstractMethodError e) {
-                log.error("Duration modifier " + id + " of type " + durationModifierType + " has incorrect constructFromJSON function signature");
-            }
-        } else {
+        if (factory == null) {
             log.error("Duration modifier " + id + " of type " + durationModifierType + " has no assigned factory");
+            return null;
         }
-        return null;
+        try {
+            BoggledTerraformingDurationModifier.TerraformingDurationModifier mod = factory.constructFromJSON(data);
+            if (mod == null) {
+                log.error("Duration modifier " + id + " of type " + durationModifierType + " was null when created with data " + data);
+                return null;
+            }
+            return mod;
+        } catch (AbstractMethodError e) {
+            log.error("Duration modifier " + id + " of type " + durationModifierType + " has incorrect constructFromJSON function signature");
+            return null;
+        }
+    }
+
+    @Nullable
+    public static BoggledCommodityDemand.CommodityDemand getCommodityDemand(String commodityDemandType, String id, String[] enableSettings, String commodity, String data) {
+        Logger log = Global.getLogger(boggledTools.class);
+
+        BoggledCommodityDemandFactory.CommodityDemandFactory factory = commodityDemandFactories.get(commodityDemandType);
+        if (factory == null) {
+            log.error("Commodity demand " + id + " of type " + commodityDemandType + " has no assigned factory");
+            return null;
+        }
+        try {
+            BoggledCommodityDemand.CommodityDemand demand = factory.constructFromJSON(enableSettings, commodity, data);
+            if (demand == null) {
+                log.error("Commodity demand " + id + " of type " + commodityDemandType + " was null when created with data " + data);
+                return null;
+            }
+            return demand;
+        } catch (AbstractMethodError e) {
+            log.error("Commodity demand " + id + " of type " + commodityDemandType + " has incorrect constructFromJSON signature");
+            return null;
+        }
     }
 
     @Nullable
@@ -336,21 +358,20 @@ public class boggledTools
         Logger log = Global.getLogger(boggledTools.class);
 
         BoggledTerraformingProjectEffectFactory.TerraformingProjectEffectFactory factory = terraformingProjectEffectFactories.get(projectEffectType);
-        if (factory != null) {
-            try {
-                BoggledTerraformingProjectEffect.TerraformingProjectEffect effect = factory.constructFromJSON(data);
-                if (effect != null) {
-                    return effect;
-                } else {
-                    log.error("Terraforming project effect " + id + " of type " + projectEffectType + " was null when created with data " + data);
-                }
-            } catch (AbstractMethodError e) {
-                log.error("Terraforming project effect " + id + " of type " + projectEffectType + " has incorrect constructFromJSON function signature");
-            }
-        } else {
+        if (factory == null) {
             log.error("Terraforming project effect " + id + " of type " + projectEffectType + " has no assigned factory");
+            return null;
         }
-        return null;
+        try {
+            BoggledTerraformingProjectEffect.TerraformingProjectEffect effect = factory.constructFromJSON(data);
+            if (effect == null) {
+                log.error("Terraforming project effect " + id + " of type " + projectEffectType + " was null when created with data " + data);
+            }
+            return effect;
+        } catch (AbstractMethodError e) {
+            log.error("Terraforming project effect " + id + " of type " + projectEffectType + " has incorrect constructFromJSON function signature");
+            return null;
+        }
     }
 
     public static boolean optionsAllowThis(String... options) {
@@ -466,6 +487,16 @@ public class boggledTools
         terraformingDurationModifierFactories.put(key, value);
     }
 
+    public static void initialiseDefaultCommodityDemandFactories() {
+        addCommodityDemandFactory("FlatCommodityDemand", new BoggledCommodityDemandFactory.FlatFactory());
+        addCommodityDemandFactory("MarketSizeDemand", new BoggledCommodityDemandFactory.MarketSizeFactory());
+    }
+
+    public static void addCommodityDemandFactory(String key, BoggledCommodityDemandFactory.CommodityDemandFactory value) {
+        Global.getLogger(boggledTools.class).info("Adding commodity demand factory " + key);
+        commodityDemandFactories.put(key, value);
+    }
+
     public static void initialiseDefaultTerraformingProjectEffectFactories() {
         addTerraformingProjectEffectFactory("PlanetTypeChange", new BoggledTerraformingProjectEffectFactory.PlanetTypeChange());
         addTerraformingProjectEffectFactory("MarketAddCondition", new BoggledTerraformingProjectEffectFactory.MarketAddCondition());
@@ -484,37 +515,6 @@ public class boggledTools
     public static void addTerraformingProjectEffectFactory(String key, BoggledTerraformingProjectEffectFactory.TerraformingProjectEffectFactory value) {
         Global.getLogger(boggledTools.class).info("Adding terraforming project effect factory " + key);
         terraformingProjectEffectFactories.put(key, value);
-    }
-
-    public static void initialiseDefaultIndustryOptionsTrampolines() {
-        addIndustryOptionsTrampoline("ai_mining_drones", new BoggledIndustryOptionTrampoline.AIMiningDrones());
-        addIndustryOptionsTrampoline("atmosphere_processor", new BoggledIndustryOptionTrampoline.AtmosphereProcessor());
-        addIndustryOptionsTrampoline("chameleon", new BoggledIndustryOptionTrampoline.CHAMELEON());
-        addIndustryOptionsTrampoline("cloning", new BoggledIndustryOptionTrampoline.Cloning());
-        addIndustryOptionsTrampoline("cryosanctum", new BoggledIndustryOptionTrampoline.Cryosanctum());
-        addIndustryOptionsTrampoline("domain_archaeology", new BoggledIndustryOptionTrampoline.DomainArchaeology());
-        addIndustryOptionsTrampoline("domed_cities", new BoggledIndustryOptionTrampoline.DomedCitiesIndustryTrampoline());
-        addIndustryOptionsTrampoline("expand_station", new BoggledIndustryOptionTrampoline.ExpandStation());
-        addIndustryOptionsTrampoline("genelab", new BoggledIndustryOptionTrampoline.Genelab());
-        addIndustryOptionsTrampoline("gpa", new BoggledIndustryOptionTrampoline.GPA());
-        addIndustryOptionsTrampoline("harmonic_damper", new BoggledIndustryOptionTrampoline.HarmonicDamper());
-        addIndustryOptionsTrampoline("hydroponics", new BoggledIndustryOptionTrampoline.Hydroponics());
-        addIndustryOptionsTrampoline("ismara_sling", new BoggledIndustryOptionTrampoline.IsmaraSling());
-        addIndustryOptionsTrampoline("kletka_simulator", new BoggledIndustryOptionTrampoline.KletkaSimulator());
-        addIndustryOptionsTrampoline("limelight_network", new BoggledIndustryOptionTrampoline.LimelightNetwork());
-        addIndustryOptionsTrampoline("magnetoshield", new BoggledIndustryOptionTrampoline.Magnetoshield());
-        addIndustryOptionsTrampoline("mesozoic_park", new BoggledIndustryOptionTrampoline.MesozoicPark());
-        addIndustryOptionsTrampoline("ouyang_optimizer", new BoggledIndustryOptionTrampoline.OuyangOptimizer());
-        addIndustryOptionsTrampoline("perihelion_project", new BoggledIndustryOptionTrampoline.PerihelionProject());
-        addIndustryOptionsTrampoline("planet_cracker", new BoggledIndustryOptionTrampoline.PlanetCracker());
-        addIndustryOptionsTrampoline("planetary_agrav_field", new BoggledIndustryOptionTrampoline.PlanetaryAgravField());
-        addIndustryOptionsTrampoline("remnant_station", new BoggledIndustryOptionTrampoline.RemnantStation());
-        addIndustryOptionsTrampoline("stellar_reflector_array", new BoggledIndustryOptionTrampoline.StellarReflectorArray());
-    }
-
-    public static void addIndustryOptionsTrampoline(String key, BoggledIndustryOptionTrampoline.IndustryOptionTrampoline value) {
-        Global.getLogger(boggledTools.class).info("Adding industry option trampoline " + key);
-        industryOptionTrampolines.put(key, value);
     }
 
     @NotNull
@@ -559,7 +559,6 @@ public class boggledTools
         Logger log = Global.getLogger(boggledTools.class);
 
         HashMap<String, PlanetType> planetTypesMap = new HashMap<>();
-        LinkedHashMap<String, String> planetConditionsMap = new LinkedHashMap<>();
 
         planetTypesMap.put(unknownPlanetId, new PlanetType(unknownPlanetId, "unknown", false, 0, new ArrayList<Pair<BoggledProjectRequirementsOR, Integer>>()));
 
@@ -605,9 +604,6 @@ public class boggledTools
                 PlanetType planetType = new PlanetType(planetTypeId, planetTypeName, terraformingPossible, baseWaterLevel, conditionalWaterRequirements);
 
                 planetTypesMap.put(id, planetType);
-                for (String condition : conditions) {
-                    planetConditionsMap.put(condition, planetTypeId);
-                }
 
             } catch (JSONException e) {
                 log.error("Error in planet types map: " + e);
@@ -615,13 +611,12 @@ public class boggledTools
         }
 
         boggledTools.planetTypesMap = planetTypesMap;
-        boggledTools.planetConditionsMap = planetConditionsMap;
     }
 
     public static void initialiseResourceProgressionsFromJSON(@NotNull JSONArray resourceProgressionsJSON) {
         Logger log = Global.getLogger(boggledTools.class);
 
-        HashMap<String, ArrayList<String>> resourceProgressionsMap = new HashMap<>();
+        HashMap<String, ArrayList<String>> resourceProgressions = new HashMap<>();
 
         for (int i = 0; i < resourceProgressionsJSON.length(); ++i) {
             try {
@@ -634,13 +629,13 @@ public class boggledTools
 
                 ArrayList<String> resource_progression = arrayListFromJSON(row, "resource_progression", boggledTools.csvOptionSeparator);
 
-                resourceProgressionsMap.put(id, resource_progression);
+                resourceProgressions.put(id, resource_progression);
             } catch (JSONException e) {
                 log.error("Error in resource progressions: " + e);
             }
         }
 
-        boggledTools.resourceProgressions = resourceProgressionsMap;
+        boggledTools.resourceProgressions = resourceProgressions;
     }
 
     public static void initialiseResourceLimitsFromJSON(@NotNull JSONArray resourceLimitsJSON) {
@@ -675,6 +670,7 @@ public class boggledTools
     public static void initialiseIndustryOptionsFromJSON(@NotNull JSONArray industryOptionsJSON) {
         Logger log = Global.getLogger(boggledTools.class);
 
+        HashMap<String, BoggledCommonIndustry> industryProjects = new HashMap<>();
         for (int i = 0; i < industryOptionsJSON.length(); ++i) {
             try {
                 JSONObject row = industryOptionsJSON.getJSONObject(i);
@@ -684,22 +680,81 @@ public class boggledTools
                     continue;
                 }
 
-                BoggledIndustryOptionTrampoline.IndustryOptionTrampoline trampoline = industryOptionTrampolines.get(id);
-                if (trampoline == null) {
-                    log.error("Industry option " + id + " doesn't have a corresponding trampoline, ignoring");
-                    continue;
+                String industry = row.getString("tooltip");
+
+                String[] projects = row.getString("projects").split(boggledTools.csvOptionSeparator);
+
+                ArrayList<Triple<BoggledTerraformingProject, String, String>> projectsWithIntel = new ArrayList<>();
+                for (String project : projects) {
+                    String[] projectWithTooltips = project.split(boggledTools.csvSubOptionSeparator);
+                    BoggledTerraformingProject p = boggledTools.getProject(projectWithTooltips[0]);
+                    if (p != null) {
+                        String intelTooltip = "";
+                        String intelCompleteMessage = "";
+                        if (projectWithTooltips.length > 1) {
+                            intelTooltip = projectWithTooltips[1];
+                        }
+                        if (projectWithTooltips.length > 2) {
+                            intelCompleteMessage = projectWithTooltips[2];
+                        }
+
+                        projectsWithIntel.add(new Triple<>(p, intelTooltip, intelCompleteMessage));
+                    }
                 }
-                trampoline.initialiseOptionsFromJSON(row);
+                
+                String[] commodityDemandsString = row.getString("commodity_demands").split(boggledTools.csvOptionSeparator);
+                ArrayList<BoggledCommodityDemand.CommodityDemand> commodityDemands = new ArrayList<>();
+                for (String commodityDemandString : commodityDemandsString) {
+                    BoggledCommodityDemand.CommodityDemand demand = boggledTools.commodityDemands.get(commodityDemandString);
+                    if (demand != null) {
+                        commodityDemands.add(demand);
+                    } else {
+                        log.info("Industry " + id + " has invalid commodity demand " + commodityDemandString);
+                    }
+                }
+
+                industryProjects.put(id, new BoggledCommonIndustry(industry, projectsWithIntel, commodityDemands));
             } catch (JSONException e) {
                 log.error("Error in industry options: " + e);
             }
         }
+        boggledTools.industryProjects = industryProjects;
+    }
+
+    public static void initialiseCommodityDemandsFromJSON(@NotNull JSONArray commodityDemandsJSON) {
+        Logger log = Global.getLogger(boggledTools.class);
+
+        HashMap<String, BoggledCommodityDemand.CommodityDemand> commodityDemands = new HashMap<>();
+
+        for (int i = 0; i < commodityDemandsJSON.length(); ++i) {
+            try {
+                JSONObject row = commodityDemandsJSON.getJSONObject(i);
+
+                String id = row.getString("id");
+                if (id == null || id.isEmpty()) {
+                    continue;
+                }
+
+                String[] enableSettings = row.getString("enable_settings").split(csvOptionSeparator);
+
+                String commodityDemandType = row.getString("commodity_demand_type");
+                String commodity = row.getString("commodity");
+                String data = row.getString("data");
+
+                BoggledCommodityDemand.CommodityDemand demand = getCommodityDemand(commodityDemandType, id, enableSettings, commodity, data);
+
+                commodityDemands.put(id, demand);
+            } catch (JSONException e) {
+                log.error("Error in commodity demands: " + e);
+            }
+        }
+        boggledTools.commodityDemands = commodityDemands;
     }
 
     public static void initialiseTerraformingRequirementFromJSON(@NotNull JSONArray terraformingRequirementJSON) {
         Logger log = Global.getLogger(boggledTools.class);
 
-        HashMap<String, BoggledTerraformingRequirement.TerraformingRequirement> terraformingReqs = new HashMap<>();
+        HashMap<String, BoggledTerraformingRequirement.TerraformingRequirement> terraformingRequirement = new HashMap<>();
 
         for (int i = 0; i < terraformingRequirementJSON.length(); ++i) {
             try {
@@ -716,20 +771,20 @@ public class boggledTools
 
                 BoggledTerraformingRequirement.TerraformingRequirement req = getTerraformingRequirement(requirementType, id, invert, data);
                 if (req != null) {
-                    terraformingReqs.put(id, req);
+                    terraformingRequirement.put(id, req);
                 }
             } catch (JSONException e) {
                 log.error("Error in terraforming requirement: " + e);
             }
         }
 
-        boggledTools.terraformingRequirement = terraformingReqs;
+        boggledTools.terraformingRequirement = terraformingRequirement;
     }
 
     public static void initialiseTerraformingRequirementsFromJSON(@NotNull JSONArray terraformingRequirementsJSON) {
         Logger log = Global.getLogger(boggledTools.class);
 
-        HashMap<String, BoggledProjectRequirementsOR> terraformingReqss = new HashMap<>();
+        HashMap<String, BoggledProjectRequirementsOR> terraformingRequirements = new HashMap<>();
         for (int i = 0; i < terraformingRequirementsJSON.length(); ++i) {
             try {
                 JSONObject row = terraformingRequirementsJSON.getJSONObject(i);
@@ -754,19 +809,19 @@ public class boggledTools
                 }
 
                 BoggledProjectRequirementsOR terraformingReqs = new BoggledProjectRequirementsOR(id, tooltip, invertAll, reqs);
-                terraformingReqss.put(id, terraformingReqs);
+                terraformingRequirements.put(id, terraformingReqs);
 
             } catch (JSONException e) {
                 log.error("Error in terraforming requirements: " + e);
             }
         }
-        boggledTools.terraformingRequirements = terraformingReqss;
+        boggledTools.terraformingRequirements = terraformingRequirements;
     }
 
     public static void initialiseTerraformingDurationModifiersFromJSON(@NotNull JSONArray durationModifiersJSON) {
         Logger log = Global.getLogger(boggledTools.class);
 
-        HashMap<String, BoggledTerraformingDurationModifier.TerraformingDurationModifier> durationMods = new HashMap<>();
+        HashMap<String, BoggledTerraformingDurationModifier.TerraformingDurationModifier> durationModifiers = new HashMap<>();
         for (int i = 0; i < durationModifiersJSON.length(); ++i) {
             try {
                 JSONObject row = durationModifiersJSON.getJSONObject(i);
@@ -781,20 +836,20 @@ public class boggledTools
 
                 BoggledTerraformingDurationModifier.TerraformingDurationModifier mod = getDurationModifier(durationModifierType, id, data);
                 if (mod != null) {
-                    durationMods.put(id, mod);
+                    durationModifiers.put(id, mod);
                 }
             } catch (JSONException e) {
                 log.error("Error in duration modifiers: " + e);
             }
         }
 
-        boggledTools.durationModifiers = durationMods;
+        boggledTools.durationModifiers = durationModifiers;
     }
 
     public static void initialiseTerraformingProjectEffectsFromJSON(@NotNull JSONArray projectEffectsJSON) {
         Logger log = Global.getLogger(boggledTools.class);
 
-        HashMap<String, BoggledTerraformingProjectEffect.TerraformingProjectEffect> terraformingEffects = new HashMap<>();
+        HashMap<String, BoggledTerraformingProjectEffect.TerraformingProjectEffect> terraformingProjectEffects = new HashMap<>();
         for (int i = 0; i < projectEffectsJSON.length(); ++i) {
             try {
                 JSONObject row = projectEffectsJSON.getJSONObject(i);
@@ -809,13 +864,13 @@ public class boggledTools
 
                 BoggledTerraformingProjectEffect.TerraformingProjectEffect projectEffect = getProjectEffect(projectEffectType, id, data);
                 if (projectEffect != null) {
-                    terraformingEffects.put(id, projectEffect);
+                    terraformingProjectEffects.put(id, projectEffect);
                 }
             } catch (JSONException e) {
                 log.error("Error in project effects: " + e);
             }
         }
-        boggledTools.terraformingProjectEffects = terraformingEffects;
+        boggledTools.terraformingProjectEffects = terraformingProjectEffects;
     }
 
     public static void initialiseTerraformingProjectsFromJSON(@NotNull JSONArray terraformingProjectsJSON) {
@@ -831,7 +886,7 @@ public class boggledTools
                     continue;
                 }
 
-                String[] enableSettings = row.getString("enable_setting").split(csvOptionSeparator);
+                String[] enableSettings = row.getString("enable_settings").split(csvOptionSeparator);
 
                 String projectType = row.getString("project_type");
 
@@ -1087,7 +1142,9 @@ public class boggledTools
     private static HashMap<String, BoggledTerraformingRequirement.TerraformingRequirement> terraformingRequirement;
     private static HashMap<String, BoggledProjectRequirementsOR> terraformingRequirements;
     private static HashMap<String, BoggledTerraformingDurationModifier.TerraformingDurationModifier> durationModifiers;
+    private static HashMap<String, BoggledCommodityDemand.CommodityDemand> commodityDemands;
     private static HashMap<String, BoggledTerraformingProjectEffect.TerraformingProjectEffect> terraformingProjectEffects;
+    private static HashMap<String, BoggledCommonIndustry> industryProjects;
     private static LinkedHashMap<String, BoggledTerraformingProject> terraformingProjects;
 
     public static HashMap<String, BoggledProjectRequirementsOR> getTerraformingRequirements() {
@@ -1098,9 +1155,16 @@ public class boggledTools
     private static HashMap<Pair<String, String>, String> resourceLimits;
 
     private static HashMap<String, PlanetType> planetTypesMap;
-    private static LinkedHashMap<String, String> planetConditionsMap;
 
     private static ArrayList<BoggledTerraformingProject> craftingProjects = initialiseCraftingProjects();
+
+    public static BoggledCommonIndustry getIndustryProject(String industry) {
+        return industryProjects.get(industry);
+    }
+
+    public static BoggledCommodityDemand.CommodityDemand getCommodityDemand(String demand) {
+        return commodityDemands.get(demand);
+    }
 
     public static int getNumTerraformingProjects() {
         int ret = 0;
