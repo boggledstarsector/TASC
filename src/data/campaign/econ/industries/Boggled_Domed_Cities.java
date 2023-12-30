@@ -127,6 +127,7 @@ public class Boggled_Domed_Cities extends BaseIndustry implements MarketImmigrat
     public void apply()
     {
         super.apply(true);
+        thisIndustry.apply(this);
 
         // Reduces ground defense in Domed Cities mode, increases it in Seafloor Cities mode.
         if(!this.market.hasCondition(Conditions.WATER_SURFACE))

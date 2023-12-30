@@ -91,12 +91,9 @@ public class Boggled_Atmosphere_Processor extends BaseIndustry
     }
 
     @Override
-    public void apply()
-    {
+    public void apply() {
         super.apply(true);
-
-        int size = this.market.getSize();
-        this.demand(Commodities.HEAVY_MACHINERY, size);
+        thisIndustry.apply(this);
     }
 
     @Override

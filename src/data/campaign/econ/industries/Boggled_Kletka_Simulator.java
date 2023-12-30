@@ -307,12 +307,10 @@ public class Boggled_Kletka_Simulator extends BaseIndustry {
     }
 
     @Override
-    public void apply()
-    {
-        thisIndustry.apply(this);
-
+    public void apply() {
         super.apply(false);
         super.applyIncomeAndUpkeep(3);
+        thisIndustry.apply(this);
 
         if(boggledTools.getBooleanSetting(boggledTools.BoggledSettings.kletkaSimulatorTemperatureBasedUpkeep))
         {

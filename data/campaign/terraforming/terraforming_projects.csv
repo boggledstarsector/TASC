@@ -83,7 +83,7 @@ industry_expand_station,boggledStationCrampedQuartersEnabled | boggledStationCra
 station_construction_num_expansions ; $market is too large to expand further",,,,
 industry_genelab_pollution,boggledTerraformingContentEnabled | boggledGenelabEnabled,industry,,"colony_is_not_station ; Colony must be on a planet.",,,,
 industry_genelab_lobster,boggledTerraformingContentEnabled | boggledGenelabEnabled,industry,"Lobster seeding","colony_has_water_surface |
-colony_not_has_heavy_industry_or_orbital_works_with_nanoforge"
+colony_not_has_heavy_industry_or_orbital_works_with_nanoforge",,,,,,,
 industry_gpa,,industry,,,,,,
 industry_harmonic_damper,boggledHarmonicDamperEnabled,industry,,"colony_is_not_station ; Colony must be on a planet.",,,,
 industry_hydroponics,boggledHydroponicsEnabled,industry,,,,,,

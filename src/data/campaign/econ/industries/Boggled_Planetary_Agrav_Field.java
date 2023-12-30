@@ -101,6 +101,7 @@ public class Boggled_Planetary_Agrav_Field extends BaseIndustry {
     public void apply()
     {
         super.apply(true);
+        thisIndustry.apply(this);
 
         if(isFunctional() && (this.market.hasIndustry(boggledTools.BoggledIndustries.domedCitiesIndustryId) || boggledTools.getPlanetType(this.market.getPlanetEntity()).equals(boggledTools.gasGiantPlanetId)))
         {

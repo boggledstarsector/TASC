@@ -77,15 +77,9 @@ public class Boggled_Cryosanctum extends Cryosanctum {
     }
 
     @Override
-    public void apply()
-    {
+    public void apply() {
         super.apply();
-
-        if(boggledTools.getBooleanSetting(boggledTools.BoggledSettings.domainArchaeologyEnabled))
-        {
-            int size = this.market.getSize();
-            this.demand(boggledTools.BoggledCommodities.domainArtifacts, size);
-        }
+        thisIndustry.apply(this);
     }
 
     @Override

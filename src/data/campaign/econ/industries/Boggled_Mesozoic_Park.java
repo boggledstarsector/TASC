@@ -135,9 +135,9 @@ public class Boggled_Mesozoic_Park extends BaseIndustry {
     }
 
     @Override
-    public void apply()
-    {
+    public void apply() {
         super.apply(true);
+        thisIndustry.apply(this);
     }
 
     @Override

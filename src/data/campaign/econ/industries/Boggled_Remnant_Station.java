@@ -422,7 +422,7 @@ public class Boggled_Remnant_Station extends OrbitalStation implements RouteMana
         int size = 7;
         this.market.getStability().modifyFlat(this.getModId(), 3.0f, "Autonomous AI battlestation");
         this.applyIncomeAndUpkeep((float)size);
-        this.demand("supplies", size);
+        thisIndustry.apply(this);
 
         this.market.getStats().getDynamic().getMod("ground_defenses_mod").modifyMult(this.getModId(), 3.0f, "Autonomous AI battlestation");
         this.matchCommanderToAICore(this.aiCoreId);

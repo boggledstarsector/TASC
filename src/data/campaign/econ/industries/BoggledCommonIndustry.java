@@ -7,7 +7,7 @@ import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.impl.campaign.econ.impl.BaseIndustry;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import data.campaign.econ.boggledTools;
-import data.scripts.BoggledCommodityDemand;
+import data.scripts.BoggledCommoditySupplyDemand;
 import data.scripts.BoggledTerraformingProject;
 import kotlin.Triple;
 import org.json.JSONException;
@@ -27,17 +27,17 @@ public class BoggledCommonIndustry {
     private String industryTooltip;
 
     public ArrayList<Triple<BoggledTerraformingProject, String, String>> projects;
-    private ArrayList<BoggledCommodityDemand.CommodityDemand> commodityDemands;
+    private ArrayList<BoggledCommoditySupplyDemand.CommoditySupplyAndDemand> commoditySupplyAndDemands;
 
     private boolean building = false;
     private boolean built = false;
     public ArrayList<Integer> lastDayChecked;
     public ArrayList<Integer> daysWithoutShortage;
 
-    public BoggledCommonIndustry(String industryTooltip, ArrayList<Triple<BoggledTerraformingProject, String, String>> projects, ArrayList<BoggledCommodityDemand.CommodityDemand> commodityDemands) {
+    public BoggledCommonIndustry(String industryTooltip, ArrayList<Triple<BoggledTerraformingProject, String, String>> projects, ArrayList<BoggledCommoditySupplyDemand.CommoditySupplyAndDemand> commoditySupplyAndDemands) {
         this.industryTooltip = industryTooltip;
         this.projects = projects;
-        this.commodityDemands = commodityDemands;
+        this.commoditySupplyAndDemands = commoditySupplyAndDemands;
         this.lastDayChecked = new ArrayList<>(Collections.nCopies(projects.size(), 0));
         this.daysWithoutShortage = new ArrayList<>(Collections.nCopies(projects.size(), 0));
     }
@@ -284,14 +284,14 @@ public class BoggledCommonIndustry {
     }
 
     public void apply(BaseIndustry industry) {
-        for (BoggledCommodityDemand.CommodityDemand commodityDemand : commodityDemands) {
-            commodityDemand.applyDemand(industry);
+        for (BoggledCommoditySupplyDemand.CommoditySupplyAndDemand commoditySupplyAndDemand : commoditySupplyAndDemands) {
+            commoditySupplyAndDemand.applySupplyDemand(industry);
         }
     }
 
     public boolean hasPostDemandSection(BaseIndustry industry, boolean hasDemand, Industry.IndustryTooltipMode mode) {
-        for (BoggledCommodityDemand.CommodityDemand commodityDemand : commodityDemands) {
-            if (commodityDemand.isEnabled()) {
+        for (BoggledCommoditySupplyDemand.CommoditySupplyAndDemand commoditySupplyAndDemand : commoditySupplyAndDemands) {
+            if (commoditySupplyAndDemand.isEnabled()) {
                 return true;
             }
         }
@@ -299,9 +299,9 @@ public class BoggledCommonIndustry {
     }
 
     public void addPostDemandSection(BaseIndustry industry, TooltipMakerAPI tooltip, boolean hasDemand, Industry.IndustryTooltipMode mode) {
-        for (BoggledCommodityDemand.CommodityDemand commodityDemand : commodityDemands) {
-            if (commodityDemand.isEnabled()) {
-                commodityDemand.addPostDemandSection(industryTooltip, industry, tooltip, hasDemand, mode);
+        for (BoggledCommoditySupplyDemand.CommoditySupplyAndDemand commoditySupplyAndDemand : commoditySupplyAndDemands) {
+            if (commoditySupplyAndDemand.isEnabled()) {
+                commoditySupplyAndDemand.addPostDemandSection(industryTooltip, industry, tooltip, hasDemand, mode);
             }
         }
     }

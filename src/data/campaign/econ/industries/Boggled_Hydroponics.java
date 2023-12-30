@@ -86,13 +86,9 @@ public class Boggled_Hydroponics extends BaseIndustry {
     }
 
     @Override
-    public void apply()
-    {
+    public void apply() {
         super.apply(true);
-
-        int size = this.market.getSize();
-        this.demand(Commodities.HEAVY_MACHINERY, size - 2);
-        this.supply(Commodities.FOOD, size);
+        thisIndustry.apply(this);
 
         Pair<String, Integer> deficit = this.getMaxDeficit(Commodities.HEAVY_MACHINERY);
         this.applyDeficitToProduction(1, deficit, Commodities.FOOD);

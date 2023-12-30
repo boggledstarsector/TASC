@@ -123,12 +123,8 @@ public class Boggled_AI_Mining_Drones extends BaseIndustry {
     @Override
     public void apply()
     {
-        if(this.market.getPrimaryEntity() != null && this.market.getPrimaryEntity().hasTag(Tags.STATION) && this.isFunctional())
-        {
-            int size = this.market.getSize();
-            this.demand(Commodities.FUEL, size);
-            this.demand(Commodities.SUPPLIES, size);
-            this.demand(Commodities.SHIPS, size);
+        if(this.market.getPrimaryEntity() != null && this.market.getPrimaryEntity().hasTag(Tags.STATION) && this.isFunctional()) {
+            thisIndustry.apply(this);
 
             //Increased production
             Industry i = market.getIndustry(Industries.MINING);

@@ -282,7 +282,7 @@ public class boggledTools
     public static final HashMap<String, BoggledTerraformingRequirementFactory.TerraformingRequirementFactory> terraformingRequirementFactories = new HashMap<>();
     public static final HashMap<String, BoggledTerraformingDurationModifierFactory.TerraformingDurationModifierFactory> terraformingDurationModifierFactories = new HashMap<>();
     public static final HashMap<String, BoggledTerraformingProjectEffectFactory.TerraformingProjectEffectFactory> terraformingProjectEffectFactories = new HashMap<>();
-    public static final HashMap<String, BoggledCommodityDemandFactory.CommodityDemandFactory> commodityDemandFactories = new HashMap<>();
+    public static final HashMap<String, BoggledCommoditySupplyDemandFactory.CommoditySupplyDemandFactory> commodityDemandFactories = new HashMap<>();
 
     @Nullable
     public static BoggledTerraformingRequirement.TerraformingRequirement getTerraformingRequirement(String terraformingRequirementType, String id, boolean invert, String data) {
@@ -332,16 +332,16 @@ public class boggledTools
     }
 
     @Nullable
-    public static BoggledCommodityDemand.CommodityDemand getCommodityDemand(String commodityDemandType, String id, String[] enableSettings, String commodity, String data) {
+    public static BoggledCommoditySupplyDemand.CommoditySupplyAndDemand getCommoditySupplyAndDemand(String commodityDemandType, String id, String[] enableSettings, String commodity, String data) {
         Logger log = Global.getLogger(boggledTools.class);
 
-        BoggledCommodityDemandFactory.CommodityDemandFactory factory = commodityDemandFactories.get(commodityDemandType);
+        BoggledCommoditySupplyDemandFactory.CommoditySupplyDemandFactory factory = commodityDemandFactories.get(commodityDemandType);
         if (factory == null) {
             log.error("Commodity demand " + id + " of type " + commodityDemandType + " has no assigned factory");
             return null;
         }
         try {
-            BoggledCommodityDemand.CommodityDemand demand = factory.constructFromJSON(enableSettings, commodity, data);
+            BoggledCommoditySupplyDemand.CommoditySupplyAndDemand demand = factory.constructFromJSON(enableSettings, commodity, data);
             if (demand == null) {
                 log.error("Commodity demand " + id + " of type " + commodityDemandType + " was null when created with data " + data);
                 return null;
@@ -488,11 +488,19 @@ public class boggledTools
     }
 
     public static void initialiseDefaultCommodityDemandFactories() {
-        addCommodityDemandFactory("FlatCommodityDemand", new BoggledCommodityDemandFactory.FlatFactory());
-        addCommodityDemandFactory("MarketSizeDemand", new BoggledCommodityDemandFactory.MarketSizeFactory());
+        addCommodityDemandFactory("FlatCommodityDemand", new BoggledCommoditySupplyDemandFactory.FlatDemandFactory());
+        addCommodityDemandFactory("FlatCommoditySupply", new BoggledCommoditySupplyDemandFactory.FlatSupplyFactory());
+
+        addCommodityDemandFactory("MarketSizeDemand", new BoggledCommoditySupplyDemandFactory.MarketSizeDemandFactory());
+        addCommodityDemandFactory("MarketSizeSupply", new BoggledCommoditySupplyDemandFactory.MarketSizeSupplyFactory());
+
+        addCommodityDemandFactory("ConditionModifyDemand", new BoggledCommoditySupplyDemandFactory.ConditionModifyDemandFactory());
+        addCommodityDemandFactory("ConditionModifySupply", new BoggledCommoditySupplyDemandFactory.ConditionModifySupplyFactory());
+
+        addCommodityDemandFactory("PlayerMarketSizeElseFlatDemand", new BoggledCommoditySupplyDemandFactory.PlayerMarketSizeElseFlatDemandFactory());
     }
 
-    public static void addCommodityDemandFactory(String key, BoggledCommodityDemandFactory.CommodityDemandFactory value) {
+    public static void addCommodityDemandFactory(String key, BoggledCommoditySupplyDemandFactory.CommoditySupplyDemandFactory value) {
         Global.getLogger(boggledTools.class).info("Adding commodity demand factory " + key);
         commodityDemandFactories.put(key, value);
     }
@@ -703,17 +711,20 @@ public class boggledTools
                 }
                 
                 String[] commodityDemandsString = row.getString("commodity_demands").split(boggledTools.csvOptionSeparator);
-                ArrayList<BoggledCommodityDemand.CommodityDemand> commodityDemands = new ArrayList<>();
-                for (String commodityDemandString : commodityDemandsString) {
-                    BoggledCommodityDemand.CommodityDemand demand = boggledTools.commodityDemands.get(commodityDemandString);
+                ArrayList<BoggledCommoditySupplyDemand.CommoditySupplyAndDemand> commoditySupplyAndDemands = new ArrayList<>();
+                for (String commoditySupplyDemandString : commodityDemandsString) {
+                    if (commoditySupplyDemandString.isEmpty()) {
+                        continue;
+                    }
+                    BoggledCommoditySupplyDemand.CommoditySupplyAndDemand demand = boggledTools.commoditySupplyAndDemand.get(commoditySupplyDemandString);
                     if (demand != null) {
-                        commodityDemands.add(demand);
+                        commoditySupplyAndDemands.add(demand);
                     } else {
-                        log.info("Industry " + id + " has invalid commodity demand " + commodityDemandString);
+                        log.info("Industry " + id + " has invalid commodity supply or demand " + commoditySupplyDemandString);
                     }
                 }
 
-                industryProjects.put(id, new BoggledCommonIndustry(industry, projectsWithIntel, commodityDemands));
+                industryProjects.put(id, new BoggledCommonIndustry(industry, projectsWithIntel, commoditySupplyAndDemands));
             } catch (JSONException e) {
                 log.error("Error in industry options: " + e);
             }
@@ -724,7 +735,7 @@ public class boggledTools
     public static void initialiseCommodityDemandsFromJSON(@NotNull JSONArray commodityDemandsJSON) {
         Logger log = Global.getLogger(boggledTools.class);
 
-        HashMap<String, BoggledCommodityDemand.CommodityDemand> commodityDemands = new HashMap<>();
+        HashMap<String, BoggledCommoditySupplyDemand.CommoditySupplyAndDemand> commodityDemands = new HashMap<>();
 
         for (int i = 0; i < commodityDemandsJSON.length(); ++i) {
             try {
@@ -741,14 +752,14 @@ public class boggledTools
                 String commodity = row.getString("commodity");
                 String data = row.getString("data");
 
-                BoggledCommodityDemand.CommodityDemand demand = getCommodityDemand(commodityDemandType, id, enableSettings, commodity, data);
+                BoggledCommoditySupplyDemand.CommoditySupplyAndDemand demand = getCommoditySupplyAndDemand(commodityDemandType, id, enableSettings, commodity, data);
 
                 commodityDemands.put(id, demand);
             } catch (JSONException e) {
-                log.error("Error in commodity demands: " + e);
+                log.error("Error in commodity supply and demands: " + e);
             }
         }
-        boggledTools.commodityDemands = commodityDemands;
+        boggledTools.commoditySupplyAndDemand = commodityDemands;
     }
 
     public static void initialiseTerraformingRequirementFromJSON(@NotNull JSONArray terraformingRequirementJSON) {
@@ -1142,7 +1153,7 @@ public class boggledTools
     private static HashMap<String, BoggledTerraformingRequirement.TerraformingRequirement> terraformingRequirement;
     private static HashMap<String, BoggledProjectRequirementsOR> terraformingRequirements;
     private static HashMap<String, BoggledTerraformingDurationModifier.TerraformingDurationModifier> durationModifiers;
-    private static HashMap<String, BoggledCommodityDemand.CommodityDemand> commodityDemands;
+    private static HashMap<String, BoggledCommoditySupplyDemand.CommoditySupplyAndDemand> commoditySupplyAndDemand;
     private static HashMap<String, BoggledTerraformingProjectEffect.TerraformingProjectEffect> terraformingProjectEffects;
     private static HashMap<String, BoggledCommonIndustry> industryProjects;
     private static LinkedHashMap<String, BoggledTerraformingProject> terraformingProjects;
@@ -1162,8 +1173,8 @@ public class boggledTools
         return industryProjects.get(industry);
     }
 
-    public static BoggledCommodityDemand.CommodityDemand getCommodityDemand(String demand) {
-        return commodityDemands.get(demand);
+    public static BoggledCommoditySupplyDemand.CommoditySupplyAndDemand getCommoditySupplyAndDemand(String supplyOrDemand) {
+        return commoditySupplyAndDemand.get(supplyOrDemand);
     }
 
     public static int getNumTerraformingProjects() {

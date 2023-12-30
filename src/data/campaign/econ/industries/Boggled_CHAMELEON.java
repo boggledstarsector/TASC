@@ -98,15 +98,9 @@ public class Boggled_CHAMELEON extends BaseIndustry
     public static int DEMAND_REDUCTION = 1;
 
     @Override
-    public void apply()
-    {
+    public void apply() {
         super.apply(true);
-
-        if(boggledTools.getBooleanSetting(boggledTools.BoggledSettings.domainArchaeologyEnabled))
-        {
-            int size = this.market.getSize();
-            this.demand(boggledTools.BoggledCommodities.domainArtifacts, size);
-        }
+        thisIndustry.apply(this);
     }
 
     @Override

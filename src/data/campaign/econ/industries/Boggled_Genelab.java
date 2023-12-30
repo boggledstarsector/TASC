@@ -227,22 +227,9 @@ public class Boggled_Genelab extends BaseIndustry {
     }
 
     @Override
-    public void apply()
-    {
+    public void apply() {
         super.apply(true);
-
-        if(boggledTools.getBooleanSetting(boggledTools.BoggledSettings.domainTechContentEnabled) && boggledTools.getBooleanSetting(boggledTools.BoggledSettings.domainArchaeologyEnabled))
-        {
-            if(!this.market.isPlayerOwned())
-            {
-                this.demand(boggledTools.BoggledCommodities.domainArtifacts, 4);
-            }
-            else
-            {
-                int size = this.market.getSize();
-                this.demand(boggledTools.BoggledCommodities.domainArtifacts, size);
-            }
-        }
+        thisIndustry.apply(this);
 
         Boggled_Mesozoic_Park park = (Boggled_Mesozoic_Park) this.market.getIndustry(boggledTools.BoggledIndustries.mesozoicParkIndustryId);
         if(park != null && this.isFunctional() && !this.genelabHasShortage())

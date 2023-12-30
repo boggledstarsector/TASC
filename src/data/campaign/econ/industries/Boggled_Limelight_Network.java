@@ -95,12 +95,7 @@ public class Boggled_Limelight_Network extends BaseIndustry {
     public void apply()
     {
         super.apply(true);
-
-        if(boggledTools.getBooleanSetting(boggledTools.BoggledSettings.domainArchaeologyEnabled))
-        {
-            int size = this.market.getSize();
-            this.demand(boggledTools.BoggledCommodities.domainArtifacts, size - 2);
-        }
+        thisIndustry.apply(this);
 
         if(hasShortage())
         {
@@ -116,6 +111,17 @@ public class Boggled_Limelight_Network extends BaseIndustry {
     public void unapply()
     {
         super.unapply();
+    }
+
+    @Override
+    protected boolean hasPostDemandSection(boolean hasDemand, IndustryTooltipMode mode) {
+        return thisIndustry.hasPostDemandSection(this, hasDemand, mode);
+    }
+
+    @Override
+    protected void addPostDemandSection(TooltipMakerAPI tooltip, boolean hasDemand, IndustryTooltipMode mode) {
+        super.addPostDemandSection(tooltip, hasDemand, mode);
+        thisIndustry.addPostDemandSection(this, tooltip, hasDemand, mode);
     }
 
     @Override

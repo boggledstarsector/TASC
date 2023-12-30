@@ -1,0 +1,36 @@
+id,enable_settings,commodity_demand_type,commodity,data
+# id is a unique identifier for each demand
+# enable_settings is the settings that have to be enabled for this demand to be active
+# commodity_demand_type is the type of this commodity demand
+# commodity is the commodity that will be demanded
+# data is demand type specific data
+# FlatCommodity{Demand,Supply} will always {demand,supply} the same amount of the commodity, data specifies how much as a single integer
+# MarketSize{Demand,Supply} will {demand,supply} more of the commodity as the market grows, data specifies modifier to the market size as a signed integer
+# ConditionModify{Demand,Supply} will modify {demand,supply} depending on if the market has the conditions specified. If the market doesn't have any of the conditions, then no modification will happen.
+flat_1_demand_domain_artifacts,boggledDomainTechContentEnabled | boggledDomainArchaeologyEnabled,FlatCommodityDemand,domain_artifacts,1
+flat_4_demand_domain_artifacts,boggledDomainTechContentEnabled | boggledDomainArchaeologyEnabled,FlatCommodityDemand,domain_artifacts,4
+market_size_minus_2_demand_domain_artifacts,boggledDomainTechContentEnabled | boggledDomainArchaeologyEnabled,MarketSizeDemand,domain_artifacts,-2
+market_size_minus_2_supply_domain_artifacts,boggledDomainTechContentEnabled | boggledDomainArchaeologyEnabled,MarketSizeSupply,domain_artifacts,-2
+market_size_demand_domain_artifacts,boggledDomainTechContentEnabled | boggledDomainArchaeologyEnabled,MarketSizeDemand,domain_artifacts,0
+
+player_market_size_else_flat_demand_domain_artifacts,boggledDomainTechContentEnabled | boggledDomainArchaeologyEnabled,PlayerMarketSizeElseFlatDemand,domain_artifacts,4
+
+ruins_modify_domain_artifacts,boggledDomainTechContentEnabled | boggledDomainArchaeologyEnabled,ConditionModifySupply,domain_artifacts,boggledRuinsMod | ruins_scattered ; -1 | ruins_widespred ; 0 | ruins_extensive ; 1 | ruins_vast ; 2
+
+market_size_demand_fuel,,MarketSizeDemand,fuel,0
+market_size_demand_supplies,,MarketSizeDemand,supplies,0
+market_size_demand_ships,,MarketSizeDemand,ships,0
+market_size_demand_heavy_machinery,,MarketSizeDemand,heavy_machinery,0
+
+market_size_minus_2_demand_heavy_machinery,,MarketSizeDemand,heavy_machinery,-2
+flat_demand_6_heavy_machinery,,FlatDemand,heavy_machinery,6
+
+market_size_supply_food,,MarketSizeSupply,food,0
+market_size_minus_2_supply_organs,,MarketSizeSupply,organs,-2
+
+flat_demand_7_domain_artifacts,,FlatDemand,domain_artifacts,7
+flat_demand_11_metals,,FlatDemand,metals,11
+flat_demand_9_rare_metals,,FlatDemand,rare_metals,9
+flat_demand_7_heavy_machinery,,FlatDemand,heavy_machinery,7
+
+flat_demand_7_supplies,,MarketSizeDemand,supplies,7

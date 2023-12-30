@@ -3,7 +3,6 @@ package data.campaign.econ.industries;
 import java.lang.String;
 
 import com.fs.starfarer.api.campaign.econ.*;
-import com.fs.starfarer.api.util.Misc;
 import com.fs.starfarer.api.impl.campaign.econ.impl.BaseIndustry;
 import com.fs.starfarer.api.impl.campaign.ids.Conditions;
 import data.campaign.econ.boggledTools;
@@ -86,33 +85,9 @@ public class Boggled_Domain_Archaeology extends BaseIndustry {
     }
 
     @Override
-    public void apply()
-    {
+    public void apply() {
         super.apply(true);
-
-        MarketAPI market = this.market;
-        int size = market.getSize();
-
-        supply(boggledTools.BoggledCommodities.domainArtifacts, (size - 2));
-
-        // Modify production based on ruins.
-        // This is usually done by the condition itself, but it's done here for this industry because vanilla ruins don't impact production.
-        if(market.hasCondition(Conditions.RUINS_SCATTERED))
-        {
-            this.supply("boggledRuinsMod", boggledTools.BoggledCommodities.domainArtifacts, -1, Misc.ucFirst("Scattered ruins"));
-        }
-        else if(market.hasCondition(Conditions.RUINS_WIDESPREAD))
-        {
-            //Do nothing - no impact on production
-        }
-        else if(market.hasCondition(Conditions.RUINS_EXTENSIVE))
-        {
-            this.supply("boggledRuinsMod", boggledTools.BoggledCommodities.domainArtifacts, 1, Misc.ucFirst("Extensive ruins"));
-        }
-        else if(market.hasCondition(Conditions.RUINS_VAST))
-        {
-            this.supply("boggledRuinsMod", boggledTools.BoggledCommodities.domainArtifacts, 2, Misc.ucFirst("Vast ruins"));
-        }
+        thisIndustry.apply(this);
 
         if (!this.isFunctional())
         {

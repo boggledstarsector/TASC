@@ -91,8 +91,7 @@ public class Boggled_Magnetoshield extends BaseIndustry {
     }
 
     @Override
-    public void apply()
-    {
+    public void apply() {
         super.apply(true);
 
         if(isFunctional())
@@ -105,8 +104,7 @@ public class Boggled_Magnetoshield extends BaseIndustry {
     }
 
     @Override
-    public void unapply()
-    {
+    public void unapply() {
         for (String cid : SUPPRESSED_CONDITIONS)
         {
             market.unsuppressCondition(cid);

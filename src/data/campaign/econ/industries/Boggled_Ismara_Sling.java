@@ -181,9 +181,9 @@ public class Boggled_Ismara_Sling extends BaseIndustry {
     }
 
     @Override
-    public void apply()
-    {
+    public void apply() {
         super.apply(true);
+        thisIndustry.apply(this);
 
         this.demand(Commodities.HEAVY_MACHINERY, 6);
 

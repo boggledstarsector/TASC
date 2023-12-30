@@ -92,14 +92,15 @@ public class Boggled_Cloning extends BaseIndustry implements MarketImmigrationMo
     public void apply()
     {
         super.apply(true);
+        thisIndustry.apply(this);
 
-        int size = this.market.getSize();
+//        int size = this.market.getSize();
 
-        if(boggledTools.getBooleanSetting(boggledTools.BoggledSettings.domainTechContentEnabled) && boggledTools.getBooleanSetting(boggledTools.BoggledSettings.domainArchaeologyEnabled))
-        {
-            this.demand(boggledTools.BoggledCommodities.domainArtifacts, size - 2);
-        }
-        this.supply(Commodities.ORGANS, size - 2);
+//        if(boggledTools.getBooleanSetting(boggledTools.BoggledSettings.domainTechContentEnabled) && boggledTools.getBooleanSetting(boggledTools.BoggledSettings.domainArchaeologyEnabled))
+//        {
+//            this.demand(boggledTools.BoggledCommodities.domainArtifacts, size - 2);
+//        }
+//        this.supply(Commodities.ORGANS, size - 2);
 
         if(boggledTools.getBooleanSetting(boggledTools.BoggledSettings.domainTechContentEnabled) && boggledTools.getBooleanSetting(boggledTools.BoggledSettings.domainArchaeologyEnabled))
         {

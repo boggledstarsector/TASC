@@ -153,19 +153,11 @@ public class Boggled_Perihelion_Project extends BaseIndustry {
     }
 
     @Override
-    public void apply()
-    {
+    public void apply() {
         super.apply(false);
         super.applyIncomeAndUpkeep(3);
 
-        if(boggledTools.getBooleanSetting(boggledTools.BoggledSettings.domainTechContentEnabled) && boggledTools.getBooleanSetting(boggledTools.BoggledSettings.domainArchaeologyEnabled))
-        {
-            this.demand(boggledTools.BoggledCommodities.domainArtifacts, 7);
-        }
-
-        this.demand(Commodities.METALS, 11);
-        this.demand(Commodities.RARE_METALS, 9);
-        this.demand(Commodities.HEAVY_MACHINERY, 7);
+        thisIndustry.apply(this);
     }
 
     @Override

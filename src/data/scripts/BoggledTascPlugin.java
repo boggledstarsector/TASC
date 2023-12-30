@@ -274,7 +274,7 @@ public class BoggledTascPlugin extends BaseModPlugin
             JSONArray planetTypes = settings.getMergedSpreadsheetDataForMod("id", "data/campaign/terraforming/planet_types.csv", boggledTools.BoggledMods.tascModId);
             JSONArray resourceProgressions = settings.getMergedSpreadsheetDataForMod("id", "data/campaign/terraforming/resource_progression.csv", boggledTools.BoggledMods.tascModId);
             JSONArray resourceLimits = settings.getMergedSpreadsheetDataForMod("id", "data/campaign/terraforming/planet_max_resource.csv", boggledTools.BoggledMods.tascModId);
-            JSONArray commodityDemands = settings.getMergedSpreadsheetDataForMod("id", "data/campaign/terraforming/commodity_demands.csv", boggledTools.BoggledMods.tascModId);
+            JSONArray commodityDemands = settings.getMergedSpreadsheetDataForMod("id", "data/campaign/terraforming/commodity_supply_demand.csv", boggledTools.BoggledMods.tascModId);
 
             // Terraforming requirement, requirements, and project duration modifiers next
             JSONArray terraformingRequirement = settings.getMergedSpreadsheetDataForMod("id", "data/campaign/terraforming/terraforming_requirement.csv", boggledTools.BoggledMods.tascModId);

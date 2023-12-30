@@ -86,9 +86,9 @@ public class Boggled_Ouyang_Optimizer extends BaseIndustry
     public boolean canBeDisrupted() { return true; }
 
     @Override
-    public void apply()
-    {
+    public void apply() {
         super.apply(true);
+        thisIndustry.apply(this);
     }
 
     @Override
