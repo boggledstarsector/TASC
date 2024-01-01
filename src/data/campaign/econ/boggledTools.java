@@ -4,11 +4,10 @@ import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.*;
 import com.fs.starfarer.api.campaign.ai.CampaignFleetAIAPI;
 import com.fs.starfarer.api.campaign.comm.CommMessageAPI;
-import com.fs.starfarer.api.campaign.econ.Industry;
-import com.fs.starfarer.api.campaign.econ.MarketAPI;
-import com.fs.starfarer.api.campaign.econ.MarketConditionAPI;
+import com.fs.starfarer.api.campaign.econ.*;
 import com.fs.starfarer.api.campaign.listeners.ListenerUtil;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
+import com.fs.starfarer.api.characters.MarketConditionSpecAPI;
 import com.fs.starfarer.api.impl.campaign.MilitaryResponseScript;
 import com.fs.starfarer.api.impl.campaign.ids.*;
 import com.fs.starfarer.api.impl.campaign.intel.BaseIntelPlugin;
@@ -18,6 +17,7 @@ import com.fs.starfarer.api.impl.campaign.rulecmd.salvage.MarketCMD;
 import com.fs.starfarer.api.impl.campaign.submarkets.StoragePlugin;
 import com.fs.starfarer.api.impl.campaign.terrain.AsteroidBeltTerrainPlugin;
 import com.fs.starfarer.api.impl.campaign.terrain.AsteroidFieldTerrainPlugin;
+import com.fs.starfarer.api.loading.IndustrySpecAPI;
 import com.fs.starfarer.api.util.Misc;
 import com.fs.starfarer.api.util.Pair;
 import com.fs.starfarer.campaign.CircularFleetOrbit;
@@ -48,8 +48,79 @@ import java.util.ArrayList;
 
 import static java.util.Arrays.asList;
 
-public class boggledTools
-{
+public class boggledTools {
+    public static void CheckSubmarketExists(String submarketId) {
+        for (SubmarketSpecAPI submarketSpec : Global.getSettings().getAllSubmarketSpecs()) {
+            if (submarketSpec.getId().equals(submarketId)) {
+                return;
+            }
+        }
+        throw new IllegalArgumentException("Market condition ID '" + submarketId + "' doesn't exist");
+    }
+
+    public static void CheckMarketConditionExists(String conditionId) {
+        for (MarketConditionSpecAPI marketConditionSpec : Global.getSettings().getAllMarketConditionSpecs()) {
+            if (marketConditionSpec.getId().equals(conditionId)) {
+                return;
+            }
+        }
+        throw new IllegalArgumentException("Condition ID '" + conditionId + "' doesn't exist");
+    }
+
+    public static void CheckCommodityExists(String commodityId) {
+        for (CommoditySpecAPI commoditySpec : Global.getSettings().getAllCommoditySpecs()) {
+            if (commoditySpec.getId().equals(commodityId)) {
+                return;
+            }
+        }
+        throw new IllegalArgumentException("Commodity ID '" + commodityId + "' doesn't exist");
+    }
+
+    public static void CheckResourceExists(String resourceId) {
+        for (Map.Entry<String, ArrayList<String>> resourceProgression : getResourceProgressions().entrySet()) {
+            if (resourceProgression.getKey().equals(resourceId)) {
+                return;
+            }
+        }
+        throw new IllegalArgumentException("Resource ID '" + resourceId + "' doesn't exist");
+    }
+
+    public static void CheckPlanetTypeExists(String planetType) {
+        for (PlanetSpecAPI planetSpec : Global.getSettings().getAllPlanetSpecs()) {
+            if (planetSpec.getPlanetType().equals(planetType)) {
+                return;
+            }
+        }
+        throw new IllegalArgumentException("Planet type '" + planetType + "' doesn't exist");
+    }
+
+    public static void CheckIndustryExists(String industryId) {
+        for (IndustrySpecAPI industrySpec : Global.getSettings().getAllIndustrySpecs()) {
+            if (industrySpec.getId().equals(industryId)) {
+                return;
+            }
+        }
+        throw new IllegalArgumentException("Industry ID '" + industryId + "' doesn't exist");
+    }
+
+    public static void CheckItemExists(String itemId) {
+        for (SpecialItemSpecAPI specialItemSpec : Global.getSettings().getAllSpecialItemSpecs()) {
+            if (specialItemSpec.getId().equals(itemId)) {
+                return;
+            }
+        }
+        throw new IllegalArgumentException("Item ID '" + itemId + "' doesn't exist");
+    }
+
+    public static void CheckSkillExists(String skillId) {
+        for (String skillSpecId : Global.getSettings().getSkillIds()) {
+            if (skillSpecId.equals(skillId)) {
+                return;
+            }
+        }
+        throw new IllegalArgumentException("Skill ID '" + skillId + "' doesn't exist");
+    }
+
     public static class BoggledMods {
         public static final String lunalibModId = "lunalib";
         public static final String illustratedEntitiesModId = "illustrated_entities";
@@ -523,9 +594,9 @@ public class boggledTools
         addTerraformingProjectEffectFactory("SystemAddCoronalTap", new BoggledTerraformingProjectEffectFactory.SystemAddCoronalTap());
         addTerraformingProjectEffectFactory("MarketAddStellarReflectors", new BoggledTerraformingProjectEffectFactory.MarketAddStellarReflectorsFactory());
 
-        addTerraformingProjectEffectFactory("RemoveItemFromMarketStorage", new BoggledTerraformingProjectEffectFactory.RemoveItemFromMarketStorageFactory());
+        addTerraformingProjectEffectFactory("RemoveCommodityFromSubmarket", new BoggledTerraformingProjectEffectFactory.RemoveCommodityFromSubmarketFactory());
         addTerraformingProjectEffectFactory("RemoveStoryPointsFromPlayer", new BoggledTerraformingProjectEffectFactory.RemoveStoryPointsFromPlayerFactory());
-        addTerraformingProjectEffectFactory("AddItemToMarketStorage", new BoggledTerraformingProjectEffectFactory.AddItemToMarketStorageFactory());
+        addTerraformingProjectEffectFactory("AddItemToSubmarket", new BoggledTerraformingProjectEffectFactory.AddItemToSubmarketFactory());
     }
 
     public static void addTerraformingProjectEffectFactory(String key, BoggledTerraformingProjectEffectFactory.TerraformingProjectEffectFactory value) {
@@ -674,7 +745,6 @@ public class boggledTools
                 Pair<String, String> key = new Pair<>(id[0], id[1]);
 
                 resourceLimits.put(key, resourceMax);
-
             } catch (JSONException e) {
                 log.error("Error in resource limits: " + e);
             }
@@ -1437,20 +1507,10 @@ public class boggledTools
             return planetTypesMap.get(unknownPlanetId); // Guaranteed to be there
         }
 
-//        if (planet.getMarket() != null) {
-//            MarketAPI market = planet.getMarket();
-//            for (String condition : planetConditionsMap.keySet()) {
-//                if (market.hasCondition(condition)) {
-//                    return planetConditionsMap.get(condition);
-//                }
-//            }
-//        }
-
         PlanetType planetType = planetTypesMap.get(planet.getTypeId());
         if (planetType != null) {
             return planetType;
         }
-//        Global.getLogger(boggledTools.class).info("Planet " + planet.getName() + " typeID " + planet.getTypeId() + " has unknown planet type");
         return planetTypesMap.get(unknownPlanetId); // Guaranteed to be there
     }
 

@@ -290,6 +290,9 @@ public class BoggledTascPlugin extends BaseModPlugin
             JSONArray terraformingRequirementsOverrides = settings.getMergedSpreadsheetDataForMod("id", "data/campaign/terraforming/terraforming_requirements_mods.csv", boggledTools.BoggledMods.tascModId);
             JSONArray terraformingProjectsOverrides = settings.getMergedSpreadsheetDataForMod("id", "data/campaign/terraforming/terraforming_projects_mods.csv", boggledTools.BoggledMods.tascModId);
 
+            boggledTools.initialiseResourceProgressionsFromJSON(resourceProgressions);
+            boggledTools.initialiseResourceLimitsFromJSON(resourceLimits);
+
             boggledTools.initialiseTerraformingRequirementFromJSON(terraformingRequirement);
             boggledTools.initialiseTerraformingRequirementsFromJSON(terraformingRequirements);
             boggledTools.initialiseTerraformingDurationModifiersFromJSON(terraformingDurationModifiers);
@@ -303,8 +306,6 @@ public class BoggledTascPlugin extends BaseModPlugin
             boggledTools.initialiseTerraformingProjectOverrides(terraformingProjectsOverrides);
 
             boggledTools.initialisePlanetTypesFromJSON(planetTypes);
-            boggledTools.initialiseResourceProgressionsFromJSON(resourceProgressions);
-            boggledTools.initialiseResourceLimitsFromJSON(resourceLimits);
 
         } catch (IOException | JSONException ex) {
             log.error(ex);

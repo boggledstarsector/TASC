@@ -82,7 +82,7 @@ market_not_has_mild_climate,MarketHasCondition,true,"mild_climate"
 market_has_low_gravity,MarketHasCondition,false,"low_gravity"
 market_has_high_gravity,MarketHasCondition,false,"high_gravity"
 
-market_decivilized,MarketHasCondition,false,"decivilized_population"
+market_decivilized,MarketHasCondition,false,"decivilized"
 market_decivilized_subpop,MarketHasCondition,false,"decivilized_subpop"
 market_rogue_ai_core,MarketHasCondition,false,"rogue_ai_core"
 

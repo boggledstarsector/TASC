@@ -258,11 +258,11 @@ public class BoggledTerraformingProjectEffect {
         }
     }
 
-    public static class RemoveItemFromMarketStorage extends TerraformingProjectEffect {
+    public static class RemoveItemFromSubmarket extends TerraformingProjectEffect {
         String submarketId;
         String itemId;
         int quantity;
-        public RemoveItemFromMarketStorage(String submarketId, String itemId, int quantity) {
+        public RemoveItemFromSubmarket(String submarketId, String itemId, int quantity) {
             this.submarketId = submarketId;
             this.itemId = itemId;
             this.quantity = quantity;

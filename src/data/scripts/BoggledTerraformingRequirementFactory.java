@@ -13,6 +13,7 @@ public class BoggledTerraformingRequirementFactory {
     public static class PlanetType implements TerraformingRequirementFactory {
         @Override
         public BoggledTerraformingRequirement.TerraformingRequirement constructFromJSON(String requirementId, boolean invert, String data) {
+//            boggledTools.CheckPlanetTypeExists(data);
             return new BoggledTerraformingRequirement.PlanetType(requirementId, invert, data);
         }
     }
@@ -20,6 +21,7 @@ public class BoggledTerraformingRequirementFactory {
     public static class FocusPlanetType implements TerraformingRequirementFactory {
         @Override
         public BoggledTerraformingRequirement.TerraformingRequirement constructFromJSON(String requirementId, boolean invert, String data) {
+            boggledTools.CheckPlanetTypeExists(data);
             return new BoggledTerraformingRequirement.FocusPlanetType(requirementId, invert, data);
         }
     }
@@ -27,6 +29,7 @@ public class BoggledTerraformingRequirementFactory {
     public static class MarketHasCondition implements TerraformingRequirementFactory {
         @Override
         public BoggledTerraformingRequirement.TerraformingRequirement constructFromJSON(String requirementId, boolean invert, String data) {
+            boggledTools.CheckMarketConditionExists(data);
             return new BoggledTerraformingRequirement.MarketHasCondition(requirementId, invert, data);
         }
     }
@@ -34,6 +37,7 @@ public class BoggledTerraformingRequirementFactory {
     public static class FocusMarketHasCondition implements TerraformingRequirementFactory {
         @Override
         public BoggledTerraformingRequirement.TerraformingRequirement constructFromJSON(String requirementId, boolean invert, String data) {
+            boggledTools.CheckMarketConditionExists(data);
             return new BoggledTerraformingRequirement.FocusMarketHasCondition(requirementId, invert, data);
         }
     }
@@ -41,6 +45,7 @@ public class BoggledTerraformingRequirementFactory {
     public static class MarketHasIndustry implements TerraformingRequirementFactory {
         @Override
         public BoggledTerraformingRequirement.TerraformingRequirement constructFromJSON(String requirementId, boolean invert, String data) {
+            boggledTools.CheckIndustryExists(data);
             return new BoggledTerraformingRequirement.MarketHasIndustry(requirementId, invert, data);
         }
     }
@@ -50,6 +55,8 @@ public class BoggledTerraformingRequirementFactory {
         public BoggledTerraformingRequirement.TerraformingRequirement constructFromJSON(String requirementId, boolean invert, String data) {
             String[] industryAndItem = data.split(boggledTools.csvSubOptionSeparator);
             assert(industryAndItem.length == 2);
+            boggledTools.CheckIndustryExists(industryAndItem[0]);
+            boggledTools.CheckItemExists(industryAndItem[1]);
             return new BoggledTerraformingRequirement.MarketHasIndustryWithItem(requirementId, invert, industryAndItem[0], industryAndItem[1]);
         }
     }
@@ -99,9 +106,13 @@ public class BoggledTerraformingRequirementFactory {
             String[] submarketIdAndcargoIdAndQuantityStrings = data.split(boggledTools.csvSubOptionSeparator);
             assert(submarketIdAndcargoIdAndQuantityStrings.length == 3);
             String submarketId = submarketIdAndcargoIdAndQuantityStrings[0];
-            String cargoId = submarketIdAndcargoIdAndQuantityStrings[1];
+            String commodityId = submarketIdAndcargoIdAndQuantityStrings[1];
             int quantity = Integer.parseInt(submarketIdAndcargoIdAndQuantityStrings[2]);
-            return new BoggledTerraformingRequirement.MarketStorageContainsAtLeast(requirementId, invert, submarketId, cargoId, quantity);
+
+            boggledTools.CheckSubmarketExists(submarketId);
+            boggledTools.CheckCommodityExists(commodityId);
+
+            return new BoggledTerraformingRequirement.MarketStorageContainsAtLeast(requirementId, invert, submarketId, commodityId, quantity);
         }
     }
 
@@ -116,6 +127,7 @@ public class BoggledTerraformingRequirementFactory {
     public static class WorldTypeSupportsResourceImprovement implements TerraformingRequirementFactory {
         @Override
         public BoggledTerraformingRequirement.TerraformingRequirement constructFromJSON(String requirementId, boolean invert, String data) {
+            boggledTools.CheckResourceExists(data);
             return new BoggledTerraformingRequirement.WorldTypeSupportsResourceImprovement(requirementId, invert, data);
         }
     }
@@ -139,6 +151,7 @@ public class BoggledTerraformingRequirementFactory {
     public static class PlayerHasSkill implements TerraformingRequirementFactory {
         @Override
         public BoggledTerraformingRequirement.TerraformingRequirement constructFromJSON(String requirementId, boolean invert, String data) {
+            boggledTools.CheckSkillExists(data);
             return new BoggledTerraformingRequirement.PlayerHasSkill(requirementId, invert, data);
         }
     }
