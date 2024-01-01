@@ -6,10 +6,13 @@ import com.fs.starfarer.api.campaign.SpecialItemData;
 import com.fs.starfarer.api.campaign.StarSystemAPI;
 import com.fs.starfarer.api.campaign.econ.Industry;
 import com.fs.starfarer.api.campaign.econ.MarketAPI;
+import com.fs.starfarer.api.campaign.econ.SubmarketSpecAPI;
+import com.fs.starfarer.api.util.Misc;
 import com.fs.starfarer.api.util.Pair;
 import data.campaign.econ.boggledTools;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 
 public class BoggledTerraformingRequirement {
     public abstract static class TerraformingRequirement {
@@ -22,6 +25,8 @@ public class BoggledTerraformingRequirement {
             this.requirementId = requirementId;
             this.invert = invert;
         }
+
+        public void addTokenReplacements(LinkedHashMap<String, String> tokenReplacements) {};
 
         protected abstract boolean checkRequirementImpl(MarketAPI market);
 
@@ -97,6 +102,11 @@ public class BoggledTerraformingRequirement {
         }
 
         @Override
+        public void addTokenReplacements(LinkedHashMap<String, String> tokenReplacements) {
+            tokenReplacements.put("$industry", Global.getSettings().getIndustrySpec(industryId).getName());
+        }
+
+        @Override
         protected boolean checkRequirementImpl(MarketAPI market) {
             Industry industry = market.getIndustry(industryId);
             return industry != null && industry.isFunctional() && market.hasIndustry(industryId);
@@ -108,6 +118,12 @@ public class BoggledTerraformingRequirement {
         public MarketHasIndustryWithItem(String requirementId, boolean invert, String industryId, String itemId) {
             super(requirementId, invert, industryId);
             this.itemId = itemId;
+        }
+
+        @Override
+        public void addTokenReplacements(LinkedHashMap<String, String> tokenReplacements) {
+            super.addTokenReplacements(tokenReplacements);
+            tokenReplacements.put("$item", Global.getSettings().getSpecialItemSpec(itemId).getName());
         }
 
         @Override
@@ -190,18 +206,33 @@ public class BoggledTerraformingRequirement {
         }
     }
 
-    public static class FleetCargoContainsAtLeast extends TerraformingRequirement {
+    public static class MarketStorageContainsAtLeast extends TerraformingRequirement {
+        String submarketId;
         String cargoId;
         int quantity;
-        public FleetCargoContainsAtLeast(String requirementId, boolean invert, String cargoId, int quantity) {
+        public MarketStorageContainsAtLeast(String requirementId, boolean invert, String submarketId, String cargoId, int quantity) {
             super(requirementId, invert);
+            this.submarketId = submarketId;
             this.cargoId = cargoId;
             this.quantity = quantity;
         }
 
         @Override
+        public void addTokenReplacements(LinkedHashMap<String, String> tokenReplacements) {
+            for (SubmarketSpecAPI submarketSpec : Global.getSettings().getAllSubmarketSpecs()) {
+                if (!submarketSpec.getId().equals(submarketId)) {
+                    continue;
+                }
+                tokenReplacements.put("$submarket", Misc.lcFirst(submarketSpec.getName()));
+                break;
+            }
+            tokenReplacements.put("$cargoName", Global.getSettings().getCommoditySpec(cargoId).getLowerCaseName());
+            tokenReplacements.put("$cargoQuantity", Integer.toString(quantity));
+        }
+
+        @Override
         protected boolean checkRequirementImpl(MarketAPI market) {
-            return Global.getSector().getPlayerFleet().getCargo().getCommodityQuantity(cargoId) >= quantity;
+            return market.getSubmarket(submarketId).getCargo().getCommodityQuantity(cargoId) >= quantity;
         }
     }
 
@@ -210,6 +241,11 @@ public class BoggledTerraformingRequirement {
         public PlayerHasStoryPointsAtLeast(String requirementId, boolean invert, int quantity) {
             super(requirementId, invert);
             this.quantity = quantity;
+        }
+
+        @Override
+        public void addTokenReplacements(LinkedHashMap<String, String> tokenReplacements) {
+            tokenReplacements.put("$storyPointsQuantity", Integer.toString(quantity));
         }
 
         @Override

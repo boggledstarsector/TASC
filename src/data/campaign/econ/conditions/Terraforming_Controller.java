@@ -85,13 +85,24 @@ public class Terraforming_Controller extends BaseHazardCondition
 
     public void setProject(String project)
     {
+        String projectToCheck;
+        if (currentProject == null) {
+            projectToCheck = project;
+        } else if (currentProject.equals(boggledTools.noneProjectId)) {
+            projectToCheck = project;
+        } else {
+            projectToCheck = currentProject;
+        }
+
         daysCompleted = 0;
         lastDayChecked = Global.getSector().getClock().getDay();
         currentProject = project;
 
         if(market.isPlayerOwned() || market.getFaction().isPlayerFaction())
         {
-            MessageIntel intel = new MessageIntel("Terraforming of " + market.getName(), Misc.getBasePlayerColor());
+            BoggledTerraformingProject p = boggledTools.getProject(projectToCheck);
+            String projectTooltip = p.getProjectTooltip(boggledTools.getTokenReplacements(market));
+            MessageIntel intel = new MessageIntel(projectTooltip + " on " + market.getName(), Misc.getBasePlayerColor());
             if(project.equals(boggledTools.noneProjectId))
             {
                 intel.addLine("    - Canceled");
@@ -177,15 +188,6 @@ public class Terraforming_Controller extends BaseHazardCondition
                         currentProject = null;
                         daysCompleted = 0;
                         lastDayChecked = 0;
-
-                        if (market.isPlayerOwned() || market.getFaction().isPlayerFaction())
-                        {
-                            MessageIntel intel = new MessageIntel("Terraforming on " + market.getName(), Misc.getBasePlayerColor());
-                            intel.addLine("    - Completed");
-                            intel.setIcon(Global.getSector().getPlayerFaction().getCrest());
-                            intel.setSound(BaseIntelPlugin.getSoundStandardUpdate());
-                            Global.getSector().getCampaignUI().addMessage(intel, CommMessageAPI.MessageClickAction.COLONY_INFO, market);
-                        }
                     }
                 }
                 else

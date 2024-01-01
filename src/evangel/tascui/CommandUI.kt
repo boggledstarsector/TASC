@@ -95,10 +95,11 @@ class ProjectRequirementsTooltip(width : Float) : TooltipCreator {
 
         tooltip.addSpacer(5f);
 
+        val tokenReplacements = boggledTools.getTokenReplacements(market!!)
         for (projectRequirement in terraformingProject!!.projectRequirements) {
-            val requirementMet = projectRequirement.checkRequirement(market!!);
+            val requirementMet = projectRequirement.checkRequirement(market!!)
             val color = if (requirementMet) Misc.getPositiveHighlightColor() else Misc.getNegativeHighlightColor()
-            tooltip.addPara(projectRequirement.tooltip, color, 0f)
+            tooltip.addPara(projectRequirement.getTooltip(tokenReplacements), color, 0f)
         }
 
         tooltip.addSpacer(5f);
@@ -181,6 +182,8 @@ class CommandUIIntelK : LunaBaseCustomPanelPlugin() {
     private var activeCancelProjectButton : ButtonAPI? = null
     private var inactiveCancelProjectButton : ButtonAPI? = null
 
+    private var selectionButtonsPanel : CustomPanelAPI? = null
+
     private var selectedProject : ButtonAPI? = null
     private var selectedPlanet : CommandUIButtonData? = null
 
@@ -220,10 +223,6 @@ class CommandUIIntelK : LunaBaseCustomPanelPlugin() {
 
         private const val PLANET_CARD_HOLDER_MAGIC_X_PAD = 3f
         private const val PLANET_TYPE_LABEL_MAGIC_X_PAD = 4f
-
-//        private fun getTerraformingOptionPair(projectName : String) : Pair<String, String> {
-//            return Pair(projectName, boggledTools.getTooltipProjectName(projectName))
-//        }
 
         private const val BUTTON_OFF_SCREEN_POSITION = 100000f
 
@@ -281,7 +280,7 @@ class CommandUIIntelK : LunaBaseCustomPanelPlugin() {
         }
     }
 
-    private fun createTerraformingSelectionButtons(baseElement : TooltipMakerAPI, width : Float, height : Float, yPad : Float) {
+    private fun createTerraformingSelectionButtons(baseElement : TooltipMakerAPI, width : Float, height : Float, yPad : Float) : Float {
         val faction = Global.getSector().playerFaction
 
         val buttonsHolder = LunaElement(baseElement, width, height)
@@ -291,7 +290,16 @@ class CommandUIIntelK : LunaBaseCustomPanelPlugin() {
 
 //        buttonsHolder.innerElement.addAreaCheckbox(null, null, Global.getSector().playerFaction.baseUIColor, Color(122,122,122,255), Global.getSector().playerFaction.brightUIColor, width, height, 0f).position.inTL(0f, 0f)
 
-        for (i in 0 until boggledTools.getNumTerraformingProjects()) {
+        val projectCounts = boggledTools.getNumProjects()
+        var projectCount = 0
+        if (projectCounts["terraforming"] != null) {
+            projectCount += projectCounts["terraforming"]!!
+        }
+        if (projectCounts["crafting"] != null) {
+            projectCount += projectCounts["crafting"]!!
+        }
+
+        for (i in 0 until projectCount) {
             val projectRequirementsTooltip = ProjectRequirementsTooltip(width)
 
             val validButton = buttonsHolder.innerElement.addButton("", projectRequirementsTooltip, faction.baseUIColor, faction.darkUIColor, Alignment.LMID, CutStyle.ALL, width, HEADER_HEIGHT, 0f)
@@ -306,6 +314,8 @@ class CommandUIIntelK : LunaBaseCustomPanelPlugin() {
             requirementsMetButtons.add(validButton)
             requirementsNotMetButtons.add(invalidButton)
         }
+
+        return (projectCount - 1) * (HEADER_HEIGHT + SORT_SPACING) + SORT_SPACING
     }
 
     private fun createTerraformingSelection(basePanel : CustomPanelAPI, width : Float, height : Float, xPad : Float, yPad : Float) {
@@ -323,7 +333,17 @@ class CommandUIIntelK : LunaBaseCustomPanelPlugin() {
         val buttonsWidth = width * 0.5f - SORT_SPACING;
         val buttonsHeight = height - verticalSpacing - HEADER_HEIGHT
 
-        createTerraformingSelectionButtons(terraformingElement, buttonsWidth, buttonsHeight, verticalSpacing)
+        selectionButtonsPanel = terraformingPanel.createCustomPanel(buttonsWidth, buttonsHeight, null)
+        selectionButtonsPanel!!.position.inTL(BUTTON_OFF_SCREEN_POSITION, BUTTON_OFF_SCREEN_POSITION)
+
+        val selectionButtonsElement = selectionButtonsPanel!!.createUIElement(buttonsWidth, buttonsHeight, true)
+        selectionButtonsElement.position.inTL(0f, 0f)
+
+        val selectionButtonsRequiredHeight = createTerraformingSelectionButtons(selectionButtonsElement, buttonsWidth - 5f, buttonsHeight, 0f)
+
+        selectionButtonsElement.heightSoFar = selectionButtonsRequiredHeight
+        selectionButtonsPanel!!.addUIElement(selectionButtonsElement)
+        terraformingElement.addComponent(selectionButtonsPanel)
 
         val startCancelProjectButtonsWidth = width - SORT_SPACING
         val startCancelProjectButtonsHeight = HEADER_HEIGHT
@@ -361,50 +381,69 @@ class CommandUIIntelK : LunaBaseCustomPanelPlugin() {
     }
 
     private fun updateTerraformingSelection() {
-        if (terraformingPanelData != null && selectedPlanet != null) {
-            terraformingPanelData!!.planetNameLabel.text = selectedPlanet!!.market.name
-
-            selectedProject?.unhighlight()
-            selectedProject = null
-
-            for (button in requirementsMetButtons) {
-                button.position!!.inTL(BUTTON_OFF_SCREEN_POSITION, BUTTON_OFF_SCREEN_POSITION)
-            }
-            for (button in requirementsNotMetButtons) {
-                button.position!!.inTL(BUTTON_OFF_SCREEN_POSITION, BUTTON_OFF_SCREEN_POSITION)
-            }
-
-            startProjectButton!!.position.inTL(BUTTON_OFF_SCREEN_POSITION, BUTTON_OFF_SCREEN_POSITION)
-            requirementsNotMetButton!!.position.inTL(BUTTON_OFF_SCREEN_POSITION, BUTTON_OFF_SCREEN_POSITION)
-
-            val validTerraformingOptions : ArrayList<BoggledTerraformingProject> = ArrayList()
-            val invalidTerraformingOptions : ArrayList<BoggledTerraformingProject> = ArrayList()
-            for (terraformingProject in boggledTools.getVisibleTerraformingProjects(selectedPlanet!!.market)) {
-                if (terraformingProject.value.requirementsMet(selectedPlanet!!.market)) {
-                    validTerraformingOptions.add(terraformingProject.value)
-                } else {
-                    invalidTerraformingOptions.add(terraformingProject.value)
-                }
-            }
-
-            var buttonVerticalSpacing = 0f
-            val positionButtons = fun(terraformingOptions : ArrayList<BoggledTerraformingProject>, buttons : ArrayList<ButtonAPI>, buttonsStart : Int) : Int {
-                for (i in 0 until terraformingOptions.size) {
-                    val button = buttons[i + buttonsStart]
-
-                    val projectRequirementsTooltip = button.customData as ProjectRequirementsTooltip
-                    button.text = terraformingOptions[i].projectTooltip
-                    button.position.inTL(0f, buttonVerticalSpacing)
-                    projectRequirementsTooltip.market = selectedPlanet?.market
-                    projectRequirementsTooltip.setProject(terraformingOptions[i])
-
-                    buttonVerticalSpacing += HEADER_HEIGHT + SORT_SPACING
-                }
-                return terraformingOptions.size
-            }
-            val validEnd = positionButtons(validTerraformingOptions, requirementsMetButtons, 0)
-            positionButtons(invalidTerraformingOptions, requirementsNotMetButtons, validEnd)
+        if (terraformingPanelData == null || selectedPlanet == null) {
+            return;
         }
+
+        terraformingPanelData!!.planetNameLabel.text = selectedPlanet!!.market.name
+
+        selectedProject?.unhighlight()
+        selectedProject = null
+
+        for (button in requirementsMetButtons) {
+            button.position!!.inTL(BUTTON_OFF_SCREEN_POSITION, BUTTON_OFF_SCREEN_POSITION)
+        }
+        for (button in requirementsNotMetButtons) {
+            button.position!!.inTL(BUTTON_OFF_SCREEN_POSITION, BUTTON_OFF_SCREEN_POSITION)
+        }
+
+        startProjectButton!!.position.inTL(BUTTON_OFF_SCREEN_POSITION, BUTTON_OFF_SCREEN_POSITION)
+        requirementsNotMetButton!!.position.inTL(BUTTON_OFF_SCREEN_POSITION, BUTTON_OFF_SCREEN_POSITION)
+
+        val sortProjects = fun(projectOptions : LinkedHashMap<String, BoggledTerraformingProject>?, validOptions : ArrayList<BoggledTerraformingProject>, invalidOptions : ArrayList<BoggledTerraformingProject>) {
+            if (projectOptions == null) {
+                return;
+            }
+            for (projectOption in projectOptions) {
+                if (projectOption.value.requirementsMet(selectedPlanet!!.market)) {
+                    validOptions.add(projectOption.value)
+                } else {
+                    invalidOptions.add(projectOption.value)
+                }
+            }
+        }
+        val visibleProjects = boggledTools.getVisibleProjects(selectedPlanet!!.market)
+
+        val validTerraformingOptions : ArrayList<BoggledTerraformingProject> = ArrayList()
+        val invalidTerraformingOptions : ArrayList<BoggledTerraformingProject> = ArrayList()
+        sortProjects(visibleProjects["terraforming"], validTerraformingOptions, invalidTerraformingOptions)
+
+        val validCraftingOptions : ArrayList<BoggledTerraformingProject> = ArrayList()
+        val invalidCraftingOptions : ArrayList<BoggledTerraformingProject> = ArrayList()
+        sortProjects(visibleProjects["crafting"], validCraftingOptions, invalidCraftingOptions)
+
+        var buttonVerticalSpacing = 0f
+        val positionButtons = fun(terraformingOptions : ArrayList<BoggledTerraformingProject>, buttons : ArrayList<ButtonAPI>, buttonsStart : Int) : Int {
+            for (i in 0 until terraformingOptions.size) {
+                val button = buttons[i + buttonsStart]
+
+                val projectRequirementsTooltip = button.customData as ProjectRequirementsTooltip
+                button.text = terraformingOptions[i].getProjectTooltip(boggledTools.getTokenReplacements(selectedPlanet!!.market))
+                button.position.inTL(0f, buttonVerticalSpacing)
+                projectRequirementsTooltip.market = selectedPlanet?.market
+                projectRequirementsTooltip.setProject(terraformingOptions[i])
+
+                buttonVerticalSpacing += HEADER_HEIGHT + SORT_SPACING
+            }
+            return terraformingOptions.size + buttonsStart
+        }
+        val validTerraformingEnd = positionButtons(validTerraformingOptions, requirementsMetButtons, 0)
+        val invalidTerraformingEnd = positionButtons(invalidTerraformingOptions, requirementsNotMetButtons, validTerraformingEnd)
+
+        buttonVerticalSpacing += SORT_SPACING
+
+        val validCraftingEnd = positionButtons(validCraftingOptions, requirementsMetButtons, invalidTerraformingEnd)
+        positionButtons(invalidCraftingOptions, requirementsNotMetButtons, validCraftingEnd)
     }
 
     private fun moveButtonsOffscreen(positionInPlacer : (x : Float, y : Float) -> PositionAPI, vararg inactiveButtons : ButtonAPI) {
@@ -435,6 +474,8 @@ class CommandUIIntelK : LunaBaseCustomPanelPlugin() {
             } else {
                 moveButtonsOffscreen(activeCancelProjectButton!!.position::inTR, inactiveCancelProjectButton!!)
             }
+
+            selectionButtonsPanel!!.position.inTL(0f, HEADER_HEIGHT)
         }
     }
 
@@ -454,7 +495,7 @@ class CommandUIIntelK : LunaBaseCustomPanelPlugin() {
 
         terraformingController.project = terraformingProject.projectId
 
-        selectedPlanet?.projectLabel?.text = terraformingProject.projectTooltip
+        selectedPlanet?.projectLabel?.text = terraformingProject.getProjectTooltip(boggledTools.getTokenReplacements(selectedPlanet?.market))
         selectedPlanet?.projectTimeRemaining?.text = getTerraformingDaysRemainingComplete(terraformingController)
         selectedPlanet?.projectTimeRemaining?.setHighlight("${getTerraformingDaysRemaining(terraformingController)}")
 
@@ -594,7 +635,7 @@ class CommandUIIntelK : LunaBaseCustomPanelPlugin() {
         hazardLabel.position.inTL(0f, PLANET_CARD_HEIGHT - HEADER_HEIGHT)
 
         val terraformingController = getTerraformingControllerFromMarket(market)
-        val projectNameNicer = boggledTools.getTooltipProjectName(terraformingController.project)
+        val projectNameNicer = boggledTools.getTooltipProjectName(market, terraformingController.project)
         buttonData.projectLabel = hazardHolder.innerElement.addPara(projectNameNicer, faction.baseUIColor, 0f)
         buttonData.projectLabel!!.position.inTL(0f, SORT_SPACING)
 

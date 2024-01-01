@@ -92,4 +92,41 @@ public class BoggledTerraformingProjectEffectFactory {
             return new BoggledTerraformingProjectEffect.SystemAddCoronalTap();
         }
     }
+
+    public static class MarketAddStellarReflectorsFactory implements TerraformingProjectEffectFactory {
+        @Override
+        public BoggledTerraformingProjectEffect.TerraformingProjectEffect constructFromJSON(String data) {
+            return new BoggledTerraformingProjectEffect.MarketAddStellarReflectors();
+        }
+    }
+
+    public static class RemoveItemFromMarketStorageFactory implements TerraformingProjectEffectFactory {
+        @Override
+        public BoggledTerraformingProjectEffect.TerraformingProjectEffect constructFromJSON(String data) {
+            String[] submarketIdAnditemIdAndQuantity = data.split(boggledTools.csvSubOptionSeparator);
+            String submarketId = submarketIdAnditemIdAndQuantity[0];
+            String itemId = submarketIdAnditemIdAndQuantity[1];
+            int quantity = Integer.parseInt(submarketIdAnditemIdAndQuantity[2]);
+            return new BoggledTerraformingProjectEffect.RemoveItemFromMarketStorage(submarketId, itemId, quantity);
+        }
+    }
+
+    public static class RemoveStoryPointsFromPlayerFactory implements TerraformingProjectEffectFactory {
+        @Override
+        public BoggledTerraformingProjectEffect.TerraformingProjectEffect constructFromJSON(String data) {
+            int quantity = Integer.parseInt(data);
+            return new BoggledTerraformingProjectEffect.RemoveStoryPointsFromPlayer(quantity);
+        }
+    }
+
+    public static class AddItemToMarketStorageFactory implements TerraformingProjectEffectFactory {
+        @Override
+        public BoggledTerraformingProjectEffect.TerraformingProjectEffect constructFromJSON(String data) {
+            String[] submarketIdAnditemIdAndQuantity = data.split(boggledTools.csvSubOptionSeparator);
+            String submarketId = submarketIdAnditemIdAndQuantity[0];
+            String itemId = submarketIdAnditemIdAndQuantity[1];
+            int quantity = Integer.parseInt(submarketIdAnditemIdAndQuantity[2]);
+            return new BoggledTerraformingProjectEffect.AddItemToMarketStorage(submarketId, itemId, quantity);
+        }
+    }
 }

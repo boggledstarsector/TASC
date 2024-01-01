@@ -5,6 +5,7 @@ import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 
 public class BoggledProjectRequirementsOR {
     private final String requirementId;
@@ -37,6 +38,12 @@ public class BoggledProjectRequirementsOR {
 
     public final String getTooltip() {
         return requirementTooltip;
+    }
+
+    public final void addTokenReplacements(LinkedHashMap<String, String> tokenReplacements) {
+        for (BoggledTerraformingRequirement.TerraformingRequirement terraformingRequirement : terraformingRequirements) {
+            terraformingRequirement.addTokenReplacements(tokenReplacements);
+        }
     }
 
     public final String getRequirementId() {

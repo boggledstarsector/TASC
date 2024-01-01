@@ -93,13 +93,15 @@ public class BoggledTerraformingRequirementFactory {
         }
     }
 
-    public static class FleetCargoContainsAtLeast implements TerraformingRequirementFactory {
+    public static class MarketStorageContainsAtLeast implements TerraformingRequirementFactory {
         @Override
         public BoggledTerraformingRequirement.TerraformingRequirement constructFromJSON(String requirementId, boolean invert, String data) {
-            String[] cargoIdAndQuantityStrings = data.split(boggledTools.csvOptionSeparator);
-            assert(cargoIdAndQuantityStrings.length == 2);
-            int quantity = Integer.parseInt(cargoIdAndQuantityStrings[1]);
-            return new BoggledTerraformingRequirement.FleetCargoContainsAtLeast(requirementId, invert, cargoIdAndQuantityStrings[0], quantity);
+            String[] submarketIdAndcargoIdAndQuantityStrings = data.split(boggledTools.csvSubOptionSeparator);
+            assert(submarketIdAndcargoIdAndQuantityStrings.length == 3);
+            String submarketId = submarketIdAndcargoIdAndQuantityStrings[0];
+            String cargoId = submarketIdAndcargoIdAndQuantityStrings[1];
+            int quantity = Integer.parseInt(submarketIdAndcargoIdAndQuantityStrings[2]);
+            return new BoggledTerraformingRequirement.MarketStorageContainsAtLeast(requirementId, invert, submarketId, cargoId, quantity);
         }
     }
 

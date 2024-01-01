@@ -12,6 +12,7 @@ id,requirement_type,invert,data
 # TerraformingPossibleOnMarket requires the planet to be able to be terraformed, as specified in 'planet_types.csv'
 # FocusPlanetTypeRequirement and FocusMarketHasCondition are the same as PlanetTypeRequirement and MarketHasCondition, but check the planet the station is orbiting
 # IntegerFromTagSubstring parses an integer from the end of the specified tag. Format is "tagSubstring ; value {| Option}". Returns true when the parsed integer (plus option) is greater than the given value.
+# FleetCargoContainsAtLeast is a ; separated itemId ; quantity pair.
 planet_not_arid,PlanetType,true,"desert"
 planet_not_barren,PlanetType,true,"barren"
 planet_not_jungle,PlanetType,true,"jungle"
@@ -103,10 +104,10 @@ market_has_atmosphere_processor,MarketHasIndustry,false,"BOGGLED_ATMOSPHERE_PROC
 market_has_genelab,MarketHasIndustry,false,"BOGGLED_GENELAB"
 market_has_domed_cities,MarketHasIndustry,false,"BOGGLED_DOMED_CITIES"
 
-market_has_heavy_industry_with_corrupted_nanoforge,MarketHasIndustryWithItem,false,"heavy_industry ; corrupted_nanoforge"
-market_has_heavy_industry_with_pristine_nanoforge,MarketHasIndustryWithItem,false,"heavy_industry ; pristine_nanoforge"
-market_has_orbital_works_with_corrupted_nanoforge,MarketHasIndustryWithItem,false,"orbital_works ; corrupted_nanoforge"
-market_has_orbital_works_with_pristine_nanoforge,MarketHasIndustryWithItem,false,"orbital_works ; pristine_nanoforge"
+market_has_heavy_industry_with_corrupted_nanoforge,MarketHasIndustryWithItem,false,"heavyindustry ; corrupted_nanoforge"
+market_has_heavy_industry_with_pristine_nanoforge,MarketHasIndustryWithItem,false,"heavyindustry ; pristine_nanoforge"
+market_has_orbital_works_with_corrupted_nanoforge,MarketHasIndustryWithItem,false,"orbitalworks ; corrupted_nanoforge"
+market_has_orbital_works_with_pristine_nanoforge,MarketHasIndustryWithItem,false,"orbitalworks ; pristine_nanoforge"
 
 world_type_supports_farmland_improvement,WorldTypeSupportsResourceImprovement,false,"farmland"
 world_type_supports_organics_improvement,WorldTypeSupportsResourceImprovement,false,"organics"
@@ -132,3 +133,11 @@ system_star_blue_giant,SystemStarType,false,"star_blue_giant"
 system_star_blue_supergiant,SystemStarType,false,"star_blue_supergiant"
 
 player_has_skill_automated_ships,PlayerHasSkill,false,"automated_ships"
+
+market_storage_contains_at_least_easy_domain_artifacts,MarketStorageContainsAtLeast,false,"storage ; domain_artifacts ; 1000"
+market_storage_contains_at_least_medium_domain_artifacts,MarketStorageContainsAtLeast,false,"storage ; domain_artifacts ; 2000"
+market_storage_contains_at_least_hard_domain_artifacts,MarketStorageContainsAtLeast,false,"storage ; domain_artifacts ; 4000"
+
+player_has_at_least_2_story_points,PlayerHasStoryPointsAtLeast,false,2
+
+market_has_at_least_100k_residents,MarketIsAtLeastSize,false,5

@@ -1,11 +1,9 @@
 package data.scripts;
 
 import com.fs.starfarer.api.Global;
-import com.fs.starfarer.api.campaign.CustomEntitySpecAPI;
-import com.fs.starfarer.api.campaign.PlanetAPI;
-import com.fs.starfarer.api.campaign.SectorEntityToken;
-import com.fs.starfarer.api.campaign.StarSystemAPI;
+import com.fs.starfarer.api.campaign.*;
 import com.fs.starfarer.api.campaign.econ.MarketAPI;
+import com.fs.starfarer.api.campaign.econ.SubmarketSpecAPI;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import com.fs.starfarer.api.impl.campaign.CoronalTapParticleScript;
 import com.fs.starfarer.api.impl.campaign.ids.Entities;
@@ -19,13 +17,16 @@ import data.campaign.econ.boggledTools;
 import data.campaign.econ.industries.BoggledCommonIndustry;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 
 public class BoggledTerraformingProjectEffect {
-    public interface TerraformingProjectEffect {
-        void applyProjectEffect(MarketAPI market);
+    public abstract static class TerraformingProjectEffect {
+        abstract void applyProjectEffect(MarketAPI market);
+
+        void addTokenReplacements(LinkedHashMap<String, String> tokenReplacements) {};
     }
 
-    public static class PlanetTypeChangeProjectEffect implements TerraformingProjectEffect {
+    public static class PlanetTypeChangeProjectEffect extends TerraformingProjectEffect {
         private final String newPlanetType;
 
         public PlanetTypeChangeProjectEffect(String newPlanetType) {
@@ -38,7 +39,7 @@ public class BoggledTerraformingProjectEffect {
         }
     }
 
-    public static class MarketAddConditionProjectEffect implements TerraformingProjectEffect {
+    public static class MarketAddConditionProjectEffect extends TerraformingProjectEffect {
         private final String condition;
 
         public MarketAddConditionProjectEffect(String condition) {
@@ -51,7 +52,7 @@ public class BoggledTerraformingProjectEffect {
         }
     }
 
-    public static class MarketRemoveConditionProjectEffect implements TerraformingProjectEffect {
+    public static class MarketRemoveConditionProjectEffect extends TerraformingProjectEffect {
         String condition;
 
         public MarketRemoveConditionProjectEffect(String condition) {
@@ -64,7 +65,7 @@ public class BoggledTerraformingProjectEffect {
         }
     }
 
-    public static class MarketProgressResourceProjectEffect implements TerraformingProjectEffect {
+    public static class MarketProgressResourceProjectEffect extends TerraformingProjectEffect {
         private final String resource;
         private final int step;
 
@@ -168,7 +169,7 @@ public class BoggledTerraformingProjectEffect {
         }
     }
 
-    public static class SystemAddCoronalTap implements TerraformingProjectEffect {
+    public static class SystemAddCoronalTap extends TerraformingProjectEffect {
         public SystemAddCoronalTap() {
         }
         @Override
@@ -246,7 +247,7 @@ public class BoggledTerraformingProjectEffect {
         }
     }
 
-    public static class MarketAddStellarReflectors implements TerraformingProjectEffect {
+    public static class MarketAddStellarReflectors extends TerraformingProjectEffect {
         public MarketAddStellarReflectors() {
 
         }
@@ -254,6 +255,62 @@ public class BoggledTerraformingProjectEffect {
         @Override
         public void applyProjectEffect(MarketAPI market) {
 
+        }
+    }
+
+    public static class RemoveItemFromMarketStorage extends TerraformingProjectEffect {
+        String submarketId;
+        String itemId;
+        int quantity;
+        public RemoveItemFromMarketStorage(String submarketId, String itemId, int quantity) {
+            this.submarketId = submarketId;
+            this.itemId = itemId;
+            this.quantity = quantity;
+        }
+
+        @Override
+        public void applyProjectEffect(MarketAPI market) {
+            market.getSubmarket(submarketId).getCargo().removeCommodity(itemId, quantity);
+        }
+    }
+
+    public static class RemoveStoryPointsFromPlayer extends TerraformingProjectEffect {
+        int quantity;
+        public RemoveStoryPointsFromPlayer(int quantity) {
+            this.quantity = quantity;
+        }
+
+        @Override
+        public void applyProjectEffect(MarketAPI market) {
+            Global.getSector().getPlayerStats().spendStoryPoints(quantity, false, null, false, null);
+        }
+    }
+
+    public static class AddItemToMarketStorage extends TerraformingProjectEffect {
+        String submarketId;
+        String itemId;
+        int quantity;
+        public AddItemToMarketStorage(String submarketId, String itemId, int quantity) {
+            this.submarketId = submarketId;
+            this.itemId = itemId;
+            this.quantity = quantity;
+        }
+
+        @Override
+        void addTokenReplacements(LinkedHashMap<String, String> tokenReplacements) {
+            super.addTokenReplacements(tokenReplacements);
+            for (SubmarketSpecAPI submarketSpec : Global.getSettings().getAllSubmarketSpecs()) {
+                if (submarketSpec.getId().equals(submarketId)) {
+                    tokenReplacements.put("$submarket", Misc.lcFirst(submarketSpec.getName()));
+                }
+            }
+            tokenReplacements.put("$craftedItem", Global.getSettings().getSpecialItemSpec(itemId).getName());
+            tokenReplacements.put("$craftedItemQuantity", Integer.toString(quantity));
+        }
+
+        @Override
+        public void applyProjectEffect(MarketAPI market) {
+            market.getSubmarket(submarketId).getCargo().addSpecial(new SpecialItemData(itemId, null), quantity);
         }
     }
 }

@@ -11,8 +11,6 @@ import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
 import com.fs.starfarer.api.util.Pair;
 import data.campaign.econ.boggledTools;
-import data.scripts.BoggledTerraformingProject;
-import kotlin.Triple;
 
 public class Boggled_CHAMELEON extends BaseIndustry
 {
@@ -116,23 +114,23 @@ public class Boggled_CHAMELEON extends BaseIndustry
     }
 
     @Override
-    protected void addRightAfterDescriptionSection(TooltipMakerAPI tooltip, IndustryTooltipMode mode)
-    {
-        float opad = 10.0F;
-        Color highlight = Misc.getHighlightColor();
-
-        // TODO: Hardcoded indices, hate it, fix it
-        if (thisIndustry.projects.get(0).component1().requirementsMet(getMarket())) {
-            thisIndustry.tooltipIncomplete(this, tooltip, mode, "Approximately %s of the decivilized subpopulation on " + this.getMarket().getName() + " has been eradicated.", opad, highlight, thisIndustry.getPercentComplete(0, this) + "%");
-        }
-        if (thisIndustry.projects.get(1).component1().requirementsMet(getMarket())) {
-            thisIndustry.tooltipIncomplete(this, tooltip, mode, "An investigation into the whereabouts of the rogue AI core on " + getMarket().getName() + " is approximately %s complete.", opad, highlight, thisIndustry.getPercentComplete(1, this) + "%");
-        }
-        for (Triple<BoggledTerraformingProject, String, String> project : thisIndustry.projects) {
-            if (project.component1().requirementsMet(getMarket())) {
-                thisIndustry.tooltipDisrupted(this, tooltip, mode, "Progress is stalled while CHAMELEON is disrupted.", opad, Misc.getNegativeHighlightColor());
-            }
-        }
+    protected void addRightAfterDescriptionSection(TooltipMakerAPI tooltip, IndustryTooltipMode mode) {
+        thisIndustry.addRightAfterDescriptionSection(this, tooltip, mode);
+//        float opad = 10.0F;
+//        Color highlight = Misc.getHighlightColor();
+//
+//        // TODO: Hardcoded indices, hate it, fix it
+//        if (thisIndustry.projects.get(0).requirementsMet(getMarket())) {
+//            thisIndustry.tooltipIncomplete(this, tooltip, mode, "Approximately %s of the decivilized subpopulation on " + this.getMarket().getName() + " has been eradicated.", opad, highlight, thisIndustry.getPercentComplete(0, this) + "%");
+//        }
+//        if (thisIndustry.projects.get(1).requirementsMet(getMarket())) {
+//            thisIndustry.tooltipIncomplete(this, tooltip, mode, "An investigation into the whereabouts of the rogue AI core on " + getMarket().getName() + " is approximately %s complete.", opad, highlight, thisIndustry.getPercentComplete(1, this) + "%");
+//        }
+//        for (BoggledTerraformingProject project : thisIndustry.projects) {
+//            if (project.requirementsMet(getMarket())) {
+//                thisIndustry.tooltipDisrupted(this, tooltip, mode, "Progress is stalled while CHAMELEON is disrupted.", opad, Misc.getNegativeHighlightColor());
+//            }
+//        }
     }
 
     @Override

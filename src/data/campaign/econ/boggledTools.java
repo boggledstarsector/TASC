@@ -33,7 +33,6 @@ import illustratedEntities.helper.TextHandler;
 import illustratedEntities.memory.ImageDataMemory;
 import illustratedEntities.memory.TextDataEntry;
 import illustratedEntities.memory.TextDataMemory;
-import kotlin.Triple;
 import lunalib.lunaSettings.LunaSettings;
 import org.apache.log4j.Logger;
 import org.jetbrains.annotations.Contract;
@@ -415,29 +414,33 @@ public class boggledTools
         return ret;
     }
 
-    private static void buildUnavailableReason(StringBuilder builder, @NotNull ArrayList<Triple<BoggledTerraformingProject, String, String>> projects, MarketAPI market, LinkedHashMap<String, String> tokenReplacements) {
-        for (Triple<BoggledTerraformingProject, String, String> project : projects) {
+    public static String doTokenReplacement(String replace, LinkedHashMap<String, String> tokenReplacements) {
+        for (Map.Entry<String, String> replacement : tokenReplacements.entrySet()) {
+            replace = replace.replace(replacement.getKey(), replacement.getValue());
+        }
+        return replace;
+    }
+
+    private static void buildUnavailableReason(StringBuilder builder, @NotNull ArrayList<BoggledTerraformingProject> projects, MarketAPI market, LinkedHashMap<String, String> tokenReplacements) {
+        for (BoggledTerraformingProject project : projects) {
             if (builder.length() != 0) {
                 builder.append("\n");
             }
-            for (BoggledProjectRequirementsAND.RequirementWithTooltipOverride req : project.component1().getProjectRequirements()) {
+            for (BoggledProjectRequirementsAND.RequirementWithTooltipOverride req : project.getProjectRequirements()) {
                 if (!req.checkRequirement(market)) {
                     if (builder.length() != 0) {
                         builder.append("\n");
                     }
-                    String replaced = req.getTooltip();
-                    for (Map.Entry<String, String> replacement : tokenReplacements.entrySet()) {
-                        replaced = replaced.replace(replacement.getKey(), replacement.getValue());
-                    }
+                    String replaced = req.getTooltip(tokenReplacements);
                     builder.append(replaced);
                 }
             }
         }
     }
     @NotNull
-    public static String getUnavailableReason(ArrayList<Triple<BoggledTerraformingProject, String, String>> projects, String industry, MarketAPI market, LinkedHashMap<String, String> tokenReplacements) {
-        for (Triple<BoggledTerraformingProject, String, String> project : projects) {
-            if (!boggledTools.optionsAllowThis(project.component1().getEnableSettings())) {
+    public static String getUnavailableReason(ArrayList<BoggledTerraformingProject> projects, String industry, MarketAPI market, LinkedHashMap<String, String> tokenReplacements) {
+        for (BoggledTerraformingProject project : projects) {
+            if (!boggledTools.optionsAllowThis(project.getEnableSettings())) {
                 return "Error in getUnavailableReason() in " + industry + ". Please tell Boggled about this on the forums.";
             }
         }
@@ -458,7 +461,7 @@ public class boggledTools
         addTerraformingRequirementFactory("MarketIsAtLeastSize", new BoggledTerraformingRequirementFactory.MarketIsAtLeastSize());
         addTerraformingRequirementFactory("TerraformingPossibleOnMarket", new BoggledTerraformingRequirementFactory.TerraformingPossibleOnMarket());
         addTerraformingRequirementFactory("MarketHasTags", new BoggledTerraformingRequirementFactory.MarketHasTags());
-        addTerraformingRequirementFactory("FleetCargoContainsAtLeast", new BoggledTerraformingRequirementFactory.FleetCargoContainsAtLeast());
+        addTerraformingRequirementFactory("MarketStorageContainsAtLeast", new BoggledTerraformingRequirementFactory.MarketStorageContainsAtLeast());
         addTerraformingRequirementFactory("PlayerHasStoryPointsAtLeast", new BoggledTerraformingRequirementFactory.PlayerHasStoryPointsAtLeast());
         addTerraformingRequirementFactory("WorldTypeSupportsResourceImprovement", new BoggledTerraformingRequirementFactory.WorldTypeSupportsResourceImprovement());
 
@@ -518,6 +521,11 @@ public class boggledTools
         addTerraformingProjectEffectFactory("FocusMarketAndSiphonStationProgressResource", new BoggledTerraformingProjectEffectFactory.FocusMarketAndSiphonStationProgressResource());
 
         addTerraformingProjectEffectFactory("SystemAddCoronalTap", new BoggledTerraformingProjectEffectFactory.SystemAddCoronalTap());
+        addTerraformingProjectEffectFactory("MarketAddStellarReflectors", new BoggledTerraformingProjectEffectFactory.MarketAddStellarReflectorsFactory());
+
+        addTerraformingProjectEffectFactory("RemoveItemFromMarketStorage", new BoggledTerraformingProjectEffectFactory.RemoveItemFromMarketStorageFactory());
+        addTerraformingProjectEffectFactory("RemoveStoryPointsFromPlayer", new BoggledTerraformingProjectEffectFactory.RemoveStoryPointsFromPlayerFactory());
+        addTerraformingProjectEffectFactory("AddItemToMarketStorage", new BoggledTerraformingProjectEffectFactory.AddItemToMarketStorageFactory());
     }
 
     public static void addTerraformingProjectEffectFactory(String key, BoggledTerraformingProjectEffectFactory.TerraformingProjectEffectFactory value) {
@@ -690,23 +698,13 @@ public class boggledTools
 
                 String industry = row.getString("tooltip");
 
-                String[] projects = row.getString("projects").split(boggledTools.csvOptionSeparator);
+                String[] projectStrings = row.getString("projects").split(boggledTools.csvOptionSeparator);
 
-                ArrayList<Triple<BoggledTerraformingProject, String, String>> projectsWithIntel = new ArrayList<>();
-                for (String project : projects) {
-                    String[] projectWithTooltips = project.split(boggledTools.csvSubOptionSeparator);
-                    BoggledTerraformingProject p = boggledTools.getProject(projectWithTooltips[0]);
-                    if (p != null) {
-                        String intelTooltip = "";
-                        String intelCompleteMessage = "";
-                        if (projectWithTooltips.length > 1) {
-                            intelTooltip = projectWithTooltips[1];
-                        }
-                        if (projectWithTooltips.length > 2) {
-                            intelCompleteMessage = projectWithTooltips[2];
-                        }
-
-                        projectsWithIntel.add(new Triple<>(p, intelTooltip, intelCompleteMessage));
+                ArrayList<BoggledTerraformingProject> projectsWithIntel = new ArrayList<>();
+                for (String projectString : projectStrings) {
+                    BoggledTerraformingProject project = boggledTools.getProject(projectString);
+                    if (project != null) {
+                        projectsWithIntel.add(project);
                     }
                 }
                 
@@ -902,6 +900,10 @@ public class boggledTools
                 String projectType = row.getString("project_type");
 
                 String tooltip = row.getString("tooltip");
+                String intelCompleteMessage = row.getString("intel_complete_message");
+
+                String incompleteMessage = row.getString("incomplete_message");
+                ArrayList<String> incompleteHighlights = arrayListFromJSON(row, "incomplete_message_highlights", boggledTools.csvOptionSeparator);
 
                 String[] requirementsStrings = row.getString("requirements").split(boggledTools.csvOptionSeparator);
 
@@ -940,7 +942,7 @@ public class boggledTools
                 BoggledProjectRequirementsAND reqs = requirementsFromRequirementsStrings(requirementsStrings, id, "requirements");
                 BoggledProjectRequirementsAND reqsHidden = requirementsFromRequirementsStrings(requirementsHiddenStrings, id, "requirements_hidden");
 
-                BoggledTerraformingProject terraformingProj = new BoggledTerraformingProject(id, enableSettings, projectType, tooltip, reqs, reqsHidden, baseProjectDuration, terraformingDurationModifiers, terraformingProjectEffects);
+                BoggledTerraformingProject terraformingProj = new BoggledTerraformingProject(id, enableSettings, projectType, tooltip, intelCompleteMessage, incompleteMessage, incompleteHighlights, reqs, reqsHidden, baseProjectDuration, terraformingDurationModifiers, terraformingProjectEffects);
                 terraformingProjects.put(id, terraformingProj);
 
             } catch (JSONException e) {
@@ -1039,112 +1041,8 @@ public class boggledTools
         }
     }
 
-    private static ArrayList<BoggledTerraformingProject> initialiseCraftingProjects() {
-        ArrayList<BoggledTerraformingProject> ret = new ArrayList<>();
-
-        BoggledProjectRequirementsOR colonyHasAtLeast100kInhabitants = new BoggledProjectRequirementsOR(BoggledProjectRequirements.colonyHasAtLeast100kInhabitantsRequirementId, BoggledProjectRequirements.colonyHasAtLeast100kInhabitants, false, new ArrayList<BoggledTerraformingRequirement.TerraformingRequirement>(asList(
-                new BoggledTerraformingRequirement.MarketIsAtLeastSize("market_is_at_least_size_5", false, 5)
-        )));
-
-        BoggledProjectRequirementsOR colonyHasOrbitalWorksWPristineNanoforge = new BoggledProjectRequirementsOR(BoggledProjectRequirements.colonyHasOrbitalWorksWPristineNanoforgeRequirementId, BoggledProjectRequirements.colonyHasOrbitalWorksWPristineNanoforge, false, new ArrayList<BoggledTerraformingRequirement.TerraformingRequirement>(asList(
-                new BoggledTerraformingRequirement.MarketHasIndustryWithItem("market_has_orbital_works_with_pristine_nanoforge",false, Industries.ORBITALWORKS, Items.PRISTINE_NANOFORGE)
-        )));
-
-        int domainArtifactCostMedium = boggledTools.getIntSetting(BoggledSettings.domainTechCraftingArtifactCost);
-        int domainArtifactCostHard = domainArtifactCostMedium * 2;
-        int domainArtifactCostEasy = domainArtifactCostMedium / 2;
-        BoggledProjectRequirementsOR fleetCargoContainsAtLeastDomainArtifactsEasy = new BoggledProjectRequirementsOR(BoggledProjectRequirements.fleetCargoContainsAtLeastEasyDomainArtifactsRequirementId, "Fleet cargo contains at least " + domainArtifactCostEasy + " Domain-era artifacts", false, new ArrayList<BoggledTerraformingRequirement.TerraformingRequirement>(asList(
-                new BoggledTerraformingRequirement.FleetCargoContainsAtLeast("fleet_cargo_contains_at_least_easy_domain_artifacts",false, BoggledCommodities.domainArtifacts, domainArtifactCostEasy)
-        )));
-
-        BoggledProjectRequirementsOR fleetCargoContainsAtLeastDomainArtifactsMedium = new BoggledProjectRequirementsOR(BoggledProjectRequirements.fleetCargoContainsAtLeastMediumDomainArtifactsRequirementId, "Fleet cargo contains at least " + domainArtifactCostMedium + " Domain-era artifacts", false, new ArrayList<BoggledTerraformingRequirement.TerraformingRequirement>(asList(
-                new BoggledTerraformingRequirement.FleetCargoContainsAtLeast("fleet_cargo_contains_at_least_medium_domain_artifacts", false, BoggledCommodities.domainArtifacts, domainArtifactCostMedium)
-        )));
-
-        BoggledProjectRequirementsOR fleetCargoContainsAtLeastDomainArtifactsHard = new BoggledProjectRequirementsOR(BoggledProjectRequirements.fleetCargoContainsAtLeastHardDomainArtifactsRequirementId, "Fleet cargo contains at least " + domainArtifactCostHard + " Domain-era artifacts", false, new ArrayList<BoggledTerraformingRequirement.TerraformingRequirement>(asList(
-                new BoggledTerraformingRequirement.FleetCargoContainsAtLeast("fleet_cargo_contains_at_least_hard_domain_artifacts", false, BoggledCommodities.domainArtifacts, domainArtifactCostHard)
-        )));
-
-        int storyPointCost = boggledTools.getIntSetting(BoggledSettings.domainTechCraftingStoryPointCost);
-        BoggledProjectRequirementsOR playerHasStoryPointsAtLeast = new BoggledProjectRequirementsOR(BoggledProjectRequirements.playerHasStoryPointsRequirementId, storyPointCost + " story points available to spend", false, new ArrayList<BoggledTerraformingRequirement.TerraformingRequirement>(asList(
-                new BoggledTerraformingRequirement.PlayerHasStoryPointsAtLeast("player_has_at_least_cost_story_points", false, storyPointCost)
-        )));
-
-        BoggledProjectRequirementsAND craftingProjectReqsEasy = new BoggledProjectRequirementsAND(new ArrayList<>(asList(
-                new BoggledProjectRequirementsAND.RequirementWithTooltipOverride(colonyHasAtLeast100kInhabitants, ""),
-                new BoggledProjectRequirementsAND.RequirementWithTooltipOverride(colonyHasOrbitalWorksWPristineNanoforge, ""),
-                new BoggledProjectRequirementsAND.RequirementWithTooltipOverride(fleetCargoContainsAtLeastDomainArtifactsEasy, "")
-        )));
-
-        BoggledProjectRequirementsAND craftingProjectReqsMedium = new BoggledProjectRequirementsAND(new ArrayList<>(asList(
-                new BoggledProjectRequirementsAND.RequirementWithTooltipOverride(colonyHasAtLeast100kInhabitants, ""),
-                new BoggledProjectRequirementsAND.RequirementWithTooltipOverride(colonyHasOrbitalWorksWPristineNanoforge, ""),
-                new BoggledProjectRequirementsAND.RequirementWithTooltipOverride(fleetCargoContainsAtLeastDomainArtifactsMedium, "")
-        )));
-
-        BoggledProjectRequirementsAND craftingProjectReqsHard = new BoggledProjectRequirementsAND(new ArrayList<>(asList(
-                new BoggledProjectRequirementsAND.RequirementWithTooltipOverride(colonyHasAtLeast100kInhabitants, ""),
-                new BoggledProjectRequirementsAND.RequirementWithTooltipOverride(colonyHasOrbitalWorksWPristineNanoforge, ""),
-                new BoggledProjectRequirementsAND.RequirementWithTooltipOverride(fleetCargoContainsAtLeastDomainArtifactsHard, "")
-        )));
-
-        if (storyPointCost > 0) {
-            craftingProjectReqsEasy.add(new BoggledProjectRequirementsAND.RequirementWithTooltipOverride(playerHasStoryPointsAtLeast, ""));
-            craftingProjectReqsMedium.add(new BoggledProjectRequirementsAND.RequirementWithTooltipOverride(playerHasStoryPointsAtLeast, ""));
-            craftingProjectReqsHard.add(new BoggledProjectRequirementsAND.RequirementWithTooltipOverride(playerHasStoryPointsAtLeast, ""));
-        }
-
-        String[] enableSettings = {BoggledSettings.domainTechContentEnabled, "boggledDomainTechCraftingEnabled", BoggledSettings.domainArchaeologyEnabled};
-        String projectType = "crafting";
-        ArrayList<String> emptyList = new ArrayList<>();
-        ArrayList<BoggledTerraformingDurationModifier.TerraformingDurationModifier> emptyList2 = new ArrayList<>();
-        BoggledProjectRequirementsAND emptyList4 = new BoggledProjectRequirementsAND(new ArrayList<BoggledProjectRequirementsAND.RequirementWithTooltipOverride>());
-        ArrayList<BoggledTerraformingProjectEffect.TerraformingProjectEffect> emptyList3 = new ArrayList<>();
-
-        ret.add(new BoggledTerraformingProject(craftCorruptedNanoforgeProjectId, enableSettings, projectType, craftCorruptedNanoforgeProjectTooltip, craftingProjectReqsEasy, emptyList4, 0, emptyList2, emptyList3));
-
-        ret.add(new BoggledTerraformingProject(craftPristineNanoforgeProjectId, enableSettings, projectType, craftPristineNanoforgeProjectTooltip, craftingProjectReqsHard, emptyList4, 0, emptyList2, emptyList3));
-
-        ret.add(new BoggledTerraformingProject(craftSynchrotronProjectId, enableSettings, projectType, craftSynchrotronProjectTooltip, craftingProjectReqsMedium, emptyList4, 0, emptyList2, emptyList3));
-
-        ret.add(new BoggledTerraformingProject(craftHypershuntTapProjectId, enableSettings, projectType, craftHypershuntTapProjectTooltip, craftingProjectReqsHard, emptyList4, 0, emptyList2, emptyList3));
-
-        ret.add(new BoggledTerraformingProject(craftCryoarithmeticEngineProjectId, enableSettings, projectType, craftCryoarithmeticEngineProjectTooltip, craftingProjectReqsMedium, emptyList4, 0, emptyList2, emptyList3));
-
-        ret.add(new BoggledTerraformingProject(craftPlanetKillerDeviceProjectId, enableSettings, projectType, craftPlanetKillerDeviceProjectTooltip, craftingProjectReqsHard, emptyList4, 0, emptyList2, emptyList3));
-
-        ret.add(new BoggledTerraformingProject(craftFusionLampProjectId, enableSettings, projectType, craftFusionLampProjectTooltip, craftingProjectReqsHard, emptyList4, 0, emptyList2, emptyList3));
-
-        ret.add(new BoggledTerraformingProject(craftFullereneSpoolProjectId, enableSettings, projectType, craftFullereneSpoolProjectTooltip, craftingProjectReqsMedium, emptyList4, 0, emptyList2, emptyList3));
-
-        ret.add(new BoggledTerraformingProject(craftPlasmaDynamoProjectId, enableSettings, projectType, craftPlasmaDynamoProjectTooltip, craftingProjectReqsMedium, emptyList4, 0, emptyList2, emptyList3));
-
-        ret.add(new BoggledTerraformingProject(craftAutonomousMantleBoreProjectId, enableSettings, projectType, craftAutonomousMantleBoreProjectTooltip, craftingProjectReqsMedium, emptyList4, 0, emptyList2, emptyList3));
-
-        ret.add(new BoggledTerraformingProject(craftSoilNanitesProjectId, enableSettings, projectType, craftSoilNanitesProjectTooltip, craftingProjectReqsMedium, emptyList4, 0, emptyList2, emptyList3));
-
-        ret.add(new BoggledTerraformingProject(craftCatalyticCoreProjectId, enableSettings, projectType, craftCatalyticCoreProjectTooltip, craftingProjectReqsMedium, emptyList4, 0, emptyList2, emptyList3));
-
-        ret.add(new BoggledTerraformingProject(craftCombatDroneReplicatorProjectId, enableSettings, projectType, craftCombatDroneReplicatorProjectTooltip, craftingProjectReqsEasy, emptyList4, 0, emptyList2, emptyList3));
-
-        ret.add(new BoggledTerraformingProject(craftBiofactoryEmbryoProjectId, enableSettings, projectType, craftBiofactoryEmbryoProjectTooltip, craftingProjectReqsMedium, emptyList4, 0, emptyList2, emptyList3));
-
-        ret.add(new BoggledTerraformingProject(craftDealmakerHolosuiteProjectId, enableSettings, projectType, craftDealmakerHolosuiteProjectTooltip, craftingProjectReqsEasy, emptyList4, 0, emptyList2, emptyList3));
-
-        return ret;
-    }
-
     public static BoggledTerraformingProject getProject(String projectId) {
         return terraformingProjects.get(projectId);
-    }
-
-    public static BoggledTerraformingProject getCraftingProject(String projectId) {
-        for (BoggledTerraformingProject project : craftingProjects) {
-            if (project.getProjectId().equals(projectId)) {
-                return project;
-            }
-        }
-        return null;
     }
 
     public static HashMap<Pair<String, String>, String> getResourceLimits() { return resourceLimits; }
@@ -1167,8 +1065,6 @@ public class boggledTools
 
     private static HashMap<String, PlanetType> planetTypesMap;
 
-    private static ArrayList<BoggledTerraformingProject> craftingProjects = initialiseCraftingProjects();
-
     public static BoggledCommonIndustry getIndustryProject(String industry) {
         return industryProjects.get(industry);
     }
@@ -1177,34 +1073,49 @@ public class boggledTools
         return commoditySupplyAndDemand.get(supplyOrDemand);
     }
 
-    public static int getNumTerraformingProjects() {
-        int ret = 0;
+    public static HashMap<String, Integer> getNumProjects() {
+        HashMap<String, Integer> ret = new HashMap<>();
         for (Map.Entry<String, BoggledTerraformingProject> entry : terraformingProjects.entrySet()) {
             if (!entry.getValue().isEnabled()) {
                 continue;
             }
-            if (entry.getValue().getProjectType().equals("terraforming")) {
-                ret++;
+            Integer val = ret.get(entry.getValue().getProjectType());
+            if (val != null) {
+                ret.put(entry.getValue().getProjectType(), ++val);
+            } else {
+                ret.put(entry.getValue().getProjectType(), 1);
             }
         }
         return ret;
     }
 
-    public static LinkedHashMap<String, BoggledTerraformingProject> getVisibleTerraformingProjects(MarketAPI market) {
-        LinkedHashMap<String, BoggledTerraformingProject> ret = new LinkedHashMap<>();
+    public static HashMap<String, LinkedHashMap<String, BoggledTerraformingProject>> getVisibleProjects(MarketAPI market) {
+        HashMap<String, LinkedHashMap<String, BoggledTerraformingProject>> ret = new HashMap<>();
         for (Map.Entry<String, BoggledTerraformingProject> entry : terraformingProjects.entrySet()) {
             if (!entry.getValue().isEnabled()) {
                 continue;
             }
-            if (entry.getValue().getProjectType().equals("terraforming") && entry.getValue().requirementsHiddenMet(market)) {
-                ret.put(entry.getKey(), entry.getValue());
+            if (!entry.getValue().requirementsHiddenMet(market)) {
+                continue;
             }
+            LinkedHashMap<String, BoggledTerraformingProject> val = ret.get(entry.getValue().getProjectType());
+            if (val == null) {
+                val = new LinkedHashMap<>();
+                ret.put(entry.getValue().getProjectType(), val);
+            }
+            val.put(entry.getKey(), entry.getValue());
         }
         return ret;
     }
 
-    private static void reinitialiseInfo() {
-        craftingProjects = initialiseCraftingProjects();
+    public static LinkedHashMap<String, String> getTokenReplacements(MarketAPI market) {
+        LinkedHashMap<String, String> ret = new LinkedHashMap<>();
+        ret.put("$player", Global.getSector().getPlayerPerson().getNameString());
+        ret.put("$market", market.getName());
+        ret.put("$focusMarket", BoggledCommonIndustry.getFocusMarketOrMarket(market).getName());
+        ret.put("$planetTypeName", getPlanetType(market.getPlanetEntity()).getPlanetTypeName());
+        ret.put("$system", market.getStarSystem().getName());
+        return ret;
     }
 
     public static float getDistanceBetweenPoints(float x1, float y1, float x2, float y2) {
@@ -2404,9 +2315,9 @@ public class boggledTools
         }
     }
 
-    public static void showProjectCompleteIntelMessage(String project, String completedMessage, String marketName, MarketAPI market) {
+    public static void showProjectCompleteIntelMessage(String project, String completedMessage, MarketAPI market) {
         if (market.isPlayerOwned()) {
-            MessageIntel intel = new MessageIntel(project + " on " + marketName, Misc.getBasePlayerColor());
+            MessageIntel intel = new MessageIntel(project + " on " + market.getName(), Misc.getBasePlayerColor());
             intel.addLine("    - " + completedMessage);
             intel.setIcon(Global.getSector().getPlayerFaction().getCrest());
             intel.setSound(BaseIntelPlugin.getSoundStandardUpdate());
@@ -2475,17 +2386,16 @@ public class boggledTools
         return reqs.checkRequirement(market);
     }
 
-    public static String getTooltipProjectName(String currentProject)
+    public static String getTooltipProjectName(MarketAPI market, String currentProject)
     {
         if(currentProject == null || currentProject.equals(noneProjectId))
         {
             return noneProjectId;
         }
 
-        reinitialiseInfo();
         BoggledTerraformingProject terraformingProject = getProject(currentProject);
         if (terraformingProject != null) {
-            return terraformingProject.getProjectTooltip();
+            return terraformingProject.getProjectTooltip(boggledTools.getTokenReplacements(market));
         } else {
             return "ERROR";
         }

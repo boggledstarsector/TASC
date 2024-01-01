@@ -105,7 +105,7 @@ public class Boggled_Planet_Cracker extends BaseIndustry {
         float opad = 10.0F;
         Color highlight = Misc.getHighlightColor();
 
-        thisIndustry.tooltipIncomplete(this, tooltip, mode, "Planet cracking is approximately %s complete on " + thisIndustry.getFocusMarketOrMarket(getMarket()).getName() + ".", opad, highlight, thisIndustry.getPercentComplete(0, this) + "%");
+        thisIndustry.tooltipIncomplete(this, tooltip, mode, "Planet cracking is approximately %s complete on " + thisIndustry.getFocusMarketOrMarket(getMarket()).getName() + ".", opad, highlight, thisIndustry.getPercentComplete(0, getMarket()) + "%");
 
         thisIndustry.tooltipComplete(this, tooltip, mode, "Further planet cracking operations would serve no purpose on " + thisIndustry.getFocusMarketOrMarket(getMarket()).getName() + ". The Planet Cracker can now be deconstructed without any risk of regression.", opad, highlight);
 

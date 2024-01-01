@@ -75,3 +75,25 @@ focus_market_progress_rare_ore_planet_cracker,FocusMarketProgressResource,"rare_
 focus_market_progress_volatiles_ouyang_optimizer,FocusMarketAndSiphonStationProgressResource,"volatiles ; 2"
 
 system_add_coronal_tap,SystemAddCoronalTap,"coronal_tap"
+
+add_corrupted_nanoforge_to_storage,AddItemToMarketStorage,"storage ; corrupted_nanoforge ; 1"
+add_pristine_nanoforge_to_storage,AddItemToMarketStorage,"storage ; pristine_nanoforge ; 1"
+add_synchrotron_core_to_storage,AddItemToMarketStorage,"storage ; synchrotron ; 1"
+add_hypershunt_tap_to_storage,AddItemToMarketStorage,"storage ; coronal_portal ; 1"
+add_cryoarithmetic_engine_to_storage,AddItemToMarketStorage,"storage ; cryoarithmetic_engine ; 1"
+add_planetkiller_device_to_storage,AddItemToMarketStorage,"storage ; boggled_planetkiller ; 1"
+add_orbital_fusion_lamp_to_storage,AddItemToMarketStorage,"storage ; orbital_fusion_lamp ; 1"
+add_fullerene_spool_to_storage,AddItemToMarketStorage,"storage ; fullerene_spool ; 1"
+add_plasma_dynamo_to_storage,AddItemToMarketStorage,"storage ; plasma_dynamo ; 1"
+add_autonomous_mantle_bore_to_storage,AddItemToMarketStorage,"storage ; mantle_bore ; 1"
+add_soil_nanites_to_storage,AddItemToMarketStorage,"storage ; soil_nanites ; 1"
+add_catalytic_core_to_storage,AddItemToMarketStorage,"storage ; catalytic_core ; 1"
+add_drone_replicator_to_storage,AddItemToMarketStorage,"storage ; drone_replicator ; 1"
+add_biofactory_embryo_to_storage,AddItemToMarketStorage,"storage ; biofactory_embryo ; 1"
+add_dealmaker_holosuite_to_storage,AddItemToMarketStorage,"storage ; dealmaker_holosuite ; 1"
+
+remove_2_story_points_from_player,RemoveStoryPointsFromPlayer,2
+
+remove_domain_artifacts_easy_from_storage,RemoveItemFromMarketStorage,"storage ; domain_artifacts ; 1000"
+remove_domain_artifacts_medium_from_storage,RemoveItemFromMarketStorage,"storage ; domain_artifacts ; 2000"
+remove_domain_artifacts_hard_from_storage,RemoveItemFromMarketStorage,"storage ; domain_artifacts ; 4000"

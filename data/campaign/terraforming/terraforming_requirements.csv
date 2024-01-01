@@ -3,61 +3,63 @@ id,tooltip,invert_all,requirements
 # tooltip is the user displayed string shown to display the requirement conditions
 # invert_all is whether the result of checking all the requirements will be inverted
 # requirements is a | separated list of requirement IDs as specified in 'terraforming_requirement.csv'. These are checked in an OR manner, ie only one of the requirements has to be true for this check to return true
-colony_not_arid_world,"Colony is not already an arid world",false,"planet_not_arid"
-colony_not_jungle_world,"Colony is not already a jungle world",false,"planet_not_jungle"
-colony_not_terran_world,"Colony is not already a Terran world",false,"planet_not_terran"
-colony_not_water_world,"Colony is not already a water world",false,"planet_not_water"
-colony_not_tundra_world,"Colony is not already a tundra world",false,"planet_not_tundra"
-colony_not_frozen_world,"Colony is not already a frozen world",false,"planet_not_frozen"
 
-colony_water_or_frozen,"Colony is a water or frozen world",false,"planet_water | planet_frozen"
+# Token replacements can be used in tooltips. Available token replacements depend on the specific requirement used. Some token replacements may themselves be replaced if there are multiple requirements listed.
+colony_not_arid_world,"$market is not already an arid world",false,"planet_not_arid"
+colony_not_jungle_world,"$market is not already a jungle world",false,"planet_not_jungle"
+colony_not_terran_world,"$market is not already a Terran world",false,"planet_not_terran"
+colony_not_water_world,"$market is not already a water world",false,"planet_not_water"
+colony_not_tundra_world,"$market is not already a tundra world",false,"planet_not_tundra"
+colony_not_frozen_world,"$market is not already a frozen world",false,"planet_not_frozen"
 
-colony_not_gas_giant,"Colony is not a gas giant",false,"planet_not_gas_giant"
-colony_not_volcanic,"Colony is not a volcanic world",false,"planet_not_volcanic"
-colony_not_irradiated,"Colony is not an irradiated world",false,"planet_not_irradiated"
-colony_not_star,"Colony is not on a star",false,"planet_not_star"
+colony_water_or_frozen,"$market is a water or frozen world",false,"planet_water | planet_frozen"
 
-colony_not_unknown_world,"Colony is not on an unknown world",false,"planet_not_unknown"
+colony_not_gas_giant,"$market is not a gas giant",false,"planet_not_gas_giant"
+colony_not_volcanic,"$market is not a volcanic world",false,"planet_not_volcanic"
+colony_not_irradiated,"$market is not an irradiated world",false,"planet_not_irradiated"
+colony_not_star,"$market is not on a star",false,"planet_not_star"
 
-colony_barren_or_frozen,"Colony is barren or frozen",false,"planet_barren | planet_frozen"
-colony_terran_or_water_or_jungle_or_desert,"Colony is terran, water, jungle, or desert",false,"planet_terran | planet_water | planet_jungle | planet_arid"
+colony_not_unknown_world,"$market is not on an unknown world",false,"planet_not_unknown"
 
-colony_atmospheric_density_normal,"Colony has normal atmospheric density",true,"market_no_atmosphere | market_thin_atmosphere | market_dense_atmosphere"
-colony_atmosphere_not_toxic_or_irradiated,"Colony atmosphere is not toxic or irradiated",true,"market_toxic_atmosphere | market_irradiated"
+colony_barren_or_frozen,"$market is barren or frozen",false,"planet_barren | planet_frozen"
+colony_terran_or_water_or_jungle_or_desert,"$market is terran, water, jungle, or desert",false,"planet_terran | planet_water | planet_jungle | planet_arid"
 
-colony_not_cold_or_very_cold,"Colony is not cold or very cold",true,"market_cold | market_very_cold"
-colony_hot_or_very_hot,"Colony is hot or very hot",false,"market_hot | market_very_hot"
-colony_not_very_cold_or_very_hot,"Colony is not very cold or very hot",true,"market_very_cold | market_very_hot"
-colony_not_hot_or_very_hot,"Colony is not hot or very hot",true,"market_hot | market_very_hot"
-colony_very_cold,"Colony is very cold",false,"market_very_cold"
-colony_temperate_or_hot,"Colony is temperate or hot",true,"market_very_cold | market_cold | market_very_hot"
-colony_temperate_or_cold,"Colony is temperate or hot",true,"market_very_cold | market_hot | market_very_hot"
+colony_atmospheric_density_normal,"$market has normal atmospheric density",true,"market_no_atmosphere | market_thin_atmosphere | market_dense_atmosphere"
+colony_atmosphere_not_toxic_or_irradiated,"$market atmosphere is not toxic or irradiated",true,"market_toxic_atmosphere | market_irradiated"
 
-colony_has_stellar_reflectors,"Colony has stellar reflectors",false,"market_has_stellar_reflectors"
-colony_has_atmosphere_processor,"Colony has an atmosphere processor",false,"market_has_atmosphere_processor"
-colony_has_genelab,"Colony has a genelab",false,"market_has_genelab"
+colony_not_cold_or_very_cold,"$market is not cold or very cold",true,"market_cold | market_very_cold"
+colony_hot_or_very_hot,"$market is hot or very hot",false,"market_hot | market_very_hot"
+colony_not_very_cold_or_very_hot,"$market is not very cold or very hot",true,"market_very_cold | market_very_hot"
+colony_not_hot_or_very_hot,"$market is not hot or very hot",true,"market_hot | market_very_hot"
+colony_very_cold,"$market is very cold",false,"market_very_cold"
+colony_temperate_or_hot,"$market is temperate or hot",true,"market_very_cold | market_cold | market_very_hot"
+colony_temperate_or_cold,"$market is temperate or hot",true,"market_very_cold | market_hot | market_very_hot"
 
-colony_has_moderate_water_present,"Colony has a moderate amount of water present",false,"market_has_moderate_water_present"
-colony_has_large_water_present,"Colony has a large amount of water present",false,"market_has_large_water_present"
+colony_has_stellar_reflectors,"$market has stellar reflectors",false,"market_has_stellar_reflectors"
+colony_has_atmosphere_processor,"$market has an atmosphere processor",false,"market_has_atmosphere_processor"
+colony_has_genelab,"$market has a genelab",false,"market_has_genelab"
 
-colony_habitable,"Colony is habitable",false,"market_habitable"
-colony_has_extreme_weather,"Colony has extreme weather",false,"market_has_extreme_weather"
-colony_atmosphere_toxic,"Colony atmosphere is toxic",false,"market_toxic_atmosphere"
-colony_irradiated,"Colony atmosphere is irradiated",false,"market_irradiated"
-colony_has_atmosphere,"Colony has an atmosphere",false,"market_no_atmosphere"
+colony_has_moderate_water_present,"$market has a moderate amount of water present",false,"market_has_moderate_water_present"
+colony_has_large_water_present,"$market has a large amount of water present",false,"market_has_large_water_present"
 
-colony_poor_light,"Colony has little light reaching it",false,"market_poor_light"
-colony_dark,"Colony has no light reaching it",false,"market_dark"
+colony_habitable,"$market is habitable",false,"market_habitable"
+colony_has_extreme_weather,"$market has extreme weather",false,"market_has_extreme_weather"
+colony_atmosphere_toxic,"$market atmosphere is toxic",false,"market_toxic_atmosphere"
+colony_irradiated,"$market atmosphere is irradiated",false,"market_irradiated"
+colony_has_atmosphere,"$market has an atmosphere",false,"market_no_atmosphere"
+
+colony_poor_light,"$market has little light reaching it",false,"market_poor_light"
+colony_dark,"$market has no light reaching it",false,"market_dark"
 
 colony_not_dark,,false,"market_not_dark"
 
-colony_not_habitable,"Colony is not habitable",false,"market_not_habitable"
-colony_not_has_meteor_impacts,"Colony does not have meteor impacts",false,"market_not_has_meteor_impacts"
-colony_not_irradiated,"Colony atmosphere is not irradiated",false,"market_not_irradiated"
+colony_not_habitable,"$market is not habitable",false,"market_not_habitable"
+colony_not_has_meteor_impacts,"$market does not have meteor impacts",false,"market_not_has_meteor_impacts"
+colony_not_irradiated,"$market atmosphere is not irradiated",false,"market_not_irradiated"
 
-colony_has_normal_climate,"Colony has normal climate",true,"market_has_mild_climate | market_has_extreme_weather"
-colony_atmosphere_suboptimal_density,"Colony atmosphere has suboptimal density",false,"market_no_atmosphere | market_thin_atmosphere | market_dense_atmosphere"
-colony_has_low_or_high_gravity,"Colony has suboptimal gravity",false,"market_has_low_gravity | market_has_high_gravity"
+colony_has_normal_climate,"$market has normal climate",true,"market_has_mild_climate | market_has_extreme_weather"
+colony_atmosphere_suboptimal_density,"$market atmosphere has suboptimal density",false,"market_no_atmosphere | market_thin_atmosphere | market_dense_atmosphere"
+colony_has_low_or_high_gravity,"$market has suboptimal gravity",false,"market_has_low_gravity | market_has_high_gravity"
 
 colony_not_no_or_thin_atmosphere,,true,"market_no_atmosphere | market_thin_atmosphere"
 colony_not_dense_atmosphere,,true,"market_dense_atmosphere"
@@ -71,29 +73,29 @@ world_type_allows_terraforming,"World type allows further terraforming",true,"pl
 world_type_allows_mild_climate,"World type allows for mild climate",false,"planet_jungle | planet_arid | planet_terran | planet_water | planet_tundra"
 world_type_allows_human_habitability,"World type allows for human habitability",false,"planet_jungle | planet_arid | planet_terran | planet_water | planet_tundra"
 
-colony_habitable_with_atmosphere,"Colony is habitable and has an atmosphere",false,"market_habitable | market_any_atmosphere"
-colony_has_atmo_problem,"Colony has an atmosphere problem",false,"market_not_has_mild_climate | market_not_habitable | market_no_atmosphere | market_thin_atmosphere | market_dense_atmosphere | market_toxic_atmosphere"
+colony_habitable_with_atmosphere,"$market is habitable and has an atmosphere",false,"market_habitable | market_any_atmosphere"
+colony_has_atmo_problem,"$market has an atmosphere problem",false,"market_not_has_mild_climate | market_not_habitable | market_no_atmosphere | market_thin_atmosphere | market_dense_atmosphere | market_toxic_atmosphere"
 
-colony_has_water_surface,"Colony has a primarily water surface",false,"market_has_water_surface"
+colony_has_water_surface,"$market has a primarily water surface",false,"market_has_water_surface"
 
-colony_is_station,"Colony is a station",false,"market_is_station"
-colony_is_not_station,"Colony is not a station",false,"market_is_not_station"
+colony_is_station,"$market is a station",false,"market_is_station"
+colony_is_not_station,"$market is not a station",false,"market_is_not_station"
 
-orbited_planet_is_gas_giant,"Orbited planet is a gas giant",false,"focus_planet_gas_giant"
-orbited_planet_is_not_gas_giant,"Orbited planet is not a gas giant",false,"focus_planet_not_gas_giant"
+orbited_planet_is_gas_giant,"$focusMarket is a gas giant",false,"focus_planet_gas_giant"
+orbited_planet_is_not_gas_giant,"$focusMarket is not a gas giant",false,"focus_planet_not_gas_giant"
 
-orbited_planet_not_has_extreme_weather,"Orbited planet does not have extreme weather",true,"focus_market_has_extreme_weather"
-orbited_planet_not_has_tectonic_or_extreme_tectonic_activity,"Orbited planet does not have tectonic or extreme tectonic activity",true,"focus_market_has_tectonic_activity | focus_market_has_extreme_tectonic_activity"
+orbited_planet_not_has_extreme_weather,"$focusMarket does not have extreme weather",true,"focus_market_has_extreme_weather"
+orbited_planet_not_has_tectonic_or_extreme_tectonic_activity,"$focusMarket does not have tectonic or extreme tectonic activity",true,"focus_market_has_tectonic_activity | focus_market_has_extreme_tectonic_activity"
 
-orbited_planet_not_has_volatiles_plentiful,"Orbited planet does not have plentiful volatiles",true,"focus_market_has_volatiles_plentiful"
-orbited_planet_not_has_ore_and_rare_ore_ultrarich,"Orbited planet does not have ultrarich ore and rare ore",true,"focus_market_has_ore_ultrarich | focus_market_has_rare_ore_ultrarich"
+orbited_planet_not_has_volatiles_plentiful,"$focusMarket does not have plentiful volatiles",true,"focus_market_has_volatiles_plentiful"
+orbited_planet_not_has_ore_and_rare_ore_ultrarich,"$focusMarket does not have ultrarich ore and rare ore",true,"focus_market_has_ore_ultrarich | focus_market_has_rare_ore_ultrarich"
 
-colony_decivilized,"Colony has a decivilized population",false,"market_decivilized | market_decivilized_subpop"
-colony_rogue_ai_core,"Colony has a rogue AI core",false,"market_rogue_ai_core"
-colony_has_ruins,"Colony has Domain era ruins",false,"market_ruins_scattered | market_ruins_widespread | market_ruins_extensive | market_ruins_vast"
+colony_decivilized,"$market has a decivilized population",false,"market_decivilized | market_decivilized_subpop"
+colony_rogue_ai_core,"$market has a rogue AI core",false,"market_rogue_ai_core"
+colony_has_ruins,"$market has Domain era ruins",false,"market_ruins_scattered | market_ruins_widespread | market_ruins_extensive | market_ruins_vast"
 
-colony_not_has_tectonic_activity_unless_has_harmonic_damper,"Colony doesn't have tectonic activity or has harmonic damper",false,"market_not_has_extreme_tectonic_activity | market_has_harmonic_damper"
-colony_has_domed_cities,"Colony population is housed in domed cities",false,"market_has_domed_cities"
+colony_not_has_tectonic_activity_unless_has_harmonic_damper,"$market doesn't have tectonic activity or has harmonic damper",false,"market_not_has_extreme_tectonic_activity | market_has_harmonic_damper"
+colony_has_domed_cities,"$market population is housed in domed cities",false,"market_has_domed_cities"
 
 station_construction_num_expansions,,false,"station_construction_num_expansions"
 
@@ -104,4 +106,11 @@ player_has_skill_automated_ships,,false,"player_has_skill_automated_ships"
 system_star_not_has_coronal_tap,,false,"system_star_not_has_coronal_tap"
 system_star_coronal_tap_viable,,false,"system_star_blue_giant | system_star_blue_supergiant"
 
-colony_not_has_heavy_industry_or_orbital_works_with_nanoforge,,true,"market_has_heavy_industry_with_corrupted_nanoforge | market_has_heavy_industry_with_pristine_nanoforge | market_has_orbital_works_with_corrupted_nanofroge | market_has_orbital_works_with_pristine_nanoforge"
+colony_not_has_heavy_industry_or_orbital_works_with_nanoforge,,true,"market_has_heavy_industry_with_corrupted_nanoforge | market_has_heavy_industry_with_pristine_nanoforge | market_has_orbital_works_with_corrupted_nanoforge | market_has_orbital_works_with_pristine_nanoforge"
+
+colony_has_at_least_100k_inhabitants,"$market has at least 100,000 inhabitants",false,market_has_at_least_100k_residents
+colony_has_orbital_works_with_pristine_nanoforge,"$market has $industry with $item",false,market_has_orbital_works_with_pristine_nanoforge
+colony_storage_contains_at_least_easy_domain_artifacts,"$market $submarket contains at least $cargoQuantity $cargoName",false,market_storage_contains_at_least_easy_domain_artifacts
+colony_storage_contains_at_least_medium_domain_artifacts,"$market $submarket contains at least $cargoQuantity $cargoName",false,market_storage_contains_at_least_medium_domain_artifacts
+colony_storage_contains_at_least_hard_domain_artifacts,"$market $submarket contains at least $cargoQuantity $cargoName",false,market_storage_contains_at_least_hard_domain_artifacts
+player_has_at_least_2_story_points,"$player has at least $storyPointsQuantity story points",false,player_has_at_least_2_story_points

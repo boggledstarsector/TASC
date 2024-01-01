@@ -109,7 +109,7 @@ public class Boggled_Ouyang_Optimizer extends BaseIndustry
         float opad = 10.0F;
         Color highlight = Misc.getHighlightColor();
 
-        thisIndustry.tooltipIncomplete(this, tooltip, mode, "Ouyang optimization is approximately %s complete on " + thisIndustry.getFocusMarketOrMarket(getMarket()).getName() + ".", opad, highlight, thisIndustry.getPercentComplete(0, this) + "%");
+        thisIndustry.tooltipIncomplete(this, tooltip, mode, "Ouyang optimization is approximately %s complete on " + thisIndustry.getFocusMarketOrMarket(getMarket()).getName() + ".", opad, highlight, thisIndustry.getPercentComplete(0, getMarket()) + "%");
 
         thisIndustry.tooltipComplete(this, tooltip, mode, "Further Ouyang optimization would yield no improvements on " + thisIndustry.getFocusMarketOrMarket(getMarket()).getName() + ". The Ouyang Optimizer can now be deconstructed without any risk of regression.", opad, highlight);
 

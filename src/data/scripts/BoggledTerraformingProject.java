@@ -6,12 +6,17 @@ import data.campaign.econ.boggledTools;
 import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 
 public class BoggledTerraformingProject {
     private final String projectId;
     private final String[] enableSettings;
     private final String projectType;
     private String projectTooltip;
+    private String intelCompleteMessage;
+
+    private final String incompleteMessage;
+    private final ArrayList<String> incompleteMessageHighlights;
     // Multiple separate TerraformingRequirements form an AND'd collection
     // Each individual requirement inside the TerraformingRequirements forms an OR'd collection
     // ie If any of the conditions inside a TerraformingRequirements is fulfilled, that entire requirement is filled
@@ -26,29 +31,34 @@ public class BoggledTerraformingProject {
     private final int baseProjectDuration;
     private final ArrayList<BoggledTerraformingDurationModifier.TerraformingDurationModifier> durationModifiers;
 
-    public String getProjectId() {
-        return projectId;
+    public String getProjectId() { return projectId; }
+
+    public String[] getEnableSettings() { return enableSettings; }
+
+    public boolean isEnabled() { return boggledTools.optionsAllowThis(enableSettings); }
+
+    public String getProjectType() { return projectType; }
+
+    public String getProjectTooltip(LinkedHashMap<String, String> tokenReplacements) {
+        for (BoggledTerraformingProjectEffect.TerraformingProjectEffect projectEffect : projectEffects) {
+            projectEffect.addTokenReplacements(tokenReplacements);
+        }
+        return boggledTools.doTokenReplacement(projectTooltip, tokenReplacements);
     }
 
-    public String[] getEnableSettings() {
-        return enableSettings;
+    public String getIntelCompleteMessage() { return intelCompleteMessage; }
+
+    public String getIncompleteMessage() { return incompleteMessage; }
+
+    public String[] getIncompleteMessageHighlights(LinkedHashMap<String, String> tokenReplacements) {
+        ArrayList<String> replaced = new ArrayList<>(incompleteMessageHighlights.size());
+        for (String highlight : incompleteMessageHighlights) {
+            replaced.add(boggledTools.doTokenReplacement(highlight, tokenReplacements));
+        }
+        return replaced.toArray(new String[0]);
     }
 
-    public boolean isEnabled() {
-        return boggledTools.optionsAllowThis(enableSettings);
-    }
-
-    public String getProjectType() {
-        return projectType;
-    }
-
-    public String getProjectTooltip() {
-        return projectTooltip;
-    }
-
-    public BoggledProjectRequirementsAND getProjectRequirements() {
-        return projectRequirements;
-    }
+    public BoggledProjectRequirementsAND getProjectRequirements() { return projectRequirements; }
 
     public int getModifiedProjectDuration(MarketAPI market) {
         float projectDuration = baseProjectDuration;
@@ -82,22 +92,24 @@ public class BoggledTerraformingProject {
         return requirementsHiddenMet(market) && projectRequirements.requirementsMet(market);
     }
 
-    public void finishProject(MarketAPI market, String intelTooltip, String intelCompletedMessage) {
+    public void finishProject(MarketAPI market) {
         for (BoggledTerraformingProjectEffect.TerraformingProjectEffect effect : projectEffects) {
-            Global.getLogger(this.getClass()).info("Doing effect " + effect.getClass());
             effect.applyProjectEffect(market);
         }
+
+        String intelTooltip = getProjectTooltip(boggledTools.getTokenReplacements(market));
+        String intelCompletedMessage = getIntelCompleteMessage();
 
         boggledTools.surveyAll(market);
         boggledTools.refreshSupplyAndDemand(market);
         boggledTools.refreshAquacultureAndFarming(market);
 
-        boggledTools.showProjectCompleteIntelMessage(intelTooltip, intelCompletedMessage, market.getName(), market);
+        boggledTools.showProjectCompleteIntelMessage(intelTooltip, intelCompletedMessage, market);
     }
 
-    public void finishProject(MarketAPI market) {
-        finishProject(market, getProjectTooltip(), "Completed");
-    }
+//    public void finishProject(MarketAPI market) {
+//        finishProject(market, getProjectTooltip(boggledTools.getTokenReplacements(market)), "Completed");
+//    }
 
 //    public void overrideAddTooltip(String tooltipOverride, String tooltipAddition) {
 //        if (!tooltipOverride.isEmpty()) {
@@ -122,11 +134,16 @@ public class BoggledTerraformingProject {
 //        projectRequirements.addAll(add);
 //    }
 
-    public BoggledTerraformingProject(String projectId, String[] enableSettings, String projectType, String projectTooltip, BoggledProjectRequirementsAND projectRequirements, BoggledProjectRequirementsAND projectRequirementsHidden, int baseProjectDuration, ArrayList<BoggledTerraformingDurationModifier.TerraformingDurationModifier> durationModifiers, ArrayList<BoggledTerraformingProjectEffect.TerraformingProjectEffect> projectEffects) {
+    public BoggledTerraformingProject(String projectId, String[] enableSettings, String projectType, String projectTooltip, String intelCompleteMessage, String incompleteMessage, ArrayList<String> incompleteMessageHighlights, BoggledProjectRequirementsAND projectRequirements, BoggledProjectRequirementsAND projectRequirementsHidden, int baseProjectDuration, ArrayList<BoggledTerraformingDurationModifier.TerraformingDurationModifier> durationModifiers, ArrayList<BoggledTerraformingProjectEffect.TerraformingProjectEffect> projectEffects) {
         this.projectId = projectId;
         this.enableSettings = enableSettings;
         this.projectType = projectType;
         this.projectTooltip = projectTooltip;
+        this.intelCompleteMessage = intelCompleteMessage;
+
+        this.incompleteMessage = incompleteMessage;
+        this.incompleteMessageHighlights = incompleteMessageHighlights;
+
         this.projectRequirements = projectRequirements;
         this.projectRequirementsHidden = projectRequirementsHidden;
 

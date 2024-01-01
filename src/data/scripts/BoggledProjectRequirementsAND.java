@@ -1,10 +1,12 @@
 package data.scripts;
 
 import com.fs.starfarer.api.campaign.econ.MarketAPI;
+import data.campaign.econ.boggledTools;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 
 public class BoggledProjectRequirementsAND implements Iterable<BoggledProjectRequirementsAND.RequirementWithTooltipOverride> {
     public static class RequirementWithTooltipOverride {
@@ -19,11 +21,14 @@ public class BoggledProjectRequirementsAND implements Iterable<BoggledProjectReq
         public boolean checkRequirement(MarketAPI market) {
             return requirements.checkRequirement(market);
         }
-        public String getTooltip() {
+        public String getTooltip(LinkedHashMap<String, String> tokenReplacements) {
+            String ret = tooltipOverride;
             if (tooltipOverride.isEmpty()) {
-                return requirements.getTooltip();
+                ret = requirements.getTooltip();
             }
-            return tooltipOverride;
+            requirements.addTokenReplacements(tokenReplacements);
+            ret = boggledTools.doTokenReplacement(ret, tokenReplacements);
+            return ret;
         }
     }
 
