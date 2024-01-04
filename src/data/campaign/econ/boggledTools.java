@@ -575,7 +575,7 @@ public class boggledTools {
 
         addCommodityShortageEffectFactory("ConditionMultiplierToUpkeep", new BoggledCommoditySupplyDemandFactory.ConditionMultiplierToUpkeepFactory());
 
-        addCommodityShortageEffectFactory("TagMultiplerToUpkeep", new BoggledCommoditySupplyDemandFactory.TagMultiplierToUpkeepFactory());
+        addCommodityShortageEffectFactory("TagMultiplierToUpkeep", new BoggledCommoditySupplyDemandFactory.TagMultiplierToUpkeepFactory());
 
         addCommodityShortageEffectFactory("IncomeBonusFromIndustry", new BoggledCommoditySupplyDemandFactory.IncomeBonusFromIndustryFactory());
     }

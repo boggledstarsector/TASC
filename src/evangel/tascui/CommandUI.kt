@@ -4,6 +4,7 @@ import com.fs.starfarer.api.Global
 import com.fs.starfarer.api.campaign.FactionAPI
 import com.fs.starfarer.api.campaign.econ.MarketAPI
 import com.fs.starfarer.api.campaign.econ.MarketConditionAPI
+import com.fs.starfarer.api.impl.campaign.econ.ResourceDepositsCondition
 import com.fs.starfarer.api.input.InputEventAPI
 import com.fs.starfarer.api.ui.*
 import com.fs.starfarer.api.ui.TooltipMakerAPI.TooltipCreator
@@ -17,6 +18,9 @@ import lunalib.lunaUI.panel.LunaBaseCustomPanelPlugin
 import org.apache.log4j.LogManager
 import org.lwjgl.input.Keyboard
 import java.awt.Color
+import java.util.*
+import kotlin.collections.ArrayList
+import kotlin.collections.LinkedHashMap
 
 class StaticTooltip(title : String?, condition : MarketConditionAPI?, vararg strings : String) : TooltipCreator {
     private val title : String?
@@ -63,6 +67,20 @@ class StaticTooltip(title : String?, condition : MarketConditionAPI?, vararg str
             if (hazardRating != 0) {
                 val hazardPrefix = if (hazardRating > 0) "+" else ""
                 tooltip.addPara("$hazardPrefix$hazardRating%% hazard rating", spacing, Misc.getHighlightColor(), "$hazardPrefix$hazardRating%")
+            }
+
+            val commodity = ResourceDepositsCondition.COMMODITY[condition.id];
+            if (commodity != null) {
+                val commoditySpec = Global.getSettings().getCommoditySpec(commodity);
+                val industry = ResourceDepositsCondition.INDUSTRY[commodity];
+
+                val mod = ResourceDepositsCondition.MODIFIER[condition.id]!!
+                val plusOrBlank = if (mod > 0) "+" else ""
+                if (mod == 0) {
+                    tooltip.addPara("No bonuses or penalties to ${commoditySpec.name.lowercase(Locale.getDefault())} production.", spacing);
+                } else {
+                    tooltip.addPara("$plusOrBlank$mod to ${commoditySpec.name.lowercase(Locale.getDefault())} production.", spacing, Misc.getHighlightColor(), "$plusOrBlank$mod");
+                }
             }
         }
     }
