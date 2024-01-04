@@ -5,13 +5,12 @@ import java.lang.String;
 
 import com.fs.starfarer.api.campaign.econ.Industry;
 import com.fs.starfarer.api.impl.campaign.econ.impl.BaseIndustry;
-import com.fs.starfarer.api.impl.campaign.ids.Commodities;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
 import com.fs.starfarer.api.util.Pair;
 import data.campaign.econ.boggledTools;
 
-public class Boggled_Atmosphere_Processor extends BaseIndustry
+public class Boggled_Atmosphere_Processor extends BaseIndustry implements BoggledIndustryInterface
 {
     private final BoggledCommonIndustry thisIndustry;
 
@@ -54,6 +53,9 @@ public class Boggled_Atmosphere_Processor extends BaseIndustry
     public boolean isBuilding() { return thisIndustry.isBuilding(this); }
 
     @Override
+    public boolean isFunctional() { return super.isFunctional() && thisIndustry.isFunctional(); }
+
+    @Override
     public boolean isUpgrading() { return thisIndustry.isUpgrading(this); }
 
     @Override
@@ -85,15 +87,9 @@ public class Boggled_Atmosphere_Processor extends BaseIndustry
     }
 
     @Override
-    public boolean canBeDisrupted()
-    {
-        return true;
-    }
-
-    @Override
     public void apply() {
         super.apply(true);
-        thisIndustry.apply(this);
+        thisIndustry.apply(this, this);
     }
 
     @Override
@@ -102,19 +98,10 @@ public class Boggled_Atmosphere_Processor extends BaseIndustry
         super.unapply();
     }
 
-    @Override
-    protected void addRightAfterDescriptionSection(TooltipMakerAPI tooltip, IndustryTooltipMode mode)
-    {
-        float opad = 10.0F;
-        Color highlight = Misc.getHighlightColor();
-        Color bad = Misc.getNegativeHighlightColor();
-        Color good = Misc.getPositiveHighlightColor();
-
-        if(this.isDisrupted() && boggledTools.marketHasAtmoProblem(this.market) && mode != IndustryTooltipMode.ADD_INDUSTRY && mode != IndustryTooltipMode.QUEUED && !isBuilding())
-        {
-            tooltip.addPara("Terraforming progress is stalled while the atmosphere processor is disrupted.", bad, opad);
-        }
-    }
+//    @Override
+//    protected void addRightAfterDescriptionSection(TooltipMakerAPI tooltip, IndustryTooltipMode mode) {
+//        thisIndustry.addRightAfterDescriptionSection(this, tooltip, mode);
+//    }
 
     @Override
     protected boolean hasPostDemandSection(boolean hasDemand, IndustryTooltipMode mode) {
@@ -122,24 +109,28 @@ public class Boggled_Atmosphere_Processor extends BaseIndustry
     }
 
     @Override
-    protected void addPostDemandSection(TooltipMakerAPI tooltip, boolean hasDemand, IndustryTooltipMode mode)
+    protected void addPostDemandSection(TooltipMakerAPI tooltip, boolean hasDemand, IndustryTooltipMode mode) {
+        thisIndustry.addPostDemandSection(this, tooltip, hasDemand, mode);
+    }
+
+    @Override
+    public void applyDeficitToProduction(int index, Pair<String, Integer> deficit, String... commodities) {
+        super.applyDeficitToProduction(index, deficit, commodities);
+    }
+
+    @Override
+    public void setFunctional(boolean functional) {
+        thisIndustry.setFunctional(functional);
+    }
+
+    @Override
+    protected void addRightAfterDescriptionSection(TooltipMakerAPI tooltip, IndustryTooltipMode mode)
     {
-        boolean shortage = false;
-        Pair<String, Integer> deficit = this.getMaxDeficit(Commodities.HEAVY_MACHINERY);
-        if(deficit.two != 0)
-        {
-            shortage = true;
-        }
+        float opad = 10.0F;
+        Color bad = Misc.getNegativeHighlightColor();
 
-        if(shortage && mode != IndustryTooltipMode.ADD_INDUSTRY && mode != IndustryTooltipMode.QUEUED && !isBuilding())
-        {
-            float opad = 10.0F;
-            Color bad = Misc.getNegativeHighlightColor();
-
-            if(deficit.two != 0)
-            {
-                tooltip.addPara("The atmosphere processor is inactive due to a shortage of heavy machinery.", bad, opad);
-            }
+        if(this.isDisrupted() && boggledTools.marketHasAtmoProblem(this.market) && mode != IndustryTooltipMode.ADD_INDUSTRY && mode != IndustryTooltipMode.QUEUED && !isBuilding()) {
+            tooltip.addPara("Terraforming progress is stalled while the atmosphere processor is disrupted.", bad, opad);
         }
     }
 

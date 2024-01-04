@@ -11,7 +11,7 @@ import data.campaign.econ.boggledTools;
 import java.awt.*;
 import com.fs.starfarer.api.impl.campaign.ids.Commodities;
 
-public class Boggled_Limelight_Network extends BaseIndustry {
+public class Boggled_Limelight_Network extends BaseIndustry implements BoggledIndustryInterface {
     private final BoggledCommonIndustry thisIndustry;
 
     public Boggled_Limelight_Network() {
@@ -53,6 +53,9 @@ public class Boggled_Limelight_Network extends BaseIndustry {
     public boolean isBuilding() { return thisIndustry.isBuilding(this); }
 
     @Override
+    public boolean isFunctional() { return super.isFunctional() && thisIndustry.isFunctional(); }
+
+    @Override
     public boolean isUpgrading() { return thisIndustry.isUpgrading(this); }
 
     @Override
@@ -83,28 +86,10 @@ public class Boggled_Limelight_Network extends BaseIndustry {
         thisIndustry.advance(amount, this);
     }
 
-    //Need to update string in addImproveDesc if value changed
-    private final float IMPROVE_BONUS = 1.20f;
-
     @Override
-    public boolean canBeDisrupted() {
-        return true;
-    }
-
-    @Override
-    public void apply()
-    {
+    public void apply() {
         super.apply(true);
-        thisIndustry.apply(this);
-
-        if(hasShortage())
-        {
-            getUpkeep().modifyMult("deficit", 5.0f, "Artifacts shortage");
-        }
-        else
-        {
-            getUpkeep().unmodifyMult("deficit");
-        }
+        thisIndustry.apply(this, this);
     }
 
     @Override
@@ -114,15 +99,32 @@ public class Boggled_Limelight_Network extends BaseIndustry {
     }
 
     @Override
+    protected void addRightAfterDescriptionSection(TooltipMakerAPI tooltip, IndustryTooltipMode mode) {
+        thisIndustry.addRightAfterDescriptionSection(this, tooltip, mode);
+    }
+
+    @Override
     protected boolean hasPostDemandSection(boolean hasDemand, IndustryTooltipMode mode) {
-        return thisIndustry.hasPostDemandSection(this, hasDemand, mode);
+        return true;
     }
 
     @Override
     protected void addPostDemandSection(TooltipMakerAPI tooltip, boolean hasDemand, IndustryTooltipMode mode) {
-        super.addPostDemandSection(tooltip, hasDemand, mode);
         thisIndustry.addPostDemandSection(this, tooltip, hasDemand, mode);
     }
+
+    @Override
+    public void applyDeficitToProduction(int index, Pair<String, Integer> deficit, String... commodities) {
+        super.applyDeficitToProduction(index, deficit, commodities);
+    }
+
+    @Override
+    public void setFunctional(boolean functional) {
+        thisIndustry.setFunctional(functional);
+    }
+
+    //Need to update string in addImproveDesc if value changed
+    private final float IMPROVE_BONUS = 1.20f;
 
     @Override
     public void addAlphaCoreDescription(TooltipMakerAPI tooltip, AICoreDescriptionMode mode) {
@@ -193,11 +195,11 @@ public class Boggled_Limelight_Network extends BaseIndustry {
         String bonus = "20%";
         if (mode == ImprovementDescriptionMode.INDUSTRY_TOOLTIP)
         {
-            info.addPara("Income increased by %s.", 0.0F, highlight, new String[]{bonus});
+            info.addPara("Income increased by %s.", 0.0F, highlight, bonus);
         }
         else
         {
-            info.addPara("Increases income by %s.", 0.0F, highlight, new String[]{bonus});
+            info.addPara("Increases income by %s.", 0.0F, highlight, bonus);
         }
 
         info.addSpacer(opad);
@@ -216,17 +218,5 @@ public class Boggled_Limelight_Network extends BaseIndustry {
             return super.getPatherInterest();
         }
     }
-
-    private boolean hasShortage()
-    {
-        if(boggledTools.getBooleanSetting(boggledTools.BoggledSettings.domainArchaeologyEnabled))
-        {
-            Pair<String, Integer> deficit = this.getMaxDeficit(new String[]{boggledTools.BoggledCommodities.domainArtifacts});
-            return deficit.two != 0;
-        }
-
-        return false;
-    }
-
 }
 

@@ -1,7 +1,6 @@
 package data.campaign.econ.industries;
 
 import com.fs.starfarer.api.Global;
-import com.fs.starfarer.api.campaign.CampaignClockAPI;
 import com.fs.starfarer.api.campaign.econ.Industry;
 import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.impl.campaign.econ.impl.BaseIndustry;
@@ -15,29 +14,44 @@ import org.json.JSONObject;
 
 import java.awt.*;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedHashMap;
+import java.util.Map;
 
 public class BoggledCommonIndustry {
     /*
-    This class cannot be made into a base class of any of the Boggled industries because Remnant Station gets in the way
+    This class cannot be made into a base class of any of the Boggled industries because Remnant Station and Cryosanctum gets in the way, may be able to do something else though
      */
+    private final String industryId;
     private final String industryTooltip;
 
-    public ArrayList<BoggledTerraformingProject> projects;
-    private final ArrayList<BoggledCommoditySupplyDemand.CommoditySupplyAndDemand> commoditySupplyAndDemands;
+    public ArrayList<BoggledTerraformingProject.ProjectInstance> projects;
+    private ArrayList<BoggledCommoditySupplyDemand.CommoditySupplyAndDemand> commoditySupplyAndDemands;
+    private ArrayList<BoggledCommoditySupplyDemand.CommodityDemandShortageEffect> commodityDemandShortageEffects;
+
+    private boolean functional = true;
 
     private boolean building = false;
     private boolean built = false;
-    public ArrayList<Integer> lastDayChecked;
-    public ArrayList<Integer> daysWithoutShortage;
 
-    public BoggledCommonIndustry(String industryTooltip, ArrayList<BoggledTerraformingProject> projects, ArrayList<BoggledCommoditySupplyDemand.CommoditySupplyAndDemand> commoditySupplyAndDemands) {
+    public BoggledCommonIndustry(String industryId, String industryTooltip, ArrayList<BoggledTerraformingProject> projects, ArrayList<BoggledCommoditySupplyDemand.CommoditySupplyAndDemand> commoditySupplyAndDemands, ArrayList<BoggledCommoditySupplyDemand.CommodityDemandShortageEffect> commodityDemandShortageEffects) {
+        this.industryId = industryId;
         this.industryTooltip = industryTooltip;
-        this.projects = projects;
+
+        this.projects = new ArrayList<>(projects.size());
+        for (BoggledTerraformingProject project : projects) {
+            this.projects.add(new BoggledTerraformingProject.ProjectInstance(project));
+        }
+
         this.commoditySupplyAndDemands = commoditySupplyAndDemands;
-        this.lastDayChecked = new ArrayList<>(Collections.nCopies(projects.size(), 0));
-        this.daysWithoutShortage = new ArrayList<>(Collections.nCopies(projects.size(), 0));
+        this.commodityDemandShortageEffects = commodityDemandShortageEffects;
+    }
+
+    protected Object readResolve() {
+        Global.getLogger(this.getClass()).info("Doing readResolve for " + industryId + " " + industryTooltip);
+        BoggledCommonIndustry that = boggledTools.getIndustryProject(industryId);
+        this.projects = that.projects;
+        this.commoditySupplyAndDemands = that.commoditySupplyAndDemands;
+        this.commodityDemandShortageEffects = that.commodityDemandShortageEffects;
+        return this;
     }
 
     public void overridesFromJSON(JSONObject data) throws JSONException {
@@ -53,37 +67,18 @@ public class BoggledCommonIndustry {
             return;
         }
 
-        CampaignClockAPI clock = Global.getSector().getClock();
-        for (int i = 0; i < projects.size(); ++i) {
-            if (clock.getDay() == lastDayChecked.get(i)) {
-                continue;
-            }
-
-            BoggledTerraformingProject project = projects.get(i);
-            int step = 1;
-            if (!project.requirementsMet(industry.getMarket())) {
-                step = -1;
-            }
-
-            int daysWithoutShortage = this.daysWithoutShortage.get(i) + step;
-            this.daysWithoutShortage.set(i, daysWithoutShortage);
-            this.lastDayChecked.set(i, clock.getDay());
-
-            if (daysWithoutShortage < project.getModifiedProjectDuration(getFocusMarketOrMarket(industry.getMarket()))) {
-                continue;
-            }
-
-            project.finishProject(getFocusMarketOrMarket(industry.getMarket()));
-            this.daysWithoutShortage.set(i, 0);
+        for (BoggledTerraformingProject.ProjectInstance project : projects) {
+            project.advance(industry.getMarket());
         }
     }
 
     public int getPercentComplete(int projectIndex, MarketAPI market) {
-        return (int) Math.min(99, ((float)daysWithoutShortage.get(projectIndex) / projects.get(projectIndex).getModifiedProjectDuration(getFocusMarketOrMarket(market))) * 100);
+        return (int) Math.min(99, ((float)projects.get(projectIndex).getDaysCompleted() / projects.get(projectIndex).getProject().getModifiedProjectDuration(getFocusMarketOrMarket(market))) * 100);
     }
 
     public int getDaysRemaining(int projectIndex, BaseIndustry industry) {
-        return projects.get(projectIndex).getModifiedProjectDuration(getFocusMarketOrMarket(industry.getMarket())) - daysWithoutShortage.get(projectIndex);
+        BoggledTerraformingProject.ProjectInstance project = projects.get(projectIndex);
+        return project.getProject().getModifiedProjectDuration(getFocusMarketOrMarket(industry.getMarket())) - project.getDaysCompleted();
     }
 
     public void tooltipIncomplete(BaseIndustry industry, TooltipMakerAPI tooltip, Industry.IndustryTooltipMode mode, String format, float pad, Color hl, String... highlights) {
@@ -109,16 +104,16 @@ public class BoggledCommonIndustry {
 
     private boolean marketSuitableVisible(MarketAPI market) {
         boolean anyProjectValid = false;
-        for (BoggledTerraformingProject project : projects) {
-            anyProjectValid = anyProjectValid || project.requirementsMet(market);
+        for (BoggledTerraformingProject.ProjectInstance project : projects) {
+            anyProjectValid = anyProjectValid || project.getProject().requirementsMet(market);
         }
         return anyProjectValid;
     }
 
     private boolean marketSuitableHidden(MarketAPI market) {
         boolean anyProjectValid = false;
-        for (BoggledTerraformingProject project : projects) {
-            anyProjectValid = anyProjectValid || project.requirementsHiddenMet(market);
+        for (BoggledTerraformingProject.ProjectInstance project : projects) {
+            anyProjectValid = anyProjectValid || project.getProject().requirementsHiddenMet(market);
         }
         return anyProjectValid;
     }
@@ -167,11 +162,19 @@ public class BoggledCommonIndustry {
             return false;
         }
         for (int i = 0; i < projects.size(); ++i) {
-            if (projects.get(i).requirementsMet(industry.getMarket()) && getDaysRemaining(i, industry) > 0) {
+            if (projects.get(i).getProject().requirementsMet(industry.getMarket()) && getDaysRemaining(i, industry) > 0) {
                 return true;
             }
         }
         return false;
+    }
+
+    public void setFunctional(boolean functional) {
+        this.functional = functional;
+    }
+
+    public boolean isFunctional() {
+        return functional;
     }
 
     public boolean isUpgrading(BaseIndustry industry) {
@@ -179,7 +182,7 @@ public class BoggledCommonIndustry {
             return false;
         }
         for (int i = 0; i < projects.size(); ++i) {
-            if (projects.get(i).requirementsMet(industry.getMarket()) && getDaysRemaining(i, industry) > 0) {
+            if (projects.get(i).getProject().requirementsMet(industry.getMarket()) && getDaysRemaining(i, industry) > 0) {
                 return true;
             }
         }
@@ -230,15 +233,20 @@ public class BoggledCommonIndustry {
 
     public boolean isAvailableToBuild(BaseIndustry industry) {
         if (!projects.isEmpty()) {
-            for (BoggledTerraformingProject project : projects) {
-                if (!project.isEnabled()) {
-                    return false;
+            boolean anyEnabled = false;
+            for (BoggledTerraformingProject.ProjectInstance project : projects) {
+                if (project.getProject().isEnabled()) {
+                    anyEnabled = true;
+                    break;
                 }
+            }
+            if (!anyEnabled) {
+                return false;
             }
 
             boolean noneMet = true;
-            for (BoggledTerraformingProject project : projects) {
-                if (project.requirementsMet(industry.getMarket())) {
+            for (BoggledTerraformingProject.ProjectInstance project : projects) {
+                if (project.getProject().requirementsMet(industry.getMarket())) {
                     noneMet = false;
                     break;
                 }
@@ -253,15 +261,20 @@ public class BoggledCommonIndustry {
 
     public boolean showWhenUnavailable(BaseIndustry industry) {
         if (!projects.isEmpty()) {
-            for (BoggledTerraformingProject project : projects) {
-                if (!project.isEnabled()) {
-                    return false;
+            boolean anyEnabled = false;
+            for (BoggledTerraformingProject.ProjectInstance project : projects) {
+                if (project.getProject().isEnabled()) {
+                    anyEnabled = true;
+                    break;
                 }
+            }
+            if (!anyEnabled) {
+                return false;
             }
 
             boolean allHidden = true;
-            for (BoggledTerraformingProject project : projects) {
-                if (project.requirementsHiddenMet(industry.getMarket())) {
+            for (BoggledTerraformingProject.ProjectInstance project : projects) {
+                if (project.getProject().requirementsHiddenMet(industry.getMarket())) {
                     allHidden = false;
                     break;
                 }
@@ -278,19 +291,27 @@ public class BoggledCommonIndustry {
         return boggledTools.getUnavailableReason(projects, industryTooltip, industry.getMarket(), boggledTools.getTokenReplacements(industry.getMarket()));
     }
 
-    public void apply(BaseIndustry industry) {
+    public void apply(BaseIndustry industry, BoggledIndustryInterface industryInterface) {
         for (BoggledCommoditySupplyDemand.CommoditySupplyAndDemand commoditySupplyAndDemand : commoditySupplyAndDemands) {
             commoditySupplyAndDemand.applySupplyDemand(industry);
+        }
+
+        for (BoggledCommoditySupplyDemand.CommodityDemandShortageEffect commodityDemandShortageEffect : commodityDemandShortageEffects) {
+            commodityDemandShortageEffect.applyShortageEffect(industry, industryInterface);
+        }
+
+        if (!industry.isFunctional()) {
+            industry.getAllSupply().clear();
+            industry.unapply();
         }
     }
 
     public void addRightAfterDescriptionSection(BaseIndustry industry, TooltipMakerAPI tooltip, Industry.IndustryTooltipMode mode) {
         float pad = 10.0f;
-//        for (BoggledTerraformingProject project : projects) {
         for (int i = 0; i < projects.size(); ++i) {
-            BoggledTerraformingProject project = projects.get(i);
+            BoggledTerraformingProject project = projects.get(i).getProject();
             if (project.requirementsMet(industry.getMarket())) {
-                LinkedHashMap<String, String> tokenReplacements = getTokenReplacements(industry.getMarket(), i);
+                Map<String, String> tokenReplacements = getTokenReplacements(industry.getMarket(), i);
                 String[] highlights = project.getIncompleteMessageHighlights(tokenReplacements);
                 addFormatTokenReplacement(tokenReplacements);
                 String incompleteMessage = boggledTools.doTokenReplacement(project.getIncompleteMessage(), tokenReplacements);
@@ -306,24 +327,36 @@ public class BoggledCommonIndustry {
                 return true;
             }
         }
+
+        for (BoggledCommoditySupplyDemand.CommodityDemandShortageEffect commodityDemandShortageEffect : commodityDemandShortageEffects) {
+            if (commodityDemandShortageEffect.isEnabled()) {
+                return true;
+            }
+        }
         return false;
     }
 
     public void addPostDemandSection(BaseIndustry industry, TooltipMakerAPI tooltip, boolean hasDemand, Industry.IndustryTooltipMode mode) {
         for (BoggledCommoditySupplyDemand.CommoditySupplyAndDemand commoditySupplyAndDemand : commoditySupplyAndDemands) {
             if (commoditySupplyAndDemand.isEnabled()) {
-                commoditySupplyAndDemand.addPostDemandSection(industryTooltip, industry, tooltip, hasDemand, mode);
+                commoditySupplyAndDemand.addPostDemandSection(industry.getCurrentName(), industry, tooltip, hasDemand, mode);
+            }
+        }
+
+        for (BoggledCommoditySupplyDemand.CommodityDemandShortageEffect commodityDemandShortageEffect : commodityDemandShortageEffects) {
+            if (commodityDemandShortageEffect.isEnabled()) {
+                commodityDemandShortageEffect.addPostDemandSection(industry.getCurrentName(), industry, tooltip, hasDemand, mode);
             }
         }
     }
 
-    private LinkedHashMap<String, String> getTokenReplacements(MarketAPI market, int projectIndex) {
-        LinkedHashMap<String, String> ret = boggledTools.getTokenReplacements(market);
+    private Map<String, String> getTokenReplacements(MarketAPI market, int projectIndex) {
+        Map<String, String> ret = boggledTools.getTokenReplacements(market);
         ret.put("$percentComplete", Integer.toString(getPercentComplete(projectIndex, market)));
         return ret;
     }
 
-    private void addFormatTokenReplacement(LinkedHashMap<String, String> tokenReplacements) {
+    private void addFormatTokenReplacement(Map<String, String> tokenReplacements) {
         tokenReplacements.put("%", "%%");
     }
 }

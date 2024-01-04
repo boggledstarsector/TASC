@@ -9,6 +9,7 @@ import com.fs.starfarer.api.campaign.listeners.ListenerUtil;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import com.fs.starfarer.api.characters.MarketConditionSpecAPI;
 import com.fs.starfarer.api.impl.campaign.MilitaryResponseScript;
+import com.fs.starfarer.api.impl.campaign.econ.impl.BaseIndustry;
 import com.fs.starfarer.api.impl.campaign.ids.*;
 import com.fs.starfarer.api.impl.campaign.intel.BaseIntelPlugin;
 import com.fs.starfarer.api.impl.campaign.intel.MessageIntel;
@@ -295,64 +296,17 @@ public class boggledTools {
 
         public static final String crampedQuartersConditionId = "cramped_quarters";
     }
-
-    private static class BoggledProjectRequirements {
-        public static final String colonyHasAtLeast100kInhabitantsRequirementId = "colony_has_at_least_100k_inhabitants";
-
-        public static final String colonyHasOrbitalWorksWPristineNanoforgeRequirementId = "colony_has_orbital_works_w_pristine_nanoforge";
-
-        public static final String fleetCargoContainsAtLeastEasyDomainArtifactsRequirementId = "fleet_cargo_contains_at_least_easy_domain_artifacts";
-        public static final String fleetCargoContainsAtLeastMediumDomainArtifactsRequirementId = "fleet_cargo_contains_at_least_medium_domain_artifacts";
-        public static final String fleetCargoContainsAtLeastHardDomainArtifactsRequirementId = "fleet_cargo_contains_at_least_hard_domain_artifacts";
-
-        public static final String playerHasStoryPointsRequirementId = "player_has_at_least_story_points";
-
-        public static final String colonyHasAtLeast100kInhabitants = "Colony has at least 100,000 inhabitants";
-
-        public static final String colonyHasOrbitalWorksWPristineNanoforge = "Colony has orbital works with a pristine nanoforge";
-    }
     // A mistyped string compiles fine and leads to plenty of debugging. A mistyped constant gives an error.
 
     public static final String csvOptionSeparator = "\\s*\\|\\s*";
     public static final String csvSubOptionSeparator = "\\s*;\\s*";
     public static final String noneProjectId = "None";
 
-    public static final String craftCorruptedNanoforgeProjectId = "craftCorruptedNanoforge";
-    public static final String craftPristineNanoforgeProjectId = "craftPristineNanoforge";
-    public static final String craftSynchrotronProjectId = "craftSynchrotron";
-    public static final String craftHypershuntTapProjectId = "craftHypershuntTap";
-    public static final String craftCryoarithmeticEngineProjectId = "craftCryoarithmeticEngine";
-    public static final String craftPlanetKillerDeviceProjectId = "craftPlanetKillerDevice";
-    public static final String craftFusionLampProjectId = "craftFusionLamp";
-    public static final String craftFullereneSpoolProjectId = "craftFullereneSpool";
-    public static final String craftPlasmaDynamoProjectId = "craftPlasmaDynamo";
-    public static final String craftAutonomousMantleBoreProjectId = "craftAutonomousMantleBore";
-    public static final String craftSoilNanitesProjectId = "craftSoilNanites";
-    public static final String craftCatalyticCoreProjectId = "craftCatalyticCore";
-    public static final String craftCombatDroneReplicatorProjectId = "craftCombatDroneReplicator";
-    public static final String craftBiofactoryEmbryoProjectId = "crafyBiofactoryEmbryo";
-    public static final String craftDealmakerHolosuiteProjectId = "craftDealmakerHolosuite";
-
-    public static final String craftCorruptedNanoforgeProjectTooltip = "Craft Corrupted Nanoforge";
-    public static final String craftPristineNanoforgeProjectTooltip = "Craft Pristine Nanoforge";
-    public static final String craftSynchrotronProjectTooltip = "Craft Synchrotron";
-    public static final String craftHypershuntTapProjectTooltip = "Craft Hypershunt Tap";
-    public static final String craftCryoarithmeticEngineProjectTooltip = "Craft Cryoarithmetic Engine";
-    public static final String craftPlanetKillerDeviceProjectTooltip = "Craft Planet Killer Device";
-    public static final String craftFusionLampProjectTooltip = "Craft Fusion Lamp";
-    public static final String craftFullereneSpoolProjectTooltip = "Craft Fullerene Spool";
-    public static final String craftPlasmaDynamoProjectTooltip = "Craft Plasma Dynamo";
-    public static final String craftAutonomousMantleBoreProjectTooltip = "Craft Autonomous Mantle Bore";
-    public static final String craftSoilNanitesProjectTooltip = "Craft Soil Nanites";
-    public static final String craftCatalyticCoreProjectTooltip = "Craft Catalytic Core";
-    public static final String craftCombatDroneReplicatorProjectTooltip = "Craft Combat Drone Replicator";
-    public static final String craftBiofactoryEmbryoProjectTooltip = "Craft Biofactory Embryo";
-    public static final String craftDealmakerHolosuiteProjectTooltip = "Craft Dealmaker Holosuite";
-
     public static final HashMap<String, BoggledTerraformingRequirementFactory.TerraformingRequirementFactory> terraformingRequirementFactories = new HashMap<>();
     public static final HashMap<String, BoggledTerraformingDurationModifierFactory.TerraformingDurationModifierFactory> terraformingDurationModifierFactories = new HashMap<>();
     public static final HashMap<String, BoggledTerraformingProjectEffectFactory.TerraformingProjectEffectFactory> terraformingProjectEffectFactories = new HashMap<>();
     public static final HashMap<String, BoggledCommoditySupplyDemandFactory.CommoditySupplyDemandFactory> commodityDemandFactories = new HashMap<>();
+    public static final HashMap<String, BoggledCommoditySupplyDemandFactory.CommodityDemandShortageEffectFactory> commodityShortageEffectFactories = new HashMap<>();
 
     @Nullable
     public static BoggledTerraformingRequirement.TerraformingRequirement getTerraformingRequirement(String terraformingRequirementType, String id, boolean invert, String data) {
@@ -371,8 +325,8 @@ public class boggledTools {
             return req;
         } catch (AbstractMethodError e) {
             log.error("Requirement " + id + " of type " + terraformingRequirementType + " has incorrect constructFromJSON function signature");
-            return null;
         }
+        return null;
     }
 
     public static BoggledProjectRequirementsOR getTerraformingRequirements(String terraformingRequirementId) {
@@ -397,8 +351,8 @@ public class boggledTools {
             return mod;
         } catch (AbstractMethodError e) {
             log.error("Duration modifier " + id + " of type " + durationModifierType + " has incorrect constructFromJSON function signature");
-            return null;
         }
+        return null;
     }
 
     @Nullable
@@ -411,7 +365,7 @@ public class boggledTools {
             return null;
         }
         try {
-            BoggledCommoditySupplyDemand.CommoditySupplyAndDemand demand = factory.constructFromJSON(enableSettings, commodity, data);
+            BoggledCommoditySupplyDemand.CommoditySupplyAndDemand demand = factory.constructFromJSON(id, enableSettings, commodity, data);
             if (demand == null) {
                 log.error("Commodity demand " + id + " of type " + commodityDemandType + " was null when created with data " + data);
                 return null;
@@ -419,8 +373,30 @@ public class boggledTools {
             return demand;
         } catch (AbstractMethodError e) {
             log.error("Commodity demand " + id + " of type " + commodityDemandType + " has incorrect constructFromJSON signature");
+        }
+        return null;
+    }
+
+    @Nullable
+    public static BoggledCommoditySupplyDemand.CommodityDemandShortageEffect getCommodityDemandShortageEffect(String commodityDemandShortageEffectType, String id, String[] enableSettings, String[] commoditiesDemanded, String data) {
+        Logger log = Global.getLogger(boggledTools.class);
+
+        BoggledCommoditySupplyDemandFactory.CommodityDemandShortageEffectFactory factory = commodityShortageEffectFactories.get(commodityDemandShortageEffectType);
+        if (factory == null) {
+            log.error("Commodity demand shortage effect " + id + " of type " + commodityDemandShortageEffectType + " has no assigned factory");
             return null;
         }
+        try {
+            BoggledCommoditySupplyDemand.CommodityDemandShortageEffect effect = factory.constructFromJSON(id, enableSettings, new ArrayList<>(asList(commoditiesDemanded)), data);
+            if (effect == null) {
+                log.error("Commodity demand shortage effect " + id + " of type " + commodityDemandShortageEffectType + " was null when created with data " + data);
+                return null;
+            }
+            return effect;
+        } catch (AbstractMethodError e) {
+            log.error("Commodity demand shortage effect " + id + " of type " + commodityDemandShortageEffectType + " has incorrect constructFromJSON signature");
+        }
+        return null;
     }
 
     @Nullable
@@ -440,8 +416,8 @@ public class boggledTools {
             return effect;
         } catch (AbstractMethodError e) {
             log.error("Terraforming project effect " + id + " of type " + projectEffectType + " has incorrect constructFromJSON function signature");
-            return null;
         }
+        return null;
     }
 
     public static boolean optionsAllowThis(String... options) {
@@ -485,19 +461,32 @@ public class boggledTools {
         return ret;
     }
 
-    public static String doTokenReplacement(String replace, LinkedHashMap<String, String> tokenReplacements) {
+    public static String doTokenReplacement(String replace, Map<String, String> tokenReplacements) {
         for (Map.Entry<String, String> replacement : tokenReplacements.entrySet()) {
             replace = replace.replace(replacement.getKey(), replacement.getValue());
         }
         return replace;
     }
 
-    private static void buildUnavailableReason(StringBuilder builder, @NotNull ArrayList<BoggledTerraformingProject> projects, MarketAPI market, LinkedHashMap<String, String> tokenReplacements) {
-        for (BoggledTerraformingProject project : projects) {
+    public static String buildCommodityList(BaseIndustry industry, String[] commoditiesDemanded) {
+        if (commoditiesDemanded.length == 0) {
+            return "";
+        }
+
+        List<Pair<String, Integer>> deficits = industry.getAllDeficit(commoditiesDemanded);
+        String[] strings = new String[deficits.size()];
+        for (int i = 0; i < deficits.size(); ++i) {
+            strings[i] = Global.getSettings().getCommoditySpec(deficits.get(i).one).getLowerCaseName();
+        }
+        return Misc.getAndJoined(strings);
+    }
+
+    private static void buildUnavailableReason(StringBuilder builder, @NotNull ArrayList<BoggledTerraformingProject.ProjectInstance> projects, MarketAPI market, Map<String, String> tokenReplacements) {
+        for (BoggledTerraformingProject.ProjectInstance project : projects) {
             if (builder.length() != 0) {
                 builder.append("\n");
             }
-            for (BoggledProjectRequirementsAND.RequirementWithTooltipOverride req : project.getProjectRequirements()) {
+            for (BoggledProjectRequirementsAND.RequirementWithTooltipOverride req : project.getProject().getProjectRequirements()) {
                 if (!req.checkRequirement(market)) {
                     if (builder.length() != 0) {
                         builder.append("\n");
@@ -509,9 +498,9 @@ public class boggledTools {
         }
     }
     @NotNull
-    public static String getUnavailableReason(ArrayList<BoggledTerraformingProject> projects, String industry, MarketAPI market, LinkedHashMap<String, String> tokenReplacements) {
-        for (BoggledTerraformingProject project : projects) {
-            if (!boggledTools.optionsAllowThis(project.getEnableSettings())) {
+    public static String getUnavailableReason(ArrayList<BoggledTerraformingProject.ProjectInstance> projects, String industry, MarketAPI market, Map<String, String> tokenReplacements) {
+        for (BoggledTerraformingProject.ProjectInstance project : projects) {
+            if (!boggledTools.optionsAllowThis(project.getProject().getEnableSettings())) {
                 return "Error in getUnavailableReason() in " + industry + ". Please tell Boggled about this on the forums.";
             }
         }
@@ -579,6 +568,23 @@ public class boggledTools {
         commodityDemandFactories.put(key, value);
     }
 
+    public static void initialiseDefaultCommodityShortageEffectFactories() {
+        addCommodityShortageEffectFactory("DeficitToInactive", new BoggledCommoditySupplyDemandFactory.DeficitToInactiveFactory());
+        addCommodityShortageEffectFactory("DeficitToCommodity", new BoggledCommoditySupplyDemandFactory.DeficitToCommodityFactory());
+        addCommodityShortageEffectFactory("DeficitMultiplierToUpkeep", new BoggledCommoditySupplyDemandFactory.DeficitMultiplierToUpkeepFactory());
+
+        addCommodityShortageEffectFactory("ConditionMultiplierToUpkeep", new BoggledCommoditySupplyDemandFactory.ConditionMultiplierToUpkeepFactory());
+
+        addCommodityShortageEffectFactory("TagMultiplerToUpkeep", new BoggledCommoditySupplyDemandFactory.TagMultiplierToUpkeepFactory());
+
+        addCommodityShortageEffectFactory("IncomeBonusFromIndustry", new BoggledCommoditySupplyDemandFactory.IncomeBonusFromIndustryFactory());
+    }
+
+    public static void addCommodityShortageEffectFactory(String key, BoggledCommoditySupplyDemandFactory.CommodityDemandShortageEffectFactory value) {
+        Global.getLogger(boggledTools.class).info("Adding commodity shortage effect factory " + key);
+        commodityShortageEffectFactories.put(key, value);
+    }
+
     public static void initialiseDefaultTerraformingProjectEffectFactories() {
         addTerraformingProjectEffectFactory("PlanetTypeChange", new BoggledTerraformingProjectEffectFactory.PlanetTypeChange());
         addTerraformingProjectEffectFactory("MarketAddCondition", new BoggledTerraformingProjectEffectFactory.MarketAddCondition());
@@ -591,8 +597,10 @@ public class boggledTools {
         addTerraformingProjectEffectFactory("FocusMarketProgressResource", new BoggledTerraformingProjectEffectFactory.FocusMarketProgressResource());
         addTerraformingProjectEffectFactory("FocusMarketAndSiphonStationProgressResource", new BoggledTerraformingProjectEffectFactory.FocusMarketAndSiphonStationProgressResource());
 
-        addTerraformingProjectEffectFactory("SystemAddCoronalTap", new BoggledTerraformingProjectEffectFactory.SystemAddCoronalTap());
+        addTerraformingProjectEffectFactory("SystemAddCoronalTapFactory", new BoggledTerraformingProjectEffectFactory.SystemAddCoronalTapFactory());
         addTerraformingProjectEffectFactory("MarketAddStellarReflectors", new BoggledTerraformingProjectEffectFactory.MarketAddStellarReflectorsFactory());
+
+        addTerraformingProjectEffectFactory("MarketRemoveIndustry", new BoggledTerraformingProjectEffectFactory.MarketRemoveIndustryFactory());
 
         addTerraformingProjectEffectFactory("RemoveCommodityFromSubmarket", new BoggledTerraformingProjectEffectFactory.RemoveCommodityFromSubmarketFactory());
         addTerraformingProjectEffectFactory("RemoveStoryPointsFromPlayer", new BoggledTerraformingProjectEffectFactory.RemoveStoryPointsFromPlayerFactory());
@@ -770,17 +778,17 @@ public class boggledTools {
 
                 String[] projectStrings = row.getString("projects").split(boggledTools.csvOptionSeparator);
 
-                ArrayList<BoggledTerraformingProject> projectsWithIntel = new ArrayList<>();
+                ArrayList<BoggledTerraformingProject> projects = new ArrayList<>();
                 for (String projectString : projectStrings) {
                     BoggledTerraformingProject project = boggledTools.getProject(projectString);
                     if (project != null) {
-                        projectsWithIntel.add(project);
+                        projects.add(project);
                     }
                 }
                 
-                String[] commodityDemandsString = row.getString("commodity_demands").split(boggledTools.csvOptionSeparator);
+                String[] commoditySupplyDemandStrings = row.getString("commodity_supply_demand").split(boggledTools.csvOptionSeparator);
                 ArrayList<BoggledCommoditySupplyDemand.CommoditySupplyAndDemand> commoditySupplyAndDemands = new ArrayList<>();
-                for (String commoditySupplyDemandString : commodityDemandsString) {
+                for (String commoditySupplyDemandString : commoditySupplyDemandStrings) {
                     if (commoditySupplyDemandString.isEmpty()) {
                         continue;
                     }
@@ -792,7 +800,21 @@ public class boggledTools {
                     }
                 }
 
-                industryProjects.put(id, new BoggledCommonIndustry(industry, projectsWithIntel, commoditySupplyAndDemands));
+                String[] commodityDemandShortageEffectStrings = row.getString("demand_shortage_effect").split(csvOptionSeparator);
+                ArrayList<BoggledCommoditySupplyDemand.CommodityDemandShortageEffect> commodityDemandShortageEffects = new ArrayList<>();
+                for (String commodityDemandShortageEffectString : commodityDemandShortageEffectStrings) {
+                    if (commodityDemandShortageEffectString.isEmpty()) {
+                        continue;
+                    }
+                    BoggledCommoditySupplyDemand.CommodityDemandShortageEffect shortageEffect = boggledTools.commodityDemandShortageEffects.get(commodityDemandShortageEffectString);
+                    if (shortageEffect != null) {
+                        commodityDemandShortageEffects.add(shortageEffect);
+                    } else {
+                        log.info("Industry " + id + " has invalid commodity demand shortage effect " + commodityDemandShortageEffectString);
+                    }
+                }
+
+                industryProjects.put(id, new BoggledCommonIndustry(id, industry, projects, commoditySupplyAndDemands, commodityDemandShortageEffects));
             } catch (JSONException e) {
                 log.error("Error in industry options: " + e);
             }
@@ -816,7 +838,7 @@ public class boggledTools {
 
                 String[] enableSettings = row.getString("enable_settings").split(csvOptionSeparator);
 
-                String commodityDemandType = row.getString("commodity_demand_type");
+                String commodityDemandType = row.getString("commodity_supply_demand_type");
                 String commodity = row.getString("commodity");
                 String data = row.getString("data");
 
@@ -824,10 +846,41 @@ public class boggledTools {
 
                 commodityDemands.put(id, demand);
             } catch (JSONException e) {
-                log.error("Error in commodity supply and demands: " + e);
+                log.error("Error in commodity supply and demand: " + e);
             }
         }
         boggledTools.commoditySupplyAndDemand = commodityDemands;
+    }
+
+    public static void initialiseCommodityDemandShortageEffectsFromJSON(@NotNull JSONArray commoditDemandShortageEffectsJSON) {
+        Logger log = Global.getLogger(boggledTools.class);
+
+        HashMap<String, BoggledCommoditySupplyDemand.CommodityDemandShortageEffect> commodityDemandShortageEffects = new HashMap<>();
+
+        for (int i = 0; i < commoditDemandShortageEffectsJSON.length(); ++i) {
+            try {
+                JSONObject row = commoditDemandShortageEffectsJSON.getJSONObject(i);
+
+                String id = row.getString("id");
+                if (id == null || id.isEmpty()) {
+                    continue;
+                }
+
+                String[] enableSettings = row.getString("enable_settings").split(csvOptionSeparator);
+
+                String commodityDemandShortageEffectType = row.getString("commodity_shortage_effect_type");
+                String[] commoditiesDemanded = row.getString("commodities_demanded").split(csvOptionSeparator);
+                String data = row.getString("data");
+
+                BoggledCommoditySupplyDemand.CommodityDemandShortageEffect effect = getCommodityDemandShortageEffect(commodityDemandShortageEffectType, id, enableSettings, commoditiesDemanded, data);
+
+                commodityDemandShortageEffects.put(id, effect);
+            } catch (JSONException e) {
+                log.error("Error in commodity demand shortage effects: " + e);
+            }
+        }
+
+        boggledTools.commodityDemandShortageEffects = commodityDemandShortageEffects;
     }
 
     public static void initialiseTerraformingRequirementFromJSON(@NotNull JSONArray terraformingRequirementJSON) {
@@ -995,6 +1048,27 @@ public class boggledTools {
                     }
                 }
 
+                String[] requirementsStallStrings = row.getString("requirements_stall").split(boggledTools.csvOptionSeparator);
+                ArrayList<BoggledProjectRequirementsAND> reqsStall = new ArrayList<>();
+                for (String requirementsStallString : requirementsStallStrings) {
+                    if (requirementsStallString.isEmpty()) {
+                        continue;
+                    }
+                    String[] requirementsStallStrings2 = requirementsStallString.split(boggledTools.csvSubOptionSeparator);
+                    BoggledProjectRequirementsAND reqStall = requirementsFromRequirementsStrings(requirementsStallStrings2, id, "requirements_stall");
+                    reqsStall.add(reqStall);
+                }
+                String[] requirementsResetStrings = row.getString("requirements_reset").split(boggledTools.csvOptionSeparator);
+                ArrayList<BoggledProjectRequirementsAND> reqsReset = new ArrayList<>();
+                for (String requirementsResetString : requirementsResetStrings) {
+                    if (requirementsResetString.isEmpty()) {
+                        continue;
+                    }
+                    String[] requirementsResetStrings2 = requirementsResetString.split(boggledTools.csvSubOptionSeparator);
+                    BoggledProjectRequirementsAND reqReset = requirementsFromRequirementsStrings(requirementsResetStrings2, id, "requirements_reset");
+                    reqsReset.add(reqReset);
+                }
+
                 String[] projectEffects = row.getString("project_effects").split(boggledTools.csvOptionSeparator);
                 ArrayList<BoggledTerraformingProjectEffect.TerraformingProjectEffect> terraformingProjectEffects = new ArrayList<>();
                 for (String projectEffect : projectEffects) {
@@ -1012,7 +1086,7 @@ public class boggledTools {
                 BoggledProjectRequirementsAND reqs = requirementsFromRequirementsStrings(requirementsStrings, id, "requirements");
                 BoggledProjectRequirementsAND reqsHidden = requirementsFromRequirementsStrings(requirementsHiddenStrings, id, "requirements_hidden");
 
-                BoggledTerraformingProject terraformingProj = new BoggledTerraformingProject(id, enableSettings, projectType, tooltip, intelCompleteMessage, incompleteMessage, incompleteHighlights, reqs, reqsHidden, baseProjectDuration, terraformingDurationModifiers, terraformingProjectEffects);
+                BoggledTerraformingProject terraformingProj = new BoggledTerraformingProject(id, enableSettings, projectType, tooltip, intelCompleteMessage, incompleteMessage, incompleteHighlights, reqs, reqsHidden, baseProjectDuration, terraformingDurationModifiers, reqsStall, reqsReset, terraformingProjectEffects);
                 terraformingProjects.put(id, terraformingProj);
 
             } catch (JSONException e) {
@@ -1122,6 +1196,7 @@ public class boggledTools {
     private static HashMap<String, BoggledProjectRequirementsOR> terraformingRequirements;
     private static HashMap<String, BoggledTerraformingDurationModifier.TerraformingDurationModifier> durationModifiers;
     private static HashMap<String, BoggledCommoditySupplyDemand.CommoditySupplyAndDemand> commoditySupplyAndDemand;
+    private static HashMap<String, BoggledCommoditySupplyDemand.CommodityDemandShortageEffect> commodityDemandShortageEffects;
     private static HashMap<String, BoggledTerraformingProjectEffect.TerraformingProjectEffect> terraformingProjectEffects;
     private static HashMap<String, BoggledCommonIndustry> industryProjects;
     private static LinkedHashMap<String, BoggledTerraformingProject> terraformingProjects;
@@ -1178,7 +1253,7 @@ public class boggledTools {
         return ret;
     }
 
-    public static LinkedHashMap<String, String> getTokenReplacements(MarketAPI market) {
+    public static Map<String, String> getTokenReplacements(MarketAPI market) {
         LinkedHashMap<String, String> ret = new LinkedHashMap<>();
         ret.put("$player", Global.getSector().getPlayerPerson().getNameString());
         ret.put("$market", market.getName());
@@ -2376,6 +2451,9 @@ public class boggledTools {
     }
 
     public static void showProjectCompleteIntelMessage(String project, String completedMessage, MarketAPI market) {
+        if (completedMessage.isEmpty()) {
+            return;
+        }
         if (market.isPlayerOwned()) {
             MessageIntel intel = new MessageIntel(project + " on " + market.getName(), Misc.getBasePlayerColor());
             intel.addLine("    - " + completedMessage);
@@ -2446,19 +2524,12 @@ public class boggledTools {
         return reqs.checkRequirement(market);
     }
 
-    public static String getTooltipProjectName(MarketAPI market, String currentProject)
-    {
-        if(currentProject == null || currentProject.equals(noneProjectId))
-        {
+    public static String getTooltipProjectName(MarketAPI market, BoggledTerraformingProject currentProject) {
+        if(currentProject == null) {
             return noneProjectId;
         }
 
-        BoggledTerraformingProject terraformingProject = getProject(currentProject);
-        if (terraformingProject != null) {
-            return terraformingProject.getProjectTooltip(boggledTools.getTokenReplacements(market));
-        } else {
-            return "ERROR";
-        }
+        return currentProject.getProjectTooltip(boggledTools.getTokenReplacements(market));
     }
 
     public static MarketAPI createMiningStationMarket(SectorEntityToken stationEntity)

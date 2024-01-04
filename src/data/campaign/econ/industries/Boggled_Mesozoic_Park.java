@@ -12,12 +12,13 @@ import com.fs.starfarer.api.impl.campaign.intel.BaseIntelPlugin;
 import com.fs.starfarer.api.impl.campaign.intel.MessageIntel;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
+import com.fs.starfarer.api.util.Pair;
 import data.campaign.econ.boggledTools;
 import com.fs.starfarer.api.impl.campaign.ids.Commodities;
 
 import java.awt.*;
 
-public class Boggled_Mesozoic_Park extends BaseIndustry {
+public class Boggled_Mesozoic_Park extends BaseIndustry implements BoggledIndustryInterface {
     private final BoggledCommonIndustry thisIndustry;
 
     public Boggled_Mesozoic_Park() {
@@ -41,7 +42,6 @@ public class Boggled_Mesozoic_Park extends BaseIndustry {
     protected void buildingFinished() {
         super.buildingFinished();
         thisIndustry.buildingFinished(this);
-        boggledTools.addCondition(this.market, "inimical_biosphere");
     }
 
     @Override
@@ -58,6 +58,9 @@ public class Boggled_Mesozoic_Park extends BaseIndustry {
 
     @Override
     public boolean isBuilding() { return thisIndustry.isBuilding(this); }
+
+    @Override
+    public boolean isFunctional() { return super.isFunctional() && thisIndustry.isFunctional(); }
 
     @Override
     public boolean isUpgrading() { return thisIndustry.isUpgrading(this); }
@@ -90,13 +93,45 @@ public class Boggled_Mesozoic_Park extends BaseIndustry {
 //        thisIndustry.advance(amount, this);
 //    }
 
-    //Need to update string in addImproveDesc if value changed
-    private final float IMPROVE_BONUS = 1.20f;
+    @Override
+    public void apply() {
+        super.apply(true);
+        thisIndustry.apply(this, this);
+    }
 
     @Override
-    public boolean canBeDisrupted() {
+    public void unapply()
+    {
+        super.unapply();
+    }
+
+    @Override
+    protected void addRightAfterDescriptionSection(TooltipMakerAPI tooltip, IndustryTooltipMode mode) {
+        thisIndustry.addRightAfterDescriptionSection(this, tooltip, mode);
+    }
+
+    @Override
+    protected boolean hasPostDemandSection(boolean hasDemand, IndustryTooltipMode mode) {
         return true;
     }
+
+    @Override
+    protected void addPostDemandSection(TooltipMakerAPI tooltip, boolean hasDemand, IndustryTooltipMode mode) {
+        thisIndustry.addPostDemandSection(this, tooltip, hasDemand, mode);
+    }
+
+    @Override
+    public void applyDeficitToProduction(int index, Pair<String, Integer> deficit, String... commodities) {
+        super.applyDeficitToProduction(index, deficit, commodities);
+    }
+
+    @Override
+    public void setFunctional(boolean functional) {
+        thisIndustry.setFunctional(functional);
+    }
+
+    //Need to update string in addImproveDesc if value changed
+    private final float IMPROVE_BONUS = 1.20f;
 
     @Override
     public void advance(float amount)
@@ -135,12 +170,6 @@ public class Boggled_Mesozoic_Park extends BaseIndustry {
     }
 
     @Override
-    public void apply() {
-        super.apply(true);
-        thisIndustry.apply(this);
-    }
-
-    @Override
     public String getCurrentImage()
     {
         MarketAPI market = this.market;
@@ -166,12 +195,6 @@ public class Boggled_Mesozoic_Park extends BaseIndustry {
         }
 
         return this.getSpec().getImageName();
-    }
-
-    @Override
-    public void unapply()
-    {
-        super.unapply();
     }
 
 

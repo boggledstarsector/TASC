@@ -2,9 +2,11 @@ package data.campaign.econ.industries;
 
 import com.fs.starfarer.api.campaign.econ.Industry;
 import com.fs.starfarer.api.impl.campaign.econ.impl.Cryosanctum;
+import com.fs.starfarer.api.ui.TooltipMakerAPI;
+import com.fs.starfarer.api.util.Pair;
 import data.campaign.econ.boggledTools;
 
-public class Boggled_Cryosanctum extends Cryosanctum {
+public class Boggled_Cryosanctum extends Cryosanctum implements BoggledIndustryInterface {
     private final BoggledCommonIndustry thisIndustry;
 
     public Boggled_Cryosanctum() {
@@ -46,6 +48,9 @@ public class Boggled_Cryosanctum extends Cryosanctum {
     public boolean isBuilding() { return thisIndustry.isBuilding(this); }
 
     @Override
+    public boolean isFunctional() { return super.isFunctional() && thisIndustry.isFunctional(); }
+
+    @Override
     public boolean isUpgrading() { return thisIndustry.isUpgrading(this); }
 
     @Override
@@ -78,14 +83,39 @@ public class Boggled_Cryosanctum extends Cryosanctum {
 
     @Override
     public void apply() {
-        super.apply();
-        thisIndustry.apply(this);
+        super.apply(true);
+        thisIndustry.apply(this, this);
     }
 
     @Override
     public void unapply()
     {
         super.unapply();
+    }
+
+    @Override
+    protected void addRightAfterDescriptionSection(TooltipMakerAPI tooltip, IndustryTooltipMode mode) {
+        thisIndustry.addRightAfterDescriptionSection(this, tooltip, mode);
+    }
+
+    @Override
+    protected boolean hasPostDemandSection(boolean hasDemand, IndustryTooltipMode mode) {
+        return true;
+    }
+
+    @Override
+    protected void addPostDemandSection(TooltipMakerAPI tooltip, boolean hasDemand, IndustryTooltipMode mode) {
+        thisIndustry.addPostDemandSection(this, tooltip, hasDemand, mode);
+    }
+
+    @Override
+    public void applyDeficitToProduction(int index, Pair<String, Integer> deficit, String... commodities) {
+        super.applyDeficitToProduction(index, deficit, commodities);
+    }
+
+    @Override
+    public void setFunctional(boolean functional) {
+        thisIndustry.setFunctional(functional);
     }
 }
 

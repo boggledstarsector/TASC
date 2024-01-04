@@ -12,8 +12,7 @@ import com.fs.starfarer.api.util.Misc;
 import com.fs.starfarer.api.util.Pair;
 import data.campaign.econ.boggledTools;
 
-public class Boggled_CHAMELEON extends BaseIndustry
-{
+public class Boggled_CHAMELEON extends BaseIndustry implements BoggledIndustryInterface {
     private final BoggledCommonIndustry thisIndustry;
 
     public Boggled_CHAMELEON() {
@@ -55,6 +54,9 @@ public class Boggled_CHAMELEON extends BaseIndustry
     public boolean isBuilding() { return thisIndustry.isBuilding(this); }
 
     @Override
+    public boolean isFunctional() { return super.isFunctional() && thisIndustry.isFunctional(); }
+
+    @Override
     public boolean isUpgrading() { return thisIndustry.isUpgrading(this); }
 
     @Override
@@ -86,31 +88,15 @@ public class Boggled_CHAMELEON extends BaseIndustry
     }
 
     @Override
-    public boolean canBeDisrupted() {
-        return true;
-    }
-
-    public static float IMPROVE_STABILITY_BONUS = 1f;
-
-    public static float UPKEEP_MULT = 0.75F;
-    public static int DEMAND_REDUCTION = 1;
-
-    @Override
     public void apply() {
         super.apply(true);
-        thisIndustry.apply(this);
+        thisIndustry.apply(this, this);
     }
 
     @Override
     public void unapply()
     {
         super.unapply();
-    }
-
-    @Override
-    public void notifyBeingRemoved(MarketAPI.MarketInteractionMode mode, boolean forUpgrade)
-    {
-        super.notifyBeingRemoved(mode, forUpgrade);
     }
 
     @Override
@@ -124,29 +110,28 @@ public class Boggled_CHAMELEON extends BaseIndustry
     }
 
     @Override
-    protected void addPostDemandSection(TooltipMakerAPI tooltip, boolean hasDemand, IndustryTooltipMode mode)
-    {
-        boolean shortage = false;
-        if(boggledTools.getBooleanSetting(boggledTools.BoggledSettings.domainArchaeologyEnabled))
-        {
-            Pair<String, Integer> deficit = this.getMaxDeficit(boggledTools.BoggledCommodities.domainArtifacts);
-            if(deficit.two != 0)
-            {
-                shortage = true;
-            }
-        }
+    protected void addPostDemandSection(TooltipMakerAPI tooltip, boolean hasDemand, IndustryTooltipMode mode) {
+        thisIndustry.addPostDemandSection(this, tooltip, hasDemand, mode);
+    }
 
-        if(shortage && mode != IndustryTooltipMode.ADD_INDUSTRY && mode != IndustryTooltipMode.QUEUED && !isBuilding())
-        {
-            float opad = 10.0F;
-            Color bad = Misc.getNegativeHighlightColor();
+    @Override
+    public void applyDeficitToProduction(int index, Pair<String, Integer> deficit, String... commodities) {
+        super.applyDeficitToProduction(index, deficit, commodities);
+    }
 
-            Pair<String, Integer> deficit = this.getMaxDeficit(boggledTools.BoggledCommodities.domainArtifacts);
-            if(deficit.two != 0)
-            {
-                tooltip.addPara("CHAMELEON is inactive due to a shortage of Domain-era artifacts.", bad, opad);
-            }
-        }
+    @Override
+    public void setFunctional(boolean functional) {
+        thisIndustry.setFunctional(functional);
+    }
+
+    public static float IMPROVE_STABILITY_BONUS = 1f;
+
+    public static float UPKEEP_MULT = 0.75F;
+    public static int DEMAND_REDUCTION = 1;
+
+    @Override
+    public void notifyBeingRemoved(MarketAPI.MarketInteractionMode mode, boolean forUpgrade) {
+        super.notifyBeingRemoved(mode, forUpgrade);
     }
 
     @Override

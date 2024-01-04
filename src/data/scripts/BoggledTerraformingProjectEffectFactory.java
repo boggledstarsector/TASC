@@ -103,7 +103,7 @@ public class BoggledTerraformingProjectEffectFactory {
         }
     }
 
-    public static class SystemAddCoronalTap implements TerraformingProjectEffectFactory {
+    public static class SystemAddCoronalTapFactory implements TerraformingProjectEffectFactory {
         @Override
         public BoggledTerraformingProjectEffect.TerraformingProjectEffect constructFromJSON(String data) {
             return new BoggledTerraformingProjectEffect.SystemAddCoronalTap();
@@ -114,6 +114,13 @@ public class BoggledTerraformingProjectEffectFactory {
         @Override
         public BoggledTerraformingProjectEffect.TerraformingProjectEffect constructFromJSON(String data) {
             return new BoggledTerraformingProjectEffect.MarketAddStellarReflectors();
+        }
+    }
+
+    public static class MarketRemoveIndustryFactory implements TerraformingProjectEffectFactory {
+        @Override
+        public BoggledTerraformingProjectEffect.TerraformingProjectEffect constructFromJSON(String data) {
+            return new BoggledTerraformingProjectEffect.MarketRemoveIndustry(data);
         }
     }
 

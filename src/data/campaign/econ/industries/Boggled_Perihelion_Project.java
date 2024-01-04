@@ -5,7 +5,6 @@ import java.util.Random;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.*;
-import com.fs.starfarer.api.campaign.comm.CommMessageAPI;
 import com.fs.starfarer.api.campaign.econ.Industry;
 import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
@@ -15,8 +14,6 @@ import com.fs.starfarer.api.impl.campaign.ids.Commodities;
 import com.fs.starfarer.api.impl.campaign.ids.Entities;
 import com.fs.starfarer.api.impl.campaign.ids.StarTypes;
 import com.fs.starfarer.api.impl.campaign.ids.Tags;
-import com.fs.starfarer.api.impl.campaign.intel.BaseIntelPlugin;
-import com.fs.starfarer.api.impl.campaign.intel.MessageIntel;
 import com.fs.starfarer.api.impl.campaign.procgen.StarSystemGenerator;
 import com.fs.starfarer.api.impl.campaign.rulecmd.salvage.FleetAdvanceScript;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
@@ -25,7 +22,7 @@ import com.fs.starfarer.api.util.Pair;
 import com.fs.starfarer.api.util.WeightedRandomPicker;
 import data.campaign.econ.boggledTools;
 
-public class Boggled_Perihelion_Project extends BaseIndustry {
+public class Boggled_Perihelion_Project extends BaseIndustry implements BoggledIndustryInterface {
     private final BoggledCommonIndustry thisIndustry;
 
     public Boggled_Perihelion_Project() {
@@ -67,6 +64,9 @@ public class Boggled_Perihelion_Project extends BaseIndustry {
     public boolean isBuilding() { return thisIndustry.isBuilding(this); }
 
     @Override
+    public boolean isFunctional() { return super.isFunctional() && thisIndustry.isFunctional(); }
+
+    @Override
     public boolean isUpgrading() { return thisIndustry.isUpgrading(this); }
 
     @Override
@@ -91,65 +91,10 @@ public class Boggled_Perihelion_Project extends BaseIndustry {
     @Override
     public String getUnavailableReason() { return thisIndustry.getUnavailableReason(this); }
 
-//    @Override
-//    public void advance(float amount) {
-//        super.advance(amount);
-//        thisIndustry.advance(amount, this);
-//    }
-
-    protected Random random;
-
-    private int daysWithoutShortageCoronalTap = 0;
-    private int lastDayCheckedCoronalTap = 0;
-    private int requiredDaysToBuildCoronalTap = boggledTools.getIntSetting(boggledTools.BoggledSettings.perihelionProjectDaysToFinish);
-
     @Override
-    public void advance(float amount)
-    {
+    public void advance(float amount) {
         super.advance(amount);
-
-        boolean shortage = perihelionProjectHasShortage();
-
-        CampaignClockAPI clock = Global.getSector().getClock();
-
-        //
-        // Coronal tap construction
-        //
-
-        if(this.isFunctional())
-        {
-            if(clock.getDay() != this.lastDayCheckedCoronalTap && !shortage)
-            {
-                // Just in case the player changes the required days after building the structure. Without this, the required days will stay
-                // at the original value regardless of subsequent changes in the settings file for Perihelion Project buildings already constructed.
-                this.requiredDaysToBuildCoronalTap = boggledTools.getIntSetting(boggledTools.BoggledSettings.perihelionProjectDaysToFinish);
-
-                this.daysWithoutShortageCoronalTap++;
-                this.lastDayCheckedCoronalTap = clock.getDay();
-
-                if(daysWithoutShortageCoronalTap >= requiredDaysToBuildCoronalTap)
-                {
-                    if (this.market.isPlayerOwned())
-                    {
-                        MessageIntel intel = new MessageIntel("Coronal hypershunt at " + this.market.getStarSystem().getName(), Misc.getBasePlayerColor());
-                        intel.addLine("    - Constructed");
-                        intel.setIcon(Global.getSector().getPlayerFaction().getCrest());
-                        intel.setSound(BaseIntelPlugin.getSoundStandardUpdate());
-                        Global.getSector().getCampaignUI().addMessage(intel, CommMessageAPI.MessageClickAction.COLONY_INFO, this.market);
-                    }
-
-                    this.daysWithoutShortageCoronalTap = 0;
-                    this.lastDayCheckedCoronalTap = clock.getDay();
-
-                    if(!this.market.getStarSystem().hasTag(Tags.HAS_CORONAL_TAP))
-                    {
-                        this.createCoronalTapEntity(this.market.getStarSystem());
-                    }
-
-                    this.market.removeIndustry(boggledTools.BoggledIndustries.perihelionProjectIndustryId, null, false);
-                }
-            }
-        }
+        thisIndustry.advance(amount, this);
     }
 
     @Override
@@ -157,14 +102,45 @@ public class Boggled_Perihelion_Project extends BaseIndustry {
         super.apply(false);
         super.applyIncomeAndUpkeep(3);
 
-        thisIndustry.apply(this);
+        thisIndustry.apply(this, this);
     }
 
     @Override
-    public void unapply() { super.unapply(); }
+    public void unapply()
+    {
+        super.unapply();
+    }
+
+//    @Override
+//    protected void addRightAfterDescriptionSection(TooltipMakerAPI tooltip, IndustryTooltipMode mode) {
+//        thisIndustry.addRightAfterDescriptionSection(this, tooltip, mode);
+//    }
 
     @Override
-    public boolean canBeDisrupted() { return true; }
+    protected boolean hasPostDemandSection(boolean hasDemand, IndustryTooltipMode mode) {
+        return true;
+    }
+
+//    @Override
+//    protected void addPostDemandSection(TooltipMakerAPI tooltip, boolean hasDemand, IndustryTooltipMode mode) {
+//        thisIndustry.addPostDemandSection(this, tooltip, hasDemand, mode);
+//    }
+
+    @Override
+    public void applyDeficitToProduction(int index, Pair<String, Integer> deficit, String... commodities) {
+        super.applyDeficitToProduction(index, deficit, commodities);
+    }
+
+    @Override
+    public void setFunctional(boolean functional) {
+        thisIndustry.setFunctional(functional);
+    }
+
+    protected Random random;
+
+    private int daysWithoutShortageCoronalTap = 0;
+    private int lastDayCheckedCoronalTap = 0;
+    private int requiredDaysToBuildCoronalTap = boggledTools.getIntSetting(boggledTools.BoggledSettings.perihelionProjectDaysToFinish);
 
     public boolean perihelionProjectHasShortage()
     {

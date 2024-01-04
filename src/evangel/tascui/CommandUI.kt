@@ -231,12 +231,12 @@ class CommandUIIntelK : LunaBaseCustomPanelPlugin() {
         }
 
         private fun getTerraformingDaysRemaining(terraformingController: Terraforming_Controller) : Int {
-            if (terraformingController.project == null || terraformingController.project == "None") return 0
+            if (terraformingController.project == null) return 0
             return terraformingController.daysRemaining
         }
 
         private fun getTerraformingDaysRemainingComplete(terraformingController : Terraforming_Controller) : String {
-            if (terraformingController.project == null || terraformingController.project == "None") return ""
+            if (terraformingController.project == null) return ""
             val daysRemaining = terraformingController.daysRemaining
             val days = if (daysRemaining == 1) " day " else " days "
             return daysRemaining.toString() + days + "remaining"
@@ -469,7 +469,7 @@ class CommandUIIntelK : LunaBaseCustomPanelPlugin() {
 
             moveButtonsOffscreen(inactiveStartProjectButton!!.position::inTL, startProjectButton!!, requirementsNotMetButton!!)
             val terraformingController = getTerraformingControllerFromMarket(selectedPlanet!!.market)
-            if (terraformingController.project == "None") {
+            if (terraformingController.project == null) {
                 moveButtonsOffscreen(inactiveCancelProjectButton!!.position::inTR, activeCancelProjectButton!!)
             } else {
                 moveButtonsOffscreen(activeCancelProjectButton!!.position::inTR, inactiveCancelProjectButton!!)
@@ -493,7 +493,7 @@ class CommandUIIntelK : LunaBaseCustomPanelPlugin() {
 
         val terraformingProject = (selectedProject?.customData as ProjectRequirementsTooltip).terraformingProject!!
 
-        terraformingController.project = terraformingProject.projectId
+        terraformingController.setProject(terraformingProject)
 
         selectedPlanet?.projectLabel?.text = terraformingProject.getProjectTooltip(boggledTools.getTokenReplacements(selectedPlanet?.market))
         selectedPlanet?.projectTimeRemaining?.text = getTerraformingDaysRemainingComplete(terraformingController)
@@ -504,7 +504,7 @@ class CommandUIIntelK : LunaBaseCustomPanelPlugin() {
 
     private fun handleTerraformingCancelProjectButtonPress() {
         val terraformingController = getTerraformingControllerFromMarket(selectedPlanet!!.market)
-        terraformingController.project = "None"
+        terraformingController.setProject(null)
 
         selectedPlanet?.projectLabel?.text = "None"
         selectedPlanet?.projectTimeRemaining?.text = ""

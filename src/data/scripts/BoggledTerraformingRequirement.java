@@ -12,7 +12,7 @@ import com.fs.starfarer.api.util.Pair;
 import data.campaign.econ.boggledTools;
 
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
+import java.util.Map;
 
 public class BoggledTerraformingRequirement {
     public abstract static class TerraformingRequirement {
@@ -26,7 +26,7 @@ public class BoggledTerraformingRequirement {
             this.invert = invert;
         }
 
-        public void addTokenReplacements(LinkedHashMap<String, String> tokenReplacements) {};
+        public void addTokenReplacements(Map<String, String> tokenReplacements) {}
 
         protected abstract boolean checkRequirementImpl(MarketAPI market);
 
@@ -102,7 +102,7 @@ public class BoggledTerraformingRequirement {
         }
 
         @Override
-        public void addTokenReplacements(LinkedHashMap<String, String> tokenReplacements) {
+        public void addTokenReplacements(Map<String, String> tokenReplacements) {
             tokenReplacements.put("$industry", Global.getSettings().getIndustrySpec(industryId).getName());
         }
 
@@ -121,7 +121,7 @@ public class BoggledTerraformingRequirement {
         }
 
         @Override
-        public void addTokenReplacements(LinkedHashMap<String, String> tokenReplacements) {
+        public void addTokenReplacements(Map<String, String> tokenReplacements) {
             super.addTokenReplacements(tokenReplacements);
             tokenReplacements.put("$item", Global.getSettings().getSpecialItemSpec(itemId).getName());
         }
@@ -218,7 +218,7 @@ public class BoggledTerraformingRequirement {
         }
 
         @Override
-        public void addTokenReplacements(LinkedHashMap<String, String> tokenReplacements) {
+        public void addTokenReplacements(Map<String, String> tokenReplacements) {
             for (SubmarketSpecAPI submarketSpec : Global.getSettings().getAllSubmarketSpecs()) {
                 if (!submarketSpec.getId().equals(submarketId)) {
                     continue;
@@ -244,7 +244,7 @@ public class BoggledTerraformingRequirement {
         }
 
         @Override
-        public void addTokenReplacements(LinkedHashMap<String, String> tokenReplacements) {
+        public void addTokenReplacements(Map<String, String> tokenReplacements) {
             tokenReplacements.put("$storyPointsQuantity", Integer.toString(quantity));
         }
 

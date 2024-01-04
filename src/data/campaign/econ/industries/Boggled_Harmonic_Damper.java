@@ -13,9 +13,10 @@ import com.fs.starfarer.api.campaign.econ.*;
 import com.fs.starfarer.api.impl.campaign.ids.*;
 import com.fs.starfarer.api.impl.campaign.econ.impl.BaseIndustry;
 import com.fs.starfarer.api.impl.campaign.ids.Conditions;
+import com.fs.starfarer.api.util.Pair;
 import data.campaign.econ.boggledTools;
 
-public class Boggled_Harmonic_Damper extends BaseIndustry {
+public class Boggled_Harmonic_Damper extends BaseIndustry implements BoggledIndustryInterface {
     private final BoggledCommonIndustry thisIndustry;
 
     public Boggled_Harmonic_Damper() {
@@ -57,6 +58,9 @@ public class Boggled_Harmonic_Damper extends BaseIndustry {
     public boolean isBuilding() { return thisIndustry.isBuilding(this); }
 
     @Override
+    public boolean isFunctional() { return super.isFunctional() && thisIndustry.isFunctional(); }
+
+    @Override
     public boolean isUpgrading() { return thisIndustry.isUpgrading(this); }
 
     @Override
@@ -87,28 +91,10 @@ public class Boggled_Harmonic_Damper extends BaseIndustry {
         thisIndustry.advance(amount, this);
     }
 
-    public static float IMPROVE_DEFENSE_BONUS = 1.25f;
-
-    public static float GAMMA_DEFENSE_BONUS = 1.25f;
-    public static float BETA_DEFENSE_BONUS = 1.50f;
-    public static float ALPHA_DEFENSE_BONUS = 2.00f;
-
     @Override
-    public boolean canBeDisrupted() {
-        return true;
-    }
-
-    public static List<String> SUPPRESSED_CONDITIONS = new ArrayList<String>();
-    static
-    {
-        SUPPRESSED_CONDITIONS.add(Conditions.TECTONIC_ACTIVITY);
-        SUPPRESSED_CONDITIONS.add(Conditions.EXTREME_TECTONIC_ACTIVITY);
-    }
-
-    @Override
-    public void apply()
-    {
+    public void apply() {
         super.apply(true);
+        thisIndustry.apply(this, this);
 
         if(isFunctional())
         {
@@ -148,6 +134,91 @@ public class Boggled_Harmonic_Damper extends BaseIndustry {
         this.market.getStats().getDynamic().getMod(Stats.GROUND_DEFENSES_MOD).unmodifyMult("boggled_harmonic_damper_improve_bonus");
 
         super.unapply();
+    }
+
+    @Override
+    protected void addRightAfterDescriptionSection(TooltipMakerAPI tooltip, IndustryTooltipMode mode) {
+        thisIndustry.addRightAfterDescriptionSection(this, tooltip, mode);
+    }
+
+    @Override
+    protected boolean hasPostDemandSection(boolean hasDemand, IndustryTooltipMode mode) {
+        return true;
+    }
+
+    @Override
+    protected void addPostDemandSection(TooltipMakerAPI tooltip, boolean hasDemand, IndustryTooltipMode mode) {
+        thisIndustry.addPostDemandSection(this, tooltip, hasDemand, mode);
+
+        float opad = 10.0F;
+
+        if(mode == IndustryTooltipMode.ADD_INDUSTRY || mode == IndustryTooltipMode.QUEUED ||!isFunctional())
+        {
+            tooltip.addPara("If operational, would counter the effects of:", opad, Misc.getHighlightColor(), "");
+            int numCondsCountered = 0;
+            for (String id : SUPPRESSED_CONDITIONS)
+            {
+                if(this.market.hasCondition(id))
+                {
+                    String condName = Global.getSettings().getMarketConditionSpec(id).getName();
+                    tooltip.addPara("           %s", 2f, Misc.getHighlightColor(), condName);
+                    numCondsCountered++;
+                }
+            }
+
+            if(numCondsCountered == 0)
+            {
+                tooltip.addPara("           %s", 2f, Misc.getGrayColor(), "(none)");
+            }
+        }
+
+        if(mode != IndustryTooltipMode.ADD_INDUSTRY && mode != IndustryTooltipMode.QUEUED && isFunctional())
+        {
+            tooltip.addPara("Countering the effects of:", opad);
+            int numCondsCountered = 0;
+            for (String id : SUPPRESSED_CONDITIONS)
+            {
+                if(this.market.hasCondition(id))
+                {
+                    String condName = Global.getSettings().getMarketConditionSpec(id).getName();
+                    tooltip.addPara("           %s", 2f, Misc.getHighlightColor(), condName);
+                    numCondsCountered++;
+                }
+            }
+
+            if(numCondsCountered == 0)
+            {
+                tooltip.addPara("           %s", 2f, Misc.getGrayColor(), "(none)");
+            }
+        }
+    }
+
+    @Override
+    public void applyDeficitToProduction(int index, Pair<String, Integer> deficit, String... commodities) {
+        super.applyDeficitToProduction(index, deficit, commodities);
+    }
+
+    @Override
+    public void setFunctional(boolean functional) {
+        thisIndustry.setFunctional(functional);
+    }
+
+    public static float IMPROVE_DEFENSE_BONUS = 1.25f;
+
+    public static float GAMMA_DEFENSE_BONUS = 1.25f;
+    public static float BETA_DEFENSE_BONUS = 1.50f;
+    public static float ALPHA_DEFENSE_BONUS = 2.00f;
+
+    @Override
+    public boolean canBeDisrupted() {
+        return true;
+    }
+
+    public static List<String> SUPPRESSED_CONDITIONS = new ArrayList<String>();
+    static
+    {
+        SUPPRESSED_CONDITIONS.add(Conditions.TECTONIC_ACTIVITY);
+        SUPPRESSED_CONDITIONS.add(Conditions.EXTREME_TECTONIC_ACTIVITY);
     }
 
     @Override
@@ -235,51 +306,5 @@ public class Boggled_Harmonic_Damper extends BaseIndustry {
 
     @Override
     public float getPatherInterest() { return super.getPatherInterest() + 2.0f; }
-
-    @Override
-    protected void addPostDemandSection(TooltipMakerAPI tooltip, boolean hasDemand, IndustryTooltipMode mode)
-    {
-        float opad = 10.0F;
-
-        if(mode == IndustryTooltipMode.ADD_INDUSTRY || mode == IndustryTooltipMode.QUEUED ||!isFunctional())
-        {
-            tooltip.addPara("If operational, would counter the effects of:", opad, Misc.getHighlightColor(), "");
-            int numCondsCountered = 0;
-            for (String id : SUPPRESSED_CONDITIONS)
-            {
-                if(this.market.hasCondition(id))
-                {
-                    String condName = Global.getSettings().getMarketConditionSpec(id).getName();
-                    tooltip.addPara("           %s", 2f, Misc.getHighlightColor(), condName);
-                    numCondsCountered++;
-                }
-            }
-
-            if(numCondsCountered == 0)
-            {
-                tooltip.addPara("           %s", 2f, Misc.getGrayColor(), "(none)");
-            }
-        }
-
-        if(mode != IndustryTooltipMode.ADD_INDUSTRY && mode != IndustryTooltipMode.QUEUED && isFunctional())
-        {
-            tooltip.addPara("Countering the effects of:", opad);
-            int numCondsCountered = 0;
-            for (String id : SUPPRESSED_CONDITIONS)
-            {
-                if(this.market.hasCondition(id))
-                {
-                    String condName = Global.getSettings().getMarketConditionSpec(id).getName();
-                    tooltip.addPara("           %s", 2f, Misc.getHighlightColor(), condName);
-                    numCondsCountered++;
-                }
-            }
-
-            if(numCondsCountered == 0)
-            {
-                tooltip.addPara("           %s", 2f, Misc.getGrayColor(), "(none)");
-            }
-        }
-    }
 }
 

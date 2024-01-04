@@ -5,13 +5,20 @@ import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
+import java.util.Map;
 
 public class BoggledProjectRequirementsOR {
     private final String requirementId;
     private final String requirementTooltip;
     private final boolean invertAll;
     private final ArrayList<BoggledTerraformingRequirement.TerraformingRequirement> terraformingRequirements;
+
+    public BoggledProjectRequirementsOR(String requirementId, String requirementTooltip, boolean invertAll, ArrayList<BoggledTerraformingRequirement.TerraformingRequirement> terraformingRequirements) {
+        this.requirementId = requirementId;
+        this.requirementTooltip = requirementTooltip;
+        this.invertAll = invertAll;
+        this.terraformingRequirements = terraformingRequirements;
+    }
 
     public void addRemoveProjectRequirement(ArrayList<BoggledTerraformingRequirement.TerraformingRequirement> add, String[] remove) {
         Logger log = Global.getLogger(BoggledProjectRequirementsOR.class);
@@ -29,18 +36,11 @@ public class BoggledProjectRequirementsOR {
         terraformingRequirements.addAll(add);
     }
 
-    public BoggledProjectRequirementsOR(String requirementId, String requirementTooltip, boolean invertAll, ArrayList<BoggledTerraformingRequirement.TerraformingRequirement> terraformingRequirements) {
-        this.requirementId = requirementId;
-        this.requirementTooltip = requirementTooltip;
-        this.invertAll = invertAll;
-        this.terraformingRequirements = terraformingRequirements;
-    }
-
     public final String getTooltip() {
         return requirementTooltip;
     }
 
-    public final void addTokenReplacements(LinkedHashMap<String, String> tokenReplacements) {
+    public final void addTokenReplacements(Map<String, String> tokenReplacements) {
         for (BoggledTerraformingRequirement.TerraformingRequirement terraformingRequirement : terraformingRequirements) {
             terraformingRequirement.addTokenReplacements(tokenReplacements);
         }

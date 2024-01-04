@@ -74,7 +74,8 @@ focus_market_progress_ore_planet_cracker,FocusMarketProgressResource,"ore ; 1"
 focus_market_progress_rare_ore_planet_cracker,FocusMarketProgressResource,"rare_ore ; 1"
 focus_market_progress_volatiles_ouyang_optimizer,FocusMarketAndSiphonStationProgressResource,"volatiles ; 2"
 
-system_add_coronal_tap,SystemAddCoronalTap,"coronal_tap"
+system_add_coronal_tap,SystemAddCoronalTapFactory,"coronal_tap"
+market_remove_perihelion_project,MarketRemoveIndustry,"BOGGLED_PERIHELION_PROJECT"
 
 add_corrupted_nanoforge_to_storage,AddItemToSubmarket,"storage ; corrupted_nanoforge ; 1"
 add_pristine_nanoforge_to_storage,AddItemToSubmarket,"storage ; pristine_nanoforge ; 1"

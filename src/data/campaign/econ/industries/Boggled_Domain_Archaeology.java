@@ -5,9 +5,11 @@ import java.lang.String;
 import com.fs.starfarer.api.campaign.econ.*;
 import com.fs.starfarer.api.impl.campaign.econ.impl.BaseIndustry;
 import com.fs.starfarer.api.impl.campaign.ids.Conditions;
+import com.fs.starfarer.api.ui.TooltipMakerAPI;
+import com.fs.starfarer.api.util.Pair;
 import data.campaign.econ.boggledTools;
 
-public class Boggled_Domain_Archaeology extends BaseIndustry {
+public class Boggled_Domain_Archaeology extends BaseIndustry implements BoggledIndustryInterface {
     private final BoggledCommonIndustry thisIndustry;
 
     public Boggled_Domain_Archaeology() {
@@ -49,6 +51,9 @@ public class Boggled_Domain_Archaeology extends BaseIndustry {
     public boolean isBuilding() { return thisIndustry.isBuilding(this); }
 
     @Override
+    public boolean isFunctional() { return super.isFunctional() && thisIndustry.isFunctional(); }
+
+    @Override
     public boolean isUpgrading() { return thisIndustry.isUpgrading(this); }
 
     @Override
@@ -80,25 +85,40 @@ public class Boggled_Domain_Archaeology extends BaseIndustry {
     }
 
     @Override
-    public boolean canBeDisrupted() {
-        return true;
-    }
-
-    @Override
     public void apply() {
         super.apply(true);
-        thisIndustry.apply(this);
-
-        if (!this.isFunctional())
-        {
-            this.supply.clear();
-        }
+        thisIndustry.apply(this, this);
     }
 
     @Override
     public void unapply()
     {
         super.unapply();
+    }
+
+    @Override
+    protected void addRightAfterDescriptionSection(TooltipMakerAPI tooltip, IndustryTooltipMode mode) {
+        thisIndustry.addRightAfterDescriptionSection(this, tooltip, mode);
+    }
+
+    @Override
+    protected boolean hasPostDemandSection(boolean hasDemand, IndustryTooltipMode mode) {
+        return true;
+    }
+
+    @Override
+    protected void addPostDemandSection(TooltipMakerAPI tooltip, boolean hasDemand, IndustryTooltipMode mode) {
+        thisIndustry.addPostDemandSection(this, tooltip, hasDemand, mode);
+    }
+
+    @Override
+    public void applyDeficitToProduction(int index, Pair<String, Integer> deficit, String... commodities) {
+        super.applyDeficitToProduction(index, deficit, commodities);
+    }
+
+    @Override
+    public void setFunctional(boolean functional) {
+        thisIndustry.setFunctional(functional);
     }
 
     @Override

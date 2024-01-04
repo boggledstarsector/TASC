@@ -1,8 +1,8 @@
-id,enable_settings,commodity_demand_type,commodity,data
+id,enable_settings,commodity_supply_demand_type,commodity,data
 # id is a unique identifier for each demand
-# enable_settings is the settings that have to be enabled for this demand to be active
-# commodity_demand_type is the type of this commodity demand
-# commodity is the commodity that will be demanded
+# enable_settings is the settings that have to be enabled for this supply or demand to be active
+# commodity_supply_demand_type is the type of this commodity supply or demand
+# commodity is the commodity that will be supplied or demanded
 # data is demand type specific data
 # FlatCommodity{Demand,Supply} will always {demand,supply} the same amount of the commodity, data specifies how much as a single integer
 # MarketSize{Demand,Supply} will {demand,supply} more of the commodity as the market grows, data specifies modifier to the market size as a signed integer
@@ -23,14 +23,19 @@ market_size_demand_ships,,MarketSizeDemand,ships,0
 market_size_demand_heavy_machinery,,MarketSizeDemand,heavy_machinery,0
 
 market_size_minus_2_demand_heavy_machinery,,MarketSizeDemand,heavy_machinery,-2
-flat_demand_6_heavy_machinery,,FlatDemand,heavy_machinery,6
+flat_demand_6_heavy_machinery,,FlatCommodityDemand,heavy_machinery,6
 
 market_size_supply_food,,MarketSizeSupply,food,0
 market_size_minus_2_supply_organs,,MarketSizeSupply,organs,-2
 
-flat_demand_7_domain_artifacts,,FlatDemand,domain_artifacts,7
-flat_demand_11_metals,,FlatDemand,metals,11
-flat_demand_9_rare_metals,,FlatDemand,rare_metals,9
-flat_demand_7_heavy_machinery,,FlatDemand,heavy_machinery,7
+flat_demand_7_domain_artifacts,,FlatCommodityDemand,domain_artifacts,7
+flat_demand_11_metals,,FlatCommodityDemand,metals,11
+flat_demand_9_rare_metals,,FlatCommodityDemand,rare_metals,9
+flat_demand_7_heavy_machinery,,FlatCommodityDemand,heavy_machinery,7
 
 flat_demand_7_supplies,,MarketSizeDemand,supplies,7
+
+just_break_the_damn_thing1,,FlatCommodityDemand,heavy_machinery,99
+just_break_the_damn_thing2,,FlatCommodityDemand,supplies,99
+just_break_the_damn_thing3,,FlatCommodityDemand,fuel,99
+just_break_the_damn_thing4,,FlatCommodityDemand,domain_artifacts,99

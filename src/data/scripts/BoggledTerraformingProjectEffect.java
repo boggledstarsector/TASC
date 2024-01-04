@@ -17,13 +17,13 @@ import data.campaign.econ.boggledTools;
 import data.campaign.econ.industries.BoggledCommonIndustry;
 
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
+import java.util.Map;
 
 public class BoggledTerraformingProjectEffect {
     public abstract static class TerraformingProjectEffect {
         abstract void applyProjectEffect(MarketAPI market);
 
-        void addTokenReplacements(LinkedHashMap<String, String> tokenReplacements) {};
+        void addTokenReplacements(Map<String, String> tokenReplacements) {}
     }
 
     public static class PlanetTypeChangeProjectEffect extends TerraformingProjectEffect {
@@ -247,6 +247,18 @@ public class BoggledTerraformingProjectEffect {
         }
     }
 
+    public static class MarketRemoveIndustry extends TerraformingProjectEffect {
+        String industryId;
+        public MarketRemoveIndustry(String industryId) {
+            this.industryId = industryId;
+        }
+
+        @Override
+        void applyProjectEffect(MarketAPI market) {
+            market.removeIndustry(industryId, null, false);
+        }
+    }
+
     public static class MarketAddStellarReflectors extends TerraformingProjectEffect {
         public MarketAddStellarReflectors() {
 
@@ -297,7 +309,7 @@ public class BoggledTerraformingProjectEffect {
         }
 
         @Override
-        void addTokenReplacements(LinkedHashMap<String, String> tokenReplacements) {
+        void addTokenReplacements(Map<String, String> tokenReplacements) {
             super.addTokenReplacements(tokenReplacements);
             for (SubmarketSpecAPI submarketSpec : Global.getSettings().getAllSubmarketSpecs()) {
                 if (submarketSpec.getId().equals(submarketId)) {

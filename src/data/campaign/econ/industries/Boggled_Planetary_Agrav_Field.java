@@ -11,9 +11,10 @@ import com.fs.starfarer.api.util.Misc;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.impl.campaign.econ.impl.BaseIndustry;
 import com.fs.starfarer.api.impl.campaign.ids.Conditions;
+import com.fs.starfarer.api.util.Pair;
 import data.campaign.econ.boggledTools;
 
-public class Boggled_Planetary_Agrav_Field extends BaseIndustry {
+public class Boggled_Planetary_Agrav_Field extends BaseIndustry implements BoggledIndustryInterface {
     private final BoggledCommonIndustry thisIndustry;
 
     public Boggled_Planetary_Agrav_Field() {
@@ -55,6 +56,9 @@ public class Boggled_Planetary_Agrav_Field extends BaseIndustry {
     public boolean isBuilding() { return thisIndustry.isBuilding(this); }
 
     @Override
+    public boolean isFunctional() { return super.isFunctional() && thisIndustry.isFunctional(); }
+
+    @Override
     public boolean isUpgrading() { return thisIndustry.isUpgrading(this); }
 
     @Override
@@ -86,24 +90,11 @@ public class Boggled_Planetary_Agrav_Field extends BaseIndustry {
     }
 
     @Override
-    public boolean canBeDisrupted() {
-        return true;
-    }
-
-    public static List<String> SUPPRESSED_CONDITIONS = new ArrayList<String>();
-    static
-    {
-        SUPPRESSED_CONDITIONS.add(Conditions.HIGH_GRAVITY);
-        SUPPRESSED_CONDITIONS.add(Conditions.LOW_GRAVITY);
-    }
-
-    @Override
-    public void apply()
-    {
+    public void apply() {
         super.apply(true);
-        thisIndustry.apply(this);
+        thisIndustry.apply(this, this);
 
-        if(isFunctional() && (this.market.hasIndustry(boggledTools.BoggledIndustries.domedCitiesIndustryId) || boggledTools.getPlanetType(this.market.getPlanetEntity()).equals(boggledTools.gasGiantPlanetId)))
+        if(isFunctional() && (this.market.hasIndustry(boggledTools.BoggledIndustries.domedCitiesIndustryId) || boggledTools.getPlanetType(this.market.getPlanetEntity()).getPlanetId().equals(boggledTools.gasGiantPlanetId)))
         {
             for (String cid : SUPPRESSED_CONDITIONS)
             {
@@ -113,39 +104,29 @@ public class Boggled_Planetary_Agrav_Field extends BaseIndustry {
     }
 
     @Override
-    public void unapply()
-    {
+    public void unapply() {
+        super.unapply();
+
         for (String cid : SUPPRESSED_CONDITIONS)
         {
             market.unsuppressCondition(cid);
         }
-
-        super.unapply();
     }
 
     @Override
-    public void applyAICoreToIncomeAndUpkeep()
-    {
-        //Prevents AI cores from modifying upkeep
+    protected void addRightAfterDescriptionSection(TooltipMakerAPI tooltip, IndustryTooltipMode mode) {
+        thisIndustry.addRightAfterDescriptionSection(this, tooltip, mode);
     }
 
     @Override
-    protected void applyAlphaCoreSupplyAndDemandModifiers()
-    {
-        //Prevents AI cores from modifying supply and demand
+    protected boolean hasPostDemandSection(boolean hasDemand, IndustryTooltipMode mode) {
+        return true;
     }
 
     @Override
-    public boolean canImprove() {
-        return false;
-    }
+    protected void addPostDemandSection(TooltipMakerAPI tooltip, boolean hasDemand, IndustryTooltipMode mode) {
+        thisIndustry.addPostDemandSection(this, tooltip, hasDemand, mode);
 
-    @Override
-    public float getPatherInterest() { return super.getPatherInterest() + 2.0f; }
-
-    @Override
-    protected void addPostDemandSection(TooltipMakerAPI tooltip, boolean hasDemand, IndustryTooltipMode mode)
-    {
         float opad = 10.0F;
         Color bad = Misc.getNegativeHighlightColor();
 
@@ -189,6 +170,43 @@ public class Boggled_Planetary_Agrav_Field extends BaseIndustry {
             }
         }
     }
+
+    @Override
+    public void applyDeficitToProduction(int index, Pair<String, Integer> deficit, String... commodities) {
+        super.applyDeficitToProduction(index, deficit, commodities);
+    }
+
+    @Override
+    public void setFunctional(boolean functional) {
+        thisIndustry.setFunctional(functional);
+    }
+
+    public static List<String> SUPPRESSED_CONDITIONS = new ArrayList<String>();
+    static
+    {
+        SUPPRESSED_CONDITIONS.add(Conditions.HIGH_GRAVITY);
+        SUPPRESSED_CONDITIONS.add(Conditions.LOW_GRAVITY);
+    }
+
+    @Override
+    public void applyAICoreToIncomeAndUpkeep()
+    {
+        //Prevents AI cores from modifying upkeep
+    }
+
+    @Override
+    protected void applyAlphaCoreSupplyAndDemandModifiers()
+    {
+        //Prevents AI cores from modifying supply and demand
+    }
+
+    @Override
+    public boolean canImprove() {
+        return false;
+    }
+
+    @Override
+    public float getPatherInterest() { return super.getPatherInterest() + 2.0f; }
 
     @Override
     public boolean canInstallAICores() {

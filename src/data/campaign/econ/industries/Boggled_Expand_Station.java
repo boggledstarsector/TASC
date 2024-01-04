@@ -4,17 +4,17 @@ import java.lang.String;
 
 import com.fs.starfarer.api.campaign.econ.Industry;
 import com.fs.starfarer.api.impl.campaign.econ.impl.BaseIndustry;
+import com.fs.starfarer.api.ui.TooltipMakerAPI;
+import com.fs.starfarer.api.util.Pair;
 import data.campaign.econ.boggledTools;
 
-public class Boggled_Expand_Station extends BaseIndustry {
+public class Boggled_Expand_Station extends BaseIndustry implements BoggledIndustryInterface {
     private final BoggledCommonIndustry thisIndustry;
 
     public Boggled_Expand_Station() {
         super();
         thisIndustry = boggledTools.getIndustryProject("expand_station");
     }
-
-
 
     @Override
     public void startBuilding() {
@@ -32,8 +32,8 @@ public class Boggled_Expand_Station extends BaseIndustry {
     protected void buildingFinished() {
         super.buildingFinished();
         thisIndustry.buildingFinished(this);
-        boggledTools.incrementNumberOfStationExpansions(this.market);
 
+        boggledTools.incrementNumberOfStationExpansions(this.market);
         this.market.removeIndustry(boggledTools.BoggledIndustries.stationExpansionIndustryId,null,false);
     }
 
@@ -51,6 +51,9 @@ public class Boggled_Expand_Station extends BaseIndustry {
 
     @Override
     public boolean isBuilding() { return thisIndustry.isBuilding(this); }
+
+    @Override
+    public boolean isFunctional() { return super.isFunctional() && thisIndustry.isFunctional(); }
 
     @Override
     public boolean isUpgrading() { return thisIndustry.isUpgrading(this); }
@@ -84,13 +87,43 @@ public class Boggled_Expand_Station extends BaseIndustry {
     }
 
     @Override
-    public void apply() { super.apply(true); }
+    public void apply() {
+        super.apply(true);
+        thisIndustry.apply(this, this);
+    }
 
     @Override
-    public void unapply() {
+    public void unapply()
+    {
         super.unapply();
     }
 
+    @Override
+    protected void addRightAfterDescriptionSection(TooltipMakerAPI tooltip, IndustryTooltipMode mode) {
+        thisIndustry.addRightAfterDescriptionSection(this, tooltip, mode);
+    }
+
+    @Override
+    protected boolean hasPostDemandSection(boolean hasDemand, IndustryTooltipMode mode) {
+        return true;
+    }
+
+    @Override
+    protected void addPostDemandSection(TooltipMakerAPI tooltip, boolean hasDemand, IndustryTooltipMode mode) {
+        thisIndustry.addPostDemandSection(this, tooltip, hasDemand, mode);
+    }
+
+    @Override
+    public void applyDeficitToProduction(int index, Pair<String, Integer> deficit, String... commodities) {
+        super.applyDeficitToProduction(index, deficit, commodities);
+    }
+
+    @Override
+    public void setFunctional(boolean functional) {
+        thisIndustry.setFunctional(functional);
+    }
+
+    @Override
     public float getBuildCost()
     {
         if(!boggledTools.getBooleanSetting(boggledTools.BoggledSettings.stationProgressIncreaseInCostsToExpandStation))
@@ -104,8 +137,7 @@ public class Boggled_Expand_Station extends BaseIndustry {
         }
     }
 
-
-
+    @Override
     public boolean canInstallAICores() {
         return false;
     }

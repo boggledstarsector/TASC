@@ -15,7 +15,7 @@ import com.fs.starfarer.api.util.*;
 import com.fs.starfarer.api.util.Misc;
 import data.campaign.econ.boggledTools;
 
-public class Boggled_AI_Mining_Drones extends BaseIndustry {
+public class Boggled_AI_Mining_Drones extends BaseIndustry implements BoggledIndustryInterface {
     private final BoggledCommonIndustry thisIndustry;
 
     public Boggled_AI_Mining_Drones() {
@@ -57,6 +57,9 @@ public class Boggled_AI_Mining_Drones extends BaseIndustry {
     public boolean isBuilding() { return thisIndustry.isBuilding(this); }
 
     @Override
+    public boolean isFunctional() { return super.isFunctional() && thisIndustry.isFunctional(); }
+
+    @Override
     public boolean isUpgrading() { return thisIndustry.isUpgrading(this); }
 
     @Override
@@ -85,6 +88,60 @@ public class Boggled_AI_Mining_Drones extends BaseIndustry {
     public void advance(float amount) {
         super.advance(amount);
         thisIndustry.advance(amount, this);
+    }
+
+    @Override
+    public void apply() {
+        thisIndustry.apply(this, this);
+
+        if(this.market.getPrimaryEntity() != null && this.market.getPrimaryEntity().hasTag(Tags.STATION) && this.isFunctional()) {
+            //Increased production
+            Industry i = market.getIndustry(Industries.MINING);
+            if (i != null) {
+                for (MutableCommodityQuantity c : i.getAllSupply()) {
+                    i.getSupply(c.getCommodityId()).getQuantity().modifyFlat(id, getProductionBonusFromMiningDrones(), "AI Mining Drones");
+                }
+            }
+        }
+
+        super.apply(true);
+        thisIndustry.apply(this, this);
+    }
+
+    @Override
+    public void unapply()
+    {
+        for(Industry i : market.getIndustries())
+        {
+            for(MutableCommodityQuantity c : i.getAllSupply())
+            {
+                i.getSupply(c.getCommodityId()).getQuantity().unmodifyFlat(id);
+            }
+        }
+
+        this.market.getAccessibilityMod().unmodifyFlat(this.getModId(5));
+
+        super.unapply();
+    }
+
+    @Override
+    protected boolean hasPostDemandSection(boolean hasDemand, IndustryTooltipMode mode) {
+        return true;
+    }
+
+    @Override
+    protected void addPostDemandSection(TooltipMakerAPI tooltip, boolean hasDemand, IndustryTooltipMode mode) {
+        thisIndustry.addPostDemandSection(this, tooltip, hasDemand, mode);
+    }
+
+    @Override
+    public void applyDeficitToProduction(int index, Pair<String, Integer> deficit, String... commodities) {
+        super.applyDeficitToProduction(index, deficit, commodities);
+    }
+
+    @Override
+    public void setFunctional(boolean functional) {
+        thisIndustry.setFunctional(functional);
     }
 
     @Override
@@ -118,40 +175,6 @@ public class Boggled_AI_Mining_Drones extends BaseIndustry {
 
         // Make sure we can't return a negative bonus if a large supply deficit exists
         return Math.max(ai_bonus, 0);
-    }
-
-    @Override
-    public void apply()
-    {
-        if(this.market.getPrimaryEntity() != null && this.market.getPrimaryEntity().hasTag(Tags.STATION) && this.isFunctional()) {
-            thisIndustry.apply(this);
-
-            //Increased production
-            Industry i = market.getIndustry(Industries.MINING);
-            if (i != null) {
-                for (MutableCommodityQuantity c : i.getAllSupply()) {
-                    i.getSupply(c.getCommodityId()).getQuantity().modifyFlat(id, getProductionBonusFromMiningDrones(), "AI Mining Drones");
-                }
-            }
-        }
-
-        super.apply(true);
-    }
-
-    @Override
-    public void unapply()
-    {
-        for(Industry i : market.getIndustries())
-        {
-            for(MutableCommodityQuantity c : i.getAllSupply())
-            {
-                i.getSupply(c.getCommodityId()).getQuantity().unmodifyFlat(id);
-            }
-        }
-
-        this.market.getAccessibilityMod().unmodifyFlat(this.getModId(5));
-
-        super.unapply();
     }
 
     @Override

@@ -2,7 +2,6 @@
 package data.campaign.econ.conditions;
 
 import com.fs.starfarer.api.Global;
-import com.fs.starfarer.api.campaign.*;
 import com.fs.starfarer.api.campaign.comm.CommMessageAPI;
 import com.fs.starfarer.api.impl.campaign.econ.BaseHazardCondition;
 import com.fs.starfarer.api.impl.campaign.intel.BaseIntelPlugin;
@@ -14,190 +13,73 @@ import java.util.Map;
 import data.campaign.econ.boggledTools;
 import data.scripts.BoggledTerraformingProject;
 
-public class Terraforming_Controller extends BaseHazardCondition
-{
-    private static class BoggledTags {
-        public static String terraformingControllerDaysCompleted = "boggledTerraformingControllerDaysCompleted_";
-        public static String terraformingControllerLastDayChecked = "boggledTerraformingControllerLastDayChecked_";
-        public static String terraformingControllerCurrentProject = "boggledTerraformingControllerCurrentProject_";
+public class Terraforming_Controller extends BaseHazardCondition {
+
+    private BoggledTerraformingProject.ProjectInstance currentProject = null;
+
+    @Override
+    public boolean isTransient() {
+        return false;
     }
 
-    public Terraforming_Controller() { }
-
-    private int daysRequiredForCurrentProject;
-
-    private int daysCompleted = 0;
-    private int lastDayChecked = 0;
-
-    private String currentProject = null;
-
-    private void loadVariables()
-    {
-        daysRequiredForCurrentProject = 0;
-        if (currentProject != null)
-        {
-            BoggledTerraformingProject terraformingProject = boggledTools.getProject(currentProject);
-            if (terraformingProject != null) {
-                daysRequiredForCurrentProject = terraformingProject.getModifiedProjectDuration(market);
-            }
-        }
-
-        for (String tag : market.getTags()) {
-            if (tag.contains(BoggledTags.terraformingControllerDaysCompleted)) {
-                daysCompleted = Integer.parseInt(tag.replace(BoggledTags.terraformingControllerDaysCompleted, ""));
-            } else if (tag.contains(BoggledTags.terraformingControllerLastDayChecked)) {
-                lastDayChecked = Integer.parseInt(tag.replace(BoggledTags.terraformingControllerLastDayChecked, ""));
-            } else if (tag.contains(BoggledTags.terraformingControllerCurrentProject)) {
-                currentProject = tag.replace(BoggledTags.terraformingControllerCurrentProject, "");
-            }
-        }
+    public BoggledTerraformingProject getProject() {
+        if (currentProject == null) return null;
+        return currentProject.getProject();
     }
 
-    private void storeVariables()
-    {
-        boggledTools.clearBoggledTerraformingControllerTags(market);
-
-        market.addTag(BoggledTags.terraformingControllerDaysCompleted + daysCompleted);
-        market.addTag(BoggledTags.terraformingControllerLastDayChecked + lastDayChecked);
-        if(currentProject == null)
-        {
-            market.addTag(BoggledTags.terraformingControllerCurrentProject + "None");
+    public void setProject(BoggledTerraformingProject project) {
+        if (currentProject == null && project == null) {
+            return;
         }
-        else
-        {
-            market.addTag(BoggledTags.terraformingControllerCurrentProject + currentProject);
-        }
-    }
+        BoggledTerraformingProject projectToCheck = project == null ? currentProject.getProject() : project;
 
-    public String getProject()
-    {
-        loadVariables();
+        currentProject = project == null ? null : new BoggledTerraformingProject.ProjectInstance(project);
 
-        if(currentProject == null)
-        {
-            return boggledTools.noneProjectId;
-        }
-        else
-        {
-            return currentProject;
-        }
-    }
-
-    public void setProject(String project)
-    {
-        String projectToCheck;
-        if (currentProject == null) {
-            projectToCheck = project;
-        } else if (currentProject.equals(boggledTools.noneProjectId)) {
-            projectToCheck = project;
-        } else {
-            projectToCheck = currentProject;
-        }
-
-        daysCompleted = 0;
-        lastDayChecked = Global.getSector().getClock().getDay();
-        currentProject = project;
-
-        if(market.isPlayerOwned() || market.getFaction().isPlayerFaction())
-        {
-            BoggledTerraformingProject p = boggledTools.getProject(projectToCheck);
-            String projectTooltip = p.getProjectTooltip(boggledTools.getTokenReplacements(market));
+        if(market.isPlayerOwned() || market.getFaction().isPlayerFaction()) {
+            String projectTooltip = projectToCheck.getProjectTooltip(boggledTools.getTokenReplacements(market));
             MessageIntel intel = new MessageIntel(projectTooltip + " on " + market.getName(), Misc.getBasePlayerColor());
-            if(project.equals(boggledTools.noneProjectId))
-            {
+            if (project == null) {
                 intel.addLine("    - Canceled");
-            }
-            else
-            {
+            } else {
                 intel.addLine("    - Started");
             }
             intel.setIcon(Global.getSector().getPlayerFaction().getCrest());
             intel.setSound(BaseIntelPlugin.getSoundStandardUpdate());
             Global.getSector().getCampaignUI().addMessage(intel, CommMessageAPI.MessageClickAction.COLONY_INFO, market);
         }
-
-        storeVariables();
     }
 
-    public int getDaysCompleted()
-    {
-        loadVariables();
-
-        return daysCompleted;
+    public int getDaysCompleted() {
+        if (currentProject == null) {
+            return 0;
+        }
+        return currentProject.getDaysCompleted();
     }
 
-    public int getDaysRequired()
-    {
-        loadVariables();
-
-        return daysRequiredForCurrentProject;
+    public int getDaysRequired() {
+        if (currentProject == null) {
+            return 0;
+        }
+        return currentProject.getProject().getModifiedProjectDuration(market);
     }
 
-    public int getDaysRemaining()
-    {
+    public int getDaysRemaining() {
         return getDaysRequired() - getDaysCompleted();
     }
 
-    public int getPercentComplete()
-    {
-        Double daysCompleted = (double) getDaysCompleted();
-        Double daysRequired = (double) getDaysRequired();
-
-        double percentCompete = (daysCompleted / daysRequired) * 100;
-        int returnValue = (int) percentCompete;
-        return Math.min(returnValue, 99);
-    }
-
-    public void advance(float amount)
-    {
-        loadVariables();
-
+    public void advance(float amount) {
         super.advance(amount);
 
-        if(!(market.isPlayerOwned() || market.getFaction().isPlayerFaction()) || boggledTools.marketIsStation(market))
-        {
+        if(!(market.isPlayerOwned() || market.getFaction().isPlayerFaction()) || boggledTools.marketIsStation(market)) {
             boggledTools.removeCondition(market, boggledTools.BoggledConditions.terraformingControllerConditionId);
             return;
         }
 
-        if(currentProject == null || currentProject.equals(boggledTools.noneProjectId))
-        {
-            daysCompleted = 0;
-            lastDayChecked = 0;
-        }
-        else
-        {
-            CampaignClockAPI clock = Global.getSector().getClock();
-            if(clock.getDay() != lastDayChecked)
-            {
-                BoggledTerraformingProject project = boggledTools.getProject(currentProject);
-                // Null check so it doesn't crash when updating with an active project
-                if(project != null && project.requirementsMet(market))
-                {
-                    daysCompleted++;
-                    lastDayChecked = clock.getDay();
-
-                    if (daysCompleted >= daysRequiredForCurrentProject) {
-                        BoggledTerraformingProject terraformingProject = boggledTools.getProject(currentProject);
-                        if (terraformingProject != null) {
-                            terraformingProject.finishProject(market);
-                        } else {
-                            Global.getLogger(Terraforming_Controller.class).error("Couldn't find TerraformingProject for project " + currentProject);
-                        }
-
-                        currentProject = null;
-                        daysCompleted = 0;
-                        lastDayChecked = 0;
-                    }
-                }
-                else
-                {
-                    lastDayChecked = clock.getDay();
-                }
+        if (currentProject != null) {
+            if (currentProject.advance(market)) {
+                currentProject = null;
             }
         }
-
-        storeVariables();
     }
 
     public void apply(String id) { super.apply(id); }

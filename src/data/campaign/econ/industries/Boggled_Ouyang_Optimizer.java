@@ -7,10 +7,10 @@ import com.fs.starfarer.api.campaign.econ.*;
 import com.fs.starfarer.api.impl.campaign.econ.impl.BaseIndustry;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
+import com.fs.starfarer.api.util.Pair;
 import data.campaign.econ.boggledTools;
 
-public class Boggled_Ouyang_Optimizer extends BaseIndustry
-{
+public class Boggled_Ouyang_Optimizer extends BaseIndustry implements BoggledIndustryInterface {
     private final BoggledCommonIndustry thisIndustry;
 
     public Boggled_Ouyang_Optimizer() {
@@ -52,6 +52,9 @@ public class Boggled_Ouyang_Optimizer extends BaseIndustry
     public boolean isBuilding() { return thisIndustry.isBuilding(this); }
 
     @Override
+    public boolean isFunctional() { return super.isFunctional() && thisIndustry.isFunctional(); }
+
+    @Override
     public boolean isUpgrading() { return thisIndustry.isUpgrading(this); }
 
     @Override
@@ -83,18 +86,40 @@ public class Boggled_Ouyang_Optimizer extends BaseIndustry
     }
 
     @Override
-    public boolean canBeDisrupted() { return true; }
-
-    @Override
     public void apply() {
         super.apply(true);
-        thisIndustry.apply(this);
+        thisIndustry.apply(this, this);
     }
 
     @Override
     public void unapply()
     {
         super.unapply();
+    }
+
+//    @Override
+//    protected void addRightAfterDescriptionSection(TooltipMakerAPI tooltip, IndustryTooltipMode mode) {
+//        thisIndustry.addRightAfterDescriptionSection(this, tooltip, mode);
+//    }
+
+    @Override
+    protected boolean hasPostDemandSection(boolean hasDemand, IndustryTooltipMode mode) {
+        return true;
+    }
+
+    @Override
+    protected void addPostDemandSection(TooltipMakerAPI tooltip, boolean hasDemand, IndustryTooltipMode mode) {
+        thisIndustry.addPostDemandSection(this, tooltip, hasDemand, mode);
+    }
+
+    @Override
+    public void applyDeficitToProduction(int index, Pair<String, Integer> deficit, String... commodities) {
+        super.applyDeficitToProduction(index, deficit, commodities);
+    }
+
+    @Override
+    public void setFunctional(boolean functional) {
+        thisIndustry.setFunctional(functional);
     }
 
     @Override
@@ -114,28 +139,6 @@ public class Boggled_Ouyang_Optimizer extends BaseIndustry
         thisIndustry.tooltipComplete(this, tooltip, mode, "Further Ouyang optimization would yield no improvements on " + thisIndustry.getFocusMarketOrMarket(getMarket()).getName() + ". The Ouyang Optimizer can now be deconstructed without any risk of regression.", opad, highlight);
 
         thisIndustry.tooltipDisrupted(this, tooltip, mode, "Progress is stalled while the Ouyang optimizer is disrupted.", opad, Misc.getNegativeHighlightColor());
-        //Inserts optimization status after description
-//        if(commonIndustry.marketSuitableBoth(getMarket()) && mode != IndustryTooltipMode.ADD_INDUSTRY && mode != IndustryTooltipMode.QUEUED && !isBuilding())
-//        {
-//            int percentComplete = commonIndustry.getPercentComplete(0, this);
-//
-            //Makes sure the tooltip doesn't say "100% complete" on the last day due to rounding up 99.5 to 100
-//            percentComplete = Math.min(percentComplete, 99);
-//
-//            tooltip.addPara("Ouyang optimization is approximately %s complete on " + commonIndustry.getFocusMarketOrMarket(getMarket()).getName() + ".", opad, highlight, percentComplete + "%");
-//        }
-
-        // Tell the player they can remove it
-//        if(!commonIndustry.marketSuitableBoth(getMarket()) && mode != IndustryTooltipMode.ADD_INDUSTRY && mode != IndustryTooltipMode.QUEUED && !isBuilding())
-//        {
-//            tooltip.addPara("Further Ouyang optimization would yield no improvements on " + commonIndustry.getFocusMarketOrMarket(getMarket()).getName() + ". The Ouyang Optimizer can now be deconstructed without any risk of regression.", opad);
-//        }
-
-//        if(this.isDisrupted() && commonIndustry.marketSuitableBoth(getMarket()) && mode != IndustryTooltipMode.ADD_INDUSTRY && mode != IndustryTooltipMode.QUEUED && !isBuilding())
-//        {
-//            Color bad = Misc.getNegativeHighlightColor();
-//            tooltip.addPara("Progress is stalled while the Ouyang optimizer is disrupted.", bad, opad);
-//        }
     }
 
     @Override

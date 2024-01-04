@@ -2,7 +2,6 @@ package data.campaign.econ.industries;
 
 import com.fs.starfarer.api.campaign.econ.*;
 import com.fs.starfarer.api.impl.campaign.econ.impl.BaseIndustry;
-import com.fs.starfarer.api.impl.campaign.ids.Commodities;
 import com.fs.starfarer.api.impl.campaign.population.PopulationComposition;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
@@ -11,7 +10,7 @@ import data.campaign.econ.boggledTools;
 
 import java.lang.String;
 
-public class Boggled_Cloning extends BaseIndustry implements MarketImmigrationModifier {
+public class Boggled_Cloning extends BaseIndustry implements MarketImmigrationModifier, BoggledIndustryInterface {
     private final BoggledCommonIndustry thisIndustry;
 
     public Boggled_Cloning() {
@@ -53,6 +52,9 @@ public class Boggled_Cloning extends BaseIndustry implements MarketImmigrationMo
     public boolean isBuilding() { return thisIndustry.isBuilding(this); }
 
     @Override
+    public boolean isFunctional() { return super.isFunctional() && thisIndustry.isFunctional(); }
+
+    @Override
     public boolean isUpgrading() { return thisIndustry.isUpgrading(this); }
 
     @Override
@@ -84,35 +86,45 @@ public class Boggled_Cloning extends BaseIndustry implements MarketImmigrationMo
     }
 
     @Override
-    public boolean canBeDisrupted() {
+    public void apply() {
+        super.apply(true);
+        thisIndustry.apply(this, this);
+    }
+
+    @Override
+    public void unapply()
+    {
+        super.unapply();
+    }
+
+    @Override
+    protected void addRightAfterDescriptionSection(TooltipMakerAPI tooltip, IndustryTooltipMode mode) {
+        thisIndustry.addRightAfterDescriptionSection(this, tooltip, mode);
+    }
+
+    @Override
+    protected boolean hasPostDemandSection(boolean hasDemand, IndustryTooltipMode mode) {
         return true;
     }
 
     @Override
-    public void apply()
-    {
-        super.apply(true);
-        thisIndustry.apply(this);
+    protected void addPostDemandSection(TooltipMakerAPI tooltip, boolean hasDemand, IndustryTooltipMode mode) {
+        thisIndustry.addPostDemandSection(this, tooltip, hasDemand, mode);
 
-//        int size = this.market.getSize();
-
-//        if(boggledTools.getBooleanSetting(boggledTools.BoggledSettings.domainTechContentEnabled) && boggledTools.getBooleanSetting(boggledTools.BoggledSettings.domainArchaeologyEnabled))
-//        {
-//            this.demand(boggledTools.BoggledCommodities.domainArtifacts, size - 2);
-//        }
-//        this.supply(Commodities.ORGANS, size - 2);
-
-        if(boggledTools.getBooleanSetting(boggledTools.BoggledSettings.domainTechContentEnabled) && boggledTools.getBooleanSetting(boggledTools.BoggledSettings.domainArchaeologyEnabled))
+        if (isFunctional())
         {
-            Pair<String, Integer> deficit = this.getMaxDeficit(boggledTools.BoggledCommodities.domainArtifacts);
-            this.applyDeficitToProduction(1, deficit, Commodities.ORGANS);
+            tooltip.addPara("%s population growth (based on colony size)", 10f, Misc.getHighlightColor(), "+" + (int) getImmigrationBonus());
         }
+    }
 
-        if (!this.isFunctional())
-        {
-            this.supply.clear();
-            this.unapply();
-        }
+    @Override
+    public void applyDeficitToProduction(int index, Pair<String, Integer> deficit, String... commodities) {
+        super.applyDeficitToProduction(index, deficit, commodities);
+    }
+
+    @Override
+    public void setFunctional(boolean functional) {
+        thisIndustry.setFunctional(functional);
     }
 
     public void modifyIncoming(MarketAPI market, PopulationComposition incoming)
@@ -125,23 +137,8 @@ public class Boggled_Cloning extends BaseIndustry implements MarketImmigrationMo
     }
 
     @Override
-    public void unapply()
-    {
-        super.unapply();
-    }
-
-    @Override
     public float getPatherInterest() {
         return 10.0F;
-    }
-
-    @Override
-    protected void addPostDemandSection(TooltipMakerAPI tooltip, boolean hasDemand, IndustryTooltipMode mode)
-    {
-        if (isFunctional())
-        {
-            tooltip.addPara("%s population growth (based on colony size)", 10f, Misc.getHighlightColor(), "+" + (int) getImmigrationBonus());
-        }
     }
 
     @Override

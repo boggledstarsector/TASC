@@ -22,7 +22,7 @@ import java.awt.*;
 import java.util.List;
 import java.util.Random;
 
-public class Boggled_Remnant_Station extends OrbitalStation implements RouteManager.RouteFleetSpawner, FleetEventListener {
+public class Boggled_Remnant_Station extends OrbitalStation implements RouteManager.RouteFleetSpawner, FleetEventListener, BoggledIndustryInterface {
     private final BoggledCommonIndustry thisIndustry;
     public Boggled_Remnant_Station() {
         super();
@@ -63,6 +63,9 @@ public class Boggled_Remnant_Station extends OrbitalStation implements RouteMana
     public boolean isBuilding() { return thisIndustry.isBuilding(this); }
 
     @Override
+    public boolean isFunctional() { return super.isFunctional() && thisIndustry.isFunctional(); }
+
+    @Override
     public boolean isUpgrading() { return thisIndustry.isUpgrading(this); }
 
     @Override
@@ -92,6 +95,42 @@ public class Boggled_Remnant_Station extends OrbitalStation implements RouteMana
 //        super.advance(amount);
 //        thisIndustry.advance(amount, this);
 //    }
+//
+//    @Override
+//    public void apply() {
+//        super.apply(true);
+//        thisIndustry.apply(this, this);
+//    }
+//
+//    @Override
+//    public void unapply() {
+//        super.unapply();
+//    }
+
+    @Override
+    protected void addRightAfterDescriptionSection(TooltipMakerAPI tooltip, IndustryTooltipMode mode) {
+        thisIndustry.addRightAfterDescriptionSection(this, tooltip, mode);
+    }
+
+    @Override
+    protected boolean hasPostDemandSection(boolean hasDemand, IndustryTooltipMode mode) {
+        return true;
+    }
+
+//    @Override
+//    protected void addPostDemandSection(TooltipMakerAPI tooltip, boolean hasDemand, IndustryTooltipMode mode) {
+//        thisIndustry.addPostDemandSection(this, tooltip, hasDemand, mode);
+//    }
+
+    @Override
+    public void applyDeficitToProduction(int index, Pair<String, Integer> deficit, String... commodities) {
+        super.applyDeficitToProduction(index, deficit, commodities);
+    }
+
+    @Override
+    public void setFunctional(boolean functional) {
+        thisIndustry.setFunctional(functional);
+    }
 
     protected IntervalUtil tracker = new IntervalUtil(Global.getSettings().getFloat("averagePatrolSpawnInterval") * 0.7f, Global.getSettings().getFloat("averagePatrolSpawnInterval") * 1.3f);
 
@@ -422,7 +461,7 @@ public class Boggled_Remnant_Station extends OrbitalStation implements RouteMana
         int size = 7;
         this.market.getStability().modifyFlat(this.getModId(), 3.0f, "Autonomous AI battlestation");
         this.applyIncomeAndUpkeep((float)size);
-        thisIndustry.apply(this);
+        thisIndustry.apply(this, this);
 
         this.market.getStats().getDynamic().getMod("ground_defenses_mod").modifyMult(this.getModId(), 3.0f, "Autonomous AI battlestation");
         this.matchCommanderToAICore(this.aiCoreId);

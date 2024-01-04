@@ -16,7 +16,7 @@ import com.fs.starfarer.api.impl.campaign.econ.impl.BaseIndustry;
 import com.fs.starfarer.api.util.Pair;
 import data.campaign.econ.boggledTools;
 
-public class Boggled_Ismara_Sling extends BaseIndustry {
+public class Boggled_Ismara_Sling extends BaseIndustry implements BoggledIndustryInterface {
     private final BoggledCommonIndustry thisIndustry;
 
     public Boggled_Ismara_Sling() {
@@ -58,6 +58,9 @@ public class Boggled_Ismara_Sling extends BaseIndustry {
     public boolean isBuilding() { return thisIndustry.isBuilding(this); }
 
     @Override
+    public boolean isFunctional() { return super.isFunctional() && thisIndustry.isFunctional(); }
+
+    @Override
     public boolean isUpgrading() { return thisIndustry.isUpgrading(this); }
 
     @Override
@@ -95,12 +98,12 @@ public class Boggled_Ismara_Sling extends BaseIndustry {
     }
 
     @Override
-    public void advance(float amount)
-    {
+    public void advance(float amount) {
         super.advance(amount);
 
         // This check exists to remove Ismara's Sling if the planet was terraformed to a type that is incompatible with it.
-        if(!boggledTools.marketIsStation(this.market) && (!boggledTools.getPlanetType(this.market.getPlanetEntity()).equals(boggledTools.waterPlanetId) && !boggledTools.getPlanetType(this.market.getPlanetEntity()).equals(boggledTools.frozenPlanetId)))
+        // If market is not station and market's water level is below 2 (high water supply level)
+        if (!boggledTools.marketIsStation(getMarket()) && boggledTools.getPlanetType(getMarket().getPlanetEntity()).getWaterLevel(getMarket()) < 2)
         {
             // If an AI core is installed, put one in storage so the player doesn't "lose" an AI core
             if (this.aiCoreId != null)
@@ -174,18 +177,13 @@ public class Boggled_Ismara_Sling extends BaseIndustry {
         {
             return "Crashing asteroids rich in water-ice into planets is an effective means of terraforming - except when the asteroid is so large that the impact would be cataclysmic. In this case, the asteroid can be towed to a space station, where the water-ice is safely extracted and shipped to the destination planet. Can only help terraform worlds in the same system.";
         }
-        else
-        {
-            return null;
-        }
+        return null;
     }
 
     @Override
     public void apply() {
         super.apply(true);
-        thisIndustry.apply(this);
-
-        this.demand(Commodities.HEAVY_MACHINERY, 6);
+        thisIndustry.apply(this, this);
 
         super.apply(false);
         super.applyIncomeAndUpkeep(3);
@@ -200,19 +198,8 @@ public class Boggled_Ismara_Sling extends BaseIndustry {
     public float getPatherInterest() { return 10.0F; }
 
     @Override
-    protected void addPostDemandSection(TooltipMakerAPI tooltip, boolean hasDemand, IndustryTooltipMode mode)
-    {
-        float opad = 10.0F;
-        Color highlight = Misc.getHighlightColor();
-
-        if(boggledTools.marketIsStation(this.market))
-        {
-            tooltip.addPara("Asteroid Processing always demands %s heavy machinery regardless of market size.", opad, highlight, "6");
-        }
-        else
-        {
-            tooltip.addPara("Ismara's Sling always demands %s heavy machinery regardless of market size.", opad, highlight, "6");
-        }
+    protected void addPostDemandSection(TooltipMakerAPI tooltip, boolean hasDemand, IndustryTooltipMode mode) {
+        thisIndustry.addPostDemandSection(this, tooltip, hasDemand, mode);
     }
 
     @Override
@@ -233,5 +220,15 @@ public class Boggled_Ismara_Sling extends BaseIndustry {
         {
             tooltip.addPara(this.getCurrentName() + " is experiencing a shortage of heavy machinery. No water-ice can be supplied for terraforming projects until the shortage is resolved.", bad, opad);
         }
+    }
+
+    @Override
+    public void applyDeficitToProduction(int index, Pair<String, Integer> deficit, String... commodities) {
+        super.applyDeficitToProduction(index, deficit, commodities);
+    }
+
+    @Override
+    public void setFunctional(boolean functional) {
+        thisIndustry.setFunctional(functional);
     }
 }

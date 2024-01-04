@@ -6,12 +6,12 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
+import java.util.Map;
 
 public class BoggledProjectRequirementsAND implements Iterable<BoggledProjectRequirementsAND.RequirementWithTooltipOverride> {
     public static class RequirementWithTooltipOverride {
-        private BoggledProjectRequirementsOR requirements;
-        private String tooltipOverride;
+        private final BoggledProjectRequirementsOR requirements;
+        private final String tooltipOverride;
 
         public RequirementWithTooltipOverride(BoggledProjectRequirementsOR requirements, String tooltipOverride) {
             this.requirements = requirements;
@@ -21,7 +21,7 @@ public class BoggledProjectRequirementsAND implements Iterable<BoggledProjectReq
         public boolean checkRequirement(MarketAPI market) {
             return requirements.checkRequirement(market);
         }
-        public String getTooltip(LinkedHashMap<String, String> tokenReplacements) {
+        public String getTooltip(Map<String, String> tokenReplacements) {
             String ret = tooltipOverride;
             if (tooltipOverride.isEmpty()) {
                 ret = requirements.getTooltip();
@@ -33,6 +33,10 @@ public class BoggledProjectRequirementsAND implements Iterable<BoggledProjectReq
     }
 
     private final ArrayList<RequirementWithTooltipOverride> requirementsOR;
+
+    public BoggledProjectRequirementsAND(ArrayList<RequirementWithTooltipOverride> requirementsOR) {
+        this.requirementsOR = requirementsOR;
+    }
 
     @NotNull
     @Override
@@ -51,9 +55,5 @@ public class BoggledProjectRequirementsAND implements Iterable<BoggledProjectReq
             }
         }
         return true;
-    }
-
-    public BoggledProjectRequirementsAND(ArrayList<RequirementWithTooltipOverride> requirementsOR) {
-        this.requirementsOR = requirementsOR;
     }
 }

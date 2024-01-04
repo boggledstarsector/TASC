@@ -1,14 +1,69 @@
 package data.scripts;
 
 import com.fs.starfarer.api.Global;
+import com.fs.starfarer.api.campaign.CampaignClockAPI;
 import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import data.campaign.econ.boggledTools;
-import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
+import java.util.Map;
 
 public class BoggledTerraformingProject {
+    public static class ProjectInstance {
+        private BoggledTerraformingProject project;
+        private int daysCompleted = 0;
+        private int lastDayChecked = 0;
+
+        public ProjectInstance(BoggledTerraformingProject project) {
+            this.project = project;
+            if (Global.getSector() == null) {
+                // Happens when game first loads
+                this.lastDayChecked = 0;
+            } else {
+                this.lastDayChecked = Global.getSector().getClock().getDay();
+            }
+        }
+
+        public Object readResolve() {
+            Global.getLogger(this.getClass()).info("Doing readResolve for ProjectInstance");
+            this.project = boggledTools.getProject(project.getProjectId());
+            return this;
+        }
+
+        public BoggledTerraformingProject getProject() { return project; }
+        public int getDaysCompleted() { return daysCompleted; }
+        public int getLastDayChecked() { return lastDayChecked; }
+
+        public boolean advance(MarketAPI market) {
+            CampaignClockAPI clock = Global.getSector().getClock();
+            if (clock.getDay() == lastDayChecked) {
+                return false;
+            }
+            lastDayChecked = clock.getDay();
+
+            if (!project.requirementsMet(market)) {
+                return false;
+            }
+
+            if (project.requirementsReset(market)) {
+                this.daysCompleted = 0;
+                return false;
+            }
+
+            if (project.requirementsStall(market)) {
+                return false;
+            }
+
+            daysCompleted++;
+            if (daysCompleted < project.getModifiedProjectDuration(market)) {
+                return false;
+            }
+
+            project.finishProject(market);
+            return true;
+        }
+    }
+
     private final String projectId;
     private final String[] enableSettings;
     private final String projectType;
@@ -26,10 +81,35 @@ public class BoggledTerraformingProject {
     private final BoggledProjectRequirementsAND projectRequirements;
     private final BoggledProjectRequirementsAND projectRequirementsHidden;
 
-    private final ArrayList<BoggledTerraformingProjectEffect.TerraformingProjectEffect> projectEffects;
-
     private final int baseProjectDuration;
     private final ArrayList<BoggledTerraformingDurationModifier.TerraformingDurationModifier> durationModifiers;
+
+    private final ArrayList<BoggledProjectRequirementsAND> requirementsStall;
+    private final ArrayList<BoggledProjectRequirementsAND> requirementsReset;
+
+    private final ArrayList<BoggledTerraformingProjectEffect.TerraformingProjectEffect> projectEffects;
+
+    public BoggledTerraformingProject(String projectId, String[] enableSettings, String projectType, String projectTooltip, String intelCompleteMessage, String incompleteMessage, ArrayList<String> incompleteMessageHighlights, BoggledProjectRequirementsAND projectRequirements, BoggledProjectRequirementsAND projectRequirementsHidden, int baseProjectDuration, ArrayList<BoggledTerraformingDurationModifier.TerraformingDurationModifier> durationModifiers, ArrayList<BoggledProjectRequirementsAND> requirementsStall, ArrayList<BoggledProjectRequirementsAND> requirementsReset, ArrayList<BoggledTerraformingProjectEffect.TerraformingProjectEffect> projectEffects) {
+        this.projectId = projectId;
+        this.enableSettings = enableSettings;
+        this.projectType = projectType;
+        this.projectTooltip = projectTooltip;
+        this.intelCompleteMessage = intelCompleteMessage;
+
+        this.incompleteMessage = incompleteMessage;
+        this.incompleteMessageHighlights = incompleteMessageHighlights;
+
+        this.projectRequirements = projectRequirements;
+        this.projectRequirementsHidden = projectRequirementsHidden;
+
+        this.baseProjectDuration = baseProjectDuration;
+        this.durationModifiers = durationModifiers;
+
+        this.requirementsStall = requirementsStall;
+        this.requirementsReset = requirementsReset;
+
+        this.projectEffects = projectEffects;
+    }
 
     public String getProjectId() { return projectId; }
 
@@ -39,7 +119,7 @@ public class BoggledTerraformingProject {
 
     public String getProjectType() { return projectType; }
 
-    public String getProjectTooltip(LinkedHashMap<String, String> tokenReplacements) {
+    public String getProjectTooltip(Map<String, String> tokenReplacements) {
         for (BoggledTerraformingProjectEffect.TerraformingProjectEffect projectEffect : projectEffects) {
             projectEffect.addTokenReplacements(tokenReplacements);
         }
@@ -50,7 +130,7 @@ public class BoggledTerraformingProject {
 
     public String getIncompleteMessage() { return incompleteMessage; }
 
-    public String[] getIncompleteMessageHighlights(LinkedHashMap<String, String> tokenReplacements) {
+    public String[] getIncompleteMessageHighlights(Map<String, String> tokenReplacements) {
         ArrayList<String> replaced = new ArrayList<>(incompleteMessageHighlights.size());
         for (String highlight : incompleteMessageHighlights) {
             replaced.add(boggledTools.doTokenReplacement(highlight, tokenReplacements));
@@ -69,11 +149,8 @@ public class BoggledTerraformingProject {
     }
 
     public boolean requirementsHiddenMet(MarketAPI market) {
-        Logger log = Global.getLogger(boggledTools.class);
-        log.info("Checking requirements hidden for project " + getProjectId() + " for market " + market.getName());
-
         if (projectRequirementsHidden == null) {
-            log.error("Terraforming hidden project requirements is null for project " + getProjectId()
+            Global.getLogger(this.getClass()).error("Terraforming hidden project requirements is null for project " + getProjectId()
                     + " and market " + market.getName());
             return false;
         }
@@ -82,14 +159,29 @@ public class BoggledTerraformingProject {
     }
 
     public boolean requirementsMet(MarketAPI market) {
-        Logger log = Global.getLogger(boggledTools.class);
-        log.info("Checking project requirements for project " + getProjectId() + " for market " + market.getName());
-
         if (projectRequirements == null) {
-            log.error("Terraforming project requirements is null for project " + getProjectId() + " and market " + market.getName());
+            Global.getLogger(this.getClass()).error("Terraforming project requirements is null for project " + getProjectId() + " and market " + market.getName());
             return false;
         }
         return requirementsHiddenMet(market) && projectRequirements.requirementsMet(market);
+    }
+
+    public boolean requirementsStall(MarketAPI market) {
+        for (BoggledProjectRequirementsAND requirementStall : requirementsStall) {
+            if (requirementStall.requirementsMet(market)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean requirementsReset(MarketAPI market) {
+        for (BoggledProjectRequirementsAND requirementReset : requirementsReset) {
+            if (requirementReset.requirementsMet(market)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public void finishProject(MarketAPI market) {
@@ -106,10 +198,6 @@ public class BoggledTerraformingProject {
 
         boggledTools.showProjectCompleteIntelMessage(intelTooltip, intelCompletedMessage, market);
     }
-
-//    public void finishProject(MarketAPI market) {
-//        finishProject(market, getProjectTooltip(boggledTools.getTokenReplacements(market)), "Completed");
-//    }
 
 //    public void overrideAddTooltip(String tooltipOverride, String tooltipAddition) {
 //        if (!tooltipOverride.isEmpty()) {
@@ -133,23 +221,4 @@ public class BoggledTerraformingProject {
 //
 //        projectRequirements.addAll(add);
 //    }
-
-    public BoggledTerraformingProject(String projectId, String[] enableSettings, String projectType, String projectTooltip, String intelCompleteMessage, String incompleteMessage, ArrayList<String> incompleteMessageHighlights, BoggledProjectRequirementsAND projectRequirements, BoggledProjectRequirementsAND projectRequirementsHidden, int baseProjectDuration, ArrayList<BoggledTerraformingDurationModifier.TerraformingDurationModifier> durationModifiers, ArrayList<BoggledTerraformingProjectEffect.TerraformingProjectEffect> projectEffects) {
-        this.projectId = projectId;
-        this.enableSettings = enableSettings;
-        this.projectType = projectType;
-        this.projectTooltip = projectTooltip;
-        this.intelCompleteMessage = intelCompleteMessage;
-
-        this.incompleteMessage = incompleteMessage;
-        this.incompleteMessageHighlights = incompleteMessageHighlights;
-
-        this.projectRequirements = projectRequirements;
-        this.projectRequirementsHidden = projectRequirementsHidden;
-
-        this.baseProjectDuration = baseProjectDuration;
-        this.durationModifiers = durationModifiers;
-
-        this.projectEffects = projectEffects;
-    }
 }
