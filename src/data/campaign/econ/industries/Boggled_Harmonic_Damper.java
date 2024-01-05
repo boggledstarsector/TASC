@@ -123,8 +123,7 @@ public class Boggled_Harmonic_Damper extends BaseIndustry implements BoggledIndu
     }
 
     @Override
-    public void unapply()
-    {
+    public void unapply() {
         for (String cid : SUPPRESSED_CONDITIONS)
         {
             market.unsuppressCondition(cid);
@@ -134,6 +133,8 @@ public class Boggled_Harmonic_Damper extends BaseIndustry implements BoggledIndu
         this.market.getStats().getDynamic().getMod(Stats.GROUND_DEFENSES_MOD).unmodifyMult("boggled_harmonic_damper_improve_bonus");
 
         super.unapply();
+        thisIndustry.unapply(this, this);
+
     }
 
     @Override

@@ -92,6 +92,7 @@ public class Boggled_Genelab extends BaseIndustry implements BoggledIndustryInte
     @Override
     public void unapply() {
         super.unapply();
+        thisIndustry.unapply(this, this);
     }
 
     @Override

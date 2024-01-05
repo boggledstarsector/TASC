@@ -2,14 +2,14 @@ package data.scripts;
 
 import com.fs.starfarer.api.util.Pair;
 import data.campaign.econ.boggledTools;
-import kotlin.Triple;
+import org.json.JSONException;
+import org.json.JSONObject;
 
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.*;
 
 public class BoggledCommoditySupplyDemandFactory {
     public interface CommodityDemandShortageEffectFactory {
-        BoggledCommoditySupplyDemand.CommodityDemandShortageEffect constructFromJSON(String id, String[] enableSettings, ArrayList<String> commoditiesDemanded, String data);
+        BoggledCommoditySupplyDemand.CommodityDemandShortageEffect constructFromJSON(String id, String[] enableSettings, ArrayList<String> commoditiesDemanded, String data) throws JSONException;
     }
 
     public static class DeficitToInactiveFactory implements CommodityDemandShortageEffectFactory {
@@ -37,52 +37,83 @@ public class BoggledCommoditySupplyDemandFactory {
 
     public static class ConditionMultiplierToUpkeepFactory implements CommodityDemandShortageEffectFactory {
         @Override
-        public BoggledCommoditySupplyDemand.CommodityDemandShortageEffect constructFromJSON(String id, String[] enableSettings, ArrayList<String> commoditiesDemanded, String data) {
-            String[] conditionUpkeepMultiplierStrings = data.split(boggledTools.csvOptionSeparator);
-            ArrayList<Pair<String, Float>> conditionUpkeepMultipliers = new ArrayList<>();
-            for (String conditionUpkeepMultiplierString : conditionUpkeepMultiplierStrings) {
-                String[] conditionUpkeepMultiplierPair = conditionUpkeepMultiplierString.split(boggledTools.csvSubOptionSeparator);
-                String condition = conditionUpkeepMultiplierPair[0];
-                float upkeepMultiplier = Float.parseFloat(conditionUpkeepMultiplierPair[1]);
-                conditionUpkeepMultipliers.add(new Pair<>(condition, upkeepMultiplier));
+        public BoggledCommoditySupplyDemand.CommodityDemandShortageEffect constructFromJSON(String id, String[] enableSettings, ArrayList<String> commoditiesDemanded, String data) throws JSONException {
+            JSONObject jsonData = new JSONObject(data);
+
+            List<BoggledCommoditySupplyDemand.ConditionMultiplierToUpkeep.Data> conditionIdsAndMultipliers = new ArrayList<>();
+            for (Iterator<String> it = jsonData.keys(); it.hasNext(); ) {
+                String key = it.next();
+                JSONObject conditionMultiplierData = jsonData.getJSONObject(key);
+                float value = (float) conditionMultiplierData.getDouble("multiplier");
+                conditionIdsAndMultipliers.add(new BoggledCommoditySupplyDemand.ConditionMultiplierToUpkeep.Data(key, value));
             }
 
-            return new BoggledCommoditySupplyDemand.ConditionMultiplierToUpkeep(id, enableSettings, commoditiesDemanded, conditionUpkeepMultipliers);
+            return new BoggledCommoditySupplyDemand.ConditionMultiplierToUpkeep(id, enableSettings, commoditiesDemanded, conditionIdsAndMultipliers);
         }
     }
 
     public static class TagMultiplierToUpkeepFactory implements CommodityDemandShortageEffectFactory {
         @Override
-        public BoggledCommoditySupplyDemand.CommodityDemandShortageEffect constructFromJSON(String id, String[] enableSettings, ArrayList<String> commoditiesDemanded, String data) {
-            String[] tagUpkeepMultiplierDescriptionStrings = data.split(boggledTools.csvOptionSeparator);
-            ArrayList<Triple<String, Float, String>> tagUpkeepMultiplierDescriptions = new ArrayList<>();
-            for (String tagUpkeepMultiplierDescriptionString : tagUpkeepMultiplierDescriptionStrings) {
-                String[] tagUpkeepMultiplerDescriptionTriple = tagUpkeepMultiplierDescriptionString.split(boggledTools.csvSubOptionSeparator);
-                String tag = tagUpkeepMultiplerDescriptionTriple[0];
-                float upkeepMultiplier = Float.parseFloat(tagUpkeepMultiplerDescriptionTriple[1]);
-                String description = "";
-                if (tagUpkeepMultiplerDescriptionTriple.length == 3) {
-                    description = tagUpkeepMultiplerDescriptionTriple[2];
-                }
-                tagUpkeepMultiplierDescriptions.add(new Triple<>(tag, upkeepMultiplier, description));
+        public BoggledCommoditySupplyDemand.CommodityDemandShortageEffect constructFromJSON(String id, String[] enableSettings, ArrayList<String> commoditiesDemanded, String data) throws JSONException {
+            JSONObject jsonData = new JSONObject(data);
+
+            List<BoggledCommoditySupplyDemand.TagMultiplierToUpkeep.Data> tagsAndMultipliers = new ArrayList<>();
+            for (Iterator<String> it = jsonData.keys(); it.hasNext(); ) {
+                String key = it.next();
+                JSONObject conditionMultiplierData = jsonData.getJSONObject(key);
+                float value = (float) conditionMultiplierData.getDouble("multiplier");
+                String description = conditionMultiplierData.getString("description");
+                tagsAndMultipliers.add(new BoggledCommoditySupplyDemand.TagMultiplierToUpkeep.Data(key, value, description));
             }
 
-            return new BoggledCommoditySupplyDemand.TagMultiplierToUpkeep(id, enableSettings, commoditiesDemanded, tagUpkeepMultiplierDescriptions);
+            return new BoggledCommoditySupplyDemand.TagMultiplierToUpkeep(id, enableSettings, commoditiesDemanded, tagsAndMultipliers);
         }
     }
 
-    public static class IncomeBonusFromIndustryFactory implements CommodityDemandShortageEffectFactory {
+    public static class IncomeBonusToIndustryFactory implements CommodityDemandShortageEffectFactory {
         @Override
-        public BoggledCommoditySupplyDemand.CommodityDemandShortageEffect constructFromJSON(String id, String[] enableSettings, ArrayList<String> commoditiesDemanded, String data) {
-            String[] industryIdAndIncomeMultiplerStrings = data.split(boggledTools.csvSubOptionSeparator);
-            String industryId = industryIdAndIncomeMultiplerStrings[0];
-            float incomeMultiplier = Float.parseFloat(industryIdAndIncomeMultiplerStrings[1]);
-            return new BoggledCommoditySupplyDemand.IncomeBonusFromIndustry(id, enableSettings, commoditiesDemanded, industryId, incomeMultiplier);
+        public BoggledCommoditySupplyDemand.CommodityDemandShortageEffect constructFromJSON(String id, String[] enableSettings, ArrayList<String> commoditiesDemanded, String data) throws JSONException {
+            JSONObject jsonData = new JSONObject(data);
+
+            List<BoggledCommoditySupplyDemand.IncomeBonusToIndustry.Data> industryIdIncomeMultipliers = new ArrayList<>();
+            for (Iterator<String> it = jsonData.keys(); it.hasNext(); ) {
+                String key = it.next();
+                JSONObject industryData = jsonData.getJSONObject(key);
+                float multiplier = (float) industryData.getDouble("multiplier");
+                industryIdIncomeMultipliers.add(new BoggledCommoditySupplyDemand.IncomeBonusToIndustry.Data(key, multiplier));
+            }
+
+            return new BoggledCommoditySupplyDemand.IncomeBonusToIndustry(id, enableSettings, commoditiesDemanded, industryIdIncomeMultipliers);
+        }
+    }
+
+    public static class SupplyBonusWithDeficitToIndustryFactory implements CommodityDemandShortageEffectFactory {
+        @Override
+        public BoggledCommoditySupplyDemand.CommodityDemandShortageEffect constructFromJSON(String id, String[] enableSettings, ArrayList<String> commoditiesDemanded, String data) throws JSONException {
+            JSONObject jsonData = new JSONObject(data);
+            JSONObject industries = jsonData.getJSONObject("industries");
+            JSONObject aiCoreBonuses = jsonData.getJSONObject("ai_core_bonuses");
+
+            List<BoggledCommoditySupplyDemand.SupplyBonusWithDeficitToIndustry.Data> effectData = new ArrayList<>();
+            for (Iterator<String> it = industries.keys(); it.hasNext(); ) {
+                String key = it.next();
+                int value = industries.getInt(key);
+                effectData.add(new BoggledCommoditySupplyDemand.SupplyBonusWithDeficitToIndustry.Data(key, value));
+            }
+
+            Map<String, Integer> aiCoreIdAndBonusesMap = new HashMap<>();
+            for (Iterator<String> it = aiCoreBonuses.keys(); it.hasNext(); ) {
+                String key = it.next();
+                int value = aiCoreBonuses.getInt(key);
+                aiCoreBonuses.put(key, value);
+            }
+
+            return new BoggledCommoditySupplyDemand.SupplyBonusWithDeficitToIndustry(id, enableSettings, commoditiesDemanded, aiCoreIdAndBonusesMap, effectData);
         }
     }
 
     public interface CommoditySupplyDemandFactory {
-        BoggledCommoditySupplyDemand.CommoditySupplyAndDemand constructFromJSON(String id, String[] enableSettings, String commodity, String data);
+        BoggledCommoditySupplyDemand.CommoditySupplyAndDemand constructFromJSON(String id, String[] enableSettings, String commodity, String data) throws JSONException;
     }
 
     public static class FlatDemandFactory implements CommoditySupplyDemandFactory {
@@ -118,30 +149,33 @@ public class BoggledCommoditySupplyDemandFactory {
     }
 
     public abstract static class ConditionModifySupplyDemandFactory implements CommoditySupplyDemandFactory {
-        protected Pair<String, ArrayList<Pair<String, Integer>>> parseData(String data) {
-            String[] modIdAndConditionAndQuantityOffsets = data.split(boggledTools.csvOptionSeparator);
-            String modId = modIdAndConditionAndQuantityOffsets[0];
-            ArrayList<Pair<String, Integer>> conditionAndQuantityOffsets = new ArrayList<>();
-            for (int i = 1; i < modIdAndConditionAndQuantityOffsets.length; ++i) {
-                String[] conditionAndQuantityOffsetsString = modIdAndConditionAndQuantityOffsets[i].split(boggledTools.csvSubOptionSeparator);
-                conditionAndQuantityOffsets.add(new Pair<>(conditionAndQuantityOffsetsString[0], Integer.parseInt(conditionAndQuantityOffsetsString[1])));
+        protected Pair<String, List<Pair<String, Integer>>> parseData(String data) throws JSONException {
+            JSONObject jsonData = new JSONObject(data);
+
+            String modId = jsonData.getString("mod_id");
+            JSONObject conditionsData = jsonData.getJSONObject("conditions");
+            List<Pair<String, Integer>> conditions = new ArrayList<>();
+            for (Iterator<String> it = conditionsData.keys(); it.hasNext(); ) {
+                String key = it.next();
+                int value = conditionsData.getInt(key);
+                conditions.add(new Pair<>(key, value));
             }
-            return new Pair<>(modId, conditionAndQuantityOffsets);
+            return new Pair<>(modId, conditions);
         }
     }
 
     public static class ConditionModifySupplyFactory extends ConditionModifySupplyDemandFactory {
         @Override
-        public BoggledCommoditySupplyDemand.CommoditySupplyAndDemand constructFromJSON(String id, String[] enableSettings, String commodity, String data) {
-            Pair<String, ArrayList<Pair<String, Integer>>> modIdAndConditionAndQuantityOffsets = parseData(data);
+        public BoggledCommoditySupplyDemand.CommoditySupplyAndDemand constructFromJSON(String id, String[] enableSettings, String commodity, String data) throws JSONException {
+            Pair<String, List<Pair<String, Integer>>> modIdAndConditionAndQuantityOffsets = parseData(data);
             return new BoggledCommoditySupplyDemand.ConditionModifySupply(id, enableSettings, commodity, modIdAndConditionAndQuantityOffsets.one, modIdAndConditionAndQuantityOffsets.two);
         }
     }
 
     public static class ConditionModifyDemandFactory extends ConditionModifySupplyDemandFactory {
         @Override
-        public BoggledCommoditySupplyDemand.CommoditySupplyAndDemand constructFromJSON(String id, String[] enableSettings, String commodity, String data) {
-            Pair<String, ArrayList<Pair<String, Integer>>> modIdAndConditionAndQuantityOffsets = parseData(data);
+        public BoggledCommoditySupplyDemand.CommoditySupplyAndDemand constructFromJSON(String id, String[] enableSettings, String commodity, String data) throws JSONException {
+            Pair<String, List<Pair<String, Integer>>> modIdAndConditionAndQuantityOffsets = parseData(data);
             return new BoggledCommoditySupplyDemand.ConditionModifyDemand(id, enableSettings, commodity, modIdAndConditionAndQuantityOffsets.one, modIdAndConditionAndQuantityOffsets.two);
         }
     }

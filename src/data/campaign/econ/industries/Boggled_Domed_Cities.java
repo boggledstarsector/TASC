@@ -148,8 +148,7 @@ public class Boggled_Domed_Cities extends BaseIndustry implements MarketImmigrat
     }
 
     @Override
-    public void apply()
-    {
+    public void apply() {
         super.apply(true);
         thisIndustry.apply(this, this);
 
@@ -225,6 +224,7 @@ public class Boggled_Domed_Cities extends BaseIndustry implements MarketImmigrat
         this.market.getAccessibilityMod().unmodifyFlat(this.getModId());
         this.market.getHazard().unmodifyFlat(this.getModId());
         super.unapply();
+        thisIndustry.unapply(this, this);
     }
 
     @Override

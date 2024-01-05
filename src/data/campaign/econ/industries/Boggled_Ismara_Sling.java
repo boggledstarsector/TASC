@@ -92,12 +92,6 @@ public class Boggled_Ismara_Sling extends BaseIndustry implements BoggledIndustr
 //    }
 
     @Override
-    public boolean canBeDisrupted()
-    {
-        return true;
-    }
-
-    @Override
     public void advance(float amount) {
         super.advance(amount);
 
@@ -192,6 +186,7 @@ public class Boggled_Ismara_Sling extends BaseIndustry implements BoggledIndustr
     @Override
     public void unapply() {
         super.unapply();
+        thisIndustry.unapply(this, this);
     }
 
     @Override

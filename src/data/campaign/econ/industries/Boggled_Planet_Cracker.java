@@ -91,10 +91,10 @@ public class Boggled_Planet_Cracker extends BaseIndustry implements BoggledIndus
         thisIndustry.apply(this, this);
     }
 
-    @Override
-    public void unapply()
-    {
+     @Override
+    public void unapply() {
         super.unapply();
+        thisIndustry.unapply(this, this);
     }
 
     @Override

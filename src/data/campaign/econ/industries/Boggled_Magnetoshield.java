@@ -130,6 +130,7 @@ public class Boggled_Magnetoshield extends BaseIndustry implements BoggledIndust
     @Override
     public void apply() {
         super.apply(true);
+        thisIndustry.apply(this, this);
 
         if(isFunctional())
         {
@@ -148,6 +149,7 @@ public class Boggled_Magnetoshield extends BaseIndustry implements BoggledIndust
         }
 
         super.unapply();
+        thisIndustry.unapply(this, this);
     }
 
     @Override

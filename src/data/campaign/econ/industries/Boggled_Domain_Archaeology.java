@@ -3,6 +3,7 @@ package data.campaign.econ.industries;
 import java.lang.String;
 
 import com.fs.starfarer.api.campaign.econ.*;
+import com.fs.starfarer.api.impl.campaign.econ.ResourceDepositsCondition;
 import com.fs.starfarer.api.impl.campaign.econ.impl.BaseIndustry;
 import com.fs.starfarer.api.impl.campaign.ids.Conditions;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
@@ -10,6 +11,22 @@ import com.fs.starfarer.api.util.Pair;
 import data.campaign.econ.boggledTools;
 
 public class Boggled_Domain_Archaeology extends BaseIndustry implements BoggledIndustryInterface {
+    static {
+        ResourceDepositsCondition.COMMODITY.put(Conditions.RUINS_SCATTERED, boggledTools.BoggledCommodities.domainArtifacts);
+        ResourceDepositsCondition.COMMODITY.put(Conditions.RUINS_WIDESPREAD, boggledTools.BoggledCommodities.domainArtifacts);
+        ResourceDepositsCondition.COMMODITY.put(Conditions.RUINS_EXTENSIVE, boggledTools.BoggledCommodities.domainArtifacts);
+        ResourceDepositsCondition.COMMODITY.put(Conditions.RUINS_VAST, boggledTools.BoggledCommodities.domainArtifacts);
+
+        ResourceDepositsCondition.MODIFIER.put(Conditions.RUINS_SCATTERED, -1);
+        ResourceDepositsCondition.MODIFIER.put(Conditions.RUINS_WIDESPREAD, 0);
+        ResourceDepositsCondition.MODIFIER.put(Conditions.RUINS_EXTENSIVE, 1);
+        ResourceDepositsCondition.MODIFIER.put(Conditions.RUINS_VAST, 2);
+
+        ResourceDepositsCondition.INDUSTRY.put(boggledTools.BoggledCommodities.domainArtifacts, boggledTools.BoggledIndustries.domainArchaeologyIndustryId);
+
+        ResourceDepositsCondition.BASE_MODIFIER.put(boggledTools.BoggledCommodities.domainArtifacts, -2);
+    }
+
     private final BoggledCommonIndustry thisIndustry;
 
     public Boggled_Domain_Archaeology() {
@@ -90,10 +107,10 @@ public class Boggled_Domain_Archaeology extends BaseIndustry implements BoggledI
         thisIndustry.apply(this, this);
     }
 
-    @Override
-    public void unapply()
-    {
+     @Override
+    public void unapply() {
         super.unapply();
+        thisIndustry.unapply(this, this);
     }
 
     @Override

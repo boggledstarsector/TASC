@@ -126,7 +126,11 @@ focus_market_has_ore_ultrarich,FocusMarketHasCondition,false,"ore_ultrarich"
 focus_market_has_rare_ore_ultrarich,FocusMarketHasCondition,false,"rare_ore_ultrarich"
 focus_market_has_volatiles_plentiful,FocusMarketHasCondition,false,"volatiles_plentiful"
 
-station_construction_num_expansions,IntegerFromTagSubstring,false,"boggled_station_construction_numExpansions_ ; 11 | boggledStationCrampedQuartersSizeGrowthReductionStarts"
+station_construction_num_expansions,IntegerFromTagSubstring,false,"{
+	'option' : 'boggledStationCrampedQuartersSizeGrowthReductionStarts',
+	'tag_substring' : 'boggled_station_construction_numExpansions_',
+	'max_value' : 11
+}"
 
 system_star_not_has_coronal_tap,SystemStarHasTags,true,"has_coronal_tap"
 system_star_blue_giant,SystemStarType,false,"star_blue_giant"

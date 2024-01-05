@@ -95,10 +95,10 @@ public class Boggled_Kletka_Simulator extends BaseIndustry implements BoggledInd
         thisIndustry.apply(this, this);
     }
 
-    @Override
-    public void unapply()
-    {
+     @Override
+    public void unapply() {
         super.unapply();
+        thisIndustry.unapply(this, this);
     }
 
     @Override

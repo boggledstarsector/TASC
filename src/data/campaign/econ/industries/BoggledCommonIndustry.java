@@ -306,6 +306,12 @@ public class BoggledCommonIndustry {
         }
     }
 
+    public void unapply(BaseIndustry industry, BoggledIndustryInterface industryInterface) {
+        for (BoggledCommoditySupplyDemand.CommodityDemandShortageEffect commodityDemandShortageEffect : commodityDemandShortageEffects) {
+            commodityDemandShortageEffect.unapplyShortageEffect(industry, industryInterface);
+        }
+    }
+
     public void addRightAfterDescriptionSection(BaseIndustry industry, TooltipMakerAPI tooltip, Industry.IndustryTooltipMode mode) {
         float pad = 10.0f;
         for (int i = 0; i < projects.size(); ++i) {

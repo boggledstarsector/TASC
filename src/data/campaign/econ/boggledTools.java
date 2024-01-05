@@ -309,7 +309,7 @@ public class boggledTools {
     public static final HashMap<String, BoggledCommoditySupplyDemandFactory.CommodityDemandShortageEffectFactory> commodityShortageEffectFactories = new HashMap<>();
 
     @Nullable
-    public static BoggledTerraformingRequirement.TerraformingRequirement getTerraformingRequirement(String terraformingRequirementType, String id, boolean invert, String data) {
+    public static BoggledTerraformingRequirement.TerraformingRequirement getTerraformingRequirement(String terraformingRequirementType, String id, boolean invert, String data) throws JSONException {
         Logger log = Global.getLogger(boggledTools.class);
 
         BoggledTerraformingRequirementFactory.TerraformingRequirementFactory factory = terraformingRequirementFactories.get(terraformingRequirementType);
@@ -317,16 +317,11 @@ public class boggledTools {
             log.error("Requirement " + id + " of type " + terraformingRequirementType + " has no assigned factory");
             return null;
         }
-        try {
-            BoggledTerraformingRequirement.TerraformingRequirement req = factory.constructFromJSON(id, invert, data);
-            if (req == null) {
-                log.error("Requirement " + id + " of type " + terraformingRequirementType + " was null when created with data " + data);
-            }
-            return req;
-        } catch (AbstractMethodError e) {
-            log.error("Requirement " + id + " of type " + terraformingRequirementType + " has incorrect constructFromJSON function signature");
+        BoggledTerraformingRequirement.TerraformingRequirement req = factory.constructFromJSON(id, invert, data);
+        if (req == null) {
+            log.error("Requirement " + id + " of type " + terraformingRequirementType + " was null when created with data " + data);
         }
-        return null;
+        return req;
     }
 
     public static BoggledProjectRequirementsOR getTerraformingRequirements(String terraformingRequirementId) {
@@ -342,21 +337,16 @@ public class boggledTools {
             log.error("Duration modifier " + id + " of type " + durationModifierType + " has no assigned factory");
             return null;
         }
-        try {
-            BoggledTerraformingDurationModifier.TerraformingDurationModifier mod = factory.constructFromJSON(data);
-            if (mod == null) {
-                log.error("Duration modifier " + id + " of type " + durationModifierType + " was null when created with data " + data);
-                return null;
-            }
-            return mod;
-        } catch (AbstractMethodError e) {
-            log.error("Duration modifier " + id + " of type " + durationModifierType + " has incorrect constructFromJSON function signature");
+        BoggledTerraformingDurationModifier.TerraformingDurationModifier mod = factory.constructFromJSON(data);
+        if (mod == null) {
+            log.error("Duration modifier " + id + " of type " + durationModifierType + " was null when created with data " + data);
+            return null;
         }
-        return null;
+        return mod;
     }
 
     @Nullable
-    public static BoggledCommoditySupplyDemand.CommoditySupplyAndDemand getCommoditySupplyAndDemand(String commodityDemandType, String id, String[] enableSettings, String commodity, String data) {
+    public static BoggledCommoditySupplyDemand.CommoditySupplyAndDemand getCommoditySupplyAndDemand(String commodityDemandType, String id, String[] enableSettings, String commodity, String data) throws JSONException {
         Logger log = Global.getLogger(boggledTools.class);
 
         BoggledCommoditySupplyDemandFactory.CommoditySupplyDemandFactory factory = commodityDemandFactories.get(commodityDemandType);
@@ -364,21 +354,16 @@ public class boggledTools {
             log.error("Commodity demand " + id + " of type " + commodityDemandType + " has no assigned factory");
             return null;
         }
-        try {
-            BoggledCommoditySupplyDemand.CommoditySupplyAndDemand demand = factory.constructFromJSON(id, enableSettings, commodity, data);
-            if (demand == null) {
-                log.error("Commodity demand " + id + " of type " + commodityDemandType + " was null when created with data " + data);
-                return null;
-            }
-            return demand;
-        } catch (AbstractMethodError e) {
-            log.error("Commodity demand " + id + " of type " + commodityDemandType + " has incorrect constructFromJSON signature");
+        BoggledCommoditySupplyDemand.CommoditySupplyAndDemand demand = factory.constructFromJSON(id, enableSettings, commodity, data);
+        if (demand == null) {
+            log.error("Commodity demand " + id + " of type " + commodityDemandType + " was null when created with data " + data);
+            return null;
         }
-        return null;
+        return demand;
     }
 
     @Nullable
-    public static BoggledCommoditySupplyDemand.CommodityDemandShortageEffect getCommodityDemandShortageEffect(String commodityDemandShortageEffectType, String id, String[] enableSettings, String[] commoditiesDemanded, String data) {
+    public static BoggledCommoditySupplyDemand.CommodityDemandShortageEffect getCommodityDemandShortageEffect(String commodityDemandShortageEffectType, String id, String[] enableSettings, String[] commoditiesDemanded, String data) throws JSONException {
         Logger log = Global.getLogger(boggledTools.class);
 
         BoggledCommoditySupplyDemandFactory.CommodityDemandShortageEffectFactory factory = commodityShortageEffectFactories.get(commodityDemandShortageEffectType);
@@ -386,17 +371,12 @@ public class boggledTools {
             log.error("Commodity demand shortage effect " + id + " of type " + commodityDemandShortageEffectType + " has no assigned factory");
             return null;
         }
-        try {
-            BoggledCommoditySupplyDemand.CommodityDemandShortageEffect effect = factory.constructFromJSON(id, enableSettings, new ArrayList<>(asList(commoditiesDemanded)), data);
-            if (effect == null) {
-                log.error("Commodity demand shortage effect " + id + " of type " + commodityDemandShortageEffectType + " was null when created with data " + data);
-                return null;
-            }
-            return effect;
-        } catch (AbstractMethodError e) {
-            log.error("Commodity demand shortage effect " + id + " of type " + commodityDemandShortageEffectType + " has incorrect constructFromJSON signature");
+        BoggledCommoditySupplyDemand.CommodityDemandShortageEffect effect = factory.constructFromJSON(id, enableSettings, new ArrayList<>(asList(commoditiesDemanded)), data);
+        if (effect == null) {
+            log.error("Commodity demand shortage effect " + id + " of type " + commodityDemandShortageEffectType + " was null when created with data " + data);
+            return null;
         }
-        return null;
+        return effect;
     }
 
     @Nullable
@@ -408,16 +388,11 @@ public class boggledTools {
             log.error("Terraforming project effect " + id + " of type " + projectEffectType + " has no assigned factory");
             return null;
         }
-        try {
-            BoggledTerraformingProjectEffect.TerraformingProjectEffect effect = factory.constructFromJSON(data);
-            if (effect == null) {
-                log.error("Terraforming project effect " + id + " of type " + projectEffectType + " was null when created with data " + data);
-            }
-            return effect;
-        } catch (AbstractMethodError e) {
-            log.error("Terraforming project effect " + id + " of type " + projectEffectType + " has incorrect constructFromJSON function signature");
+        BoggledTerraformingProjectEffect.TerraformingProjectEffect effect = factory.constructFromJSON(data);
+        if (effect == null) {
+            log.error("Terraforming project effect " + id + " of type " + projectEffectType + " was null when created with data " + data);
         }
-        return null;
+        return effect;
     }
 
     public static boolean optionsAllowThis(String... options) {
@@ -577,7 +552,8 @@ public class boggledTools {
 
         addCommodityShortageEffectFactory("TagMultiplierToUpkeep", new BoggledCommoditySupplyDemandFactory.TagMultiplierToUpkeepFactory());
 
-        addCommodityShortageEffectFactory("IncomeBonusFromIndustry", new BoggledCommoditySupplyDemandFactory.IncomeBonusFromIndustryFactory());
+        addCommodityShortageEffectFactory("IncomeBonusToIndustry", new BoggledCommoditySupplyDemandFactory.IncomeBonusToIndustryFactory());
+        addCommodityShortageEffectFactory("SupplyBonusWithDeficitToIndustry", new BoggledCommoditySupplyDemandFactory.SupplyBonusWithDeficitToIndustryFactory());
     }
 
     public static void addCommodityShortageEffectFactory(String key, BoggledCommoditySupplyDemandFactory.CommodityDemandShortageEffectFactory value) {

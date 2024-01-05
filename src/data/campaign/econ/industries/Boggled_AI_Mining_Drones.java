@@ -5,10 +5,8 @@ import java.awt.Color;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.econ.CommoditySpecAPI;
 import com.fs.starfarer.api.campaign.econ.Industry;
-import com.fs.starfarer.api.campaign.econ.MutableCommodityQuantity;
 import com.fs.starfarer.api.impl.campaign.econ.impl.BaseIndustry;
 import com.fs.starfarer.api.impl.campaign.ids.Commodities;
-import com.fs.starfarer.api.impl.campaign.ids.Industries;
 import com.fs.starfarer.api.impl.campaign.ids.Tags;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.*;
@@ -92,36 +90,14 @@ public class Boggled_AI_Mining_Drones extends BaseIndustry implements BoggledInd
 
     @Override
     public void apply() {
-        thisIndustry.apply(this, this);
-
-        if(this.market.getPrimaryEntity() != null && this.market.getPrimaryEntity().hasTag(Tags.STATION) && this.isFunctional()) {
-            //Increased production
-            Industry i = market.getIndustry(Industries.MINING);
-            if (i != null) {
-                for (MutableCommodityQuantity c : i.getAllSupply()) {
-                    i.getSupply(c.getCommodityId()).getQuantity().modifyFlat(id, getProductionBonusFromMiningDrones(), "AI Mining Drones");
-                }
-            }
-        }
-
         super.apply(true);
         thisIndustry.apply(this, this);
     }
 
     @Override
-    public void unapply()
-    {
-        for(Industry i : market.getIndustries())
-        {
-            for(MutableCommodityQuantity c : i.getAllSupply())
-            {
-                i.getSupply(c.getCommodityId()).getQuantity().unmodifyFlat(id);
-            }
-        }
-
-        this.market.getAccessibilityMod().unmodifyFlat(this.getModId(5));
-
+    public void unapply() {
         super.unapply();
+        thisIndustry.unapply(this, this);
     }
 
     @Override

@@ -291,13 +291,14 @@ public class BoggledTerraformingRequirement {
     }
 
     public static class IntegerFromTagSubstring extends TerraformingRequirement {
-        String tagSubstring;
-        int value;
         String option;
-        public IntegerFromTagSubstring(String requirementId, boolean invert, String tagSubstring, int value, String option) {
+        String tagSubstring;
+        int maxValue;
+
+        public IntegerFromTagSubstring(String requirementId, boolean invert, String option, String tagSubstring, int maxValue) {
             super(requirementId, invert);
             this.tagSubstring = tagSubstring;
-            this.value = value;
+            this.maxValue = maxValue;
             this.option = option;
         }
 
@@ -313,7 +314,7 @@ public class BoggledTerraformingRequirement {
                     break;
                 }
             }
-            return value > testValue;
+            return maxValue > testValue;
         }
     }
 

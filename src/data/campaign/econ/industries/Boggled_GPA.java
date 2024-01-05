@@ -2,9 +2,10 @@ package data.campaign.econ.industries;
 
 import java.lang.String;
 import com.fs.starfarer.api.impl.campaign.econ.impl.BaseIndustry;
+import com.fs.starfarer.api.util.Pair;
 import data.campaign.econ.boggledTools;
 
-public class Boggled_GPA extends BaseIndustry {
+public class Boggled_GPA extends BaseIndustry implements BoggledIndustryInterface {
     private final BoggledCommonIndustry thisIndustry;
 
     public Boggled_GPA() {
@@ -80,10 +81,10 @@ public class Boggled_GPA extends BaseIndustry {
         this.demand(boggledTools.BoggledCommodities.domainArtifacts, 3);
     }
 
-    @Override
-    public void unapply()
-    {
+     @Override
+    public void unapply() {
         super.unapply();
+        thisIndustry.unapply(this, this);
     }
 
     @Override
@@ -105,6 +106,16 @@ public class Boggled_GPA extends BaseIndustry {
     @Override
     public boolean canInstallAICores() {
         return false;
+    }
+
+    @Override
+    public void applyDeficitToProduction(int index, Pair<String, Integer> deficit, String... commodities) {
+        super.applyDeficitToProduction(index, deficit, commodities);
+    }
+
+    @Override
+    public void setFunctional(boolean functional) {
+        thisIndustry.setFunctional(functional);
     }
 }
 

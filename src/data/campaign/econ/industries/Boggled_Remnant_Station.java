@@ -426,8 +426,7 @@ public class Boggled_Remnant_Station extends OrbitalStation implements RouteMana
     }
 
     @Override
-    public void apply()
-    {
+    public void apply() {
         MemoryAPI memory = market.getMemoryWithoutUpdate();
         Misc.setFlagWithReason(memory, MemFlags.MARKET_PATROL, getModId(), true, -1);
 
@@ -477,8 +476,8 @@ public class Boggled_Remnant_Station extends OrbitalStation implements RouteMana
     }
 
     @Override
-    public void unapply()
-    {
+    public void unapply() {
+        thisIndustry.unapply(this, this);
         this.unmodifyStabilityWithBaseMod();
         this.matchCommanderToAICore((String)null);
         this.market.getStats().getDynamic().getMod("ground_defenses_mod").unmodifyMult(this.getModId());

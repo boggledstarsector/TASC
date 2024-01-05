@@ -106,6 +106,7 @@ public class Boggled_Planetary_Agrav_Field extends BaseIndustry implements Boggl
     @Override
     public void unapply() {
         super.unapply();
+        thisIndustry.unapply(this, this);
 
         for (String cid : SUPPRESSED_CONDITIONS)
         {

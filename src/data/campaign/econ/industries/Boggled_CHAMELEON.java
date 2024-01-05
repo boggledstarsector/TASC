@@ -94,9 +94,9 @@ public class Boggled_CHAMELEON extends BaseIndustry implements BoggledIndustryIn
     }
 
     @Override
-    public void unapply()
-    {
+    public void unapply() {
         super.unapply();
+        thisIndustry.unapply(this, this);
     }
 
     @Override

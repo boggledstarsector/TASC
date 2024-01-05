@@ -3,17 +3,18 @@ package data.scripts;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.econ.Industry;
 import com.fs.starfarer.api.campaign.econ.MarketAPI;
+import com.fs.starfarer.api.campaign.econ.MutableCommodityQuantity;
 import com.fs.starfarer.api.impl.campaign.econ.impl.BaseIndustry;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
 import com.fs.starfarer.api.util.Pair;
 import data.campaign.econ.boggledTools;
 import data.campaign.econ.industries.BoggledIndustryInterface;
-import kotlin.Triple;
 
 import java.awt.*;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Map;
 
 public class BoggledCommoditySupplyDemand {
     public static abstract class CommodityDemandShortageEffect {
@@ -29,6 +30,8 @@ public class BoggledCommoditySupplyDemand {
 
         protected abstract void applyShortageEffectImpl(BaseIndustry industry, BoggledIndustryInterface industryInterface, String[] commoditiesDemanded);
 
+        protected void unapplyShortageEffectImpl(BaseIndustry industry, BoggledIndustryInterface industryInterface, String[] commoditiesDemanded) {}
+
         protected void addPostDemandSectionImpl(String industryTooltip, BaseIndustry industry, TooltipMakerAPI tooltip, boolean hasDemand, Industry.IndustryTooltipMode mode, String[] commoditiesDemanded, float pad) {}
 
         public boolean isEnabled() { return boggledTools.optionsAllowThis(enableSettings); }
@@ -38,6 +41,13 @@ public class BoggledCommoditySupplyDemand {
                 return;
             }
             applyShortageEffectImpl(industry, industryInterface, commoditiesDemanded.toArray(new String[0]));
+        }
+
+        public void unapplyShortageEffect(BaseIndustry industry, BoggledIndustryInterface industryInterface) {
+            if (!isEnabled()) {
+                return;
+            }
+            unapplyShortageEffectImpl(industry, industryInterface, commoditiesDemanded.toArray(new String[0]));
         }
 
         public void addPostDemandSection(String industryTooltip, BaseIndustry industry, TooltipMakerAPI tooltip, boolean hasDemand, Industry.IndustryTooltipMode mode) {
@@ -114,18 +124,26 @@ public class BoggledCommoditySupplyDemand {
     }
 
     public static class ConditionMultiplierToUpkeep extends CommodityDemandShortageEffect {
-        ArrayList<Pair<String, Float>> conditionUpkeepMultipliers;
+        public static class Data {
+            String conditionId;
+            float upkeepMultiplier;
+            public Data(String conditionId, float upkeepMultiplier) {
+                this.conditionId = conditionId;
+                this.upkeepMultiplier = upkeepMultiplier;
+            }
+        }
+        List<Data> conditionUpkeepMultipliers;
 
-        public ConditionMultiplierToUpkeep(String id, String[] enableSettings, ArrayList<String> commoditiesDemanded, ArrayList<Pair<String, Float>> conditionUpkeepMultipliers) {
+        public ConditionMultiplierToUpkeep(String id, String[] enableSettings, ArrayList<String> commoditiesDemanded, List<Data> conditionUpkeepMultipliers) {
             super(id, enableSettings, commoditiesDemanded);
             this.conditionUpkeepMultipliers = conditionUpkeepMultipliers;
         }
 
         @Override
         protected void applyShortageEffectImpl(BaseIndustry industry, BoggledIndustryInterface industryInterface, String[] commoditiesDemanded) {
-            for (Pair<String, Float> conditionUpkeepMultipler : conditionUpkeepMultipliers) {
-                if (industry.getMarket().hasCondition(conditionUpkeepMultipler.one)) {
-                    industry.getUpkeep().modifyMult(id, conditionUpkeepMultipler.two, Global.getSettings().getMarketConditionSpec(conditionUpkeepMultipler.one).getName());
+            for (Data conditionUpkeepMultipler : conditionUpkeepMultipliers) {
+                if (industry.getMarket().hasCondition(conditionUpkeepMultipler.conditionId)) {
+                    industry.getUpkeep().modifyMult(id, conditionUpkeepMultipler.upkeepMultiplier, Global.getSettings().getMarketConditionSpec(conditionUpkeepMultipler.conditionId).getName());
                     return;
                 }
             }
@@ -134,13 +152,13 @@ public class BoggledCommoditySupplyDemand {
 
         @Override
         protected void addPostDemandSectionImpl(String industryTooltip, BaseIndustry industry, TooltipMakerAPI tooltip, boolean hasDemand, Industry.IndustryTooltipMode mode, String[] commoditiesDemanded, float pad) {
-            for (Pair<String, Float> conditionUpkeepMultipler : conditionUpkeepMultipliers) {
-                if (!industry.getMarket().hasCondition(conditionUpkeepMultipler.one)) {
+            for (Data conditionUpkeepMultipler : conditionUpkeepMultipliers) {
+                if (!industry.getMarket().hasCondition(conditionUpkeepMultipler.conditionId)) {
                     continue;
                 }
 
-                String upkeepMultiplierString = "x" + conditionUpkeepMultipler.two;
-                String description = Global.getSettings().getMarketConditionSpec(conditionUpkeepMultipler.one).getName();
+                String upkeepMultiplierString = "x" + conditionUpkeepMultipler.upkeepMultiplier;
+                String description = Global.getSettings().getMarketConditionSpec(conditionUpkeepMultipler.conditionId).getName();
                 tooltip.addPara(industryTooltip + " upkeep is increased by %s due to condition " + description + " present on " + industry.getMarket().getName() + ".", pad, Misc.getHighlightColor(), upkeepMultiplierString);
                 return;
             }
@@ -148,18 +166,29 @@ public class BoggledCommoditySupplyDemand {
     }
 
     public static class TagMultiplierToUpkeep extends CommodityDemandShortageEffect {
-        ArrayList<Triple<String, Float, String>> tagUpkeepMultiplierDescriptions;
+        public static class Data {
+            String tag;
+            float upkeepMultiplier;
+            String description;
 
-        public TagMultiplierToUpkeep(String id, String[] enableSettings, ArrayList<String> commoditiesDemanded, ArrayList<Triple<String, Float, String>> tagUpkeepMultiplierDescriptions) {
+            public Data(String tag, float upkeepMultiplier, String description) {
+                this.tag = tag;
+                this.upkeepMultiplier = upkeepMultiplier;
+                this.description = description;
+            }
+        }
+        List<Data> tagUpkeepMultiplierDescriptions;
+
+        public TagMultiplierToUpkeep(String id, String[] enableSettings, ArrayList<String> commoditiesDemanded, List<Data> tagUpkeepMultiplierDescriptions) {
             super(id, enableSettings, commoditiesDemanded);
             this.tagUpkeepMultiplierDescriptions = tagUpkeepMultiplierDescriptions;
         }
 
         @Override
         protected void applyShortageEffectImpl(BaseIndustry industry, BoggledIndustryInterface industryInterface, String[] commoditiesDemanded) {
-            for (Triple<String, Float, String> tagUpkeepMultiplerDescription : tagUpkeepMultiplierDescriptions) {
-                if (industry.getMarket().hasTag(tagUpkeepMultiplerDescription.component1())) {
-                    industry.getUpkeep().modifyMult(id, tagUpkeepMultiplerDescription.component2(), tagUpkeepMultiplerDescription.component3());
+            for (Data tagUpkeepMultiplerDescription : tagUpkeepMultiplierDescriptions) {
+                if (industry.getMarket().hasTag(tagUpkeepMultiplerDescription.tag)) {
+                    industry.getUpkeep().modifyMult(id, tagUpkeepMultiplerDescription.upkeepMultiplier, tagUpkeepMultiplerDescription.description);
                 }
             }
             industry.getUpkeep().unmodifyMult(id);
@@ -167,37 +196,118 @@ public class BoggledCommoditySupplyDemand {
 
         @Override
         protected void addPostDemandSectionImpl(String industryTooltip, BaseIndustry industry, TooltipMakerAPI tooltip, boolean hasDemand, Industry.IndustryTooltipMode mode, String[] commoditiesDemanded, float pad) {
-            for (Triple<String, Float, String> tagUpkeepMultiplierDescription : tagUpkeepMultiplierDescriptions) {
-                if (!industry.getMarket().hasCondition(tagUpkeepMultiplierDescription.component1())) {
+            for (Data tagUpkeepMultiplierDescription : tagUpkeepMultiplierDescriptions) {
+                if (!industry.getMarket().hasTag(tagUpkeepMultiplierDescription.tag)) {
                     continue;
                 }
 
-                String upkeepMultiplierString = Float.toString(tagUpkeepMultiplierDescription.component2());
-                String description = tagUpkeepMultiplierDescription.component3();
+                String upkeepMultiplierString = Float.toString(tagUpkeepMultiplierDescription.upkeepMultiplier);
+                String description = tagUpkeepMultiplierDescription.description;
                 tooltip.addPara(industryTooltip + " upkeep is increased by %s due to " + industry.getMarket().getName() + " being " + description + ".", pad, Misc.getHighlightColor(), upkeepMultiplierString);
                 return;
             }
         }
     }
 
-    public static class IncomeBonusFromIndustry extends CommodityDemandShortageEffect {
-        String industryId;
-        float incomeMultiplier;
+    public static class IncomeBonusToIndustry extends CommodityDemandShortageEffect {
+        public static class Data {
+            String industryId;
+            float incomeMultiplier;
+            public Data(String industryId, float incomeMultiplier) {
+                this.industryId = industryId;
+                this.incomeMultiplier = incomeMultiplier;
+            }
+        }
+        List<Data> industryIdIncomeMultipliers;
 
-        public IncomeBonusFromIndustry(String id, String[] enableSettings, ArrayList<String> commoditiesDemanded, String industryId, float incomeMultiplier) {
+        public IncomeBonusToIndustry(String id, String[] enableSettings, ArrayList<String> commoditiesDemanded, List<Data> industryIdIncomeMultipliers) {
             super(id, enableSettings, commoditiesDemanded);
-            this.industryId = industryId;
-            this.incomeMultiplier = incomeMultiplier;
+            this.industryIdIncomeMultipliers = industryIdIncomeMultipliers;
         }
 
         @Override
         protected void applyShortageEffectImpl(BaseIndustry industry, BoggledIndustryInterface industryInterface, String[] commoditiesDemanded) {
-            Industry industryFrom = industry.getMarket().getIndustry(industryId);
-            if (industryFrom == null || !industryFrom.isFunctional()) {
-                industry.getIncome().unmodifyMult(id);
+            if (!industry.isFunctional()) {
+                unapplyShortageEffectImpl(industry, industryInterface, commoditiesDemanded);
                 return;
             }
-            industry.getIncome().modifyMult(id, incomeMultiplier, industryFrom.getCurrentName());
+            for (Data data : industryIdIncomeMultipliers) {
+                Industry industryTo = industry.getMarket().getIndustry(data.industryId);
+                if (industryTo == null) {
+                    continue;
+                }
+                industryTo.getIncome().modifyMult(id, data.incomeMultiplier, industry.getCurrentName());
+            }
+        }
+
+        @Override
+        protected void unapplyShortageEffectImpl(BaseIndustry industry, BoggledIndustryInterface industryInterface, String[] commoditiesDemanded) {
+            for (Data data : industryIdIncomeMultipliers) {
+                Industry industryTo = industry.getMarket().getIndustry(data.industryId);
+                if (industryTo == null) {
+                    continue;
+                }
+                industryTo.getIncome().unmodifyMult(id);
+            }
+        }
+    }
+
+    public static class SupplyBonusWithDeficitToIndustry extends CommodityDemandShortageEffect {
+        public static class Data {
+            String industryId;
+            int flatBonus;
+            Data(String industryId, int flatBonus) {
+                this.industryId = industryId;
+                this.flatBonus = flatBonus;
+            }
+        }
+        Map<String, Integer> aiCoreIdAndBonuses;
+        List<Data> data;
+        public SupplyBonusWithDeficitToIndustry(String id, String[] enableSettings, ArrayList<String> commoditiesDemanded, Map<String, Integer> aiCoreIdAndBonuses, List<Data> data) {
+            super(id, enableSettings, commoditiesDemanded);
+            this.aiCoreIdAndBonuses = aiCoreIdAndBonuses;
+            this.data = data;
+        }
+
+        @Override
+        protected void applyShortageEffectImpl(BaseIndustry industry, BoggledIndustryInterface industryInterface, String[] commoditiesDemanded) {
+            if (!industry.isFunctional()) {
+                unapplyShortageEffectImpl(industry, industryInterface, commoditiesDemanded);
+                return;
+            }
+
+            int aiCoreBonus = 0;
+            if (aiCoreIdAndBonuses.containsKey(industry.getAICoreId())) {
+                aiCoreBonus = aiCoreIdAndBonuses.get(industry.getAICoreId());
+            }
+            aiCoreBonus += Math.max(industry.getMaxDeficit(commoditiesDemanded).two, 0);
+            aiCoreBonus = Math.max(aiCoreBonus, 0);
+
+            for (Data datum : data) {
+                Industry industryTo = industry.getMarket().getIndustry(datum.industryId);
+                if (industryTo == null) {
+                    continue;
+                }
+
+                int bonus = aiCoreBonus + datum.flatBonus;
+                for (MutableCommodityQuantity c : industryTo.getAllSupply()) {
+                    industryTo.getSupply(c.getCommodityId()).getQuantity().modifyFlat(id, bonus, "Description");
+                }
+            }
+        }
+
+        @Override
+        protected void unapplyShortageEffectImpl(BaseIndustry industry, BoggledIndustryInterface industryInterface, String[] commoditiesDemanded) {
+            for (Data datum : data) {
+                Industry industryTo = industry.getMarket().getIndustry(datum.industryId);
+                if (industryTo == null) {
+                    continue;
+                }
+
+                for (MutableCommodityQuantity c : industryTo.getAllSupply()) {
+                    industryTo.getSupply(c.getCommodityId()).getQuantity().unmodifyFlat(id);
+                }
+            }
         }
     }
 
@@ -344,8 +454,8 @@ public class BoggledCommoditySupplyDemand {
 
     public abstract static class ConditionModify extends CommoditySupplyAndDemand {
         String modId;
-        ArrayList<Pair<String, Integer>> conditionAndQuantityOffsets;
-        public ConditionModify(String id, String[] enableSettings, String commodity, String modId, ArrayList<Pair<String, Integer>> conditionAndQuantityOffsets) {
+        List<Pair<String, Integer>> conditionAndQuantityOffsets;
+        public ConditionModify(String id, String[] enableSettings, String commodity, String modId, List<Pair<String, Integer>> conditionAndQuantityOffsets) {
             super(id, enableSettings, commodity);
             this.modId = modId;
             this.conditionAndQuantityOffsets = conditionAndQuantityOffsets;
@@ -365,7 +475,7 @@ public class BoggledCommoditySupplyDemand {
     }
 
     public static class ConditionModifyDemand extends ConditionModify {
-        public ConditionModifyDemand(String id, String[] enableSettings, String commodity, String modId, ArrayList<Pair<String, Integer>> conditionAndQuantityOffsets) {
+        public ConditionModifyDemand(String id, String[] enableSettings, String commodity, String modId, List<Pair<String, Integer>> conditionAndQuantityOffsets) {
             super(id, enableSettings, commodity, modId, conditionAndQuantityOffsets);
         }
 
@@ -383,7 +493,7 @@ public class BoggledCommoditySupplyDemand {
     }
 
     public static class ConditionModifySupply extends ConditionModify {
-        public ConditionModifySupply(String id, String[] enableSettings, String commodity, String modId, ArrayList<Pair<String, Integer>> conditionAndQuantityOffsets) {
+        public ConditionModifySupply(String id, String[] enableSettings, String commodity, String modId, List<Pair<String, Integer>> conditionAndQuantityOffsets) {
             super(id, enableSettings, commodity, modId, conditionAndQuantityOffsets);
         }
 

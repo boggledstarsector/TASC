@@ -12,21 +12,35 @@ id,enable_settings,commodity_shortage_effect_type,commodities_demanded,data
 # DeficitToInactive requires no specific data. If there's a shortage, the industry becomes non-functional
 # DeficitToCommodity is a "commodity_to_deficit1 | commodity_to_deficity2 | etc" list. Maximum deficit of the first collection is applied to all the commodities in the second collection.
 # DeficitMultiplierToUpkeep is a "float". If any of the commodities in the first collection are in deficit, the upkeep is multiplied by the float.
-# ConditionToUpkeep is a horrible, horrible hack for Kletka Simulator. "commodities_demanded" is ignored. "data" is a | separated collection of "condition ; upkeep_multiplier" pairs.
+# ConditionMultiplierToUpkeep data is a JSON collection of conditions and their upkeep multipliers.
 # TagToUpkeep is the same as ConditionToUpkeep but is for tags instead of conditions, and includes a third description component in each element ie "tag ; upkeep_multiplier ; description"
 # RequirementsToResetProgress is a | separated list of requirements Is as specified in 'terraforming_requirements.csv'. If any of the requirements is met, industry project progress is reset
+# SupplyBonusToIndustry data is a JSON collection of industries and their bonus, and AI cores and their bonus, separated into two objects, 'industries' and 'ai_core_bonuses'
 heavy_machinery_deficit_to_inactive,,DeficitToInactive,"heavy_machinery",
 heavy_machinery_deficit_to_food,,DeficitToCommodity,"heavy_machinery","food"
 domain_artifacts_deficit_to_organs,boggledDomainTechContentEnabled | boggledDomainArchaeologyEnabled,DeficitToCommodity,"domain_artifacts","organs"
 domain_artifacts_deficit_to_5_times_upkeep,boggledDomainTechContentEnabled | boggledDomainArchaeologyEnabled,DeficitMultiplierToUpkeep,"domain_artifacts",5.0
 
-kletka_simulator_temperature_to_upkeep,boggledKletkaSimulatorTemperatureBasedUpkeep,ConditionMultiplierToUpkeep,,"very_cold ; 0.25 | cold ; 0.5 | hot ; 2.0 | very_hot ; 4.0"
-kletka_simulator_station_to_upkeep,boggledKletkaSimulatorTemperatureBasedUpkeep,TagMultiplierToUpkeep,,"station ; 8.0 ; a station"
+kletka_simulator_temperature_to_upkeep,boggledKletkaSimulatorTemperatureBasedUpkeep,ConditionMultiplierToUpkeep,,"{
+	'very_cold' : {'multiplier' : 0.25},
+	'cold' : {'multiplier' : 0.5},
+	'hot' : {'multiplier' : 2.0},
+	'very_hot' : {'multiplier' : 4.0}
+}"
+kletka_simulator_station_to_upkeep,boggledKletkaSimulatorTemperatureBasedUpkeep,TagMultiplierToUpkeep,,"{
+	'station' : { 'multiplier' : 8.0, 'description' : 'a station' }
+}"
 
 perihelion_project_deficit_to_inactive,,DeficitToInactive,"domain_artifacts | metals | rare_metals | heavy_machinery",
 
-mesozoic_park_income_bonus_from_genelab,,IncomeBonusFromIndustry,,"BOGGLED_GENELAB ; 1.5"
+genelab_income_bonus_to_mesozoic_park,,IncomeBonusToIndustry,,"{
+	'BOGGLED_MESOZOIC_PARK' : { 'multiplier' : 1.5 }
+}"
+ai_mining_drones_bonus_to_mining,,SupplyBonusWithDeficitToIndustry,"fuel | supplies | ships","{
+	'industries' : { 'mining' : 0 },
+	'ai_core_bonuses' : { 'alpha_core' : 3, 'beta_core' : 2, 'gamma_core' : 1 }
+}"
 
-genelab_pollution_reset_progress,,RequirementsToResetProgress,,"colony_has_heavy_industry_or_orbital_works_with_nanoforge"
+#genelab_pollution_reset_progress,,RequirementsToResetProgress,,"colony_has_heavy_industry_or_orbital_works_with_nanoforge"
 
 just_break_the_damn_thing,,DeficitToInactive,"heavy_machinery | supplies | fuel",

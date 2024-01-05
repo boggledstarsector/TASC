@@ -89,10 +89,10 @@ public class Boggled_Hydroponics extends BaseIndustry implements BoggledIndustry
         thisIndustry.apply(this, this);
     }
 
-    @Override
-    public void unapply()
-    {
+     @Override
+    public void unapply() {
         super.unapply();
+        thisIndustry.unapply(this, this);
     }
 
     @Override

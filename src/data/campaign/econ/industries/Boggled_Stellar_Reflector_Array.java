@@ -95,10 +95,10 @@ public class Boggled_Stellar_Reflector_Array extends BaseIndustry implements Bog
 //        thisIndustry.apply(this, this);
 //    }
 
-    @Override
-    public void unapply()
-    {
+     @Override
+    public void unapply() {
         super.unapply();
+        thisIndustry.unapply(this, this);
     }
 
     @Override

@@ -88,9 +88,9 @@ public class Boggled_Cryosanctum extends Cryosanctum implements BoggledIndustryI
     }
 
     @Override
-    public void unapply()
-    {
+    public void unapply() {
         super.unapply();
+        thisIndustry.unapply(this, this);
     }
 
     @Override

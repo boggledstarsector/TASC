@@ -92,10 +92,10 @@ public class Boggled_Limelight_Network extends BaseIndustry implements BoggledIn
         thisIndustry.apply(this, this);
     }
 
-    @Override
-    public void unapply()
-    {
+     @Override
+    public void unapply() {
         super.unapply();
+        thisIndustry.unapply(this, this);
     }
 
     @Override

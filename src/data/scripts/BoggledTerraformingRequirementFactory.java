@@ -1,13 +1,15 @@
 package data.scripts;
 
 import data.campaign.econ.boggledTools;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 
 public class BoggledTerraformingRequirementFactory {
     public interface TerraformingRequirementFactory {
-        BoggledTerraformingRequirement.TerraformingRequirement constructFromJSON(String requirementId, boolean invert, String data);
+        BoggledTerraformingRequirement.TerraformingRequirement constructFromJSON(String requirementId, boolean invert, String data) throws JSONException;
     }
 
     public static class PlanetType implements TerraformingRequirementFactory {
@@ -134,17 +136,14 @@ public class BoggledTerraformingRequirementFactory {
 
     public static class IntegerFromTagSubstring implements TerraformingRequirementFactory {
         @Override
-        public BoggledTerraformingRequirement.TerraformingRequirement constructFromJSON(String requirementId, boolean invert, String data) {
-            String[] substringWithOption = data.split(boggledTools.csvOptionSeparator);
-            String option = "";
-            if (substringWithOption.length > 1) {
-                option = substringWithOption[1];
-            }
-            String[] substringWithValue = substringWithOption[0].split(boggledTools.csvSubOptionSeparator);
-            String substring = substringWithValue[0];
-            int value = Integer.parseInt(substringWithValue[1]);
+        public BoggledTerraformingRequirement.TerraformingRequirement constructFromJSON(String requirementId, boolean invert, String data) throws JSONException {
+            JSONObject jsonData = new JSONObject(data);
 
-            return new BoggledTerraformingRequirement.IntegerFromTagSubstring(requirementId, invert, substring, value, option);
+            String option = jsonData.getString("option");
+            String tagSubstring = jsonData.getString("tag_substring");
+            int maxValue = jsonData.getInt("max_value");
+
+            return new BoggledTerraformingRequirement.IntegerFromTagSubstring(requirementId, invert, option, tagSubstring, maxValue);
         }
     }
 

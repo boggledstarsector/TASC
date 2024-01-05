@@ -92,9 +92,9 @@ public class Boggled_Cloning extends BaseIndustry implements MarketImmigrationMo
     }
 
     @Override
-    public void unapply()
-    {
+    public void unapply() {
         super.unapply();
+        thisIndustry.unapply(this, this);
     }
 
     @Override

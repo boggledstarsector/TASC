@@ -93,9 +93,9 @@ public class Boggled_Atmosphere_Processor extends BaseIndustry implements Boggle
     }
 
     @Override
-    public void unapply()
-    {
+    public void unapply() {
         super.unapply();
+        thisIndustry.unapply(this, this);
     }
 
 //    @Override
