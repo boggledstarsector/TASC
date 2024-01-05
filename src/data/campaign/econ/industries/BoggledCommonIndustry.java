@@ -1,11 +1,13 @@
 package data.campaign.econ.industries;
 
 import com.fs.starfarer.api.Global;
+import com.fs.starfarer.api.campaign.econ.CommoditySpecAPI;
 import com.fs.starfarer.api.campaign.econ.Industry;
 import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.impl.campaign.econ.impl.BaseIndustry;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
+import com.fs.starfarer.api.util.Pair;
 import data.campaign.econ.boggledTools;
 import data.scripts.BoggledCommoditySupplyDemand;
 import data.scripts.BoggledTerraformingProject;
@@ -13,6 +15,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.awt.*;
+import java.util.List;
 import java.util.ArrayList;
 import java.util.Map;
 
@@ -328,14 +331,14 @@ public class BoggledCommonIndustry {
     }
 
     public boolean hasPostDemandSection(BaseIndustry industry, boolean hasDemand, Industry.IndustryTooltipMode mode) {
-        for (BoggledCommoditySupplyDemand.CommoditySupplyAndDemand commoditySupplyAndDemand : commoditySupplyAndDemands) {
-            if (commoditySupplyAndDemand.isEnabled()) {
+        for (BoggledCommoditySupplyDemand.CommoditySupplyAndDemand supplyAndDemand : commoditySupplyAndDemands) {
+            if (supplyAndDemand.isEnabled()) {
                 return true;
             }
         }
 
-        for (BoggledCommoditySupplyDemand.CommodityDemandShortageEffect commodityDemandShortageEffect : commodityDemandShortageEffects) {
-            if (commodityDemandShortageEffect.isEnabled()) {
+        for (BoggledCommoditySupplyDemand.CommodityDemandShortageEffect effect : commodityDemandShortageEffects) {
+            if (effect.isEnabled()) {
                 return true;
             }
         }
@@ -343,16 +346,42 @@ public class BoggledCommonIndustry {
     }
 
     public void addPostDemandSection(BaseIndustry industry, TooltipMakerAPI tooltip, boolean hasDemand, Industry.IndustryTooltipMode mode) {
-        for (BoggledCommoditySupplyDemand.CommoditySupplyAndDemand commoditySupplyAndDemand : commoditySupplyAndDemands) {
-            if (commoditySupplyAndDemand.isEnabled()) {
-                commoditySupplyAndDemand.addPostDemandSection(industry.getCurrentName(), industry, tooltip, hasDemand, mode);
-            }
+        for (BoggledCommoditySupplyDemand.CommoditySupplyAndDemand supplyAndDemand : commoditySupplyAndDemands) {
+            supplyAndDemand.addPostDemandSection(industry.getCurrentName(), industry, tooltip, hasDemand, mode);
         }
 
-        for (BoggledCommoditySupplyDemand.CommodityDemandShortageEffect commodityDemandShortageEffect : commodityDemandShortageEffects) {
-            if (commodityDemandShortageEffect.isEnabled()) {
-                commodityDemandShortageEffect.addPostDemandSection(industry.getCurrentName(), industry, tooltip, hasDemand, mode);
-            }
+        for (BoggledCommoditySupplyDemand.CommodityDemandShortageEffect effect : commodityDemandShortageEffects) {
+            effect.addPostDemandSection(industry.getCurrentName(), industry, tooltip, hasDemand, mode);
+        }
+    }
+
+    public void addAICoreDescription(BaseIndustry industry, TooltipMakerAPI tooltip, Industry.AICoreDescriptionMode mode, String coreType, String coreId) {
+        String prefix = coreType + "-level AI core currently assigned. ";
+        if (mode == Industry.AICoreDescriptionMode.MANAGE_CORE_DIALOG_LIST || mode == Industry.AICoreDescriptionMode.INDUSTRY_TOOLTIP) {
+            prefix = coreType + "-level AI core. ";
+        }
+
+        StringBuilder builder = new StringBuilder(prefix);
+        List<String> highlights = new ArrayList<>();
+        for (BoggledCommoditySupplyDemand.CommodityDemandShortageEffect effect : commodityDemandShortageEffects) {
+            Pair<String, List<String>> aiCoreDescription = effect.addAICoreDescription(industryTooltip, industry, tooltip, mode, coreType, coreId);
+            builder.append(" ");
+            builder.append(aiCoreDescription.one);
+            highlights.addAll(aiCoreDescription.two);
+        }
+
+        TooltipMakerAPI writeTo = tooltip;
+        float pad = 10f;
+        float imagePad = 10f;
+        if (mode == Industry.AICoreDescriptionMode.INDUSTRY_TOOLTIP) {
+            CommoditySpecAPI coreSpec = Global.getSettings().getCommoditySpec(coreId);
+            writeTo = tooltip.beginImageWithText(coreSpec.getIconName(), 48.0f);
+            pad = 0f;
+        }
+
+        writeTo.addPara(builder.toString(), pad, Misc.getHighlightColor(), highlights.toArray(new String[0]));
+        if (mode == Industry.AICoreDescriptionMode.INDUSTRY_TOOLTIP) {
+            tooltip.addImageWithText(imagePad);
         }
     }
 

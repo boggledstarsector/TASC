@@ -104,10 +104,22 @@ market_has_atmosphere_processor,MarketHasIndustry,false,"BOGGLED_ATMOSPHERE_PROC
 market_has_genelab,MarketHasIndustry,false,"BOGGLED_GENELAB"
 market_has_domed_cities,MarketHasIndustry,false,"BOGGLED_DOMED_CITIES"
 
-market_has_heavy_industry_with_corrupted_nanoforge,MarketHasIndustryWithItem,false,"heavyindustry ; corrupted_nanoforge"
-market_has_heavy_industry_with_pristine_nanoforge,MarketHasIndustryWithItem,false,"heavyindustry ; pristine_nanoforge"
-market_has_orbital_works_with_corrupted_nanoforge,MarketHasIndustryWithItem,false,"orbitalworks ; corrupted_nanoforge"
-market_has_orbital_works_with_pristine_nanoforge,MarketHasIndustryWithItem,false,"orbitalworks ; pristine_nanoforge"
+market_has_heavy_industry_with_corrupted_nanoforge,MarketHasIndustryWithItem,false,"{
+	'industry_id' : 'heavyindustry',
+	'item_id' : 'corrupted_nanoforge'
+}"
+market_has_heavy_industry_with_pristine_nanoforge,MarketHasIndustryWithItem,false,"{
+	'industry_id' : 'heavyindustry',
+	'item_id' : 'pristine_nanoforge'
+}"
+market_has_orbital_works_with_corrupted_nanoforge,MarketHasIndustryWithItem,false,"{
+	'industry_id' : 'orbitalworks',
+	'item_id' : 'corrupted_nanoforge'
+}"
+market_has_orbital_works_with_pristine_nanoforge,MarketHasIndustryWithItem,false,"{
+	'industry_id' : 'orbitalworks',
+	'item_id' : 'pristine_nanoforge'
+}"
 
 world_type_supports_farmland_improvement,WorldTypeSupportsResourceImprovement,false,"farmland"
 world_type_supports_organics_improvement,WorldTypeSupportsResourceImprovement,false,"organics"
@@ -138,9 +150,21 @@ system_star_blue_supergiant,SystemStarType,false,"star_blue_supergiant"
 
 player_has_skill_automated_ships,PlayerHasSkill,false,"automated_ships"
 
-market_storage_contains_at_least_easy_domain_artifacts,MarketStorageContainsAtLeast,false,"storage ; domain_artifacts ; 1000"
-market_storage_contains_at_least_medium_domain_artifacts,MarketStorageContainsAtLeast,false,"storage ; domain_artifacts ; 2000"
-market_storage_contains_at_least_hard_domain_artifacts,MarketStorageContainsAtLeast,false,"storage ; domain_artifacts ; 4000"
+market_storage_contains_at_least_easy_domain_artifacts,MarketStorageContainsAtLeast,false,"{
+	'submarket_id' : 'storage',
+	'commodity_id' : 'domain_artifacts',
+	'quantity' : 1000
+}"
+market_storage_contains_at_least_medium_domain_artifacts,MarketStorageContainsAtLeast,false,"{
+	'submarket_id' : 'storage',
+	'commodity_id' : 'domain_artifacts',
+	'quantity' : 2000
+}"
+market_storage_contains_at_least_hard_domain_artifacts,MarketStorageContainsAtLeast,false,"{
+	'submarket_id' : 'storage',
+	'commodity_id' : 'domain_artifacts',
+	'quantity' : 4000
+}"
 
 player_has_at_least_2_story_points,PlayerHasStoryPointsAtLeast,false,2
 

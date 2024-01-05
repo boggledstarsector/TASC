@@ -54,12 +54,16 @@ public class BoggledTerraformingRequirementFactory {
 
     public static class MarketHasIndustryWithItem implements TerraformingRequirementFactory {
         @Override
-        public BoggledTerraformingRequirement.TerraformingRequirement constructFromJSON(String requirementId, boolean invert, String data) {
-            String[] industryAndItem = data.split(boggledTools.csvSubOptionSeparator);
-            assert(industryAndItem.length == 2);
-            boggledTools.CheckIndustryExists(industryAndItem[0]);
-            boggledTools.CheckItemExists(industryAndItem[1]);
-            return new BoggledTerraformingRequirement.MarketHasIndustryWithItem(requirementId, invert, industryAndItem[0], industryAndItem[1]);
+        public BoggledTerraformingRequirement.TerraformingRequirement constructFromJSON(String requirementId, boolean invert, String data) throws JSONException {
+            JSONObject jsonData = new JSONObject(data);
+
+            String industryId = jsonData.getString("industry_id");
+            String itemId = jsonData.getString("item_id");
+
+            boggledTools.CheckIndustryExists(industryId);
+            boggledTools.CheckItemExists(itemId);
+
+            return new BoggledTerraformingRequirement.MarketHasIndustryWithItem(requirementId, invert, industryId, itemId);
         }
     }
 
@@ -104,12 +108,12 @@ public class BoggledTerraformingRequirementFactory {
 
     public static class MarketStorageContainsAtLeast implements TerraformingRequirementFactory {
         @Override
-        public BoggledTerraformingRequirement.TerraformingRequirement constructFromJSON(String requirementId, boolean invert, String data) {
-            String[] submarketIdAndcargoIdAndQuantityStrings = data.split(boggledTools.csvSubOptionSeparator);
-            assert(submarketIdAndcargoIdAndQuantityStrings.length == 3);
-            String submarketId = submarketIdAndcargoIdAndQuantityStrings[0];
-            String commodityId = submarketIdAndcargoIdAndQuantityStrings[1];
-            int quantity = Integer.parseInt(submarketIdAndcargoIdAndQuantityStrings[2]);
+        public BoggledTerraformingRequirement.TerraformingRequirement constructFromJSON(String requirementId, boolean invert, String data) throws JSONException {
+            JSONObject jsonData = new JSONObject(data);
+
+            String submarketId = jsonData.getString("submarket_id");
+            String commodityId = jsonData.getString("commodity_id");
+            int quantity = jsonData.getInt("quantity");
 
             boggledTools.CheckSubmarketExists(submarketId);
             boggledTools.CheckCommodityExists(commodityId);

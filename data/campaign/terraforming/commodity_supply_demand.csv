@@ -15,17 +15,6 @@ market_size_demand_domain_artifacts,boggledDomainTechContentEnabled | boggledDom
 
 player_market_size_else_flat_demand_domain_artifacts,boggledDomainTechContentEnabled | boggledDomainArchaeologyEnabled,PlayerMarketSizeElseFlatDemand,domain_artifacts,4
 
-# This one is kind of annoying, since it needs to match with some code in Boggled_Scattered_Ruins_Overwrite.java
-ruins_modify_domain_artifacts,boggledDomainTechContentEnabled | boggledDomainArchaeologyEnabled,ConditionModifySupply,domain_artifacts,"{
-	'mod_id' : 'boggledRuinsMod',
-	'conditions' : {
-		'ruins_scattered' : -1,
-		'ruins_widespred' : 0,
-		'ruins_extensive' : 1,
-		'ruins_vast' : 2
-	 }
-}"
-
 market_size_demand_fuel,,MarketSizeDemand,fuel,0
 market_size_demand_supplies,,MarketSizeDemand,supplies,0
 market_size_demand_ships,,MarketSizeDemand,ships,0

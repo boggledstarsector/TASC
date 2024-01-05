@@ -2,8 +2,6 @@ package data.campaign.econ.industries;
 
 import java.awt.Color;
 
-import com.fs.starfarer.api.Global;
-import com.fs.starfarer.api.campaign.econ.CommoditySpecAPI;
 import com.fs.starfarer.api.campaign.econ.Industry;
 import com.fs.starfarer.api.impl.campaign.econ.impl.BaseIndustry;
 import com.fs.starfarer.api.impl.campaign.ids.Commodities;
@@ -156,40 +154,19 @@ public class Boggled_AI_Mining_Drones extends BaseIndustry implements BoggledInd
     @Override
     public float getPatherInterest() { return 10.0F; }
 
-    private void addAICoreDescription(TooltipMakerAPI tooltip, AICoreDescriptionMode mode, String coreType, String highlights) {
-        float opad = 10.0F;
-        Color highlight = Misc.getHighlightColor();
-        String pre = coreType + "-level AI core currently assigned. ";
-        if (mode == AICoreDescriptionMode.MANAGE_CORE_DIALOG_LIST || mode == AICoreDescriptionMode.INDUSTRY_TOOLTIP) {
-            pre = coreType + "-level AI core. ";
-        }
-
-        if (mode == AICoreDescriptionMode.INDUSTRY_TOOLTIP) {
-            CommoditySpecAPI coreSpec = Global.getSettings().getCommoditySpec(this.aiCoreId);
-            TooltipMakerAPI text = tooltip.beginImageWithText(coreSpec.getIconName(), 48.0F);
-            text.addPara(pre + "Increases mining production by %s units.", 0.0F, highlight, highlights);
-            tooltip.addImageWithText(opad);
-        } else {
-            tooltip.addPara(pre + "Increases mining production by %s units.", opad, highlight, highlights);
-        }
+    @Override
+    public void addAlphaCoreDescription(TooltipMakerAPI tooltip, AICoreDescriptionMode mode) {
+        thisIndustry.addAICoreDescription(this, tooltip, mode, "Alpha", "alpha_core");
     }
 
     @Override
-    public void addAlphaCoreDescription(TooltipMakerAPI tooltip, AICoreDescriptionMode mode)
-    {
-        addAICoreDescription(tooltip, mode, "Alpha", "3");
+    public void addBetaCoreDescription(TooltipMakerAPI tooltip, AICoreDescriptionMode mode) {
+        thisIndustry.addAICoreDescription(this, tooltip, mode, "Beta", "beta_core");
     }
 
     @Override
-    public void addBetaCoreDescription(TooltipMakerAPI tooltip, AICoreDescriptionMode mode)
-    {
-        addAICoreDescription(tooltip, mode, "Beta", "2");
-    }
-
-    @Override
-    public void addGammaCoreDescription(TooltipMakerAPI tooltip, AICoreDescriptionMode mode)
-    {
-        addAICoreDescription(tooltip, mode, "Gamma", "1");
+    public void addGammaCoreDescription(TooltipMakerAPI tooltip, AICoreDescriptionMode mode) {
+        thisIndustry.addAICoreDescription(this, tooltip, mode, "Gamma", "gamma_core");
     }
 
     @Override

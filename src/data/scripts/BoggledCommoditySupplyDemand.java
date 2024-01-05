@@ -16,6 +16,8 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Map;
 
+import static java.util.Arrays.asList;
+
 public class BoggledCommoditySupplyDemand {
     public static abstract class CommodityDemandShortageEffect {
         String id;
@@ -33,6 +35,10 @@ public class BoggledCommoditySupplyDemand {
         protected void unapplyShortageEffectImpl(BaseIndustry industry, BoggledIndustryInterface industryInterface, String[] commoditiesDemanded) {}
 
         protected void addPostDemandSectionImpl(String industryTooltip, BaseIndustry industry, TooltipMakerAPI tooltip, boolean hasDemand, Industry.IndustryTooltipMode mode, String[] commoditiesDemanded, float pad) {}
+
+        protected Pair<String, List<String>> addAICoreDescriptionImpl(String industryTooltip, BaseIndustry industry, TooltipMakerAPI tooltip, Industry.AICoreDescriptionMode mode, String prefix, String coreId) {
+            return new Pair<String, List<String>>("", new ArrayList<String>());
+        }
 
         public boolean isEnabled() { return boggledTools.optionsAllowThis(enableSettings); }
 
@@ -56,6 +62,19 @@ public class BoggledCommoditySupplyDemand {
             }
 
             this.addPostDemandSectionImpl(industryTooltip, industry, tooltip, hasDemand, mode, commoditiesDemanded.toArray(new String[0]), 10.0f);
+        }
+
+        public Pair<String, List<String>> addAICoreDescription(String industryTooltip, BaseIndustry industry, TooltipMakerAPI tooltip, Industry.AICoreDescriptionMode mode, String coreType, String coreId) {
+            if (!isEnabled()) {
+                return new Pair<String, List<String>>("", new ArrayList<String>());
+            }
+
+            String prefix = coreType + "-level AI core currently assigned.";
+            if (mode == Industry.AICoreDescriptionMode.MANAGE_CORE_DIALOG_LIST || mode == Industry.AICoreDescriptionMode.INDUSTRY_TOOLTIP) {
+                prefix = coreType + "-level AI core. ";
+            }
+
+            return this.addAICoreDescriptionImpl(industryTooltip, industry, tooltip, mode, prefix, coreId);
         }
     }
 
@@ -132,18 +151,18 @@ public class BoggledCommoditySupplyDemand {
                 this.upkeepMultiplier = upkeepMultiplier;
             }
         }
-        List<Data> conditionUpkeepMultipliers;
+        List<Data> data;
 
-        public ConditionMultiplierToUpkeep(String id, String[] enableSettings, ArrayList<String> commoditiesDemanded, List<Data> conditionUpkeepMultipliers) {
+        public ConditionMultiplierToUpkeep(String id, String[] enableSettings, ArrayList<String> commoditiesDemanded, List<Data> data) {
             super(id, enableSettings, commoditiesDemanded);
-            this.conditionUpkeepMultipliers = conditionUpkeepMultipliers;
+            this.data = data;
         }
 
         @Override
         protected void applyShortageEffectImpl(BaseIndustry industry, BoggledIndustryInterface industryInterface, String[] commoditiesDemanded) {
-            for (Data conditionUpkeepMultipler : conditionUpkeepMultipliers) {
-                if (industry.getMarket().hasCondition(conditionUpkeepMultipler.conditionId)) {
-                    industry.getUpkeep().modifyMult(id, conditionUpkeepMultipler.upkeepMultiplier, Global.getSettings().getMarketConditionSpec(conditionUpkeepMultipler.conditionId).getName());
+            for (Data datum : data) {
+                if (industry.getMarket().hasCondition(datum.conditionId)) {
+                    industry.getUpkeep().modifyMult(id, datum.upkeepMultiplier, Global.getSettings().getMarketConditionSpec(datum.conditionId).getName());
                     return;
                 }
             }
@@ -152,13 +171,13 @@ public class BoggledCommoditySupplyDemand {
 
         @Override
         protected void addPostDemandSectionImpl(String industryTooltip, BaseIndustry industry, TooltipMakerAPI tooltip, boolean hasDemand, Industry.IndustryTooltipMode mode, String[] commoditiesDemanded, float pad) {
-            for (Data conditionUpkeepMultipler : conditionUpkeepMultipliers) {
-                if (!industry.getMarket().hasCondition(conditionUpkeepMultipler.conditionId)) {
+            for (Data datum : data) {
+                if (!industry.getMarket().hasCondition(datum.conditionId)) {
                     continue;
                 }
 
-                String upkeepMultiplierString = "x" + conditionUpkeepMultipler.upkeepMultiplier;
-                String description = Global.getSettings().getMarketConditionSpec(conditionUpkeepMultipler.conditionId).getName();
+                String upkeepMultiplierString = "x" + datum.upkeepMultiplier;
+                String description = Global.getSettings().getMarketConditionSpec(datum.conditionId).getName();
                 tooltip.addPara(industryTooltip + " upkeep is increased by %s due to condition " + description + " present on " + industry.getMarket().getName() + ".", pad, Misc.getHighlightColor(), upkeepMultiplierString);
                 return;
             }
@@ -168,27 +187,27 @@ public class BoggledCommoditySupplyDemand {
     public static class TagMultiplierToUpkeep extends CommodityDemandShortageEffect {
         public static class Data {
             String tag;
-            float upkeepMultiplier;
             String description;
+            float upkeepMultiplier;
 
-            public Data(String tag, float upkeepMultiplier, String description) {
+            public Data(String tag, String description, float upkeepMultiplier) {
                 this.tag = tag;
-                this.upkeepMultiplier = upkeepMultiplier;
                 this.description = description;
+                this.upkeepMultiplier = upkeepMultiplier;
             }
         }
-        List<Data> tagUpkeepMultiplierDescriptions;
+        List<Data> data;
 
-        public TagMultiplierToUpkeep(String id, String[] enableSettings, ArrayList<String> commoditiesDemanded, List<Data> tagUpkeepMultiplierDescriptions) {
+        public TagMultiplierToUpkeep(String id, String[] enableSettings, ArrayList<String> commoditiesDemanded, List<Data> data) {
             super(id, enableSettings, commoditiesDemanded);
-            this.tagUpkeepMultiplierDescriptions = tagUpkeepMultiplierDescriptions;
+            this.data = data;
         }
 
         @Override
         protected void applyShortageEffectImpl(BaseIndustry industry, BoggledIndustryInterface industryInterface, String[] commoditiesDemanded) {
-            for (Data tagUpkeepMultiplerDescription : tagUpkeepMultiplierDescriptions) {
-                if (industry.getMarket().hasTag(tagUpkeepMultiplerDescription.tag)) {
-                    industry.getUpkeep().modifyMult(id, tagUpkeepMultiplerDescription.upkeepMultiplier, tagUpkeepMultiplerDescription.description);
+            for (Data datum : data) {
+                if (industry.getMarket().hasTag(datum.tag)) {
+                    industry.getUpkeep().modifyMult(id, datum.upkeepMultiplier, datum.description);
                 }
             }
             industry.getUpkeep().unmodifyMult(id);
@@ -196,13 +215,13 @@ public class BoggledCommoditySupplyDemand {
 
         @Override
         protected void addPostDemandSectionImpl(String industryTooltip, BaseIndustry industry, TooltipMakerAPI tooltip, boolean hasDemand, Industry.IndustryTooltipMode mode, String[] commoditiesDemanded, float pad) {
-            for (Data tagUpkeepMultiplierDescription : tagUpkeepMultiplierDescriptions) {
-                if (!industry.getMarket().hasTag(tagUpkeepMultiplierDescription.tag)) {
+            for (Data datum : data) {
+                if (!industry.getMarket().hasTag(datum.tag)) {
                     continue;
                 }
 
-                String upkeepMultiplierString = Float.toString(tagUpkeepMultiplierDescription.upkeepMultiplier);
-                String description = tagUpkeepMultiplierDescription.description;
+                String upkeepMultiplierString = Float.toString(datum.upkeepMultiplier);
+                String description = datum.description;
                 tooltip.addPara(industryTooltip + " upkeep is increased by %s due to " + industry.getMarket().getName() + " being " + description + ".", pad, Misc.getHighlightColor(), upkeepMultiplierString);
                 return;
             }
@@ -213,16 +232,16 @@ public class BoggledCommoditySupplyDemand {
         public static class Data {
             String industryId;
             float incomeMultiplier;
-            public Data(String industryId, float incomeMultiplier) {
+            Data(String industryId, float incomeMultiplier) {
                 this.industryId = industryId;
                 this.incomeMultiplier = incomeMultiplier;
             }
         }
-        List<Data> industryIdIncomeMultipliers;
+        List<Data> data;
 
-        public IncomeBonusToIndustry(String id, String[] enableSettings, ArrayList<String> commoditiesDemanded, List<Data> industryIdIncomeMultipliers) {
+        public IncomeBonusToIndustry(String id, String[] enableSettings, ArrayList<String> commoditiesDemanded, List<Data> data) {
             super(id, enableSettings, commoditiesDemanded);
-            this.industryIdIncomeMultipliers = industryIdIncomeMultipliers;
+            this.data = data;
         }
 
         @Override
@@ -231,21 +250,21 @@ public class BoggledCommoditySupplyDemand {
                 unapplyShortageEffectImpl(industry, industryInterface, commoditiesDemanded);
                 return;
             }
-            for (Data data : industryIdIncomeMultipliers) {
-                Industry industryTo = industry.getMarket().getIndustry(data.industryId);
+            for (Data datum : data) {
+                Industry industryTo = industry.getMarket().getIndustry(datum.industryId);
                 if (industryTo == null) {
-                    continue;
+                    return;
                 }
-                industryTo.getIncome().modifyMult(id, data.incomeMultiplier, industry.getCurrentName());
+                industryTo.getIncome().modifyMult(id, datum.incomeMultiplier, industry.getCurrentName());
             }
         }
 
         @Override
         protected void unapplyShortageEffectImpl(BaseIndustry industry, BoggledIndustryInterface industryInterface, String[] commoditiesDemanded) {
-            for (Data data : industryIdIncomeMultipliers) {
-                Industry industryTo = industry.getMarket().getIndustry(data.industryId);
+            for (Data datum : data) {
+                Industry industryTo = industry.getMarket().getIndustry(datum.industryId);
                 if (industryTo == null) {
-                    continue;
+                    return;
                 }
                 industryTo.getIncome().unmodifyMult(id);
             }
@@ -261,11 +280,21 @@ public class BoggledCommoditySupplyDemand {
                 this.flatBonus = flatBonus;
             }
         }
-        Map<String, Integer> aiCoreIdAndBonuses;
         List<Data> data;
-        public SupplyBonusWithDeficitToIndustry(String id, String[] enableSettings, ArrayList<String> commoditiesDemanded, Map<String, Integer> aiCoreIdAndBonuses, List<Data> data) {
+
+        public static class AICoreData {
+            String description;
+            Map<String, Integer> bonus;
+            AICoreData(String description, Map<String, Integer> bonus) {
+                this.description = description;
+                this.bonus = bonus;
+            }
+        }
+        AICoreData aiCoreData;
+
+        public SupplyBonusWithDeficitToIndustry(String id, String[] enableSettings, ArrayList<String> commoditiesDemanded, List<Data> data, AICoreData aiCoreData) {
             super(id, enableSettings, commoditiesDemanded);
-            this.aiCoreIdAndBonuses = aiCoreIdAndBonuses;
+            this.aiCoreData = aiCoreData;
             this.data = data;
         }
 
@@ -277,10 +306,10 @@ public class BoggledCommoditySupplyDemand {
             }
 
             int aiCoreBonus = 0;
-            if (aiCoreIdAndBonuses.containsKey(industry.getAICoreId())) {
-                aiCoreBonus = aiCoreIdAndBonuses.get(industry.getAICoreId());
+            if (aiCoreData.bonus.containsKey(industry.getAICoreId())) {
+                aiCoreBonus = aiCoreData.bonus.get(industry.getAICoreId());
             }
-            aiCoreBonus += Math.max(industry.getMaxDeficit(commoditiesDemanded).two, 0);
+            aiCoreBonus -= Math.max(industry.getMaxDeficit(commoditiesDemanded).two, 0);
             aiCoreBonus = Math.max(aiCoreBonus, 0);
 
             for (Data datum : data) {
@@ -308,6 +337,30 @@ public class BoggledCommoditySupplyDemand {
                     industryTo.getSupply(c.getCommodityId()).getQuantity().unmodifyFlat(id);
                 }
             }
+        }
+
+        @Override
+        protected Pair<String, List<String>> addAICoreDescriptionImpl(String industryTooltip, BaseIndustry industry, TooltipMakerAPI tooltip, Industry.AICoreDescriptionMode mode, String prefix, String coreId) {
+            Map<String, String> tokenReplacements = getTokenReplacements(industry.getMarket(), coreId);
+            String replaced = boggledTools.doTokenReplacement(aiCoreData.description, tokenReplacements);
+            String highlights = boggledTools.doTokenReplacement("$aiCoreBonus", tokenReplacements);
+
+            return new Pair<String, List<String>>(replaced, new ArrayList<>(asList(highlights)));
+        }
+
+        private Map<String, String> getTokenReplacements(MarketAPI market, String aiCoreId) {
+            Map<String, String> ret = boggledTools.getTokenReplacements(market);
+            Integer bonus = aiCoreData.bonus.get(aiCoreId);
+            if (bonus != null) {
+                ret.put("$aiCoreBonus", Integer.toString(bonus));
+            }
+            List<String> industries = new ArrayList<>();
+            for (Data datum : data) {
+                industries.add(Global.getSettings().getIndustrySpec(datum.industryId).getName().toLowerCase());
+            }
+            ret.put("$industryTo", Misc.getAndJoined(industries.toArray(new String[0])));
+
+            return ret;
         }
     }
 

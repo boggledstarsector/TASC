@@ -833,11 +833,13 @@ public class boggledTools {
 
         HashMap<String, BoggledCommoditySupplyDemand.CommodityDemandShortageEffect> commodityDemandShortageEffects = new HashMap<>();
 
+        String idForErrors = "";
         for (int i = 0; i < commoditDemandShortageEffectsJSON.length(); ++i) {
             try {
                 JSONObject row = commoditDemandShortageEffectsJSON.getJSONObject(i);
 
                 String id = row.getString("id");
+                idForErrors = id;
                 if (id == null || id.isEmpty()) {
                     continue;
                 }
@@ -852,7 +854,7 @@ public class boggledTools {
 
                 commodityDemandShortageEffects.put(id, effect);
             } catch (JSONException e) {
-                log.error("Error in commodity demand shortage effects: " + e);
+                log.error("Error in commodity demand shortage effect '" + idForErrors + "': " + e);
             }
         }
 
