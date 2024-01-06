@@ -1,6 +1,7 @@
 package data.scripts;
 
 import data.campaign.econ.boggledTools;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -69,21 +70,25 @@ public class BoggledTerraformingRequirementFactory {
 
     public static class MarketHasWaterPresent implements TerraformingRequirementFactory {
         @Override
-        public BoggledTerraformingRequirement.TerraformingRequirement constructFromJSON(String requirementId, boolean invert, String data) {
-            String[] waterLevelStrings = data.split(boggledTools.csvSubOptionSeparator);
-            assert(waterLevelStrings.length == 2);
-            int[] waterLevels = new int[waterLevelStrings.length];
-            for (int i = 0; i < waterLevels.length; ++i) {
-                waterLevels[i] = Integer.parseInt(waterLevelStrings[i]);
-            }
-            return new BoggledTerraformingRequirement.MarketHasWaterPresent(requirementId, invert, waterLevels[0], waterLevels[1]);
+        public BoggledTerraformingRequirement.TerraformingRequirement constructFromJSON(String requirementId, boolean invert, String data) throws JSONException {
+            JSONObject jsonData = new JSONObject(data);
+
+            int minWaterLevel = jsonData.getInt("min_water_level");
+            int maxWaterLevel = jsonData.getInt("max_water_level");
+
+            return new BoggledTerraformingRequirement.MarketHasWaterPresent(requirementId, invert, minWaterLevel, maxWaterLevel);
         }
     }
 
     public static class TerraformingPossibleOnMarket implements TerraformingRequirementFactory {
         @Override
-        public BoggledTerraformingRequirement.TerraformingRequirement constructFromJSON(String requirementId, boolean invert, String data) {
-            ArrayList<String> invalidatingConditions = new ArrayList<>(Arrays.asList(data.split(boggledTools.csvSubOptionSeparator)));
+        public BoggledTerraformingRequirement.TerraformingRequirement constructFromJSON(String requirementId, boolean invert, String data) throws JSONException {
+            JSONArray jsonArray = new JSONArray(data);
+
+            ArrayList<String> invalidatingConditions = new ArrayList<>(jsonArray.length());
+            for (int i = 0; i < jsonArray.length(); ++i) {
+                invalidatingConditions.add(jsonArray.getString(i));
+            }
 
             return new BoggledTerraformingRequirement.TerraformingPossibleOnMarket(requirementId, invert, invalidatingConditions);
         }

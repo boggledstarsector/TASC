@@ -11,20 +11,17 @@ import com.fs.starfarer.api.util.Pair;
 import data.campaign.econ.boggledTools;
 import data.campaign.econ.industries.BoggledIndustryInterface;
 
-import java.awt.*;
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Map;
+import java.util.*;
 
 import static java.util.Arrays.asList;
 
 public class BoggledCommoditySupplyDemand {
-    public static abstract class CommodityDemandShortageEffect {
+    public static abstract class IndustryEffect {
         String id;
         String[] enableSettings;
         ArrayList<String> commoditiesDemanded;
 
-        public CommodityDemandShortageEffect(String id, String[] enableSettings, ArrayList<String> commoditiesDemanded) {
+        public IndustryEffect(String id, String[] enableSettings, ArrayList<String> commoditiesDemanded) {
             this.id = id;
             this.enableSettings = enableSettings;
             this.commoditiesDemanded = commoditiesDemanded;
@@ -78,7 +75,7 @@ public class BoggledCommoditySupplyDemand {
         }
     }
 
-    public static class DeficitToInactive extends CommodityDemandShortageEffect {
+    public static class DeficitToInactive extends IndustryEffect {
         public DeficitToInactive(String id, String[] enableSettings, ArrayList<String> commoditiesDemanded) {
             super(id, enableSettings, commoditiesDemanded);
         }
@@ -101,7 +98,7 @@ public class BoggledCommoditySupplyDemand {
         }
     }
 
-    public static class DeficitToCommodity extends CommodityDemandShortageEffect {
+    public static class DeficitToCommodity extends IndustryEffect {
         ArrayList<String> commoditiesDeficited;
 
         DeficitToCommodity(String id, String[] enableSettings, ArrayList<String> commoditiesDemanded, ArrayList<String> commoditiesDeficited) {
@@ -116,7 +113,7 @@ public class BoggledCommoditySupplyDemand {
         }
     }
 
-    public static class DeficitMultiplierToUpkeep extends CommodityDemandShortageEffect {
+    public static class DeficitMultiplierToUpkeep extends IndustryEffect {
         float upkeepMultiplier;
 
         public DeficitMultiplierToUpkeep(String id, String[] enableSettings, ArrayList<String> commoditiesDemanded, float upkeepMultiplier) {
@@ -142,7 +139,7 @@ public class BoggledCommoditySupplyDemand {
         }
     }
 
-    public static class ConditionMultiplierToUpkeep extends CommodityDemandShortageEffect {
+    public static class ConditionMultiplierToUpkeep extends IndustryEffect {
         public static class Data {
             String conditionId;
             float upkeepMultiplier;
@@ -184,7 +181,7 @@ public class BoggledCommoditySupplyDemand {
         }
     }
 
-    public static class TagMultiplierToUpkeep extends CommodityDemandShortageEffect {
+    public static class TagMultiplierToUpkeep extends IndustryEffect {
         public static class Data {
             String tag;
             String description;
@@ -228,7 +225,7 @@ public class BoggledCommoditySupplyDemand {
         }
     }
 
-    public static class IncomeBonusToIndustry extends CommodityDemandShortageEffect {
+    public static class IncomeBonusToIndustry extends IndustryEffect {
         public static class Data {
             String industryId;
             float incomeMultiplier;
@@ -271,12 +268,14 @@ public class BoggledCommoditySupplyDemand {
         }
     }
 
-    public static class SupplyBonusWithDeficitToIndustry extends CommodityDemandShortageEffect {
+    public static class SupplyBonusWithDeficitToIndustry extends IndustryEffect {
         public static class Data {
             String industryId;
+            String description;
             int flatBonus;
-            Data(String industryId, int flatBonus) {
+            Data(String industryId, String description, int flatBonus) {
                 this.industryId = industryId;
+                this.description = description;
                 this.flatBonus = flatBonus;
             }
         }
@@ -320,7 +319,7 @@ public class BoggledCommoditySupplyDemand {
 
                 int bonus = aiCoreBonus + datum.flatBonus;
                 for (MutableCommodityQuantity c : industryTo.getAllSupply()) {
-                    industryTo.getSupply(c.getCommodityId()).getQuantity().modifyFlat(id, bonus, "Description");
+                    industryTo.getSupply(c.getCommodityId()).getQuantity().modifyFlat(id, bonus, datum.description);
                 }
             }
         }
@@ -364,206 +363,161 @@ public class BoggledCommoditySupplyDemand {
         }
     }
 
-    public static abstract class CommoditySupplyAndDemand {
+    public static abstract class CommoditySupply {
         protected final String id;
         protected final String[] enableSettings;
         protected String commodity;
 
-        public CommoditySupplyAndDemand(String id, String[] enableSettings, String commodity) {
+        public CommoditySupply(String id, String[] enableSettings, String commodity) {
             this.id = id;
             this.enableSettings = enableSettings;
             this.commodity = commodity;
         }
 
-        protected abstract void applySupplyDemandImpl(BaseIndustry industry);
-        protected abstract void addPostDemandSectionImpl(String industryTooltip, BaseIndustry industry, TooltipMakerAPI tooltip, boolean hasDemand, Industry.IndustryTooltipMode mode, float pad);
-
-        public String getCommodity() { return commodity; }
         public boolean isEnabled() { return boggledTools.optionsAllowThis(enableSettings); }
 
-        public void applySupplyDemand(BaseIndustry industry) {
+        public abstract void applyImpl(BaseIndustry industry);
+
+        public void apply(BaseIndustry industry) {
             if (!isEnabled()) {
                 return;
             }
 
-            this.applySupplyDemandImpl(industry);
+            applyImpl(industry);
         }
-
-        public void addPostDemandSection(String industryTooltip, BaseIndustry industry, TooltipMakerAPI tooltip, boolean hasDemand, Industry.IndustryTooltipMode mode) {
-            if (!isEnabled()) {
-                return;
-            }
-
-            this.addPostDemandSectionImpl(industryTooltip, industry, tooltip, hasDemand, mode, 10.0f);
-        }
-
-        public abstract boolean isDemand();
-        public boolean isSupply() { return !isDemand(); }
     }
 
-    public abstract static class Flat extends CommoditySupplyAndDemand {
-        protected int quantity;
-        public Flat(String id, String[] enableSettings, String commodity, int quantity) {
+    public static class FlatSupply extends CommoditySupply {
+        int quantity;
+
+        public FlatSupply(String id, String[] enableSettings, String commodity, int quantity) {
             super(id, enableSettings, commodity);
             this.quantity = quantity;
         }
-    }
-    public static class FlatDemand extends Flat {
-        public FlatDemand(String id, String[] enableSettings, String commodity, int quantity) {
-            super(id, enableSettings, commodity, quantity);
-        }
 
         @Override
-        protected void applySupplyDemandImpl(BaseIndustry industry) {
-            industry.demand(id, commodity, quantity, BaseIndustry.BASE_VALUE_TEXT);
+        public void applyImpl(BaseIndustry industry) {
+            industry.supply(id, commodity, quantity, industry.getCurrentName());
         }
-
-        @Override
-        public void addPostDemandSectionImpl(String industryTooltip, BaseIndustry industry, TooltipMakerAPI tooltip, boolean hasDemand, Industry.IndustryTooltipMode mode, float pad) {
-            Color highlight = Misc.getHighlightColor();
-            String commodityTooltip = Global.getSettings().getCommoditySpec(commodity).getName();
-            tooltip.addPara(industryTooltip + " always demands %s " + commodityTooltip + " regardless of market size.", pad, highlight, Integer.toString(quantity));
-        }
-
-        @Override
-        public boolean isDemand() { return true; }
     }
 
-    public static class FlatSupply extends Flat {
-        public FlatSupply(String id, String[] enableSettings, String commodity, int quantity) {
-            super(id, enableSettings, commodity, quantity);
-        }
+    public static class MarketSizeSupply extends CommoditySupply {
+        int quantityOffset;
 
-        @Override
-        protected void applySupplyDemandImpl(BaseIndustry industry) {
-            industry.supply(id, commodity, quantity, BaseIndustry.BASE_VALUE_TEXT);
-        }
-
-        @Override
-        protected void addPostDemandSectionImpl(String industryTooltip, BaseIndustry industry, TooltipMakerAPI tooltip, boolean hasDemand, Industry.IndustryTooltipMode mode, float pad) {
-        }
-
-        @Override
-        public boolean isDemand() { return false; }
-    }
-
-    public abstract static class MarketSize extends CommoditySupplyAndDemand {
-        protected int quantityOffset;
-        public MarketSize(String id, String[] enableSettings, String commodity, int quantityOffset) {
+        public MarketSizeSupply(String id, String[] enableSettings, String commodity, int quantityOffset) {
             super(id, enableSettings, commodity);
             this.quantityOffset = quantityOffset;
         }
 
-        protected abstract void applySupplyDemandMarketSize(BaseIndustry industry, int adjustedQuantity);
-
         @Override
-        protected void applySupplyDemandImpl(BaseIndustry industry) {
-            int adjustedQuantity = industry.getMarket().getSize() + quantityOffset;
-            if (adjustedQuantity <= 0) {
+        public void applyImpl(BaseIndustry industry) {
+            int adjustedQuantity = Math.max(0, industry.getMarket().getSize() + quantityOffset);
+            industry.supply(id, commodity, adjustedQuantity, industry.getCurrentName());
+        }
+    }
+
+    public static class CommodityDemandPara {
+        public String prefix;
+        public String suffix;
+        public Set<String> commodities = new LinkedHashSet<>();
+        public List<String> highlights = new ArrayList<>();
+
+        CommodityDemandPara(String prefix, String suffix) {
+            this.prefix = prefix;
+            this.suffix = suffix;
+        }
+
+        void addCommodity(String commodityString) {
+            commodities.add(commodityString);
+        }
+
+        void addHighlight(String highlight) {
+            highlights.add(highlight);
+        }
+    }
+
+    public static abstract class CommodityDemand {
+        protected final String id;
+        protected final String[] enableSettings;
+        protected String commodity;
+
+        public CommodityDemand(String id, String[] enableSettings, String commodity) {
+            this.id = id;
+            this.enableSettings = enableSettings;
+            this.commodity = commodity;
+        }
+
+        public boolean isEnabled() { return boggledTools.optionsAllowThis(enableSettings); }
+
+        protected abstract void applyImpl(BaseIndustry industry);
+        protected abstract void addPostDemandInfoImpl(Map<String, BoggledCommoditySupplyDemand.CommodityDemandPara> demandTypeToCommodity, BaseIndustry industry, String industryTooltip);
+
+        public void apply(BaseIndustry industry) {
+            if (!isEnabled()) {
                 return;
             }
-            applySupplyDemandMarketSize(industry, adjustedQuantity);
-        }
-    }
 
-    public static class MarketSizeDemand extends MarketSize {
-        public MarketSizeDemand(String id, String[] enableSettings, String commodity, int quantityOffset) {
-            super(id, enableSettings, commodity, quantityOffset);
+            applyImpl(industry);
         }
 
-        @Override
-        protected void applySupplyDemandMarketSize(BaseIndustry industry, int adjustedQuantity) {
-            industry.demand(id, commodity, adjustedQuantity, BaseIndustry.BASE_VALUE_TEXT);
-        }
-
-        @Override
-        public void addPostDemandSectionImpl(String industryTooltip, BaseIndustry industry, TooltipMakerAPI tooltip, boolean hasDemand, Industry.IndustryTooltipMode mode, float pad) {
-            String commodityTooltip = Global.getSettings().getCommoditySpec(commodity).getName();
-            tooltip.addPara(industryTooltip + " demand for " + commodityTooltip + " increases with market size.", pad);
-        }
-
-        @Override
-        public boolean isDemand() { return true; }
-    }
-
-    public static class MarketSizeSupply extends MarketSize {
-        public MarketSizeSupply(String id, String[] enableSettings, String commodity, int quantityOffset) {
-            super(id, enableSettings, commodity, quantityOffset);
-        }
-
-        @Override
-        protected void applySupplyDemandMarketSize(BaseIndustry industry, int adjustedQuantity) {
-            industry.supply(id, commodity, adjustedQuantity, BaseIndustry.BASE_VALUE_TEXT);
-        }
-
-        @Override
-        protected void addPostDemandSectionImpl(String industryTooltip, BaseIndustry industry, TooltipMakerAPI tooltip, boolean hasDemand, Industry.IndustryTooltipMode mode, float pad) {
-
-        }
-
-        @Override
-        public boolean isDemand() { return false; }
-    }
-
-    public abstract static class ConditionModify extends CommoditySupplyAndDemand {
-        String modId;
-        List<Pair<String, Integer>> conditionAndQuantityOffsets;
-        public ConditionModify(String id, String[] enableSettings, String commodity, String modId, List<Pair<String, Integer>> conditionAndQuantityOffsets) {
-            super(id, enableSettings, commodity);
-            this.modId = modId;
-            this.conditionAndQuantityOffsets = conditionAndQuantityOffsets;
-        }
-
-        public abstract void applySupplyDemandCondition(BaseIndustry industry, String conditionId, int quantityOffset);
-
-        @Override
-        public void applySupplyDemandImpl(BaseIndustry industry) {
-            MarketAPI market = industry.getMarket();
-            for (Pair<String, Integer> conditionAndQuantityOffset : conditionAndQuantityOffsets) {
-                if (market.hasCondition(conditionAndQuantityOffset.one)) {
-                    applySupplyDemandCondition(industry, conditionAndQuantityOffset.one, conditionAndQuantityOffset.two);
-                }
+        public void addPostDemandInfo(Map<String, BoggledCommoditySupplyDemand.CommodityDemandPara> demandTypeToCommodity, BaseIndustry industry) {
+            if (!isEnabled()) {
+                return;
             }
+
+            addPostDemandInfoImpl(demandTypeToCommodity, industry, industry.getCurrentName());
         }
     }
 
-    public static class ConditionModifyDemand extends ConditionModify {
-        public ConditionModifyDemand(String id, String[] enableSettings, String commodity, String modId, List<Pair<String, Integer>> conditionAndQuantityOffsets) {
-            super(id, enableSettings, commodity, modId, conditionAndQuantityOffsets);
+    public static class FlatDemand extends CommodityDemand {
+        int quantity;
+
+        public FlatDemand(String id, String[] enableSettings, String commodity, int quantity) {
+            super(id, enableSettings, commodity);
+            this.quantity = quantity;
         }
 
         @Override
-        public void applySupplyDemandCondition(BaseIndustry industry, String conditionId, int quantityOffset) {
-            industry.demand(modId, commodity, quantityOffset, Misc.ucFirst(Global.getSettings().getMarketConditionSpec(conditionId).getName()));
+        protected void applyImpl(BaseIndustry industry) {
+            industry.demand(id, commodity, quantity, industry.getCurrentName());
         }
 
         @Override
-        protected void addPostDemandSectionImpl(String industryTooltip, BaseIndustry industry, TooltipMakerAPI tooltip, boolean hasDemand, Industry.IndustryTooltipMode mode, float pad) {
+        protected void addPostDemandInfoImpl(Map<String, BoggledCommoditySupplyDemand.CommodityDemandPara> demandTypeToCommodity, BaseIndustry industry, String industryTooltip) {
+            if (!demandTypeToCommodity.containsKey("FlatDemand")) {
+                demandTypeToCommodity.put("FlatDemand", new CommodityDemandPara(industryTooltip + " always demands ", " regardless of market size."));
+            }
+            CommodityDemandPara para = demandTypeToCommodity.get("FlatDemand");
+            para.addCommodity(quantity + " " + Global.getSettings().getCommoditySpec(commodity).getLowerCaseName());
+            para.addHighlight(Integer.toString(quantity));
         }
-
-        @Override
-        public boolean isDemand() { return true; }
     }
 
-    public static class ConditionModifySupply extends ConditionModify {
-        public ConditionModifySupply(String id, String[] enableSettings, String commodity, String modId, List<Pair<String, Integer>> conditionAndQuantityOffsets) {
-            super(id, enableSettings, commodity, modId, conditionAndQuantityOffsets);
+    public static class MarketSizeDemand extends CommodityDemand {
+        int quantityOffset;
+
+        public MarketSizeDemand(String id, String[] enableSettings, String commodity, int quantityOffset) {
+            super(id, enableSettings, commodity);
+            this.quantityOffset = quantityOffset;
         }
 
         @Override
-        public void applySupplyDemandCondition(BaseIndustry industry, String conditionId, int quantityOffset) {
-            industry.supply(modId, commodity, quantityOffset, Misc.ucFirst(Global.getSettings().getMarketConditionSpec(conditionId).getName()));
+        protected void applyImpl(BaseIndustry industry) {
+            int adjustedQuantity = Math.max(0, industry.getMarket().getSize() + quantityOffset);
+            industry.demand(id, commodity, adjustedQuantity, industry.getCurrentName());
         }
 
         @Override
-        protected void addPostDemandSectionImpl(String industryTooltip, BaseIndustry industry, TooltipMakerAPI tooltip, boolean hasDemand, Industry.IndustryTooltipMode mode, float pad) {
+        protected void addPostDemandInfoImpl(Map<String, BoggledCommoditySupplyDemand.CommodityDemandPara> demandTypeToCommodity, BaseIndustry industry, String industryTooltip) {
+            if (!demandTypeToCommodity.containsKey("MarketSizeDemand")) {
+                demandTypeToCommodity.put("MarketSizeDemand", new CommodityDemandPara(industryTooltip + " demand for ", " increases with market size"));
+            }
+            CommodityDemandPara para = demandTypeToCommodity.get("MarketSizeDemand");
+            para.addCommodity(Global.getSettings().getCommoditySpec(commodity).getLowerCaseName());
         }
-
-        @Override
-        public boolean isDemand() { return false; }
     }
 
-    public static class PlayerMarketSizeElseFlatDemand extends CommoditySupplyAndDemand {
+    public static class PlayerMarketSizeElseFlatDemand extends CommodityDemand {
         int quantity;
         public PlayerMarketSizeElseFlatDemand(String id, String[] enableSettings, String commodity, int quantity) {
             super(id, enableSettings, commodity);
@@ -571,23 +525,30 @@ public class BoggledCommoditySupplyDemand {
         }
 
         @Override
-        protected void applySupplyDemandImpl(BaseIndustry industry) {
+        public void applyImpl(BaseIndustry industry) {
             if (industry.getMarket().isPlayerOwned()) {
-                industry.demand(id, commodity, industry.getMarket().getSize(), BaseIndustry.BASE_VALUE_TEXT);
+                industry.demand(id, commodity, industry.getMarket().getSize(), industry.getCurrentName());
             } else {
-                industry.demand(id, commodity, quantity, BaseIndustry.BASE_VALUE_TEXT);
+                industry.demand(id, commodity, quantity, industry.getCurrentName());
             }
         }
 
         @Override
-        protected void addPostDemandSectionImpl(String industryTooltip, BaseIndustry industry, TooltipMakerAPI tooltip, boolean hasDemand, Industry.IndustryTooltipMode mode, float pad) {
-            String commodityTooltip = Global.getSettings().getCommoditySpec(commodity).getName();
+        protected void addPostDemandInfoImpl(Map<String, BoggledCommoditySupplyDemand.CommodityDemandPara> demandTypeToCommodity, BaseIndustry industry, String industryTooltip) {
             if (industry.getMarket().isPlayerOwned()) {
-                tooltip.addPara(industryTooltip + " demand for " + commodityTooltip + " increases with market size", pad);
+                if (!demandTypeToCommodity.containsKey("MarketSizeDemand")) {
+                    demandTypeToCommodity.put("MarketSizeDemand", new CommodityDemandPara(industryTooltip + " demand for ", " increases with market size"));
+                }
+                CommodityDemandPara para = demandTypeToCommodity.get("MarketSizeDemand");
+                para.addCommodity(Global.getSettings().getCommoditySpec(commodity).getLowerCaseName());
+            } else {
+                if (!demandTypeToCommodity.containsKey("FlatDemand")) {
+                    demandTypeToCommodity.put("FlatDemand", new CommodityDemandPara(industryTooltip + " always demands ", " regardless of market size."));
+                }
+                CommodityDemandPara para = demandTypeToCommodity.get("FlatDemand");
+                para.addCommodity(quantity + " " + Global.getSettings().getCommoditySpec(commodity).getLowerCaseName());
+                para.addHighlight(Integer.toString(quantity));
             }
         }
-
-        @Override
-        public boolean isDemand() { return true; }
     }
 }

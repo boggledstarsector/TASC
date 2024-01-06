@@ -303,8 +303,8 @@ public class Boggled_Perihelion_Project extends BaseIndustry implements BoggledI
     }
 
     @Override
-    protected void addPostDemandSection(TooltipMakerAPI tooltip, boolean hasDemand, IndustryTooltipMode mode)
-    {
+    protected void addPostDemandSection(TooltipMakerAPI tooltip, boolean hasDemand, IndustryTooltipMode mode) {
+        thisIndustry.addPostDemandSection(this, tooltip, hasDemand, mode);
         boolean shortage = perihelionProjectHasShortage();
         float opad = 10.0F;
         Color bad = Misc.getNegativeHighlightColor();

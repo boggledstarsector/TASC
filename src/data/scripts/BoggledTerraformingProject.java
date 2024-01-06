@@ -6,6 +6,7 @@ import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import data.campaign.econ.boggledTools;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 public class BoggledTerraformingProject {
@@ -82,14 +83,14 @@ public class BoggledTerraformingProject {
     private final BoggledProjectRequirementsAND projectRequirementsHidden;
 
     private final int baseProjectDuration;
-    private final ArrayList<BoggledTerraformingDurationModifier.TerraformingDurationModifier> durationModifiers;
+    private final List<BoggledTerraformingDurationModifier.TerraformingDurationModifier> durationModifiers;
 
-    private final ArrayList<BoggledProjectRequirementsAND> requirementsStall;
-    private final ArrayList<BoggledProjectRequirementsAND> requirementsReset;
+    private final List<BoggledProjectRequirementsAND> requirementsStall;
+    private final List<BoggledProjectRequirementsAND> requirementsReset;
 
-    private final ArrayList<BoggledTerraformingProjectEffect.TerraformingProjectEffect> projectEffects;
+    private final List<BoggledTerraformingProjectEffect.TerraformingProjectEffect> projectEffects;
 
-    public BoggledTerraformingProject(String projectId, String[] enableSettings, String projectType, String projectTooltip, String intelCompleteMessage, String incompleteMessage, ArrayList<String> incompleteMessageHighlights, BoggledProjectRequirementsAND projectRequirements, BoggledProjectRequirementsAND projectRequirementsHidden, int baseProjectDuration, ArrayList<BoggledTerraformingDurationModifier.TerraformingDurationModifier> durationModifiers, ArrayList<BoggledProjectRequirementsAND> requirementsStall, ArrayList<BoggledProjectRequirementsAND> requirementsReset, ArrayList<BoggledTerraformingProjectEffect.TerraformingProjectEffect> projectEffects) {
+    public BoggledTerraformingProject(String projectId, String[] enableSettings, String projectType, String projectTooltip, String intelCompleteMessage, String incompleteMessage, ArrayList<String> incompleteMessageHighlights, BoggledProjectRequirementsAND projectRequirements, BoggledProjectRequirementsAND projectRequirementsHidden, int baseProjectDuration, List<BoggledTerraformingDurationModifier.TerraformingDurationModifier> durationModifiers, List<BoggledProjectRequirementsAND> requirementsStall, List<BoggledProjectRequirementsAND> requirementsReset, List<BoggledTerraformingProjectEffect.TerraformingProjectEffect> projectEffects) {
         this.projectId = projectId;
         this.enableSettings = enableSettings;
         this.projectType = projectType;

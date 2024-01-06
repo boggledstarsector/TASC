@@ -127,6 +127,7 @@ public class Boggled_Cloning extends BaseIndustry implements MarketImmigrationMo
         thisIndustry.setFunctional(functional);
     }
 
+    @Override
     public void modifyIncoming(MarketAPI market, PopulationComposition incoming)
     {
         incoming.getWeight().modifyFlat(getModId(), getImmigrationBonus(), Misc.ucFirst(this.getCurrentName().toLowerCase()));

@@ -97,8 +97,14 @@ market_ruins_widespread,MarketHasCondition,false,"ruins_widespread"
 market_ruins_extensive,MarketHasCondition,false,"ruins_extensive"
 market_ruins_vast,MarketHasCondition,false,"ruins_vast"
 
-market_has_moderate_water_present,MarketHasWaterPresent,false,1 ; 2
-market_has_large_water_present,MarketHasWaterPresent,false,2 ; 2
+market_has_moderate_water_present,MarketHasWaterPresent,false,"{
+	'min_water_level' : 1,
+	'max_water_level' : 2
+}"
+market_has_large_water_present,MarketHasWaterPresent,false,"{
+	'min_water_level' : 2,
+	'max_water_level' : 2
+}"
 
 market_has_atmosphere_processor,MarketHasIndustry,false,"BOGGLED_ATMOSPHERE_PROCESSOR"
 market_has_genelab,MarketHasIndustry,false,"BOGGLED_GENELAB"
@@ -125,7 +131,7 @@ world_type_supports_farmland_improvement,WorldTypeSupportsResourceImprovement,fa
 world_type_supports_organics_improvement,WorldTypeSupportsResourceImprovement,false,"organics"
 world_type_supports_volatiles_improvement,WorldTypeSupportsResourceImprovement,false,"volatiles"
 
-terraforming_possible_on_market,TerraformingPossibleOnMarket,false,"irradiated"
+terraforming_possible_on_market,TerraformingPossibleOnMarket,false,"[ 'irradiated' ]"
 
 focus_planet_not_gas_giant,FocusPlanetType,true,"gas_giant"
 focus_planet_gas_giant,FocusPlanetType,false,"gas_giant"

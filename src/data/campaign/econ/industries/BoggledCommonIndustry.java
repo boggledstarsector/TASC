@@ -5,6 +5,7 @@ import com.fs.starfarer.api.campaign.econ.CommoditySpecAPI;
 import com.fs.starfarer.api.campaign.econ.Industry;
 import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.impl.campaign.econ.impl.BaseIndustry;
+import com.fs.starfarer.api.impl.campaign.population.PopulationComposition;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
 import com.fs.starfarer.api.util.Pair;
@@ -15,9 +16,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.awt.*;
+import java.util.*;
 import java.util.List;
-import java.util.ArrayList;
-import java.util.Map;
 
 public class BoggledCommonIndustry {
     /*
@@ -26,16 +26,19 @@ public class BoggledCommonIndustry {
     private final String industryId;
     private final String industryTooltip;
 
-    public ArrayList<BoggledTerraformingProject.ProjectInstance> projects;
-    private ArrayList<BoggledCommoditySupplyDemand.CommoditySupplyAndDemand> commoditySupplyAndDemands;
-    private ArrayList<BoggledCommoditySupplyDemand.CommodityDemandShortageEffect> commodityDemandShortageEffects;
+    public List<BoggledTerraformingProject.ProjectInstance> projects;
+
+    private List<BoggledCommoditySupplyDemand.CommoditySupply> commoditySupply;
+    private List<BoggledCommoditySupplyDemand.CommodityDemand> commodityDemand;
+
+    private List<BoggledCommoditySupplyDemand.IndustryEffect> industryEffects;
 
     private boolean functional = true;
 
     private boolean building = false;
     private boolean built = false;
 
-    public BoggledCommonIndustry(String industryId, String industryTooltip, ArrayList<BoggledTerraformingProject> projects, ArrayList<BoggledCommoditySupplyDemand.CommoditySupplyAndDemand> commoditySupplyAndDemands, ArrayList<BoggledCommoditySupplyDemand.CommodityDemandShortageEffect> commodityDemandShortageEffects) {
+    public BoggledCommonIndustry(String industryId, String industryTooltip, List<BoggledTerraformingProject> projects, List<BoggledCommoditySupplyDemand.CommoditySupply> commoditySupply, List<BoggledCommoditySupplyDemand.CommodityDemand> commodityDemand, List<BoggledCommoditySupplyDemand.IndustryEffect> industryEffects) {
         this.industryId = industryId;
         this.industryTooltip = industryTooltip;
 
@@ -44,16 +47,19 @@ public class BoggledCommonIndustry {
             this.projects.add(new BoggledTerraformingProject.ProjectInstance(project));
         }
 
-        this.commoditySupplyAndDemands = commoditySupplyAndDemands;
-        this.commodityDemandShortageEffects = commodityDemandShortageEffects;
+        this.commoditySupply = commoditySupply;
+        this.commodityDemand = commodityDemand;
+
+        this.industryEffects = industryEffects;
     }
 
     protected Object readResolve() {
         Global.getLogger(this.getClass()).info("Doing readResolve for " + industryId + " " + industryTooltip);
         BoggledCommonIndustry that = boggledTools.getIndustryProject(industryId);
         this.projects = that.projects;
-        this.commoditySupplyAndDemands = that.commoditySupplyAndDemands;
-        this.commodityDemandShortageEffects = that.commodityDemandShortageEffects;
+        this.commoditySupply = that.commoditySupply;
+        this.commodityDemand = that.commodityDemand;
+        this.industryEffects = that.industryEffects;
         return this;
     }
 
@@ -295,12 +301,15 @@ public class BoggledCommonIndustry {
     }
 
     public void apply(BaseIndustry industry, BoggledIndustryInterface industryInterface) {
-        for (BoggledCommoditySupplyDemand.CommoditySupplyAndDemand commoditySupplyAndDemand : commoditySupplyAndDemands) {
-            commoditySupplyAndDemand.applySupplyDemand(industry);
+        for (BoggledCommoditySupplyDemand.CommoditySupply commoditySupply : commoditySupply) {
+            commoditySupply.apply(industry);
+        }
+        for (BoggledCommoditySupplyDemand.CommodityDemand commodityDemand : commodityDemand) {
+            commodityDemand.apply(industry);
         }
 
-        for (BoggledCommoditySupplyDemand.CommodityDemandShortageEffect commodityDemandShortageEffect : commodityDemandShortageEffects) {
-            commodityDemandShortageEffect.applyShortageEffect(industry, industryInterface);
+        for (BoggledCommoditySupplyDemand.IndustryEffect industryEffect : industryEffects) {
+            industryEffect.applyShortageEffect(industry, industryInterface);
         }
 
         if (!industry.isFunctional()) {
@@ -310,8 +319,8 @@ public class BoggledCommonIndustry {
     }
 
     public void unapply(BaseIndustry industry, BoggledIndustryInterface industryInterface) {
-        for (BoggledCommoditySupplyDemand.CommodityDemandShortageEffect commodityDemandShortageEffect : commodityDemandShortageEffects) {
-            commodityDemandShortageEffect.unapplyShortageEffect(industry, industryInterface);
+        for (BoggledCommoditySupplyDemand.IndustryEffect industryEffect : industryEffects) {
+            industryEffect.unapplyShortageEffect(industry, industryInterface);
         }
     }
 
@@ -331,13 +340,13 @@ public class BoggledCommonIndustry {
     }
 
     public boolean hasPostDemandSection(BaseIndustry industry, boolean hasDemand, Industry.IndustryTooltipMode mode) {
-        for (BoggledCommoditySupplyDemand.CommoditySupplyAndDemand supplyAndDemand : commoditySupplyAndDemands) {
-            if (supplyAndDemand.isEnabled()) {
+        for (BoggledCommoditySupplyDemand.CommodityDemand demand : commodityDemand) {
+            if (demand.isEnabled()) {
                 return true;
             }
         }
 
-        for (BoggledCommoditySupplyDemand.CommodityDemandShortageEffect effect : commodityDemandShortageEffects) {
+        for (BoggledCommoditySupplyDemand.IndustryEffect effect : industryEffects) {
             if (effect.isEnabled()) {
                 return true;
             }
@@ -346,11 +355,18 @@ public class BoggledCommonIndustry {
     }
 
     public void addPostDemandSection(BaseIndustry industry, TooltipMakerAPI tooltip, boolean hasDemand, Industry.IndustryTooltipMode mode) {
-        for (BoggledCommoditySupplyDemand.CommoditySupplyAndDemand supplyAndDemand : commoditySupplyAndDemands) {
-            supplyAndDemand.addPostDemandSection(industry.getCurrentName(), industry, tooltip, hasDemand, mode);
+        Map<String, BoggledCommoditySupplyDemand.CommodityDemandPara> demandTypeToCommodity = new HashMap<>();
+        for (BoggledCommoditySupplyDemand.CommodityDemand demand : commodityDemand) {
+            demand.addPostDemandInfo(demandTypeToCommodity, industry);
         }
 
-        for (BoggledCommoditySupplyDemand.CommodityDemandShortageEffect effect : commodityDemandShortageEffects) {
+        for (Map.Entry<String, BoggledCommoditySupplyDemand.CommodityDemandPara> entry : demandTypeToCommodity.entrySet()) {
+            String commoditiesAnd = Misc.getAndJoined(entry.getValue().commodities.toArray(new String[0]));
+
+            tooltip.addPara(entry.getValue().prefix + commoditiesAnd + entry.getValue().suffix, 10f, Misc.getHighlightColor(), entry.getValue().highlights.toArray(new String[0]));
+        }
+
+        for (BoggledCommoditySupplyDemand.IndustryEffect effect : industryEffects) {
             effect.addPostDemandSection(industry.getCurrentName(), industry, tooltip, hasDemand, mode);
         }
     }
@@ -363,7 +379,7 @@ public class BoggledCommonIndustry {
 
         StringBuilder builder = new StringBuilder(prefix);
         List<String> highlights = new ArrayList<>();
-        for (BoggledCommoditySupplyDemand.CommodityDemandShortageEffect effect : commodityDemandShortageEffects) {
+        for (BoggledCommoditySupplyDemand.IndustryEffect effect : industryEffects) {
             Pair<String, List<String>> aiCoreDescription = effect.addAICoreDescription(industryTooltip, industry, tooltip, mode, coreType, coreId);
             builder.append(" ");
             builder.append(aiCoreDescription.one);
@@ -383,6 +399,14 @@ public class BoggledCommonIndustry {
         if (mode == Industry.AICoreDescriptionMode.INDUSTRY_TOOLTIP) {
             tooltip.addImageWithText(imagePad);
         }
+    }
+
+    public float getPatherInterest(BaseIndustry industry) {
+        return 0f;
+    }
+
+    public void modifyIncoming(BaseIndustry industry, MarketAPI market, PopulationComposition incoming) {
+
     }
 
     private Map<String, String> getTokenReplacements(MarketAPI market, int projectIndex) {

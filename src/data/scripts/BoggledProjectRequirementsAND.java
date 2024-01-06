@@ -4,8 +4,8 @@ import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import data.campaign.econ.boggledTools;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 public class BoggledProjectRequirementsAND implements Iterable<BoggledProjectRequirementsAND.RequirementWithTooltipOverride> {
@@ -32,9 +32,9 @@ public class BoggledProjectRequirementsAND implements Iterable<BoggledProjectReq
         }
     }
 
-    private final ArrayList<RequirementWithTooltipOverride> requirementsOR;
+    private final List<RequirementWithTooltipOverride> requirementsOR;
 
-    public BoggledProjectRequirementsAND(ArrayList<RequirementWithTooltipOverride> requirementsOR) {
+    public BoggledProjectRequirementsAND(List<RequirementWithTooltipOverride> requirementsOR) {
         this.requirementsOR = requirementsOR;
     }
 

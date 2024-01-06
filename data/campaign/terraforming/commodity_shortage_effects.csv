@@ -38,7 +38,7 @@ genelab_income_bonus_to_mesozoic_park,,IncomeBonusToIndustry,,"[
 ]"
 ai_mining_drones_bonus_to_mining,,SupplyBonusWithDeficitToIndustry,"fuel | supplies | ships","{
 	'industry_data' : [
-		{ 'industry_id' : 'mining', 'bonus' : 0 }
+		{ 'industry_id' : 'mining', 'description' : 'AI Mining Drones', 'bonus' : 0 }
 	],
 	'ai_core_data' : {
 		'description' : 'Increases $industryTo production bonus by $aiCoreBonus units.',

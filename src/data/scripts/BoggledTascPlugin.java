@@ -274,7 +274,7 @@ public class BoggledTascPlugin extends BaseModPlugin
             JSONArray planetTypes = settings.getMergedSpreadsheetDataForMod("id", "data/campaign/terraforming/planet_types.csv", boggledTools.BoggledMods.tascModId);
             JSONArray resourceProgressions = settings.getMergedSpreadsheetDataForMod("id", "data/campaign/terraforming/resource_progression.csv", boggledTools.BoggledMods.tascModId);
             JSONArray resourceLimits = settings.getMergedSpreadsheetDataForMod("id", "data/campaign/terraforming/planet_max_resource.csv", boggledTools.BoggledMods.tascModId);
-            JSONArray commodityDemands = settings.getMergedSpreadsheetDataForMod("id", "data/campaign/terraforming/commodity_supply_demand.csv", boggledTools.BoggledMods.tascModId);
+            JSONArray commoditySupplyAndDemand = settings.getMergedSpreadsheetDataForMod("id", "data/campaign/terraforming/commodity_supply_demand.csv", boggledTools.BoggledMods.tascModId);
             JSONArray commodityDemandShortageEffects = settings.getMergedSpreadsheetDataForMod("id", "data/campaign/terraforming/commodity_shortage_effects.csv", boggledTools.BoggledMods.tascModId);
 
             // Terraforming requirement, requirements, and project duration modifiers next
@@ -298,7 +298,7 @@ public class BoggledTascPlugin extends BaseModPlugin
             boggledTools.initialiseTerraformingRequirementsFromJSON(terraformingRequirements);
 
             boggledTools.initialiseTerraformingDurationModifiersFromJSON(terraformingDurationModifiers);
-            boggledTools.initialiseCommodityDemandsFromJSON(commodityDemands);
+            boggledTools.initialiseCommoditySupplyAndDemandFromJSON(commoditySupplyAndDemand);
             boggledTools.initialiseCommodityDemandShortageEffectsFromJSON(commodityDemandShortageEffects);
             boggledTools.initialiseTerraformingProjectEffectsFromJSON(terraformingProjectEffects);
 
@@ -379,8 +379,8 @@ public class BoggledTascPlugin extends BaseModPlugin
     public void onApplicationLoad()  {
         boggledTools.initialiseDefaultTerraformingRequirementFactories();
         boggledTools.initialiseDefaultTerraformingDurationModifierFactories();
-        boggledTools.initialiseDefaultCommodityDemandFactories();
-        boggledTools.initialiseDefaultCommodityShortageEffectFactories();
+        boggledTools.initialiseDefaultCommoditySupplyAndDemandFactories();
+        boggledTools.initialiseDefaultIndustryEffectFactories();
         boggledTools.initialiseDefaultTerraformingProjectEffectFactories();
 
         loadSettingsFromJSON();
