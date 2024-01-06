@@ -307,7 +307,9 @@ public class boggledTools {
 
     public static final HashMap<String, BoggledCommoditySupplyDemandFactory.CommodityDemandFactory> commodityDemandFactories = new HashMap<>();
     public static final HashMap<String, BoggledCommoditySupplyDemandFactory.CommoditySupplyFactory> commoditySupplyFactories = new HashMap<>();
+
     public static final HashMap<String, BoggledCommoditySupplyDemandFactory.IndustryEffectFactory> industryEffectFactories = new HashMap<>();
+    public static final HashMap<String, BoggledCommoditySupplyDemandFactory.AICoreEffectFactory> aiCoreEffectFactories = new HashMap<>();
 
     @Nullable
     public static BoggledTerraformingRequirement.TerraformingRequirement getTerraformingRequirement(String terraformingRequirementType, String id, boolean invert, String data) throws JSONException {
@@ -381,17 +383,34 @@ public class boggledTools {
     }
 
     @Nullable
-    public static BoggledCommoditySupplyDemand.IndustryEffect getCommodityDemandShortageEffect(String commodityDemandShortageEffectType, String id, String[] enableSettings, String[] commoditiesDemanded, String data) throws JSONException {
+    public static BoggledCommoditySupplyDemand.IndustryEffect getIndustryEffect(String industryEffectType, String id, String[] enableSettings, String[] commoditiesDemanded, String data) throws JSONException {
         Logger log = Global.getLogger(boggledTools.class);
 
-        BoggledCommoditySupplyDemandFactory.IndustryEffectFactory factory = industryEffectFactories.get(commodityDemandShortageEffectType);
+        BoggledCommoditySupplyDemandFactory.IndustryEffectFactory factory = industryEffectFactories.get(industryEffectType);
         if (factory == null) {
-            log.error("Commodity demand shortage effect " + id + " of type " + commodityDemandShortageEffectType + " has no assigned factory");
+            log.error("Industry effect " + id + " of type " + industryEffectType + " has no assigned factory");
             return null;
         }
         BoggledCommoditySupplyDemand.IndustryEffect effect = factory.constructFromJSON(id, enableSettings, new ArrayList<>(asList(commoditiesDemanded)), data);
         if (effect == null) {
-            log.error("Commodity demand shortage effect " + id + " of type " + commodityDemandShortageEffectType + " was null when created with data " + data);
+            log.error("Industry effect " + id + " of type " + industryEffectType + " was null when created with data " + data);
+            return null;
+        }
+        return effect;
+    }
+
+    @Nullable
+    public static BoggledCommoditySupplyDemand.AICoreEffect getAICoreEffect(String aiCoreEffectType, String id, String[] enableSettings, String data) throws JSONException {
+        Logger log = Global.getLogger(boggledTools.class);
+
+        BoggledCommoditySupplyDemandFactory.AICoreEffectFactory factory = aiCoreEffectFactories.get(aiCoreEffectType);
+        if (factory == null) {
+            log.error("AI core effect " + id + " of type " + aiCoreEffectType + " has no assigned factory");
+            return null;
+        }
+        BoggledCommoditySupplyDemand.AICoreEffect effect = factory.constructFromJSON(id, enableSettings, data);
+        if (effect == null) {
+            log.error("AI core effect " + id + " of type " + aiCoreEffectType + " was null when created with data " + data);
             return null;
         }
         return effect;
@@ -543,12 +562,22 @@ public class boggledTools {
         addIndustryEffectFactory("TagMultiplierToUpkeep", new BoggledCommoditySupplyDemandFactory.TagMultiplierToUpkeepFactory());
 
         addIndustryEffectFactory("IncomeBonusToIndustry", new BoggledCommoditySupplyDemandFactory.IncomeBonusToIndustryFactory());
-        addIndustryEffectFactory("SupplyBonusWithDeficitToIndustry", new BoggledCommoditySupplyDemandFactory.SupplyBonusWithDeficitToIndustryFactory());
+
+        addIndustryEffectFactory("BonusToAccessibility", new BoggledCommoditySupplyDemandFactory.BonusToAccessibilityFactory());
+
+        addAICoreEffectFactory("SupplyBonusWithDeficitToIndustry", new BoggledCommoditySupplyDemandFactory.SupplyBonusWithDeficitToIndustryFactory());
+
+        addAICoreEffectFactory("ShitPost", new BoggledCommoditySupplyDemandFactory.ShitPostFactory());
     }
 
     public static void addIndustryEffectFactory(String key, BoggledCommoditySupplyDemandFactory.IndustryEffectFactory value) {
-        Global.getLogger(boggledTools.class).info("Adding commodity shortage effect factory " + key);
+        Global.getLogger(boggledTools.class).info("Adding industry effect factory " + key);
         industryEffectFactories.put(key, value);
+    }
+
+    public static void addAICoreEffectFactory(String key, BoggledCommoditySupplyDemandFactory.AICoreEffectFactory value) {
+        Global.getLogger(boggledTools.class).info("Adding AI core effect factory " + key);
+        aiCoreEffectFactories.put(key, value);
     }
 
     public static void initialiseDefaultTerraformingProjectEffectFactories() {
@@ -605,6 +634,25 @@ public class boggledTools {
             }
         }
         return new BoggledProjectRequirementsAND(reqs);
+    }
+
+    private static List<BoggledCommoditySupplyDemand.IndustryEffect> industryEffectsFromObject(JSONObject object, String key, String id) throws JSONException {
+        Logger log = Global.getLogger(boggledTools.class);
+
+        String[] effectStrings = object.getString(key).split(csvOptionSeparator);
+        List<BoggledCommoditySupplyDemand.IndustryEffect> ret = new ArrayList<>();
+        for (String effectString : effectStrings) {
+            if (effectString.isEmpty()) {
+                continue;
+            }
+            BoggledCommoditySupplyDemand.IndustryEffect effect = boggledTools.industryEffects.get(effectString);
+            if (effect != null) {
+                ret.add(effect);
+            } else {
+                log.info("Industry " + id + " has invalid " + key + " effect " + effectString);
+            }
+        }
+        return ret;
     }
 
     public static void initialisePlanetTypesFromJSON(@NotNull JSONArray planetTypesJSON) {
@@ -764,21 +812,24 @@ public class boggledTools {
                     }
                 }
 
-                String[] commodityDemandShortageEffectStrings = row.getString("demand_shortage_effect").split(csvOptionSeparator);
-                ArrayList<BoggledCommoditySupplyDemand.IndustryEffect> industryEffects = new ArrayList<>();
-                for (String commodityDemandShortageEffectString : commodityDemandShortageEffectStrings) {
-                    if (commodityDemandShortageEffectString.isEmpty()) {
+                List<BoggledCommoditySupplyDemand.IndustryEffect> industryEffects = industryEffectsFromObject(row, "industry_effects", id);
+                List< BoggledCommoditySupplyDemand.IndustryEffect> improveEffects = industryEffectsFromObject(row, "improve_effects", id);
+
+                String[] aiCoreEffectStrings = row.getString("ai_core_effects").split(csvOptionSeparator);
+                ArrayList<BoggledCommoditySupplyDemand.AICoreEffect> aiCoreEffects = new ArrayList<>();
+                for (String aiCoreEffectString : aiCoreEffectStrings) {
+                    if (aiCoreEffectString.isEmpty()) {
                         continue;
                     }
-                    BoggledCommoditySupplyDemand.IndustryEffect shortageEffect = boggledTools.industryEffects.get(commodityDemandShortageEffectString);
-                    if (shortageEffect != null) {
-                        industryEffects.add(shortageEffect);
+                    BoggledCommoditySupplyDemand.AICoreEffect aiCoreEffect = boggledTools.aiCoreEffects.get(aiCoreEffectString);
+                    if (aiCoreEffect != null) {
+                        aiCoreEffects.add(aiCoreEffect);
                     } else {
-                        log.info("Industry " + id + " has invalid commodity demand shortage effect " + commodityDemandShortageEffectString);
+                        log.info("Industry " + id + " has invalid AI core effect " + aiCoreEffectString);
                     }
                 }
 
-                industryProjects.put(id, new BoggledCommonIndustry(id, industry, projects, commoditySupply, commodityDemand, industryEffects));
+                industryProjects.put(id, new BoggledCommonIndustry(id, industry, projects, commoditySupply, commodityDemand, industryEffects, improveEffects, aiCoreEffects));
             } catch (JSONException e) {
                 log.error("Error in industry options: " + e);
             }
@@ -830,37 +881,69 @@ public class boggledTools {
         boggledTools.commoditySupply = commoditySupply;
     }
 
-    public static void initialiseCommodityDemandShortageEffectsFromJSON(@NotNull JSONArray commoditDemandShortageEffectsJSON) {
+    public static void initialiseIndustryEffectsFromJSON(@NotNull JSONArray industryEffectsJSON) {
         Logger log = Global.getLogger(boggledTools.class);
 
-        HashMap<String, BoggledCommoditySupplyDemand.IndustryEffect> commodityDemandShortageEffects = new HashMap<>();
+        HashMap<String, BoggledCommoditySupplyDemand.IndustryEffect> industryEffects = new HashMap<>();
 
         String idForErrors = "";
-        for (int i = 0; i < commoditDemandShortageEffectsJSON.length(); ++i) {
+        for (int i = 0; i < industryEffectsJSON.length(); ++i) {
             try {
-                JSONObject row = commoditDemandShortageEffectsJSON.getJSONObject(i);
+                JSONObject row = industryEffectsJSON.getJSONObject(i);
 
                 String id = row.getString("id");
-                idForErrors = id;
                 if (id == null || id.isEmpty()) {
                     continue;
                 }
+                idForErrors = id;
 
                 String[] enableSettings = row.getString("enable_settings").split(csvOptionSeparator);
 
-                String commodityDemandShortageEffectType = row.getString("commodity_shortage_effect_type");
+                String industryEffectType = row.getString("industry_effect_type");
                 String[] commoditiesDemanded = row.getString("commodities_demanded").split(csvOptionSeparator);
                 String data = row.getString("data");
 
-                BoggledCommoditySupplyDemand.IndustryEffect effect = getCommodityDemandShortageEffect(commodityDemandShortageEffectType, id, enableSettings, commoditiesDemanded, data);
+                BoggledCommoditySupplyDemand.IndustryEffect effect = getIndustryEffect(industryEffectType, id, enableSettings, commoditiesDemanded, data);
 
-                commodityDemandShortageEffects.put(id, effect);
+                industryEffects.put(id, effect);
             } catch (JSONException e) {
-                log.error("Error in commodity demand shortage effect '" + idForErrors + "': " + e);
+                log.error("Error in industry effect '" + idForErrors + "': " + e);
             }
         }
 
-        boggledTools.industryEffects = commodityDemandShortageEffects;
+        boggledTools.industryEffects = industryEffects;
+    }
+
+    public static void initialiseAICoreEffectsFromJSON(@NotNull JSONArray aiCoreEffectsJSON) throws JSONException {
+        Logger log = Global.getLogger(boggledTools.class);
+
+        HashMap<String, BoggledCommoditySupplyDemand.AICoreEffect> aiCoreEffects = new HashMap<>();
+
+        String idForErrors = "";
+        for (int i = 0; i < aiCoreEffectsJSON.length(); ++i) {
+            try {
+                JSONObject row = aiCoreEffectsJSON.getJSONObject(i);
+
+                String id = row.getString("id");
+                if (id == null || id.isEmpty()) {
+                    continue;
+                }
+                idForErrors = id;
+
+                String[] enableSettings = row.getString("enable_settings").split(csvOptionSeparator);
+
+                String aiCoreEffectType = row.getString("ai_core_effect_type");
+                String data = row.getString("data");
+
+                BoggledCommoditySupplyDemand.AICoreEffect effect = getAICoreEffect(aiCoreEffectType, id, enableSettings, data);
+
+                aiCoreEffects.put(id, effect);
+            } catch (JSONException e) {
+                log.error("Error in AI core effect '" + idForErrors + "': " + e);
+            }
+        }
+
+        boggledTools.aiCoreEffects = aiCoreEffects;
     }
 
     public static void initialiseTerraformingRequirementFromJSON(@NotNull JSONArray terraformingRequirementJSON) {
@@ -1192,7 +1275,9 @@ public class boggledTools {
 
     private static HashMap<String, BoggledCommoditySupplyDemand.CommoditySupply> commoditySupply;
     private static HashMap<String, BoggledCommoditySupplyDemand.CommodityDemand> commodityDemand;
+
     private static HashMap<String, BoggledCommoditySupplyDemand.IndustryEffect> industryEffects;
+    private static HashMap<String, BoggledCommoditySupplyDemand.AICoreEffect> aiCoreEffects;
 
     private static HashMap<String, BoggledTerraformingProjectEffect.TerraformingProjectEffect> terraformingProjectEffects;
     private static HashMap<String, BoggledCommonIndustry> industryProjects;

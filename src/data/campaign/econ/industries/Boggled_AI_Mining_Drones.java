@@ -1,14 +1,9 @@
 package data.campaign.econ.industries;
 
-import java.awt.Color;
-
 import com.fs.starfarer.api.campaign.econ.Industry;
 import com.fs.starfarer.api.impl.campaign.econ.impl.BaseIndustry;
-import com.fs.starfarer.api.impl.campaign.ids.Commodities;
-import com.fs.starfarer.api.impl.campaign.ids.Tags;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.*;
-import com.fs.starfarer.api.util.Misc;
 import data.campaign.econ.boggledTools;
 
 public class Boggled_AI_Mining_Drones extends BaseIndustry implements BoggledIndustryInterface {
@@ -109,8 +104,8 @@ public class Boggled_AI_Mining_Drones extends BaseIndustry implements BoggledInd
     }
 
     @Override
-    public void applyDeficitToProduction(int index, Pair<String, Integer> deficit, String... commodities) {
-        super.applyDeficitToProduction(index, deficit, commodities);
+    public void applyDeficitToProduction(String modId, Pair<String, Integer> deficit, String... commodities) {
+        thisIndustry.applyDeficitToProduction(this, modId, deficit, commodities);
     }
 
     @Override
@@ -125,34 +120,13 @@ public class Boggled_AI_Mining_Drones extends BaseIndustry implements BoggledInd
 
     public static float IMPROVE_BONUS = .20F;
 
-    public int getProductionBonusFromMiningDrones()
-    {
-        int ai_bonus = 0;
-        if (Commodities.ALPHA_CORE.equals(this.aiCoreId))
-        {
-            ai_bonus = 3;
-        }
-        else if (Commodities.BETA_CORE.equals(this.aiCoreId))
-        {
-            ai_bonus = 2;
-        }
-        else if (Commodities.GAMMA_CORE.equals(this.aiCoreId))
-        {
-            ai_bonus = 1;
-        }
-
-        Pair<String, Integer> deficit = this.getMaxDeficit(Commodities.FUEL, Commodities.SUPPLIES, Commodities.SHIPS);
-        if(deficit.two > 0)
-        {
-            ai_bonus = ai_bonus - deficit.two;
-        }
-
-        // Make sure we can't return a negative bonus if a large supply deficit exists
-        return Math.max(ai_bonus, 0);
-    }
-
     @Override
     public float getPatherInterest() { return 10.0F; }
+
+    @Override
+    public boolean canInstallAICores() {
+        return thisIndustry.canInstallAICores();
+    }
 
     @Override
     public void addAlphaCoreDescription(TooltipMakerAPI tooltip, AICoreDescriptionMode mode) {
@@ -182,68 +156,23 @@ public class Boggled_AI_Mining_Drones extends BaseIndustry implements BoggledInd
     }
 
     @Override
-    protected void addRightAfterDescriptionSection(TooltipMakerAPI tooltip, IndustryTooltipMode mode)
-    {
-        float opad = 10.0F;
-        Color highlight = Misc.getHighlightColor();
-        Color bad = Misc.getNegativeHighlightColor();
-
-        if(this.market.getPrimaryEntity() != null && this.market.getPrimaryEntity().hasTag(Tags.STATION))
-        {
-            tooltip.addPara("Current production bonus: %s", opad, highlight, getProductionBonusFromMiningDrones() + "");
-            Pair<String, Integer> deficit = this.getMaxDeficit(Commodities.FUEL, Commodities.SUPPLIES, Commodities.SHIPS);
-
-            if(deficit.two > 0)
-            {
-                tooltip.addPara("The production bonus is being reduced by " + deficit.two + " due to a " + deficit.one + " shortage.", bad, opad);
-            }
-        }
-        else
-        {
-            tooltip.addPara("AI Mining Drones are only useful on station-based markets.", opad);
-        }
+    protected void addRightAfterDescriptionSection(TooltipMakerAPI tooltip, IndustryTooltipMode mode) {
+        thisIndustry.addRightAfterDescriptionSection(this, tooltip, mode);
     }
 
     @Override
     public boolean canImprove() {
-        return true;
+        return thisIndustry.canImprove(this);
     }
 
     @Override
-    protected void applyImproveModifiers()
-    {
-        if (this.isImproved())
-        {
-            market.getAccessibilityMod().modifyFlat(this.getModId(5), IMPROVE_BONUS, "AI Mining Drones");
-
-            if (!this.isFunctional())
-            {
-                this.unapply();
-            }
-        }
-        else
-        {
-            this.market.getAccessibilityMod().unmodifyFlat(this.getModId(5));
-        }
+    protected void applyImproveModifiers() {
+        thisIndustry.applyImproveModifiers(this, this);
     }
 
     @Override
-    public void addImproveDesc(TooltipMakerAPI info, ImprovementDescriptionMode mode)
-    {
-        float opad = 10.0F;
-        Color highlight = Misc.getHighlightColor();
-        float a = IMPROVE_BONUS;
-        String aStr = Math.round(a * 100.0F) + "%";
-        if (mode == ImprovementDescriptionMode.INDUSTRY_TOOLTIP)
-        {
-            info.addPara("Colony accessibility increased by %s.", 0.0F, highlight, aStr);
-        }
-        else
-        {
-            info.addPara("Increases colony accessibility by %s.", 0.0F, highlight, aStr);
-        }
-
-        info.addSpacer(opad);
-        super.addImproveDesc(info, mode);
+    public void addImproveDesc(TooltipMakerAPI tooltip, ImprovementDescriptionMode mode) {
+        thisIndustry.addImproveDesc(this, tooltip, mode);
+        super.addImproveDesc(tooltip, mode);
     }
 }

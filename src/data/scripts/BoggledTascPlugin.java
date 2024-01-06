@@ -275,7 +275,8 @@ public class BoggledTascPlugin extends BaseModPlugin
             JSONArray resourceProgressions = settings.getMergedSpreadsheetDataForMod("id", "data/campaign/terraforming/resource_progression.csv", boggledTools.BoggledMods.tascModId);
             JSONArray resourceLimits = settings.getMergedSpreadsheetDataForMod("id", "data/campaign/terraforming/planet_max_resource.csv", boggledTools.BoggledMods.tascModId);
             JSONArray commoditySupplyAndDemand = settings.getMergedSpreadsheetDataForMod("id", "data/campaign/terraforming/commodity_supply_demand.csv", boggledTools.BoggledMods.tascModId);
-            JSONArray commodityDemandShortageEffects = settings.getMergedSpreadsheetDataForMod("id", "data/campaign/terraforming/commodity_shortage_effects.csv", boggledTools.BoggledMods.tascModId);
+            JSONArray industryEffects = settings.getMergedSpreadsheetDataForMod("id", "data/campaign/terraforming/industry_effects.csv", boggledTools.BoggledMods.tascModId);
+            JSONArray aiCoreEffects = settings.getMergedSpreadsheetDataForMod("id", "data/campaign/terraforming/ai_core_effects.csv", boggledTools.BoggledMods.tascModId);
 
             // Terraforming requirement, requirements, and project duration modifiers next
             JSONArray terraformingRequirement = settings.getMergedSpreadsheetDataForMod("id", "data/campaign/terraforming/terraforming_requirement.csv", boggledTools.BoggledMods.tascModId);
@@ -299,7 +300,9 @@ public class BoggledTascPlugin extends BaseModPlugin
 
             boggledTools.initialiseTerraformingDurationModifiersFromJSON(terraformingDurationModifiers);
             boggledTools.initialiseCommoditySupplyAndDemandFromJSON(commoditySupplyAndDemand);
-            boggledTools.initialiseCommodityDemandShortageEffectsFromJSON(commodityDemandShortageEffects);
+
+            boggledTools.initialiseIndustryEffectsFromJSON(industryEffects);
+            boggledTools.initialiseAICoreEffectsFromJSON(aiCoreEffects);
             boggledTools.initialiseTerraformingProjectEffectsFromJSON(terraformingProjectEffects);
 
             boggledTools.initialiseTerraformingProjectsFromJSON(terraformingProjects);

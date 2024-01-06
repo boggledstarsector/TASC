@@ -1,4 +1,4 @@
-id,enable_settings,commodity_shortage_effect_type,commodities_demanded,data
+id,enable_settings,industry_effect_type,commodities_demanded,data
 # I can't think of any good way to automatically tie commodity shortages to effects since you might want the maximum deficit of a market size and a flat commodity, or the sum of deficits to tie to give a flat penalty to upkeep, etc
 # So just do the effects independently and rely on humans to keep things in line
 # I hate it
@@ -36,18 +36,7 @@ perihelion_project_deficit_to_inactive,,DeficitToInactive,"domain_artifacts | me
 genelab_income_bonus_to_mesozoic_park,,IncomeBonusToIndustry,,"[
 	{ 'industry_id' : 'BOGGLED_MESOZOIC_PARK', 'income_multiplier' : 1.5 }
 ]"
-ai_mining_drones_bonus_to_mining,,SupplyBonusWithDeficitToIndustry,"fuel | supplies | ships","{
-	'industry_data' : [
-		{ 'industry_id' : 'mining', 'description' : 'AI Mining Drones', 'bonus' : 0 }
-	],
-	'ai_core_data' : {
-		'description' : 'Increases $industryTo production bonus by $aiCoreBonus units.',
-		'effects' = [
-			{ 'ai_core_id' : 'alpha_core', 'bonus' : 3 },
-			{ 'ai_core_id' : 'beta_core', 'bonus' : 2 },
-			{ 'ai_core_id' : 'gamma_core', 'bonus' : 1 }
-		]
-	}
-}"
+
+ai_mining_drones_improve_bonus_to_accessibility,,BonusToAccessibility,,0.20
 
 just_break_the_damn_thing,,DeficitToInactive,"heavy_machinery | supplies | fuel",

@@ -118,8 +118,8 @@ public class Boggled_Cloning extends BaseIndustry implements MarketImmigrationMo
     }
 
     @Override
-    public void applyDeficitToProduction(int index, Pair<String, Integer> deficit, String... commodities) {
-        super.applyDeficitToProduction(index, deficit, commodities);
+    public void applyDeficitToProduction(String modId, Pair<String, Integer> deficit, String... commodities) {
+        thisIndustry.applyDeficitToProduction(this, modId, deficit, commodities);
     }
 
     @Override

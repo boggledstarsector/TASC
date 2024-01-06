@@ -114,8 +114,8 @@ public class Boggled_Atmosphere_Processor extends BaseIndustry implements Boggle
     }
 
     @Override
-    public void applyDeficitToProduction(int index, Pair<String, Integer> deficit, String... commodities) {
-        super.applyDeficitToProduction(index, deficit, commodities);
+    public void applyDeficitToProduction(String modId, Pair<String, Integer> deficit, String... commodities) {
+        thisIndustry.applyDeficitToProduction(this, modId, deficit, commodities);
     }
 
     @Override
@@ -142,7 +142,22 @@ public class Boggled_Atmosphere_Processor extends BaseIndustry implements Boggle
 
     @Override
     public boolean canInstallAICores() {
-        return false;
+        return thisIndustry.canInstallAICores();
+    }
+
+    @Override
+    public void addAlphaCoreDescription(TooltipMakerAPI tooltip, AICoreDescriptionMode mode) {
+        thisIndustry.addAICoreDescription(this, tooltip, mode, "Alpha", "alpha_core");
+    }
+
+    @Override
+    public void addBetaCoreDescription(TooltipMakerAPI tooltip, AICoreDescriptionMode mode) {
+        thisIndustry.addAICoreDescription(this, tooltip, mode, "Beta", "beta_core");
+    }
+
+    @Override
+    public void addGammaCoreDescription(TooltipMakerAPI tooltip, AICoreDescriptionMode mode) {
+        thisIndustry.addAICoreDescription(this, tooltip, mode, "Gamma", "gamma_core");
     }
 }
 

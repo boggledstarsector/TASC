@@ -8,6 +8,65 @@ import org.json.JSONObject;
 import java.util.*;
 
 public class BoggledCommoditySupplyDemandFactory {
+    public interface AICoreEffectFactory {
+        BoggledCommoditySupplyDemand.AICoreEffect constructFromJSON(String id, String[] enableSettings, String data) throws JSONException;
+    }
+
+    public static class ShitPostFactory implements AICoreEffectFactory {
+        @Override
+        public BoggledCommoditySupplyDemand.AICoreEffect constructFromJSON(String id, String[] enableSettings, String data) throws JSONException {
+            return new BoggledCommoditySupplyDemand.ShitPost(id, enableSettings);
+        }
+    }
+
+    public static class SupplyBonusWithDeficitToIndustryFactory implements AICoreEffectFactory {
+        @Override
+        public BoggledCommoditySupplyDemand.AICoreEffect constructFromJSON(String id, String[] enableSettings, String data) throws JSONException {
+            JSONObject jsonData = new JSONObject(data);
+
+            JSONArray industryArray = jsonData.getJSONArray("industry_data");
+
+            List<BoggledCommoditySupplyDemand.SupplyBonusWithDeficitToIndustry.Data> effectData = new ArrayList<>();
+            for (int i = 0; i < industryArray.length(); ++i) {
+                JSONObject industryData = industryArray.getJSONObject(i);
+
+                String industryId = industryData.getString("industry_id");
+                String description = industryData.getString("description");
+                int bonus = industryData.getInt("bonus");
+
+                effectData.add(new BoggledCommoditySupplyDemand.SupplyBonusWithDeficitToIndustry.Data(industryId, description, bonus));
+            }
+
+            JSONObject aiCoreObject = jsonData.getJSONObject("ai_core_data");
+
+            JSONArray aiCoreEffectsArray = aiCoreObject.getJSONArray("effects");
+            Map<String, Integer> aiCoreEffectMap = new HashMap<>();
+            for (int i = 0; i < aiCoreEffectsArray.length(); ++i) {
+                JSONObject aiCoreData = aiCoreEffectsArray.getJSONObject(i);
+
+                String aiCoreId = aiCoreData.getString("ai_core_id");
+                int bonus = aiCoreData.getInt("bonus");
+
+                aiCoreEffectMap.put(aiCoreId, bonus);
+            }
+
+            List<String> commoditiesDemanded = new ArrayList<>();
+            JSONArray commoditiesDemandedArray = jsonData.optJSONArray("commodities_demanded");
+            if (commoditiesDemandedArray != null) {
+                for (int i = 0; i < commoditiesDemandedArray.length(); ++i) {
+                    String commodityId = commoditiesDemandedArray.getString(i);
+                    commoditiesDemanded.add(commodityId);
+                }
+            }
+
+            String aiCoreDescription = jsonData.optString("ai_core_description", "");
+            String afterDescriptionSection = jsonData.optString("after_description_section", "");
+            String afterDescriptionSectionShortage = jsonData.optString("after_description_section_shortage", "");
+
+            return new BoggledCommoditySupplyDemand.SupplyBonusWithDeficitToIndustry(id, enableSettings, effectData, aiCoreEffectMap, commoditiesDemanded, aiCoreDescription, afterDescriptionSection, afterDescriptionSectionShortage);
+        }
+    }
+
     public interface IndustryEffectFactory {
         BoggledCommoditySupplyDemand.IndustryEffect constructFromJSON(String id, String[] enableSettings, ArrayList<String> commoditiesDemanded, String data) throws JSONException;
     }
@@ -92,43 +151,11 @@ public class BoggledCommoditySupplyDemandFactory {
         }
     }
 
-    public static class SupplyBonusWithDeficitToIndustryFactory implements IndustryEffectFactory {
+    public static class BonusToAccessibilityFactory implements IndustryEffectFactory {
         @Override
         public BoggledCommoditySupplyDemand.IndustryEffect constructFromJSON(String id, String[] enableSettings, ArrayList<String> commoditiesDemanded, String data) throws JSONException {
-            JSONObject jsonData = new JSONObject(data);
-
-            JSONArray industryArray = jsonData.getJSONArray("industry_data");
-
-            List<BoggledCommoditySupplyDemand.SupplyBonusWithDeficitToIndustry.Data> effectData = new ArrayList<>();
-            for (int i = 0; i < industryArray.length(); ++i) {
-                JSONObject industryData = industryArray.getJSONObject(i);
-
-                String industryId = industryData.getString("industry_id");
-                String description = industryData.getString("description");
-                int bonus = industryData.getInt("bonus");
-
-                effectData.add(new BoggledCommoditySupplyDemand.SupplyBonusWithDeficitToIndustry.Data(industryId, description, bonus));
-            }
-
-            JSONObject aiCoreObject = jsonData.getJSONObject("ai_core_data");
-
-            String aiCoreDescription = aiCoreObject.getString("description");
-
-            JSONArray aiCoreArray = aiCoreObject.getJSONArray("effects");
-
-            Map<String, Integer> aiCoreEffectMap = new HashMap<>();
-            for (int i = 0; i < aiCoreArray.length(); ++i) {
-                JSONObject aiCoreData = aiCoreArray.getJSONObject(i);
-
-                String aiCoreId = aiCoreData.getString("ai_core_id");
-                int bonus = aiCoreData.getInt("bonus");
-
-                aiCoreEffectMap.put(aiCoreId, bonus);
-            }
-
-            BoggledCommoditySupplyDemand.SupplyBonusWithDeficitToIndustry.AICoreData aiCoreData = new BoggledCommoditySupplyDemand.SupplyBonusWithDeficitToIndustry.AICoreData(aiCoreDescription, aiCoreEffectMap);
-
-            return new BoggledCommoditySupplyDemand.SupplyBonusWithDeficitToIndustry(id, enableSettings, commoditiesDemanded, effectData, aiCoreData);
+            float accessibilityBonus = Float.parseFloat(data);
+            return new BoggledCommoditySupplyDemand.BonusToAccessibility(id, enableSettings, commoditiesDemanded, accessibilityBonus);
         }
     }
 
