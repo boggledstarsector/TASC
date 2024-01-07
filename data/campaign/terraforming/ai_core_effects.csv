@@ -1,20 +1,7 @@
-id,enable_settings,ai_core_effect_type,data
+id,enable_settings,alpha_core_effects,beta_core_effects,gamma_core_effects
 # This is a bit more of a custom effect
 # You'll probably want an ai_core_data field in the data
-shitpost,,ShitPost,"Breaks your save."
-ai_mining_drones_bonus_to_mining,,SupplyBonusWithDeficitToIndustry,"{
-	'industry_data' : [
-		{ 'industry_id' : 'mining', 'description' : 'AI Mining Drones', 'bonus' : 0 }
-	],
-	'commodities_demanded' : [ 'fuel', 'supplies', 'ships' ],
-	'after_description_section' : 'Current production bonus: $aiCoreBonusWithDeficit.',
-	'after_description_section_shortage' : 'The production bonus is being reduced by $commodityShortageAmount due to a $commodityShortageName shortage.',
-	'ai_core_description' : 'Increases $industryTo production bonus by $aiCoreBonusWithoutDeficit units.',
-	'ai_core_data' : {
-		'effects' = [
-			{ 'ai_core_id' : 'alpha_core', 'bonus' : 3 },
-			{ 'ai_core_id' : 'beta_core', 'bonus' : 2 },
-			{ 'ai_core_id' : 'gamma_core', 'bonus' : 1 }
-		]
-	}
-}"
+ai_mining_drones_bonus_to_mining,,ai_mining_drones_alpha_core_bonus_to_mining,ai_mining_drones_beta_core_bonus_to_mining,ai_mining_drones_gamma_core_bonus_to_mining
+chameleon_reduce_demand,,chameleon_alpha_core_reduce_demand,,
+chameleon_reduce_upkeep,,chameleon_alpha_core_reduce_upkeep,,
+chameleon_eliminate_pather_interest,,chameleon_alpha_core_eliminate_pather_interest,,

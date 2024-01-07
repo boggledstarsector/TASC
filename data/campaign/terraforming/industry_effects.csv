@@ -37,6 +37,24 @@ genelab_income_bonus_to_mesozoic_park,,IncomeBonusToIndustry,,"[
 	{ 'industry_id' : 'BOGGLED_MESOZOIC_PARK', 'income_multiplier' : 1.5 }
 ]"
 
+ai_mining_drones_alpha_core_bonus_to_mining,,SupplyBonusToIndustryWithDeficit,"fuel | supplies | ships","{
+	'industry_id' : 'mining',
+	'bonus' : 3
+}"
+ai_mining_drones_beta_core_bonus_to_mining,,SupplyBonusToIndustryWithDeficit,"fuel | supplies | ships","{
+	'industry_id' : 'mining',
+	'bonus' : 2
+}"
+ai_mining_drones_gamma_core_bonus_to_mining,,SupplyBonusToIndustryWithDeficit,"fuel | supplies | ships","{
+	'industry_id' : 'mining',
+	'bonus' : 1
+}"
 ai_mining_drones_improve_bonus_to_accessibility,,BonusToAccessibility,,0.20
+
+chameleon_alpha_core_reduce_demand,,ReduceAllDemand,,1
+chameleon_alpha_core_reduce_upkeep,,ReduceUpkeep,,0.25
+chameleon_alpha_core_eliminate_pather_interest,,EliminatePatherInterest,,
+
+chameleon_improve_bonus_to_stability,,BonusToStability,,1
 
 just_break_the_damn_thing,,DeficitToInactive,"heavy_machinery | supplies | fuel",

@@ -2,7 +2,6 @@ package data.campaign.econ.industries;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.*;
-import com.fs.starfarer.api.campaign.econ.Industry;
 import com.fs.starfarer.api.campaign.econ.MarketImmigrationModifier;
 import com.fs.starfarer.api.campaign.listeners.FleetEventListener;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
@@ -22,114 +21,9 @@ import java.awt.*;
 import java.util.List;
 import java.util.Random;
 
-public class Boggled_Remnant_Station extends OrbitalStation implements RouteManager.RouteFleetSpawner, FleetEventListener, BoggledIndustryInterface {
-    private final BoggledCommonIndustry thisIndustry;
+public class Boggled_Remnant_Station extends BoggledOrbitalStation implements RouteManager.RouteFleetSpawner, FleetEventListener, BoggledIndustryInterface {
     public Boggled_Remnant_Station() {
-        super();
-        thisIndustry = boggledTools.getIndustryProject("remnant_station");
-    }
-
-    @Override
-    public void startBuilding() {
-        super.startBuilding();
-        thisIndustry.startBuilding(this);
-    }
-
-    @Override
-    public void startUpgrading() {
-        super.startUpgrading();
-        thisIndustry.startUpgrading(this);
-    }
-
-    @Override
-    protected void buildingFinished() {
-        super.buildingFinished();
-        thisIndustry.buildingFinished(this);
-    }
-
-    @Override
-    protected void upgradeFinished(Industry previous) {
-        super.upgradeFinished(previous);
-        thisIndustry.upgradeFinished(this, previous);
-    }
-
-    @Override
-    public void finishBuildingOrUpgrading() {
-        super.finishBuildingOrUpgrading();
-        thisIndustry.finishBuildingOrUpgrading(this);
-    }
-
-    @Override
-    public boolean isBuilding() { return thisIndustry.isBuilding(this); }
-
-    @Override
-    public boolean isFunctional() { return super.isFunctional() && thisIndustry.isFunctional(); }
-
-    @Override
-    public boolean isUpgrading() { return thisIndustry.isUpgrading(this); }
-
-    @Override
-    public float getBuildOrUpgradeProgress() { return thisIndustry.getBuildOrUpgradeProgress(this); }
-
-    @Override
-    public String getBuildOrUpgradeDaysText() {
-        return thisIndustry.getBuildOrUpgradeDaysText(this);
-    }
-
-    @Override
-    public String getBuildOrUpgradeProgressText() {
-        return thisIndustry.getBuildOrUpgradeProgressText(this);
-    }
-
-    @Override
-    public boolean isAvailableToBuild() { return thisIndustry.isAvailableToBuild(this); }
-
-    @Override
-    public boolean showWhenUnavailable() { return thisIndustry.showWhenUnavailable(this); }
-
-    @Override
-    public String getUnavailableReason() { return thisIndustry.getUnavailableReason(this); }
-
-//    @Override
-//    public void advance(float amount) {
-//        super.advance(amount);
-//        thisIndustry.advance(amount, this);
-//    }
-//
-//    @Override
-//    public void apply() {
-//        super.apply(true);
-//        thisIndustry.apply(this, this);
-//    }
-//
-//    @Override
-//    public void unapply() {
-//        super.unapply();
-//    }
-
-    @Override
-    protected void addRightAfterDescriptionSection(TooltipMakerAPI tooltip, IndustryTooltipMode mode) {
-        thisIndustry.addRightAfterDescriptionSection(this, tooltip, mode);
-    }
-
-    @Override
-    protected boolean hasPostDemandSection(boolean hasDemand, IndustryTooltipMode mode) {
-        return true;
-    }
-
-//    @Override
-//    protected void addPostDemandSection(TooltipMakerAPI tooltip, boolean hasDemand, IndustryTooltipMode mode) {
-//        thisIndustry.addPostDemandSection(this, tooltip, hasDemand, mode);
-//    }
-
-    @Override
-    public void applyDeficitToProduction(String modId, Pair<String, Integer> deficit, String... commodities) {
-        thisIndustry.applyDeficitToProduction(this, modId, deficit, commodities);
-    }
-
-    @Override
-    public void setFunctional(boolean functional) {
-        thisIndustry.setFunctional(functional);
+        super("remnant_station");
     }
 
     protected IntervalUtil tracker = new IntervalUtil(Global.getSettings().getFloat("averagePatrolSpawnInterval") * 0.7f, Global.getSettings().getFloat("averagePatrolSpawnInterval") * 1.3f);
@@ -166,8 +60,7 @@ public class Boggled_Remnant_Station extends OrbitalStation implements RouteMana
     }
 
     @Override
-    public void advance(float amount)
-    {
+    public void advance(float amount) {
         super.advance(amount);
 
         if (Global.getSector().getEconomy().isSimMode()) return;
@@ -460,7 +353,6 @@ public class Boggled_Remnant_Station extends OrbitalStation implements RouteMana
         int size = 7;
         this.market.getStability().modifyFlat(this.getModId(), 3.0f, "Autonomous AI battlestation");
         this.applyIncomeAndUpkeep((float)size);
-        thisIndustry.apply(this, this);
 
         this.market.getStats().getDynamic().getMod("ground_defenses_mod").modifyMult(this.getModId(), 3.0f, "Autonomous AI battlestation");
         this.matchCommanderToAICore(this.aiCoreId);
@@ -477,7 +369,7 @@ public class Boggled_Remnant_Station extends OrbitalStation implements RouteMana
 
     @Override
     public void unapply() {
-        thisIndustry.unapply(this, this);
+        super.unapply();
         this.unmodifyStabilityWithBaseMod();
         this.matchCommanderToAICore((String)null);
         this.market.getStats().getDynamic().getMod("ground_defenses_mod").unmodifyMult(this.getModId());
@@ -538,8 +430,8 @@ public class Boggled_Remnant_Station extends OrbitalStation implements RouteMana
     }
 
     @Override
-    protected void addPostDemandSection(TooltipMakerAPI tooltip, boolean hasDemand, IndustryTooltipMode mode)
-    {
+    protected void addPostDemandSection(TooltipMakerAPI tooltip, boolean hasDemand, IndustryTooltipMode mode) {
+        super.addPostDemandSection(tooltip, hasDemand, mode);
         if (mode != IndustryTooltipMode.NORMAL || this.isFunctional())
         {
             Color h = Misc.getHighlightColor();
