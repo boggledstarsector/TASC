@@ -74,6 +74,18 @@ public class BoggledTerraformingRequirementFactory {
         }
     }
 
+    public static class PlanetWaterLevel implements TerraformingRequirementFactory {
+        @Override
+        public BoggledTerraformingRequirement.TerraformingRequirement constructFromJSON(String requirementId, boolean invert, String data) throws JSONException {
+            JSONObject jsonData = new JSONObject(data);
+
+            int minWaterLevel = jsonData.getInt("min_water_level");
+            int maxWaterLevel = jsonData.getInt("max_water_level");
+
+            return new BoggledTerraformingRequirement.PlanetWaterLevel(requirementId, invert, minWaterLevel, maxWaterLevel);
+        }
+    }
+
     public static class MarketHasWaterPresent implements TerraformingRequirementFactory {
         @Override
         public BoggledTerraformingRequirement.TerraformingRequirement constructFromJSON(String requirementId, boolean invert, String data) throws JSONException {

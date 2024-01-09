@@ -493,6 +493,7 @@ public class boggledTools {
         addTerraformingRequirementFactory("MarketHasCondition", new BoggledTerraformingRequirementFactory.MarketHasCondition());
         addTerraformingRequirementFactory("MarketHasIndustry", new BoggledTerraformingRequirementFactory.MarketHasIndustry());
         addTerraformingRequirementFactory("MarketHasIndustryWithItem", new BoggledTerraformingRequirementFactory.MarketHasIndustryWithItem());
+        addTerraformingRequirementFactory("PlanetWaterLevel", new BoggledTerraformingRequirementFactory.PlanetWaterLevel());
         addTerraformingRequirementFactory("MarketHasWaterPresent", new BoggledTerraformingRequirementFactory.MarketHasWaterPresent());
         addTerraformingRequirementFactory("MarketIsAtLeastSize", new BoggledTerraformingRequirementFactory.MarketIsAtLeastSize());
         addTerraformingRequirementFactory("TerraformingPossibleOnMarket", new BoggledTerraformingRequirementFactory.TerraformingPossibleOnMarket());
@@ -550,28 +551,31 @@ public class boggledTools {
         addIndustryEffectFactory("DeficitToCommodity", new BoggledIndustryEffectFactory.DeficitToCommodityFactory());
         addIndustryEffectFactory("DeficitMultiplierToUpkeep", new BoggledIndustryEffectFactory.DeficitMultiplierToUpkeepFactory());
 
-        addIndustryEffectFactory("ConditionMultiplierToUpkeep", new BoggledIndustryEffectFactory.ConditionMultiplierToUpkeepFactory());
+        addIndustryEffectFactory("EffectToIndustry", new BoggledIndustryEffectFactory.EffectToIndustryFactory());
 
-        addIndustryEffectFactory("TagMultiplierToUpkeep", new BoggledIndustryEffectFactory.TagMultiplierToUpkeepFactory());
+        addIndustryEffectFactory("ModifyIncome", new BoggledIndustryEffectFactory.ModifyIncomeFactory());
 
-        addIndustryEffectFactory("IncomeBonusToIndustry", new BoggledIndustryEffectFactory.IncomeBonusToIndustryFactory());
-
-        addIndustryEffectFactory("BonusToAccessibility", new BoggledIndustryEffectFactory.BonusToAccessibilityFactory());
-        addIndustryEffectFactory("BonusToStability", new BoggledIndustryEffectFactory.BonusToStabilityFactory());
+        addIndustryEffectFactory("ModifyAccessibility", new BoggledIndustryEffectFactory.ModifyAccessibilityFactory());
+        addIndustryEffectFactory("ModifyStability", new BoggledIndustryEffectFactory.ModifyStabilityFactory());
 
         addIndustryEffectFactory("SupplyBonusToIndustryWithDeficit", new BoggledIndustryEffectFactory.SupplyBonusToIndustryWithDeficitFactory());
-        addIndustryEffectFactory("ReduceAllDemand", new BoggledIndustryEffectFactory.ReduceAllDemandFactory());
-        addIndustryEffectFactory("ReduceUpkeep", new BoggledIndustryEffectFactory.ReduceUpkeepFactory());
+        addIndustryEffectFactory("ModifyAllDemand", new BoggledIndustryEffectFactory.ModifyAllDemandFactory());
+        addIndustryEffectFactory("ModifyUpkeep", new BoggledIndustryEffectFactory.ModifyUpkeepFactory());
 
         addIndustryEffectFactory("EliminatePatherInterest", new BoggledIndustryEffectFactory.EliminatePatherInterestFactory());
-        addIndustryEffectFactory("ConditionToPatherInterest", new BoggledIndustryEffectFactory.ConditionToPatherInterestFactory());
+        addIndustryEffectFactory("ModifyPatherInterest", new BoggledIndustryEffectFactory.ModifyPatherInterestFactory());
+
         addIndustryEffectFactory("IncrementTag", new BoggledIndustryEffectFactory.IncrementTagFactory());
         addIndustryEffectFactory("RemoveIndustry", new BoggledIndustryEffectFactory.RemoveIndustryFactory());
 
         addIndustryEffectFactory("SuppressConditions", new BoggledIndustryEffectFactory.SuppressConditionsFactory());
-        addIndustryEffectFactory("ImproveGroundDefense", new BoggledIndustryEffectFactory.ImproveGroundDefenseFactory());
+        addIndustryEffectFactory("ModifyGroundDefense", new BoggledIndustryEffectFactory.ModifyGroundDefenseFactory());
 
         addIndustryEffectFactory("IndustryEffectWithRequirement", new BoggledIndustryEffectFactory.IndustryEffectWithRequirementFactory());
+
+        addIndustryEffectFactory("AddCondition", new BoggledIndustryEffectFactory.AddConditionFactory());
+
+        addIndustryEffectFactory("AddStellarReflectorsToMarket", new BoggledIndustryEffectFactory.AddStellarReflectorsToMarketFactory());
     }
 
     public static void addIndustryEffectFactory(String key, BoggledIndustryEffectFactory.IndustryEffectFactory value) {
@@ -592,7 +596,7 @@ public class boggledTools {
         addTerraformingProjectEffectFactory("FocusMarketAndSiphonStationProgressResource", new BoggledTerraformingProjectEffectFactory.FocusMarketAndSiphonStationProgressResource());
 
         addTerraformingProjectEffectFactory("SystemAddCoronalTapFactory", new BoggledTerraformingProjectEffectFactory.SystemAddCoronalTapFactory());
-        addTerraformingProjectEffectFactory("MarketAddStellarReflectors", new BoggledTerraformingProjectEffectFactory.MarketAddStellarReflectorsFactory());
+//        addTerraformingProjectEffectFactory("MarketAddStellarReflectors", new BoggledTerraformingProjectEffectFactory.MarketAddStellarReflectorsFactory());
 
         addTerraformingProjectEffectFactory("MarketRemoveIndustry", new BoggledTerraformingProjectEffectFactory.MarketRemoveIndustryFactory());
 
@@ -815,6 +819,7 @@ public class boggledTools {
 
                 List<BoggledIndustryEffect.IndustryEffect> buildingFinishedEffects = industryEffectsFromObject(row, "building_finished_effects",id, "Industry");
                 List<BoggledIndustryEffect.IndustryEffect> industryEffects = industryEffectsFromObject(row, "industry_effects", id, "Industry");
+                List<BoggledIndustryEffect.IndustryEffect> immigrationEffects = industryEffectsFromObject(row, "immigration_effects", id,"Industry");
                 List<BoggledIndustryEffect.IndustryEffect> improveEffects = industryEffectsFromObject(row, "improve_effects", id, "Industry");
 
                 String[] aiCoreEffectStrings = row.getString("ai_core_effects").split(csvOptionSeparator);
@@ -844,7 +849,7 @@ public class boggledTools {
 
                 float basePatherInterest = (float) row.getDouble("base_pather_interest");
 
-                industryProjects.put(id, new BoggledCommonIndustry(id, industry, projects, commoditySupply, commodityDemand, buildingFinishedEffects, industryEffects, improveEffects, aiCoreEffects, disruptRequirements, basePatherInterest));
+                industryProjects.put(id, new BoggledCommonIndustry(id, industry, projects, commoditySupply, commodityDemand, buildingFinishedEffects, industryEffects, immigrationEffects, improveEffects, aiCoreEffects, disruptRequirements, basePatherInterest));
             } catch (JSONException e) {
                 log.error("Error in industry options " + idForErrors + ": " + e);
             }
@@ -2602,28 +2607,28 @@ public class boggledTools {
         }
     }
 
-    public static int getPlanetWaterLevel(MarketAPI market)
-    {
-        // There are checks present elsewhere that will prevent passing in a station market.
-        // If that happens anyway, it's best to just throw an exception.
-        if (hasIsmaraSling(market)) {
-            return 2;
-        }
+//    public static int getPlanetWaterLevel(MarketAPI market)
+//    {
+//        // There are checks present elsewhere that will prevent passing in a station market.
+//        // If that happens anyway, it's best to just throw an exception.
+//        if (hasIsmaraSling(market)) {
+//            return 2;
+//        }
+//
+//        PlanetAPI planet = market.getPlanetEntity();
+//        PlanetType planetType = getPlanetType(planet);
+//        return planetType.getWaterLevel(market);
+//    }
 
-        PlanetAPI planet = market.getPlanetEntity();
-        PlanetType planetType = getPlanetType(planet);
-        return planetType.getWaterLevel(market);
-    }
-
-    public static boolean marketHasAtmoProblem(MarketAPI market)
-    {
-        BoggledProjectRequirementsOR reqs = terraformingRequirements.get("colony_has_atmo_problem");
-        if (reqs == null) {
-            // Abundance of caution
-            return false;
-        }
-        return reqs.checkRequirement(market);
-    }
+//    public static boolean marketHasAtmoProblem(MarketAPI market)
+//    {
+//        BoggledProjectRequirementsOR reqs = terraformingRequirements.get("colony_has_atmo_problem");
+//        if (reqs == null) {
+//            // Abundance of caution
+//            return false;
+//        }
+//        return reqs.checkRequirement(market);
+//    }
 
     public static String getTooltipProjectName(MarketAPI market, BoggledTerraformingProject currentProject) {
         if(currentProject == null) {

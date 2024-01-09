@@ -38,76 +38,45 @@ public class BoggledIndustryEffectFactory {
         }
     }
 
-    public static class ConditionMultiplierToUpkeepFactory implements IndustryEffectFactory {
+    public static class EffectToIndustryFactory implements IndustryEffectFactory {
         @Override
         public BoggledIndustryEffect.IndustryEffect constructFromJSON(String id, String[] enableSettings, ArrayList<String> commoditiesDemanded, String data) throws JSONException {
-            JSONArray jsonArray = new JSONArray(data);
-
-            List<BoggledIndustryEffect.ConditionMultiplierToUpkeep.Data> effectData = new ArrayList<>();
-            for (int i = 0; i < jsonArray.length(); ++i) {
-                JSONObject jsonData = jsonArray.getJSONObject(i);
-                String conditionId = jsonData.getString("condition_id");
-                float upkeepMultiplier = (float) jsonData.getDouble("upkeep_multiplier");
-
-                effectData.add(new BoggledIndustryEffect.ConditionMultiplierToUpkeep.Data(conditionId, upkeepMultiplier));
-            }
-
-            return new BoggledIndustryEffect.ConditionMultiplierToUpkeep(id, enableSettings, commoditiesDemanded, effectData);
+            JSONObject jsonData = new JSONObject(data);
+            String industryId = jsonData.getString("industry_id");
+            String effectId = jsonData.getString("effect_id");
+            BoggledIndustryEffect.IndustryEffect effect = boggledTools.getIndustryEffect(effectId);
+            return new BoggledIndustryEffect.EffectToIndustry(id, enableSettings, commoditiesDemanded, industryId, effect);
         }
     }
 
-    public static class TagMultiplierToUpkeepFactory implements IndustryEffectFactory {
+    public static class ModifyIncomeFactory implements IndustryEffectFactory {
         @Override
         public BoggledIndustryEffect.IndustryEffect constructFromJSON(String id, String[] enableSettings, ArrayList<String> commoditiesDemanded, String data) throws JSONException {
-            JSONArray jsonArray = new JSONArray(data);
+            JSONObject jsonData = new JSONObject(data);
+            String typeString = jsonData.getString("type");
+            float value = (float) jsonData.getDouble("value");
 
-            List<BoggledIndustryEffect.TagMultiplierToUpkeep.Data> effectData = new ArrayList<>();
-            for (int i = 0; i < jsonArray.length(); ++i) {
-                JSONObject jsonData = jsonArray.getJSONObject(i);
-
-                String tag = jsonData.getString("tag");
-                String description = jsonData.getString("description");
-                float upkeepMultiplier = (float) jsonData.getDouble("upkeep_multiplier");
-
-                effectData.add(new BoggledIndustryEffect.TagMultiplierToUpkeep.Data(tag, description, upkeepMultiplier));
-            }
-
-            return new BoggledIndustryEffect.TagMultiplierToUpkeep(id, enableSettings, commoditiesDemanded, effectData);
+            return new BoggledIndustryEffect.ModifyIncome(id, enableSettings, commoditiesDemanded, typeString, value);
         }
     }
 
-    public static class IncomeBonusToIndustryFactory implements IndustryEffectFactory {
+    public static class ModifyAccessibilityFactory implements IndustryEffectFactory {
         @Override
         public BoggledIndustryEffect.IndustryEffect constructFromJSON(String id, String[] enableSettings, ArrayList<String> commoditiesDemanded, String data) throws JSONException {
-            JSONArray jsonArray = new JSONArray(data);
-
-            List<BoggledIndustryEffect.IncomeBonusToIndustry.Data> effectData = new ArrayList<>();
-            for (int i = 0; i < jsonArray.length(); ++i) {
-                JSONObject jsonData = jsonArray.getJSONObject(i);
-
-                String industryId = jsonData.getString("industry_id");
-                float incomeMultiplier = (float) jsonData.getDouble("income_multiplier");
-
-                effectData.add(new BoggledIndustryEffect.IncomeBonusToIndustry.Data(industryId, incomeMultiplier));
-            }
-
-            return new BoggledIndustryEffect.IncomeBonusToIndustry(id, enableSettings, commoditiesDemanded, effectData);
+            JSONObject jsonData = new JSONObject(data);
+            String modType = jsonData.getString("type");
+            float value = (float) jsonData.getDouble("value");
+            return new BoggledIndustryEffect.ModifyAccessibility(id, enableSettings, commoditiesDemanded, modType, value);
         }
     }
 
-    public static class BonusToAccessibilityFactory implements IndustryEffectFactory {
+    public static class ModifyStabilityFactory implements IndustryEffectFactory {
         @Override
         public BoggledIndustryEffect.IndustryEffect constructFromJSON(String id, String[] enableSettings, ArrayList<String> commoditiesDemanded, String data) throws JSONException {
-            float accessibilityBonus = Float.parseFloat(data);
-            return new BoggledIndustryEffect.BonusToAccessibility(id, enableSettings, commoditiesDemanded, accessibilityBonus);
-        }
-    }
-
-    public static class BonusToStabilityFactory implements IndustryEffectFactory {
-        @Override
-        public BoggledIndustryEffect.IndustryEffect constructFromJSON(String id, String[] enableSettings, ArrayList<String> commoditiesDemanded, String data) throws JSONException {
-            float stabilityBonus = Float.parseFloat(data);
-            return new BoggledIndustryEffect.BonusToStability(id, enableSettings, commoditiesDemanded, stabilityBonus);
+            JSONObject jsonData = new JSONObject(data);
+            String modType = jsonData.getString("type");
+            float value = (float) jsonData.getDouble("value");
+            return new BoggledIndustryEffect.ModifyStability(id, enableSettings, commoditiesDemanded, modType, value);
         }
     }
 
@@ -121,19 +90,23 @@ public class BoggledIndustryEffectFactory {
         }
     }
 
-    public static class ReduceAllDemandFactory implements IndustryEffectFactory {
+    public static class ModifyAllDemandFactory implements IndustryEffectFactory {
         @Override
         public BoggledIndustryEffect.IndustryEffect constructFromJSON(String id, String[] enableSettings, ArrayList<String> commoditiesDemanded, String data) throws JSONException {
-            int demandReduction = Integer.parseInt(data);
-            return new BoggledIndustryEffect.ReduceAllDemand(id, enableSettings, commoditiesDemanded, demandReduction);
+            JSONObject jsonData = new JSONObject(data);
+            String modType = jsonData.getString("type");
+            float value = (float) jsonData.getDouble("value");
+            return new BoggledIndustryEffect.ModifyAllDemand(id, enableSettings, commoditiesDemanded, modType, value);
         }
     }
 
-    public static class ReduceUpkeepFactory implements IndustryEffectFactory {
+    public static class ModifyUpkeepFactory implements IndustryEffectFactory {
         @Override
         public BoggledIndustryEffect.IndustryEffect constructFromJSON(String id, String[] enableSettings, ArrayList<String> commoditiesDemanded, String data) throws JSONException {
-            float upkeepReduction = Float.parseFloat(data);
-            return new BoggledIndustryEffect.ReduceUpkeep(id, enableSettings, commoditiesDemanded, upkeepReduction);
+            JSONObject jsonData = new JSONObject(data);
+            String modType = jsonData.getString("type");
+            float value = (float) jsonData.getDouble("value");
+            return new BoggledIndustryEffect.ModifyUpkeep(id, enableSettings, commoditiesDemanded, modType, value);
         }
     }
 
@@ -144,18 +117,11 @@ public class BoggledIndustryEffectFactory {
         }
     }
 
-    public static class ConditionToPatherInterestFactory implements IndustryEffectFactory {
+    public static class ModifyPatherInterestFactory implements IndustryEffectFactory {
         @Override
         public BoggledIndustryEffect.IndustryEffect constructFromJSON(String id, String[] enableSettings, ArrayList<String> commoditiesDemanded, String data) throws JSONException {
-            JSONArray jsonArray = new JSONArray(data);
-            List<BoggledIndustryEffect.ConditionToPatherInterest.Data> patherData = new ArrayList<>();
-            for (int i = 0; i < jsonArray.length(); ++i) {
-                JSONObject jsonData = jsonArray.getJSONObject(i);
-                String conditionId = jsonData.getString("condition_id");
-                float patherInterest = (float) jsonData.getDouble("interest");
-                patherData.add(new BoggledIndustryEffect.ConditionToPatherInterest.Data(conditionId, patherInterest));
-            }
-            return new BoggledIndustryEffect.ConditionToPatherInterest(id, enableSettings, commoditiesDemanded, patherData);
+            int patherInterestModifier = Integer.parseInt(data);
+            return new BoggledIndustryEffect.ModifyPatherInterest(id, enableSettings, commoditiesDemanded, patherInterestModifier);
         }
     }
 
@@ -185,11 +151,13 @@ public class BoggledIndustryEffectFactory {
         }
     }
 
-    public static class ImproveGroundDefenseFactory implements IndustryEffectFactory {
+    public static class ModifyGroundDefenseFactory implements IndustryEffectFactory {
         @Override
         public BoggledIndustryEffect.IndustryEffect constructFromJSON(String id, String[] enableSettings, ArrayList<String> commoditiesDemanded, String data) throws JSONException {
-            float groundDefenseImproveBonus = Float.parseFloat(data);
-            return new BoggledIndustryEffect.ImproveGroundDefense(id, enableSettings, commoditiesDemanded, groundDefenseImproveBonus);
+            JSONObject jsonData = new JSONObject(data);
+            String modType = jsonData.getString("type");
+            float value = (float) jsonData.getDouble("value");
+            return new BoggledIndustryEffect.ModifyGroundDefense(id, enableSettings, commoditiesDemanded, modType, value);
         }
     }
 
@@ -210,6 +178,21 @@ public class BoggledIndustryEffectFactory {
                 }
             }
             return new BoggledIndustryEffect.IndustryEffectWithRequirement(id, enableSettings, commoditiesDemanded, reqs, industryEffects);
+        }
+    }
+
+    public static class AddConditionFactory implements IndustryEffectFactory {
+        @Override
+        public BoggledIndustryEffect.IndustryEffect constructFromJSON(String id, String[] enableSettings, ArrayList<String> commoditiesDemanded, String data) throws JSONException {
+            boggledTools.CheckMarketConditionExists(data);
+            return new BoggledIndustryEffect.AddCondition(id, enableSettings, commoditiesDemanded, data);
+        }
+    }
+
+    public static class AddStellarReflectorsToMarketFactory implements IndustryEffectFactory {
+        @Override
+        public BoggledIndustryEffect.IndustryEffect constructFromJSON(String id, String[] enableSettings, ArrayList<String> commoditiesDemanded, String data) throws JSONException {
+            return new BoggledIndustryEffect.AddStellarReflectorsToMarket(id, enableSettings, commoditiesDemanded);
         }
     }
 }

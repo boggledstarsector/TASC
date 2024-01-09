@@ -111,12 +111,12 @@ public class BoggledTerraformingProjectEffectFactory {
         }
     }
 
-    public static class MarketAddStellarReflectorsFactory implements TerraformingProjectEffectFactory {
-        @Override
-        public BoggledTerraformingProjectEffect.TerraformingProjectEffect constructFromJSON(String data) {
-            return new BoggledTerraformingProjectEffect.MarketAddStellarReflectors();
-        }
-    }
+//    public static class MarketAddStellarReflectorsFactory implements TerraformingProjectEffectFactory {
+//        @Override
+//        public BoggledTerraformingProjectEffect.TerraformingProjectEffect constructFromJSON(String data) {
+//            return new BoggledTerraformingProjectEffect.MarketAddStellarReflectors();
+//        }
+//    }
 
     public static class MarketRemoveIndustryFactory implements TerraformingProjectEffectFactory {
         @Override
@@ -159,7 +159,7 @@ public class BoggledTerraformingProjectEffectFactory {
             boggledTools.CheckSubmarketExists(submarketId);
             boggledTools.CheckItemExists(itemId);
 
-            return new BoggledTerraformingProjectEffect.AddItemToMarketStorage(submarketId, itemId, quantity);
+            return new BoggledTerraformingProjectEffect.AddItemToSubmarket(submarketId, itemId, quantity);
         }
     }
 }

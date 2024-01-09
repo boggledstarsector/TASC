@@ -1,5 +1,6 @@
 package data.campaign.econ.industries;
 
+import com.fs.starfarer.api.combat.MutableStat;
 import com.fs.starfarer.api.util.Pair;
 
 public interface BoggledIndustryInterface {
@@ -7,7 +8,9 @@ public interface BoggledIndustryInterface {
 
     void setFunctional(boolean functional);
 
-    void modifyPatherInterest(String id, float patherInterest);
-    void unmodifyPatherInterest(String id);
-    float getBasePatherInterest();
+    void modifyPatherInterest(MutableStat modifier);
+    void unmodifyPatherInterest(String source);
+
+    void modifyImmigration(MutableStat modifier);
+    void unmodifyImmigration(String source);
 }

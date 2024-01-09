@@ -33,6 +33,7 @@ public class BoggledCommonIndustry {
 
     private List<BoggledIndustryEffect.IndustryEffect> buildingFinishedEffects;
     private List<BoggledIndustryEffect.IndustryEffect> industryEffects;
+    private List<BoggledIndustryEffect.IndustryEffect> immigrationEffects;
     private List<BoggledIndustryEffect.IndustryEffect> improveEffects;
 
     private List<BoggledIndustryEffect.AICoreEffect> aiCoreEffects;
@@ -40,9 +41,23 @@ public class BoggledCommonIndustry {
     private List<BoggledProjectRequirementsAND> disruptRequirements;
 
     private float basePatherInterest;
-//    private float modifiedPatherInterest;
-
     MutableStat modifiedPatherInterest;
+
+    public static class ImmigrationModifier {
+        float value;
+        String desc;
+
+        public ImmigrationModifier(float value, String desc) {
+            this.value = value;
+            this.desc = desc;
+        }
+    }
+
+    MutableStat immigrationBonus = new MutableStat(0f);
+
+//    Map<String, ImmigrationModifier> immigrationBonusesFlat = new LinkedHashMap<>();
+//    Map<String, ImmigrationModifier> immigrationBonusesMult = new LinkedHashMap<>();
+//    Map<String, ImmigrationModifier> immigrationBonusesPercent = new LinkedHashMap<>();
 
     private boolean functional = true;
 
@@ -52,19 +67,25 @@ public class BoggledCommonIndustry {
     public BoggledCommonIndustry() {
         this.industryId = "";
         this.industryTooltip = "";
+
         this.projects = new ArrayList<>();
+
         this.commodityDemand = new ArrayList<>();
         this.commoditySupply = new ArrayList<>();
+
         this.buildingFinishedEffects = new ArrayList<>();
         this.industryEffects = new ArrayList<>();
+        this.immigrationEffects = new ArrayList<>();
         this.improveEffects = new ArrayList<>();
         this.aiCoreEffects = new ArrayList<>();
+
         this.disruptRequirements = new ArrayList<>();
+
         this.basePatherInterest = 0f;
         this.modifiedPatherInterest = new MutableStat(0);
     }
 
-    public BoggledCommonIndustry(String industryId, String industryTooltip, List<BoggledTerraformingProject> projects, List<BoggledCommoditySupplyDemand.CommoditySupply> commoditySupply, List<BoggledCommoditySupplyDemand.CommodityDemand> commodityDemand, List<BoggledIndustryEffect.IndustryEffect> buildingFinishedEffects, List<BoggledIndustryEffect.IndustryEffect> industryEffects, List<BoggledIndustryEffect.IndustryEffect> improveEffects, List<BoggledIndustryEffect.AICoreEffect> aiCoreEffects, List<BoggledProjectRequirementsAND> disruptRequirements, float basePatherInterest) {
+    public BoggledCommonIndustry(String industryId, String industryTooltip, List<BoggledTerraformingProject> projects, List<BoggledCommoditySupplyDemand.CommoditySupply> commoditySupply, List<BoggledCommoditySupplyDemand.CommodityDemand> commodityDemand, List<BoggledIndustryEffect.IndustryEffect> buildingFinishedEffects, List<BoggledIndustryEffect.IndustryEffect> industryEffects, List<BoggledIndustryEffect.IndustryEffect> immigrationEffects, List<BoggledIndustryEffect.IndustryEffect> improveEffects, List<BoggledIndustryEffect.AICoreEffect> aiCoreEffects, List<BoggledProjectRequirementsAND> disruptRequirements, float basePatherInterest) {
         this.industryId = industryId;
         this.industryTooltip = industryTooltip;
 
@@ -78,13 +99,13 @@ public class BoggledCommonIndustry {
 
         this.buildingFinishedEffects = buildingFinishedEffects;
         this.industryEffects = industryEffects;
+        this.immigrationEffects = immigrationEffects;
         this.improveEffects = improveEffects;
         this.aiCoreEffects = aiCoreEffects;
 
         this.disruptRequirements = disruptRequirements;
 
         this.basePatherInterest = basePatherInterest;
-//        this.modifiedPatherInterest = basePatherInterest;
         this.modifiedPatherInterest = new MutableStat(basePatherInterest);
     }
 
@@ -92,13 +113,19 @@ public class BoggledCommonIndustry {
         Global.getLogger(this.getClass()).info("Doing readResolve for " + industryId + " " + industryTooltip);
         BoggledCommonIndustry that = boggledTools.getIndustryProject(industryId);
         this.projects = that.projects;
+
         this.commoditySupply = that.commoditySupply;
         this.commodityDemand = that.commodityDemand;
+
         this.buildingFinishedEffects = that.buildingFinishedEffects;
         this.industryEffects = that.industryEffects;
+        this.immigrationEffects = that.immigrationEffects;
         this.improveEffects = that.improveEffects;
+
         this.aiCoreEffects = that.aiCoreEffects;
+
         this.disruptRequirements = that.disruptRequirements;
+
         this.basePatherInterest = that.basePatherInterest;
         this.modifiedPatherInterest = that.modifiedPatherInterest;
         return this;
@@ -108,7 +135,7 @@ public class BoggledCommonIndustry {
 
     }
 
-    public void advance(float amount, BaseIndustry industry) {
+    public void advance(float amount, BaseIndustry industry, BoggledIndustryInterface industryInterface) {
         if (!built) {
             return;
         }
@@ -534,8 +561,15 @@ public class BoggledCommonIndustry {
     }
 
     public void addImproveDesc(BaseIndustry industry, TooltipMakerAPI tooltip, Industry.ImprovementDescriptionMode mode) {
+        BoggledIndustryEffect.IndustryEffect.DescriptionMode descMode;
+        if (mode == Industry.ImprovementDescriptionMode.INDUSTRY_TOOLTIP) {
+            descMode = BoggledIndustryEffect.IndustryEffect.DescriptionMode.APPLIED;
+        } else {
+            descMode = BoggledIndustryEffect.IndustryEffect.DescriptionMode.TO_APPLY;
+        }
+
         for (BoggledIndustryEffect.IndustryEffect improveEffect : improveEffects) {
-            List<TooltipData> improveDescription = improveEffect.addImproveDesc(industry, mode);
+            List<TooltipData> improveDescription = improveEffect.getApplyOrAppliedDesc(industry, descMode);
             for (TooltipData desc : improveDescription) {
                 tooltip.addPara(desc.text, 0f, desc.highlightColors.toArray(new Color[0]), desc.highlights.toArray(new String[0]));
                 tooltip.addSpacer(10.0f);
@@ -543,12 +577,12 @@ public class BoggledCommonIndustry {
         }
     }
 
-    public void modifyPatherInterest(String id, float patherInterest) {
-        modifiedPatherInterest.modifyFlat(id, patherInterest, "");
+    public void modifyPatherInterest(MutableStat modifier) {
+        modifiedPatherInterest.applyMods(modifier);
     }
 
-    public void unmodifyPatherInterest(String id) {
-        modifiedPatherInterest.unmodifyFlat(id);
+    public void unmodifyPatherInterest(String source) {
+        modifiedPatherInterest.unmodify(source);
     }
 
     public float getPatherInterest(BaseIndustry industry) {
@@ -559,8 +593,16 @@ public class BoggledCommonIndustry {
         return basePatherInterest;
     }
 
-    public void modifyIncoming(BaseIndustry industry, MarketAPI market, PopulationComposition incoming) {
+    public void modifyImmigration(MutableStat modifier) {
+        immigrationBonus.applyMods(modifier);
+    }
 
+    public void unmodifyImmigration(String source) {
+        immigrationBonus.unmodify(source);
+    }
+
+    public void modifyIncoming(BaseIndustry industry, BoggledIndustryInterface industryInterface, MarketAPI market, PopulationComposition incoming) {
+        incoming.getWeight().applyMods(immigrationBonus);
     }
 
     private Map<String, String> getTokenReplacements(MarketAPI market, int projectIndex) {

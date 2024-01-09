@@ -1,6 +1,7 @@
 package data.campaign.econ.industries;
 
 import com.fs.starfarer.api.campaign.econ.Industry;
+import com.fs.starfarer.api.combat.MutableStat;
 import com.fs.starfarer.api.impl.campaign.econ.impl.OrbitalStation;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Pair;
@@ -78,7 +79,7 @@ public class BoggledOrbitalStation extends OrbitalStation implements BoggledIndu
     @Override
     public void advance(float amount) {
         super.advance(amount);
-        thisIndustry.advance(amount, this);
+        thisIndustry.advance(amount, this, this);
     }
 
     @Override
@@ -111,6 +112,26 @@ public class BoggledOrbitalStation extends OrbitalStation implements BoggledIndu
     @Override
     public void setFunctional(boolean functional) {
         thisIndustry.setFunctional(functional);
+    }
+
+    @Override
+    public void modifyPatherInterest(MutableStat modifier) {
+        thisIndustry.modifyPatherInterest(modifier);
+    }
+
+    @Override
+    public void unmodifyPatherInterest(String source) {
+        thisIndustry.unmodifyPatherInterest(source);
+    }
+
+    @Override
+    public void modifyImmigration(MutableStat modifier) {
+        thisIndustry.modifyImmigration(modifier);
+    }
+
+    @Override
+    public void unmodifyImmigration(String source) {
+        thisIndustry.unmodifyImmigration(source);
     }
 
     @Override
@@ -172,20 +193,5 @@ public class BoggledOrbitalStation extends OrbitalStation implements BoggledIndu
     public void addImproveDesc(TooltipMakerAPI tooltip, Industry.ImprovementDescriptionMode mode) {
         thisIndustry.addImproveDesc(this, tooltip, mode);
         super.addImproveDesc(tooltip, mode);
-    }
-
-    @Override
-    public final void modifyPatherInterest(String id, float patherInterest) {
-        thisIndustry.modifyPatherInterest(id, patherInterest);
-    }
-
-    @Override
-    public void unmodifyPatherInterest(String id) {
-        thisIndustry.unmodifyPatherInterest(id);
-    }
-
-    @Override
-    public float getBasePatherInterest() {
-        return thisIndustry.getBasePatherInterest();
     }
 }

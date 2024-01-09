@@ -152,10 +152,10 @@ public class BoggledTerraformingRequirement {
         }
     }
 
-    public static class MarketHasWaterPresent extends TerraformingRequirement {
+    public static class PlanetWaterLevel extends TerraformingRequirement {
         int minWaterLevel;
         int maxWaterLevel;
-        public MarketHasWaterPresent(String requirementId, boolean invert, int minWaterLevel, int maxWaterLevel) {
+        protected PlanetWaterLevel(String requirementId, boolean invert, int minWaterLevel, int maxWaterLevel) {
             super(requirementId, invert);
             this.minWaterLevel = minWaterLevel;
             this.maxWaterLevel = maxWaterLevel;
@@ -163,8 +163,21 @@ public class BoggledTerraformingRequirement {
 
         @Override
         protected boolean checkRequirementImpl(MarketAPI market) {
-            int waterLevel = boggledTools.getPlanetWaterLevel(market);
-            return minWaterLevel <= waterLevel && waterLevel <= maxWaterLevel;
+            PlanetAPI planet = market.getPlanetEntity();
+            boggledTools.PlanetType planetType = boggledTools.getPlanetType(planet);
+            int planetWaterLevel = planetType.getWaterLevel(market);
+            return minWaterLevel <= planetWaterLevel && planetWaterLevel <= maxWaterLevel;
+        }
+    }
+
+    public static class MarketHasWaterPresent extends PlanetWaterLevel {
+        public MarketHasWaterPresent(String requirementId, boolean invert, int minWaterLevel, int maxWaterLevel) {
+            super(requirementId, invert, minWaterLevel, maxWaterLevel);
+        }
+
+        @Override
+        protected boolean checkRequirementImpl(MarketAPI market) {
+            return super.checkRequirementImpl(market) || boggledTools.hasIsmaraSling(market);
         }
     }
 

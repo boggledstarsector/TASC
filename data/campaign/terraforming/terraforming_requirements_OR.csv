@@ -29,6 +29,12 @@ colony_terran_or_water_or_jungle_or_desert,"$market is terran, water, jungle, or
 colony_atmospheric_density_normal,"$market has normal atmospheric density",true,"market_no_atmosphere | market_thin_atmosphere | market_dense_atmosphere"
 colony_atmosphere_not_toxic_or_irradiated,"$market atmosphere is not toxic or irradiated",true,"market_toxic_atmosphere | market_irradiated"
 
+colony_very_cold_short,"Very Cold",false,"market_very_cold"
+colony_cold_short,"Cold",false,"market_cold"
+colony_hot_short,"Hot",false,"market_hot"
+colony_very_hot_short,"Very Hot",false,"market_very_hot"
+colony_is_station_short,"Station",false,"market_is_station"
+
 colony_not_cold_or_very_cold,"$market is not cold or very cold",true,"market_cold | market_very_cold"
 colony_hot_or_very_hot,"$market is hot or very hot",false,"market_hot | market_very_hot"
 colony_not_very_cold_or_very_hot,"$market is not very cold or very hot",true,"market_very_cold | market_very_hot"
@@ -41,6 +47,7 @@ colony_has_stellar_reflectors,"$market has functional stellar reflectors",false,
 colony_has_atmosphere_processor,"$market has a functional atmosphere processor",false,"market_has_atmosphere_processor"
 colony_has_genelab,"$market has a functional genelab",false,"market_has_genelab"
 
+planet_not_has_large_water_present,,false,"planet_not_has_large_water_present"
 colony_has_moderate_water_present,"$market has a moderate amount of water present",false,"market_has_moderate_water_present"
 colony_has_large_water_present,"$market has a large amount of water present",false,"market_has_large_water_present"
 
@@ -102,7 +109,7 @@ colony_has_domed_cities_or_is_gas_giant,,false,"market_has_domed_cities | planet
 
 station_construction_num_expansions,,false,"station_construction_num_expansions"
 
-colony_water_or_frozen_or_station,,false,"planet_water | planet_frozen | market_is_station"
+colony_water_or_frozen,,false,"planet_water | planet_frozen"
 
 player_has_skill_automated_ships,,false,"player_has_skill_automated_ships"
 
@@ -117,3 +124,8 @@ colony_storage_contains_at_least_easy_domain_artifacts,"$market $submarket conta
 colony_storage_contains_at_least_medium_domain_artifacts,"$market $submarket contains at least $cargoQuantity $cargoName",false,market_storage_contains_at_least_medium_domain_artifacts
 colony_storage_contains_at_least_hard_domain_artifacts,"$market $submarket contains at least $cargoQuantity $cargoName",false,market_storage_contains_at_least_hard_domain_artifacts
 player_has_at_least_2_story_points,"$player has at least $storyPointsQuantity story points",false,player_has_at_least_2_story_points
+
+colony_ruins_scattered,,false,"market_ruins_scattered"
+colony_ruins_widespread,,false,"market_ruins_widespread"
+colony_ruins_extensive,,false,"market_ruins_extensive"
+colony_ruins_vast,,false,"market_ruins_vast"

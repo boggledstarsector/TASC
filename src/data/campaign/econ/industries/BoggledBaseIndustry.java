@@ -2,12 +2,15 @@ package data.campaign.econ.industries;
 
 import com.fs.starfarer.api.campaign.econ.Industry;
 import com.fs.starfarer.api.campaign.econ.MarketAPI;
+import com.fs.starfarer.api.campaign.econ.MarketImmigrationModifier;
+import com.fs.starfarer.api.combat.MutableStat;
 import com.fs.starfarer.api.impl.campaign.econ.impl.BaseIndustry;
+import com.fs.starfarer.api.impl.campaign.population.PopulationComposition;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Pair;
 import data.campaign.econ.boggledTools;
 
-public class BoggledBaseIndustry extends BaseIndustry implements BoggledIndustryInterface {
+public class BoggledBaseIndustry extends BaseIndustry implements BoggledIndustryInterface, MarketImmigrationModifier {
     private BoggledCommonIndustry thisIndustry;
 
     public BoggledBaseIndustry() {
@@ -91,7 +94,7 @@ public class BoggledBaseIndustry extends BaseIndustry implements BoggledIndustry
     @Override
     public final void advance(float amount) {
         super.advance(amount);
-        thisIndustry.advance(amount, this);
+        thisIndustry.advance(amount, this, this);
     }
 
     @Override
@@ -127,18 +130,28 @@ public class BoggledBaseIndustry extends BaseIndustry implements BoggledIndustry
     }
 
     @Override
-    public final void modifyPatherInterest(String id, float patherInterest) {
-        thisIndustry.modifyPatherInterest(id, patherInterest);
+    public void modifyPatherInterest(MutableStat modifier) {
+        thisIndustry.modifyPatherInterest(modifier);
     }
 
     @Override
-    public final void unmodifyPatherInterest(String id) {
-        thisIndustry.unmodifyPatherInterest(id);
+    public void unmodifyPatherInterest(String source) {
+        thisIndustry.unmodifyPatherInterest(source);
     }
 
     @Override
-    public final float getBasePatherInterest() {
-        return thisIndustry.getBasePatherInterest();
+    public void modifyImmigration(MutableStat modifier) {
+        thisIndustry.modifyImmigration(modifier);
+    }
+
+    @Override
+    public void unmodifyImmigration(String source) {
+        thisIndustry.unmodifyImmigration(source);
+    }
+
+    @Override
+    public void modifyIncoming(MarketAPI market, PopulationComposition incoming) {
+        thisIndustry.modifyIncoming(this, this, market, incoming);
     }
 
     @Override

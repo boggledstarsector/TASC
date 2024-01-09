@@ -21,21 +21,40 @@ heavy_machinery_deficit_to_food,,DeficitToCommodity,"heavy_machinery","food"
 domain_artifacts_deficit_to_organs,boggledDomainTechContentEnabled | boggledDomainArchaeologyEnabled,DeficitToCommodity,"domain_artifacts","organs"
 domain_artifacts_deficit_to_5_times_upkeep,boggledDomainTechContentEnabled | boggledDomainArchaeologyEnabled,DeficitMultiplierToUpkeep,"domain_artifacts",5.0
 
-kletka_simulator_temperature_to_upkeep,boggledKletkaSimulatorTemperatureBasedUpkeep,ConditionMultiplierToUpkeep,,"[
-	{ 'condition_id' : 'very_cold', 'upkeep_multiplier' : 0.25 },
-	{ 'condition_id' : 'cold', 'upkeep_multiplier' : 0.5 },
-	{ 'condition_id' : 'hot', 'upkeep_multiplier' : 2.0 },
-	{ 'condition_id' : 'very_hot', 'upkeep_multiplier' : 4.0 }
-]"
-kletka_simulator_station_to_upkeep,boggledKletkaSimulatorTemperatureBasedUpkeep,TagMultiplierToUpkeep,,"[
-	{ 'tag' : 'station', 'description' : 'a station', 'upkeep_multiplier' : 8.0 }
-]"
+kletka_simulator_very_cold_upkeep_modifier,,ModifyUpkeep,,"{ 'type' : 'mult', 'value' : 0.25 }"
+kletka_simulator_cold_upkeep_modifier,,ModifyUpkeep,,"{ 'type' : 'mult', 'value' : 0.5 }"
+kletka_simulator_hot_upkeep_modifier,,ModifyUpkeep,,"{ 'type' : 'mult', 'value' : 2 }"
+kletka_simulator_very_hot_upkeep_modifier,,ModifyUpkeep,,"{ 'type' : 'mult', 'value' : 4 }"
+kletka_simulator_station_upkeep_modifier,,ModifyUpkeep,,"{ 'type' : 'mult', 'value' : 8 }"
+
+kletka_simulator_very_cold_modifier,boggledKletkaSimulatorTemperatureBasedUpkeep,IndustryEffectWithRequirement,,"{
+	'requirement_ids' : [ { 'requirement_id' : 'colony_very_cold_short' } ],
+	'industry_effects' : [ 'kletka_simulator_very_cold_upkeep_modifier' ]
+}"
+kletka_simulator_cold_modifier,boggledKletkaSimulatorTemperatureBasedUpkeep,IndustryEffectWithRequirement,,"{
+	'requirement_ids' : [ { 'requirement_id' : 'colony_cold_short' } ],
+	'industry_effects' : [ 'kletka_simulator_cold_upkeep_modifier' ]
+}"
+kletka_simulator_hot_modifier,boggledKletkaSimulatorTemperatureBasedUpkeep,IndustryEffectWithRequirement,,"{
+	'requirement_ids' : [ { 'requirement_id' : 'colony_hot_short' } ],
+	'industry_effects' : [ 'kletka_simulator_hot_upkeep_modifier' ]
+}"
+kletka_simulator_very_hot_modifier,boggledKletkaSimulatorTemperatureBasedUpkeep,IndustryEffectWithRequirement,,"{
+	'requirement_ids' : [ { 'requirement_id' : 'colony_very_hot_short' } ],
+	'industry_effects' : [ 'kletka_simulator_very_hot_upkeep_modifier' ]
+}"
+kletka_simulator_station_modifier,boggledKletkaSimulatorTemperatureBasedUpkeep,IndustryEffectWithRequirement,,"{
+	'requirement_ids' : [ { 'requirement_id' : 'colony_is_station_short' } ],
+	'industry_effects' : [ 'kletka_simulator_station_upkeep_modifier' ]
+}"
 
 perihelion_project_deficit_to_inactive,,DeficitToInactive,"domain_artifacts | metals | rare_metals | heavy_machinery",
 
-genelab_income_bonus_to_mesozoic_park,,IncomeBonusToIndustry,,"[
-	{ 'industry_id' : 'BOGGLED_MESOZOIC_PARK', 'income_multiplier' : 1.5 }
-]"
+genelab_income_bonus_to_mesozoic_park,,ModifyIncome,,"{ 'type' : 'mult', 'value' : 1.5 }"
+genelab_apply_effect_to_mesozoic_park,,EffectToIndustry,,"{
+	'industry_id' : 'BOGGLED_MESOZOIC_PARK',
+	'effect_id' : 'genelab_income_bonus_to_mesozoic_park'
+}"
 
 ai_mining_drones_alpha_core_bonus_to_mining,,SupplyBonusToIndustryWithDeficit,"fuel | supplies | ships","{
 	'industry_id' : 'mining',
@@ -49,50 +68,65 @@ ai_mining_drones_gamma_core_bonus_to_mining,,SupplyBonusToIndustryWithDeficit,"f
 	'industry_id' : 'mining',
 	'bonus' : 1
 }"
-ai_mining_drones_improve_bonus_to_accessibility,,BonusToAccessibility,,0.20
+ai_mining_drones_improve_bonus_to_accessibility,,ModifyAccessibility,,"{ 'type' : 'mult', 'value' : 1.20 }"
 
-chameleon_alpha_core_reduce_demand,,ReduceAllDemand,,1
-chameleon_alpha_core_reduce_upkeep,,ReduceUpkeep,,0.25
+chameleon_alpha_core_reduce_demand,,ModifyAllDemand,,"{ 'type' : 'flat', 'value' : -1 }"
+chameleon_alpha_core_reduce_upkeep,,ModifyUpkeep,,"{ 'type' : 'mult', 'value' : 0.75 }"
 chameleon_alpha_core_eliminate_pather_interest,,EliminatePatherInterest,,
 
-chameleon_improve_bonus_to_stability,,BonusToStability,,1
+chameleon_improve_bonus_to_stability,,ModifyStability,,"{ 'type' : 'flat', 'value' : 1 }"
 
-domain_archaeology_ruins_pather_interest,,ConditionToPatherInterest,,"[
-	{ 'condition_id' : 'ruins_scattered', 'interest' : 1 },
-	{ 'condition_id' : 'ruins_widespread', 'interest' : 2 },
-	{ 'condition_id' : 'ruins_extensive', 'interest' : 3 },
-	{ 'condition_id' : 'ruins_vast', 'interest' : 4 }
-]"
+domain_archaeology_ruins_scattered_pather_interest,,ModifyPatherInterest,,1
+domain_archaeology_ruins_widespread_pather_interest,,ModifyPatherInterest,,2
+domain_archaeology_ruins_extensive_pather_interest,,ModifyPatherInterest,,3
+domain_archaeology_ruins_vast_pather_interest,,ModifyPatherInterest,,4
+
+domain_archaeology_ruins_scattered_effect,boggledKletkaSimulatorTemperatureBasedUpkeep,IndustryEffectWithRequirement,,"{
+	'requirement_ids' : [ { 'requirement_id' : 'colony_ruins_scattered' } ],
+	'industry_effects' : [ 'domain_archaeology_ruins_scattered_pather_interest' ]
+}"
+domain_archaeology_ruins_widespread_effect,boggledKletkaSimulatorTemperatureBasedUpkeep,IndustryEffectWithRequirement,,"{
+	'requirement_ids' : [ { 'requirement_id' : 'colony_ruins_widespread' } ],
+	'industry_effects' : [ 'domain_archaeology_ruins_widespread_pather_interest' ]
+}"
+domain_archaeology_ruins_extensive_effect,boggledKletkaSimulatorTemperatureBasedUpkeep,IndustryEffectWithRequirement,,"{
+	'requirement_ids' : [ { 'requirement_id' : 'colony_ruins_extensive' } ],
+	'industry_effects' : [ 'domain_archaeology_ruins_extensive_pather_interest' ]
+}"
+domain_archaeology_ruins_vast_effect,boggledKletkaSimulatorTemperatureBasedUpkeep,IndustryEffectWithRequirement,,"{
+	'requirement_ids' : [ { 'requirement_id' : 'colony_ruins_vast' } ],
+	'industry_effects' : [ 'domain_archaeology_ruins_vast_pather_interest' ]
+}"
 
 just_break_the_damn_thing,,DeficitToInactive,"heavy_machinery | supplies | fuel",
 
 domed_cities_suppress_conditions,,SuppressConditions,,no_atmosphere | thin_atmosphere | dense_atmosphere | toxic_atmosphere | extreme_weather | inimical_biosphere
-domed_cities_ground_defenses,boggledDomedCitiesDefensePenaltyEnabled,ImproveGroundDefense,,0.05
-domed_cities_improve_stability_bonus,,BonusToStability,,1
-domed_cities_alpha_core_stability_bonus,,BonusToStability,,1
-domed_cities_beta_core_stability_bonus,,BonusToStability,,2
-domed_cities_gamma_core_stability_bonus,,BonusToStability,,3
+domed_cities_ground_defenses,boggledDomedCitiesDefensePenaltyEnabled,ImproveGroundDefense,,"{ 'type' : 'mult', 'value' : 0.05 }"
+domed_cities_improve_stability_bonus,,ModifyStability,,"{ 'type' : 'flat', 'value' : 1 }"
+domed_cities_alpha_core_stability_bonus,,ModifyStability,,"{ 'type' : 'flat', 'value' : 1 }"
+domed_cities_beta_core_stability_bonus,,ModifyStability,,"{ 'type' : 'flat', 'value' : 2 }"
+domed_cities_gamma_core_stability_bonus,,ModifyStability,,"{ 'type' : 'flat', 'value' : 3 }"
 
 expand_station_increment_tag,,IncrementTag,,"{ 'tag' : 'boggled_station_construction_numExpansions_', 'step' : 1 }"
 expand_station_remove_on_completion,,RemoveIndustry,,BOGGLED_STATION_EXPANSION
 
 harmonic_damper_suppress_conditions,,SuppressConditions,,tectonic_activity | extreme_tectonic_activity
-harmonic_damper_improve_ground_defenses,,ImproveGroundDefense,,1.25
-harmonic_damper_alpha_core_ground_defenses,,ImproveGroundDefense,,2
-harmonic_damper_beta_core_ground_defenses,,ImproveGroundDefense,,1.5
-harmonic_damper_gamma_core_ground_defenses,,ImproveGroundDefense,,1.25
+harmonic_damper_improve_ground_defenses,,ModifyGroundDefense,,"{ 'type' : 'mult', 'value' : 1.25 }"
+harmonic_damper_alpha_core_ground_defenses,,ModifyGroundDefense,,"{ 'type' : 'mult', 'value' : 2 }"
+harmonic_damper_beta_core_ground_defenses,,ModifyGroundDefense,,"{ 'type' : 'mult', 'value' : 1.5 }"
+harmonic_damper_gamma_core_ground_defenses,,ModifyGroundDefense,,"{ 'type' : 'mult', 'value' : 1.25 }"
 
-limelight_network_improve_increase_income_bonus,,IncomeBonusToIndustry,,"[ { 'industry_id' : 'BOGGLED_LIMELIGHT_NETWORK', 'income_multiplier' : 1.2 } ]"
-limelight_network_alpha_core_reduce_upkeep_bonus,,ReduceUpkeep,,0.25
-limelight_network_alpha_core_reduce_demand_bonus,,ReduceAllDemand,,1
-limelight_network_alpha_core_increase_income_bonus,,IncomeBonusToIndustry,,"[ { 'industry_id' : 'BOGGLED_LIMELIGHT_NETWORK', 'income_multiplier' : 1.5 } ]"
+limelight_network_improve_increase_income_bonus,,ModifyIncome,,"{ 'type' : 'mult', 'value' : 1.2 }"
+limelight_network_alpha_core_reduce_upkeep_bonus,,ModifyUpkeep,,"{ 'type' : 'mult', 'value' : 0.75 }"
+limelight_network_alpha_core_reduce_demand_bonus,,ModifyAllDemand,,"{ 'type' : 'flat', 'value' : -1 }"
+limelight_network_alpha_core_increase_income_bonus,,ModifyIncome,,"{ 'type' : 'mult', 'value' : 1.5 }"
 
 magnetoshield_suppress_conditions,,SuppressConditions,,irradiated
 
-mesozoic_park_improve_increase_income_bonus,,IncomeBonusToIndustry,,"[ { 'industry_id' : 'BOGGLED_MESOZOIC_PARK', 'income_multiplier' : 1.2 } ]"
-mesozoic_park_alpha_core_increase_income_bonus,,IncomeBonusToIndustry,,"[ { 'industry_id' : 'BOGGLED_MESOZOIC_PARK', 'income_multiplier' : 1.2 } ]"
-mesozoic_park_beta_core_increase_income_bonus,,IncomeBonusToIndustry,,"[ { 'industry_id' : 'BOGGLED_MESOZOIC_PARK', 'income_multiplier' : 1.1 } ]"
-mesozoic_park_gamma_core_increase_income_bonus,,IncomeBonusToIndustry,,"[ { 'industry_id' : 'BOGGLED_MESOZOIC_PARK', 'income_multiplier' : 1.05 } ]"
+mesozoic_park_improve_increase_income_bonus,,ModifyIncome,,"{ 'type' : 'mult', 'value' : 1.2 }"
+mesozoic_park_alpha_core_increase_income_bonus,,ModifyIncome,,"{ 'type' : 'mult', 'value' : 1.2 }"
+mesozoic_park_beta_core_increase_income_bonus,,ModifyIncome,,"{ 'type' : 'mult', 'value' : 1.1 }"
+mesozoic_park_gamma_core_increase_income_bonus,,ModifyIncome,,"{ 'type' : 'mult', 'value' : 1.05 }"
 
 planetary_agrav_field_suppress_conditions,,SuppressConditions,,high_gravity | low_gravity
 planetary_agrav_field_effect_with_requirement,,IndustryEffectWithRequirement,,"{
@@ -101,4 +135,5 @@ planetary_agrav_field_effect_with_requirement,,IndustryEffectWithRequirement,,"{
 }"
 
 stellar_reflector_array_suppress_conditions,,SuppressConditions,,hot | cold | poor_light
-stellar_reflector_array_add_solar_array_condition,,,,
+stellar_reflector_add_stellar_reflectors_to_market,,AddStellarReflectorsToMarket,,
+stellar_reflector_array_add_solar_array_condition,,AddCondition,,solar_array

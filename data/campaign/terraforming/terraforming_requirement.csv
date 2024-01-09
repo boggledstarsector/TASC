@@ -101,6 +101,11 @@ market_ruins_widespread,MarketHasCondition,false,"ruins_widespread"
 market_ruins_extensive,MarketHasCondition,false,"ruins_extensive"
 market_ruins_vast,MarketHasCondition,false,"ruins_vast"
 
+planet_not_has_large_water_present,PlanetWaterLevel,true,"{
+	'min_water_level' : 2,
+	'max_water_level' : 2
+}"
+
 market_has_moderate_water_present,MarketHasWaterPresent,false,"{
 	'min_water_level' : 1,
 	'max_water_level' : 2

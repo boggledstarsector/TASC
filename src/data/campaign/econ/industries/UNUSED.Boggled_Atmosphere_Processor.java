@@ -1,11 +1,5 @@
 package data.campaign.econ.industries;
 
-import java.awt.*;
-
-import com.fs.starfarer.api.ui.TooltipMakerAPI;
-import com.fs.starfarer.api.util.Misc;
-import data.campaign.econ.boggledTools;
-
 public class Boggled_Atmosphere_Processor extends BoggledBaseIndustry {
     public Boggled_Atmosphere_Processor() {
         super();

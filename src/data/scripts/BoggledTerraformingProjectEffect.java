@@ -259,16 +259,16 @@ public class BoggledTerraformingProjectEffect {
         }
     }
 
-    public static class MarketAddStellarReflectors extends TerraformingProjectEffect {
-        public MarketAddStellarReflectors() {
-
-        }
-
-        @Override
-        public void applyProjectEffect(MarketAPI market) {
-
-        }
-    }
+//    public static class MarketAddStellarReflectors extends TerraformingProjectEffect {
+//        public MarketAddStellarReflectors() {
+//
+//        }
+//
+//        @Override
+//        public void applyProjectEffect(MarketAPI market) {
+//
+//        }
+//    }
 
     public static class RemoveItemFromSubmarket extends TerraformingProjectEffect {
         String submarketId;
@@ -298,11 +298,11 @@ public class BoggledTerraformingProjectEffect {
         }
     }
 
-    public static class AddItemToMarketStorage extends TerraformingProjectEffect {
+    public static class AddItemToSubmarket extends TerraformingProjectEffect {
         String submarketId;
         String itemId;
         int quantity;
-        public AddItemToMarketStorage(String submarketId, String itemId, int quantity) {
+        public AddItemToSubmarket(String submarketId, String itemId, int quantity) {
             this.submarketId = submarketId;
             this.itemId = itemId;
             this.quantity = quantity;

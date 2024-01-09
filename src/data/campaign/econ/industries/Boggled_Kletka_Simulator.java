@@ -6,6 +6,7 @@ import java.util.*;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.*;
 import com.fs.starfarer.api.campaign.econ.*;
+import com.fs.starfarer.api.combat.MutableStat;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
 import com.fs.starfarer.api.impl.campaign.econ.impl.BaseIndustry;
@@ -85,7 +86,7 @@ public class Boggled_Kletka_Simulator extends BaseIndustry implements BoggledInd
     @Override
     public void advance(float amount) {
         super.advance(amount);
-        thisIndustry.advance(amount, this);
+        thisIndustry.advance(amount, this, this);
     }
 
     @Override
@@ -202,18 +203,23 @@ public class Boggled_Kletka_Simulator extends BaseIndustry implements BoggledInd
     }
 
     @Override
-    public void modifyPatherInterest(String id, float patherInterest) {
-
+    public void modifyPatherInterest(MutableStat modifier) {
+        thisIndustry.modifyPatherInterest(modifier);
     }
 
     @Override
-    public void unmodifyPatherInterest(String id) {
-
+    public void unmodifyPatherInterest(String source) {
+        thisIndustry.unmodifyPatherInterest(source);
     }
 
     @Override
-    public float getBasePatherInterest() {
-        return 0;
+    public void modifyImmigration(MutableStat modifier) {
+        thisIndustry.modifyImmigration(modifier);
+    }
+
+    @Override
+    public void unmodifyImmigration(String source) {
+        thisIndustry.unmodifyImmigration(source);
     }
 
     @Override

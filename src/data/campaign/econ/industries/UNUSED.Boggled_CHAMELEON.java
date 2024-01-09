@@ -1,12 +1,5 @@
 package data.campaign.econ.industries;
 
-import java.lang.String;
-
-import com.fs.starfarer.api.campaign.econ.*;
-import com.fs.starfarer.api.impl.campaign.ids.Commodities;
-import com.fs.starfarer.api.util.Pair;
-import data.campaign.econ.boggledTools;
-
 public class Boggled_CHAMELEON extends BoggledBaseIndustry {
     public Boggled_CHAMELEON() {
         super();
