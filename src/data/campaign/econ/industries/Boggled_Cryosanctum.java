@@ -1,121 +1,209 @@
 package data.campaign.econ.industries;
 
 import com.fs.starfarer.api.campaign.econ.Industry;
+import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.impl.campaign.econ.impl.Cryosanctum;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Pair;
 import data.campaign.econ.boggledTools;
 
 public class Boggled_Cryosanctum extends Cryosanctum implements BoggledIndustryInterface {
-    private final BoggledCommonIndustry thisIndustry;
+    private BoggledCommonIndustry thisIndustry;
 
     public Boggled_Cryosanctum() {
         super();
-        thisIndustry = boggledTools.getIndustryProject("cryosanctum");
+        thisIndustry = new BoggledCommonIndustry();
     }
 
     @Override
-    public void startBuilding() {
+    public void init(String id, MarketAPI market) {
+        super.init(id, market);
+        thisIndustry = boggledTools.getIndustryProject(id);
+    }
+
+    @Override
+    public final void startBuilding() {
         super.startBuilding();
         thisIndustry.startBuilding(this);
     }
 
     @Override
-    public void startUpgrading() {
+    public final void startUpgrading() {
         super.startUpgrading();
         thisIndustry.startUpgrading(this);
     }
 
     @Override
-    protected void buildingFinished() {
+    protected final void buildingFinished() {
         super.buildingFinished();
-        thisIndustry.buildingFinished(this);
+        thisIndustry.buildingFinished(this, this);
     }
 
     @Override
-    protected void upgradeFinished(Industry previous) {
+    protected final void upgradeFinished(Industry previous) {
         super.upgradeFinished(previous);
         thisIndustry.upgradeFinished(this, previous);
     }
 
     @Override
-    public void finishBuildingOrUpgrading() {
+    public final void finishBuildingOrUpgrading() {
         super.finishBuildingOrUpgrading();
         thisIndustry.finishBuildingOrUpgrading(this);
     }
 
     @Override
-    public boolean isBuilding() { return thisIndustry.isBuilding(this); }
+    public final boolean isBuilding() { return thisIndustry.isBuilding(this); }
 
     @Override
-    public boolean isFunctional() { return super.isFunctional() && thisIndustry.isFunctional(); }
+    public final boolean isFunctional() { return super.isFunctional() && thisIndustry.isFunctional(); }
 
     @Override
-    public boolean isUpgrading() { return thisIndustry.isUpgrading(this); }
+    public final boolean isUpgrading() { return thisIndustry.isUpgrading(this); }
 
     @Override
-    public float getBuildOrUpgradeProgress() { return thisIndustry.getBuildOrUpgradeProgress(this); }
+    public final void notifyBeingRemoved(MarketAPI.MarketInteractionMode mode, boolean forUpgrade) {
+        super.notifyBeingRemoved(mode, forUpgrade);
+        thisIndustry.notifyBeingRemoved(this, this, mode, forUpgrade);
+    }
 
     @Override
-    public String getBuildOrUpgradeDaysText() {
+    public final float getBuildOrUpgradeProgress() { return thisIndustry.getBuildOrUpgradeProgress(this); }
+
+    @Override
+    public final String getBuildOrUpgradeDaysText() {
         return thisIndustry.getBuildOrUpgradeDaysText(this);
     }
 
     @Override
-    public String getBuildOrUpgradeProgressText() {
+    public final String getBuildOrUpgradeProgressText() {
         return thisIndustry.getBuildOrUpgradeProgressText(this);
     }
 
     @Override
-    public boolean isAvailableToBuild() { return thisIndustry.isAvailableToBuild(this); }
+    public final boolean isAvailableToBuild() { return thisIndustry.isAvailableToBuild(this); }
 
     @Override
-    public boolean showWhenUnavailable() { return thisIndustry.showWhenUnavailable(this); }
+    public final boolean showWhenUnavailable() { return thisIndustry.showWhenUnavailable(this); }
 
     @Override
-    public String getUnavailableReason() { return thisIndustry.getUnavailableReason(this); }
+    public final String getUnavailableReason() { return thisIndustry.getUnavailableReason(this); }
 
     @Override
-    public void advance(float amount) {
+    public final void advance(float amount) {
         super.advance(amount);
         thisIndustry.advance(amount, this);
     }
 
     @Override
-    public void apply() {
+    public final void apply() {
         super.apply(true);
         thisIndustry.apply(this, this);
     }
 
     @Override
-    public void unapply() {
+    public final void unapply() {
         super.unapply();
         thisIndustry.unapply(this, this);
     }
 
     @Override
-    protected void addRightAfterDescriptionSection(TooltipMakerAPI tooltip, IndustryTooltipMode mode) {
-        thisIndustry.addRightAfterDescriptionSection(this, tooltip, mode);
+    protected final boolean hasPostDemandSection(boolean hasDemand, Industry.IndustryTooltipMode mode) {
+        return thisIndustry.hasPostDemandSection(this, hasDemand, mode);
     }
 
     @Override
-    protected boolean hasPostDemandSection(boolean hasDemand, IndustryTooltipMode mode) {
-        return true;
-    }
-
-    @Override
-    protected void addPostDemandSection(TooltipMakerAPI tooltip, boolean hasDemand, IndustryTooltipMode mode) {
+    protected final void addPostDemandSection(TooltipMakerAPI tooltip, boolean hasDemand, Industry.IndustryTooltipMode mode) {
         thisIndustry.addPostDemandSection(this, tooltip, hasDemand, mode);
     }
 
     @Override
-    public void applyDeficitToProduction(String modId, Pair<String, Integer> deficit, String... commodities) {
+    public final void applyDeficitToProduction(String modId, Pair<String, Integer> deficit, String... commodities) {
         thisIndustry.applyDeficitToProduction(this, modId, deficit, commodities);
     }
 
     @Override
-    public void setFunctional(boolean functional) {
+    public final void setFunctional(boolean functional) {
         thisIndustry.setFunctional(functional);
+    }
+
+    @Override
+    public final void modifyPatherInterest(String id, float patherInterest) {
+        thisIndustry.modifyPatherInterest(id, patherInterest);
+    }
+
+    @Override
+    public final void unmodifyPatherInterest(String id) {
+        thisIndustry.unmodifyPatherInterest(id);
+    }
+
+    @Override
+    public final float getBasePatherInterest() {
+        return thisIndustry.getBasePatherInterest();
+    }
+
+    @Override
+    public final boolean canBeDisrupted() {
+        return thisIndustry.canBeDisrupted(this);
+    }
+
+    @Override
+    public final float getPatherInterest() {
+        return super.getPatherInterest() + thisIndustry.getPatherInterest(this);
+    }
+
+    @Override
+    public final boolean canInstallAICores() {
+        return thisIndustry.canInstallAICores();
+    }
+
+    @Override
+    public final void addAlphaCoreDescription(TooltipMakerAPI tooltip, Industry.AICoreDescriptionMode mode) {
+        thisIndustry.addAICoreDescription(this, tooltip, mode, "Alpha", "alpha_core");
+    }
+
+    @Override
+    public final void addBetaCoreDescription(TooltipMakerAPI tooltip, Industry.AICoreDescriptionMode mode) {
+        thisIndustry.addAICoreDescription(this, tooltip, mode, "Beta", "beta_core");
+    }
+
+    @Override
+    public final void addGammaCoreDescription(TooltipMakerAPI tooltip, Industry.AICoreDescriptionMode mode) {
+        thisIndustry.addAICoreDescription(this, tooltip, mode, "Gamma", "gamma_core");
+    }
+
+    @Override
+    public final void applyAICoreToIncomeAndUpkeep()
+    {
+        // This being blank prevents installed AI cores from altering monthly upkeep
+        // AI cores affect income and upkeep from the regular apply() function
+    }
+
+    @Override
+    public final void updateAICoreToSupplyAndDemandModifiers()
+    {
+        // This being blank prevents AI cores from reducing the demand
+        // AI cores affect supply and demand from the regular apply() function
+    }
+
+    @Override
+    protected final void addRightAfterDescriptionSection(TooltipMakerAPI tooltip, Industry.IndustryTooltipMode mode) {
+        thisIndustry.addRightAfterDescriptionSection(this, tooltip, mode);
+    }
+
+    @Override
+    public final boolean canImprove() {
+        return thisIndustry.canImprove(this);
+    }
+
+    @Override
+    protected final void applyImproveModifiers() {
+        thisIndustry.applyImproveModifiers(this, this);
+    }
+
+    @Override
+    public final void addImproveDesc(TooltipMakerAPI tooltip, Industry.ImprovementDescriptionMode mode) {
+        thisIndustry.addImproveDesc(this, tooltip, mode);
+        super.addImproveDesc(tooltip, mode);
     }
 }
 

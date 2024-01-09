@@ -57,4 +57,48 @@ chameleon_alpha_core_eliminate_pather_interest,,EliminatePatherInterest,,
 
 chameleon_improve_bonus_to_stability,,BonusToStability,,1
 
+domain_archaeology_ruins_pather_interest,,ConditionToPatherInterest,,"[
+	{ 'condition_id' : 'ruins_scattered', 'interest' : 1 },
+	{ 'condition_id' : 'ruins_widespread', 'interest' : 2 },
+	{ 'condition_id' : 'ruins_extensive', 'interest' : 3 },
+	{ 'condition_id' : 'ruins_vast', 'interest' : 4 }
+]"
+
 just_break_the_damn_thing,,DeficitToInactive,"heavy_machinery | supplies | fuel",
+
+domed_cities_suppress_conditions,,SuppressConditions,,no_atmosphere | thin_atmosphere | dense_atmosphere | toxic_atmosphere | extreme_weather | inimical_biosphere
+domed_cities_ground_defenses,boggledDomedCitiesDefensePenaltyEnabled,ImproveGroundDefense,,0.05
+domed_cities_improve_stability_bonus,,BonusToStability,,1
+domed_cities_alpha_core_stability_bonus,,BonusToStability,,1
+domed_cities_beta_core_stability_bonus,,BonusToStability,,2
+domed_cities_gamma_core_stability_bonus,,BonusToStability,,3
+
+expand_station_increment_tag,,IncrementTag,,"{ 'tag' : 'boggled_station_construction_numExpansions_', 'step' : 1 }"
+expand_station_remove_on_completion,,RemoveIndustry,,BOGGLED_STATION_EXPANSION
+
+harmonic_damper_suppress_conditions,,SuppressConditions,,tectonic_activity | extreme_tectonic_activity
+harmonic_damper_improve_ground_defenses,,ImproveGroundDefense,,1.25
+harmonic_damper_alpha_core_ground_defenses,,ImproveGroundDefense,,2
+harmonic_damper_beta_core_ground_defenses,,ImproveGroundDefense,,1.5
+harmonic_damper_gamma_core_ground_defenses,,ImproveGroundDefense,,1.25
+
+limelight_network_improve_increase_income_bonus,,IncomeBonusToIndustry,,"[ { 'industry_id' : 'BOGGLED_LIMELIGHT_NETWORK', 'income_multiplier' : 1.2 } ]"
+limelight_network_alpha_core_reduce_upkeep_bonus,,ReduceUpkeep,,0.25
+limelight_network_alpha_core_reduce_demand_bonus,,ReduceAllDemand,,1
+limelight_network_alpha_core_increase_income_bonus,,IncomeBonusToIndustry,,"[ { 'industry_id' : 'BOGGLED_LIMELIGHT_NETWORK', 'income_multiplier' : 1.5 } ]"
+
+magnetoshield_suppress_conditions,,SuppressConditions,,irradiated
+
+mesozoic_park_improve_increase_income_bonus,,IncomeBonusToIndustry,,"[ { 'industry_id' : 'BOGGLED_MESOZOIC_PARK', 'income_multiplier' : 1.2 } ]"
+mesozoic_park_alpha_core_increase_income_bonus,,IncomeBonusToIndustry,,"[ { 'industry_id' : 'BOGGLED_MESOZOIC_PARK', 'income_multiplier' : 1.2 } ]"
+mesozoic_park_beta_core_increase_income_bonus,,IncomeBonusToIndustry,,"[ { 'industry_id' : 'BOGGLED_MESOZOIC_PARK', 'income_multiplier' : 1.1 } ]"
+mesozoic_park_gamma_core_increase_income_bonus,,IncomeBonusToIndustry,,"[ { 'industry_id' : 'BOGGLED_MESOZOIC_PARK', 'income_multiplier' : 1.05 } ]"
+
+planetary_agrav_field_suppress_conditions,,SuppressConditions,,high_gravity | low_gravity
+planetary_agrav_field_effect_with_requirement,,IndustryEffectWithRequirement,,"{
+	'requirement_ids' : [ { 'requirement_id' : 'colony_has_domed_cities_or_is_gas_giant' } ],
+	'industry_effects' : [ 'planetary_agrav_field_suppress_conditions' ]
+}"
+
+stellar_reflector_array_suppress_conditions,,SuppressConditions,,hot | cold | poor_light
+stellar_reflector_array_add_solar_array_condition,,,,

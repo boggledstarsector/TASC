@@ -266,6 +266,7 @@ public class boggledTools {
         public static final String harmonicDamperIndustryId = "BOGGLED_HARMONIC_DAMPER";
         public static final String hydroponicsIndustryId = "BOGGLED_HYDROPONICS";
         public static final String ismaraSlingIndustryId = "BOGGLED_ISMARA_SLING";
+        public static final String asteroidProcessingIndustryId = "BOGGLED_ASTEROID_PROCESSING";
         public static final String kletkaSimulatorIndustryId = "BOGGLED_KLETKA_SIMULATOR";
         public static final String magnetoShieldIndustryId = "BOGGLED_MAGNETOSHIELD";
         public static final String mesozoicParkIndustryId = "BOGGLED_MESOZOIC_PARK";
@@ -327,8 +328,15 @@ public class boggledTools {
         return req;
     }
 
-    public static BoggledProjectRequirementsOR getTerraformingRequirements(String terraformingRequirementId) {
-        return terraformingRequirements.get(terraformingRequirementId);
+    @Nullable
+    public static BoggledProjectRequirementsOR getTerraformingRequirements(String terraformingRequirementId, String type, String id) {
+        Logger log = Global.getLogger(boggledTools.class);
+
+        BoggledProjectRequirementsOR req = terraformingRequirements.get(terraformingRequirementId);
+        if (req == null) {
+            log.error(type + " " + id + " has invalid requirement " + terraformingRequirementId);
+        }
+        return req;
     }
 
     @Nullable
@@ -479,6 +487,8 @@ public class boggledTools {
     }
 
     public static void initialiseDefaultTerraformingRequirementFactories() {
+        addTerraformingRequirementFactory("AlwaysTrue", new BoggledTerraformingRequirementFactory.AlwaysTrue());
+
         addTerraformingRequirementFactory("PlanetType", new BoggledTerraformingRequirementFactory.PlanetType());
         addTerraformingRequirementFactory("MarketHasCondition", new BoggledTerraformingRequirementFactory.MarketHasCondition());
         addTerraformingRequirementFactory("MarketHasIndustry", new BoggledTerraformingRequirementFactory.MarketHasIndustry());
@@ -554,6 +564,14 @@ public class boggledTools {
         addIndustryEffectFactory("ReduceUpkeep", new BoggledIndustryEffectFactory.ReduceUpkeepFactory());
 
         addIndustryEffectFactory("EliminatePatherInterest", new BoggledIndustryEffectFactory.EliminatePatherInterestFactory());
+        addIndustryEffectFactory("ConditionToPatherInterest", new BoggledIndustryEffectFactory.ConditionToPatherInterestFactory());
+        addIndustryEffectFactory("IncrementTag", new BoggledIndustryEffectFactory.IncrementTagFactory());
+        addIndustryEffectFactory("RemoveIndustry", new BoggledIndustryEffectFactory.RemoveIndustryFactory());
+
+        addIndustryEffectFactory("SuppressConditions", new BoggledIndustryEffectFactory.SuppressConditionsFactory());
+        addIndustryEffectFactory("ImproveGroundDefense", new BoggledIndustryEffectFactory.ImproveGroundDefenseFactory());
+
+        addIndustryEffectFactory("IndustryEffectWithRequirement", new BoggledIndustryEffectFactory.IndustryEffectWithRequirementFactory());
     }
 
     public static void addIndustryEffectFactory(String key, BoggledIndustryEffectFactory.IndustryEffectFactory value) {
@@ -598,7 +616,7 @@ public class boggledTools {
         return new ArrayList<>(Arrays.asList(toSplit.split(regex)));
     }
 
-    private static BoggledProjectRequirementsAND requirementsFromRequirementsArray(JSONArray requirementArray, String id, String requirementType) throws JSONException {
+    public static BoggledProjectRequirementsAND requirementsFromRequirementsArray(JSONArray requirementArray, String id, String requirementType) throws JSONException {
         Logger log = Global.getLogger(boggledTools.class);
 
         List<BoggledProjectRequirementsAND.RequirementWithTooltipOverride> reqs = new ArrayList<>();
@@ -744,6 +762,7 @@ public class boggledTools {
         Logger log = Global.getLogger(boggledTools.class);
 
         HashMap<String, BoggledCommonIndustry> industryProjects = new HashMap<>();
+        String idForErrors = "";
         for (int i = 0; i < industryOptionsJSON.length(); ++i) {
             try {
                 JSONObject row = industryOptionsJSON.getJSONObject(i);
@@ -752,6 +771,7 @@ public class boggledTools {
                 if (id == null || id.isEmpty()) {
                     continue;
                 }
+                idForErrors = id;
 
                 String industry = row.getString("tooltip");
 
@@ -793,6 +813,7 @@ public class boggledTools {
                     }
                 }
 
+                List<BoggledIndustryEffect.IndustryEffect> buildingFinishedEffects = industryEffectsFromObject(row, "building_finished_effects",id, "Industry");
                 List<BoggledIndustryEffect.IndustryEffect> industryEffects = industryEffectsFromObject(row, "industry_effects", id, "Industry");
                 List<BoggledIndustryEffect.IndustryEffect> improveEffects = industryEffectsFromObject(row, "improve_effects", id, "Industry");
 
@@ -810,11 +831,22 @@ public class boggledTools {
                     }
                 }
 
-                boolean disruptable = row.optBoolean("can_be_disrupted", true);
+                List<BoggledProjectRequirementsAND> disruptRequirements = new ArrayList<>();
+//                String disruptRequirementString = row.getString("disrupt_requirements");
+//                if (!disruptRequirementString.isEmpty()) {
+//                    JSONArray disruptRequirementsArray = new JSONArray(disruptRequirementString);
+//                    for (int j = 0; j < disruptRequirementsArray.length(); ++j) {
+//                        JSONArray reqArray = disruptRequirementsArray.getJSONArray(j);
+//                        BoggledProjectRequirementsAND reqsAnd = requirementsFromRequirementsArray(reqArray, id, "disrupt_requirements");
+//                        disruptRequirements.add(reqsAnd);
+//                    }
+//                }
 
-                industryProjects.put(id, new BoggledCommonIndustry(id, industry, projects, commoditySupply, commodityDemand, industryEffects, improveEffects, aiCoreEffects, disruptable));
+                float basePatherInterest = (float) row.getDouble("base_pather_interest");
+
+                industryProjects.put(id, new BoggledCommonIndustry(id, industry, projects, commoditySupply, commodityDemand, buildingFinishedEffects, industryEffects, improveEffects, aiCoreEffects, disruptRequirements, basePatherInterest));
             } catch (JSONException e) {
-                log.error("Error in industry options: " + e);
+                log.error("Error in industry options " + idForErrors + ": " + e);
             }
         }
         boggledTools.industryProjects = industryProjects;
@@ -867,7 +899,7 @@ public class boggledTools {
     public static void initialiseIndustryEffectsFromJSON(@NotNull JSONArray industryEffectsJSON) {
         Logger log = Global.getLogger(boggledTools.class);
 
-        HashMap<String, BoggledIndustryEffect.IndustryEffect> industryEffects = new HashMap<>();
+        boggledTools.industryEffects = new HashMap<>();
 
         String idForErrors = "";
         for (int i = 0; i < industryEffectsJSON.length(); ++i) {
@@ -888,13 +920,11 @@ public class boggledTools {
 
                 BoggledIndustryEffect.IndustryEffect effect = getIndustryEffect(industryEffectType, id, enableSettings, commoditiesDemanded, data);
 
-                industryEffects.put(id, effect);
+                boggledTools.industryEffects.put(id, effect);
             } catch (JSONException e) {
                 log.error("Error in industry effect '" + idForErrors + "': " + e);
             }
         }
-
-        boggledTools.industryEffects = industryEffects;
     }
 
     public static void initialiseAICoreEffectsFromJSON(@NotNull JSONArray aiCoreEffectsJSON) throws JSONException {
@@ -1110,7 +1140,7 @@ public class boggledTools {
                     for (int j = 0; j < requirementsResetArray.length(); ++j) {
                         JSONArray reqArray = requirementsResetArray.getJSONArray(j);
                         BoggledProjectRequirementsAND reqsAnd = requirementsFromRequirementsArray(reqArray, id, "requirements_reset");
-                        reqsStall.add(reqsAnd);
+                        reqsReset.add(reqsAnd);
                     }
                 }
 
@@ -1249,6 +1279,10 @@ public class boggledTools {
         return terraformingProjects.get(projectId);
     }
 
+    public static BoggledIndustryEffect.IndustryEffect getIndustryEffect(String industryEffectId) {
+        return industryEffects.get(industryEffectId);
+    }
+
     public static HashMap<Pair<String, String>, String> getResourceLimits() { return resourceLimits; }
     public static HashMap<String, ArrayList<String>> getResourceProgressions() { return resourceProgressions; }
 
@@ -1265,10 +1299,6 @@ public class boggledTools {
     private static HashMap<String, BoggledTerraformingProjectEffect.TerraformingProjectEffect> terraformingProjectEffects;
     private static HashMap<String, BoggledCommonIndustry> industryProjects;
     private static LinkedHashMap<String, BoggledTerraformingProject> terraformingProjects;
-
-    public static HashMap<String, BoggledProjectRequirementsOR> getTerraformingRequirements() {
-        return terraformingRequirements;
-    }
 
     private static HashMap<String, ArrayList<String>> resourceProgressions;
     private static HashMap<Pair<String, String>, String> resourceLimits;
@@ -1870,15 +1900,15 @@ public class boggledTools {
         return 0;
     }
 
-    public static void incrementNumberOfStationExpansions(MarketAPI market) {
-        if (getNumberOfStationExpansions(market) == 0) {
-            market.addTag(BoggledTags.stationConstructionNumExpansionsOne);
-        } else {
-            int numExpansionsOld = getNumberOfStationExpansions(market);
-            market.removeTag(BoggledTags.stationConstructionNumExpansions + numExpansionsOld);
-            market.addTag(BoggledTags.stationConstructionNumExpansions + (numExpansionsOld + 1));
-        }
-    }
+//    public static void incrementNumberOfStationExpansions(MarketAPI market) {
+//        if (getNumberOfStationExpansions(market) == 0) {
+//            market.addTag(BoggledTags.stationConstructionNumExpansionsOne);
+//        } else {
+//            int numExpansionsOld = getNumberOfStationExpansions(market);
+//            market.removeTag(BoggledTags.stationConstructionNumExpansions + numExpansionsOld);
+//            market.addTag(BoggledTags.stationConstructionNumExpansions + (numExpansionsOld + 1));
+//        }
+//    }
 
     public static boolean systemHasJumpPoint(StarSystemAPI system)
     {
@@ -2003,7 +2033,17 @@ public class boggledTools {
     public static boolean hasIsmaraSling(MarketAPI market)
     {
         for (MarketAPI marketElement : Global.getSector().getEconomy().getMarkets(market.getStarSystem())) {
-            if (marketElement.getFactionId().equals(market.getFactionId()) && marketElement.hasIndustry(BoggledIndustries.ismaraSlingIndustryId) && marketElement.getIndustry(BoggledIndustries.ismaraSlingIndustryId).isFunctional()) {
+            if (!marketElement.getFactionId().equals(market.getFactionId())) {
+                continue;
+            }
+
+            Industry ismaraSlingIndustry = marketElement.getIndustry(BoggledIndustries.ismaraSlingIndustryId);
+            if (ismaraSlingIndustry != null && ismaraSlingIndustry.isFunctional()) {
+                return true;
+            }
+
+            Industry asteroidProcessingIndustry = marketElement.getIndustry(BoggledIndustries.asteroidProcessingIndustryId);
+            if (asteroidProcessingIndustry != null && asteroidProcessingIndustry.isFunctional()) {
                 return true;
             }
         }

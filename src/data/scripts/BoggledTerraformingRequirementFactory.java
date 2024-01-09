@@ -13,10 +13,16 @@ public class BoggledTerraformingRequirementFactory {
         BoggledTerraformingRequirement.TerraformingRequirement constructFromJSON(String requirementId, boolean invert, String data) throws JSONException;
     }
 
+    public static class AlwaysTrue implements TerraformingRequirementFactory {
+        @Override
+        public BoggledTerraformingRequirement.TerraformingRequirement constructFromJSON(String requirementId, boolean invert, String data) throws JSONException {
+            return new BoggledTerraformingRequirement.AlwaysTrue(requirementId, invert);
+        }
+    }
+
     public static class PlanetType implements TerraformingRequirementFactory {
         @Override
         public BoggledTerraformingRequirement.TerraformingRequirement constructFromJSON(String requirementId, boolean invert, String data) {
-//            boggledTools.CheckPlanetTypeExists(data);
             return new BoggledTerraformingRequirement.PlanetType(requirementId, invert, data);
         }
     }

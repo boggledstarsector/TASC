@@ -5,6 +5,8 @@ id,tooltip,invert_all,requirements
 # requirements is a | separated list of requirement IDs as specified in 'terraforming_requirement.csv'. These are checked in an OR manner, ie only one of the requirements has to be true for this check to return true
 
 # Token replacements can be used in tooltips. Available token replacements depend on the specific requirement used. Some token replacements may themselves be replaced if there are multiple requirements listed.
+true,"True",false,"true"
+false,"False",false,"false"
 colony_not_arid_world,"$market is not already an arid world",false,"planet_not_arid"
 colony_not_jungle_world,"$market is not already a jungle world",false,"planet_not_jungle"
 colony_not_terran_world,"$market is not already a Terran world",false,"planet_not_terran"
@@ -96,6 +98,7 @@ colony_has_ruins,"$market has Domain era ruins",false,"market_ruins_scattered | 
 
 colony_not_has_tectonic_activity_unless_has_harmonic_damper,"$market doesn't have tectonic activity or has harmonic damper",false,"market_not_has_extreme_tectonic_activity | market_has_harmonic_damper"
 colony_has_domed_cities,"$market population is housed in domed cities",false,"market_has_domed_cities"
+colony_has_domed_cities_or_is_gas_giant,,false,"market_has_domed_cities | planet_gas_giant"
 
 station_construction_num_expansions,,false,"station_construction_num_expansions"
 

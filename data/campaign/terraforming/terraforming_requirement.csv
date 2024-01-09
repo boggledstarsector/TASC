@@ -13,6 +13,10 @@ id,requirement_type,invert,data
 # FocusPlanetTypeRequirement and FocusMarketHasCondition are the same as PlanetTypeRequirement and MarketHasCondition, but check the planet the station is orbiting
 # IntegerFromTagSubstring parses an integer from the end of the specified tag. Format is "tagSubstring ; value {| Option}". Returns true when the parsed integer (plus option) is greater than the given value.
 # FleetCargoContainsAtLeast is a ; separated itemId ; quantity pair.
+# Don't judge me about requirements true and false
+true,AlwaysTrue,false,
+false,AlwaysTrue,true,
+
 planet_not_arid,PlanetType,true,"desert"
 planet_not_barren,PlanetType,true,"barren"
 planet_not_jungle,PlanetType,true,"jungle"

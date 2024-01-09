@@ -29,7 +29,7 @@ public class BoggledOrbitalStation extends OrbitalStation implements BoggledIndu
     @Override
     protected void buildingFinished() {
         super.buildingFinished();
-        thisIndustry.buildingFinished(this);
+        thisIndustry.buildingFinished(this, this);
     }
 
     @Override
@@ -115,7 +115,7 @@ public class BoggledOrbitalStation extends OrbitalStation implements BoggledIndu
 
     @Override
     public boolean canBeDisrupted() {
-        return thisIndustry.canBeDisrupted();
+        return thisIndustry.canBeDisrupted(this);
     }
 
     @Override
@@ -172,5 +172,20 @@ public class BoggledOrbitalStation extends OrbitalStation implements BoggledIndu
     public void addImproveDesc(TooltipMakerAPI tooltip, Industry.ImprovementDescriptionMode mode) {
         thisIndustry.addImproveDesc(this, tooltip, mode);
         super.addImproveDesc(tooltip, mode);
+    }
+
+    @Override
+    public final void modifyPatherInterest(String id, float patherInterest) {
+        thisIndustry.modifyPatherInterest(id, patherInterest);
+    }
+
+    @Override
+    public void unmodifyPatherInterest(String id) {
+        thisIndustry.unmodifyPatherInterest(id);
+    }
+
+    @Override
+    public float getBasePatherInterest() {
+        return thisIndustry.getBasePatherInterest();
     }
 }

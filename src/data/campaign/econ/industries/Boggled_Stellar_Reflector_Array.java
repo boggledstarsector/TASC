@@ -15,11 +15,18 @@ import com.fs.starfarer.api.util.Pair;
 import data.campaign.econ.boggledTools;
 
 public class Boggled_Stellar_Reflector_Array extends BaseIndustry implements BoggledIndustryInterface {
-    private final BoggledCommonIndustry thisIndustry;
+    private BoggledCommonIndustry thisIndustry;
 
     public Boggled_Stellar_Reflector_Array() {
         super();
-        thisIndustry = boggledTools.getIndustryProject("stellar_reflector_array");
+        thisIndustry = new BoggledCommonIndustry();
+//        thisIndustry = boggledTools.getIndustryProject("stellar_reflector_array");
+    }
+
+    @Override
+    public void init(String id, MarketAPI market) {
+        super.init(id, market);
+        thisIndustry = boggledTools.getIndustryProject(id);
     }
 
     @Override
@@ -126,6 +133,21 @@ public class Boggled_Stellar_Reflector_Array extends BaseIndustry implements Bog
         thisIndustry.setFunctional(functional);
     }
 
+    @Override
+    public void modifyPatherInterest(String id, float patherInterest) {
+
+    }
+
+    @Override
+    public void unmodifyPatherInterest(String id) {
+
+    }
+
+    @Override
+    public float getBasePatherInterest() {
+        return 0;
+    }
+
     // The "solar_array" condition handles suppressing hot, cold and poor light conditions.
     // This is here merely to allow the tooltip to say which conditions are/would be suppressed.
     public static List<String> SUPPRESSED_CONDITIONS = new ArrayList<String>();
@@ -141,24 +163,24 @@ public class Boggled_Stellar_Reflector_Array extends BaseIndustry implements Bog
         super.apply(true);
         thisIndustry.apply(this, this);
 
-        boolean shortage = false;
-        if(boggledTools.getBooleanSetting(boggledTools.BoggledSettings.domainTechContentEnabled) && boggledTools.getBooleanSetting(boggledTools.BoggledSettings.domainArchaeologyEnabled))
-        {
-            Pair<String, Integer> deficit = this.getMaxDeficit(boggledTools.BoggledCommodities.domainArtifacts);
-            if(deficit.two != 0)
-            {
-                shortage = true;
-            }
-        }
-
-        if(shortage)
-        {
-            getUpkeep().modifyMult("deficit", 5.0f, "Artifacts shortage");
-        }
-        else
-        {
-            getUpkeep().unmodifyMult("deficit");
-        }
+//        boolean shortage = false;
+//        if(boggledTools.getBooleanSetting(boggledTools.BoggledSettings.domainTechContentEnabled) && boggledTools.getBooleanSetting(boggledTools.BoggledSettings.domainArchaeologyEnabled))
+//        {
+//            Pair<String, Integer> deficit = this.getMaxDeficit(boggledTools.BoggledCommodities.domainArtifacts);
+//            if(deficit.two != 0)
+//            {
+//                shortage = true;
+//            }
+//        }
+//
+//        if(shortage)
+//        {
+//            getUpkeep().modifyMult("deficit", 5.0f, "Artifacts shortage");
+//        }
+//        else
+//        {
+//            getUpkeep().unmodifyMult("deficit");
+//        }
     }
 
     @Override
@@ -265,7 +287,7 @@ public class Boggled_Stellar_Reflector_Array extends BaseIndustry implements Bog
     protected void buildingFinished()
     {
         super.buildingFinished();
-        thisIndustry.buildingFinished(this);
+        thisIndustry.buildingFinished(this, this);
 
         MarketAPI market = this.market;
         boggledTools.addCondition(market, Conditions.SOLAR_ARRAY);

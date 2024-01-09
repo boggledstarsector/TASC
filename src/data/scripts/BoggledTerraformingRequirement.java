@@ -39,6 +39,17 @@ public class BoggledTerraformingRequirement {
         }
     }
 
+    public static class AlwaysTrue extends TerraformingRequirement {
+        public AlwaysTrue(String requirementId, boolean invert) {
+            super(requirementId, invert);
+        }
+
+        @Override
+        protected boolean checkRequirementImpl(MarketAPI market) {
+            return true;
+        }
+    }
+
     public static class PlanetType extends TerraformingRequirement {
         String planetTypeId;
 

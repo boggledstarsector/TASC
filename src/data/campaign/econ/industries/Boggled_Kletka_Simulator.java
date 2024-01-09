@@ -18,7 +18,7 @@ public class Boggled_Kletka_Simulator extends BaseIndustry implements BoggledInd
 
     public Boggled_Kletka_Simulator() {
         super();
-        thisIndustry = boggledTools.getIndustryProject("kletka_simulator");
+        thisIndustry = boggledTools.getIndustryProject("BOGGLED_KLETKA_SIMULATOR");
     }
 
     @Override
@@ -36,7 +36,7 @@ public class Boggled_Kletka_Simulator extends BaseIndustry implements BoggledInd
     @Override
     protected void buildingFinished() {
         super.buildingFinished();
-        thisIndustry.buildingFinished(this);
+        thisIndustry.buildingFinished(this, this);
     }
 
     @Override
@@ -199,6 +199,21 @@ public class Boggled_Kletka_Simulator extends BaseIndustry implements BoggledInd
     @Override
     public void setFunctional(boolean functional) {
         thisIndustry.setFunctional(functional);
+    }
+
+    @Override
+    public void modifyPatherInterest(String id, float patherInterest) {
+
+    }
+
+    @Override
+    public void unmodifyPatherInterest(String id) {
+
+    }
+
+    @Override
+    public float getBasePatherInterest() {
+        return 0;
     }
 
     @Override

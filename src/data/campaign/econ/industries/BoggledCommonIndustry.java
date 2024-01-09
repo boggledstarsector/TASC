@@ -4,15 +4,14 @@ import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.econ.CommoditySpecAPI;
 import com.fs.starfarer.api.campaign.econ.Industry;
 import com.fs.starfarer.api.campaign.econ.MarketAPI;
+import com.fs.starfarer.api.combat.MutableStat;
 import com.fs.starfarer.api.impl.campaign.econ.impl.BaseIndustry;
 import com.fs.starfarer.api.impl.campaign.population.PopulationComposition;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
 import com.fs.starfarer.api.util.Pair;
 import data.campaign.econ.boggledTools;
-import data.scripts.BoggledCommoditySupplyDemand;
-import data.scripts.BoggledIndustryEffect;
-import data.scripts.BoggledTerraformingProject;
+import data.scripts.*;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -32,19 +31,40 @@ public class BoggledCommonIndustry {
     private List<BoggledCommoditySupplyDemand.CommoditySupply> commoditySupply;
     private List<BoggledCommoditySupplyDemand.CommodityDemand> commodityDemand;
 
+    private List<BoggledIndustryEffect.IndustryEffect> buildingFinishedEffects;
     private List<BoggledIndustryEffect.IndustryEffect> industryEffects;
     private List<BoggledIndustryEffect.IndustryEffect> improveEffects;
 
     private List<BoggledIndustryEffect.AICoreEffect> aiCoreEffects;
 
-    private boolean disruptable = true;
+    private List<BoggledProjectRequirementsAND> disruptRequirements;
+
+    private float basePatherInterest;
+//    private float modifiedPatherInterest;
+
+    MutableStat modifiedPatherInterest;
 
     private boolean functional = true;
 
     private boolean building = false;
     private boolean built = false;
 
-    public BoggledCommonIndustry(String industryId, String industryTooltip, List<BoggledTerraformingProject> projects, List<BoggledCommoditySupplyDemand.CommoditySupply> commoditySupply, List<BoggledCommoditySupplyDemand.CommodityDemand> commodityDemand, List<BoggledIndustryEffect.IndustryEffect> industryEffects, List<BoggledIndustryEffect.IndustryEffect> improveEffects, List<BoggledIndustryEffect.AICoreEffect> aiCoreEffects, boolean disruptable) {
+    public BoggledCommonIndustry() {
+        this.industryId = "";
+        this.industryTooltip = "";
+        this.projects = new ArrayList<>();
+        this.commodityDemand = new ArrayList<>();
+        this.commoditySupply = new ArrayList<>();
+        this.buildingFinishedEffects = new ArrayList<>();
+        this.industryEffects = new ArrayList<>();
+        this.improveEffects = new ArrayList<>();
+        this.aiCoreEffects = new ArrayList<>();
+        this.disruptRequirements = new ArrayList<>();
+        this.basePatherInterest = 0f;
+        this.modifiedPatherInterest = new MutableStat(0);
+    }
+
+    public BoggledCommonIndustry(String industryId, String industryTooltip, List<BoggledTerraformingProject> projects, List<BoggledCommoditySupplyDemand.CommoditySupply> commoditySupply, List<BoggledCommoditySupplyDemand.CommodityDemand> commodityDemand, List<BoggledIndustryEffect.IndustryEffect> buildingFinishedEffects, List<BoggledIndustryEffect.IndustryEffect> industryEffects, List<BoggledIndustryEffect.IndustryEffect> improveEffects, List<BoggledIndustryEffect.AICoreEffect> aiCoreEffects, List<BoggledProjectRequirementsAND> disruptRequirements, float basePatherInterest) {
         this.industryId = industryId;
         this.industryTooltip = industryTooltip;
 
@@ -56,11 +76,16 @@ public class BoggledCommonIndustry {
         this.commoditySupply = commoditySupply;
         this.commodityDemand = commodityDemand;
 
+        this.buildingFinishedEffects = buildingFinishedEffects;
         this.industryEffects = industryEffects;
         this.improveEffects = improveEffects;
         this.aiCoreEffects = aiCoreEffects;
 
-        this.disruptable = disruptable;
+        this.disruptRequirements = disruptRequirements;
+
+        this.basePatherInterest = basePatherInterest;
+//        this.modifiedPatherInterest = basePatherInterest;
+        this.modifiedPatherInterest = new MutableStat(basePatherInterest);
     }
 
     protected Object readResolve() {
@@ -69,10 +94,13 @@ public class BoggledCommonIndustry {
         this.projects = that.projects;
         this.commoditySupply = that.commoditySupply;
         this.commodityDemand = that.commodityDemand;
+        this.buildingFinishedEffects = that.buildingFinishedEffects;
         this.industryEffects = that.industryEffects;
         this.improveEffects = that.improveEffects;
         this.aiCoreEffects = that.aiCoreEffects;
-        this.disruptable = that.disruptable;
+        this.disruptRequirements = that.disruptRequirements;
+        this.basePatherInterest = that.basePatherInterest;
+        this.modifiedPatherInterest = that.modifiedPatherInterest;
         return this;
     }
 
@@ -164,9 +192,12 @@ public class BoggledCommonIndustry {
     public void startUpgrading(BaseIndustry industry) {
     }
 
-    public void buildingFinished(BaseIndustry industry) {
+    public void buildingFinished(BaseIndustry industry, BoggledIndustryInterface industryInterface) {
         building = false;
         built = true;
+        for (BoggledIndustryEffect.IndustryEffect buildingFinishedEffect : buildingFinishedEffects) {
+            buildingFinishedEffect.applyEffect(industry, industryInterface, industry.getNameForModifier());
+        }
     }
 
     public void upgradeFinished(BaseIndustry industry, Industry previous) {
@@ -191,8 +222,13 @@ public class BoggledCommonIndustry {
         return false;
     }
 
-    public boolean canBeDisrupted() {
-        return disruptable;
+    public boolean canBeDisrupted(BaseIndustry industry) {
+        for (BoggledProjectRequirementsAND disruptRequirement : disruptRequirements) {
+            if (disruptRequirement.requirementsMet(industry.getMarket())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public void setFunctional(boolean functional) {
@@ -213,6 +249,12 @@ public class BoggledCommonIndustry {
             }
         }
         return false;
+    }
+
+    public void notifyBeingRemoved(BaseIndustry industry, BoggledIndustryInterface industryInterface, MarketAPI.MarketInteractionMode mode, boolean forUpgrade) {
+        for (BoggledIndustryEffect.IndustryEffect buildingFinishedEffect : buildingFinishedEffects) {
+            buildingFinishedEffect.unapplyEffect(industry, industryInterface);
+        }
     }
 
     public float getBuildOrUpgradeProgress(BaseIndustry industry) {
@@ -326,7 +368,7 @@ public class BoggledCommonIndustry {
         }
 
         for (BoggledIndustryEffect.IndustryEffect industryEffect : industryEffects) {
-            industryEffect.applyEffect(industry, industryInterface);
+            industryEffect.applyEffect(industry, industryInterface, industry.getNameForModifier());
         }
 
         for (BoggledIndustryEffect.AICoreEffect aiCoreEffect : aiCoreEffects) {
@@ -364,11 +406,11 @@ public class BoggledCommonIndustry {
         }
 
         for (BoggledIndustryEffect.IndustryEffect effect : industryEffects) {
-            effect.addRightAfterDescriptionSection(industry.getCurrentName(), industry, mode);
+            effect.addRightAfterDescriptionSection(industry, mode);
         }
 
         for (BoggledIndustryEffect.AICoreEffect effect : aiCoreEffects) {
-            List<TooltipData> desc = effect.addRightAfterDescriptionSection(industry.getCurrentName(), industry, mode);
+            List<TooltipData> desc = effect.addRightAfterDescriptionSection(industry, mode);
 
             for (TooltipData d : desc) {
                 tooltip.addPara(d.text, 10f, d.highlightColors.toArray(new Color[0]), d.highlights.toArray(new String[0]));
@@ -405,14 +447,14 @@ public class BoggledCommonIndustry {
 
         List<TooltipData> tooltipData = new ArrayList<>();
         for (BoggledIndustryEffect.IndustryEffect effect : industryEffects) {
-            List<TooltipData> data = effect.addPostDemandSection(industry.getCurrentName(), industry, hasDemand, mode);
+            List<TooltipData> data = effect.addPostDemandSection(industry, hasDemand, mode);
             if (!data.isEmpty()) {
                 tooltipData.addAll(data);
             }
         }
 
         for (BoggledIndustryEffect.AICoreEffect effect : aiCoreEffects) {
-            List<TooltipData> data = effect.addPostDemandSection(industry.getCurrentName(), industry, hasDemand, mode);
+            List<TooltipData> data = effect.addPostDemandSection(industry, hasDemand, mode);
             if (!data.isEmpty()) {
                 tooltipData.addAll(data);
             }
@@ -446,7 +488,7 @@ public class BoggledCommonIndustry {
         List<String> highlights = new ArrayList<>();
         List<Color> highlightColors = new ArrayList<>();
         for (BoggledIndustryEffect.AICoreEffect effect : aiCoreEffects) {
-            List<TooltipData> aiCoreDescription = effect.addAICoreDescription(industryTooltip, industry, mode, coreId);
+            List<TooltipData> aiCoreDescription = effect.addAICoreDescription(industry, mode, coreId);
             for (TooltipData desc : aiCoreDescription) {
                 builder.append(" ");
                 builder.append(desc.text);
@@ -481,7 +523,7 @@ public class BoggledCommonIndustry {
         }
 
         for (BoggledIndustryEffect.IndustryEffect improveEffect : improveEffects) {
-            improveEffect.applyEffect(industry, industryInterface);
+            improveEffect.applyEffect(industry, industryInterface, "Improvement (" + industry.getCurrentName() + ")");
         }
     }
 
@@ -493,7 +535,7 @@ public class BoggledCommonIndustry {
 
     public void addImproveDesc(BaseIndustry industry, TooltipMakerAPI tooltip, Industry.ImprovementDescriptionMode mode) {
         for (BoggledIndustryEffect.IndustryEffect improveEffect : improveEffects) {
-            List<TooltipData> improveDescription = improveEffect.addImproveDesc(industry.getCurrentName(), industry, mode);
+            List<TooltipData> improveDescription = improveEffect.addImproveDesc(industry, mode);
             for (TooltipData desc : improveDescription) {
                 tooltip.addPara(desc.text, 0f, desc.highlightColors.toArray(new Color[0]), desc.highlights.toArray(new String[0]));
                 tooltip.addSpacer(10.0f);
@@ -501,8 +543,20 @@ public class BoggledCommonIndustry {
         }
     }
 
+    public void modifyPatherInterest(String id, float patherInterest) {
+        modifiedPatherInterest.modifyFlat(id, patherInterest, "");
+    }
+
+    public void unmodifyPatherInterest(String id) {
+        modifiedPatherInterest.unmodifyFlat(id);
+    }
+
     public float getPatherInterest(BaseIndustry industry) {
-        return 0f;
+        return modifiedPatherInterest.getModifiedValue();
+    }
+
+    public float getBasePatherInterest() {
+        return basePatherInterest;
     }
 
     public void modifyIncoming(BaseIndustry industry, MarketAPI market, PopulationComposition incoming) {
