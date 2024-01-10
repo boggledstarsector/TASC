@@ -101,7 +101,10 @@ public class BoggledIndustryEffect {
 
             List<BoggledCommonIndustry.TooltipData> ret = new ArrayList<>();
             for (IndustryEffect effect : effects) {
-                ret.addAll(effect.addPostDemandSection(industry, hasDemand, mode));
+                List<BoggledCommonIndustry.TooltipData> add = effect.addPostDemandSection(industry, hasDemand, mode);
+                if (add != null) {
+                    ret.addAll(add);
+                }
             }
             return ret;
         }
@@ -121,7 +124,10 @@ public class BoggledIndustryEffect {
 
             List<BoggledCommonIndustry.TooltipData> ret = new ArrayList<>();
             for (IndustryEffect effect : effects) {
-                ret.addAll(effect.getApplyOrAppliedDesc(industry, descMode));
+                List<BoggledCommonIndustry.TooltipData> add = effect.getApplyOrAppliedDesc(industry, descMode);
+                if (add != null) {
+                    ret.addAll(add);
+                }
             }
             return ret;
         }
@@ -135,19 +141,17 @@ public class BoggledIndustryEffect {
 
         String id;
         String[] enableSettings;
-        List<String> commoditiesDemanded;
 
-        public IndustryEffect(String id, String[] enableSettings, List<String> commoditiesDemanded) {
+        public IndustryEffect(String id, String[] enableSettings) {
             this.id = id;
             this.enableSettings = enableSettings;
-            this.commoditiesDemanded = commoditiesDemanded;
         }
 
-        protected abstract void applyEffectImpl(BaseIndustry industry, BoggledIndustryInterface industryInterface, String[] commoditiesDemanded, String effectSource);
+        protected abstract void applyEffectImpl(BaseIndustry industry, BoggledIndustryInterface industryInterface, String effectSource);
 
-        protected abstract void unapplyEffectImpl(BaseIndustry industry, BoggledIndustryInterface industryInterface, String[] commoditiesDemanded);
+        protected abstract void unapplyEffectImpl(BaseIndustry industry, BoggledIndustryInterface industryInterface);
 
-        protected List<BoggledCommonIndustry.TooltipData> addPostDemandSectionImpl(BaseIndustry industry, boolean hasDemand, Industry.IndustryTooltipMode mode, String[] commoditiesDemanded) {
+        protected List<BoggledCommonIndustry.TooltipData> addPostDemandSectionImpl(BaseIndustry industry, boolean hasDemand, Industry.IndustryTooltipMode mode) {
             return new ArrayList<>();
         }
 
@@ -169,14 +173,14 @@ public class BoggledIndustryEffect {
             if (!isEnabled()) {
                 return;
             }
-            applyEffectImpl(industry, industryInterface, commoditiesDemanded.toArray(new String[0]), effectSource);
+            applyEffectImpl(industry, industryInterface, effectSource);
         }
 
         public void unapplyEffect(BaseIndustry industry, BoggledIndustryInterface industryInterface) {
             if (!isEnabled()) {
                 return;
             }
-            unapplyEffectImpl(industry, industryInterface, commoditiesDemanded.toArray(new String[0]));
+            unapplyEffectImpl(industry, industryInterface);
         }
 
         public List<BoggledCommonIndustry.TooltipData> addPostDemandSection(BaseIndustry industry, boolean hasDemand, Industry.IndustryTooltipMode mode) {
@@ -184,7 +188,7 @@ public class BoggledIndustryEffect {
                 return new ArrayList<>();
             }
 
-            return addPostDemandSectionImpl(industry, hasDemand, mode, commoditiesDemanded.toArray(new String[0]));
+            return addPostDemandSectionImpl(industry, hasDemand, mode);
         }
 
         public List<BoggledCommonIndustry.TooltipData> addRightAfterDescriptionSection(BaseIndustry industry, Industry.IndustryTooltipMode mode) {
@@ -211,27 +215,30 @@ public class BoggledIndustryEffect {
     }
 
     public static class DeficitToInactive extends IndustryEffect {
-        public DeficitToInactive(String id, String[] enableSettings, ArrayList<String> commoditiesDemanded) {
-            super(id, enableSettings, commoditiesDemanded);
+        List<String> commoditiesDemanded;
+        public DeficitToInactive(String id, String[] enableSettings, List<String> commoditiesDemanded) {
+            super(id, enableSettings);
+            this.commoditiesDemanded = commoditiesDemanded;
         }
 
         @Override
-        protected void applyEffectImpl(BaseIndustry industry, BoggledIndustryInterface industryInterface, String[] commoditiesDemanded, String effectSource) {
+        protected void applyEffectImpl(BaseIndustry industry, BoggledIndustryInterface industryInterface, String effectSource) {
             industryInterface.setFunctional(true);
-            if (industry.getMaxDeficit(commoditiesDemanded).two > 0) {
+            if (industry.getMaxDeficit(commoditiesDemanded.toArray(new String[0])).two > 0) {
                 industryInterface.setFunctional(false);
             }
         }
 
         @Override
-        protected void unapplyEffectImpl(BaseIndustry industry, BoggledIndustryInterface industryInterface, String[] commoditiesDemanded) {}
+        protected void unapplyEffectImpl(BaseIndustry industry, BoggledIndustryInterface industryInterface) {}
 
         @Override
-        protected List<BoggledCommonIndustry.TooltipData> addPostDemandSectionImpl(BaseIndustry industry, boolean hasDemand, Industry.IndustryTooltipMode mode, String[] commoditiesDemanded) {
-            if (industry.getMaxDeficit(commoditiesDemanded).two <= 0) {
+        protected List<BoggledCommonIndustry.TooltipData> addPostDemandSectionImpl(BaseIndustry industry, boolean hasDemand, Industry.IndustryTooltipMode mode) {
+            String[] commDem = commoditiesDemanded.toArray(new String[0]);
+            if (industry.getMaxDeficit(commDem).two <= 0) {
                 return new ArrayList<>();
             }
-            String shortage = boggledTools.buildCommodityList(industry, commoditiesDemanded);
+            String shortage = boggledTools.buildCommodityList(industry, commDem);
             String text = industry.getCurrentName() + " is inactive due to a shortage of " + shortage;
 
             List<BoggledCommonIndustry.TooltipData> ret = new ArrayList<>();
@@ -252,49 +259,53 @@ public class BoggledIndustryEffect {
     }
 
     public static class DeficitToCommodity extends IndustryEffect {
-        ArrayList<String> commoditiesDeficited;
+        List<String> commoditiesDemanded;
+        List<String> commoditiesDeficited;
 
-        public DeficitToCommodity(String id, String[] enableSettings, ArrayList<String> commoditiesDemanded, ArrayList<String> commoditiesDeficited) {
-            super(id, enableSettings, commoditiesDemanded);
+        public DeficitToCommodity(String id, String[] enableSettings, List<String> commoditiesDemanded, List<String> commoditiesDeficited) {
+            super(id, enableSettings);
+            this.commoditiesDemanded = commoditiesDemanded;
             this.commoditiesDeficited = commoditiesDeficited;
         }
 
         @Override
-        protected void applyEffectImpl(BaseIndustry industry, BoggledIndustryInterface industryInterface, String[] commoditiesDemanded, String effectSource) {
-            Pair<String, Integer> deficit = industry.getMaxDeficit(commoditiesDemanded);
+        protected void applyEffectImpl(BaseIndustry industry, BoggledIndustryInterface industryInterface, String effectSource) {
+            Pair<String, Integer> deficit = industry.getMaxDeficit(commoditiesDemanded.toArray(new String[0]));
             industryInterface.applyDeficitToProduction(id + "_DeficitToCommodity", deficit, commoditiesDeficited.toArray(new String[0]));
         }
 
         @Override
-        protected void unapplyEffectImpl(BaseIndustry industry, BoggledIndustryInterface industryInterface, String[] commoditiesDemanded) {}
+        protected void unapplyEffectImpl(BaseIndustry industry, BoggledIndustryInterface industryInterface) {}
     }
 
     public static class DeficitMultiplierToUpkeep extends IndustryEffect {
+        List<String> commoditiesDemanded;
         float upkeepMultiplier;
 
-        public DeficitMultiplierToUpkeep(String id, String[] enableSettings, ArrayList<String> commoditiesDemanded, float upkeepMultiplier) {
-            super(id, enableSettings, commoditiesDemanded);
+        public DeficitMultiplierToUpkeep(String id, String[] enableSettings, List<String> commoditiesDemanded, float upkeepMultiplier) {
+            super(id, enableSettings);
+            this.commoditiesDemanded = commoditiesDemanded;
             this.upkeepMultiplier = upkeepMultiplier;
         }
 
         @Override
-        protected void applyEffectImpl(BaseIndustry industry, BoggledIndustryInterface industryInterface, String[] commoditiesDemanded, String effectSource) {
-            List<Pair<String, Integer>> deficits = industry.getAllDeficit(commoditiesDemanded);
+        protected void applyEffectImpl(BaseIndustry industry, BoggledIndustryInterface industryInterface, String effectSource) {
+            List<Pair<String, Integer>> deficits = industry.getAllDeficit(commoditiesDemanded.toArray(new String[0]));
             if (deficits.isEmpty()) {
-                unapplyEffectImpl(industry, industryInterface, commoditiesDemanded);
+                unapplyEffectImpl(industry, industryInterface);
             } else {
                 industry.getUpkeep().modifyMult(id + "_DeficitMultiplierToUpkeep", upkeepMultiplier, "Commodity shortage");
             }
         }
 
         @Override
-        protected void unapplyEffectImpl(BaseIndustry industry, BoggledIndustryInterface industryInterface, String[] commoditiesDemanded) {
+        protected void unapplyEffectImpl(BaseIndustry industry, BoggledIndustryInterface industryInterface) {
             industry.getUpkeep().unmodifyMult(id + "_DeficitMultiplierToUpkeep");
         }
 
         @Override
-        protected List<BoggledCommonIndustry.TooltipData> addPostDemandSectionImpl(BaseIndustry industry, boolean hasDemand, Industry.IndustryTooltipMode mode, String[] commoditiesDemanded) {
-            String shortage = boggledTools.buildCommodityList(industry, commoditiesDemanded);
+        protected List<BoggledCommonIndustry.TooltipData> addPostDemandSectionImpl(BaseIndustry industry, boolean hasDemand, Industry.IndustryTooltipMode mode) {
+            String shortage = boggledTools.buildCommodityList(industry, commoditiesDemanded.toArray(new String[0]));
             if (shortage.isEmpty()) {
                 return new ArrayList<>();
             }
@@ -312,14 +323,14 @@ public class BoggledIndustryEffect {
         String industryId;
         IndustryEffect effect;
 
-        public EffectToIndustry(String id, String[] enableSettings, List<String> commoditiesDemanded, String industryId, IndustryEffect effect) {
-            super(id, enableSettings, commoditiesDemanded);
+        public EffectToIndustry(String id, String[] enableSettings, String industryId, IndustryEffect effect) {
+            super(id, enableSettings);
             this.industryId = industryId;
             this.effect = effect;
         }
 
         @Override
-        protected void applyEffectImpl(BaseIndustry industry, BoggledIndustryInterface industryInterface, String[] commoditiesDemanded, String effectSource) {
+        protected void applyEffectImpl(BaseIndustry industry, BoggledIndustryInterface industryInterface, String effectSource) {
             Industry industryTo = industry.getMarket().getIndustry(industryId);
             if (industryTo == null) {
                 return;
@@ -334,21 +345,38 @@ public class BoggledIndustryEffect {
         }
 
         @Override
-        protected void unapplyEffectImpl(BaseIndustry industry, BoggledIndustryInterface industryInterface, String[] commoditiesDemanded) {
-
+        protected void unapplyEffectImpl(BaseIndustry industry, BoggledIndustryInterface industryInterface) {
+            Industry industryTo = industry.getMarket().getIndustry(industryId);
+            if (industryTo == null) {
+                return;
+            }
+            BoggledIndustryInterface industryToInterface = null;
+            if (industryTo instanceof BoggledIndustryInterface) {
+                industryToInterface = (BoggledIndustryInterface) industryTo;
+            } else {
+                Global.getLogger(this.getClass()).warn("IndustryEffect '" + id + "' is applying '" + effect.id + "' to non-BoggledIndustryInterface industry '" + industryTo.getId() + "', this may crash the game");
+            }
+            effect.unapplyEffect((BaseIndustry) industryTo, industryToInterface);
         }
     }
 
     private static abstract class Modifier extends IndustryEffect {
-        MutableStat.StatModType modType;
-        float value;
+        private enum StatModType {
+            FLAT,
+            MULT,
+            PERCENT,
+            MARKET_SIZE
+        }
+        private StatModType modType;
+        private final float value;
 
-        protected Modifier(String id, String[] enableSettings, List<String> commoditiesDemanded, String typeString, float value) {
-            super(id, enableSettings, commoditiesDemanded);
+        protected Modifier(String id, String[] enableSettings, String typeString, float value) {
+            super(id, enableSettings);
             switch (typeString) {
-                case "flat": this.modType = MutableStat.StatModType.FLAT; break;
-                case "mult": this.modType = MutableStat.StatModType.MULT; break;
-                case "percent": this.modType = MutableStat.StatModType.PERCENT; break;
+                case "flat": this.modType = StatModType.FLAT; break;
+                case "mult": this.modType = StatModType.MULT; break;
+                case "percent": this.modType = StatModType.PERCENT; break;
+                case "market_size": this.modType = StatModType.MARKET_SIZE; break;
             }
             if (modType == null) {
                 Global.getLogger(this.getClass()).error("Industry effect " + id + " has invalid mod type string " + typeString);
@@ -356,9 +384,10 @@ public class BoggledIndustryEffect {
             this.value = value;
         }
 
-        protected MutableStat createModifier(String effectSource) {
+        protected MutableStat createModifier(MarketAPI market, String effectSource) {
             MutableStat mod = new MutableStat(0);
             switch (modType) {
+                case MARKET_SIZE: mod.modifyFlat(id, market.getSize() + value, effectSource); break;
                 case FLAT: mod.modifyFlat(id, value, effectSource); break;
                 case MULT: mod.modifyMult(id, value, effectSource); break;
                 case PERCENT: mod.modifyPercent(id, value, effectSource); break;
@@ -366,132 +395,182 @@ public class BoggledIndustryEffect {
             return mod;
         }
 
-        protected Pair<String, String> createValueHighlightStrings() {
-            // one is format string
-            // two is highlight string
-            Pair<String, String> ret = new Pair<>();
-            String truncatedString = (value % 1.0f != 0) ? String.format("%s", value) : String.format("%.0f", value);
-            switch (modType) {
-                case FLAT:
-                    ret.one = truncatedString;
-                    ret.two = truncatedString;
-                    break;
-                case MULT:
-                    ret.one = Strings.X + truncatedString;
-                    ret.two = Strings.X + truncatedString;
-                    break;
-                case PERCENT:
-                    ret.one = truncatedString + "%%";
-                    ret.two = truncatedString + "%";
-                    break;
+        protected BoggledCommonIndustry.TooltipData createTooltipData(MarketAPI market, String effect, DescriptionMode mode) {
+            ModifierStrings modStrings = new ModifierStrings(market, modType, value);
+            String text;
+            if (mode == DescriptionMode.APPLIED) {
+                text = Misc.ucFirst(effect) + " " + modStrings.increasedOrReduced + " by " + modStrings.bonusString + ".";
+            } else {
+                text = modStrings.IncreasesOrReduces + " " + Misc.lcFirst(effect) + " by " + modStrings.bonusString + ".";
             }
-            return ret;
+            List<Color> highlightColors = new ArrayList<>(asList(Misc.getHighlightColor()));
+            List<String> highlights = new ArrayList<>(asList(modStrings.highlightString));
+
+            return new BoggledCommonIndustry.TooltipData(text, highlightColors, highlights);
+        }
+
+        protected BoggledCommonIndustry.TooltipData createPostDemandSection(MarketAPI market, String effect) {
+            ModifierStrings modStrings = new ModifierStrings(market, modType, value);
+
+            String text = modStrings.bonusString + " " + effect + " " + modStrings.suffix;
+            List<Color> highlightColors = new ArrayList<>(asList(Misc.getHighlightColor()));
+            List<String> highlights = new ArrayList<>(asList(modStrings.highlightString));
+
+            return new BoggledCommonIndustry.TooltipData(text, highlightColors, highlights);
+        }
+
+        public static class ModifierStrings {
+            String increasesOrReduces;
+            String IncreasesOrReduces;
+            String increasedOrReduced;
+            String IncreasedOrReduced;
+
+            String bonusString;
+            String highlightString;
+
+            String suffix;
+
+            private void setToIncrease() {
+                this.increasesOrReduces = "increases";
+                this.IncreasesOrReduces = "Increases";
+                this.increasedOrReduced = "increased";
+                this.IncreasedOrReduced = "Increased";
+            }
+
+            private void setToReduce() {
+                this.increasesOrReduces = "reduces";
+                this.IncreasesOrReduces = "Reduces";
+                this.increasedOrReduced = "reduced";
+                this.IncreasedOrReduced = "Reduced";
+            }
+
+            private String formatBonusString(float value) {
+                if (value % 1.0 != 0) {
+                    return String.format("%s", value);
+                }
+                return String.format("%.0f", value);
+            }
+
+            ModifierStrings(MarketAPI market, StatModType modType, float baseValue) {
+                suffix = "";
+                float value = baseValue;
+                switch (modType) {
+                    case MARKET_SIZE:
+                        suffix = "(based on colony size)";
+                        value += market.getSize();
+                    case FLAT: {
+                        if (value < 0) {
+                            setToReduce();
+                            bonusString = formatBonusString(value);
+                        } else {
+                            setToIncrease();
+                            bonusString = "+" + formatBonusString(value);
+                        }
+                        highlightString = bonusString;
+                        break;
+                    }
+                    case MULT: {
+                        if (value < 1) {
+                            setToReduce();
+                        } else {
+                            setToIncrease();
+                        }
+                        bonusString = Strings.X + formatBonusString(value);
+                        highlightString = bonusString;
+                        break;
+                    }
+                    case PERCENT: {
+                        if (value < 100) {
+                            setToReduce();
+                            highlightString = formatBonusString(100 - value) + "%";
+                        } else {
+                            setToIncrease();
+                            highlightString = formatBonusString(value - 100) + "%";
+                        }
+                        bonusString = highlightString + "%";
+                        break;
+                    }
+                }
+            }
         }
     }
 
     public static class ModifyIncome extends Modifier {
-        public ModifyIncome(String id, String[] enableSettings, ArrayList<String> commoditiesDemanded, String typeString, float value) {
-            super(id, enableSettings, commoditiesDemanded, typeString, value);
+        public ModifyIncome(String id, String[] enableSettings, String typeString, float value) {
+            super(id, enableSettings, typeString, value);
         }
 
         @Override
-        protected void applyEffectImpl(BaseIndustry industry, BoggledIndustryInterface industryInterface, String[] commoditiesDemanded, String effectSource) {
-            industry.getIncome().applyMods(createModifier(effectSource));
+        protected void applyEffectImpl(BaseIndustry industry, BoggledIndustryInterface industryInterface, String effectSource) {
+            industry.getIncome().applyMods(createModifier(industry.getMarket(), effectSource));
         }
 
         @Override
-        protected void unapplyEffectImpl(BaseIndustry industry, BoggledIndustryInterface industryInterface, String[] commoditiesDemanded) {
+        protected void unapplyEffectImpl(BaseIndustry industry, BoggledIndustryInterface industryInterface) {
             industry.getIncome().unmodify(id);
+        }
+
+        @Override
+        protected List<BoggledCommonIndustry.TooltipData> getApplyOrAppliedDescImpl(BaseIndustry industry, DescriptionMode mode) {
+            List<BoggledCommonIndustry.TooltipData> ret = new ArrayList<>();
+            ret.add(createTooltipData(industry.getMarket(), "Income", mode));
+            return ret;
         }
     }
 
     public static class ModifyAccessibility extends Modifier {
-        public ModifyAccessibility(String id, String[] enableSettings, ArrayList<String> commoditiesDemanded, String modType, float value) {
-            super(id, enableSettings, commoditiesDemanded, modType, value);
+        public ModifyAccessibility(String id, String[] enableSettings, String modType, float value) {
+            super(id, enableSettings, modType, value);
         }
 
         @Override
-        protected void applyEffectImpl(BaseIndustry industry, BoggledIndustryInterface industryInterface, String[] commoditiesDemanded, String effectSource) {
-            industry.getMarket().getAccessibilityMod().applyMods(createModifier(effectSource));
+        protected void applyEffectImpl(BaseIndustry industry, BoggledIndustryInterface industryInterface, String effectSource) {
+            industry.getMarket().getAccessibilityMod().applyMods(createModifier(industry.getMarket(), effectSource));
         }
 
         @Override
-        protected void unapplyEffectImpl(BaseIndustry industry, BoggledIndustryInterface industryInterface, String[] commoditiesDemanded) {
+        protected void unapplyEffectImpl(BaseIndustry industry, BoggledIndustryInterface industryInterface) {
             industry.getMarket().getAccessibilityMod().unmodifyFlat(id);
         }
 
         @Override
         protected List<BoggledCommonIndustry.TooltipData> getApplyOrAppliedDescImpl(BaseIndustry industry, DescriptionMode mode) {
-            String text;
-            Pair<String, String> bonusAndHighlightString = createValueHighlightStrings();
-            String increasedOrDecreased;
-            String increasesOrDecreases;
-            if (value < 0) {
-                increasedOrDecreased = "decreased";
-                increasesOrDecreases = "Decreases";
-            } else {
-                increasedOrDecreased = "increased";
-                increasesOrDecreases = "Increases";
-            }
-
-            if (mode == DescriptionMode.APPLIED) {
-                text = industry.getMarket().getName() + " accessibility " + increasedOrDecreased + " by " + bonusAndHighlightString.one + ".";
-            } else {
-                text = increasesOrDecreases + " " + industry.getMarket().getName() + " accessibility by " + bonusAndHighlightString.two + ".";
-            }
-
             List<BoggledCommonIndustry.TooltipData> ret = new ArrayList<>();
-
-            List<Color> highlightColors = new ArrayList<>(asList(Misc.getHighlightColor()));
-            List<String> highlights = new ArrayList<>(asList(bonusAndHighlightString.two));
-
-            ret.add(new BoggledCommonIndustry.TooltipData(text, highlightColors, highlights));
-
+            ret.add(createTooltipData(industry.getMarket(), industry.getMarket().getName() + " accessibility", mode));
             return ret;
         }
     }
 
     public static class ModifyStability extends Modifier {
-        public ModifyStability(String id, String[] enableSettings, List<String> commoditiesDemanded, String modType, float value) {
-            super(id, enableSettings, commoditiesDemanded, modType, value);
+        public ModifyStability(String id, String[] enableSettings, String modType, float value) {
+            super(id, enableSettings, modType, value);
         }
 
         @Override
-        protected void applyEffectImpl(BaseIndustry industry, BoggledIndustryInterface industryInterface, String[] commoditiesDemanded, String effectSource) {
-            industry.getMarket().getStability().applyMods(createModifier(effectSource));
+        protected void applyEffectImpl(BaseIndustry industry, BoggledIndustryInterface industryInterface, String effectSource) {
+            industry.getMarket().getStability().applyMods(createModifier(industry.getMarket(), effectSource));
         }
 
         @Override
-        protected void unapplyEffectImpl(BaseIndustry industry, BoggledIndustryInterface industryInterface, String[] commoditiesDemanded) {
+        protected void unapplyEffectImpl(BaseIndustry industry, BoggledIndustryInterface industryInterface) {
             industry.getMarket().getStability().unmodifyFlat(id);
         }
 
         @Override
         protected List<BoggledCommonIndustry.TooltipData> getApplyOrAppliedDescImpl(BaseIndustry industry, DescriptionMode mode) {
             List<BoggledCommonIndustry.TooltipData> ret = new ArrayList<>();
-
-            Pair<String, String> bonusAndHighlightString = createValueHighlightStrings();
-//            String stabilityModifierString = String.format("%d", (int) stabilityModifier);
-            String text;
-            if (mode == DescriptionMode.APPLIED) {
-                text = industry.getMarket().getName() + " stability increased by " + bonusAndHighlightString.one + ".";
-            } else {
-                text = "Increases " + industry.getMarket().getName() + " stability by " + bonusAndHighlightString.one + ".";
-            }
-            List<Color> highlightColors = new ArrayList<>(asList(Misc.getHighlightColor()));
-            List<String> highlights = new ArrayList<>(asList(bonusAndHighlightString.two));
-
-            ret.add(new BoggledCommonIndustry.TooltipData(text, highlightColors, highlights));
-
+            ret.add(createTooltipData(industry.getMarket(), industry.getMarket().getName() + " stability", mode));
             return ret;
         }
     }
 
     public static class SupplyBonusToIndustryWithDeficit extends IndustryEffect {
+        List<String> commoditiesDemanded;
         String industryId;
         int supplyBonus;
         public SupplyBonusToIndustryWithDeficit(String id, String[] enableSettings, List<String> commoditiesDemanded, String industryId, int supplyBonus) {
-            super(id, enableSettings, commoditiesDemanded);
+            super(id, enableSettings);
+            this.commoditiesDemanded = commoditiesDemanded;
             this.industryId = industryId;
             this.supplyBonus = supplyBonus;
         }
@@ -501,9 +580,9 @@ public class BoggledIndustryEffect {
             return Math.max(0, supplyBonus - deficit.two);
         }
         @Override
-        protected void applyEffectImpl(BaseIndustry industry, BoggledIndustryInterface industryInterface, String[] commoditiesDemanded, String effectSource) {
+        protected void applyEffectImpl(BaseIndustry industry, BoggledIndustryInterface industryInterface, String effectSource) {
             if (!industry.isFunctional()) {
-                unapplyEffectImpl(industry, industryInterface, commoditiesDemanded);
+                unapplyEffectImpl(industry, industryInterface);
                 return;
             }
 
@@ -511,14 +590,14 @@ public class BoggledIndustryEffect {
             if (industryTo == null) {
                 return;
             }
-            int bonus = getBonusAmountWithDeficit(industry, commoditiesDemanded);
+            int bonus = getBonusAmountWithDeficit(industry, commoditiesDemanded.toArray(new String[0]));
             for (MutableCommodityQuantity c : industryTo.getAllSupply()) {
                 c.getQuantity().modifyFlat(id, bonus, effectSource);
             }
         }
 
         @Override
-        protected void unapplyEffectImpl(BaseIndustry industry, BoggledIndustryInterface industryInterface, String[] commoditiesDemanded) {
+        protected void unapplyEffectImpl(BaseIndustry industry, BoggledIndustryInterface industryInterface) {
             Industry industryTo = industry.getMarket().getIndustry(industryId);
             if (industryTo == null) {
                 return;
@@ -560,20 +639,19 @@ public class BoggledIndustryEffect {
     }
 
     public static class ModifyAllDemand extends Modifier {
-
-        public ModifyAllDemand(String id, String[] enableSettings, List<String> commoditiesDemanded, String modType, float value) {
-            super(id, enableSettings, commoditiesDemanded, modType, value);
+        public ModifyAllDemand(String id, String[] enableSettings, String modType, float value) {
+            super(id, enableSettings, modType, value);
         }
 
         @Override
-        protected void applyEffectImpl(BaseIndustry industry, BoggledIndustryInterface industryInterface, String[] commoditiesDemanded, String effectSource) {
+        protected void applyEffectImpl(BaseIndustry industry, BoggledIndustryInterface industryInterface, String effectSource) {
             for (MutableCommodityQuantity d : industry.getAllDemand()) {
-                d.getQuantity().applyMods(createModifier(effectSource));
+                d.getQuantity().applyMods(createModifier(industry.getMarket(), effectSource));
             }
         }
 
         @Override
-        protected void unapplyEffectImpl(BaseIndustry industry, BoggledIndustryInterface industryInterface, String[] commoditiesDemanded) {
+        protected void unapplyEffectImpl(BaseIndustry industry, BoggledIndustryInterface industryInterface) {
             for (MutableCommodityQuantity d : industry.getAllDemand()) {
                 d.getQuantity().unmodify(id);
             }
@@ -582,96 +660,43 @@ public class BoggledIndustryEffect {
         @Override
         protected List<BoggledCommonIndustry.TooltipData> getApplyOrAppliedDescImpl(BaseIndustry industry, DescriptionMode mode) {
             List<BoggledCommonIndustry.TooltipData> ret = new ArrayList<>();
-            String demandReductionHighlightString = String.format("%d", (int) Math.abs(value));
-            String demandReductionString = demandReductionHighlightString;
-            String increasesOrReduces;
-            String increasedOrReduced;
-            if (value < 0) {
-                increasesOrReduces = "Reduces";
-                increasedOrReduced = "reduced";
-            } else {
-                increasesOrReduces = "Increases";
-                increasedOrReduced = "increased";
-            }
-
-            String text;
-            if (mode == DescriptionMode.APPLIED) {
-                text = "Demand " + increasedOrReduced + " by " + demandReductionString + ".";
-            } else {
-                text = increasesOrReduces + " demand by " + demandReductionString + ".";
-
-            }
-
-            ret.add(new BoggledCommonIndustry.TooltipData(text, new ArrayList<>(asList(Misc.getHighlightColor())), new ArrayList<>(asList(demandReductionHighlightString))));
+            ret.add(createTooltipData(industry.getMarket(), "Demand", mode));
             return ret;
         }
     }
 
     public static class ModifyUpkeep extends Modifier {
-        public ModifyUpkeep(String id, String[] enableSettings, List<String> commoditiesDemanded, String modType, float value) {
-            super(id, enableSettings, commoditiesDemanded, modType, value);
+        public ModifyUpkeep(String id, String[] enableSettings, String modType, float value) {
+            super(id, enableSettings, modType, value);
         }
 
         @Override
-        protected void applyEffectImpl(BaseIndustry industry, BoggledIndustryInterface industryInterface, String[] commoditiesDemanded, String effectSource) {
-            industry.getUpkeep().applyMods(createModifier(effectSource));
+        protected void applyEffectImpl(BaseIndustry industry, BoggledIndustryInterface industryInterface, String effectSource) {
+            industry.getUpkeep().applyMods(createModifier(industry.getMarket(), effectSource));
         }
 
         @Override
-        protected void unapplyEffectImpl(BaseIndustry industry, BoggledIndustryInterface industryInterface, String[] commoditiesDemanded) {
+        protected void unapplyEffectImpl(BaseIndustry industry, BoggledIndustryInterface industryInterface) {
             industry.getUpkeep().unmodify(id);
         }
 
         @Override
         protected List<BoggledCommonIndustry.TooltipData> getApplyOrAppliedDescImpl(BaseIndustry industry, DescriptionMode mode) {
             List<BoggledCommonIndustry.TooltipData> ret = new ArrayList<>();
-            String upkeepMultiplierHighlightString;
-
-            String increasesOrReduces;
-            String increasedOrReduced;
-            if (value < 1) {
-                increasesOrReduces = "Reduces";
-                increasedOrReduced = "reduced";
-                upkeepMultiplierHighlightString = String.format("%.0f%%", (1 - value) * 100);
-            } else {
-                increasesOrReduces = "Increases";
-                increasedOrReduced = "increased";
-                upkeepMultiplierHighlightString = String.format("%.0f%%", (value - 1) * 100);
-            }
-            String upkeepMultiplierString = upkeepMultiplierHighlightString + "%";
-
-            String text;
-            if (mode == DescriptionMode.APPLIED) {
-                text = "Upkeep " + increasedOrReduced + " by " + upkeepMultiplierString + ".";
-            } else {
-                text = increasesOrReduces + " upkeep by " + upkeepMultiplierString + ".";
-            }
-
-
-//            if (upkeepMultiplier < 1) {
-//                upkeepMultiplierHighlightString = String.format("%.0f%%", (1 - upkeepMultiplier) * 100);
-//                upkeepMultiplierString = upkeepMultiplierHighlightString + "%";
-//                text = "Reduces upkeep by " + upkeepMultiplierString + ".";
-//            } else {
-//                upkeepMultiplierHighlightString = String.format("%.0f%%", upkeepMultiplier * 100);
-//                upkeepMultiplierString = upkeepMultiplierHighlightString + "%";
-//                text = "Increases upkeep by " + upkeepMultiplierString + ".";
-//            }
-            ret.add(new BoggledCommonIndustry.TooltipData(text, new ArrayList<>(asList(Misc.getHighlightColor())), new ArrayList<>(asList(upkeepMultiplierHighlightString))));
+            ret.add(createTooltipData(industry.getMarket(), "Upkeep", mode));
             return ret;
         }
-
     }
 
     public static class EliminatePatherInterest extends IndustryEffect {
-        public EliminatePatherInterest(String id, String[] enableSettings, List<String> commoditiesDemanded) {
-            super(id, enableSettings, commoditiesDemanded);
+        public EliminatePatherInterest(String id, String[] enableSettings) {
+            super(id, enableSettings);
         }
 
         @Override
-        protected void applyEffectImpl(BaseIndustry industry, BoggledIndustryInterface industryInterface, String[] commoditiesDemanded, String effectSource) {
+        protected void applyEffectImpl(BaseIndustry industry, BoggledIndustryInterface industryInterface, String effectSource) {
             if (!industry.isFunctional()) {
-                unapplyEffectImpl(industry, industryInterface, commoditiesDemanded);
+                unapplyEffectImpl(industry, industryInterface);
                 return;
             }
 
@@ -699,7 +724,7 @@ public class BoggledIndustryEffect {
         }
 
         @Override
-        protected void unapplyEffectImpl(BaseIndustry industry, BoggledIndustryInterface industryInterface, String[] commoditiesDemanded) {
+        protected void unapplyEffectImpl(BaseIndustry industry, BoggledIndustryInterface industryInterface) {
             industryInterface.unmodifyPatherInterest(id);
         }
 
@@ -712,63 +737,63 @@ public class BoggledIndustryEffect {
         }
     }
 
-    public static class ModifyPatherInterest extends IndustryEffect {
-        int patherInterestModifier;
-
-        public ModifyPatherInterest(String id, String[] enableSettings, List<String> commoditiesDemanded, int patherInterestModifier) {
-            super(id, enableSettings, commoditiesDemanded);
-            this.patherInterestModifier = patherInterestModifier;
+    public static class ModifyPatherInterest extends Modifier {
+        public ModifyPatherInterest(String id, String[] enableSettings, String modType, float value) {
+            super(id, enableSettings, modType, value);
         }
 
         @Override
-        protected void applyEffectImpl(BaseIndustry industry, BoggledIndustryInterface industryInterface, String[] commoditiesDemanded, String effectSource) {
-            MutableStat modifier = new MutableStat(0);
-            modifier.modifyFlat(id, patherInterestModifier, effectSource);
-            industryInterface.modifyPatherInterest(modifier);
+        protected void applyEffectImpl(BaseIndustry industry, BoggledIndustryInterface industryInterface, String effectSource) {
+            industryInterface.modifyPatherInterest(createModifier(industry.getMarket(), effectSource));
         }
 
         @Override
-        protected void unapplyEffectImpl(BaseIndustry industry, BoggledIndustryInterface industryInterface, String[] commoditiesDemanded) {
+        protected void unapplyEffectImpl(BaseIndustry industry, BoggledIndustryInterface industryInterface) {
             industryInterface.unmodifyPatherInterest(id);
         }
     }
 
-    public static class ModifierToColonyGrowthRate extends IndustryEffect {
-        int immigrationBonus;
-        public ModifierToColonyGrowthRate(String id, String[] enableSettings, List<String> commoditiesDemanded, int immigrationBonus) {
-            super(id, enableSettings, commoditiesDemanded);
-            this.immigrationBonus = immigrationBonus;
+    public static class ModifyColonyGrowthRate extends Modifier {
+        public ModifyColonyGrowthRate(String id, String[] enableSettings, String modType, float value) {
+            super(id, enableSettings, modType, value);
         }
 
         @Override
-        protected void applyEffectImpl(BaseIndustry industry, BoggledIndustryInterface industryInterface, String[] commoditiesDemanded, String effectSource) {
-            MutableStat modifier = new MutableStat(0);
-            modifier.modifyFlat(id, immigrationBonus, effectSource);
-            industryInterface.modifyImmigration(modifier);
+        protected void applyEffectImpl(BaseIndustry industry, BoggledIndustryInterface industryInterface, String effectSource) {
+            industryInterface.modifyImmigration(createModifier(industry.getMarket(), effectSource));
         }
 
         @Override
-        protected void unapplyEffectImpl(BaseIndustry industry, BoggledIndustryInterface industryInterface, String[] commoditiesDemanded) {
+        protected void unapplyEffectImpl(BaseIndustry industry, BoggledIndustryInterface industryInterface) {
             industryInterface.unmodifyImmigration(id);
         }
 
         @Override
         protected List<BoggledCommonIndustry.TooltipData> getApplyOrAppliedDescImpl(BaseIndustry industry, DescriptionMode mode) {
-            return new ArrayList<>();
+            List<BoggledCommonIndustry.TooltipData> ret = new ArrayList<>();
+            ret.add(createTooltipData(industry.getMarket(), "Colony growth rate", mode));
+            return ret;
+        }
+
+        @Override
+        protected List<BoggledCommonIndustry.TooltipData> addPostDemandSectionImpl(BaseIndustry industry, boolean hasDemand, Industry.IndustryTooltipMode mode) {
+            List<BoggledCommonIndustry.TooltipData> ret = new ArrayList<>();
+            ret.add(createPostDemandSection(industry.getMarket(), "population growth"));
+            return ret;
         }
     }
 
     public static class IncrementTag extends IndustryEffect {
         String tag;
         int step;
-        public IncrementTag(String id, String[] enableSettings, List<String> commoditiesDemanded, String tag, int step) {
-            super(id, enableSettings, commoditiesDemanded);
+        public IncrementTag(String id, String[] enableSettings, String tag, int step) {
+            super(id, enableSettings);
             this.tag = tag;
             this.step = step;
         }
 
         @Override
-        protected void applyEffectImpl(BaseIndustry industry, BoggledIndustryInterface industryInterface, String[] commoditiesDemanded, String effectSource) {
+        protected void applyEffectImpl(BaseIndustry industry, BoggledIndustryInterface industryInterface, String effectSource) {
             for (String tag : industry.getMarket().getTags()) {
                 if (tag.contains(this.tag)) {
                     int tagValueOld = Integer.parseInt(tag.substring(this.tag.length()));
@@ -781,20 +806,20 @@ public class BoggledIndustryEffect {
         }
 
         @Override
-        protected void unapplyEffectImpl(BaseIndustry industry, BoggledIndustryInterface industryInterface, String[] commoditiesDemanded) {
+        protected void unapplyEffectImpl(BaseIndustry industry, BoggledIndustryInterface industryInterface) {
 
         }
     }
 
     public static class RemoveIndustry extends IndustryEffect {
         String industryId;
-        public RemoveIndustry(String id, String[] enableSettings, List<String> commoditiesDemanded, String industryId) {
-            super(id, enableSettings, commoditiesDemanded);
+        public RemoveIndustry(String id, String[] enableSettings, String industryId) {
+            super(id, enableSettings);
             this.industryId = industryId;
         }
 
         @Override
-        protected void applyEffectImpl(BaseIndustry industry, BoggledIndustryInterface industryInterface, String[] commoditiesDemanded, String effectSource) {
+        protected void applyEffectImpl(BaseIndustry industry, BoggledIndustryInterface industryInterface, String effectSource) {
             CargoAPI cargo = industry.getMarket().getSubmarket(Submarkets.SUBMARKET_STORAGE).getCargo();
             if (cargo != null) {
                 if (industry.getAICoreId() != null) {
@@ -814,7 +839,7 @@ public class BoggledIndustryEffect {
         }
 
         @Override
-        protected void unapplyEffectImpl(BaseIndustry industry, BoggledIndustryInterface industryInterface, String[] commoditiesDemanded) {
+        protected void unapplyEffectImpl(BaseIndustry industry, BoggledIndustryInterface industryInterface) {
 
         }
     }
@@ -822,14 +847,14 @@ public class BoggledIndustryEffect {
     public static class SuppressConditions extends IndustryEffect {
         List<String> conditionIds;
 
-        public SuppressConditions(String id, String[] enableSettings, List<String> commoditiesDemanded, List<String> conditionIds) {
-            super(id, enableSettings, commoditiesDemanded);
+        public SuppressConditions(String id, String[] enableSettings, List<String> conditionIds) {
+            super(id, enableSettings);
             this.conditionIds = conditionIds;
         }
 
 
         @Override
-        protected void applyEffectImpl(BaseIndustry industry, BoggledIndustryInterface industryInterface, String[] commoditiesDemanded, String effectSource) {
+        protected void applyEffectImpl(BaseIndustry industry, BoggledIndustryInterface industryInterface, String effectSource) {
             for (String conditionId : conditionIds) {
                 if (conditionId.equals(Conditions.WATER_SURFACE) && industry.getMarket().hasCondition(conditionId)) {
                     // Suppress water surface without actually suppressing it
@@ -842,7 +867,7 @@ public class BoggledIndustryEffect {
         }
 
         @Override
-        protected void unapplyEffectImpl(BaseIndustry industry, BoggledIndustryInterface industryInterface, String[] commoditiesDemanded) {
+        protected void unapplyEffectImpl(BaseIndustry industry, BoggledIndustryInterface industryInterface) {
             for (String conditionId : conditionIds) {
                 if (conditionId.equals(Conditions.WATER_SURFACE) && industry.getMarket().hasCondition(conditionId)) {
                     industry.getMarket().getHazard().unmodifyFlat(id);
@@ -852,7 +877,7 @@ public class BoggledIndustryEffect {
             }
         }
 
-        protected List<BoggledCommonIndustry.TooltipData> addPostDemandSectionImpl(BaseIndustry industry, boolean hasDemand, Industry.IndustryTooltipMode mode, String[] commoditiesDemanded) {
+        protected List<BoggledCommonIndustry.TooltipData> addPostDemandSectionImpl(BaseIndustry industry, boolean hasDemand, Industry.IndustryTooltipMode mode) {
             List<BoggledCommonIndustry.TooltipData> ret = new ArrayList<>();
             if (mode == Industry.IndustryTooltipMode.ADD_INDUSTRY || mode == Industry.IndustryTooltipMode.QUEUED) {
                 ret.add(new BoggledCommonIndustry.TooltipData("If operational, would counter the effects of:", new ArrayList<Color>(), new ArrayList<String>()));
@@ -877,62 +902,42 @@ public class BoggledIndustryEffect {
     }
 
     public static class ModifyGroundDefense extends Modifier {
-        public ModifyGroundDefense(String id, String[] enableSettings, List<String> commoditiesDemanded, String modType, float value) {
-            super(id, enableSettings, commoditiesDemanded, modType, value);
+        public ModifyGroundDefense(String id, String[] enableSettings, String modType, float value) {
+            super(id, enableSettings, modType, value);
         }
 
         @Override
-        protected void applyEffectImpl(BaseIndustry industry, BoggledIndustryInterface industryInterface, String[] commoditiesDemanded, String effectSource) {
-            industry.getMarket().getStats().getDynamic().getMod(Stats.GROUND_DEFENSES_MOD).applyMods(createModifier(effectSource));
+        protected void applyEffectImpl(BaseIndustry industry, BoggledIndustryInterface industryInterface, String effectSource) {
+            industry.getMarket().getStats().getDynamic().getMod(Stats.GROUND_DEFENSES_MOD).applyMods(createModifier(industry.getMarket(), effectSource));
         }
 
         @Override
-        protected void unapplyEffectImpl(BaseIndustry industry, BoggledIndustryInterface industryInterface, String[] commoditiesDemanded) {
+        protected void unapplyEffectImpl(BaseIndustry industry, BoggledIndustryInterface industryInterface) {
             industry.getMarket().getStats().getDynamic().getMod(Stats.GROUND_DEFENSES_MOD).unmodifyMult(id);
         }
 
         @Override
         protected List<BoggledCommonIndustry.TooltipData> getApplyOrAppliedDescImpl(BaseIndustry industry, DescriptionMode mode) {
             List<BoggledCommonIndustry.TooltipData> ret = new ArrayList<>();
-
-            Pair<String, String> bonusAndHighlightStrings = createValueHighlightStrings();
-
-            String increasesOrReduces;
-            String increasedOrReduced;
-            if (value < 1) {
-                increasesOrReduces = "Reduces";
-                increasedOrReduced = "reduced";
-            } else {
-                increasesOrReduces = "Increases";
-                increasedOrReduced = "increased";
-            }
-
-            String text;
-            if (mode == DescriptionMode.APPLIED) {
-                text = "Ground defenses " + increasedOrReduced + " by " + bonusAndHighlightStrings.one + ".";
-            } else {
-                text = increasesOrReduces + " ground defenses by " + bonusAndHighlightStrings.one + ".";
-            }
-            ret.add(new BoggledCommonIndustry.TooltipData(text, new ArrayList<>(asList(Misc.getHighlightColor())), new ArrayList<>(asList(bonusAndHighlightStrings.two))));
-
+            ret.add(createTooltipData(industry.getMarket(), "Ground defenses", mode));
             return ret;
         }
     }
 
     public static class AddCondition extends IndustryEffect {
         String conditionId;
-        public AddCondition(String id, String[] enableSettings, List<String> commoditiesDemanded, String conditionId) {
-            super(id, enableSettings, commoditiesDemanded);
+        public AddCondition(String id, String[] enableSettings, String conditionId) {
+            super(id, enableSettings);
             this.conditionId = conditionId;
         }
 
         @Override
-        protected void applyEffectImpl(BaseIndustry industry, BoggledIndustryInterface industryInterface, String[] commoditiesDemanded, String effectSource) {
+        protected void applyEffectImpl(BaseIndustry industry, BoggledIndustryInterface industryInterface, String effectSource) {
             boggledTools.addCondition(industry.getMarket(), conditionId);
         }
 
         @Override
-        protected void unapplyEffectImpl(BaseIndustry industry, BoggledIndustryInterface industryInterface, String[] commoditiesDemanded) {
+        protected void unapplyEffectImpl(BaseIndustry industry, BoggledIndustryInterface industryInterface) {
             boggledTools.removeCondition(industry.getMarket(), conditionId);
         }
     }
@@ -941,16 +946,16 @@ public class BoggledIndustryEffect {
         BoggledProjectRequirementsAND requirements;
         List<IndustryEffect> effects;
 
-        public IndustryEffectWithRequirement(String id, String[] enableSettings, List<String> commoditiesDemanded, BoggledProjectRequirementsAND requirements, List<IndustryEffect> effects) {
-            super(id, enableSettings, commoditiesDemanded);
+        public IndustryEffectWithRequirement(String id, String[] enableSettings, BoggledProjectRequirementsAND requirements, List<IndustryEffect> effects) {
+            super(id, enableSettings);
             this.requirements = requirements;
             this.effects = effects;
         }
 
         @Override
-        protected void applyEffectImpl(BaseIndustry industry, BoggledIndustryInterface industryInterface, String[] commoditiesDemanded, String effectSource) {
+        protected void applyEffectImpl(BaseIndustry industry, BoggledIndustryInterface industryInterface, String effectSource) {
             if (!requirements.requirementsMet(industry.getMarket())) {
-                unapplyEffectImpl(industry, industryInterface, commoditiesDemanded);
+                unapplyEffectImpl(industry, industryInterface);
                 return;
             }
             List<String> reqList = new ArrayList<>();
@@ -964,17 +969,17 @@ public class BoggledIndustryEffect {
         }
 
         @Override
-        protected void unapplyEffectImpl(BaseIndustry industry, BoggledIndustryInterface industryInterface, String[] commoditiesDemanded) {
+        protected void unapplyEffectImpl(BaseIndustry industry, BoggledIndustryInterface industryInterface) {
             for (IndustryEffect effect : effects) {
                 effect.unapplyEffect(industry, industryInterface);
             }
         }
 
         @Override
-        protected List<BoggledCommonIndustry.TooltipData> addPostDemandSectionImpl(BaseIndustry industry, boolean hasDemand, Industry.IndustryTooltipMode mode, String[] commoditiesDemanded) {
+        protected List<BoggledCommonIndustry.TooltipData> addPostDemandSectionImpl(BaseIndustry industry, boolean hasDemand, Industry.IndustryTooltipMode mode) {
             List<BoggledCommonIndustry.TooltipData> ret = new ArrayList<>();
             for (IndustryEffect effect : effects) {
-                ret.addAll(effect.addPostDemandSectionImpl(industry, hasDemand, mode, commoditiesDemanded));
+                ret.addAll(effect.addPostDemandSectionImpl(industry, hasDemand, mode));
             }
             return ret;
         }
@@ -1065,18 +1070,48 @@ public class BoggledIndustryEffect {
             }
         }
 
-        public AddStellarReflectorsToMarket(String id, String[] enableSettings, List<String> commoditiesDemanded) {
-            super(id, enableSettings, commoditiesDemanded);
+        public AddStellarReflectorsToMarket(String id, String[] enableSettings) {
+            super(id, enableSettings);
         }
 
         @Override
-        protected void applyEffectImpl(BaseIndustry industry, BoggledIndustryInterface industryInterface, String[] commoditiesDemanded, String effectSource) {
+        protected void applyEffectImpl(BaseIndustry industry, BoggledIndustryInterface industryInterface, String effectSource) {
             createMirrorsOrShades(industry.getMarket());
         }
 
         @Override
-        protected void unapplyEffectImpl(BaseIndustry industry, BoggledIndustryInterface industryInterface, String[] commoditiesDemanded) {
+        protected void unapplyEffectImpl(BaseIndustry industry, BoggledIndustryInterface industryInterface) {
             boggledTools.clearReflectorsInOrbit(industry.getMarket());
+        }
+    }
+
+    public static class TagSubstringPowerModifyBuildCost extends IndustryEffect {
+        MutableStat modifier;
+        String tagSubstring;
+        int tagCountDefault;
+        public TagSubstringPowerModifyBuildCost(String id, String[] enableSettings, String tagSubstring, int tagCountDefault) {
+            super(id, enableSettings);
+            this.modifier = new MutableStat(0);
+            this.tagSubstring = tagSubstring;
+            this.tagCountDefault = tagCountDefault;
+        }
+
+        @Override
+        protected void applyEffectImpl(BaseIndustry industry, BoggledIndustryInterface industryInterface, String effectSource) {
+            int tagCount = tagCountDefault;
+            for (String tag : industry.getMarket().getTags()) {
+                if (tag.contains(tagSubstring)) {
+                    tagCount = Integer.parseInt(tag.substring(tagSubstring.length()));
+                    break;
+                }
+            }
+            modifier.modifyMult(id, (float) Math.pow(2, tagCount));
+            industryInterface.modifyBuildCost(modifier);
+        }
+
+        @Override
+        protected void unapplyEffectImpl(BaseIndustry industry, BoggledIndustryInterface industryInterface) {
+            industryInterface.unmodifyBuildCost(id);
         }
     }
 }

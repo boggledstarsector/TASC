@@ -1,8 +1,6 @@
 package data.campaign.econ.industries;
 
 import com.fs.starfarer.api.campaign.econ.*;
-import com.fs.starfarer.api.impl.campaign.population.PopulationComposition;
-import com.fs.starfarer.api.util.Misc;
 
 public class Boggled_Cloning extends BoggledBaseIndustry implements MarketImmigrationModifier {
     public Boggled_Cloning() {
@@ -19,19 +17,19 @@ public class Boggled_Cloning extends BoggledBaseIndustry implements MarketImmigr
 //        }
 //    }
 
-    @Override
-    public void modifyIncoming(MarketAPI market, PopulationComposition incoming)
-    {
-        incoming.getWeight().modifyFlat(getModId(), getImmigrationBonus(), Misc.ucFirst(this.getCurrentName().toLowerCase()));
-    }
-
-    protected float getImmigrationBonus() {
-        return Math.max(0, market.getSize() - 1);
-    }
-
-    @Override
-    protected boolean canImproveToIncreaseProduction() {
-        return true;
-    }
+//    @Override
+//    public void modifyIncoming(MarketAPI market, PopulationComposition incoming)
+//    {
+//        incoming.getWeight().modifyFlat(getModId(), getImmigrationBonus(), Misc.ucFirst(this.getCurrentName().toLowerCase()));
+//    }
+//
+//    protected float getImmigrationBonus() {
+//        return Math.max(0, market.getSize() - 1);
+//    }
+//
+//    @Override
+//    protected boolean canImproveToIncreaseProduction() {
+//        return true;
+//    }
 }
 

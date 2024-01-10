@@ -445,4 +445,14 @@ public class Boggled_Kletka_Simulator extends BaseIndustry implements BoggledInd
         info.addSpacer(opad);
         super.addImproveDesc(info, mode);
     }
+
+    @Override
+    public void modifyBuildCost(MutableStat modifier) {
+        thisIndustry.modifyBuildCost(modifier);
+    }
+
+    @Override
+    public void unmodifyBuildCost(String source) {
+        thisIndustry.unmodifyBuildCost(source);
+    }
 }

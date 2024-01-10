@@ -4,11 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.lang.String;
 
-import com.fs.starfarer.api.impl.campaign.population.PopulationComposition;
-import com.fs.starfarer.api.util.Misc;
-
-import com.fs.starfarer.api.Global;
-import com.fs.starfarer.api.campaign.econ.*;
 import com.fs.starfarer.api.impl.campaign.ids.Conditions;
 
 public class Boggled_Domed_Cities extends BoggledBaseIndustry {
@@ -358,15 +353,15 @@ public class Boggled_Domed_Cities extends BoggledBaseIndustry {
 //    @Override
 //    public float getPatherInterest() { return super.getPatherInterest() + 2.0f; }
 
-    public void modifyIncoming(MarketAPI market, PopulationComposition incoming)
-    {
-        incoming.getWeight().modifyFlat(getModId(), getImmigrationBonus(), Misc.ucFirst(this.getCurrentName().toLowerCase()));
-    }
-
-    protected float getImmigrationBonus()
-    {
-        return Math.max(0, market.getSize() - 1);
-    }
+//    public void modifyIncoming(MarketAPI market, PopulationComposition incoming)
+//    {
+//        incoming.getWeight().modifyFlat(getModId(), getImmigrationBonus(), Misc.ucFirst(this.getCurrentName().toLowerCase()));
+//    }
+//
+//    protected float getImmigrationBonus()
+//    {
+//        return Math.max(0, market.getSize() - 1);
+//    }
 
 //    @Override
 //    protected void addPostDemandSection(TooltipMakerAPI tooltip, boolean hasDemand, IndustryTooltipMode mode) {

@@ -218,4 +218,24 @@ public class BoggledBaseIndustry extends BaseIndustry implements BoggledIndustry
         thisIndustry.addImproveDesc(this, tooltip, mode);
         super.addImproveDesc(tooltip, mode);
     }
+
+    @Override
+    public String getCurrentImage() {
+        return thisIndustry.getCurrentImage(this);
+    }
+
+    @Override
+    public float getBuildCost() {
+        return thisIndustry.getBuildCost(this, this);
+    }
+
+    @Override
+    public void modifyBuildCost(MutableStat modifier) {
+        thisIndustry.modifyBuildCost(modifier);
+    }
+
+    @Override
+    public void unmodifyBuildCost(String source) {
+        thisIndustry.unmodifyBuildCost(source);
+    }
 }

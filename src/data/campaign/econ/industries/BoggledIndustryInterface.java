@@ -13,4 +13,7 @@ public interface BoggledIndustryInterface {
 
     void modifyImmigration(MutableStat modifier);
     void unmodifyImmigration(String source);
+
+    void modifyBuildCost(MutableStat modifier);
+    void unmodifyBuildCost(String source);
 }

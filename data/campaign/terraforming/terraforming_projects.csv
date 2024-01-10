@@ -33,7 +33,7 @@ jungle_type_change,boggledTerraformingContentEnabled,terraforming,"Jungle type c
 	{ 'requirement_id' : 'colony_temperate_or_hot' },
 	{ 'requirement_id' : 'colony_has_stellar_reflectors' },
 	{ 'requirement_id' : 'colony_has_moderate_water_present' }
-]",,2,planet_size,,,"jungle_type_change |
+]",,2,,,,"jungle_type_change |
 market_add_habitable | market_add_farmland_adequate | market_add_organics_common |
 market_remove_water_surface | market_remove_volturnian_lobster_pens |
 market_remove_farmland_poor | market_remove_farmland_rich | market_remove_farmland_bountiful |
@@ -148,7 +148,7 @@ market_remove_thin_atmosphere | market_remove_toxic_atmosphere | market_remove_d
 ,,,,,,,,,,,,,
 industry_ai_mining_drones,boggledStationConstructionContentEnabled | boggledEnableAIMiningDronesStructure,industry,,,"[
 	{ 'requirement_id' : 'colony_is_station', 'description' : 'Colony must be a station.' },
-	{ 'requirement_id' : 'market_has_mining_industry' }
+	{ 'requirement_id' : 'market_has_mining_industry', 'description' : 'Station must have a mining industry.' }
 ]",,,,,,,,
 industry_atmosphere_processor,boggledTerraformingContentEnabled,industry,,,"[
 	{ 'requirement_id' : 'colony_is_not_station', 'description' : 'Colony must be on a planet.' },
@@ -170,7 +170,17 @@ industry_domed_cities,boggledTerraformingContentEnabled | boggledDomedCitiesEnab
 	{ 'requirement_id' : 'colony_not_has_tectonic_activity_unless_has_harmonic_damper', 'description' : '$market experiences frequent seismic events that could destroy megastructures. It would be too dangerous to construct one here.' },
 	{ 'requirement_id' : 'colony_not_has_meteor_impacts', 'description' : '$market experiences frequent meteor impacts that could destroy megastructures. It would be too dangerous to construct one here' },
 	{ 'requirement_id' : 'colony_not_gas_giant', 'description' : 'There is no solid ground on $market upon which to build a dome.' }
-]",,,,,,,,
+]","[
+	{ 'requirement_id' : 'colony_not_water_surface' }
+]",,,,,,,
+industry_seafloor_cities,boggledTerraformingContentEnabled | boggledDomedCitiesEnabled,industry,,,"[
+	{ 'requirement_id' : 'colony_is_not_station', 'description' : 'Colony must be on a planet.' },
+	{ 'requirement_id' : 'colony_not_has_tectonic_activity_unless_has_harmonic_damper', 'description' : '$market experiences frequent seismic events that could destroy megastructures. It would be too dangerous to construct one here.' },
+	{ 'requirement_id' : 'colony_not_has_meteor_impacts', 'description' : '$market experiences frequent meteor impacts that could destroy megastructures. It would be too dangerous to construct one here' },
+	{ 'requirement_id' : 'colony_not_gas_giant', 'description' : 'There is no solid ground on $market upon which to build a dome.' }
+]","[
+	{ 'requirement_id' : 'colony_water_surface' }
+]",,,,,,,
 industry_expand_station,boggledStationCrampedQuartersEnabled | boggledStationCrampedQuartersPlayerCanPayToIncreaseStationSize,industry,,,"[
 	{ 'requirement_id' : 'colony_is_station' },
 	{ 'requirement_id' : 'station_construction_num_expansions', 'description' : '$market is too large to expand further.' }
@@ -182,8 +192,8 @@ industry_genelab_lobster,boggledTerraformingContentEnabled | boggledGenelabEnabl
 industry_gpa,,industry,,,,,,,,,,,
 industry_harmonic_damper,boggledHarmonicDamperEnabled,industry,,,"[ { 'requirement_id' : 'colony_is_not_station', 'description' : 'Colony must be on a planet.' } ]",,,,,,,,
 industry_hydroponics,boggledHydroponicsEnabled,industry,,,,,,,,,,,
-industry_ismara_sling,boggledTerraformingContentEnabled,industry,,,"[ { 'requirement_id' : 'colony_water_or_frozen', 'description' : 'Ismara\'s Sling can only be built on cryovolcanic, frozen, and water covered world. $market is on a $planetTypeName.' } ]",,,,,,,,
-industry_asteroid_processing,boggledTerraformingContentEnabled,industry,,,"[ { 'requirement_id' : 'colony_is_station', 'description' : 'Asteroid Processing can only be built on a station.' } ]",,,,,,,,
+industry_ismara_sling,boggledTerraformingContentEnabled,industry,,,"[ { 'requirement_id' : 'colony_water_or_frozen', 'description' : 'Ismara\'s Sling can only be built on cryovolcanic, frozen, and water covered world. $market is on a $planetTypeName.' } ]","[ { 'requirement_id' : 'colony_is_not_station' } ]",,,,,,,
+industry_asteroid_processing,boggledTerraformingContentEnabled,industry,,,,"[ { 'requirement_id' : 'colony_is_station' } ]",,,,,,,
 industry_kletka_simulator,boggledDomainTechContentEnabled | boggledKletkaSimulatorEnabled,industry,,,,,,,,,,,
 industry_limelight_network,boggledDomainTechContentEnabled | boggledLimelightNetworkPlayerBuildEnabled,industry,,,,,,,,,,,
 industry_magnetoshield,boggledTerraformingContentEnabled | boggledMagnetoshieldEnabled,industry,,,"[ { 'requirement_id' : 'colony_irradiated', 'description' : '$market is not irradiated. There is no reason to build a magnetoshield.' } ]",,,,,,,,

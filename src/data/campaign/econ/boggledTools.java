@@ -391,7 +391,7 @@ public class boggledTools {
     }
 
     @Nullable
-    public static BoggledIndustryEffect.IndustryEffect getIndustryEffect(String industryEffectType, String id, String[] enableSettings, String[] commoditiesDemanded, String data) throws JSONException {
+    public static BoggledIndustryEffect.IndustryEffect getIndustryEffect(String industryEffectType, String id, String[] enableSettings, String data) throws JSONException {
         Logger log = Global.getLogger(boggledTools.class);
 
         BoggledIndustryEffectFactory.IndustryEffectFactory factory = industryEffectFactories.get(industryEffectType);
@@ -399,7 +399,7 @@ public class boggledTools {
             log.error("Industry effect " + id + " of type " + industryEffectType + " has no assigned factory");
             return null;
         }
-        BoggledIndustryEffect.IndustryEffect effect = factory.constructFromJSON(id, enableSettings, new ArrayList<>(asList(commoditiesDemanded)), data);
+        BoggledIndustryEffect.IndustryEffect effect = factory.constructFromJSON(id, enableSettings, data);
         if (effect == null) {
             log.error("Industry effect " + id + " of type " + industryEffectType + " was null when created with data " + data);
             return null;
@@ -576,6 +576,10 @@ public class boggledTools {
         addIndustryEffectFactory("AddCondition", new BoggledIndustryEffectFactory.AddConditionFactory());
 
         addIndustryEffectFactory("AddStellarReflectorsToMarket", new BoggledIndustryEffectFactory.AddStellarReflectorsToMarketFactory());
+
+        addIndustryEffectFactory("ModifyColonyGrowthRate", new BoggledIndustryEffectFactory.ModifyColonyGrowthRateFactory());
+
+        addIndustryEffectFactory("TagSubstringPowerModifyBuildCostFactory", new BoggledIndustryEffectFactory.TagSubstringPowerModifyBuildCostFactory());
     }
 
     public static void addIndustryEffectFactory(String key, BoggledIndustryEffectFactory.IndustryEffectFactory value) {
@@ -819,8 +823,8 @@ public class boggledTools {
 
                 List<BoggledIndustryEffect.IndustryEffect> buildingFinishedEffects = industryEffectsFromObject(row, "building_finished_effects",id, "Industry");
                 List<BoggledIndustryEffect.IndustryEffect> industryEffects = industryEffectsFromObject(row, "industry_effects", id, "Industry");
-                List<BoggledIndustryEffect.IndustryEffect> immigrationEffects = industryEffectsFromObject(row, "immigration_effects", id,"Industry");
                 List<BoggledIndustryEffect.IndustryEffect> improveEffects = industryEffectsFromObject(row, "improve_effects", id, "Industry");
+                List<BoggledIndustryEffect.IndustryEffect> preBuildEffects = industryEffectsFromObject(row, "pre_build_effects", id, "Industry");
 
                 String[] aiCoreEffectStrings = row.getString("ai_core_effects").split(csvOptionSeparator);
                 ArrayList<BoggledIndustryEffect.AICoreEffect> aiCoreEffects = new ArrayList<>();
@@ -849,7 +853,22 @@ public class boggledTools {
 
                 float basePatherInterest = (float) row.getDouble("base_pather_interest");
 
-                industryProjects.put(id, new BoggledCommonIndustry(id, industry, projects, commoditySupply, commodityDemand, buildingFinishedEffects, industryEffects, immigrationEffects, improveEffects, aiCoreEffects, disruptRequirements, basePatherInterest));
+                String imageOverridesString = row.getString("image_overrides");
+                List<BoggledCommonIndustry.ImageOverrideWithRequirement> imageOverrides = new ArrayList<>();
+                if (!imageOverridesString.isEmpty()) {
+                    JSONArray imageOverridesJson = new JSONArray(imageOverridesString);
+                    for (int j = 0; j < imageOverridesJson.length(); ++j) {
+                        JSONObject imageOverride = imageOverridesJson.getJSONObject(j);
+                        JSONArray requirementsArray = imageOverride.getJSONArray("requirement_ids");
+                        BoggledProjectRequirementsAND imageReqs = requirementsFromRequirementsArray(requirementsArray, id, "image_overrides");
+                        String category = imageOverride.getString("category");
+                        String imageId = imageOverride.getString("id");
+
+                        imageOverrides.add(new BoggledCommonIndustry.ImageOverrideWithRequirement(imageReqs, category, imageId));
+                    }
+                }
+
+                industryProjects.put(id, new BoggledCommonIndustry(id, industry, projects, commoditySupply, commodityDemand, buildingFinishedEffects, industryEffects, improveEffects, aiCoreEffects, disruptRequirements, basePatherInterest, imageOverrides, preBuildEffects));
             } catch (JSONException e) {
                 log.error("Error in industry options " + idForErrors + ": " + e);
             }
@@ -920,10 +939,9 @@ public class boggledTools {
                 String[] enableSettings = row.getString("enable_settings").split(csvOptionSeparator);
 
                 String industryEffectType = row.getString("industry_effect_type");
-                String[] commoditiesDemanded = row.getString("commodities_demanded").split(csvOptionSeparator);
                 String data = row.getString("data");
 
-                BoggledIndustryEffect.IndustryEffect effect = getIndustryEffect(industryEffectType, id, enableSettings, commoditiesDemanded, data);
+                BoggledIndustryEffect.IndustryEffect effect = getIndustryEffect(industryEffectType, id, enableSettings, data);
 
                 boggledTools.industryEffects.put(id, effect);
             } catch (JSONException e) {

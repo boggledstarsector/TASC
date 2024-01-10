@@ -14,6 +14,14 @@ colony_not_water_world,"$market is not already a water world",false,"planet_not_
 colony_not_tundra_world,"$market is not already a tundra world",false,"planet_not_tundra"
 colony_not_frozen_world,"$market is not already a frozen world",false,"planet_not_frozen"
 
+colony_arid_world,,false,"planet_arid"
+colony_terran_world,,false,"planet_terran"
+colony_water_world,,false,"planet_water"
+colony_jungle_world,,false,"planet_jungle"
+
+colony_water_surface,"$market is covered in water",false,"market_has_water_surface"
+colony_not_water_surface,"$market is not covered in water",false,"market_not_has_water_surface"
+
 colony_water_or_frozen,"$market is a water or frozen world",false,"planet_water | planet_frozen"
 
 colony_not_gas_giant,"$market is not a gas giant",false,"planet_not_gas_giant"

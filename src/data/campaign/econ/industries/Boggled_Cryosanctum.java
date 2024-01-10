@@ -211,5 +211,15 @@ public class Boggled_Cryosanctum extends Cryosanctum implements BoggledIndustryI
         thisIndustry.addImproveDesc(this, tooltip, mode);
         super.addImproveDesc(tooltip, mode);
     }
+
+    @Override
+    public void modifyBuildCost(MutableStat modifier) {
+        thisIndustry.modifyBuildCost(modifier);
+    }
+
+    @Override
+    public void unmodifyBuildCost(String source) {
+        thisIndustry.unmodifyBuildCost(source);
+    }
 }
 
