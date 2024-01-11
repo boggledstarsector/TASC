@@ -21,11 +21,16 @@ public class BoggledProjectRequirementsAND implements Iterable<BoggledProjectReq
         public boolean checkRequirement(MarketAPI market) {
             return requirements.checkRequirement(market);
         }
-        public String getTooltip(Map<String, String> tokenReplacements) {
+
+        public String getTooltip() {
             String ret = tooltipOverride;
             if (tooltipOverride.isEmpty()) {
                 ret = requirements.getTooltip();
             }
+            return ret;
+        }
+        public String getTooltip(Map<String, String> tokenReplacements) {
+            String ret = getTooltip();
             requirements.addTokenReplacements(tokenReplacements);
             ret = boggledTools.doTokenReplacement(ret, tokenReplacements);
             return ret;

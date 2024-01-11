@@ -137,3 +137,5 @@ colony_ruins_scattered,,false,"market_ruins_scattered"
 colony_ruins_widespread,,false,"market_ruins_widespread"
 colony_ruins_extensive,,false,"market_ruins_extensive"
 colony_ruins_vast,,false,"market_ruins_vast"
+
+kletka_simulator_has_ai_core,"Requires AI core.",false,"kletka_simulator_has_alpha_core | kletka_simulator_has_beta_core | kletka_simulator_has_gamma_core"

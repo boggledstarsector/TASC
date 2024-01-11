@@ -184,3 +184,16 @@ market_storage_contains_at_least_hard_domain_artifacts,MarketStorageContainsAtLe
 player_has_at_least_2_story_points,PlayerHasStoryPointsAtLeast,false,2
 
 market_has_at_least_100k_residents,MarketIsAtLeastSize,false,5
+
+kletka_simulator_has_alpha_core,MarketHasIndustryWithAICore,false,"{
+	'industry_id' : 'BOGGLED_KLETKA_SIMULATOR',
+	'ai_core_id' : 'alpha_core'
+}"
+kletka_simulator_has_beta_core,MarketHasIndustryWithAICore,false,"{
+	'industry_id' : 'BOGGLED_KLETKA_SIMULATOR',
+	'ai_core_id' : 'beta_core'
+}"
+kletka_simulator_has_gamma_core,MarketHasIndustryWithAICore,false,"{
+	'industry_id' : 'BOGGLED_KLETKA_SIMULATOR',
+	'ai_core_id' : 'gamma_core'
+}"

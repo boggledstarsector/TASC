@@ -1,6 +1,7 @@
 package data.campaign.econ.industries;
 
 import com.fs.starfarer.api.Global;
+import com.fs.starfarer.api.campaign.CargoAPI;
 import com.fs.starfarer.api.campaign.econ.CommoditySpecAPI;
 import com.fs.starfarer.api.campaign.econ.Industry;
 import com.fs.starfarer.api.campaign.econ.MarketAPI;
@@ -45,6 +46,22 @@ public class BoggledCommonIndustry {
     private List<ImageOverrideWithRequirement> imageReqs;
     private List<BoggledIndustryEffect.IndustryEffect> preBuildEffects;
 
+    public static class ProductionData {
+        int priority;
+        public String commodityId;
+        public MutableStat chance;
+        public BoggledProjectRequirementsAND requirements;
+        public ProductionData(int priority, String commodityId, int chance, BoggledProjectRequirementsAND requirements) {
+            this.priority = priority;
+            this.commodityId = commodityId;
+            this.chance = new MutableStat(chance);
+            this.requirements = requirements;
+        }
+    }
+
+    Map<String, ProductionData> productionData;
+    Map<String, MutableStat> productionDataModifiers;
+
     MutableStat buildCostModifier = new MutableStat(0f);
     MutableStat immigrationBonus = new MutableStat(0f);
 
@@ -74,6 +91,9 @@ public class BoggledCommonIndustry {
 
         this.imageReqs = new ArrayList<>();
         this.preBuildEffects = new ArrayList<>();
+
+        this.productionData = new HashMap<>();
+        this.productionDataModifiers = new HashMap<>();
     }
 
     public BoggledCommonIndustry(String industryId, String industryTooltip, List<BoggledTerraformingProject> projects, List<BoggledCommoditySupplyDemand.CommoditySupply> commoditySupply, List<BoggledCommoditySupplyDemand.CommodityDemand> commodityDemand, List<BoggledIndustryEffect.IndustryEffect> buildingFinishedEffects, List<BoggledIndustryEffect.IndustryEffect> industryEffects, List<BoggledIndustryEffect.IndustryEffect> improveEffects, List<BoggledIndustryEffect.AICoreEffect> aiCoreEffects, List<BoggledProjectRequirementsAND> disruptRequirements, float basePatherInterest, List<ImageOverrideWithRequirement> imageReqs, List<BoggledIndustryEffect.IndustryEffect> preBuildEffects) {
@@ -102,6 +122,9 @@ public class BoggledCommonIndustry {
         this.preBuildEffects = preBuildEffects;
 
         this.buildCostModifier = new MutableStat(Global.getSettings().getIndustrySpec(industryId).getCost());
+
+        this.productionData = new HashMap<>();
+        this.productionDataModifiers = new HashMap<>();
     }
 
     protected Object readResolve() {
@@ -126,6 +149,9 @@ public class BoggledCommonIndustry {
         this.imageReqs = that.imageReqs;
 
         this.preBuildEffects = that.preBuildEffects;
+
+        this.productionData = that.productionData;
+        this.productionDataModifiers = that.productionDataModifiers;
 
         return this;
     }
@@ -451,13 +477,21 @@ public class BoggledCommonIndustry {
 
         for (BoggledIndustryEffect.IndustryEffect effect : industryEffects) {
             List<TooltipData> desc = effect.addRightAfterDescriptionSection(industry, mode);
+            if (desc.isEmpty()) {
+                continue;
+            }
+            tooltip.addSpacer(pad);
             for (TooltipData d : desc) {
-                tooltip.addPara(d.text, pad, d.highlightColors.toArray(new Color[0]), d.highlights.toArray(new String[0]));
+                tooltip.addPara(d.text, 0f, d.highlightColors.toArray(new Color[0]), d.highlights.toArray(new String[0]));
             }
         }
 
         for (BoggledIndustryEffect.AICoreEffect effect : aiCoreEffects) {
             List<TooltipData> desc = effect.addRightAfterDescriptionSection(industry, mode);
+            if (desc.isEmpty()) {
+                continue;
+            }
+            tooltip.addSpacer(pad);
             for (TooltipData d : desc) {
                 tooltip.addPara(d.text, pad, d.highlightColors.toArray(new Color[0]), d.highlights.toArray(new String[0]));
             }
@@ -644,6 +678,12 @@ public class BoggledCommonIndustry {
             this.highlightColors = highlightColors;
             this.highlights = highlights;
         }
+
+        public TooltipData(String text) {
+            this.text = text;
+            this.highlightColors = new ArrayList<>();
+            this.highlights = new ArrayList<>();
+        }
     }
 
     public static class ImageOverrideWithRequirement {
@@ -681,5 +721,72 @@ public class BoggledCommonIndustry {
             preBuildEffect.applyEffect(industry, industryInterface, "Prebuild lol");
         }
         return buildCostModifier.getModifiedValue();
+    }
+
+    public void addProductionData(ProductionData data) {
+        productionData.put(data.commodityId, data);
+        if (!productionDataModifiers.containsKey(data.commodityId)) {
+            productionDataModifiers.put(data.commodityId, new MutableStat(0));
+        }
+    }
+
+    public void removeProductionData(ProductionData data) {
+        productionData.remove(data.commodityId);
+    }
+
+    public void modifyProductionChance(String commodityId, String source, int value) {
+        MutableStat modifier = productionDataModifiers.get(commodityId);
+        if (modifier == null) {
+            productionDataModifiers.put(commodityId, new MutableStat(0));
+            modifier = productionDataModifiers.get(commodityId);
+        }
+        modifier.modifyFlat(source, value);
+    }
+
+    public void unmodifyProductionChance(String commodityId, String source) {
+        MutableStat modifier = productionDataModifiers.get(commodityId);
+        if (modifier == null) {
+            productionDataModifiers.put(commodityId, new MutableStat(0));
+            modifier = productionDataModifiers.get(commodityId);
+        }
+        modifier.unmodify(source);
+    }
+
+    public CargoAPI generateCargoForGatheringPoint(BaseIndustry industry, Random random) {
+        // As each item is checked, offset is incremented by the chance of the item
+        // If the roll is less than chance + offset, give the item and return
+        // Goes from smaller priority value items to bigger priority value items
+        // The smaller the priority, the higher the priority, with zero being the highest priority
+        // If multiple items share the same priority, order is unspecified
+        // Number in range (0, 100], ie possible values are from 1 to 100 inclusive both ends
+        int roll = random.nextInt(100) + 1;
+        int offset = 0;
+        CargoAPI ret = Global.getFactory().createCargo(true);
+
+        List<ProductionData> workingData = new ArrayList<>(productionData.values());
+        Collections.sort(workingData, new Comparator<ProductionData>() {
+            @Override
+            public int compare(ProductionData o1, ProductionData o2) {
+                return Integer.compare(o1.priority, o2.priority);
+            }
+        });
+
+        for (ProductionData pd : workingData) {
+            if (!pd.requirements.requirementsMet(industry.getMarket())) {
+                offset += pd.chance.getModifiedInt();
+                continue;
+            }
+            MutableStat modifier = productionDataModifiers.get(pd.commodityId);
+            int value = pd.chance.getModifiedInt() + modifier.getModifiedInt();
+            if (value == 0) {
+                continue;
+            }
+            if (roll < (offset + value)) {
+                ret.addCommodity(pd.commodityId, 1);
+                return ret;
+            }
+            offset += value;
+        }
+        return null;
     }
 }

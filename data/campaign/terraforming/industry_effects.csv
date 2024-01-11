@@ -30,6 +30,10 @@ domain_artifacts_deficit_to_5_times_upkeep,boggledDomainTechContentEnabled | bog
 	'upkeep_multiplier' : 5.0
 }"
 
+kletka_simulator_deficit_to_inactive,boggledDomainArchaeologyEnabled,DeficitToInactive,"{
+	'commodities_demanded' : [ 'domain_artifacts' ]
+}"
+
 kletka_simulator_very_cold_upkeep_modifier,,ModifyUpkeep,"{ 'type' : 'mult', 'value' : 0.25 }"
 kletka_simulator_cold_upkeep_modifier,,ModifyUpkeep,"{ 'type' : 'mult', 'value' : 0.5 }"
 kletka_simulator_hot_upkeep_modifier,,ModifyUpkeep,"{ 'type' : 'mult', 'value' : 2 }"
@@ -56,6 +60,33 @@ kletka_simulator_station_modifier,boggledKletkaSimulatorTemperatureBasedUpkeep,I
 	'requirement_ids' : [ { 'requirement_id' : 'colony_is_station_short' } ],
 	'industry_effects' : [ 'kletka_simulator_station_upkeep_modifier' ]
 }"
+kletka_simulator_item_production_effect,,MonthlyItemProductionChance,"[
+	{ 'commodity_priority' : 0, 'commodity_id' : 'alpha_core', 'chance' : 0, 'requirement_ids' : [
+		{ 'requirement_id' : 'kletka_simulator_has_ai_core' }
+	] },
+	{ 'commodity_priority' : 1, 'commodity_id' : 'beta_core', 'chance' : 20 },
+	{ 'commodity_priority' : 2, 'commodity_id' : 'gamma_core', 'chance' : 45 },
+]"
+kletka_simulator_alpha_core_effect,,MonthlyItemProductionChanceModifier,"[
+	{ 'commodity_id' : 'alpha_core', 'chance_modifier' : 25 },
+	{ 'commodity_id' : 'beta_core', 'chance_modifier' : 30 },
+	{ 'commodity_id' : 'gamma_core', 'chance_modifier' : 30 }
+]"
+kletka_simulator_beta_core_effect,,MonthlyItemProductionChanceModifier,"[
+	{ 'commodity_id' : 'alpha_core', 'chance_modifier' : 15 },
+	{ 'commodity_id' : 'beta_core', 'chance_modifier' : 20 },
+	{ 'commodity_id' : 'gamma_core', 'chance_modifier' : 20 }
+]"
+kletka_simulator_gamma_core_effect,,MonthlyItemProductionChanceModifier,"[
+	{ 'commodity_id' : 'alpha_core', 'chance_modifier' : 5 },
+	{ 'commodity_id' : 'beta_core', 'chance_modifier' : 10 },
+	{ 'commodity_id' : 'gamma_core', 'chance_modifier' : 10 }
+]"
+kletka_simulator_improve_effect,,MonthlyItemProductionChanceModifier,"[
+	{ 'commodity_id' : 'alpha_core', 'chance_modifier' : 10 },
+	{ 'commodity_id' : 'beta_core', 'chance_modifier' : 10 },
+	{ 'commodity_id' : 'gamma_core', 'chance_modifier' : 10 }
+]"
 
 perihelion_project_deficit_to_inactive,,DeficitToInactive,"{
 	'commodities_demanded' : [ 'domain_artifacts', 'metals', 'rare_metals', 'heavy_machinery' ]

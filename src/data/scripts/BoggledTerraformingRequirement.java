@@ -152,6 +152,29 @@ public class BoggledTerraformingRequirement {
         }
     }
 
+    public static class MarketHasIndustryWithAICore extends MarketHasIndustry {
+        String aiCoreId;
+        public MarketHasIndustryWithAICore(String requirementId, boolean invert, String industryId, String aiCoreId) {
+            super(requirementId, invert, industryId);
+            this.aiCoreId = aiCoreId;
+        }
+
+        @Override
+        public void addTokenReplacements(Map<String, String> tokenReplacements) {
+            super.addTokenReplacements(tokenReplacements);
+            tokenReplacements.put("$aiCore", Global.getSettings().getCommoditySpec(aiCoreId).getName());
+        }
+
+        @Override
+        protected boolean checkRequirementImpl(MarketAPI market) {
+            if (!super.checkRequirementImpl(market)) {
+                return false;
+            }
+            Industry industry = market.getIndustry(industryId);
+            return industry.getAICoreId() != null && industry.getAICoreId().equals(aiCoreId);
+        }
+    }
+
     public static class PlanetWaterLevel extends TerraformingRequirement {
         int minWaterLevel;
         int maxWaterLevel;

@@ -8,6 +8,7 @@ public interface BoggledIndustryInterface {
 
     void setFunctional(boolean functional);
 
+    float getBasePatherInterest();
     void modifyPatherInterest(MutableStat modifier);
     void unmodifyPatherInterest(String source);
 
@@ -16,4 +17,9 @@ public interface BoggledIndustryInterface {
 
     void modifyBuildCost(MutableStat modifier);
     void unmodifyBuildCost(String source);
+
+    void addProductionData(BoggledCommonIndustry.ProductionData data);
+    void removeProductionData(BoggledCommonIndustry.ProductionData data);
+    void modifyProductionChance(String commodityId, String source, int value);
+    void unmodifyProductionChance(String commodityId, String source);
 }

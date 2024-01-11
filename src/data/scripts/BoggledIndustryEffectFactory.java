@@ -1,6 +1,8 @@
 package data.scripts;
 
+import com.fs.starfarer.api.util.Pair;
 import data.campaign.econ.boggledTools;
+import data.campaign.econ.industries.BoggledCommonIndustry;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -15,7 +17,7 @@ public class BoggledIndustryEffectFactory {
         BoggledIndustryEffect.IndustryEffect constructFromJSON(String id, String[] enableSettings, String data) throws JSONException;
     }
 
-    public static class DeficitToInactiveFactory implements IndustryEffectFactory {
+    public static class DeficitToInactive implements IndustryEffectFactory {
         @Override
         public BoggledIndustryEffect.IndustryEffect constructFromJSON(String id, String[] enableSettings, String data) throws JSONException {
             JSONObject jsonData = new JSONObject(data);
@@ -28,7 +30,7 @@ public class BoggledIndustryEffectFactory {
         }
     }
 
-    public static class DeficitToCommodityFactory implements IndustryEffectFactory {
+    public static class DeficitToCommodity implements IndustryEffectFactory {
         @Override
         public BoggledIndustryEffect.IndustryEffect constructFromJSON(String id, String[] enableSettings, String data) throws JSONException {
             JSONObject jsonData = new JSONObject(data);
@@ -48,7 +50,7 @@ public class BoggledIndustryEffectFactory {
         }
     }
 
-    public static class DeficitMultiplierToUpkeepFactory implements IndustryEffectFactory {
+    public static class DeficitMultiplierToUpkeep implements IndustryEffectFactory {
         @Override
         public BoggledIndustryEffect.IndustryEffect constructFromJSON(String id, String[] enableSettings, String data) throws JSONException {
             JSONObject jsonData = new JSONObject(data);
@@ -63,7 +65,7 @@ public class BoggledIndustryEffectFactory {
         }
     }
 
-    public static class EffectToIndustryFactory implements IndustryEffectFactory {
+    public static class EffectToIndustry implements IndustryEffectFactory {
         @Override
         public BoggledIndustryEffect.IndustryEffect constructFromJSON(String id, String[] enableSettings, String data) throws JSONException {
             JSONObject jsonData = new JSONObject(data);
@@ -74,7 +76,7 @@ public class BoggledIndustryEffectFactory {
         }
     }
 
-    public static class ModifyIncomeFactory implements IndustryEffectFactory {
+    public static class ModifyIncome implements IndustryEffectFactory {
         @Override
         public BoggledIndustryEffect.IndustryEffect constructFromJSON(String id, String[] enableSettings, String data) throws JSONException {
             JSONObject jsonData = new JSONObject(data);
@@ -85,7 +87,7 @@ public class BoggledIndustryEffectFactory {
         }
     }
 
-    public static class ModifyAccessibilityFactory implements IndustryEffectFactory {
+    public static class ModifyAccessibility implements IndustryEffectFactory {
         @Override
         public BoggledIndustryEffect.IndustryEffect constructFromJSON(String id, String[] enableSettings, String data) throws JSONException {
             JSONObject jsonData = new JSONObject(data);
@@ -95,7 +97,7 @@ public class BoggledIndustryEffectFactory {
         }
     }
 
-    public static class ModifyStabilityFactory implements IndustryEffectFactory {
+    public static class ModifyStability implements IndustryEffectFactory {
         @Override
         public BoggledIndustryEffect.IndustryEffect constructFromJSON(String id, String[] enableSettings, String data) throws JSONException {
             JSONObject jsonData = new JSONObject(data);
@@ -105,7 +107,7 @@ public class BoggledIndustryEffectFactory {
         }
     }
 
-    public static class SupplyBonusToIndustryWithDeficitFactory implements IndustryEffectFactory {
+    public static class SupplyBonusToIndustryWithDeficit implements IndustryEffectFactory {
         @Override
         public BoggledIndustryEffect.IndustryEffect constructFromJSON(String id, String[] enableSettings, String data) throws JSONException {
             JSONObject jsonData = new JSONObject(data);
@@ -120,7 +122,7 @@ public class BoggledIndustryEffectFactory {
         }
     }
 
-    public static class ModifyAllDemandFactory implements IndustryEffectFactory {
+    public static class ModifyAllDemand implements IndustryEffectFactory {
         @Override
         public BoggledIndustryEffect.IndustryEffect constructFromJSON(String id, String[] enableSettings, String data) throws JSONException {
             JSONObject jsonData = new JSONObject(data);
@@ -130,7 +132,7 @@ public class BoggledIndustryEffectFactory {
         }
     }
 
-    public static class ModifyUpkeepFactory implements IndustryEffectFactory {
+    public static class ModifyUpkeep implements IndustryEffectFactory {
         @Override
         public BoggledIndustryEffect.IndustryEffect constructFromJSON(String id, String[] enableSettings, String data) throws JSONException {
             JSONObject jsonData = new JSONObject(data);
@@ -140,14 +142,14 @@ public class BoggledIndustryEffectFactory {
         }
     }
 
-    public static class EliminatePatherInterestFactory implements IndustryEffectFactory {
+    public static class EliminatePatherInterest implements IndustryEffectFactory {
         @Override
         public BoggledIndustryEffect.IndustryEffect constructFromJSON(String id, String[] enableSettings, String data) {
             return new BoggledIndustryEffect.EliminatePatherInterest(id, enableSettings);
         }
     }
 
-    public static class ModifyPatherInterestFactory implements IndustryEffectFactory {
+    public static class ModifyPatherInterest implements IndustryEffectFactory {
         @Override
         public BoggledIndustryEffect.IndustryEffect constructFromJSON(String id, String[] enableSettings, String data) throws JSONException {
             JSONObject jsonData = new JSONObject(data);
@@ -157,7 +159,7 @@ public class BoggledIndustryEffectFactory {
         }
     }
 
-    public static class ModifyColonyGrowthRateFactory implements IndustryEffectFactory {
+    public static class ModifyColonyGrowthRate implements IndustryEffectFactory {
         @Override
         public BoggledIndustryEffect.IndustryEffect constructFromJSON(String id, String[] enableSettings, String data) throws JSONException {
             JSONObject jsonData = new JSONObject(data);
@@ -167,7 +169,7 @@ public class BoggledIndustryEffectFactory {
         }
     }
 
-    public static class IncrementTagFactory implements IndustryEffectFactory {
+    public static class IncrementTag implements IndustryEffectFactory {
         @Override
         public BoggledIndustryEffect.IndustryEffect constructFromJSON(String id, String[] enableSettings, String data) throws JSONException {
             JSONObject jsonData = new JSONObject(data);
@@ -177,7 +179,7 @@ public class BoggledIndustryEffectFactory {
         }
     }
 
-    public static class RemoveIndustryFactory implements IndustryEffectFactory {
+    public static class RemoveIndustry implements IndustryEffectFactory {
         @Override
         public BoggledIndustryEffect.IndustryEffect constructFromJSON(String id, String[] enableSettings, String data) throws JSONException {
             boggledTools.CheckIndustryExists(data);
@@ -185,7 +187,7 @@ public class BoggledIndustryEffectFactory {
         }
     }
 
-    public static class SuppressConditionsFactory implements IndustryEffectFactory {
+    public static class SuppressConditions implements IndustryEffectFactory {
         @Override
         public BoggledIndustryEffect.IndustryEffect constructFromJSON(String id, String[] enableSettings, String data) throws JSONException {
             List<String> conditionIds = new ArrayList<>(asList(data.split(boggledTools.csvOptionSeparator)));
@@ -193,7 +195,7 @@ public class BoggledIndustryEffectFactory {
         }
     }
 
-    public static class ModifyGroundDefenseFactory implements IndustryEffectFactory {
+    public static class ModifyGroundDefense implements IndustryEffectFactory {
         @Override
         public BoggledIndustryEffect.IndustryEffect constructFromJSON(String id, String[] enableSettings, String data) throws JSONException {
             JSONObject jsonData = new JSONObject(data);
@@ -203,7 +205,7 @@ public class BoggledIndustryEffectFactory {
         }
     }
 
-    public static class IndustryEffectWithRequirementFactory implements IndustryEffectFactory {
+    public static class IndustryEffectWithRequirement implements IndustryEffectFactory {
         @Override
         public BoggledIndustryEffect.IndustryEffect constructFromJSON(String id, String[] enableSettings, String data) throws JSONException {
             JSONObject jsonData = new JSONObject(data);
@@ -223,7 +225,7 @@ public class BoggledIndustryEffectFactory {
         }
     }
 
-    public static class AddConditionFactory implements IndustryEffectFactory {
+    public static class AddCondition implements IndustryEffectFactory {
         @Override
         public BoggledIndustryEffect.IndustryEffect constructFromJSON(String id, String[] enableSettings, String data) throws JSONException {
             boggledTools.CheckMarketConditionExists(data);
@@ -231,20 +233,61 @@ public class BoggledIndustryEffectFactory {
         }
     }
 
-    public static class AddStellarReflectorsToMarketFactory implements IndustryEffectFactory {
+    public static class AddStellarReflectorsToMarket implements IndustryEffectFactory {
         @Override
         public BoggledIndustryEffect.IndustryEffect constructFromJSON(String id, String[] enableSettings, String data) throws JSONException {
             return new BoggledIndustryEffect.AddStellarReflectorsToMarket(id, enableSettings);
         }
     }
 
-    public static class TagSubstringPowerModifyBuildCostFactory implements IndustryEffectFactory {
+    public static class TagSubstringPowerModifyBuildCost implements IndustryEffectFactory {
         @Override
         public BoggledIndustryEffect.IndustryEffect constructFromJSON(String id, String[] enableSettings, String data) throws JSONException {
             JSONObject jsonData = new JSONObject(data);
             String tagSubstring = jsonData.getString("tag");
             int defaultValue = jsonData.getInt("default");
             return new BoggledIndustryEffect.TagSubstringPowerModifyBuildCost(id, enableSettings, tagSubstring, defaultValue);
+        }
+    }
+
+    public static class MonthlyItemProductionChance implements IndustryEffectFactory {
+        @Override
+        public BoggledIndustryEffect.IndustryEffect constructFromJSON(String id, String[] enableSettings, String data) throws JSONException {
+            JSONArray jsonArray = new JSONArray(data);
+            List<BoggledCommonIndustry.ProductionData> productionData = new ArrayList<>();
+            for (int i = 0; i < jsonArray.length(); ++i) {
+                JSONObject jsonObject = jsonArray.getJSONObject(i);
+                int priority = jsonObject.getInt("commodity_priority");
+                String commodityId = jsonObject.getString("commodity_id");
+                int chance = jsonObject.getInt("chance");
+                JSONArray requirementsArray = jsonObject.optJSONArray("requirement_ids");
+                BoggledProjectRequirementsAND reqs;
+                if (requirementsArray != null) {
+                    reqs = boggledTools.requirementsFromRequirementsArray(requirementsArray, id, "MonthlyItemProductionChance");
+                } else {
+                    reqs = new BoggledProjectRequirementsAND(new ArrayList<BoggledProjectRequirementsAND.RequirementWithTooltipOverride>());
+                }
+
+                productionData.add(new BoggledCommonIndustry.ProductionData(priority, commodityId, chance, reqs));
+            }
+            return new BoggledIndustryEffect.MonthlyItemProductionChance(id, enableSettings, productionData);
+        }
+    }
+
+    public static class MonthlyItemProductionChanceModifier implements IndustryEffectFactory {
+        @Override
+        public BoggledIndustryEffect.IndustryEffect constructFromJSON(String id, String[] enableSettings, String data) throws JSONException {
+            JSONArray jsonArray = new JSONArray(data);
+            List<Pair<String, Integer>> productionData = new ArrayList<>();
+            for (int i = 0; i < jsonArray.length(); ++i) {
+                JSONObject jsonObject = jsonArray.getJSONObject(i);
+                String commodityId = jsonObject.getString("commodity_id");
+                int chanceModifier = jsonObject.getInt("chance_modifier");
+
+                productionData.add(new Pair<>(commodityId, chanceModifier));
+            }
+
+            return new BoggledIndustryEffect.MonthlyItemProductionChanceModifier(id, enableSettings, productionData);
         }
     }
 }

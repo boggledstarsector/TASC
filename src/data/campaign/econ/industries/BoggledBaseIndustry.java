@@ -1,5 +1,6 @@
 package data.campaign.econ.industries;
 
+import com.fs.starfarer.api.campaign.CargoAPI;
 import com.fs.starfarer.api.campaign.econ.Industry;
 import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.campaign.econ.MarketImmigrationModifier;
@@ -9,6 +10,8 @@ import com.fs.starfarer.api.impl.campaign.population.PopulationComposition;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Pair;
 import data.campaign.econ.boggledTools;
+
+import java.util.Random;
 
 public class BoggledBaseIndustry extends BaseIndustry implements BoggledIndustryInterface, MarketImmigrationModifier {
     private BoggledCommonIndustry thisIndustry;
@@ -125,8 +128,18 @@ public class BoggledBaseIndustry extends BaseIndustry implements BoggledIndustry
     }
 
     @Override
+    public CargoAPI generateCargoForGatheringPoint(Random random) {
+        return thisIndustry.generateCargoForGatheringPoint(this, random);
+    }
+
+    @Override
     public final void setFunctional(boolean functional) {
         thisIndustry.setFunctional(functional);
+    }
+
+    @Override
+    public float getBasePatherInterest() {
+        return super.getPatherInterest() + thisIndustry.getBasePatherInterest();
     }
 
     @Override
@@ -237,5 +250,25 @@ public class BoggledBaseIndustry extends BaseIndustry implements BoggledIndustry
     @Override
     public void unmodifyBuildCost(String source) {
         thisIndustry.unmodifyBuildCost(source);
+    }
+
+    @Override
+    public void addProductionData(BoggledCommonIndustry.ProductionData data) {
+        thisIndustry.addProductionData(data);
+    }
+
+    @Override
+    public void removeProductionData(BoggledCommonIndustry.ProductionData data) {
+        thisIndustry.removeProductionData(data);
+    }
+
+    @Override
+    public void modifyProductionChance(String commodityId, String source, int value) {
+        thisIndustry.modifyProductionChance(commodityId, source, value);
+    }
+
+    @Override
+    public void unmodifyProductionChance(String commodityId, String source) {
+        thisIndustry.unmodifyProductionChance(commodityId, source);
     }
 }

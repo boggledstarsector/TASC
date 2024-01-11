@@ -115,6 +115,11 @@ public class BoggledOrbitalStation extends OrbitalStation implements BoggledIndu
     }
 
     @Override
+    public float getBasePatherInterest() {
+        return super.getPatherInterest() + thisIndustry.getBasePatherInterest();
+    }
+
+    @Override
     public void modifyPatherInterest(MutableStat modifier) {
         thisIndustry.modifyPatherInterest(modifier);
     }
@@ -203,5 +208,25 @@ public class BoggledOrbitalStation extends OrbitalStation implements BoggledIndu
     @Override
     public void unmodifyBuildCost(String source) {
         thisIndustry.unmodifyBuildCost(source);
+    }
+
+    @Override
+    public void addProductionData(BoggledCommonIndustry.ProductionData data) {
+        thisIndustry.addProductionData(data);
+    }
+
+    @Override
+    public void removeProductionData(BoggledCommonIndustry.ProductionData data) {
+        thisIndustry.removeProductionData(data);
+    }
+
+    @Override
+    public void modifyProductionChance(String commodityId, String source, int value) {
+        thisIndustry.modifyProductionChance(commodityId, source, value);
+    }
+
+    @Override
+    public void unmodifyProductionChance(String commodityId, String source) {
+        thisIndustry.unmodifyProductionChance(commodityId, source);
     }
 }

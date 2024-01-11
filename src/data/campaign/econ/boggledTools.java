@@ -493,6 +493,7 @@ public class boggledTools {
         addTerraformingRequirementFactory("MarketHasCondition", new BoggledTerraformingRequirementFactory.MarketHasCondition());
         addTerraformingRequirementFactory("MarketHasIndustry", new BoggledTerraformingRequirementFactory.MarketHasIndustry());
         addTerraformingRequirementFactory("MarketHasIndustryWithItem", new BoggledTerraformingRequirementFactory.MarketHasIndustryWithItem());
+        addTerraformingRequirementFactory("MarketHasIndustryWithAICore", new BoggledTerraformingRequirementFactory.MarketHasIndustryWithAICore());
         addTerraformingRequirementFactory("PlanetWaterLevel", new BoggledTerraformingRequirementFactory.PlanetWaterLevel());
         addTerraformingRequirementFactory("MarketHasWaterPresent", new BoggledTerraformingRequirementFactory.MarketHasWaterPresent());
         addTerraformingRequirementFactory("MarketIsAtLeastSize", new BoggledTerraformingRequirementFactory.MarketIsAtLeastSize());
@@ -547,39 +548,42 @@ public class boggledTools {
     }
 
     public static void initialiseDefaultIndustryEffectFactories() {
-        addIndustryEffectFactory("DeficitToInactive", new BoggledIndustryEffectFactory.DeficitToInactiveFactory());
-        addIndustryEffectFactory("DeficitToCommodity", new BoggledIndustryEffectFactory.DeficitToCommodityFactory());
-        addIndustryEffectFactory("DeficitMultiplierToUpkeep", new BoggledIndustryEffectFactory.DeficitMultiplierToUpkeepFactory());
+        addIndustryEffectFactory("DeficitToInactive", new BoggledIndustryEffectFactory.DeficitToInactive());
+        addIndustryEffectFactory("DeficitToCommodity", new BoggledIndustryEffectFactory.DeficitToCommodity());
+        addIndustryEffectFactory("DeficitMultiplierToUpkeep", new BoggledIndustryEffectFactory.DeficitMultiplierToUpkeep());
 
-        addIndustryEffectFactory("EffectToIndustry", new BoggledIndustryEffectFactory.EffectToIndustryFactory());
+        addIndustryEffectFactory("EffectToIndustry", new BoggledIndustryEffectFactory.EffectToIndustry());
 
-        addIndustryEffectFactory("ModifyIncome", new BoggledIndustryEffectFactory.ModifyIncomeFactory());
+        addIndustryEffectFactory("ModifyIncome", new BoggledIndustryEffectFactory.ModifyIncome());
 
-        addIndustryEffectFactory("ModifyAccessibility", new BoggledIndustryEffectFactory.ModifyAccessibilityFactory());
-        addIndustryEffectFactory("ModifyStability", new BoggledIndustryEffectFactory.ModifyStabilityFactory());
+        addIndustryEffectFactory("ModifyAccessibility", new BoggledIndustryEffectFactory.ModifyAccessibility());
+        addIndustryEffectFactory("ModifyStability", new BoggledIndustryEffectFactory.ModifyStability());
 
-        addIndustryEffectFactory("SupplyBonusToIndustryWithDeficit", new BoggledIndustryEffectFactory.SupplyBonusToIndustryWithDeficitFactory());
-        addIndustryEffectFactory("ModifyAllDemand", new BoggledIndustryEffectFactory.ModifyAllDemandFactory());
-        addIndustryEffectFactory("ModifyUpkeep", new BoggledIndustryEffectFactory.ModifyUpkeepFactory());
+        addIndustryEffectFactory("SupplyBonusToIndustryWithDeficit", new BoggledIndustryEffectFactory.SupplyBonusToIndustryWithDeficit());
+        addIndustryEffectFactory("ModifyAllDemand", new BoggledIndustryEffectFactory.ModifyAllDemand());
+        addIndustryEffectFactory("ModifyUpkeep", new BoggledIndustryEffectFactory.ModifyUpkeep());
 
-        addIndustryEffectFactory("EliminatePatherInterest", new BoggledIndustryEffectFactory.EliminatePatherInterestFactory());
-        addIndustryEffectFactory("ModifyPatherInterest", new BoggledIndustryEffectFactory.ModifyPatherInterestFactory());
+        addIndustryEffectFactory("EliminatePatherInterest", new BoggledIndustryEffectFactory.EliminatePatherInterest());
+        addIndustryEffectFactory("ModifyPatherInterest", new BoggledIndustryEffectFactory.ModifyPatherInterest());
 
-        addIndustryEffectFactory("IncrementTag", new BoggledIndustryEffectFactory.IncrementTagFactory());
-        addIndustryEffectFactory("RemoveIndustry", new BoggledIndustryEffectFactory.RemoveIndustryFactory());
+        addIndustryEffectFactory("IncrementTag", new BoggledIndustryEffectFactory.IncrementTag());
+        addIndustryEffectFactory("RemoveIndustry", new BoggledIndustryEffectFactory.RemoveIndustry());
 
-        addIndustryEffectFactory("SuppressConditions", new BoggledIndustryEffectFactory.SuppressConditionsFactory());
-        addIndustryEffectFactory("ModifyGroundDefense", new BoggledIndustryEffectFactory.ModifyGroundDefenseFactory());
+        addIndustryEffectFactory("SuppressConditions", new BoggledIndustryEffectFactory.SuppressConditions());
+        addIndustryEffectFactory("ModifyGroundDefense", new BoggledIndustryEffectFactory.ModifyGroundDefense());
 
-        addIndustryEffectFactory("IndustryEffectWithRequirement", new BoggledIndustryEffectFactory.IndustryEffectWithRequirementFactory());
+        addIndustryEffectFactory("IndustryEffectWithRequirement", new BoggledIndustryEffectFactory.IndustryEffectWithRequirement());
 
-        addIndustryEffectFactory("AddCondition", new BoggledIndustryEffectFactory.AddConditionFactory());
+        addIndustryEffectFactory("AddCondition", new BoggledIndustryEffectFactory.AddCondition());
 
-        addIndustryEffectFactory("AddStellarReflectorsToMarket", new BoggledIndustryEffectFactory.AddStellarReflectorsToMarketFactory());
+        addIndustryEffectFactory("AddStellarReflectorsToMarket", new BoggledIndustryEffectFactory.AddStellarReflectorsToMarket());
 
-        addIndustryEffectFactory("ModifyColonyGrowthRate", new BoggledIndustryEffectFactory.ModifyColonyGrowthRateFactory());
+        addIndustryEffectFactory("ModifyColonyGrowthRate", new BoggledIndustryEffectFactory.ModifyColonyGrowthRate());
 
-        addIndustryEffectFactory("TagSubstringPowerModifyBuildCostFactory", new BoggledIndustryEffectFactory.TagSubstringPowerModifyBuildCostFactory());
+        addIndustryEffectFactory("TagSubstringPowerModifyBuildCostFactory", new BoggledIndustryEffectFactory.TagSubstringPowerModifyBuildCost());
+
+        addIndustryEffectFactory("MonthlyItemProductionChance", new BoggledIndustryEffectFactory.MonthlyItemProductionChance());
+        addIndustryEffectFactory("MonthlyItemProductionChanceModifier", new BoggledIndustryEffectFactory.MonthlyItemProductionChanceModifier());
     }
 
     public static void addIndustryEffectFactory(String key, BoggledIndustryEffectFactory.IndustryEffectFactory value) {

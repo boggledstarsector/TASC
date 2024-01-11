@@ -702,7 +702,9 @@ public class BoggledIndustryEffect {
 
             // Now do the calculate pather interest thing
             // It's simpler than you might think
-            float patherInterest = 0f;
+            // Start with basePatherInterest and don't add this industry's pather interest later
+            // Otherwise chattering
+            float patherInterest = industryInterface.getBasePatherInterest();
 
             if (industry.getMarket().getAdmin().getAICoreId() != null) {
                 patherInterest += 10;
@@ -1112,6 +1114,112 @@ public class BoggledIndustryEffect {
         @Override
         protected void unapplyEffectImpl(BaseIndustry industry, BoggledIndustryInterface industryInterface) {
             industryInterface.unmodifyBuildCost(id);
+        }
+    }
+
+    public static class MonthlyItemProductionChance extends IndustryEffect {
+        protected List<BoggledCommonIndustry.ProductionData> data;
+
+        public MonthlyItemProductionChance(String id, String[] enableSettings, List<BoggledCommonIndustry.ProductionData> data) {
+            super(id, enableSettings);
+            this.data = data;
+        }
+
+        @Override
+        protected void applyEffectImpl(BaseIndustry industry, BoggledIndustryInterface industryInterface, String effectSource) {
+            for (BoggledCommonIndustry.ProductionData datum : data) {
+                industryInterface.addProductionData(datum);
+            }
+        }
+
+        @Override
+        protected void unapplyEffectImpl(BaseIndustry industry, BoggledIndustryInterface industryInterface) {
+            for (BoggledCommonIndustry.ProductionData datum : data) {
+                industryInterface.removeProductionData(datum);
+            }
+        }
+
+        @Override
+        protected List<BoggledCommonIndustry.TooltipData> addRightAfterDescriptionSectionImpl(BaseIndustry industry, Industry.IndustryTooltipMode mode) {
+            List<BoggledCommonIndustry.TooltipData> ret = new ArrayList<>();
+            String chanceOrChances = data.size() == 1 ? "chance" : "chances";
+            String text = "Base " + chanceOrChances + " of producing items:";
+            ret.add(new BoggledCommonIndustry.TooltipData(text));
+
+            for (BoggledCommonIndustry.ProductionData datum : data) {
+                String chance = datum.chance.getModifiedInt() + "%";
+                List<Color> highlightColors = new ArrayList<>(asList(Misc.getHighlightColor()));
+                List<String> highlights = new ArrayList<>(asList(chance));
+                chance += "%";
+
+                String itemText = Global.getSettings().getCommoditySpec(datum.commodityId).getName() + ": " + chance;
+
+                for (BoggledProjectRequirementsAND.RequirementWithTooltipOverride tooltip : datum.requirements) {
+                    String tooltipText = Misc.lcFirst(tooltip.getTooltip());
+                    itemText += ", " + tooltipText;
+                    highlightColors.add(Misc.getNegativeHighlightColor());
+                    highlights.add(tooltipText);
+                }
+
+                ret.add(new BoggledCommonIndustry.TooltipData(itemText, highlightColors, highlights));
+            }
+            return ret;
+        }
+
+        @Override
+        protected List<BoggledCommonIndustry.TooltipData> getApplyOrAppliedDescImpl(BaseIndustry industry, DescriptionMode mode) {
+            List<BoggledCommonIndustry.TooltipData> ret = new ArrayList<>();
+            List<Color> highlightColors = new ArrayList<>();
+            List<String> highlights = new ArrayList<>();
+            String text = "Improves chances of producing items: ";
+            List<String> commodityAndChance = new ArrayList<>();
+            for (BoggledCommonIndustry.ProductionData datum : data) {
+                commodityAndChance.add(Global.getSettings().getCommoditySpec(datum.commodityId).getName() + " by " + datum.chance.getModifiedInt() + "%%");
+                highlightColors.add(Misc.getHighlightColor());
+                highlights.add(datum.chance.getModifiedInt() + "%");
+            }
+            text += Misc.getAndJoined(commodityAndChance);
+            ret.add(new BoggledCommonIndustry.TooltipData(text, highlightColors, highlights));
+            return ret;
+        }
+    }
+
+    public static class MonthlyItemProductionChanceModifier extends IndustryEffect {
+        List<Pair<String, Integer>> data;
+        public MonthlyItemProductionChanceModifier(String id, String[] enableSettings, List<Pair<String, Integer>> data) {
+            super(id, enableSettings);
+            this.data = data;
+        }
+
+        @Override
+        protected void applyEffectImpl(BaseIndustry industry, BoggledIndustryInterface industryInterface, String effectSource) {
+            for (Pair<String, Integer> datum : data) {
+                industryInterface.modifyProductionChance(datum.one, id, datum.two);
+            }
+        }
+
+        @Override
+        protected void unapplyEffectImpl(BaseIndustry industry, BoggledIndustryInterface industryInterface) {
+            for (Pair<String, Integer> datum : data) {
+                industryInterface.unmodifyProductionChance(datum.one, id);
+            }
+        }
+
+        @Override
+        protected List<BoggledCommonIndustry.TooltipData> getApplyOrAppliedDescImpl(BaseIndustry industry, DescriptionMode mode) {
+            List<BoggledCommonIndustry.TooltipData> ret = new ArrayList<>();
+            List<Color> highlightColors = new ArrayList<>();
+            List<String> highlights = new ArrayList<>();
+            String text = "Improves chances of producing items: ";
+            List<String> commodityAndChance = new ArrayList<>();
+            for (Pair<String, Integer> datum : data) {
+                commodityAndChance.add(Global.getSettings().getCommoditySpec(datum.one).getName() + " by " + datum.two + "%%");
+                highlightColors.add(Misc.getHighlightColor());
+                highlights.add(datum.two + "%");
+            }
+            text += Misc.getAndJoined(commodityAndChance);
+            ret.add(new BoggledCommonIndustry.TooltipData(text, highlightColors, highlights));
+            return ret;
         }
     }
 }

@@ -74,6 +74,21 @@ public class BoggledTerraformingRequirementFactory {
         }
     }
 
+    public static class MarketHasIndustryWithAICore implements TerraformingRequirementFactory {
+        @Override
+        public BoggledTerraformingRequirement.TerraformingRequirement constructFromJSON(String requirementId, boolean invert, String data) throws JSONException {
+            JSONObject jsonData = new JSONObject(data);
+
+            String industryId = jsonData.getString("industry_id");
+            String aiCoreId = jsonData.getString("ai_core_id");
+
+            boggledTools.CheckIndustryExists(industryId);
+            boggledTools.CheckCommodityExists(aiCoreId);
+
+            return new BoggledTerraformingRequirement.MarketHasIndustryWithAICore(requirementId, invert, industryId, aiCoreId);
+        }
+    }
+
     public static class PlanetWaterLevel implements TerraformingRequirementFactory {
         @Override
         public BoggledTerraformingRequirement.TerraformingRequirement constructFromJSON(String requirementId, boolean invert, String data) throws JSONException {
