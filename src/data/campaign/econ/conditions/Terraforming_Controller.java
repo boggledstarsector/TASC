@@ -3,6 +3,8 @@ package data.campaign.econ.conditions;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.comm.CommMessageAPI;
+import com.fs.starfarer.api.campaign.econ.MarketAPI;
+import com.fs.starfarer.api.campaign.econ.MarketConditionAPI;
 import com.fs.starfarer.api.impl.campaign.econ.BaseHazardCondition;
 import com.fs.starfarer.api.impl.campaign.intel.BaseIntelPlugin;
 import com.fs.starfarer.api.impl.campaign.intel.MessageIntel;
@@ -12,10 +14,16 @@ import java.util.Map;
 
 import data.campaign.econ.boggledTools;
 import data.scripts.BoggledTerraformingProject;
+import data.scripts.BoggledTerraformingRequirement;
 
 public class Terraforming_Controller extends BaseHazardCondition {
-
+    private BoggledTerraformingRequirement.RequirementContext ctx = null;
     private BoggledTerraformingProject.ProjectInstance currentProject = null;
+
+    public void init(MarketAPI market, MarketConditionAPI condition) {
+        super.init(market, condition);
+        this.ctx = new BoggledTerraformingRequirement.RequirementContext(market);
+    }
 
     @Override
     public boolean isTransient() {
@@ -31,12 +39,12 @@ public class Terraforming_Controller extends BaseHazardCondition {
         if (currentProject == null && project == null) {
             return;
         }
-        BoggledTerraformingProject projectToCheck = project == null ? currentProject.getProject() : project;
+        BoggledTerraformingProject projectToCheck = (project == null) ? currentProject.getProject() : project;
 
-        currentProject = project == null ? null : new BoggledTerraformingProject.ProjectInstance(project);
+        currentProject = (project == null) ? null : new BoggledTerraformingProject.ProjectInstance(project);
 
         if(market.isPlayerOwned() || market.getFaction().isPlayerFaction()) {
-            String projectTooltip = projectToCheck.getProjectTooltip(boggledTools.getTokenReplacements(market));
+            String projectTooltip = projectToCheck.getProjectTooltip(boggledTools.getTokenReplacements(ctx));
             MessageIntel intel = new MessageIntel(projectTooltip + " on " + market.getName(), Misc.getBasePlayerColor());
             if (project == null) {
                 intel.addLine("    - Canceled");
@@ -60,7 +68,7 @@ public class Terraforming_Controller extends BaseHazardCondition {
         if (currentProject == null) {
             return 0;
         }
-        return currentProject.getProject().getModifiedProjectDuration(market);
+        return currentProject.getProject().getModifiedProjectDuration(ctx);
     }
 
     public int getDaysRemaining() {
@@ -76,7 +84,7 @@ public class Terraforming_Controller extends BaseHazardCondition {
         }
 
         if (currentProject != null) {
-            if (currentProject.advance(market)) {
+            if (currentProject.advance(ctx)) {
                 currentProject = null;
             }
         }

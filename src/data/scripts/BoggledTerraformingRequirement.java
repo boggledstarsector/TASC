@@ -1,20 +1,73 @@
 package data.scripts;
 
 import com.fs.starfarer.api.Global;
-import com.fs.starfarer.api.campaign.PlanetAPI;
-import com.fs.starfarer.api.campaign.SpecialItemData;
-import com.fs.starfarer.api.campaign.StarSystemAPI;
+import com.fs.starfarer.api.campaign.*;
 import com.fs.starfarer.api.campaign.econ.Industry;
 import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.campaign.econ.SubmarketSpecAPI;
+import com.fs.starfarer.api.impl.campaign.econ.impl.BaseIndustry;
 import com.fs.starfarer.api.util.Misc;
 import com.fs.starfarer.api.util.Pair;
 import data.campaign.econ.boggledTools;
+import data.campaign.econ.industries.BoggledIndustryInterface;
 
-import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
+import static data.campaign.econ.industries.BoggledCommonIndustry.getFocusMarketOrMarket;
+
 public class BoggledTerraformingRequirement {
+    public static class RequirementContext {
+        private final BaseIndustry industry;
+        private final BoggledIndustryInterface industryInterface;
+        private final MarketAPI market;
+        private final PlanetAPI planet;
+        private final StarSystemAPI starSystem;
+        private final CampaignFleetAPI fleet;
+
+        public RequirementContext(BaseIndustry industry) {
+            this.industry = industry;
+            this.industryInterface = (industry instanceof BoggledIndustryInterface) ? (BoggledIndustryInterface) industry : null;
+            this.market = industry.getMarket();
+            this.planet = this.market.getPlanetEntity();
+            this.starSystem = this.planet.getStarSystem();
+            this.fleet = Global.getSector().getPlayerFleet();
+        }
+
+        public RequirementContext(MarketAPI market) {
+            this.industry = null;
+            this.industryInterface = null;
+            this.market = market;
+            this.planet = market.getPlanetEntity();
+            this.starSystem = this.planet.getStarSystem();
+            this.fleet = Global.getSector().getPlayerFleet();
+        }
+
+        public RequirementContext(CampaignFleetAPI fleet) {
+            this.industry = null;
+            this.industryInterface = null;
+            this.fleet = fleet;
+            this.planet = boggledTools.getClosestPlanetToken(fleet);
+            this.starSystem = this.fleet.getStarSystem();
+            if (this.planet != null) {
+                this.market = this.planet.getMarket();
+            } else {
+                this.market = null;
+            }
+        }
+
+        public RequirementContext getFocusContext() {
+            return new RequirementContext(getFocusMarketOrMarket(this.getMarket()));
+        }
+
+        public BaseIndustry getIndustry() { return industry; }
+        public BoggledIndustryInterface getIndustryInterface() { return industryInterface; }
+        public MarketAPI getMarket() { return market; }
+        public PlanetAPI getPlanet() { return planet; }
+        public StarSystemAPI getStarSystem() { return starSystem; }
+        public CampaignFleetAPI getFleet() { return fleet; }
+    }
+
     public abstract static class TerraformingRequirement {
         private final String requirementId;
         private final boolean invert;
@@ -28,10 +81,10 @@ public class BoggledTerraformingRequirement {
 
         public void addTokenReplacements(Map<String, String> tokenReplacements) {}
 
-        protected abstract boolean checkRequirementImpl(MarketAPI market);
+        protected abstract boolean checkRequirementImpl(RequirementContext ctx);
 
-        public final boolean checkRequirement(MarketAPI market) {
-            boolean ret = checkRequirementImpl(market);
+        public final boolean checkRequirement(RequirementContext ctx) {
+            boolean ret = checkRequirementImpl(ctx);
             if (invert) {
                 ret = !ret;
             }
@@ -45,7 +98,7 @@ public class BoggledTerraformingRequirement {
         }
 
         @Override
-        protected boolean checkRequirementImpl(MarketAPI market) {
+        protected boolean checkRequirementImpl(RequirementContext ctx) {
             return true;
         }
     }
@@ -59,8 +112,8 @@ public class BoggledTerraformingRequirement {
         }
 
         @Override
-        protected boolean checkRequirementImpl(MarketAPI market) {
-            return planetTypeId.equals(boggledTools.getPlanetType(market.getPlanetEntity()).getPlanetId());
+        protected boolean checkRequirementImpl(RequirementContext ctx) {
+            return planetTypeId.equals(boggledTools.getPlanetType(ctx.getPlanet()).getPlanetId());
         }
     }
 
@@ -70,11 +123,11 @@ public class BoggledTerraformingRequirement {
         }
 
         @Override
-        protected boolean checkRequirementImpl(MarketAPI market) {
-            if (market.getPrimaryEntity().getOrbitFocus().getMarket() == null) {
+        protected boolean checkRequirementImpl(RequirementContext ctx) {
+            if (ctx.getMarket().getPrimaryEntity().getOrbitFocus().getMarket() == null) {
                 return false;
             }
-            return super.checkRequirementImpl(market.getPrimaryEntity().getOrbitFocus().getMarket());
+            return super.checkRequirementImpl(new RequirementContext(ctx.getMarket().getPrimaryEntity().getOrbitFocus().getMarket()));
         }
     }
 
@@ -86,8 +139,8 @@ public class BoggledTerraformingRequirement {
         }
 
         @Override
-        protected boolean checkRequirementImpl(MarketAPI market) {
-            return market.hasCondition(conditionId);
+        protected boolean checkRequirementImpl(RequirementContext ctx) {
+            return ctx.getMarket().hasCondition(conditionId);
         }
     }
 
@@ -97,11 +150,11 @@ public class BoggledTerraformingRequirement {
         }
 
         @Override
-        protected boolean checkRequirementImpl(MarketAPI market) {
-            if (market.getPrimaryEntity().getOrbitFocus().getMarket() == null) {
+        protected boolean checkRequirementImpl(RequirementContext ctx) {
+            if (ctx.getMarket().getPrimaryEntity().getOrbitFocus().getMarket() == null) {
                 return false;
             }
-            return super.checkRequirementImpl(market.getPrimaryEntity().getOrbitFocus().getMarket());
+            return super.checkRequirementImpl(new RequirementContext(ctx.getMarket().getPrimaryEntity().getOrbitFocus().getMarket()));
         }
     }
 
@@ -118,9 +171,9 @@ public class BoggledTerraformingRequirement {
         }
 
         @Override
-        protected boolean checkRequirementImpl(MarketAPI market) {
-            Industry industry = market.getIndustry(industryId);
-            return industry != null && industry.isFunctional() && market.hasIndustry(industryId);
+        protected boolean checkRequirementImpl(RequirementContext ctx) {
+            Industry industry = ctx.getMarket().getIndustry(industryId);
+            return industry != null && industry.isFunctional() && ctx.getMarket().hasIndustry(industryId);
         }
     }
 
@@ -138,11 +191,11 @@ public class BoggledTerraformingRequirement {
         }
 
         @Override
-        protected boolean checkRequirementImpl(MarketAPI market) {
-            if (!super.checkRequirementImpl(market)) {
+        protected boolean checkRequirementImpl(RequirementContext ctx) {
+            if (!super.checkRequirementImpl(ctx)) {
                 return false;
             }
-            Industry industry = market.getIndustry(industryId);
+            Industry industry = ctx.getMarket().getIndustry(industryId);
             for (SpecialItemData specialItemData : industry.getVisibleInstalledItems()) {
                 if (itemId.equals(specialItemData.getId())) {
                     return true;
@@ -166,11 +219,11 @@ public class BoggledTerraformingRequirement {
         }
 
         @Override
-        protected boolean checkRequirementImpl(MarketAPI market) {
-            if (!super.checkRequirementImpl(market)) {
+        protected boolean checkRequirementImpl(RequirementContext ctx) {
+            if (!super.checkRequirementImpl(ctx)) {
                 return false;
             }
-            Industry industry = market.getIndustry(industryId);
+            Industry industry = ctx.getMarket().getIndustry(industryId);
             return industry.getAICoreId() != null && industry.getAICoreId().equals(aiCoreId);
         }
     }
@@ -185,10 +238,9 @@ public class BoggledTerraformingRequirement {
         }
 
         @Override
-        protected boolean checkRequirementImpl(MarketAPI market) {
-            PlanetAPI planet = market.getPlanetEntity();
-            boggledTools.PlanetType planetType = boggledTools.getPlanetType(planet);
-            int planetWaterLevel = planetType.getWaterLevel(market);
+        protected boolean checkRequirementImpl(RequirementContext ctx) {
+            boggledTools.PlanetType planetType = boggledTools.getPlanetType(ctx.getPlanet());
+            int planetWaterLevel = planetType.getWaterLevel(ctx);
             return minWaterLevel <= planetWaterLevel && planetWaterLevel <= maxWaterLevel;
         }
     }
@@ -199,40 +251,40 @@ public class BoggledTerraformingRequirement {
         }
 
         @Override
-        protected boolean checkRequirementImpl(MarketAPI market) {
-            return super.checkRequirementImpl(market) || boggledTools.hasIsmaraSling(market);
+        protected boolean checkRequirementImpl(RequirementContext ctx) {
+            return super.checkRequirementImpl(ctx) || boggledTools.hasIsmaraSling(ctx.getMarket());
         }
     }
 
     public static class TerraformingPossibleOnMarket extends TerraformingRequirement {
-        ArrayList<String> invalidatingConditions;
-        public TerraformingPossibleOnMarket(String requirementId, boolean invert, ArrayList<String> invalidatingConditions) {
+        List<String> invalidatingConditions;
+        public TerraformingPossibleOnMarket(String requirementId, boolean invert, List<String> invalidatingConditions) {
             super(requirementId, invert);
             this.invalidatingConditions = invalidatingConditions;
         }
 
         @Override
-        protected boolean checkRequirementImpl(MarketAPI market) {
+        protected boolean checkRequirementImpl(RequirementContext ctx) {
             for (String invalidatingCondition : invalidatingConditions) {
-                if (market.hasCondition(invalidatingCondition)) {
+                if (ctx.getMarket().hasCondition(invalidatingCondition)) {
                     return false;
                 }
             }
-            return boggledTools.getPlanetType(market.getPlanetEntity()).getTerraformingPossible();
+            return boggledTools.getPlanetType(ctx.getPlanet()).getTerraformingPossible();
         }
     }
 
     public static class MarketHasTags extends TerraformingRequirement {
-        ArrayList<String> tags;
-        public MarketHasTags(String requirementId, boolean invert, ArrayList<String> tags) {
+        List<String> tags;
+        public MarketHasTags(String requirementId, boolean invert, List<String> tags) {
             super(requirementId, invert);
             this.tags = tags;
         }
 
         @Override
-        protected boolean checkRequirementImpl(MarketAPI market) {
+        protected boolean checkRequirementImpl(RequirementContext ctx) {
             for (String tag : tags) {
-                if (!market.hasTag(tag) && !market.getPrimaryEntity().hasTag(tag)) {
+                if (!ctx.getMarket().hasTag(tag) && !ctx.getMarket().getPrimaryEntity().hasTag(tag)) {
                     return false;
                 }
             }
@@ -248,8 +300,8 @@ public class BoggledTerraformingRequirement {
         }
 
         @Override
-        protected boolean checkRequirementImpl(MarketAPI market) {
-            return market.getSize() >= colonySize;
+        protected boolean checkRequirementImpl(RequirementContext ctx) {
+            return ctx.getMarket().getSize() >= colonySize;
         }
     }
 
@@ -278,8 +330,8 @@ public class BoggledTerraformingRequirement {
         }
 
         @Override
-        protected boolean checkRequirementImpl(MarketAPI market) {
-            return market.getSubmarket(submarketId).getCargo().getCommodityQuantity(cargoId) >= quantity;
+        protected boolean checkRequirementImpl(RequirementContext ctx) {
+            return ctx.getMarket().getSubmarket(submarketId).getCargo().getCommodityQuantity(cargoId) >= quantity;
         }
     }
 
@@ -296,7 +348,7 @@ public class BoggledTerraformingRequirement {
         }
 
         @Override
-        protected boolean checkRequirementImpl(MarketAPI market) {
+        protected boolean checkRequirementImpl(RequirementContext ctx) {
             return Global.getSector().getPlayerStats().getStoryPoints() >= quantity;
         }
     }
@@ -309,26 +361,26 @@ public class BoggledTerraformingRequirement {
         }
 
         @Override
-        protected boolean checkRequirementImpl(MarketAPI market) {
-            Pair<String, String> key = new Pair<>(boggledTools.getPlanetType(market.getPlanetEntity()).getPlanetId(), resourceId);
+        protected boolean checkRequirementImpl(RequirementContext ctx) {
+            Pair<String, String> key = new Pair<>(boggledTools.getPlanetType(ctx.getPlanet()).getPlanetId(), resourceId);
             String maxResource = boggledTools.getResourceLimits().get(key);
 
             if (maxResource == null || maxResource.isEmpty()) {
                 return false;
             }
 
-            if (market.hasCondition(maxResource)) {
+            if (ctx.getMarket().hasCondition(maxResource)) {
                 return false;
             }
 
-            ArrayList<String> resourceProgression = boggledTools.getResourceProgressions().get(resourceId);
+            List<String> resourceProgression = boggledTools.getResourceProgressions().get(resourceId);
 
             boolean maxResourcePassed = false;
             for (String resource : resourceProgression) {
                 if (resource.equals(maxResource)) {
                     maxResourcePassed = true;
                 }
-                if (market.hasCondition(resource) && maxResourcePassed) {
+                if (ctx.getMarket().hasCondition(resource) && maxResourcePassed) {
                     return false;
                 }
             }
@@ -350,12 +402,12 @@ public class BoggledTerraformingRequirement {
         }
 
         @Override
-        protected boolean checkRequirementImpl(MarketAPI market) {
+        protected boolean checkRequirementImpl(RequirementContext ctx) {
             int testValue = 0;
             if (!option.isEmpty()) {
                 testValue += boggledTools.getIntSetting(option);
             }
-            for (String tag : market.getTags()) {
+            for (String tag : ctx.getMarket().getTags()) {
                 if (tag.contains(tagSubstring)) {
                     testValue += Integer.parseInt(tag.substring(tagSubstring.length()));
                     break;
@@ -373,14 +425,14 @@ public class BoggledTerraformingRequirement {
         }
 
         @Override
-        protected boolean checkRequirementImpl(MarketAPI market) {
+        protected boolean checkRequirementImpl(RequirementContext ctx) {
             return Global.getSector().getPlayerStats().getSkillLevel(skill) != 0;
         }
     }
 
     public static class SystemStarHasTags extends TerraformingRequirement {
-        ArrayList<String> tags;
-        public SystemStarHasTags(String requirementId, boolean invert, ArrayList<String> tags) {
+        List<String> tags;
+        public SystemStarHasTags(String requirementId, boolean invert, List<String> tags) {
             super(requirementId, invert);
             this.tags = tags;
         }
@@ -390,8 +442,8 @@ public class BoggledTerraformingRequirement {
         }
 
         @Override
-        protected boolean checkRequirementImpl(MarketAPI market) {
-            StarSystemAPI system = market.getStarSystem();
+        protected boolean checkRequirementImpl(RequirementContext ctx) {
+            StarSystemAPI system = ctx.getMarket().getStarSystem();
             PlanetAPI primary = system.getStar();
             PlanetAPI secondary = system.getSecondary();
             PlanetAPI tertiary = system.getTertiary();
@@ -416,8 +468,8 @@ public class BoggledTerraformingRequirement {
             return star != null && star.getTypeId().equals(starType);
         }
         @Override
-        protected boolean checkRequirementImpl(MarketAPI market) {
-            StarSystemAPI system = market.getStarSystem();
+        protected boolean checkRequirementImpl(RequirementContext ctx) {
+            StarSystemAPI system = ctx.getMarket().getStarSystem();
             PlanetAPI primary = system.getStar();
             PlanetAPI secondary = system.getSecondary();
             PlanetAPI tertiary = system.getTertiary();
@@ -429,6 +481,134 @@ public class BoggledTerraformingRequirement {
                 return true;
             }
             return starEquals(tertiary);
+        }
+    }
+
+    public static class PlayerFleetInHyperspace extends TerraformingRequirement {
+        protected PlayerFleetInHyperspace(String requirementId, boolean invert) {
+            super(requirementId, invert);
+        }
+
+        @Override
+        protected boolean checkRequirementImpl(RequirementContext ctx) {
+            return ctx.getFleet().isInHyperspace() || ctx.getFleet().isInHyperspaceTransition();
+        }
+    }
+
+    public static class SystemHasJumpPoints extends TerraformingRequirement {
+        protected SystemHasJumpPoints(String requirementId, boolean invert) {
+            super(requirementId, invert);
+        }
+
+        @Override
+        protected boolean checkRequirementImpl(RequirementContext ctx) {
+            return !ctx.getFleet().getStarSystem().getJumpPoints().isEmpty();
+        }
+    }
+
+    public static class TargetPlanetNotOwnedBy extends TerraformingRequirement {
+        List<String> factions;
+
+        protected TargetPlanetNotOwnedBy(String requirementId, boolean invert) {
+            super(requirementId, invert);
+        }
+
+        @Override
+        protected boolean checkRequirementImpl(RequirementContext ctx) {
+            SectorEntityToken targetPlanet = ctx.getPlanet();
+            if (targetPlanet == null) {
+                return false;
+            }
+
+            MarketAPI market = targetPlanet.getMarket();
+            if (market == null) {
+                return false;
+            }
+
+            if (!market.isPlayerOwned()) {
+                for (String faction : factions) {
+                    if (market.getFaction() != Global.getSector().getFaction(faction)) {
+                        return false;
+                    }
+                }
+            }
+
+            return true;
+        }
+    }
+
+    public static class TargetPlanetGovernedByPlayer extends TerraformingRequirement {
+        protected TargetPlanetGovernedByPlayer(String requirementId, boolean invert) {
+            super(requirementId, invert);
+        }
+
+        @Override
+        protected boolean checkRequirementImpl(RequirementContext ctx) {
+            SectorEntityToken targetPlanet = ctx.getPlanet();
+            if (targetPlanet == null) {
+                return false;
+            }
+
+            MarketAPI market = targetPlanet.getMarket();
+            if (market == null) {
+                return false;
+            }
+
+            if (!market.isPlayerOwned()) {
+                return false;
+            }
+
+            if (market.getFaction() == ctx.getFleet().getFaction()) {
+                return false;
+            }
+
+            return true;
+        }
+    }
+
+    public static class TargetPlanetWithinDistance extends TerraformingRequirement {
+        float distance;
+        protected TargetPlanetWithinDistance(String requirementId, boolean invert, float distance) {
+            super(requirementId, invert);
+            this.distance = distance;
+        }
+
+        @Override
+        protected boolean checkRequirementImpl(RequirementContext ctx) {
+            SectorEntityToken targetPlanet = ctx.getPlanet();
+            if (targetPlanet == null) {
+                return false;
+            }
+            return (Misc.getDistance(ctx.getFleet(), targetPlanet) - targetPlanet.getRadius()) < distance;
+        }
+    }
+
+    public static class TargetPlanetIsAtLeastSize extends TerraformingRequirement {
+        float size;
+        protected TargetPlanetIsAtLeastSize(String requirementId, boolean invert, float size) {
+            super(requirementId, invert);
+            this.size = size;
+        }
+
+        @Override
+        protected boolean checkRequirementImpl(RequirementContext ctx) {
+            SectorEntityToken targetPlanet = ctx.getPlanet();
+            if (targetPlanet == null) {
+                return false;
+            }
+            return targetPlanet.getRadius() >= size;
+        }
+    }
+
+    public static class TargetPlanetHasOrbitBlockers extends TerraformingRequirement {
+
+        protected TargetPlanetHasOrbitBlockers(String requirementId, boolean invert) {
+            super(requirementId, invert);
+        }
+
+        @Override
+        protected boolean checkRequirementImpl(RequirementContext ctx) {
+            return false;
         }
     }
 }

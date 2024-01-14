@@ -14,6 +14,7 @@ public class BoggledTerraformingProject {
         private BoggledTerraformingProject project;
         private int daysCompleted = 0;
         private int lastDayChecked = 0;
+        private BoggledTerraformingRequirement.RequirementContext context;
 
         public ProjectInstance(BoggledTerraformingProject project) {
             this.project = project;
@@ -35,32 +36,32 @@ public class BoggledTerraformingProject {
         public int getDaysCompleted() { return daysCompleted; }
         public int getLastDayChecked() { return lastDayChecked; }
 
-        public boolean advance(MarketAPI market) {
+        public boolean advance(BoggledTerraformingRequirement.RequirementContext ctx) {
             CampaignClockAPI clock = Global.getSector().getClock();
             if (clock.getDay() == lastDayChecked) {
                 return false;
             }
             lastDayChecked = clock.getDay();
 
-            if (!project.requirementsMet(market)) {
+            if (!project.requirementsMet(ctx)) {
                 return false;
             }
 
-            if (project.requirementsReset(market)) {
+            if (project.requirementsReset(ctx)) {
                 this.daysCompleted = 0;
                 return false;
             }
 
-            if (project.requirementsStall(market)) {
+            if (project.requirementsStall(ctx)) {
                 return false;
             }
 
             daysCompleted++;
-            if (daysCompleted < project.getModifiedProjectDuration(market)) {
+            if (daysCompleted < project.getModifiedProjectDuration(ctx)) {
                 return false;
             }
 
-            project.finishProject(market);
+            project.finishProject(ctx);
             return true;
         }
     }
@@ -141,63 +142,63 @@ public class BoggledTerraformingProject {
 
     public BoggledProjectRequirementsAND getProjectRequirements() { return projectRequirements; }
 
-    public int getModifiedProjectDuration(MarketAPI market) {
+    public int getModifiedProjectDuration(BoggledTerraformingRequirement.RequirementContext ctx) {
         float projectDuration = baseProjectDuration;
         for (BoggledTerraformingDurationModifier.TerraformingDurationModifier durationModifier : durationModifiers) {
-            projectDuration += durationModifier.getDurationModifier(market, baseProjectDuration);
+            projectDuration += durationModifier.getDurationModifier(ctx, baseProjectDuration);
         }
         return Math.max((int) projectDuration, 0);
     }
 
-    public boolean requirementsHiddenMet(MarketAPI market) {
+    public boolean requirementsHiddenMet(BoggledTerraformingRequirement.RequirementContext ctx) {
         if (projectRequirementsHidden == null) {
             Global.getLogger(this.getClass()).error("Terraforming hidden project requirements is null for project " + getProjectId()
-                    + " and market " + market.getName());
+                    + " and market " + ctx.getMarket().getName());
             return false;
         }
 
-        return projectRequirementsHidden.requirementsMet(market);
+        return projectRequirementsHidden.requirementsMet(ctx);
     }
 
-    public boolean requirementsMet(MarketAPI market) {
+    public boolean requirementsMet(BoggledTerraformingRequirement.RequirementContext ctx) {
         if (projectRequirements == null) {
-            Global.getLogger(this.getClass()).error("Terraforming project requirements is null for project " + getProjectId() + " and market " + market.getName());
+            Global.getLogger(this.getClass()).error("Terraforming project requirements is null for project " + getProjectId() + " and market " + ctx.getMarket().getName());
             return false;
         }
-        return requirementsHiddenMet(market) && projectRequirements.requirementsMet(market);
+        return requirementsHiddenMet(ctx) && projectRequirements.requirementsMet(ctx);
     }
 
-    public boolean requirementsStall(MarketAPI market) {
+    public boolean requirementsStall(BoggledTerraformingRequirement.RequirementContext ctx) {
         for (BoggledProjectRequirementsAND requirementStall : requirementsStall) {
-            if (requirementStall.requirementsMet(market)) {
+            if (requirementStall.requirementsMet(ctx)) {
                 return true;
             }
         }
         return false;
     }
 
-    public boolean requirementsReset(MarketAPI market) {
+    public boolean requirementsReset(BoggledTerraformingRequirement.RequirementContext ctx) {
         for (BoggledProjectRequirementsAND requirementReset : requirementsReset) {
-            if (requirementReset.requirementsMet(market)) {
+            if (requirementReset.requirementsMet(ctx)) {
                 return true;
             }
         }
         return false;
     }
 
-    public void finishProject(MarketAPI market) {
+    public void finishProject(BoggledTerraformingRequirement.RequirementContext ctx) {
         for (BoggledTerraformingProjectEffect.TerraformingProjectEffect effect : projectEffects) {
-            effect.applyProjectEffect(market);
+            effect.applyProjectEffect(ctx);
         }
 
-        String intelTooltip = getProjectTooltip(boggledTools.getTokenReplacements(market));
+        String intelTooltip = getProjectTooltip(boggledTools.getTokenReplacements(ctx));
         String intelCompletedMessage = getIntelCompleteMessage();
 
-        boggledTools.surveyAll(market);
-        boggledTools.refreshSupplyAndDemand(market);
-        boggledTools.refreshAquacultureAndFarming(market);
+        boggledTools.surveyAll(ctx.getMarket());
+        boggledTools.refreshSupplyAndDemand(ctx.getMarket());
+        boggledTools.refreshAquacultureAndFarming(ctx.getMarket());
 
-        boggledTools.showProjectCompleteIntelMessage(intelTooltip, intelCompletedMessage, market);
+        boggledTools.showProjectCompleteIntelMessage(intelTooltip, intelCompletedMessage, ctx.getMarket());
     }
 
 //    public void overrideAddTooltip(String tooltipOverride, String tooltipAddition) {

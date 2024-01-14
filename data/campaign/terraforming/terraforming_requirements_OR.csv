@@ -139,3 +139,5 @@ colony_ruins_extensive,,false,"market_ruins_extensive"
 colony_ruins_vast,,false,"market_ruins_vast"
 
 kletka_simulator_has_ai_core,"Requires AI core.",false,"kletka_simulator_has_alpha_core | kletka_simulator_has_beta_core | kletka_simulator_has_gamma_core"
+
+player_fleet_not_in_hyperspace,"You cannot be in hyperspace.",false,"player_fleet_not_in_hyperspace"

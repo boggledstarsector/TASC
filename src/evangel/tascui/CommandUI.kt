@@ -12,6 +12,8 @@ import com.fs.starfarer.api.util.Misc
 import data.campaign.econ.boggledTools
 import data.campaign.econ.conditions.Terraforming_Controller
 import data.scripts.BoggledTerraformingProject
+import data.scripts.BoggledTerraformingRequirement
+import data.scripts.BoggledTerraformingRequirement.RequirementContext
 import lunalib.lunaUI.elements.LunaElement
 import lunalib.lunaUI.elements.LunaSpriteElement
 import lunalib.lunaUI.panel.LunaBaseCustomPanelPlugin
@@ -72,7 +74,7 @@ class StaticTooltip(title : String?, condition : MarketConditionAPI?, vararg str
             val commodity = ResourceDepositsCondition.COMMODITY[condition.id];
             if (commodity != null) {
                 val commoditySpec = Global.getSettings().getCommoditySpec(commodity);
-                val industry = ResourceDepositsCondition.INDUSTRY[commodity];
+//                val industry = ResourceDepositsCondition.INDUSTRY[commodity]
 
                 val mod = ResourceDepositsCondition.MODIFIER[condition.id]!!
                 val plusOrBlank = if (mod > 0) "+" else ""
@@ -108,14 +110,14 @@ class ProjectRequirementsTooltip(width : Float) : TooltipCreator {
     }
 
     override fun createTooltip(tooltip : TooltipMakerAPI, expanded : Boolean, tooltipParam : Any?) {
-
-        tooltip.addPara("Project duration: %s days", 0f, Misc.getHighlightColor(), terraformingProject!!.getModifiedProjectDuration(market!!).toString());
+        val ctx = BoggledTerraformingRequirement.RequirementContext(market!!)
+        tooltip.addPara("Project duration: %s days", 0f, Misc.getHighlightColor(), terraformingProject!!.getModifiedProjectDuration(ctx).toString());
 
         tooltip.addSpacer(5f);
 
-        val tokenReplacements = boggledTools.getTokenReplacements(market!!)
+        val tokenReplacements = boggledTools.getTokenReplacements(ctx)
         for (projectRequirement in terraformingProject!!.projectRequirements) {
-            val requirementMet = projectRequirement.checkRequirement(market!!)
+            val requirementMet = projectRequirement.checkRequirement(BoggledTerraformingRequirement.RequirementContext(market!!))
             val color = if (requirementMet) Misc.getPositiveHighlightColor() else Misc.getNegativeHighlightColor()
             tooltip.addPara(projectRequirement.getTooltip(tokenReplacements), color, 0f)
         }
@@ -423,14 +425,14 @@ class CommandUIIntelK : LunaBaseCustomPanelPlugin() {
                 return;
             }
             for (projectOption in projectOptions) {
-                if (projectOption.value.requirementsMet(selectedPlanet!!.market)) {
+                if (projectOption.value.requirementsMet(BoggledTerraformingRequirement.RequirementContext(selectedPlanet!!.market))) {
                     validOptions.add(projectOption.value)
                 } else {
                     invalidOptions.add(projectOption.value)
                 }
             }
         }
-        val visibleProjects = boggledTools.getVisibleProjects(selectedPlanet!!.market)
+        val visibleProjects = boggledTools.getVisibleProjects(BoggledTerraformingRequirement.RequirementContext(selectedPlanet!!.market))
 
         val validTerraformingOptions : ArrayList<BoggledTerraformingProject> = ArrayList()
         val invalidTerraformingOptions : ArrayList<BoggledTerraformingProject> = ArrayList()
@@ -441,12 +443,12 @@ class CommandUIIntelK : LunaBaseCustomPanelPlugin() {
         sortProjects(visibleProjects["crafting"], validCraftingOptions, invalidCraftingOptions)
 
         var buttonVerticalSpacing = 0f
-        val positionButtons = fun(terraformingOptions : ArrayList<BoggledTerraformingProject>, buttons : ArrayList<ButtonAPI>, buttonsStart : Int) : Int {
+        val positionButtons = fun(ctx : RequirementContext, terraformingOptions : ArrayList<BoggledTerraformingProject>, buttons : ArrayList<ButtonAPI>, buttonsStart : Int) : Int {
             for (i in 0 until terraformingOptions.size) {
                 val button = buttons[i + buttonsStart]
 
                 val projectRequirementsTooltip = button.customData as ProjectRequirementsTooltip
-                button.text = terraformingOptions[i].getProjectTooltip(boggledTools.getTokenReplacements(selectedPlanet!!.market))
+                button.text = terraformingOptions[i].getProjectTooltip(boggledTools.getTokenReplacements(ctx))
                 button.position.inTL(0f, buttonVerticalSpacing)
                 projectRequirementsTooltip.market = selectedPlanet?.market
                 projectRequirementsTooltip.setProject(terraformingOptions[i])
@@ -455,13 +457,14 @@ class CommandUIIntelK : LunaBaseCustomPanelPlugin() {
             }
             return terraformingOptions.size + buttonsStart
         }
-        val validTerraformingEnd = positionButtons(validTerraformingOptions, requirementsMetButtons, 0)
-        val invalidTerraformingEnd = positionButtons(invalidTerraformingOptions, requirementsNotMetButtons, validTerraformingEnd)
+        val ctx = BoggledTerraformingRequirement.RequirementContext(selectedPlanet!!.market)
+        val validTerraformingEnd = positionButtons(ctx, validTerraformingOptions, requirementsMetButtons, 0)
+        val invalidTerraformingEnd = positionButtons(ctx, invalidTerraformingOptions, requirementsNotMetButtons, validTerraformingEnd)
 
         buttonVerticalSpacing += SORT_SPACING
 
-        val validCraftingEnd = positionButtons(validCraftingOptions, requirementsMetButtons, invalidTerraformingEnd)
-        positionButtons(invalidCraftingOptions, requirementsNotMetButtons, validCraftingEnd)
+        val validCraftingEnd = positionButtons(ctx, validCraftingOptions, requirementsMetButtons, invalidTerraformingEnd)
+        positionButtons(ctx, invalidCraftingOptions, requirementsNotMetButtons, validCraftingEnd)
     }
 
     private fun moveButtonsOffscreen(positionInPlacer : (x : Float, y : Float) -> PositionAPI, vararg inactiveButtons : ButtonAPI) {
@@ -499,7 +502,7 @@ class CommandUIIntelK : LunaBaseCustomPanelPlugin() {
 
     private fun handleTerraformingOptionButtonPress() {
         val terraformingProject = (selectedProject?.customData as ProjectRequirementsTooltip).terraformingProject!!
-        if (terraformingProject.requirementsMet(selectedPlanet?.market)) {
+        if (terraformingProject.requirementsMet(BoggledTerraformingRequirement.RequirementContext(selectedPlanet?.market))) {
             moveButtonsOffscreen(startProjectButton!!.position::inTL, requirementsNotMetButton!!, inactiveStartProjectButton!!)
         } else {
             moveButtonsOffscreen(requirementsNotMetButton!!.position::inTL, startProjectButton!!, inactiveStartProjectButton!!)
@@ -513,7 +516,7 @@ class CommandUIIntelK : LunaBaseCustomPanelPlugin() {
 
         terraformingController.setProject(terraformingProject)
 
-        selectedPlanet?.projectLabel?.text = terraformingProject.getProjectTooltip(boggledTools.getTokenReplacements(selectedPlanet?.market))
+        selectedPlanet?.projectLabel?.text = terraformingProject.getProjectTooltip(boggledTools.getTokenReplacements(RequirementContext(selectedPlanet?.market)))
         selectedPlanet?.projectTimeRemaining?.text = getTerraformingDaysRemainingComplete(terraformingController)
         selectedPlanet?.projectTimeRemaining?.setHighlight("${getTerraformingDaysRemaining(terraformingController)}")
 
@@ -566,7 +569,7 @@ class CommandUIIntelK : LunaBaseCustomPanelPlugin() {
         createSortButton(sortPanelElement, "Hazard rating", null, HAZARD_WIDTH, SORT_PANEL_HEIGHT, HAZARD_SORT_OFFSET, StaticTooltip(null, null, "Planetary hazard rating."))//, "Sorts by hazard rating."))
     }
 
-    private fun createPlanetsNamePanel(baseElement : TooltipMakerAPI, market : MarketAPI) {
+    private fun createPlanetsNamePanel(baseElement : TooltipMakerAPI, ctx : RequirementContext) {
         val nameHolder = LunaElement(baseElement, NAME_WIDTH, PLANET_CARD_HEIGHT)
         nameHolder.renderBackground = false
         nameHolder.renderBorder = false
@@ -574,15 +577,15 @@ class CommandUIIntelK : LunaBaseCustomPanelPlugin() {
 
 //        nameHolder.innerElement.addAreaCheckbox(null, null, Global.getSector().playerFaction.baseUIColor, Color(122,122,122,255), Global.getSector().playerFaction.brightUIColor, NAME_WIDTH, PLANET_CARD_HEIGHT, 0f).position.inTL(0f, 0f)
 
-        nameHolder.innerElement.showPlanetInfo(market.planetEntity, NAME_WIDTH, PLANET_CARD_HEIGHT, false, 0f)
+        nameHolder.innerElement.showPlanetInfo(ctx.planet, NAME_WIDTH, PLANET_CARD_HEIGHT, false, 0f)
 
-        val nameLabel = nameHolder.innerElement.addPara(market.name, market.textColorForFactionOrPlanet, 0f)
-        val nameLength = nameLabel.computeTextWidth(market.name)
+        val nameLabel = nameHolder.innerElement.addPara(ctx.market.name, ctx.market.textColorForFactionOrPlanet, 0f)
+        val nameLength = nameLabel.computeTextWidth(ctx.market.name)
 
         nameLabel.position.inTL(NAME_WIDTH / 2 - (nameLength * 0.9f) / 2, PLANET_CARD_HEIGHT - HEADER_HEIGHT)
     }
 
-    private fun createPlanetsConditionPanel(baseElement : TooltipMakerAPI, market : MarketAPI) {
+    private fun createPlanetsConditionPanel(baseElement : TooltipMakerAPI, ctx : RequirementContext) {
         /*
         stack SHOULD be: conditionHolder -> conditionElement -> conditionSprites
          */
@@ -595,7 +598,7 @@ class CommandUIIntelK : LunaBaseCustomPanelPlugin() {
 
         var conditionHorizontalSpacing = 2f
         var conditionVerticalSpacing = PLANET_CARD_HEIGHT / 2
-        val planetaryConditionsCount = market.conditions.filter { it.isPlanetary }.size
+        val planetaryConditionsCount = ctx.market.conditions.filter { it.isPlanetary }.size
 
         var conditionSpriteSize = CONDITION_SPRITE_SIZE
         val conditionSpriteCapacity = PLANET_CARD_HEIGHT / 2
@@ -610,14 +613,14 @@ class CommandUIIntelK : LunaBaseCustomPanelPlugin() {
         }
 
         val planetTypeLabelElement = conditionHolder.elementPanel.createUIElement(CONDITIONS_WIDTH, HEADER_HEIGHT, false)
-        val planetTypeLabel = planetTypeLabelElement.addPara(market.planetEntity.spec.name, market.planetEntity.spec.iconColor, 0f)
+        val planetTypeLabel = planetTypeLabelElement.addPara(ctx.planet.spec.name, ctx.planet.spec.iconColor, 0f)
 
-        val planetTypeHeight = planetTypeLabel.computeTextHeight(market.planetEntity.typeNameWithWorld)
+        val planetTypeHeight = planetTypeLabel.computeTextHeight(ctx.planet.typeNameWithWorld)
         planetTypeLabelElement.position.inTL(PLANET_TYPE_LABEL_MAGIC_X_PAD, conditionVerticalSpacing - planetTypeHeight - 5f)
         planetTypeLabel.position.inTL(0f, 0f)
         conditionHolder.elementPanel.addUIElement(planetTypeLabelElement)
 
-        for (condition in market.conditions) {
+        for (condition in ctx.market.conditions) {
             if (!condition.isPlanetary) continue
 
             val conditionSprite = LunaSpriteElement(condition.spec.icon, LunaSpriteElement.ScalingTypes.STRETCH_SPRITE, conditionHolder.innerElement, conditionSpriteSize, conditionSpriteSize)
@@ -639,7 +642,7 @@ class CommandUIIntelK : LunaBaseCustomPanelPlugin() {
         }
     }
 
-    private fun createPlanetsHazardPanel(baseElement : TooltipMakerAPI, market : MarketAPI, faction : FactionAPI, buttonData : CommandUIButtonData) {
+    private fun createPlanetsHazardPanel(baseElement : TooltipMakerAPI, ctx : RequirementContext, faction : FactionAPI, buttonData : CommandUIButtonData) {
         /*
         stack SHOULD be: hazardHolder -> hazardText
          */
@@ -648,12 +651,12 @@ class CommandUIIntelK : LunaBaseCustomPanelPlugin() {
         hazardHolder.renderBorder = false
         hazardHolder.position.inTL(HAZARD_PANEL_OFFSET, 0f)
 
-        val hazardLabelRating = (market.hazard.modified * 100).toInt()
+        val hazardLabelRating = (ctx.market.hazard.modified * 100).toInt()
         val hazardLabel = hazardHolder.innerElement.addPara("Hazard rating: $hazardLabelRating%%", 0f, faction.baseUIColor, Misc.getHighlightColor(), "$hazardLabelRating%")
         hazardLabel.position.inTL(0f, PLANET_CARD_HEIGHT - HEADER_HEIGHT)
 
-        val terraformingController = getTerraformingControllerFromMarket(market)
-        val projectNameNicer = boggledTools.getTooltipProjectName(market, terraformingController.project)
+        val terraformingController = getTerraformingControllerFromMarket(ctx.market)
+        val projectNameNicer = boggledTools.getTooltipProjectName(ctx, terraformingController.project)
         buttonData.projectLabel = hazardHolder.innerElement.addPara(projectNameNicer, faction.baseUIColor, 0f)
         buttonData.projectLabel!!.position.inTL(0f, SORT_SPACING)
 
@@ -692,12 +695,13 @@ class CommandUIIntelK : LunaBaseCustomPanelPlugin() {
             button.position.inTL(0f, 0f)
 
             val buttonData = CommandUIButtonData(button, marketVar, this)
+            val ctx = RequirementContext(marketVar)
 
-            createPlanetsNamePanel(cardHolder.innerElement, marketVar)
+            createPlanetsNamePanel(cardHolder.innerElement, ctx)
 
-            createPlanetsConditionPanel(cardHolder.innerElement, marketVar)
+            createPlanetsConditionPanel(cardHolder.innerElement, ctx)
 
-            createPlanetsHazardPanel(cardHolder.innerElement, marketVar, faction, buttonData)
+            createPlanetsHazardPanel(cardHolder.innerElement, ctx, faction, buttonData)
 
             val actualButton = LunaElement(cardHolder.innerElement, PLANET_CARD_WIDTH, PLANET_CARD_HEIGHT)
             actualButton.renderBackground = false

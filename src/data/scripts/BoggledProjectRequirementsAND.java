@@ -1,6 +1,5 @@
 package data.scripts;
 
-import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import data.campaign.econ.boggledTools;
 import org.jetbrains.annotations.NotNull;
 
@@ -18,8 +17,8 @@ public class BoggledProjectRequirementsAND implements Iterable<BoggledProjectReq
             this.tooltipOverride = tooltipOverride;
         }
 
-        public boolean checkRequirement(MarketAPI market) {
-            return requirements.checkRequirement(market);
+        public boolean checkRequirement(BoggledTerraformingRequirement.RequirementContext ctx) {
+            return requirements.checkRequirement(ctx);
         }
 
         public String getTooltip() {
@@ -53,9 +52,9 @@ public class BoggledProjectRequirementsAND implements Iterable<BoggledProjectReq
         return requirementsOR.add(req);
     }
 
-    public boolean requirementsMet(MarketAPI market) {
+    public boolean requirementsMet(BoggledTerraformingRequirement.RequirementContext ctx) {
         for (BoggledProjectRequirementsAND.RequirementWithTooltipOverride req : requirementsOR) {
-            if (!req.checkRequirement(market)) {
+            if (!req.checkRequirement(ctx)) {
                 return false;
             }
         }

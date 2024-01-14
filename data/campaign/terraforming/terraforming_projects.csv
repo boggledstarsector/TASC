@@ -4,7 +4,7 @@ id,enable_settings,project_type,tooltip,intel_complete_message,requirements,requ
 # project_type is the type of the project. Currently supported ones are 'terraforming' and 'industry'
 # tooltip is how this project is displayed on the buttons on the UI. Sorry it's a terrible name
 # intel_complete_message is what's shown when the project completes. If it's empty, no intel card is shown.
-# requirements is a | separated list of requirement IDs as specified in 'terraforming_requirements.csv'. These are checked in an AND manner, ie all of the requirements have to be true for this check to return true. Each option has an optional tooltip override specified after a ;, ie 'requirement ; tooltip_override'. If a tooltip override is not specified, the requirements tooltip will be used
+# requirements is a | separated list of requirement IDs as specified in 'terraforming_requirements.csv'. These are checked in an AND manner, ie all of the requirements have to be true for this check to return true.
 # requirements_hidden is the same as requirements, but they must be met for the project to be visible. Both this and requirements must be met for the project to be started
 # base_project_duration is the base number of days the project takes to complete
 # dynamic_project_duration_modifiers is a | separated list of duration modifier IDs that are specified in 'duration_modifiers.csv'
@@ -321,3 +321,7 @@ craft_dealmaker_holosuite,boggledDomainTechCraftingEnabled,crafting,"Craft $craf
 	{ 'requirement_id' : 'colony_storage_contains_at_least_easy_domain_artifacts' },
 	{ 'requirement_id' : 'player_has_at_least_2_story_points' }
 ]",,,,,,add_dealmaker_holosuite_to_storage | remove_2_story_points_from_player | remove_domain_artifacts_easy_from_storage,,
+
+ability_add_astropolis_station,,ability,,,"[
+	{ 'requirement_id' : 'player_fleet_not_in_hyperspace' }
+]",,,,,,add_astropolis_station_to_orbit,,

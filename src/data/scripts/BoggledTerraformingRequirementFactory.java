@@ -212,4 +212,11 @@ public class BoggledTerraformingRequirementFactory {
             return new BoggledTerraformingRequirement.SystemStarType(requirementId, invert, data);
         }
     }
+
+    public static class PlayerFleetInHyperspace implements TerraformingRequirementFactory {
+        @Override
+        public BoggledTerraformingRequirement.TerraformingRequirement constructFromJSON(String requirementId, boolean invert, String data) throws JSONException {
+            return new BoggledTerraformingRequirement.PlayerFleetInHyperspace(requirementId, invert);
+        }
+    }
 }

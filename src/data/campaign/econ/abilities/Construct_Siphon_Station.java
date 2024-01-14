@@ -79,13 +79,13 @@ public class Construct_Siphon_Station extends BaseDurationAbility
             {
                 return false;
             }
-            else if((boggledTools.getDistanceBetweenTokens(closestGasGiantToken, playerFleet) - closestGasGiantToken.getRadius()) > 250f)
+            else if((Misc.getDistance(closestGasGiantToken, playerFleet) - closestGasGiantToken.getRadius()) > 250f)
             {
                 return false;
             }
         }
 
-        if(!boggledTools.systemHasJumpPoint(playerFleet.getStarSystem()))
+        if(playerFleet.getStarSystem().getJumpPoints().isEmpty())
         {
             return false;
         }
@@ -173,7 +173,7 @@ public class Construct_Siphon_Station extends BaseDurationAbility
         {
             tooltip.addPara("Siphon stations cannot be constructed in hyperspace.", bad, pad);
         }
-        else if(!boggledTools.systemHasJumpPoint(playerFleet.getStarSystem()))
+        else if(playerFleet.getStarSystem().getJumpPoints().isEmpty())
         {
             tooltip.addPara("You cannot construct a station in a system with no jump points.", bad, pad);
         }
@@ -191,9 +191,9 @@ public class Construct_Siphon_Station extends BaseDurationAbility
             {
                 tooltip.addPara("The gas giant closest to your location is " + closestGasGiantToken.getName() + " which is controlled by " + closestGasGiantToken.getMarket().getFaction().getDisplayName() + ". You cannot construct a siphon station in orbit around a gas giant controlled by another faction.", bad, pad);
             }
-            else if((boggledTools.getDistanceBetweenTokens(closestGasGiantToken, playerFleet) - closestGasGiantToken.getRadius()) > 250f)
+            else if((Misc.getDistance(closestGasGiantToken, playerFleet) - closestGasGiantToken.getRadius()) > 250f)
             {
-                float distanceInSu = (boggledTools.getDistanceBetweenTokens(playerFleet, closestGasGiantToken) - closestGasGiantToken.getRadius()) / 2000f;
+                float distanceInSu = (Misc.getDistance(playerFleet, closestGasGiantToken) - closestGasGiantToken.getRadius()) / 2000f;
                 String distanceInSuString = String.format("%.2f", distanceInSu);
                 float requiredDistanceInSu = 250f / 2000f;
                 String requiredDistanceInSuString = String.format("%.2f", requiredDistanceInSu);

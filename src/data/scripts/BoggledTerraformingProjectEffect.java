@@ -14,14 +14,13 @@ import com.fs.starfarer.api.impl.campaign.rulecmd.salvage.FleetAdvanceScript;
 import com.fs.starfarer.api.util.Misc;
 import com.fs.starfarer.api.util.WeightedRandomPicker;
 import data.campaign.econ.boggledTools;
-import data.campaign.econ.industries.BoggledCommonIndustry;
 
 import java.util.ArrayList;
 import java.util.Map;
 
 public class BoggledTerraformingProjectEffect {
     public abstract static class TerraformingProjectEffect {
-        abstract void applyProjectEffect(MarketAPI market);
+        abstract void applyProjectEffect(BoggledTerraformingRequirement.RequirementContext ctx);
 
         void addTokenReplacements(Map<String, String> tokenReplacements) {}
     }
@@ -34,8 +33,8 @@ public class BoggledTerraformingProjectEffect {
         }
 
         @Override
-        public void applyProjectEffect(MarketAPI market) {
-            market.getPlanetEntity().changeType(newPlanetType, null);
+        public void applyProjectEffect(BoggledTerraformingRequirement.RequirementContext ctx) {
+            ctx.getPlanet().changeType(newPlanetType, null);
         }
     }
 
@@ -47,8 +46,8 @@ public class BoggledTerraformingProjectEffect {
         }
 
         @Override
-        public void applyProjectEffect(MarketAPI market) {
-            boggledTools.addCondition(market, condition);
+        public void applyProjectEffect(BoggledTerraformingRequirement.RequirementContext ctx) {
+            boggledTools.addCondition(ctx.getMarket(), condition);
         }
     }
 
@@ -60,8 +59,8 @@ public class BoggledTerraformingProjectEffect {
         }
 
         @Override
-        public void applyProjectEffect(MarketAPI market) {
-            boggledTools.removeCondition(market, condition);
+        public void applyProjectEffect(BoggledTerraformingRequirement.RequirementContext ctx) {
+            boggledTools.removeCondition(ctx.getMarket(), condition);
         }
     }
 
@@ -93,13 +92,13 @@ public class BoggledTerraformingProjectEffect {
         }
 
         @Override
-        public void applyProjectEffect(MarketAPI market) {
+        public void applyProjectEffect(BoggledTerraformingRequirement.RequirementContext ctx) {
             ArrayList<String> resourcesProgression = boggledTools.getResourceProgressions().get(resource);
             if (resourcesProgression == null || resourcesProgression.isEmpty()) {
                 return;
             }
 
-            incrementResourceWithDefault(market, boggledTools.getResourceProgressions().get(resource));
+            incrementResourceWithDefault(ctx.getMarket(), boggledTools.getResourceProgressions().get(resource));
         }
     }
 
@@ -109,8 +108,8 @@ public class BoggledTerraformingProjectEffect {
         }
 
         @Override
-        public void applyProjectEffect(MarketAPI market) {
-            super.applyProjectEffect(BoggledCommonIndustry.getFocusMarketOrMarket(market));
+        public void applyProjectEffect(BoggledTerraformingRequirement.RequirementContext ctx) {
+            super.applyProjectEffect(ctx.getFocusContext());
         }
     }
 
@@ -120,8 +119,8 @@ public class BoggledTerraformingProjectEffect {
         }
 
         @Override
-        public void applyProjectEffect(MarketAPI market) {
-            super.applyProjectEffect(BoggledCommonIndustry.getFocusMarketOrMarket(market));
+        public void applyProjectEffect(BoggledTerraformingRequirement.RequirementContext ctx) {
+            super.applyProjectEffect(ctx.getFocusContext());
         }
     }
 
@@ -130,8 +129,8 @@ public class BoggledTerraformingProjectEffect {
             super(resource, step);
         }
         @Override
-        public void applyProjectEffect(MarketAPI market) {
-            super.applyProjectEffect(BoggledCommonIndustry.getFocusMarketOrMarket(market));
+        public void applyProjectEffect(BoggledTerraformingRequirement.RequirementContext ctx) {
+            super.applyProjectEffect(ctx.getFocusContext());
         }
     }
 
@@ -141,10 +140,10 @@ public class BoggledTerraformingProjectEffect {
         }
 
         @Override
-        public void applyProjectEffect(MarketAPI market) {
-            super.applyProjectEffect(BoggledCommonIndustry.getFocusMarketOrMarket(market));
+        public void applyProjectEffect(BoggledTerraformingRequirement.RequirementContext ctx) {
+            super.applyProjectEffect(ctx.getFocusContext());
 
-            SectorEntityToken closestGasGiantToken = market.getPrimaryEntity();
+            SectorEntityToken closestGasGiantToken = ctx.getMarket().getPrimaryEntity();
             if (closestGasGiantToken == null) {
                 return;
             }
@@ -163,7 +162,7 @@ public class BoggledTerraformingProjectEffect {
                         || entity.getCustomEntitySpec().getDefaultName().equals("Siphon Station"))
                     && !entity.getId().equals("beholder_station"))
                 {
-                    super.applyProjectEffect(entity.getMarket());
+                    super.applyProjectEffect(ctx);
                 }
             }
         }
@@ -173,12 +172,12 @@ public class BoggledTerraformingProjectEffect {
         public SystemAddCoronalTap() {
         }
         @Override
-        public void applyProjectEffect(MarketAPI market) {
-            StarSystemAPI system = market.getStarSystem();
+        public void applyProjectEffect(BoggledTerraformingRequirement.RequirementContext ctx) {
+            StarSystemAPI system = ctx.getMarket().getStarSystem();
             SectorEntityToken tapToken = null;
 
             if (system.getType() == StarSystemGenerator.StarSystemType.TRINARY_2CLOSE) {
-                tapToken = system.addCustomEntity("coronal_tap_" + market.getStarSystem().getName(), null, "coronal_tap", Global.getSector().getPlayerFaction().getId());
+                tapToken = system.addCustomEntity("coronal_tap_" + system.getName(), null, "coronal_tap", Global.getSector().getPlayerFaction().getId());
 
                 float minDist = Float.MAX_VALUE;
                 PlanetAPI closest = null;
@@ -224,9 +223,9 @@ public class BoggledTerraformingProjectEffect {
                     float orbitRadius = star.getRadius() + spec.getDefaultRadius() + 100f;
                     float orbitDays = orbitRadius / 20f;
 
-                    tapToken = system.addCustomEntity("coronal_tap_" + market.getStarSystem().getName(), null, "coronal_tap", Global.getSector().getPlayerFaction().getId());
+                    tapToken = system.addCustomEntity("coronal_tap_" + system.getName(), null, "coronal_tap", Global.getSector().getPlayerFaction().getId());
 
-                    tapToken.setCircularOrbitPointingDown(star, boggledTools.getAngleFromEntity(market.getPrimaryEntity(), star), orbitRadius, orbitDays);
+                    tapToken.setCircularOrbitPointingDown(star, boggledTools.getAngleFromEntity(ctx.getMarket().getPrimaryEntity(), star), orbitRadius, orbitDays);
                 }
             }
 
@@ -254,8 +253,8 @@ public class BoggledTerraformingProjectEffect {
         }
 
         @Override
-        void applyProjectEffect(MarketAPI market) {
-            market.removeIndustry(industryId, null, false);
+        void applyProjectEffect(BoggledTerraformingRequirement.RequirementContext ctx) {
+            ctx.getMarket().removeIndustry(industryId, null, false);
         }
     }
 
@@ -281,8 +280,8 @@ public class BoggledTerraformingProjectEffect {
         }
 
         @Override
-        public void applyProjectEffect(MarketAPI market) {
-            market.getSubmarket(submarketId).getCargo().removeCommodity(itemId, quantity);
+        public void applyProjectEffect(BoggledTerraformingRequirement.RequirementContext ctx) {
+            ctx.getMarket().getSubmarket(submarketId).getCargo().removeCommodity(itemId, quantity);
         }
     }
 
@@ -293,7 +292,7 @@ public class BoggledTerraformingProjectEffect {
         }
 
         @Override
-        public void applyProjectEffect(MarketAPI market) {
+        public void applyProjectEffect(BoggledTerraformingRequirement.RequirementContext ctx) {
             Global.getSector().getPlayerStats().spendStoryPoints(quantity, false, null, false, null);
         }
     }
@@ -321,8 +320,8 @@ public class BoggledTerraformingProjectEffect {
         }
 
         @Override
-        public void applyProjectEffect(MarketAPI market) {
-            market.getSubmarket(submarketId).getCargo().addSpecial(new SpecialItemData(itemId, null), quantity);
+        public void applyProjectEffect(BoggledTerraformingRequirement.RequirementContext ctx) {
+            ctx.getMarket().getSubmarket(submarketId).getCargo().addSpecial(new SpecialItemData(itemId, null), quantity);
         }
     }
 }

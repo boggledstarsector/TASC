@@ -85,70 +85,52 @@ public class BoggledTascPlugin extends BaseModPlugin
 
     public void applyStationConstructionAbilitiesPerSettingsFile()
     {
+        if (!Global.getSector().getPlayerFleet().hasAbility("test_ability_plz_ignore")) {
+            Global.getSector().getPlayerFleet().addAbility("test_ability_plz_ignore");
+        }
+
         if(boggledTools.getBooleanSetting(boggledTools.BoggledSettings.stationConstructionContentEnabled))
         {
-            if (!Global.getSector().getPlayerFleet().hasAbility("boggled_construct_astropolis_station"))
-            {
-                if(boggledTools.getBooleanSetting(boggledTools.BoggledSettings.astropolisEnabled))
-                {
+            if (!Global.getSector().getPlayerFleet().hasAbility("boggled_construct_astropolis_station")) {
+                if(boggledTools.getBooleanSetting(boggledTools.BoggledSettings.astropolisEnabled)) {
                     Global.getSector().getCharacterData().addAbility("boggled_construct_astropolis_station");
                 }
-            }
-            else
-            {
-                if(!boggledTools.getBooleanSetting(boggledTools.BoggledSettings.astropolisEnabled))
-                {
+            } else {
+                if(!boggledTools.getBooleanSetting(boggledTools.BoggledSettings.astropolisEnabled)) {
                     Global.getSector().getCharacterData().removeAbility("boggled_construct_astropolis_station");
                 }
             }
 
-            if (!Global.getSector().getPlayerFleet().hasAbility("boggled_construct_mining_station"))
-            {
-                if(boggledTools.getBooleanSetting(boggledTools.BoggledSettings.miningStationEnabled))
-                {
+            if (!Global.getSector().getPlayerFleet().hasAbility("boggled_construct_mining_station")) {
+                if(boggledTools.getBooleanSetting(boggledTools.BoggledSettings.miningStationEnabled)) {
                     Global.getSector().getCharacterData().addAbility("boggled_construct_mining_station");
                 }
-            }
-            else
-            {
-                if(!boggledTools.getBooleanSetting(boggledTools.BoggledSettings.miningStationEnabled))
-                {
+            } else {
+                if(!boggledTools.getBooleanSetting(boggledTools.BoggledSettings.miningStationEnabled)) {
                     Global.getSector().getCharacterData().removeAbility("boggled_construct_mining_station");
                 }
             }
 
-            if (!Global.getSector().getPlayerFleet().hasAbility("boggled_construct_siphon_station"))
-            {
-                if(boggledTools.getBooleanSetting(boggledTools.BoggledSettings.siphonStationEnabled))
-                {
+            if (!Global.getSector().getPlayerFleet().hasAbility("boggled_construct_siphon_station")) {
+                if(boggledTools.getBooleanSetting(boggledTools.BoggledSettings.siphonStationEnabled)) {
                     Global.getSector().getCharacterData().addAbility("boggled_construct_siphon_station");
                 }
-            }
-            else
-            {
-                if(!boggledTools.getBooleanSetting(boggledTools.BoggledSettings.siphonStationEnabled))
-                {
+            } else {
+                if(!boggledTools.getBooleanSetting(boggledTools.BoggledSettings.siphonStationEnabled)) {
                     Global.getSector().getCharacterData().removeAbility("boggled_construct_siphon_station");
                 }
             }
 
-            if (!Global.getSector().getPlayerFleet().hasAbility("boggled_colonize_abandoned_station"))
-            {
-                if(boggledTools.getBooleanSetting(boggledTools.BoggledSettings.stationColonizationEnabled))
-                {
+            if (!Global.getSector().getPlayerFleet().hasAbility("boggled_colonize_abandoned_station")) {
+                if(boggledTools.getBooleanSetting(boggledTools.BoggledSettings.stationColonizationEnabled)) {
                     Global.getSector().getCharacterData().addAbility("boggled_colonize_abandoned_station");
                 }
-            }
-            else
-            {
-                if(!boggledTools.getBooleanSetting(boggledTools.BoggledSettings.stationColonizationEnabled))
-                {
+            } else {
+                if(!boggledTools.getBooleanSetting(boggledTools.BoggledSettings.stationColonizationEnabled)) {
                     Global.getSector().getCharacterData().removeAbility("boggled_colonize_abandoned_station");
                 }
             }
-        }
-        else
-        {
+        } else {
             Global.getSector().getCharacterData().removeAbility("boggled_construct_astropolis_station");
             Global.getSector().getCharacterData().removeAbility("boggled_construct_mining_station");
             Global.getSector().getCharacterData().removeAbility("boggled_construct_siphon_station");
@@ -293,7 +275,7 @@ public class BoggledTascPlugin extends BaseModPlugin
             JSONArray resourceLimits = settings.getMergedSpreadsheetDataForMod("id", "data/campaign/terraforming/planet_max_resource.csv", boggledTools.BoggledMods.tascModId);
             JSONArray commoditySupplyAndDemand = settings.getMergedSpreadsheetDataForMod("id", "data/campaign/terraforming/commodity_supply_demand.csv", boggledTools.BoggledMods.tascModId);
             JSONArray industryEffects = settings.getMergedSpreadsheetDataForMod("id", "data/campaign/terraforming/industry_effects.csv", boggledTools.BoggledMods.tascModId);
-            JSONArray aiCoreEffects = settings.getMergedSpreadsheetDataForMod("id", "data/campaign/terraforming/ai_core_effects.csv", boggledTools.BoggledMods.tascModId);
+//            JSONArray aiCoreEffects = settings.getMergedSpreadsheetDataForMod("id", "data/campaign/terraforming/ai_core_effects.csv", boggledTools.BoggledMods.tascModId);
 
             // Terraforming requirement, requirements, and project duration modifiers next
             JSONArray terraformingRequirement = settings.getMergedSpreadsheetDataForMod("id", "data/campaign/terraforming/terraforming_requirement.csv", boggledTools.BoggledMods.tascModId);
@@ -319,7 +301,7 @@ public class BoggledTascPlugin extends BaseModPlugin
             boggledTools.initialiseCommoditySupplyAndDemandFromJSON(commoditySupplyAndDemand);
 
             boggledTools.initialiseIndustryEffectsFromJSON(industryEffects);
-            boggledTools.initialiseAICoreEffectsFromJSON(aiCoreEffects);
+//            boggledTools.initialiseAICoreEffectsFromJSON(aiCoreEffects);
             boggledTools.initialiseTerraformingProjectEffectsFromJSON(terraformingProjectEffects);
 
             boggledTools.initialiseTerraformingProjectsFromJSON(terraformingProjects);

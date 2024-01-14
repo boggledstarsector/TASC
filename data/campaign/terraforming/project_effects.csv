@@ -1,100 +1,103 @@
-id,effect_type,data
-arid_type_change,PlanetTypeChange,"desert"
-jungle_type_change,PlanetTypeChange,"jungle"
-terran_type_change,PlanetTypeChange,"terran"
-water_type_change,PlanetTypeChange,"water"
-tundra_type_change,PlanetTypeChange,"tundra"
-frozen_type_change,PlanetTypeChange,"frozen"
-,,
-market_add_habitable,MarketAddCondition,"habitable"
-market_add_mild_climate,MarketAddCondition,"mild_climate"
-market_add_no_atmosphere,MarketAddCondition,"no_atmosphere"
-market_add_extreme_weather,MarketAddCondition,"extreme_weather"
-market_add_tectonic_activity,MarketAddCondition,"tectonic_activity"
-market_add_water_surface,MarketAddCondition,"water_surface"
-,,
-market_add_farmland_poor,MarketAddCondition,"farmland_poor"
-market_add_farmland_adequate,MarketAddCondition,"farmland_adequate"
-market_add_farmland_rich,MarketAddCondition,"farmland_rich"
-market_add_farmland_bountiful,MarketAddCondition,"farmland_bountiful"
-,,
-market_add_organics_trace,MarketAddCondition,"organics_trace"
-market_add_organics_common,MarketAddCondition,"organics_common"
-market_add_organics_abundant,MarketAddCondition,"organics_abundant"
-market_add_organics_plentiful,MarketAddCondition,"organics_plentiful"
-,,
-market_add_volatiles_trace,MarketAddCondition,"volatiles_trace"
-market_add_volatiles_diffuse,MarketAddCondition,"volatiles_diffuse"
-market_add_volatiles_abundant,MarketAddCondition,"volatiles_abundant"
-market_add_volatiles_plentiful,MarketAddCondition,"volatiles_plentiful"
-,,
-market_remove_water_surface,MarketRemoveCondition,"water_surface"
-market_remove_volturnian_lobster_pens,MarketRemoveCondition,"volturnian_lobster_pens"
-,,
-market_remove_no_atmosphere,MarketRemoveCondition,"no_atmosphere"
-market_remove_thin_atmosphere,MarketRemoveCondition,"thin_atmosphere"
-market_remove_toxic_atmosphere,MarketRemoveCondition,"toxic_atmosphere"
-market_remove_dense_atmosphere,MarketRemoveCondition,"dense_atmosphere"
-market_remove_pollution,MarketRemoveCondition,"pollution"
-market_remove_inimical_biosphere,MarketRemoveCondition,"inimical_biosphere"
-market_remove_extreme_weather,MarketRemoveCondition,"extreme_weather"
-market_remove_mild_climate,MarketRemoveCondition,"mild_climate"
-market_remove_habitable,MarketRemoveCondition,"habitable"
-market_remove_irradiated,MarketRemoveCondition,"irradiated"
-,,
-market_remove_decivilized,MarketRemoveCondition,"decivilized"
-market_remove_decivilized_subpop,MarketRemoveCondition,"decivilized_subpop"
-market_remove_rogue_ai_core,MarketRemoveCondition,"rogue_ai_core"
-,,
-market_remove_farmland_poor,MarketRemoveCondition,"farmland_poor"
-market_remove_farmland_adequate,MarketRemoveCondition,"farmland_adequate"
-market_remove_farmland_rich,MarketRemoveCondition,"farmland_rich"
-market_remove_farmland_bountiful,MarketRemoveCondition,"farmland_bountiful"
-,,
-market_remove_organics_trace,MarketRemoveCondition,"organics_trace"
-market_remove_organics_common,MarketRemoveCondition,"organics_common"
-market_remove_organics_abundant,MarketRemoveCondition,"organics_abundant"
-market_remove_organics_plentiful,MarketRemoveCondition,"organics_plentiful"
-,,
-market_remove_volatiles_trace,MarketRemoveCondition,"volatiles_trace"
-market_remove_volatiles_diffuse,MarketRemoveCondition,"volatiles_diffuse"
-market_remove_volatiles_abundant,MarketRemoveCondition,"volatiles_abundant"
-market_remove_volatiles_plentiful,MarketRemoveCondition,"volatiles_plentiful"
-,,
-market_optional_volatiles_trace,MarketOptionalCondition,"{ 'option' : 'boggledTerraformingTypeChangeAddVolatiles', 'condition_id' : 'volatiles_trace' }"
-,,
-market_progress_farmland,MarketProgressResource,"{ 'resource_id' : 'farmland', 'step' : 1 }"
-market_progress_organics,MarketProgressResource,"{ 'resource_id' : 'organics', 'step' : 1 }"
-market_progress_volatiles,MarketProgressResource,"{ 'resource_id' : 'volatiles', 'step' : 1 }"
-,,
-focus_market_add_extreme_weather,FocusMarketAddCondition,"extreme_weather"
-focus_market_add_tectonic_activity,FocusMarketAddCondition,"tectonic_activity"
-,,
-focus_market_progress_ore_planet_cracker,FocusMarketProgressResource,"{ 'resource_id' : 'ore', 'step' : 1 }"
-focus_market_progress_rare_ore_planet_cracker,FocusMarketProgressResource,"{ 'resource_id' : 'rare_ore', 'step' : 1 }"
-focus_market_progress_volatiles_ouyang_optimizer,FocusMarketAndSiphonStationProgressResource,"{ 'resource_id' : 'volatiles', 'step' : 2 }"
-
-system_add_coronal_tap,SystemAddCoronalTapFactory,"coronal_tap"
-market_remove_perihelion_project,MarketRemoveIndustry,"BOGGLED_PERIHELION_PROJECT"
-
-add_corrupted_nanoforge_to_storage,AddItemToSubmarket,"{ 'submarket_id' : 'storage', 'item_id' : 'corrupted_nanoforge', 'quantity' : 1 }"
-add_pristine_nanoforge_to_storage,AddItemToSubmarket,"{ 'submarket_id' : 'storage', 'item_id' : 'pristine_nanoforge', 'quantity' : 1 }"
-add_synchrotron_core_to_storage,AddItemToSubmarket,"{ 'submarket_id' : 'storage', 'item_id' : 'synchrotron', 'quantity' : 1 }"
-add_hypershunt_tap_to_storage,AddItemToSubmarket,"{ 'submarket_id' : 'storage', 'item_id' : 'coronal_portal', 'quantity' : 1 }"
-add_cryoarithmetic_engine_to_storage,AddItemToSubmarket,"{ 'submarket_id' : 'storage', 'item_id' : 'cryoarithmetic_engine', 'quantity' : 1 }"
-add_planetkiller_device_to_storage,AddItemToSubmarket,"{ 'submarket_id' : 'storage', 'item_id' : 'boggled_planetkiller', 'quantity' : 1 }"
-add_orbital_fusion_lamp_to_storage,AddItemToSubmarket,"{ 'submarket_id' : 'storage', 'item_id' : 'orbital_fusion_lamp', 'quantity' : 1 }"
-add_fullerene_spool_to_storage,AddItemToSubmarket,"{ 'submarket_id' : 'storage', 'item_id' : 'fullerene_spool', 'quantity' : 1 }"
-add_plasma_dynamo_to_storage,AddItemToSubmarket,"{ 'submarket_id' : 'storage', 'item_id' : 'plasma_dynamo', 'quantity' : 1 }"
-add_autonomous_mantle_bore_to_storage,AddItemToSubmarket,"{ 'submarket_id' : 'storage', 'item_id' : 'mantle_bore', 'quantity' : 1 }"
-add_soil_nanites_to_storage,AddItemToSubmarket,"{ 'submarket_id' : 'storage', 'item_id' : 'soil_nanites', 'quantity' : 1 }"
-add_catalytic_core_to_storage,AddItemToSubmarket,"{ 'submarket_id' : 'storage', 'item_id' : 'catalytic_core', 'quantity' : 1 }"
-add_drone_replicator_to_storage,AddItemToSubmarket,"{ 'submarket_id' : 'storage', 'item_id' : 'drone_replicator', 'quantity' : 1 }"
-add_biofactory_embryo_to_storage,AddItemToSubmarket,"{ 'submarket_id' : 'storage', 'item_id' : 'biofactory_embryo', 'quantity' : 1 }"
-add_dealmaker_holosuite_to_storage,AddItemToSubmarket,"{ 'submarket_id' : 'storage', 'item_id' : 'dealmaker_holosuite', 'quantity' : 1 }"
-
-remove_2_story_points_from_player,RemoveStoryPointsFromPlayer,2
-
-remove_domain_artifacts_easy_from_storage,RemoveCommodityFromSubmarket,"{ 'submarket_id' : 'storage', 'commodity_id' : 'domain_artifacts', 'quantity' : 1000 }"
-remove_domain_artifacts_medium_from_storage,RemoveCommodityFromSubmarket,"{ 'submarket_id' : 'storage', 'commodity_id' : 'domain_artifacts', 'quantity' : 2000 }"
-remove_domain_artifacts_hard_from_storage,RemoveCommodityFromSubmarket,"{ 'submarket_id' : 'storage', 'commodity_id' : 'domain_artifacts', 'quantity' : 4000 }"
+id,,effect_type,data
+arid_type_change,,PlanetTypeChange,"desert"
+jungle_type_change,,PlanetTypeChange,"jungle"
+terran_type_change,,PlanetTypeChange,"terran"
+water_type_change,,PlanetTypeChange,"water"
+tundra_type_change,,PlanetTypeChange,"tundra"
+frozen_type_change,,PlanetTypeChange,"frozen"
+,,,
+market_add_habitable,,MarketAddCondition,"habitable"
+market_add_mild_climate,,MarketAddCondition,"mild_climate"
+market_add_no_atmosphere,,MarketAddCondition,"no_atmosphere"
+market_add_extreme_weather,,MarketAddCondition,"extreme_weather"
+market_add_tectonic_activity,,MarketAddCondition,"tectonic_activity"
+market_add_water_surface,,MarketAddCondition,"water_surface"
+,,,
+market_add_farmland_poor,,MarketAddCondition,"farmland_poor"
+market_add_farmland_adequate,,MarketAddCondition,"farmland_adequate"
+market_add_farmland_rich,,MarketAddCondition,"farmland_rich"
+market_add_farmland_bountiful,,MarketAddCondition,"farmland_bountiful"
+,,,
+market_add_organics_trace,,MarketAddCondition,"organics_trace"
+market_add_organics_common,,MarketAddCondition,"organics_common"
+market_add_organics_abundant,,MarketAddCondition,"organics_abundant"
+market_add_organics_plentiful,,MarketAddCondition,"organics_plentiful"
+,,,
+market_add_volatiles_trace,,MarketAddCondition,"volatiles_trace"
+market_add_volatiles_diffuse,,MarketAddCondition,"volatiles_diffuse"
+market_add_volatiles_abundant,,MarketAddCondition,"volatiles_abundant"
+market_add_volatiles_plentiful,,MarketAddCondition,"volatiles_plentiful"
+,,,
+market_remove_water_surface,,MarketRemoveCondition,"water_surface"
+market_remove_volturnian_lobster_pens,,MarketRemoveCondition,"volturnian_lobster_pens"
+,,,
+market_remove_no_atmosphere,,MarketRemoveCondition,"no_atmosphere"
+market_remove_thin_atmosphere,,MarketRemoveCondition,"thin_atmosphere"
+market_remove_toxic_atmosphere,,MarketRemoveCondition,"toxic_atmosphere"
+market_remove_dense_atmosphere,,MarketRemoveCondition,"dense_atmosphere"
+market_remove_pollution,,MarketRemoveCondition,"pollution"
+market_remove_inimical_biosphere,,MarketRemoveCondition,"inimical_biosphere"
+market_remove_extreme_weather,,MarketRemoveCondition,"extreme_weather"
+market_remove_mild_climate,,MarketRemoveCondition,"mild_climate"
+market_remove_habitable,,MarketRemoveCondition,"habitable"
+market_remove_irradiated,,MarketRemoveCondition,"irradiated"
+,,,
+market_remove_decivilized,,MarketRemoveCondition,"decivilized"
+market_remove_decivilized_subpop,,MarketRemoveCondition,"decivilized_subpop"
+market_remove_rogue_ai_core,,MarketRemoveCondition,"rogue_ai_core"
+,,,
+market_remove_farmland_poor,,MarketRemoveCondition,"farmland_poor"
+market_remove_farmland_adequate,,MarketRemoveCondition,"farmland_adequate"
+market_remove_farmland_rich,,MarketRemoveCondition,"farmland_rich"
+market_remove_farmland_bountiful,,MarketRemoveCondition,"farmland_bountiful"
+,,,
+market_remove_organics_trace,,MarketRemoveCondition,"organics_trace"
+market_remove_organics_common,,MarketRemoveCondition,"organics_common"
+market_remove_organics_abundant,,MarketRemoveCondition,"organics_abundant"
+market_remove_organics_plentiful,,MarketRemoveCondition,"organics_plentiful"
+,,,
+market_remove_volatiles_trace,,MarketRemoveCondition,"volatiles_trace"
+market_remove_volatiles_diffuse,,MarketRemoveCondition,"volatiles_diffuse"
+market_remove_volatiles_abundant,,MarketRemoveCondition,"volatiles_abundant"
+market_remove_volatiles_plentiful,,MarketRemoveCondition,"volatiles_plentiful"
+,,,
+market_optional_volatiles_trace,,MarketOptionalCondition,"{ 'option' : 'boggledTerraformingTypeChangeAddVolatiles', 'condition_id' : 'volatiles_trace' }"
+,,,
+market_progress_farmland,,MarketProgressResource,"{ 'resource_id' : 'farmland', 'step' : 1 }"
+market_progress_organics,,MarketProgressResource,"{ 'resource_id' : 'organics', 'step' : 1 }"
+market_progress_volatiles,,MarketProgressResource,"{ 'resource_id' : 'volatiles', 'step' : 1 }"
+,,,
+focus_market_add_extreme_weather,,FocusMarketAddCondition,"extreme_weather"
+focus_market_add_tectonic_activity,,FocusMarketAddCondition,"tectonic_activity"
+,,,
+focus_market_progress_ore_planet_cracker,,FocusMarketProgressResource,"{ 'resource_id' : 'ore', 'step' : 1 }"
+focus_market_progress_rare_ore_planet_cracker,,FocusMarketProgressResource,"{ 'resource_id' : 'rare_ore', 'step' : 1 }"
+focus_market_progress_volatiles_ouyang_optimizer,,FocusMarketAndSiphonStationProgressResource,"{ 'resource_id' : 'volatiles', 'step' : 2 }"
+,
+system_add_coronal_tap,,SystemAddCoronalTapFactory,"coronal_tap"
+market_remove_perihelion_project,,MarketRemoveIndustry,"BOGGLED_PERIHELION_PROJECT"
+,
+add_corrupted_nanoforge_to_storage,,AddItemToSubmarket,"{ 'submarket_id' : 'storage', 'item_id' : 'corrupted_nanoforge', 'quantity' : 1 }"
+add_pristine_nanoforge_to_storage,,AddItemToSubmarket,"{ 'submarket_id' : 'storage', 'item_id' : 'pristine_nanoforge', 'quantity' : 1 }"
+add_synchrotron_core_to_storage,,AddItemToSubmarket,"{ 'submarket_id' : 'storage', 'item_id' : 'synchrotron', 'quantity' : 1 }"
+add_hypershunt_tap_to_storage,,AddItemToSubmarket,"{ 'submarket_id' : 'storage', 'item_id' : 'coronal_portal', 'quantity' : 1 }"
+add_cryoarithmetic_engine_to_storage,,AddItemToSubmarket,"{ 'submarket_id' : 'storage', 'item_id' : 'cryoarithmetic_engine', 'quantity' : 1 }"
+add_planetkiller_device_to_storage,,AddItemToSubmarket,"{ 'submarket_id' : 'storage', 'item_id' : 'boggled_planetkiller', 'quantity' : 1 }"
+add_orbital_fusion_lamp_to_storage,,AddItemToSubmarket,"{ 'submarket_id' : 'storage', 'item_id' : 'orbital_fusion_lamp', 'quantity' : 1 }"
+add_fullerene_spool_to_storage,,AddItemToSubmarket,"{ 'submarket_id' : 'storage', 'item_id' : 'fullerene_spool', 'quantity' : 1 }"
+add_plasma_dynamo_to_storage,,AddItemToSubmarket,"{ 'submarket_id' : 'storage', 'item_id' : 'plasma_dynamo', 'quantity' : 1 }"
+add_autonomous_mantle_bore_to_storage,,AddItemToSubmarket,"{ 'submarket_id' : 'storage', 'item_id' : 'mantle_bore', 'quantity' : 1 }"
+add_soil_nanites_to_storage,,AddItemToSubmarket,"{ 'submarket_id' : 'storage', 'item_id' : 'soil_nanites', 'quantity' : 1 }"
+add_catalytic_core_to_storage,,AddItemToSubmarket,"{ 'submarket_id' : 'storage', 'item_id' : 'catalytic_core', 'quantity' : 1 }"
+add_drone_replicator_to_storage,,AddItemToSubmarket,"{ 'submarket_id' : 'storage', 'item_id' : 'drone_replicator', 'quantity' : 1 }"
+add_biofactory_embryo_to_storage,,AddItemToSubmarket,"{ 'submarket_id' : 'storage', 'item_id' : 'biofactory_embryo', 'quantity' : 1 }"
+add_dealmaker_holosuite_to_storage,,AddItemToSubmarket,"{ 'submarket_id' : 'storage', 'item_id' : 'dealmaker_holosuite', 'quantity' : 1 }"
+,
+remove_2_story_points_from_player,,RemoveStoryPointsFromPlayer,2
+,
+remove_domain_artifacts_easy_from_storage,,RemoveCommodityFromSubmarket,"{ 'submarket_id' : 'storage', 'commodity_id' : 'domain_artifacts', 'quantity' : 1000 }"
+remove_domain_artifacts_medium_from_storage,,RemoveCommodityFromSubmarket,"{ 'submarket_id' : 'storage', 'commodity_id' : 'domain_artifacts', 'quantity' : 2000 }"
+remove_domain_artifacts_hard_from_storage,,RemoveCommodityFromSubmarket,"{ 'submarket_id' : 'storage', 'commodity_id' : 'domain_artifacts', 'quantity' : 4000 }"
+,
+add_astropolis_station_to_orbit,,AddStationToOrbit,"{ 'station_type' : 'astropolis' }"
+,

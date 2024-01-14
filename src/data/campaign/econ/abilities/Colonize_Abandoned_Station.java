@@ -5,7 +5,6 @@ import com.fs.starfarer.api.campaign.*;
 import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.impl.campaign.abilities.BaseDurationAbility;
 import com.fs.starfarer.api.impl.campaign.ids.Conditions;
-import com.fs.starfarer.api.impl.campaign.ids.Commodities;
 import com.fs.starfarer.api.impl.campaign.ids.Factions;
 import com.fs.starfarer.api.impl.campaign.ids.Industries;
 import com.fs.starfarer.api.impl.campaign.ids.Submarkets;
@@ -213,7 +212,7 @@ public class Colonize_Abandoned_Station extends BaseDurationAbility
             return false;
         }
 
-        if(!boggledTools.systemHasJumpPoint(playerFleet.getStarSystem()))
+        if(playerFleet.getStarSystem().getJumpPoints().isEmpty())
         {
             return false;
         }
@@ -228,7 +227,7 @@ public class Colonize_Abandoned_Station extends BaseDurationAbility
         {
             return false;
         }
-        else if(boggledTools.getDistanceBetweenTokens(closestColonizableStation, playerFleet) > 400f)
+        else if(Misc.getDistance(closestColonizableStation, playerFleet) > 400f)
         {
             return false;
         }
@@ -292,14 +291,14 @@ public class Colonize_Abandoned_Station extends BaseDurationAbility
         {
             tooltip.addPara("You cannot colonize stations located in hyperspace.", bad, pad);
         }
-        else if(!boggledTools.systemHasJumpPoint(playerFleet.getStarSystem()))
+        else if(playerFleet.getStarSystem().getJumpPoints().isEmpty())
         {
             tooltip.addPara("You cannot construct a station in a system with no jump points.", bad, pad);
         }
 
         if(!(playerFleet.isInHyperspace() || Global.getSector().getPlayerFleet().isInHyperspaceTransition()))
         {
-            if(!boggledTools.systemHasJumpPoint(playerFleet.getStarSystem()))
+            if(playerFleet.getStarSystem().getJumpPoints().isEmpty())
             {
                 tooltip.addPara("You cannot construct a station in a system with no jump points.", bad, pad);
             }
@@ -319,9 +318,9 @@ public class Colonize_Abandoned_Station extends BaseDurationAbility
             {
                 tooltip.addPara("The station closest to your location is " + closestStation.getName() + ". It is in a state of extreme disrepair and is not a viable target for colonization.", bad, pad);
             }
-            else if(boggledTools.getDistanceBetweenTokens(closestColonizableStation, playerFleet) > 400f)
+            else if(Misc.getDistance(closestColonizableStation, playerFleet) > 400f)
             {
-                float distanceInSu = boggledTools.getDistanceBetweenTokens(playerFleet, closestColonizableStation) / 2000f;
+                float distanceInSu = Misc.getDistance(playerFleet, closestColonizableStation) / 2000f;
                 String distanceInSuString = String.format("%.2f", distanceInSu);
                 float requiredDistanceInSu = 400f / 2000f;
                 String requiredDistanceInSuString = String.format("%.2f", requiredDistanceInSu);

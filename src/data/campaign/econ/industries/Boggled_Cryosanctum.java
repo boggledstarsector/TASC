@@ -19,107 +19,107 @@ public class Boggled_Cryosanctum extends Cryosanctum implements BoggledIndustryI
     @Override
     public void init(String id, MarketAPI market) {
         super.init(id, market);
-        thisIndustry = boggledTools.getIndustryProject(id);
+        thisIndustry = new BoggledCommonIndustry(boggledTools.getIndustryProject(id), this);
     }
 
     @Override
     public final void startBuilding() {
         super.startBuilding();
-        thisIndustry.startBuilding(this);
+        thisIndustry.startBuilding();
     }
 
     @Override
     public final void startUpgrading() {
         super.startUpgrading();
-        thisIndustry.startUpgrading(this);
+        thisIndustry.startUpgrading();
     }
 
     @Override
     protected final void buildingFinished() {
         super.buildingFinished();
-        thisIndustry.buildingFinished(this, this);
+        thisIndustry.buildingFinished();
     }
 
     @Override
     protected final void upgradeFinished(Industry previous) {
         super.upgradeFinished(previous);
-        thisIndustry.upgradeFinished(this, previous);
+        thisIndustry.upgradeFinished(previous);
     }
 
     @Override
     public final void finishBuildingOrUpgrading() {
         super.finishBuildingOrUpgrading();
-        thisIndustry.finishBuildingOrUpgrading(this);
+        thisIndustry.finishBuildingOrUpgrading();
     }
 
     @Override
-    public final boolean isBuilding() { return thisIndustry.isBuilding(this); }
+    public final boolean isBuilding() { return thisIndustry.isBuilding(); }
 
     @Override
     public final boolean isFunctional() { return super.isFunctional() && thisIndustry.isFunctional(); }
 
     @Override
-    public final boolean isUpgrading() { return thisIndustry.isUpgrading(this); }
+    public final boolean isUpgrading() { return thisIndustry.isUpgrading(); }
 
     @Override
     public final void notifyBeingRemoved(MarketAPI.MarketInteractionMode mode, boolean forUpgrade) {
         super.notifyBeingRemoved(mode, forUpgrade);
-        thisIndustry.notifyBeingRemoved(this, this, mode, forUpgrade);
+        thisIndustry.notifyBeingRemoved(mode, forUpgrade);
     }
 
     @Override
-    public final float getBuildOrUpgradeProgress() { return thisIndustry.getBuildOrUpgradeProgress(this); }
+    public final float getBuildOrUpgradeProgress() { return thisIndustry.getBuildOrUpgradeProgress(); }
 
     @Override
     public final String getBuildOrUpgradeDaysText() {
-        return thisIndustry.getBuildOrUpgradeDaysText(this);
+        return thisIndustry.getBuildOrUpgradeDaysText();
     }
 
     @Override
     public final String getBuildOrUpgradeProgressText() {
-        return thisIndustry.getBuildOrUpgradeProgressText(this);
+        return thisIndustry.getBuildOrUpgradeProgressText();
     }
 
     @Override
-    public final boolean isAvailableToBuild() { return thisIndustry.isAvailableToBuild(this); }
+    public final boolean isAvailableToBuild() { return thisIndustry.isAvailableToBuild(); }
 
     @Override
-    public final boolean showWhenUnavailable() { return thisIndustry.showWhenUnavailable(this); }
+    public final boolean showWhenUnavailable() { return thisIndustry.showWhenUnavailable(); }
 
     @Override
-    public final String getUnavailableReason() { return thisIndustry.getUnavailableReason(this); }
+    public final String getUnavailableReason() { return thisIndustry.getUnavailableReason(); }
 
     @Override
     public final void advance(float amount) {
         super.advance(amount);
-        thisIndustry.advance(amount, this, this);
+        thisIndustry.advance(amount);
     }
 
     @Override
     public final void apply() {
         super.apply(true);
-        thisIndustry.apply(this, this);
+        thisIndustry.apply();
     }
 
     @Override
     public final void unapply() {
         super.unapply();
-        thisIndustry.unapply(this, this);
+        thisIndustry.unapply();
     }
 
     @Override
     protected final boolean hasPostDemandSection(boolean hasDemand, Industry.IndustryTooltipMode mode) {
-        return thisIndustry.hasPostDemandSection(this, hasDemand, mode);
+        return thisIndustry.hasPostDemandSection(hasDemand, mode);
     }
 
     @Override
     protected final void addPostDemandSection(TooltipMakerAPI tooltip, boolean hasDemand, Industry.IndustryTooltipMode mode) {
-        thisIndustry.addPostDemandSection(this, tooltip, hasDemand, mode);
+        thisIndustry.addPostDemandSection(tooltip, hasDemand, mode);
     }
 
     @Override
     public final void applyDeficitToProduction(String modId, Pair<String, Integer> deficit, String... commodities) {
-        thisIndustry.applyDeficitToProduction(this, modId, deficit, commodities);
+        thisIndustry.applyDeficitToProduction(modId, deficit, commodities);
     }
 
     @Override
@@ -154,12 +154,12 @@ public class Boggled_Cryosanctum extends Cryosanctum implements BoggledIndustryI
 
     @Override
     public final boolean canBeDisrupted() {
-        return thisIndustry.canBeDisrupted(this);
+        return thisIndustry.canBeDisrupted();
     }
 
     @Override
     public final float getPatherInterest() {
-        return super.getPatherInterest() + thisIndustry.getPatherInterest(this);
+        return super.getPatherInterest() + thisIndustry.getPatherInterest();
     }
 
     @Override
@@ -169,17 +169,17 @@ public class Boggled_Cryosanctum extends Cryosanctum implements BoggledIndustryI
 
     @Override
     public final void addAlphaCoreDescription(TooltipMakerAPI tooltip, Industry.AICoreDescriptionMode mode) {
-        thisIndustry.addAICoreDescription(this, tooltip, mode, "Alpha", "alpha_core");
+        thisIndustry.addAICoreDescription(tooltip, mode, "Alpha", "alpha_core");
     }
 
     @Override
     public final void addBetaCoreDescription(TooltipMakerAPI tooltip, Industry.AICoreDescriptionMode mode) {
-        thisIndustry.addAICoreDescription(this, tooltip, mode, "Beta", "beta_core");
+        thisIndustry.addAICoreDescription(tooltip, mode, "Beta", "beta_core");
     }
 
     @Override
     public final void addGammaCoreDescription(TooltipMakerAPI tooltip, Industry.AICoreDescriptionMode mode) {
-        thisIndustry.addAICoreDescription(this, tooltip, mode, "Gamma", "gamma_core");
+        thisIndustry.addAICoreDescription(tooltip, mode, "Gamma", "gamma_core");
     }
 
     @Override
@@ -198,22 +198,22 @@ public class Boggled_Cryosanctum extends Cryosanctum implements BoggledIndustryI
 
     @Override
     protected final void addRightAfterDescriptionSection(TooltipMakerAPI tooltip, Industry.IndustryTooltipMode mode) {
-        thisIndustry.addRightAfterDescriptionSection(this, tooltip, mode);
+        thisIndustry.addRightAfterDescriptionSection(tooltip, mode);
     }
 
     @Override
     public final boolean canImprove() {
-        return thisIndustry.canImprove(this);
+        return thisIndustry.canImprove();
     }
 
     @Override
     protected final void applyImproveModifiers() {
-        thisIndustry.applyImproveModifiers(this, this);
+        thisIndustry.applyImproveModifiers();
     }
 
     @Override
     public final void addImproveDesc(TooltipMakerAPI tooltip, Industry.ImprovementDescriptionMode mode) {
-        thisIndustry.addImproveDesc(this, tooltip, mode);
+        thisIndustry.addImproveDesc(tooltip, mode);
         super.addImproveDesc(tooltip, mode);
     }
 

@@ -46,7 +46,7 @@ public class Construct_Mining_Station extends BaseDurationAbility
         if(boggledTools.playerFleetInAsteroidBelt(playerFleet))
         {
             SectorEntityToken focus = boggledTools.getFocusOfAsteroidBelt(playerFleet);
-            float orbitRadius = boggledTools.getDistanceBetweenTokens(focus, playerFleet);
+            float orbitRadius = Misc.getDistance(focus, playerFleet);
             float orbitAngle = boggledTools.getAngleFromPlayerFleet(focus);
 
             newMiningStation.setCircularOrbitPointingDown(focus, orbitAngle + 1, orbitRadius, orbitRadius / 10.0F);
@@ -57,12 +57,12 @@ public class Construct_Mining_Station extends BaseDurationAbility
 
             if (asteroidOrbit != null)
             {
-                newMiningStation.setCircularOrbitWithSpin(asteroidOrbit.getFocus(), boggledTools.getAngleFromPlayerFleet(asteroidOrbit.getFocus()), boggledTools.getDistanceBetweenTokens(playerFleet, asteroidOrbit.getFocus()), asteroidOrbit.getOrbitalPeriod(), 5f, 10f);
+                newMiningStation.setCircularOrbitWithSpin(asteroidOrbit.getFocus(), boggledTools.getAngleFromPlayerFleet(asteroidOrbit.getFocus()), Misc.getDistance(playerFleet, asteroidOrbit.getFocus()), asteroidOrbit.getOrbitalPeriod(), 5f, 10f);
             }
             else
             {
                 SectorEntityToken centerOfAsteroidField = boggledTools.getAsteroidFieldEntity(playerFleet);
-                newMiningStation.setCircularOrbitWithSpin(centerOfAsteroidField, boggledTools.getAngleFromPlayerFleet(centerOfAsteroidField), boggledTools.getDistanceBetweenTokens(playerFleet, centerOfAsteroidField), 40f, 5f, 10f);
+                newMiningStation.setCircularOrbitWithSpin(centerOfAsteroidField, boggledTools.getAngleFromPlayerFleet(centerOfAsteroidField), Misc.getDistance(playerFleet, centerOfAsteroidField), 40f, 5f, 10f);
             }
         }
 
@@ -130,7 +130,7 @@ public class Construct_Mining_Station extends BaseDurationAbility
             return false;
         }
 
-        if(!boggledTools.systemHasJumpPoint(playerFleet.getStarSystem()))
+        if(playerFleet.getStarSystem().getJumpPoints().isEmpty())
         {
             return false;
         }
@@ -248,7 +248,7 @@ public class Construct_Mining_Station extends BaseDurationAbility
         {
             tooltip.addPara("You cannot construct a mining station so close to a jump point.", bad, pad);
         }
-        else if(!boggledTools.systemHasJumpPoint(playerFleet.getStarSystem()))
+        else if(playerFleet.getStarSystem().getJumpPoints().isEmpty())
         {
             tooltip.addPara("You cannot construct a station in a system with no jump points.", bad, pad);
         }

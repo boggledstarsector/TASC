@@ -5,3 +5,5 @@ Construct Siphon Station,boggled_construct_siphon_station,DURATION,"",0,,0,0,1,T
 Colonize Abandoned Station,boggled_colonize_abandoned_station,DURATION,"",0,,0,0,1,TRUE,FALSE,,,,,,,,graphics/icons/abilities/colonize_abandoned_station.png,data.campaign.econ.abilities.Colonize_Abandoned_Station,,"Colonize an abandoned station.",5000
 Deploy Planet-Killer Device,boggled_deploy_planet_killer,DURATION,"",0,,0,0,1,TRUE,FALSE,,,,,,,,graphics/icons/abilities/boggled_planetkiller.png,data.campaign.econ.abilities.Deploy_Planet_Killer,,"Deploy a planet-killer device.",5000
 Open Terraforming Control Panel,boggled_open_terraforming_control_panel,DURATION,"",0,,0,0,0,TRUE,FALSE,,,,,,,,graphics/icons/abilities/boggled_open_terraforming_control_panel.png,evangel.tascui.CommandUIAbilityK,,"Open the terraforming control panel.",5000
+
+TestAbilityPlzIgnore,test_ability_plz_ignore,DURATION,"",0,,0,0,1,TRUE,FALSE,,,,,,,,graphics/icons/abilities/boggled_open_terraforming_control_panel.png,data.campaign.econ.abilities.BoggledBaseAbility,,"Test ability plz ignore",5001

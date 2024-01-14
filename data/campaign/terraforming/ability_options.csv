@@ -1,0 +1,2 @@
+id,enable_settings,requirements,effects
+construct_astropolis_station,boggledAstropolisEnabled,player_fleet_not_in_hyperspace

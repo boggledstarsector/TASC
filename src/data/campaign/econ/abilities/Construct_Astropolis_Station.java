@@ -9,11 +9,12 @@ import com.fs.starfarer.api.ui.LabelAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
 import java.awt.Color;
-import java.util.Iterator;
+import java.util.ArrayList;
 import java.util.List;
 import data.campaign.econ.boggledTools;
 import data.scripts.BoggledUnderConstructionEveryFrameScript;
 import data.scripts.PlayerCargoCalculations.bogglesDefaultCargo;
+import org.jetbrains.annotations.NotNull;
 
 public class Construct_Astropolis_Station extends BaseDurationAbility
 {
@@ -63,52 +64,63 @@ public class Construct_Astropolis_Station extends BaseDurationAbility
         {
             return "gamma";
         }
-        else
-        {
-            // Handles 0 setting and if the value somehow is a bad value (ex. not 0, 1, 2 or 3)
-            if(numAstroAlreadyPresent == 0)
-            {
-                return "alpha";
-            }
-            else if(numAstroAlreadyPresent == 1)
-            {
-                return "beta";
-            }
-            else
-            {
-                return "gamma";
-            }
-        }
+        numAstroAlreadyPresent = Math.abs(numAstroAlreadyPresent);
+        return getGreekAlphabetList().get(numAstroAlreadyPresent % 3).toLowerCase();
     }
 
     public String getColonyNameString(int numAstroAlreadyPresent)
     {
-        // This is different than the above function - this is used purely for the name of the colony on the station.
-        if(numAstroAlreadyPresent == 0)
-        {
-            return "Alpha";
+        numAstroAlreadyPresent = Math.abs(numAstroAlreadyPresent);
+        List<String> greekAlphabetList = getGreekAlphabetList();
+        int letterNum = numAstroAlreadyPresent % greekAlphabetList.size();
+        int suffixNum = numAstroAlreadyPresent / greekAlphabetList.size();
+        String ret = greekAlphabetList.get(letterNum);
+        if (suffixNum != 0) {
+            ret = ret + "-" + suffixNum;
         }
-        else if(numAstroAlreadyPresent == 1)
-        {
-            return "Beta";
-        }
-        else
-        {
-            return "Gamma";
-        }
+        return ret;
+    }
+
+    @NotNull
+    private static List<String> getGreekAlphabetList() {
+        List<String> greekAlphabetList = new ArrayList<>();
+        greekAlphabetList.add("Alpha");
+        greekAlphabetList.add("Beta");
+        greekAlphabetList.add("Gamma");
+        greekAlphabetList.add("Delta");
+        greekAlphabetList.add("Epsilon");
+        greekAlphabetList.add("Zeta");
+        greekAlphabetList.add("Eta");
+        greekAlphabetList.add("Theta");
+        greekAlphabetList.add("Kappa");
+        greekAlphabetList.add("Lambda");
+        greekAlphabetList.add("Mu");
+        greekAlphabetList.add("Nu");
+        greekAlphabetList.add("Xi");
+        greekAlphabetList.add("Omicron");
+        greekAlphabetList.add("Pi");
+        greekAlphabetList.add("Rho");
+        greekAlphabetList.add("Sigma");
+        greekAlphabetList.add("Tau");
+        greekAlphabetList.add("Upsilon");
+        greekAlphabetList.add("Phi");
+        greekAlphabetList.add("Chi");
+        greekAlphabetList.add("Psi");
+        greekAlphabetList.add("Omega");
+        return greekAlphabetList;
     }
 
     @Override
     protected void activateImpl()
     {
-        SectorEntityToken playerFleet = Global.getSector().getPlayerFleet();
+        CampaignFleetAPI playerFleet = Global.getSector().getPlayerFleet();
 
-        CargoAPI playerCargo = playerFleet.getCargo();
-        playerCargo.getCredits().subtract(creditCost);
-        bogglesDefaultCargo.active.removeCommodity(bogglesDefaultCargo.Astropolis_Station,"metals", metalCost);
-        bogglesDefaultCargo.active.removeCommodity(bogglesDefaultCargo.Astropolis_Station,"rare_metals", transplutonicsCost);
-        bogglesDefaultCargo.active.removeCommodity(bogglesDefaultCargo.Astropolis_Station,"crew", crewCost);
-        bogglesDefaultCargo.active.removeCommodity(bogglesDefaultCargo.Astropolis_Station,"heavy_machinery", heavyMachineryCost);
+//        CargoAPI playerCargo = playerFleet.getCargo();
+//        playerCargo.getCredits().subtract(creditCost);
+//        bogglesDefaultCargo.active.removeCommodity(bogglesDefaultCargo.Astropolis_Station,"metals", metalCost);
+//        bogglesDefaultCargo.active.removeCommodity(bogglesDefaultCargo.Astropolis_Station,"rare_metals", transplutonicsCost);
+//        bogglesDefaultCargo.active.removeCommodity(bogglesDefaultCargo.Astropolis_Station,"crew", crewCost);
+//        bogglesDefaultCargo.active.removeCommodity(bogglesDefaultCargo.Astropolis_Station,"heavy_machinery", heavyMachineryCost);
 
         SectorEntityToken targetPlanet = boggledTools.getClosestPlanetToken(playerFleet);
         int numAstro = numAstroInOrbit(targetPlanet);
@@ -218,24 +230,17 @@ public class Construct_Astropolis_Station extends BaseDurationAbility
         }
 
         //check if the host market has a moon that is too close to it
-        Iterator allPlanetsInSystem = targetPlanet.getStarSystem().getPlanets().iterator();
-        while(allPlanetsInSystem.hasNext())
-        {
-            PlanetAPI planet = (PlanetAPI) allPlanetsInSystem.next();
+        for (PlanetAPI planet : targetPlanet.getStarSystem().getPlanets()) {
             if (planet.getOrbitFocus() != null && !planet.isStar() && planet.getOrbitFocus().equals(targetPlanet) && planet.getCircularOrbitRadius() < (targetPlanet.getRadius() + 500f) && planet.getRadius() != 0)
             {
                 return new astropolisOrbitBlocker(planet, "moon_too_close");
             }
         }
-        allPlanetsInSystem = null;
 
         //Check if the host market has four moons - need to block building here because it creates a visual bug where the astropolis
         //appears on top of one of the other four moons in the system view
-        allPlanetsInSystem = targetPlanet.getStarSystem().getPlanets().iterator();
         int numMoons = 0;
-        while(allPlanetsInSystem.hasNext())
-        {
-            PlanetAPI planet = (PlanetAPI) allPlanetsInSystem.next();
+        for (PlanetAPI planet : targetPlanet.getStarSystem().getPlanets()) {
             if (planet.getOrbitFocus() != null && !planet.isStar() && planet.getOrbitFocus().equals(targetPlanet) && planet.getRadius() != 0)
             {
                 numMoons++;
@@ -246,13 +251,9 @@ public class Construct_Astropolis_Station extends BaseDurationAbility
         {
             return new astropolisOrbitBlocker(null, "too_many_moons");
         }
-        allPlanetsInSystem = null;
 
         //check if the host market and other planets are orbiting the same focus are too close to each other
-        allPlanetsInSystem = targetPlanet.getStarSystem().getPlanets().iterator();
-        while(allPlanetsInSystem.hasNext())
-        {
-            PlanetAPI planet = (PlanetAPI)allPlanetsInSystem.next();
+        for (PlanetAPI planet : targetPlanet.getStarSystem().getPlanets()) {
             if (planet.getOrbitFocus() != null && !planet.isStar() && planet.getOrbitFocus().equals(targetPlanet.getOrbitFocus()))
             {
                 if(Math.abs(planet.getCircularOrbitRadius() - targetPlanet.getCircularOrbitRadius()) < 400f && Math.abs(planet.getCircularOrbitRadius() - targetPlanet.getCircularOrbitRadius()) != 0)
@@ -268,20 +269,23 @@ public class Construct_Astropolis_Station extends BaseDurationAbility
     @Override
     public boolean isUsable()
     {
-        SectorEntityToken playerFleet = Global.getSector().getPlayerFleet();
+        CampaignFleetAPI playerFleet = Global.getSector().getPlayerFleet();
 
         if (playerFleet.isInHyperspace() || Global.getSector().getPlayerFleet().isInHyperspaceTransition())
         {
             return false;
         }
 
-        if(!boggledTools.systemHasJumpPoint(playerFleet.getStarSystem()))
+        if(!playerFleet.getStarSystem().getJumpPoints().isEmpty())
         {
             return false;
         }
 
         SectorEntityToken targetPlanet = boggledTools.getClosestPlanetToken(playerFleet);
-        if(targetPlanet == null || targetPlanet.getMarket() == null || (!targetPlanet.getMarket().isPlayerOwned() && targetPlanet.getMarket().getFaction() != Global.getSector().getFaction(Factions.NEUTRAL) && targetPlanet.getMarket().getFaction() != Global.getSector().getFaction(Factions.PLAYER)))
+        if(targetPlanet == null || targetPlanet.getMarket() == null ||
+           (   !targetPlanet.getMarket().isPlayerOwned()
+            && targetPlanet.getMarket().getFaction() != Global.getSector().getFaction(Factions.NEUTRAL)
+            && targetPlanet.getMarket().getFaction() != Global.getSector().getFaction(Factions.PLAYER)))
         {
             return false;
         }
@@ -293,7 +297,7 @@ public class Construct_Astropolis_Station extends BaseDurationAbility
             return false;
         }
 
-        if((boggledTools.getDistanceBetweenTokens(targetPlanet, playerFleet) - targetPlanet.getRadius()) > 500f)
+        if((Misc.getDistance(targetPlanet, playerFleet) - targetPlanet.getRadius()) > 500f)
         {
             return false;
         }
@@ -356,7 +360,7 @@ public class Construct_Astropolis_Station extends BaseDurationAbility
     @Override
     public void createTooltip(TooltipMakerAPI tooltip, boolean expanded)
     {
-        SectorEntityToken playerFleet = Global.getSector().getPlayerFleet();
+        CampaignFleetAPI playerFleet = Global.getSector().getPlayerFleet();
         SectorEntityToken targetPlanet = boggledTools.getClosestPlanetToken(playerFleet);
         Color highlight = Misc.getHighlightColor();
         Color bad = Misc.getNegativeHighlightColor();
@@ -369,16 +373,16 @@ public class Construct_Astropolis_Station extends BaseDurationAbility
         {
             tooltip.addPara("You cannot construct an astropolis station in hyperspace.", bad, pad);
         }
-        else if(!boggledTools.systemHasJumpPoint(playerFleet.getStarSystem()))
+        else if(playerFleet.getStarSystem().getJumpPoints().isEmpty())
         {
             tooltip.addPara("You cannot construct a station in a system with no jump points.", bad, pad);
         }
 
         if (!playerFleet.isInHyperspace() && !Global.getSector().getPlayerFleet().isInHyperspaceTransition() && targetPlanet != null)
         {
-            if((boggledTools.getDistanceBetweenTokens(targetPlanet, playerFleet) - targetPlanet.getRadius()) > 500f)
+            if((Misc.getDistance(targetPlanet, playerFleet) - targetPlanet.getRadius()) > 500f)
             {
-                float distanceInSu = (boggledTools.getDistanceBetweenTokens(targetPlanet, playerFleet) - targetPlanet.getRadius()) / 2000f;
+                float distanceInSu = (Misc.getDistance(targetPlanet, playerFleet) - targetPlanet.getRadius()) / 2000f;
                 String distanceInSuString = String.format("%.2f", distanceInSu);
                 float requiredDistanceInSu = 500f / 2000f;
                 String requiredDistanceInSuString = String.format("%.2f", requiredDistanceInSu);
@@ -386,7 +390,7 @@ public class Construct_Astropolis_Station extends BaseDurationAbility
             }
             else
             {
-                tooltip.addPara("Target host world: %s", pad, highlight, new String[]{targetPlanet.getName()});
+                tooltip.addPara("Target host world: %s", pad, highlight, targetPlanet.getName());
             }
 
             if(targetPlanet.getMarket() != null && (!targetPlanet.getMarket().isPlayerOwned() && targetPlanet.getMarket().getFaction() != Global.getSector().getFaction(Factions.NEUTRAL) && targetPlanet.getMarket().getFaction() != Global.getSector().getFaction(Factions.PLAYER)))

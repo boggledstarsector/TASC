@@ -1,6 +1,7 @@
 package data.campaign.econ.industries;
 
 import com.fs.starfarer.api.campaign.econ.Industry;
+import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.combat.MutableStat;
 import com.fs.starfarer.api.impl.campaign.econ.impl.OrbitalStation;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
@@ -8,7 +9,7 @@ import com.fs.starfarer.api.util.Pair;
 import data.campaign.econ.boggledTools;
 
 public class BoggledOrbitalStation extends OrbitalStation implements BoggledIndustryInterface {
-    private final BoggledCommonIndustry thisIndustry;
+    private BoggledCommonIndustry thisIndustry;
 
     public BoggledOrbitalStation(String industryId) {
         super();
@@ -16,97 +17,103 @@ public class BoggledOrbitalStation extends OrbitalStation implements BoggledIndu
     }
 
     @Override
+    public void init(String id, MarketAPI market) {
+        super.init(id, market);
+        thisIndustry = new BoggledCommonIndustry(boggledTools.getIndustryProject(id), this);
+    }
+
+    @Override
     public void startBuilding() {
         super.startBuilding();
-        thisIndustry.startBuilding(this);
+        thisIndustry.startBuilding();
     }
 
     @Override
     public void startUpgrading() {
         super.startUpgrading();
-        thisIndustry.startUpgrading(this);
+        thisIndustry.startUpgrading();
     }
 
     @Override
     protected void buildingFinished() {
         super.buildingFinished();
-        thisIndustry.buildingFinished(this, this);
+        thisIndustry.buildingFinished();
     }
 
     @Override
     protected void upgradeFinished(Industry previous) {
         super.upgradeFinished(previous);
-        thisIndustry.upgradeFinished(this, previous);
+        thisIndustry.upgradeFinished(previous);
     }
 
     @Override
     public void finishBuildingOrUpgrading() {
         super.finishBuildingOrUpgrading();
-        thisIndustry.finishBuildingOrUpgrading(this);
+        thisIndustry.finishBuildingOrUpgrading();
     }
 
     @Override
-    public boolean isBuilding() { return thisIndustry.isBuilding(this); }
+    public boolean isBuilding() { return thisIndustry.isBuilding(); }
 
     @Override
     public boolean isFunctional() { return super.isFunctional() && thisIndustry.isFunctional(); }
 
     @Override
-    public boolean isUpgrading() { return thisIndustry.isUpgrading(this); }
+    public boolean isUpgrading() { return thisIndustry.isUpgrading(); }
 
     @Override
-    public float getBuildOrUpgradeProgress() { return thisIndustry.getBuildOrUpgradeProgress(this); }
+    public float getBuildOrUpgradeProgress() { return thisIndustry.getBuildOrUpgradeProgress(); }
 
     @Override
     public String getBuildOrUpgradeDaysText() {
-        return thisIndustry.getBuildOrUpgradeDaysText(this);
+        return thisIndustry.getBuildOrUpgradeDaysText();
     }
 
     @Override
     public String getBuildOrUpgradeProgressText() {
-        return thisIndustry.getBuildOrUpgradeProgressText(this);
+        return thisIndustry.getBuildOrUpgradeProgressText();
     }
 
     @Override
-    public boolean isAvailableToBuild() { return thisIndustry.isAvailableToBuild(this); }
+    public boolean isAvailableToBuild() { return thisIndustry.isAvailableToBuild(); }
 
     @Override
-    public boolean showWhenUnavailable() { return thisIndustry.showWhenUnavailable(this); }
+    public boolean showWhenUnavailable() { return thisIndustry.showWhenUnavailable(); }
 
     @Override
-    public String getUnavailableReason() { return thisIndustry.getUnavailableReason(this); }
+    public String getUnavailableReason() { return thisIndustry.getUnavailableReason(); }
 
     @Override
     public void advance(float amount) {
         super.advance(amount);
-        thisIndustry.advance(amount, this, this);
+        thisIndustry.advance(amount);
     }
 
     @Override
     public void apply() {
         super.apply(true);
-        thisIndustry.apply(this, this);
+        thisIndustry.apply();
     }
 
     @Override
     public void unapply() {
         super.unapply();
-        thisIndustry.unapply(this, this);
+        thisIndustry.unapply();
     }
 
     @Override
     protected boolean hasPostDemandSection(boolean hasDemand, Industry.IndustryTooltipMode mode) {
-        return thisIndustry.hasPostDemandSection(this, hasDemand, mode);
+        return thisIndustry.hasPostDemandSection(hasDemand, mode);
     }
 
     @Override
     protected void addPostDemandSection(TooltipMakerAPI tooltip, boolean hasDemand, Industry.IndustryTooltipMode mode) {
-        thisIndustry.addPostDemandSection(this, tooltip, hasDemand, mode);
+        thisIndustry.addPostDemandSection(tooltip, hasDemand, mode);
     }
 
     @Override
     public void applyDeficitToProduction(String modId, Pair<String, Integer> deficit, String... commodities) {
-        thisIndustry.applyDeficitToProduction(this, modId, deficit, commodities);
+        thisIndustry.applyDeficitToProduction(modId, deficit, commodities);
     }
 
     @Override
@@ -141,7 +148,7 @@ public class BoggledOrbitalStation extends OrbitalStation implements BoggledIndu
 
     @Override
     public boolean canBeDisrupted() {
-        return thisIndustry.canBeDisrupted(this);
+        return thisIndustry.canBeDisrupted();
     }
 
     @Override
@@ -154,17 +161,17 @@ public class BoggledOrbitalStation extends OrbitalStation implements BoggledIndu
 
     @Override
     public void addAlphaCoreDescription(TooltipMakerAPI tooltip, Industry.AICoreDescriptionMode mode) {
-        thisIndustry.addAICoreDescription(this, tooltip, mode, "Alpha", "alpha_core");
+        thisIndustry.addAICoreDescription(tooltip, mode, "Alpha", "alpha_core");
     }
 
     @Override
     public void addBetaCoreDescription(TooltipMakerAPI tooltip, Industry.AICoreDescriptionMode mode) {
-        thisIndustry.addAICoreDescription(this, tooltip, mode, "Beta", "beta_core");
+        thisIndustry.addAICoreDescription(tooltip, mode, "Beta", "beta_core");
     }
 
     @Override
     public void addGammaCoreDescription(TooltipMakerAPI tooltip, Industry.AICoreDescriptionMode mode) {
-        thisIndustry.addAICoreDescription(this, tooltip, mode, "Gamma", "gamma_core");
+        thisIndustry.addAICoreDescription(tooltip, mode, "Gamma", "gamma_core");
     }
 
     @Override
@@ -181,22 +188,22 @@ public class BoggledOrbitalStation extends OrbitalStation implements BoggledIndu
 
     @Override
     protected void addRightAfterDescriptionSection(TooltipMakerAPI tooltip, Industry.IndustryTooltipMode mode) {
-        thisIndustry.addRightAfterDescriptionSection(this, tooltip, mode);
+        thisIndustry.addRightAfterDescriptionSection(tooltip, mode);
     }
 
     @Override
     public boolean canImprove() {
-        return thisIndustry.canImprove(this);
+        return thisIndustry.canImprove();
     }
 
     @Override
     protected void applyImproveModifiers() {
-        thisIndustry.applyImproveModifiers(this, this);
+        thisIndustry.applyImproveModifiers();
     }
 
     @Override
     public void addImproveDesc(TooltipMakerAPI tooltip, Industry.ImprovementDescriptionMode mode) {
-        thisIndustry.addImproveDesc(this, tooltip, mode);
+        thisIndustry.addImproveDesc(tooltip, mode);
         super.addImproveDesc(tooltip, mode);
     }
 

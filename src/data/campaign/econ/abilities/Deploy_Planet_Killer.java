@@ -52,7 +52,7 @@ public class Deploy_Planet_Killer extends BaseDurationAbility
         {
             return false;
         }
-        else if(boggledTools.getDistanceBetweenTokens(closestMarketEntity, playerFleet) > 200.0f)
+        else if(Misc.getDistance(closestMarketEntity, playerFleet) > 200.0f)
         {
             return false;
         }
@@ -114,9 +114,9 @@ public class Deploy_Planet_Killer extends BaseDurationAbility
             {
                 tooltip.addPara("The colony closest to your location is " + targetMarket.getName() + ". You cannot destroy your own colony with a planet-killer device.", bad, pad);
             }
-            else if(boggledTools.getDistanceBetweenTokens(targetMarket.getPrimaryEntity(), playerFleet) > 200f)
+            else if(Misc.getDistance(targetMarket.getPrimaryEntity(), playerFleet) > 200f)
             {
-                float distanceInSu = boggledTools.getDistanceBetweenTokens(playerFleet, targetMarket.getPrimaryEntity()) / 800f;
+                float distanceInSu = Misc.getDistance(playerFleet, targetMarket.getPrimaryEntity()) / 800f;
                 String distanceInSuString = String.format("%.2f", distanceInSu);
                 float requiredDistanceInSu = 200f / 800f;
                 String requiredDistanceInSuString = String.format("%.2f", requiredDistanceInSu);

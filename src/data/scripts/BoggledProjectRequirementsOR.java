@@ -1,7 +1,6 @@
 package data.scripts;
 
 import com.fs.starfarer.api.Global;
-import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
@@ -50,10 +49,10 @@ public class BoggledProjectRequirementsOR {
         return requirementId;
     }
 
-    public final boolean checkRequirement(MarketAPI market) {
+    public final boolean checkRequirement(BoggledTerraformingRequirement.RequirementContext ctx) {
         boolean requirementsMet = false;
         for (BoggledTerraformingRequirement.TerraformingRequirement terraformingRequirement : terraformingRequirements) {
-            requirementsMet = requirementsMet || terraformingRequirement.checkRequirement(market);
+            requirementsMet = requirementsMet || terraformingRequirement.checkRequirement(ctx);
         }
         if (invertAll) {
             requirementsMet = !requirementsMet;
