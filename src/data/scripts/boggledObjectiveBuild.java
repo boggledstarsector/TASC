@@ -13,7 +13,7 @@ import com.fs.starfarer.api.impl.campaign.ids.Factions;
 import com.fs.starfarer.api.loading.Description;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
-import data.campaign.econ.boggledTools;
+import boggled.campaign.econ.boggledTools;
 import org.json.JSONException;
 import java.io.IOException;
 import java.util.*;

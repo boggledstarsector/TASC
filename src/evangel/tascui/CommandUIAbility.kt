@@ -3,7 +3,7 @@ package evangel.tascui;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.impl.campaign.abilities.BaseDurationAbility;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
-import data.campaign.econ.boggledTools;
+import boggled.campaign.econ.boggledTools;
 import lunalib.lunaExtensions.openLunaCustomPanel;
 
 public final class CommandUIAbilityK : BaseDurationAbility() {

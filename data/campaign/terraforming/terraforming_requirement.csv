@@ -86,6 +86,7 @@ market_not_has_tectonic_activity,MarketHasCondition,true,"tectonic_activity"
 market_not_has_extreme_tectonic_activity,MarketHasCondition,true,"extreme_tectonic_activity"
 
 market_has_harmonic_damper,MarketHasIndustry,false,"BOGGLED_HARMONIC_DAMPER"
+market_has_mining,MarketHasIndustry,false,"mining"
 
 market_ruins_scattered,MarketHasCondition,false,"ruins_scattered"
 market_ruins_widespread,MarketHasCondition,false,"ruins_widespread"
@@ -189,4 +190,13 @@ kletka_simulator_has_gamma_core,MarketHasIndustryWithAICore,false,"{
 	'ai_core_id' : 'gamma_core'
 }"
 
-player_fleet_not_in_hyperspace,PlayerFleetInHyperspace,true,
+player_fleet_not_in_hyperspace,FleetInHyperspace,true,
+system_has_jump_points,SystemHasJumpPoints,false,
+target_planet_not_owned_by_player_or_neutral,TargetPlanetNotOwnedBy,false,"[ 'player', 'neutral' ]"
+target_planet_within_500_units,TargetPlanetWithinDistance,false,500
+target_planet_size_at_least_125_units,TargetPlanetIsAtLeastSize,false,125
+target_planet_too_close_to_orbit_focus,TargetPlanetOrbitFocusWithinDistance,true,900
+target_planet_too_close_to_star,TargetPlanetStarWithinDistance,true,1400
+target_planet_moon_too_close,TargetPlanetOrbitersWithinDistance,true,500
+target_planet_too_many_moons,TargetPlanetMoonCountLessThan,false,4
+target_planet_too_crowded,TargetPlanetOrbitersTooClose,false,400

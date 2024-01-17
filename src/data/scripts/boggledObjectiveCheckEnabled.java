@@ -1,6 +1,6 @@
 package data.scripts;
 
-import data.campaign.econ.boggledTools;
+import boggled.campaign.econ.boggledTools;
 import com.fs.starfarer.api.campaign.*;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import com.fs.starfarer.api.impl.campaign.rulecmd.BaseCommandPlugin;

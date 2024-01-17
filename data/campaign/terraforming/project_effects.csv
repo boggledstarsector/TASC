@@ -1,4 +1,4 @@
-id,,effect_type,data
+id,enable_settings,effect_type,data
 arid_type_change,,PlanetTypeChange,"desert"
 jungle_type_change,,PlanetTypeChange,"jungle"
 terran_type_change,,PlanetTypeChange,"terran"
@@ -74,7 +74,7 @@ focus_market_progress_ore_planet_cracker,,FocusMarketProgressResource,"{ 'resour
 focus_market_progress_rare_ore_planet_cracker,,FocusMarketProgressResource,"{ 'resource_id' : 'rare_ore', 'step' : 1 }"
 focus_market_progress_volatiles_ouyang_optimizer,,FocusMarketAndSiphonStationProgressResource,"{ 'resource_id' : 'volatiles', 'step' : 2 }"
 ,
-system_add_coronal_tap,,SystemAddCoronalTapFactory,"coronal_tap"
+system_add_coronal_tap,,SystemAddCoronalTap,"coronal_tap"
 market_remove_perihelion_project,,MarketRemoveIndustry,"BOGGLED_PERIHELION_PROJECT"
 ,
 add_corrupted_nanoforge_to_storage,,AddItemToSubmarket,"{ 'submarket_id' : 'storage', 'item_id' : 'corrupted_nanoforge', 'quantity' : 1 }"

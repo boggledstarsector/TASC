@@ -9,11 +9,10 @@ import com.fs.starfarer.api.input.InputEventAPI
 import com.fs.starfarer.api.ui.*
 import com.fs.starfarer.api.ui.TooltipMakerAPI.TooltipCreator
 import com.fs.starfarer.api.util.Misc
-import data.campaign.econ.boggledTools
-import data.campaign.econ.conditions.Terraforming_Controller
-import data.scripts.BoggledTerraformingProject
-import data.scripts.BoggledTerraformingRequirement
-import data.scripts.BoggledTerraformingRequirement.RequirementContext
+import boggled.campaign.econ.boggledTools
+import boggled.campaign.econ.conditions.Terraforming_Controller
+import boggled.scripts.BoggledTerraformingProject
+import boggled.scripts.BoggledTerraformingRequirement.RequirementContext
 import lunalib.lunaUI.elements.LunaElement
 import lunalib.lunaUI.elements.LunaSpriteElement
 import lunalib.lunaUI.panel.LunaBaseCustomPanelPlugin
@@ -110,16 +109,16 @@ class ProjectRequirementsTooltip(width : Float) : TooltipCreator {
     }
 
     override fun createTooltip(tooltip : TooltipMakerAPI, expanded : Boolean, tooltipParam : Any?) {
-        val ctx = BoggledTerraformingRequirement.RequirementContext(market!!)
+        val ctx = RequirementContext(market!!)
         tooltip.addPara("Project duration: %s days", 0f, Misc.getHighlightColor(), terraformingProject!!.getModifiedProjectDuration(ctx).toString());
 
         tooltip.addSpacer(5f);
 
         val tokenReplacements = boggledTools.getTokenReplacements(ctx)
         for (projectRequirement in terraformingProject!!.projectRequirements) {
-            val requirementMet = projectRequirement.checkRequirement(BoggledTerraformingRequirement.RequirementContext(market!!))
+            val requirementMet = projectRequirement.checkRequirement(ctx)
             val color = if (requirementMet) Misc.getPositiveHighlightColor() else Misc.getNegativeHighlightColor()
-            tooltip.addPara(projectRequirement.getTooltip(tokenReplacements), color, 0f)
+            tooltip.addPara(projectRequirement.getTooltip(ctx, tokenReplacements).text, color, 0f)
         }
 
         tooltip.addSpacer(5f);
@@ -425,14 +424,14 @@ class CommandUIIntelK : LunaBaseCustomPanelPlugin() {
                 return;
             }
             for (projectOption in projectOptions) {
-                if (projectOption.value.requirementsMet(BoggledTerraformingRequirement.RequirementContext(selectedPlanet!!.market))) {
+                if (projectOption.value.requirementsMet(RequirementContext(selectedPlanet!!.market))) {
                     validOptions.add(projectOption.value)
                 } else {
                     invalidOptions.add(projectOption.value)
                 }
             }
         }
-        val visibleProjects = boggledTools.getVisibleProjects(BoggledTerraformingRequirement.RequirementContext(selectedPlanet!!.market))
+        val visibleProjects = boggledTools.getVisibleProjects(RequirementContext(selectedPlanet!!.market))
 
         val validTerraformingOptions : ArrayList<BoggledTerraformingProject> = ArrayList()
         val invalidTerraformingOptions : ArrayList<BoggledTerraformingProject> = ArrayList()
@@ -457,7 +456,7 @@ class CommandUIIntelK : LunaBaseCustomPanelPlugin() {
             }
             return terraformingOptions.size + buttonsStart
         }
-        val ctx = BoggledTerraformingRequirement.RequirementContext(selectedPlanet!!.market)
+        val ctx = RequirementContext(selectedPlanet!!.market)
         val validTerraformingEnd = positionButtons(ctx, validTerraformingOptions, requirementsMetButtons, 0)
         val invalidTerraformingEnd = positionButtons(ctx, invalidTerraformingOptions, requirementsNotMetButtons, validTerraformingEnd)
 
@@ -502,7 +501,7 @@ class CommandUIIntelK : LunaBaseCustomPanelPlugin() {
 
     private fun handleTerraformingOptionButtonPress() {
         val terraformingProject = (selectedProject?.customData as ProjectRequirementsTooltip).terraformingProject!!
-        if (terraformingProject.requirementsMet(BoggledTerraformingRequirement.RequirementContext(selectedPlanet?.market))) {
+        if (terraformingProject.requirementsMet(RequirementContext(selectedPlanet?.market))) {
             moveButtonsOffscreen(startProjectButton!!.position::inTL, requirementsNotMetButton!!, inactiveStartProjectButton!!)
         } else {
             moveButtonsOffscreen(requirementsNotMetButton!!.position::inTL, startProjectButton!!, inactiveStartProjectButton!!)
