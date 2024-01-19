@@ -11,6 +11,7 @@ import com.fs.starfarer.api.util.Pair;
 import boggled.campaign.econ.boggledTools;
 import boggled.campaign.econ.industries.BoggledCommonIndustry;
 import boggled.campaign.econ.industries.BoggledIndustryInterface;
+import com.fs.starfarer.campaign.CampaignPlanet;
 
 import java.util.List;
 import java.util.Map;
@@ -36,13 +37,21 @@ public class BoggledTerraformingRequirement {
         }
 
         public RequirementContext(MarketAPI market) {
-            this.contextName = "Market " + market.getName();
             this.industry = null;
             this.industryInterface = null;
-            this.market = market;
-            this.planet = market.getPlanetEntity();
-            this.starSystem = this.planet.getStarSystem();
             this.fleet = Global.getSector().getPlayerFleet();
+
+            if (market == null) {
+                this.contextName = "Market null";
+                this.market = null;
+                this.planet = null;
+                this.starSystem = this.fleet.getStarSystem();
+            } else {
+                this.contextName = "Market " + market.getName();
+                this.market = market;
+                this.planet = market.getPlanetEntity();
+                this.starSystem = this.planet.getStarSystem();
+            }
         }
 
         public RequirementContext(CampaignFleetAPI fleet) {
@@ -380,6 +389,56 @@ public class BoggledTerraformingRequirement {
         }
     }
 
+    public static class FleetStorageContainsAtLeast extends TerraformingRequirement {
+        String cargoId;
+        int quantity;
+        protected FleetStorageContainsAtLeast(String requirementId, boolean invert, String cargoId, int quantity) {
+            super(requirementId, invert);
+            this.cargoId = cargoId;
+            this.quantity = quantity;
+        }
+
+        @Override
+        public void addTokenReplacements(RequirementContext ctx, Map<String, String> tokenReplacements) {
+            tokenReplacements.put("$commodityQuantity", String.format("%,d", quantity));
+            tokenReplacements.put("$CommodityName", Global.getSettings().getCommoditySpec(cargoId).getName());
+            tokenReplacements.put("$commodityName", Global.getSettings().getCommoditySpec(cargoId).getLowerCaseName());
+            tokenReplacements.put("$currentCommodityQuantity", String.format("%,d", (int)ctx.getFleet().getCargo().getCommodityQuantity(cargoId)));
+        }
+
+        @Override
+        protected boolean checkRequirementImpl(RequirementContext ctx) {
+            CampaignFleetAPI playerFleet = ctx.getFleet();
+            if (playerFleet == null) {
+                return false;
+            }
+            return playerFleet.getCargo().getCommodityQuantity(cargoId) > quantity;
+        }
+    }
+
+    public static class FleetContainsCreditsAtLeast extends TerraformingRequirement {
+        int quantity;
+        protected FleetContainsCreditsAtLeast(String requirementId, boolean invert, int quantity) {
+            super(requirementId, invert);
+            this.quantity = quantity;
+        }
+
+        @Override
+        public void addTokenReplacements(RequirementContext ctx, Map<String, String> tokenReplacements) {
+            tokenReplacements.put("$creditsQuantity", String.format("%,d", quantity));
+            tokenReplacements.put("$currentCreditsQuantity", String.format("%,d", (int)ctx.getFleet().getCargo().getCredits().get()));
+        }
+
+        @Override
+        protected boolean checkRequirementImpl(RequirementContext ctx) {
+            CampaignFleetAPI playerFleet = ctx.getFleet();
+            if (playerFleet == null) {
+                return false;
+            }
+            return playerFleet.getCargo().getCredits().get() > quantity;
+        }
+    }
+
     public static class PlayerHasStoryPointsAtLeast extends TerraformingRequirement {
         int quantity;
         public PlayerHasStoryPointsAtLeast(String requirementId, boolean invert, int quantity) {
@@ -557,8 +616,10 @@ public class BoggledTerraformingRequirement {
     }
 
     public static class SystemHasJumpPoints extends TerraformingRequirement {
-        protected SystemHasJumpPoints(String requirementId, boolean invert) {
+        int numJumpPoints;
+        protected SystemHasJumpPoints(String requirementId, boolean invert, int numJumpPoints) {
             super(requirementId, invert);
+            this.numJumpPoints = numJumpPoints;
         }
 
         @Override
@@ -566,7 +627,29 @@ public class BoggledTerraformingRequirement {
             if (ctx.getStarSystem() == null) {
                 return false;
             }
-            return !ctx.getStarSystem().getJumpPoints().isEmpty();
+            return ctx.getStarSystem().getJumpPoints().size() >= numJumpPoints;
+        }
+    }
+
+    public static class SystemHasPlanets extends TerraformingRequirement {
+        int numPlanets;
+        protected SystemHasPlanets(String requirementId, boolean invert, int numPlanets) {
+            super(requirementId, invert);
+            this.numPlanets = numPlanets;
+        }
+
+        @Override
+        protected boolean checkRequirementImpl(RequirementContext ctx) {
+            if (ctx.getStarSystem() == null) {
+                return false;
+            }
+            int planetCount = -1;
+            for (PlanetAPI planet : ctx.getStarSystem().getPlanets()) {
+                if (!planet.isStar()) {
+                    planetCount++;
+                }
+            }
+            return planetCount >= numPlanets;
         }
     }
 
@@ -595,6 +678,15 @@ public class BoggledTerraformingRequirement {
             }
 
             return true;
+        }
+
+        @Override
+        public void addTokenReplacements(RequirementContext ctx, Map<String, String> tokenReplacements) {
+            PlanetAPI targetPlanet = ctx.getPlanet();
+            if (targetPlanet == null) {
+                return;
+            }
+            tokenReplacements.put("$factionName", targetPlanet.getFaction().getDisplayNameWithArticle());
         }
     }
 
@@ -645,6 +737,10 @@ public class BoggledTerraformingRequirement {
 
         @Override
         public void addTokenReplacements(RequirementContext ctx, Map<String, String> tokenReplacements) {
+            PlanetAPI targetPlanet = ctx.getPlanet();
+            if (targetPlanet == null) {
+                return;
+            }
             float distanceInSu = (Misc.getDistance(ctx.getFleet(), ctx.getPlanet()) - ctx.getPlanet().getRadius()) / 2000f;
             float requiredDistanceInSu = distance / 2000f;
             tokenReplacements.put("$planetName", ctx.getPlanet().getName());

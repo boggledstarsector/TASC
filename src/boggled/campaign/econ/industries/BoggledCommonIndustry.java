@@ -3,6 +3,7 @@ package boggled.campaign.econ.industries;
 import boggled.scripts.*;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CargoAPI;
+import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.campaign.econ.CommoditySpecAPI;
 import com.fs.starfarer.api.campaign.econ.Industry;
 import com.fs.starfarer.api.campaign.econ.MarketAPI;
@@ -261,6 +262,13 @@ public class BoggledCommonIndustry {
     }
 
     public static MarketAPI getFocusMarketOrMarket(MarketAPI market) {
+        if (market == null) {
+            return null;
+        }
+        SectorEntityToken focus = market.getPrimaryEntity().getOrbitFocus();
+        if (focus == null) {
+            return null;
+        }
         MarketAPI ret = market.getPrimaryEntity().getOrbitFocus().getMarket();
         if (ret == null) {
             return market;
@@ -593,8 +601,6 @@ public class BoggledCommonIndustry {
         BoggledIndustryEffect.IndustryEffect.DescriptionMode descMode = BoggledIndustryEffect.IndustryEffect.DescriptionMode.TO_APPLY;
         if (mode == Industry.AICoreDescriptionMode.MANAGE_CORE_DIALOG_LIST || mode == Industry.AICoreDescriptionMode.INDUSTRY_TOOLTIP) {
             prefix = coreType + "-level AI core. ";
-        } else {
-
         }
 
         StringBuilder builder = new StringBuilder(prefix);

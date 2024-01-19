@@ -93,11 +93,6 @@ market_ruins_widespread,MarketHasCondition,false,"ruins_widespread"
 market_ruins_extensive,MarketHasCondition,false,"ruins_extensive"
 market_ruins_vast,MarketHasCondition,false,"ruins_vast"
 
-planet_not_has_large_water_present,PlanetWaterLevel,true,"{
-	'min_water_level' : 2,
-	'max_water_level' : 2
-}"
-
 market_has_moderate_water_present,MarketHasWaterPresent,false,"{
 	'min_water_level' : 1,
 	'max_water_level' : 2
@@ -110,6 +105,7 @@ market_has_large_water_present,MarketHasWaterPresent,false,"{
 market_has_atmosphere_processor,MarketHasIndustry,false,"BOGGLED_ATMOSPHERE_PROCESSOR"
 market_has_genelab,MarketHasIndustry,false,"BOGGLED_GENELAB"
 market_has_domed_cities,MarketHasIndustry,false,"BOGGLED_DOMED_CITIES"
+market_has_seafloor_cities,MarketHasIndustry,false,"BOGGLED_SEAFLOOR_CITIES"
 
 market_has_heavy_industry_with_corrupted_nanoforge,MarketHasIndustryWithItem,false,"{
 	'industry_id' : 'heavyindustry',
@@ -192,6 +188,7 @@ kletka_simulator_has_gamma_core,MarketHasIndustryWithAICore,false,"{
 
 player_fleet_not_in_hyperspace,FleetInHyperspace,true,
 system_has_jump_points,SystemHasJumpPoints,false,
+system_has_planets,SystemHasPlanets,false,
 target_planet_not_owned_by_player_or_neutral,TargetPlanetNotOwnedBy,false,"[ 'player', 'neutral' ]"
 target_planet_within_500_units,TargetPlanetWithinDistance,false,500
 target_planet_size_at_least_125_units,TargetPlanetIsAtLeastSize,false,125
@@ -200,3 +197,21 @@ target_planet_too_close_to_star,TargetPlanetStarWithinDistance,true,1400
 target_planet_moon_too_close,TargetPlanetOrbitersWithinDistance,true,500
 target_planet_too_many_moons,TargetPlanetMoonCountLessThan,false,4
 target_planet_too_crowded,TargetPlanetOrbitersTooClose,false,400
+
+astropolis_fleet_contains_credits,FleetContainsCreditsAtLeast,false,"{ 'quantity' : 500000 }"
+astropolis_fleet_contains_crew,FleetStorageContainsAtLeast,false,"{
+	'commodity_id' : 'crew',
+	'quantity' : 1000
+}"
+astropolis_fleet_contains_heavy_machinery,FleetStorageContainsAtLeast,false,"{
+	'commodity_id' : 'heavy_machinery',
+	'quantity' : 250
+}"
+astropolis_fleet_contains_metals,FleetStorageContainsAtLeast,false,"{
+	'commodity_id' : 'metals',
+	'quantity' : 1000
+}"
+astropolis_fleet_contains_transplutonics,FleetStorageContainsAtLeast,false,"{
+	'commodity_id' : 'rare_metals',
+	'quantity' : 250
+}"

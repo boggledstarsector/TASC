@@ -1,6 +1,6 @@
 package boggled.scripts;
 
-import boggled.campaign.econ.industries.BoggledCommonIndustry;
+import boggled.scripts.PlayerCargoCalculations.bogglesDefaultCargo;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.*;
 import com.fs.starfarer.api.campaign.econ.MarketAPI;
@@ -16,11 +16,32 @@ import com.fs.starfarer.api.util.Misc;
 import com.fs.starfarer.api.util.WeightedRandomPicker;
 import boggled.campaign.econ.boggledTools;
 
-import java.awt.*;
-import java.util.ArrayList;
-import java.util.Map;
+import java.util.*;
+import java.util.List;
 
 public class BoggledTerraformingProjectEffect {
+    public static class ProjectEffectWithRequirement {
+        public TerraformingProjectEffect effect;
+        public BoggledProjectRequirementsAND requirement;
+
+        public ProjectEffectWithRequirement(TerraformingProjectEffect effect, BoggledProjectRequirementsAND requirement) {
+            this.effect = effect;
+            this.requirement = requirement;
+        }
+    }
+
+    public static class EffectTooltipPara {
+        public String prefix;
+        public String suffix;
+        public Set<String> infix = new LinkedHashSet<>();
+        public List<String> highlights = new ArrayList<>();
+
+        public EffectTooltipPara(String prefix, String suffix) {
+            this.prefix = prefix;
+            this.suffix = suffix;
+        }
+    }
+
     public abstract static class TerraformingProjectEffect {
         String id;
         String[] enableSettings;
@@ -29,31 +50,31 @@ public class BoggledTerraformingProjectEffect {
             this.enableSettings = enableSettings;
         }
 
+        public boolean isEnabled() { return boggledTools.optionsAllowThis(enableSettings); }
+
         protected abstract void applyProjectEffectImpl(BoggledTerraformingRequirement.RequirementContext ctx);
         protected void unapplyProjectEffectImpl(BoggledTerraformingRequirement.RequirementContext ctx) {}
 
-        protected BoggledCommonIndustry.TooltipData getTooltipImpl(BoggledTerraformingRequirement.RequirementContext ctx, Map<String, String> tokenReplacements) {
-            return new BoggledCommonIndustry.TooltipData("");
-        }
+        protected void addTooltipInfoImpl(BoggledTerraformingRequirement.RequirementContext ctx, Map<String, EffectTooltipPara> effectTypeToPara) {}
 
         public void addTokenReplacements(Map<String, String> tokenReplacements) {}
 
-        public final BoggledCommonIndustry.TooltipData getTooltip(BoggledTerraformingRequirement.RequirementContext ctx, Map<String, String> tokenReplacements) {
-            if (!boggledTools.optionsAllowThis(enableSettings)) {
-                return new BoggledCommonIndustry.TooltipData("");
+        public final void addEffectTooltipInfo(BoggledTerraformingRequirement.RequirementContext ctx, Map<String, EffectTooltipPara> effectTypeToPara) {
+            if (!isEnabled()) {
+                return;
             }
-            return getTooltipImpl(ctx, tokenReplacements);
+            addTooltipInfoImpl(ctx, effectTypeToPara);
         }
 
         public final void applyProjectEffect(BoggledTerraformingRequirement.RequirementContext ctx) {
-            if (!boggledTools.optionsAllowThis(enableSettings)) {
+            if (!isEnabled()) {
                 return;
             }
             applyProjectEffectImpl(ctx);
         }
 
         public final void unapplyProjectEffect(BoggledTerraformingRequirement.RequirementContext ctx) {
-            if (!boggledTools.optionsAllowThis(enableSettings)) {
+            if (!isEnabled()) {
                 return;
             }
             unapplyProjectEffectImpl(ctx);
@@ -299,11 +320,11 @@ public class BoggledTerraformingProjectEffect {
         }
     }
 
-    public static class RemoveItemFromSubmarket extends TerraformingProjectEffect {
+    public static class RemoveCommodityFromSubmarket extends TerraformingProjectEffect {
         String submarketId;
         String itemId;
         int quantity;
-        public RemoveItemFromSubmarket(String id, String[] enableSettings, String submarketId, String itemId, int quantity) {
+        public RemoveCommodityFromSubmarket(String id, String[] enableSettings, String submarketId, String itemId, int quantity) {
             super(id, enableSettings);
             this.submarketId = submarketId;
             this.itemId = itemId;
@@ -326,6 +347,69 @@ public class BoggledTerraformingProjectEffect {
         @Override
         protected void applyProjectEffectImpl(BoggledTerraformingRequirement.RequirementContext ctx) {
             Global.getSector().getPlayerStats().spendStoryPoints(quantity, false, null, false, null);
+        }
+    }
+
+    public static class RemoveCommodityFromFleetStorage extends TerraformingProjectEffect {
+        String commodityId;
+        int quantity;
+        protected RemoveCommodityFromFleetStorage(String id, String[] enableSettings, String commodityId, int quantity) {
+            super(id, enableSettings);
+            this.commodityId = commodityId;
+            this.quantity = quantity;
+        }
+
+        @Override
+        protected void applyProjectEffectImpl(BoggledTerraformingRequirement.RequirementContext ctx) {
+            bogglesDefaultCargo.active.removeCommodity("station_type", commodityId, quantity);
+        }
+
+        @Override
+        public void addTokenReplacements(Map<String, String> tokenReplacements) {
+            tokenReplacements.put("$commodityName", Global.getSettings().getCommoditySpec(commodityId).getLowerCaseName());
+            tokenReplacements.put("$CommodityName", Global.getSettings().getCommoditySpec(commodityId).getName());
+            tokenReplacements.put("$commodityQuantity", Integer.toString(quantity));
+        }
+
+        @Override
+        public void addTooltipInfoImpl(BoggledTerraformingRequirement.RequirementContext ctx, Map<String, EffectTooltipPara> effectTypeToPara) {
+            if (!effectTypeToPara.containsKey("CommodityCost")) {
+                effectTypeToPara.put("CommodityCost", new EffectTooltipPara("Expends ", "."));
+            }
+            EffectTooltipPara para = effectTypeToPara.get("CommodityCost");
+            String commodityString = Global.getSettings().getCommoditySpec(commodityId).getLowerCaseName();
+            String quantityString = String.format("%,d", quantity);
+            para.infix.add(quantityString + " " + commodityString);
+            para.highlights.add(quantityString);
+        }
+    }
+
+    public static class RemoveCreditsFromFleet extends TerraformingProjectEffect {
+        int quantity;
+        protected RemoveCreditsFromFleet(String id, String[] enableSettings, int quantity) {
+            super(id, enableSettings);
+            this.quantity = quantity;
+        }
+
+        @Override
+        protected void applyProjectEffectImpl(BoggledTerraformingRequirement.RequirementContext ctx) {
+            ctx.getFleet().getCargo().getCredits().subtract(quantity);
+        }
+
+        @Override
+        public void addTokenReplacements(Map<String, String> tokenReplacements) {
+            tokenReplacements.put("$creditsQuantity", Integer.toString(quantity));
+        }
+
+        @Override
+        public void addTooltipInfoImpl(BoggledTerraformingRequirement.RequirementContext ctx, Map<String, EffectTooltipPara> effectTypeToPara) {
+            if (!effectTypeToPara.containsKey("CommodityCost")) {
+                effectTypeToPara.put("CommodityCost", new EffectTooltipPara("Expends ", "."));
+            }
+            EffectTooltipPara para = effectTypeToPara.get("CommodityCost");
+            String quantityString = String.format("%,d", quantity);
+            para.infix.add(quantityString + " credits");
+            para.highlights.add(quantityString);
         }
     }
 
@@ -367,20 +451,21 @@ public class BoggledTerraformingProjectEffect {
         }
 
         @Override
-        protected BoggledCommonIndustry.TooltipData getTooltipImpl(BoggledTerraformingRequirement.RequirementContext ctx, Map<String, String> tokenReplacements) {
+        public void addTooltipInfoImpl(BoggledTerraformingRequirement.RequirementContext ctx, Map<String, EffectTooltipPara> effectTypeToPara) {
             PlanetAPI targetPlanet = ctx.getPlanet();
             if (targetPlanet == null) {
-                return new BoggledCommonIndustry.TooltipData("");
+                return;
             }
-            String text = "Target host world: " + targetPlanet.getName();
-            Color highlightColor = Misc.getHighlightColor();
-            String highlight = targetPlanet.getName();
-            return new BoggledCommonIndustry.TooltipData(text, highlightColor, highlight);
+            if (!effectTypeToPara.containsKey("StationConstructionTarget")) {
+                effectTypeToPara.put("StationConstructionTarget", new EffectTooltipPara("Target host world: ", "."));
+            }
+            EffectTooltipPara para = effectTypeToPara.get("StationConstructionTarget");
+            para.infix.add(targetPlanet.getName());
+            para.highlights.add(targetPlanet.getName());
         }
 
         @Override
         protected void applyProjectEffectImpl(BoggledTerraformingRequirement.RequirementContext ctx) {
-
         }
     }
 }

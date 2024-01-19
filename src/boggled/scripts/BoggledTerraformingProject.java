@@ -1,11 +1,11 @@
 package boggled.scripts;
 
-import boggled.campaign.econ.industries.BoggledCommonIndustry;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CampaignClockAPI;
 import boggled.campaign.econ.boggledTools;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -72,7 +72,7 @@ public class BoggledTerraformingProject {
     private final String intelCompleteMessage;
 
     private final String incompleteMessage;
-    private final ArrayList<String> incompleteMessageHighlights;
+    private final List<String> incompleteMessageHighlights;
     // Multiple separate TerraformingRequirements form an AND'd collection
     // Each individual requirement inside the TerraformingRequirements forms an OR'd collection
     // ie If any of the conditions inside a TerraformingRequirements is fulfilled, that entire requirement is filled
@@ -88,9 +88,9 @@ public class BoggledTerraformingProject {
     private final List<BoggledProjectRequirementsAND> requirementsStall;
     private final List<BoggledProjectRequirementsAND> requirementsReset;
 
-    private final List<BoggledTerraformingProjectEffect.TerraformingProjectEffect> projectEffects;
+    private final List<BoggledTerraformingProjectEffect.ProjectEffectWithRequirement> projectEffects;
 
-    public BoggledTerraformingProject(String projectId, String[] enableSettings, String projectType, String projectTooltip, String intelCompleteMessage, String incompleteMessage, ArrayList<String> incompleteMessageHighlights, BoggledProjectRequirementsAND projectRequirements, BoggledProjectRequirementsAND projectRequirementsHidden, int baseProjectDuration, List<BoggledTerraformingDurationModifier.TerraformingDurationModifier> durationModifiers, List<BoggledProjectRequirementsAND> requirementsStall, List<BoggledProjectRequirementsAND> requirementsReset, List<BoggledTerraformingProjectEffect.TerraformingProjectEffect> projectEffects) {
+    public BoggledTerraformingProject(String projectId, String[] enableSettings, String projectType, String projectTooltip, String intelCompleteMessage, String incompleteMessage, List<String> incompleteMessageHighlights, BoggledProjectRequirementsAND projectRequirements, BoggledProjectRequirementsAND projectRequirementsHidden, int baseProjectDuration, List<BoggledTerraformingDurationModifier.TerraformingDurationModifier> durationModifiers, List<BoggledProjectRequirementsAND> requirementsStall, List<BoggledProjectRequirementsAND> requirementsReset, List<BoggledTerraformingProjectEffect.ProjectEffectWithRequirement> projectEffects) {
         this.projectId = projectId;
         this.enableSettings = enableSettings;
         this.projectType = projectType;
@@ -121,20 +121,16 @@ public class BoggledTerraformingProject {
     public String getProjectType() { return projectType; }
 
     public String getProjectTooltip(Map<String, String> tokenReplacements) {
-        for (BoggledTerraformingProjectEffect.TerraformingProjectEffect projectEffect : projectEffects) {
-            projectEffect.addTokenReplacements(tokenReplacements);
+        for (BoggledTerraformingProjectEffect.ProjectEffectWithRequirement projectEffect : projectEffects) {
+            projectEffect.effect.addTokenReplacements(tokenReplacements);
         }
         return boggledTools.doTokenReplacement(projectTooltip, tokenReplacements);
     }
 
-    public List<BoggledCommonIndustry.TooltipData> getEffectTooltip(BoggledTerraformingRequirement.RequirementContext ctx, Map<String, String> tokenReplacements) {
-        List<BoggledCommonIndustry.TooltipData> ret = new ArrayList<>();
-        for (BoggledTerraformingProjectEffect.TerraformingProjectEffect effect : projectEffects) {
-            BoggledCommonIndustry.TooltipData tt = effect.getTooltip(ctx, tokenReplacements);
-            if (tt.text.isEmpty()) {
-                continue;
-            }
-            ret.add(tt);
+    public Map<String, BoggledTerraformingProjectEffect.EffectTooltipPara> addEffectTooltipInfo(BoggledTerraformingRequirement.RequirementContext ctx) {
+        Map<String, BoggledTerraformingProjectEffect.EffectTooltipPara> ret = new LinkedHashMap<>();
+        for (BoggledTerraformingProjectEffect.ProjectEffectWithRequirement effect : projectEffects) {
+            effect.effect.addEffectTooltipInfo(ctx, ret);
         }
         return ret;
     }
@@ -197,8 +193,8 @@ public class BoggledTerraformingProject {
     }
 
     public void finishProject(BoggledTerraformingRequirement.RequirementContext ctx) {
-        for (BoggledTerraformingProjectEffect.TerraformingProjectEffect effect : projectEffects) {
-            effect.applyProjectEffectImpl(ctx);
+        for (BoggledTerraformingProjectEffect.ProjectEffectWithRequirement effect : projectEffects) {
+            effect.effect.applyProjectEffectImpl(ctx);
         }
 
         String intelTooltip = getProjectTooltip(boggledTools.getTokenReplacements(ctx));

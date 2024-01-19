@@ -825,8 +825,9 @@ public class BoggledIndustryEffect {
                 return;
             }
             List<String> reqList = new ArrayList<>();
-            for (BoggledProjectRequirementsAND.RequirementWithTooltipOverride req : requirements) {
-                reqList.add(req.getTooltip(ctx, new HashMap<String, String>()).text);
+            List<BoggledCommonIndustry.TooltipData> tooltips = requirements.getTooltip(ctx, new HashMap<String, String>());
+            for (BoggledCommonIndustry.TooltipData tooltip : tooltips) {
+                reqList.add(tooltip.text);
             }
             String reqs = Misc.getAndJoined(reqList);
             for (IndustryEffect effect : effects) {
@@ -1010,6 +1011,8 @@ public class BoggledIndustryEffect {
             String text = "Base " + chanceOrChances + " of producing items:";
             ret.add(new BoggledCommonIndustry.TooltipData(text));
 
+            Map<String, String> tokenReplacements = new HashMap<>();
+
             for (BoggledCommonIndustry.ProductionData datum : data) {
                 String chance = datum.chance.getModifiedInt() + "%";
                 List<Color> highlightColors = new ArrayList<>(Collections.singletonList(Misc.getHighlightColor()));
@@ -1018,8 +1021,10 @@ public class BoggledIndustryEffect {
 
                 StringBuilder itemText = new StringBuilder(Global.getSettings().getCommoditySpec(datum.commodityId).getName() + ": " + chance);
 
-                for (BoggledProjectRequirementsAND.RequirementWithTooltipOverride tooltip : datum.requirements) {
-                    String tooltipText = Misc.lcFirst(tooltip.getTooltip().text);
+                List<BoggledCommonIndustry.TooltipData> tooltips = datum.requirements.getTooltip(ctx, tokenReplacements);
+                for (BoggledCommonIndustry.TooltipData tooltip : tooltips) {
+//                for (BoggledProjectRequirementsAND.RequirementAndThen tooltip : datum.requirements) {
+                    String tooltipText = Misc.lcFirst(tooltip.text);
                     itemText.append(", ").append(tooltipText);
                     highlightColors.add(Misc.getNegativeHighlightColor());
                     highlights.add(tooltipText);

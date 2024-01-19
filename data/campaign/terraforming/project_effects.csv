@@ -73,10 +73,10 @@ focus_market_add_tectonic_activity,,FocusMarketAddCondition,"tectonic_activity"
 focus_market_progress_ore_planet_cracker,,FocusMarketProgressResource,"{ 'resource_id' : 'ore', 'step' : 1 }"
 focus_market_progress_rare_ore_planet_cracker,,FocusMarketProgressResource,"{ 'resource_id' : 'rare_ore', 'step' : 1 }"
 focus_market_progress_volatiles_ouyang_optimizer,,FocusMarketAndSiphonStationProgressResource,"{ 'resource_id' : 'volatiles', 'step' : 2 }"
-,
+,,
 system_add_coronal_tap,,SystemAddCoronalTap,"coronal_tap"
 market_remove_perihelion_project,,MarketRemoveIndustry,"BOGGLED_PERIHELION_PROJECT"
-,
+,,
 add_corrupted_nanoforge_to_storage,,AddItemToSubmarket,"{ 'submarket_id' : 'storage', 'item_id' : 'corrupted_nanoforge', 'quantity' : 1 }"
 add_pristine_nanoforge_to_storage,,AddItemToSubmarket,"{ 'submarket_id' : 'storage', 'item_id' : 'pristine_nanoforge', 'quantity' : 1 }"
 add_synchrotron_core_to_storage,,AddItemToSubmarket,"{ 'submarket_id' : 'storage', 'item_id' : 'synchrotron', 'quantity' : 1 }"
@@ -92,12 +92,17 @@ add_catalytic_core_to_storage,,AddItemToSubmarket,"{ 'submarket_id' : 'storage',
 add_drone_replicator_to_storage,,AddItemToSubmarket,"{ 'submarket_id' : 'storage', 'item_id' : 'drone_replicator', 'quantity' : 1 }"
 add_biofactory_embryo_to_storage,,AddItemToSubmarket,"{ 'submarket_id' : 'storage', 'item_id' : 'biofactory_embryo', 'quantity' : 1 }"
 add_dealmaker_holosuite_to_storage,,AddItemToSubmarket,"{ 'submarket_id' : 'storage', 'item_id' : 'dealmaker_holosuite', 'quantity' : 1 }"
-,
-remove_2_story_points_from_player,,RemoveStoryPointsFromPlayer,2
-,
+,,
+remove_2_story_points_from_player,,RemoveStoryPointsFromPlayer,"{ 'quantity' : 2 }"
+,,
 remove_domain_artifacts_easy_from_storage,,RemoveCommodityFromSubmarket,"{ 'submarket_id' : 'storage', 'commodity_id' : 'domain_artifacts', 'quantity' : 1000 }"
 remove_domain_artifacts_medium_from_storage,,RemoveCommodityFromSubmarket,"{ 'submarket_id' : 'storage', 'commodity_id' : 'domain_artifacts', 'quantity' : 2000 }"
 remove_domain_artifacts_hard_from_storage,,RemoveCommodityFromSubmarket,"{ 'submarket_id' : 'storage', 'commodity_id' : 'domain_artifacts', 'quantity' : 4000 }"
-,
+,,
+astropolis_station_remove_crew_from_fleet,,RemoveCommodityFromFleetStorage,"{ 'commodity_id' : 'crew', 'quantity' : 1000 }"
+astropolis_station_remove_heavy_machinery_from_fleet,,RemoveCommodityFromFleetStorage,"{ 'commodity_id' : 'heavy_machinery', 'quantity' : 250 }"
+astropolis_station_remove_metals_from_fleet,,RemoveCommodityFromFleetStorage,"{ 'commodity_id' : 'metals', 'quantity' : 1000 }"
+astropolis_station_remove_transplutonics_from_fleet,,RemoveCommodityFromFleetStorage,"{ 'commodity_id' : 'rare_metals', 'quantity' : 250 }"
+astropolis_station_remove_credits_from_fleet,,RemoveCreditsFromFleet,"{ 'quantity' : 500000 }"
 add_astropolis_station_to_orbit,,AddStationToOrbit,"{ 'station_type' : 'astropolis' }"
-,
+,,

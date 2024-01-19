@@ -1,6 +1,5 @@
 package boggled.scripts;
 
-import boggled.campaign.econ.boggledTools;
 import boggled.campaign.econ.industries.BoggledCommonIndustry;
 import org.jetbrains.annotations.NotNull;
 
@@ -9,62 +8,81 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-public class BoggledProjectRequirementsAND implements Iterable<BoggledProjectRequirementsAND.RequirementWithTooltipOverride> {
-    public static class RequirementWithTooltipOverride {
-        private final BoggledProjectRequirementsOR requirements;
-        private final BoggledCommonIndustry.TooltipData tooltipOverride;
+import static java.util.Arrays.asList;
 
-        public RequirementWithTooltipOverride(BoggledProjectRequirementsOR requirements, BoggledCommonIndustry.TooltipData tooltipOverride) {
-            this.requirements = requirements;
-            this.tooltipOverride = tooltipOverride;
+public class BoggledProjectRequirementsAND implements Iterable<BoggledProjectRequirementsAND.RequirementAndThen> {
+    public static class RequirementAndThen {
+        BoggledProjectRequirementsOR requirement;
+        BoggledProjectRequirementsAND andThen;
+
+        public RequirementAndThen(BoggledProjectRequirementsOR requirement, BoggledProjectRequirementsAND andThen) {
+            this.requirement = requirement;
+            this.andThen = andThen;
+        }
+
+        public boolean checkRequirementDontCascade(BoggledTerraformingRequirement.RequirementContext ctx) {
+            return requirement.checkRequirement(ctx);
         }
 
         public boolean checkRequirement(BoggledTerraformingRequirement.RequirementContext ctx) {
-            return requirements.checkRequirement(ctx);
+            if (!checkRequirementDontCascade(ctx)) {
+                return false;
+            }
+            if (andThen != null) {
+                return andThen.requirementsMet(ctx);
+            }
+            return true;
         }
 
-        public BoggledCommonIndustry.TooltipData getTooltip() {
-            BoggledCommonIndustry.TooltipData ret;
-            if (tooltipOverride.text.isEmpty()) {
-                ret = requirements.getTooltip();
-            } else {
-                ret = tooltipOverride;
+        public List<BoggledCommonIndustry.TooltipData> getTooltip(BoggledTerraformingRequirement.RequirementContext ctx, Map<String, String> tokenReplacements) {
+            requirement.addTokenReplacements(ctx, tokenReplacements);
+            if (checkRequirementDontCascade(ctx) && andThen != null) {
+                return andThen.getTooltip(ctx, tokenReplacements);
             }
-            return ret;
-        }
-
-        public BoggledCommonIndustry.TooltipData getTooltip(BoggledTerraformingRequirement.RequirementContext ctx, Map<String, String> tokenReplacements) {
-            BoggledCommonIndustry.TooltipData ret = getTooltip();
-            requirements.addTokenReplacements(ctx, tokenReplacements);
-            String newText = boggledTools.doTokenReplacement(ret.text, tokenReplacements);
-            List<String> newHighlightText = new ArrayList<>();
-            for (String highlight : ret.highlights) {
-                newHighlightText.add(boggledTools.doTokenReplacement(highlight, tokenReplacements));
-            }
-            ret = new BoggledCommonIndustry.TooltipData(newText, ret.highlightColors, newHighlightText);
-            return ret;
+            return new ArrayList<>(asList(requirement.getTooltip(ctx, tokenReplacements)));
         }
     }
+    private final List<RequirementAndThen> requirements;
 
-    private final List<RequirementWithTooltipOverride> requirementsOR;
-
-    public BoggledProjectRequirementsAND(List<RequirementWithTooltipOverride> requirementsOR) {
-        this.requirementsOR = requirementsOR;
+    public BoggledProjectRequirementsAND() {
+        this.requirements = new ArrayList<>();
     }
+
+    public BoggledProjectRequirementsAND(List<RequirementAndThen> requirements) {
+        this.requirements = requirements;
+    }
+
+    public int size() { return requirements.size(); }
 
     @NotNull
     @Override
-    public Iterator<RequirementWithTooltipOverride> iterator() {
-        return requirementsOR.iterator();
+    public Iterator<RequirementAndThen> iterator() {
+        return requirements.iterator();
     }
 
-    public boolean add(RequirementWithTooltipOverride req) {
-        return requirementsOR.add(req);
+    public List<BoggledCommonIndustry.TooltipData> getTooltip(BoggledTerraformingRequirement.RequirementContext ctx, Map<String, String> tokenReplacements) {
+        List<BoggledCommonIndustry.TooltipData> ret = new ArrayList<>();
+        for (RequirementAndThen req : requirements) {
+            ret.addAll(req.getTooltip(ctx, tokenReplacements));
+        }
+        return ret;
+    }
+
+    public boolean requirementsMetDontCascade(BoggledTerraformingRequirement.RequirementContext ctx) {
+        for (RequirementAndThen req : requirements) {
+            if (!req.requirement.checkRequirement(ctx)) {
+                return false;
+            }
+        }
+        return true;
     }
 
     public boolean requirementsMet(BoggledTerraformingRequirement.RequirementContext ctx) {
-        for (BoggledProjectRequirementsAND.RequirementWithTooltipOverride req : requirementsOR) {
-            if (!req.checkRequirement(ctx)) {
+        for (RequirementAndThen req : requirements) {
+            if (!req.requirement.checkRequirement(ctx)) {
+                return false;
+            }
+            if (req.andThen != null && !req.andThen.requirementsMet(ctx)) {
                 return false;
             }
         }

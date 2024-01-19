@@ -161,6 +161,25 @@ public class BoggledTerraformingRequirementFactory {
         }
     }
 
+    public static class FleetStorageContainsAtLeast implements TerraformingRequirementFactory {
+        @Override
+        public BoggledTerraformingRequirement.TerraformingRequirement constructFromJSON(String requirementId, boolean invert, String data) throws JSONException {
+            JSONObject jsonData = new JSONObject(data);
+            String commodityId = jsonData.getString("commodity_id");
+            int quantity = jsonData.getInt("quantity");
+            return new BoggledTerraformingRequirement.FleetStorageContainsAtLeast(requirementId, invert, commodityId, quantity);
+        }
+    }
+
+    public static class FleetContainsCreditsAtLeast implements TerraformingRequirementFactory {
+        @Override
+        public BoggledTerraformingRequirement.TerraformingRequirement constructFromJSON(String requirementId, boolean invert, String data) throws JSONException {
+            JSONObject jsonData = new JSONObject(data);
+            int quantity = jsonData.getInt("quantity");
+            return new BoggledTerraformingRequirement.FleetContainsCreditsAtLeast(requirementId, invert, quantity);
+        }
+    }
+
     public static class PlayerHasStoryPointsAtLeast implements TerraformingRequirementFactory {
         @Override
         public BoggledTerraformingRequirement.TerraformingRequirement constructFromJSON(String requirementId, boolean invert, String data) {
@@ -224,7 +243,22 @@ public class BoggledTerraformingRequirementFactory {
     public static class SystemHasJumpPoints implements TerraformingRequirementFactory {
         @Override
         public BoggledTerraformingRequirement.TerraformingRequirement constructFromJSON(String requirementId, boolean invert, String data) throws JSONException {
-            return new BoggledTerraformingRequirement.SystemHasJumpPoints(requirementId, invert);
+            int numJumpPoints = 1;
+            if (!data.isEmpty()) {
+                numJumpPoints = Integer.parseInt(data);
+            }
+            return new BoggledTerraformingRequirement.SystemHasJumpPoints(requirementId, invert, numJumpPoints);
+        }
+    }
+
+    public static class SystemHasPlanets implements TerraformingRequirementFactory {
+        @Override
+        public BoggledTerraformingRequirement.TerraformingRequirement constructFromJSON(String requirementId, boolean invert, String data) throws JSONException {
+            int numPlanets = 0;
+            if (!data.isEmpty()) {
+                numPlanets = Integer.parseInt(data);
+            }
+            return new BoggledTerraformingRequirement.SystemHasPlanets(requirementId, invert, numPlanets);
         }
     }
 

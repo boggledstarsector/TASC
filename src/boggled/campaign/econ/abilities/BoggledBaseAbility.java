@@ -1,9 +1,7 @@
 package boggled.campaign.econ.abilities;
 
 import boggled.campaign.econ.industries.BoggledCommonIndustry;
-import boggled.scripts.BoggledProjectRequirementsAND;
-import boggled.scripts.BoggledTerraformingProject;
-import boggled.scripts.BoggledTerraformingRequirement;
+import boggled.scripts.*;
 import boggled.scripts.PlayerCargoCalculations.bogglesDefaultCargo;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
@@ -13,10 +11,8 @@ import com.fs.starfarer.api.impl.campaign.abilities.BaseDurationAbility;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
 import boggled.campaign.econ.boggledTools;
-import boggled.scripts.BoggledUnderConstructionEveryFrameScript;
 import org.jetbrains.annotations.NotNull;
 
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -372,24 +368,41 @@ public class BoggledBaseAbility extends BaseDurationAbility {
     @Override
     public void createTooltip(TooltipMakerAPI tooltip, boolean expanded) {
         super.createTooltip(tooltip, expanded);
+        float pad = 4f;
+        float space = 10f;
 
         Map<String, String> tokenReplacements = boggledTools.getTokenReplacements(ctx);
         String projectTooltip = project.getProjectTooltip(tokenReplacements);
 
         tooltip.addTitle(getSpec().getName());
-        tooltip.addPara(projectTooltip, 10f);
+        tooltip.addPara(projectTooltip, pad);
 
-        List<BoggledCommonIndustry.TooltipData> effectTooltip = project.getEffectTooltip(ctx, tokenReplacements);
-        for (BoggledCommonIndustry.TooltipData tt : effectTooltip) {
-            tooltip.addPara(tt.text, 10f, tt.highlightColors.toArray(new Color[0]), tt.highlights.toArray(new String[0]));
+        Map<String, BoggledTerraformingProjectEffect.EffectTooltipPara> effectTypeToPara = project.addEffectTooltipInfo(ctx);
+        for (Map.Entry<String, BoggledTerraformingProjectEffect.EffectTooltipPara> entry : effectTypeToPara.entrySet()) {
+            String infixAnd = Misc.getAndJoined(entry.getValue().infix.toArray(new String[0]));
+            tooltip.addPara(entry.getValue().prefix + infixAnd + entry.getValue().suffix, pad, Misc.getHighlightColor(), entry.getValue().highlights.toArray(new String[0]));
         }
 
-        for (BoggledProjectRequirementsAND.RequirementWithTooltipOverride req : project.getProjectRequirements()) {
-            BoggledCommonIndustry.TooltipData tt = req.getTooltip(ctx, tokenReplacements);
-            if (!tt.text.isEmpty()) {
-                if (!req.checkRequirement(ctx)) {
-                    tooltip.addPara(tt.text, Misc.getNegativeHighlightColor(), 10f);
+        boolean first = true;
+        for (BoggledProjectRequirementsAND.RequirementAndThen req : project.getProjectRequirements()) {
+            if (req.checkRequirement(ctx)) {
+                continue;
+            }
+
+            List<BoggledCommonIndustry.TooltipData> tooltips = req.getTooltip(ctx, tokenReplacements);
+            if (tooltips.isEmpty()) {
+                continue;
+            }
+
+            if (first) {
+                tooltip.addSpacer(space);
+                first = false;
+            }
+            for (BoggledCommonIndustry.TooltipData tt : tooltips) {
+                if (tt.text.isEmpty()) {
+                    continue;
                 }
+                tooltip.addPara(tt.text, Misc.getNegativeHighlightColor(), pad);
             }
         }
     }

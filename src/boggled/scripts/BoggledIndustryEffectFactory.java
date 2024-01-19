@@ -261,12 +261,7 @@ public class BoggledIndustryEffectFactory {
                 String commodityId = jsonObject.getString("commodity_id");
                 int chance = jsonObject.getInt("chance");
                 JSONArray requirementsArray = jsonObject.optJSONArray("requirement_ids");
-                BoggledProjectRequirementsAND reqs;
-                if (requirementsArray != null) {
-                    reqs = boggledTools.requirementsFromRequirementsArray(requirementsArray, id, "MonthlyItemProductionChance");
-                } else {
-                    reqs = new BoggledProjectRequirementsAND(new ArrayList<BoggledProjectRequirementsAND.RequirementWithTooltipOverride>());
-                }
+                BoggledProjectRequirementsAND reqs = boggledTools.requirementsFromRequirementsArray(requirementsArray, id, "MonthlyItemProductionChance");
 
                 productionData.add(new BoggledCommonIndustry.ProductionData(priority, commodityId, chance, reqs));
             }

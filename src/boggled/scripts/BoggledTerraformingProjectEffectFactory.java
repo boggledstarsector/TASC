@@ -136,15 +136,38 @@ public class BoggledTerraformingProjectEffectFactory {
             boggledTools.CheckSubmarketExists(submarketId);
             boggledTools.CheckCommodityExists(commodityId);
 
-            return new BoggledTerraformingProjectEffect.RemoveItemFromSubmarket(id, enableSettings, submarketId, commodityId, quantity);
+            return new BoggledTerraformingProjectEffect.RemoveCommodityFromSubmarket(id, enableSettings, submarketId, commodityId, quantity);
         }
     }
 
     public static class RemoveStoryPointsFromPlayer implements TerraformingProjectEffectFactory {
         @Override
-        public BoggledTerraformingProjectEffect.TerraformingProjectEffect constructFromJSON(String id, String[] enableSettings, String data) {
-            int quantity = Integer.parseInt(data);
+        public BoggledTerraformingProjectEffect.TerraformingProjectEffect constructFromJSON(String id, String[] enableSettings, String data) throws JSONException {
+            JSONObject jsonData = new JSONObject(data);
+            int quantity = jsonData.getInt("quantity");
             return new BoggledTerraformingProjectEffect.RemoveStoryPointsFromPlayer(id, enableSettings, quantity);
+        }
+    }
+
+    public static class RemoveCommodityFromFleetStorage implements TerraformingProjectEffectFactory {
+        @Override
+        public BoggledTerraformingProjectEffect.TerraformingProjectEffect constructFromJSON(String id, String[] enableSettings, String data) throws JSONException {
+            JSONObject jsonData = new JSONObject(data);
+            String commodityId = jsonData.getString("commodity_id");
+            int quantity = jsonData.getInt("quantity");
+
+            boggledTools.CheckCommodityExists(commodityId);
+
+            return new BoggledTerraformingProjectEffect.RemoveCommodityFromFleetStorage(id, enableSettings, commodityId, quantity);
+        }
+    }
+
+    public static class RemoveCreditsFromFleet implements TerraformingProjectEffectFactory {
+        @Override
+        public BoggledTerraformingProjectEffect.TerraformingProjectEffect constructFromJSON(String id, String[] enableSettings, String data) throws JSONException {
+            JSONObject jsonData = new JSONObject(data);
+            int quantity = jsonData.getInt("quantity");
+            return new BoggledTerraformingProjectEffect.RemoveCreditsFromFleet(id, enableSettings, quantity);
         }
     }
 

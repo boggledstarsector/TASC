@@ -41,28 +41,28 @@ kletka_simulator_very_hot_upkeep_modifier,,ModifyUpkeep,"{ 'type' : 'mult', 'val
 kletka_simulator_station_upkeep_modifier,,ModifyUpkeep,"{ 'type' : 'mult', 'value' : 8 }"
 
 kletka_simulator_very_cold_modifier,boggledKletkaSimulatorTemperatureBasedUpkeep,IndustryEffectWithRequirement,"{
-	'requirement_ids' : [ { 'requirement_id' : 'colony_very_cold_short' } ],
+	'requirement_ids' : [ { 'requirement_id' : 'industry_effect_kletka_simulator_colony_very_cold' } ],
 	'industry_effects' : [ 'kletka_simulator_very_cold_upkeep_modifier' ]
 }"
 kletka_simulator_cold_modifier,boggledKletkaSimulatorTemperatureBasedUpkeep,IndustryEffectWithRequirement,"{
-	'requirement_ids' : [ { 'requirement_id' : 'colony_cold_short' } ],
+	'requirement_ids' : [ { 'requirement_id' : 'industry_effect_kletka_simulator_colony_cold' } ],
 	'industry_effects' : [ 'kletka_simulator_cold_upkeep_modifier' ]
 }"
 kletka_simulator_hot_modifier,boggledKletkaSimulatorTemperatureBasedUpkeep,IndustryEffectWithRequirement,"{
-	'requirement_ids' : [ { 'requirement_id' : 'colony_hot_short' } ],
+	'requirement_ids' : [ { 'requirement_id' : 'industry_effect_kletka_simulator_colony_hot' } ],
 	'industry_effects' : [ 'kletka_simulator_hot_upkeep_modifier' ]
 }"
 kletka_simulator_very_hot_modifier,boggledKletkaSimulatorTemperatureBasedUpkeep,IndustryEffectWithRequirement,"{
-	'requirement_ids' : [ { 'requirement_id' : 'colony_very_hot_short' } ],
+	'requirement_ids' : [ { 'requirement_id' : 'industry_effect_kletka_simulator_colony_very_hot' } ],
 	'industry_effects' : [ 'kletka_simulator_very_hot_upkeep_modifier' ]
 }"
 kletka_simulator_station_modifier,boggledKletkaSimulatorTemperatureBasedUpkeep,IndustryEffectWithRequirement,"{
-	'requirement_ids' : [ { 'requirement_id' : 'colony_is_station_short' } ],
+	'requirement_ids' : [ { 'requirement_id' : 'industry_effect_kletka_simulator_colony_is_station' } ],
 	'industry_effects' : [ 'kletka_simulator_station_upkeep_modifier' ]
 }"
 kletka_simulator_item_production_effect,,MonthlyItemProductionChance,"[
 	{ 'commodity_priority' : 0, 'commodity_id' : 'alpha_core', 'chance' : 0, 'requirement_ids' : [
-		{ 'requirement_id' : 'kletka_simulator_has_ai_core' }
+		{ 'requirement_id' : 'industry_effects_kletka_simulator_has_ai_core' }
 	] },
 	{ 'commodity_priority' : 1, 'commodity_id' : 'beta_core', 'chance' : 20 },
 	{ 'commodity_priority' : 2, 'commodity_id' : 'gamma_core', 'chance' : 45 },
@@ -129,19 +129,19 @@ domain_archaeology_ruins_extensive_pather_interest,,ModifyPatherInterest,"{ 'typ
 domain_archaeology_ruins_vast_pather_interest,,ModifyPatherInterest,"{ 'type' : 'flat', 'value' : 4 }"
 
 domain_archaeology_ruins_scattered_effect,boggledKletkaSimulatorTemperatureBasedUpkeep,IndustryEffectWithRequirement,"{
-	'requirement_ids' : [ { 'requirement_id' : 'colony_ruins_scattered' } ],
+	'requirement_ids' : [ { 'requirement_id' : 'industry_effects_domain_archaeology_colony_ruins_scattered' } ],
 	'industry_effects' : [ 'domain_archaeology_ruins_scattered_pather_interest' ]
 }"
 domain_archaeology_ruins_widespread_effect,boggledKletkaSimulatorTemperatureBasedUpkeep,IndustryEffectWithRequirement,"{
-	'requirement_ids' : [ { 'requirement_id' : 'colony_ruins_widespread' } ],
+	'requirement_ids' : [ { 'requirement_id' : 'industry_effects_domain_archaeology_colony_ruins_widespread' } ],
 	'industry_effects' : [ 'domain_archaeology_ruins_widespread_pather_interest' ]
 }"
 domain_archaeology_ruins_extensive_effect,boggledKletkaSimulatorTemperatureBasedUpkeep,IndustryEffectWithRequirement,"{
-	'requirement_ids' : [ { 'requirement_id' : 'colony_ruins_extensive' } ],
+	'requirement_ids' : [ { 'requirement_id' : 'industry_effects_domain_archaeology_colony_ruins_extensive' } ],
 	'industry_effects' : [ 'domain_archaeology_ruins_extensive_pather_interest' ]
 }"
 domain_archaeology_ruins_vast_effect,boggledKletkaSimulatorTemperatureBasedUpkeep,IndustryEffectWithRequirement,"{
-	'requirement_ids' : [ { 'requirement_id' : 'colony_ruins_vast' } ],
+	'requirement_ids' : [ { 'requirement_id' : 'industry_effects_domain_archaeology_colony_ruins_vast' } ],
 	'industry_effects' : [ 'domain_archaeology_ruins_vast_pather_interest' ]
 }"
 
@@ -184,7 +184,7 @@ mesozoic_park_gamma_core_increase_income_bonus,,ModifyIncome,"{ 'type' : 'mult',
 
 planetary_agrav_field_suppress_conditions,,SuppressConditions,high_gravity | low_gravity
 planetary_agrav_field_effect_with_requirement,,IndustryEffectWithRequirement,"{
-	'requirement_ids' : [ { 'requirement_id' : 'colony_has_domed_cities_or_is_gas_giant' } ],
+	'requirement_ids' : [ { 'requirement_id' : 'industry_colony_has_domed_cities_or_is_gas_giant' } ],
 	'industry_effects' : [ 'planetary_agrav_field_suppress_conditions' ]
 }"
 

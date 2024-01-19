@@ -5,7 +5,6 @@ import com.fs.starfarer.api.impl.campaign.econ.impl.BaseIndustry;
 import boggled.campaign.econ.boggledTools;
 
 import java.util.*;
-import java.util.List;
 
 public class BoggledCommoditySupplyDemand {
 

@@ -111,10 +111,10 @@ BOGGLED_MESOZOIC_PARK,"Mesozoic Park",industry_mesozoic_park,,,,,"[
 	'beta_core' : [ 'mesozoic_park_beta_core_increase_income_bonus' ],
 	'gamma_core' : [ 'mesozoic_park_gamma_core_increase_income_bonus' ],
 }",,2,"[
-	{ 'requirement_ids' : [ { 'requirement_id' : 'colony_terran_world' } ], 'category' : 'boggled', 'id' : 'mesozoic_park_terran' },
-	{ 'requirement_ids' : [ { 'requirement_id' : 'colony_water_world' } ], 'category' : 'boggled', 'id' : 'mesozoic_park_water' },
-	{ 'requirement_ids' : [ { 'requirement_id' : 'colony_jungle_world' } ], 'category' : 'boggled', 'id' : 'mesozoic_park_jungle' },
-	{ 'requirement_ids' : [ { 'requirement_id' : 'colony_arid_world' } ], 'category' : 'boggled', 'id' : 'mesozoic_park_desert' }
+	{ 'requirement_ids' : [ { 'requirement_id' : 'industry_option_colony_terran_world' } ], 'category' : 'boggled', 'id' : 'mesozoic_park_terran' },
+	{ 'requirement_ids' : [ { 'requirement_id' : 'industry_option_colony_water_world' } ], 'category' : 'boggled', 'id' : 'mesozoic_park_water' },
+	{ 'requirement_ids' : [ { 'requirement_id' : 'industry_option_colony_jungle_world' } ], 'category' : 'boggled', 'id' : 'mesozoic_park_jungle' },
+	{ 'requirement_ids' : [ { 'requirement_id' : 'industry_option_colony_arid_world' } ], 'category' : 'boggled', 'id' : 'mesozoic_park_desert' }
 ]",,,,
 BOGGLED_OUYANG_OPTIMIZER,"Ouyang Optimizer",industry_ouyang_optimizer ; Ouyang optimization ; Completed,,,,,,,,2,,,,,
 BOGGLED_PERIHELION_PROJECT,"Perihelion Project",industry_perihelion_project,,flat_demand_7_domain_artifacts | flat_demand_11_metals | flat_demand_9_rare_metals | flat_demand_7_heavy_machinery,,,,,,10,,,,,

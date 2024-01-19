@@ -118,7 +118,10 @@ class ProjectRequirementsTooltip(width : Float) : TooltipCreator {
         for (projectRequirement in terraformingProject!!.projectRequirements) {
             val requirementMet = projectRequirement.checkRequirement(ctx)
             val color = if (requirementMet) Misc.getPositiveHighlightColor() else Misc.getNegativeHighlightColor()
-            tooltip.addPara(projectRequirement.getTooltip(ctx, tokenReplacements).text, color, 0f)
+            val tts = projectRequirement.getTooltip(ctx, tokenReplacements)
+            for (tt in tts) {
+                tooltip.addPara(tt.text, color, 0f)
+            }
         }
 
         tooltip.addSpacer(5f);
