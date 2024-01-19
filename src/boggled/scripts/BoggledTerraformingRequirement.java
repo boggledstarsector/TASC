@@ -11,7 +11,6 @@ import com.fs.starfarer.api.util.Pair;
 import boggled.campaign.econ.boggledTools;
 import boggled.campaign.econ.industries.BoggledCommonIndustry;
 import boggled.campaign.econ.industries.BoggledIndustryInterface;
-import com.fs.starfarer.campaign.CampaignPlanet;
 
 import java.util.List;
 import java.util.Map;
@@ -32,7 +31,7 @@ public class BoggledTerraformingRequirement {
             this.industryInterface = (industry instanceof BoggledIndustryInterface) ? (BoggledIndustryInterface) industry : null;
             this.market = industry.getMarket();
             this.planet = this.market.getPlanetEntity();
-            this.starSystem = this.planet.getStarSystem();
+            this.starSystem = this.market.getStarSystem();
             this.fleet = Global.getSector().getPlayerFleet();
         }
 
@@ -412,7 +411,7 @@ public class BoggledTerraformingRequirement {
             if (playerFleet == null) {
                 return false;
             }
-            return playerFleet.getCargo().getCommodityQuantity(cargoId) > quantity;
+            return playerFleet.getCargo().getCommodityQuantity(cargoId) >= quantity;
         }
     }
 
@@ -435,7 +434,7 @@ public class BoggledTerraformingRequirement {
             if (playerFleet == null) {
                 return false;
             }
-            return playerFleet.getCargo().getCredits().get() > quantity;
+            return playerFleet.getCargo().getCredits().get() >= quantity;
         }
     }
 
@@ -1014,6 +1013,35 @@ public class BoggledTerraformingRequirement {
             SectorEntityToken focusPlanet = check(targetPlanet, starSystem);
             if (focusPlanet != null) {
                 tokenReplacements.put("$focusPlanetName", focusPlanet.getName());
+            }
+        }
+    }
+
+    public static class TargetPlanetStationCountLessThan extends TerraformingRequirement {
+        String stationTag;
+        int numStations;
+        protected TargetPlanetStationCountLessThan(String requirementId, boolean invert, String stationTag, int numStations) {
+            super(requirementId, invert);
+            this.stationTag = stationTag;
+            this.numStations = numStations;
+        }
+
+        @Override
+        protected boolean checkRequirementImpl(RequirementContext ctx) {
+            PlanetAPI targetPlanet = ctx.getPlanet();
+            if (targetPlanet == null) {
+                return false;
+            }
+            return boggledTools.numAstropoliInOrbit(targetPlanet, stationTag) < numStations;
+        }
+
+        @Override
+        public void addTokenReplacements(RequirementContext ctx, Map<String, String> tokenReplacements) {
+            PlanetAPI targetPlanet = ctx.getPlanet();
+            if (targetPlanet != null) {
+                tokenReplacements.put("$planetName", targetPlanet.getName());
+                int numAstropoli = boggledTools.numAstropoliInOrbit(targetPlanet, stationTag);
+                tokenReplacements.put("$numAstropolisStations", String.format("%,d", numAstropoli));
             }
         }
     }

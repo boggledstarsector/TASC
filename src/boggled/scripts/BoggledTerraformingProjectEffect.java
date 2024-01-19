@@ -15,6 +15,7 @@ import com.fs.starfarer.api.impl.campaign.rulecmd.salvage.FleetAdvanceScript;
 import com.fs.starfarer.api.util.Misc;
 import com.fs.starfarer.api.util.WeightedRandomPicker;
 import boggled.campaign.econ.boggledTools;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 import java.util.List;
@@ -445,9 +446,130 @@ public class BoggledTerraformingProjectEffect {
     public static class AddStationToOrbit extends TerraformingProjectEffect {
         String stationType;
 
-        public AddStationToOrbit(String id, String[] enableSettings, String stationType) {
+        int numStationsPerLayer;
+        float orbitRadius;
+        int numDaysToBuild;
+
+        public AddStationToOrbit(String id, String[] enableSettings, String stationType, int numStationsPerLayer, float orbitRadius, int numDaysToBuild) {
             super(id, enableSettings);
             this.stationType = stationType;
+            this.numStationsPerLayer = numStationsPerLayer;
+            this.orbitRadius = orbitRadius;
+            this.numDaysToBuild = numDaysToBuild;
+        }
+
+        @NotNull
+        private static List<String> getGreekAlphabetList() {
+            List<String> greekAlphabetList = new ArrayList<>();
+            greekAlphabetList.add("Alpha");
+            greekAlphabetList.add("Beta");
+            greekAlphabetList.add("Gamma");
+            greekAlphabetList.add("Delta");
+            greekAlphabetList.add("Epsilon");
+            greekAlphabetList.add("Zeta");
+            greekAlphabetList.add("Eta");
+            greekAlphabetList.add("Theta");
+            greekAlphabetList.add("Iota");
+            greekAlphabetList.add("Kappa");
+            greekAlphabetList.add("Lambda");
+            greekAlphabetList.add("Mu");
+            greekAlphabetList.add("Nu");
+            greekAlphabetList.add("Xi");
+            greekAlphabetList.add("Omicron");
+            greekAlphabetList.add("Pi");
+            greekAlphabetList.add("Rho");
+            greekAlphabetList.add("Sigma");
+            greekAlphabetList.add("Tau");
+            greekAlphabetList.add("Upsilon");
+            greekAlphabetList.add("Phi");
+            greekAlphabetList.add("Chi");
+            greekAlphabetList.add("Psi");
+            greekAlphabetList.add("Omega");
+            return greekAlphabetList;
+        }
+
+        private String getGreekLetter(int numAstroAlreadyPresent) {
+            int setting = boggledTools.getIntSetting("boggledAstropolisSpriteToUse");
+            if(setting == 1)
+            {
+                return "alpha";
+            }
+            else if(setting == 2)
+            {
+                return "beta";
+            }
+            else if(setting == 3)
+            {
+                return "gamma";
+            }
+            numAstroAlreadyPresent = Math.abs(numAstroAlreadyPresent);
+            return getGreekAlphabetList().get(numAstroAlreadyPresent % 3).toLowerCase();
+        }
+
+        private String getColonyNameString(int numAstroAlreadyPresent) {
+            numAstroAlreadyPresent = Math.abs(numAstroAlreadyPresent);
+            List<String> greekAlphabetList = getGreekAlphabetList();
+            int letterNum = numAstroAlreadyPresent % greekAlphabetList.size();
+            int suffixNum = numAstroAlreadyPresent / greekAlphabetList.size();
+            String ret = greekAlphabetList.get(letterNum);
+            if (suffixNum != 0) {
+                ret = ret + "-" + suffixNum;
+            }
+            return ret;
+        }
+
+        private SectorEntityToken compareAndGetLatest(List<String> greekAlphabet, SectorEntityToken o1, SectorEntityToken o2) {
+            if (o1 == null) {
+                return o2;
+            }
+            if (o2 == null) {
+                return o1;
+            }
+            int o1NumIndexStart = o1.getName().indexOf('-');
+            int o2NumIndexStart = o2.getName().indexOf('-');
+            if (o1NumIndexStart == -1 && o2NumIndexStart == -1) {
+                // Neither has a number at the end, so we compare according to the index in the alphabet
+                int o1GreekIndex = greekAlphabet.indexOf(o1.getName());
+                int o2GreekIndex = greekAlphabet.indexOf(o2.getName());
+                int comp =  Integer.compare(o1GreekIndex, o2GreekIndex);
+                if (comp < 0) {
+                    return o1;
+                }
+                // If they return equal, something else is broken
+                if (comp == 0) {
+                    Global.getLogger(this.getClass()).error("Sector entity tokens " + o1.getName() + " and " + o2.getName() + " compared equal");
+                }
+                return o2;
+            }
+            if (o1NumIndexStart == -1) {
+                // o2 has a number at the end, o1 doesn't, therefore o1 comes before o2
+                return o2;
+            }
+            if (o2NumIndexStart == -1) {
+                // o1 has a number at the end, o2 doesn't, therefore o1 comes after o2
+                return o1;
+            }
+            // They both have a number at the end, so compare that
+            int o1Num = Integer.parseInt(o1.getName().substring(o1NumIndexStart + 1));
+            int o2Num = Integer.parseInt(o2.getName().substring(o2NumIndexStart + 1));
+            int comp = Integer.compare(o1Num, o2Num);
+            if (comp < 0) {
+                return o1;
+            } else if (comp > 0) {
+                return o2;
+            }
+            // The numbers are the same, so compare based on the index in the alphabet
+            int o1GreekIndex = greekAlphabet.indexOf(o1.getName());
+            int o2GreekIndex = greekAlphabet.indexOf(o2.getName());
+            comp = Integer.compare(o1GreekIndex, o2GreekIndex);
+            if (comp < 0) {
+                return o1;
+            }
+            // If they return equal, something else is broken
+            if (comp == 0) {
+                Global.getLogger(this.getClass()).error("Sector entity tokens " + o1.getName() + " and " + o2.getName() + " compared equal");
+            }
+            return o2;
         }
 
         @Override
@@ -466,6 +588,54 @@ public class BoggledTerraformingProjectEffect {
 
         @Override
         protected void applyProjectEffectImpl(BoggledTerraformingRequirement.RequirementContext ctx) {
+            CampaignFleetAPI playerFleet = ctx.getFleet();
+            StarSystemAPI system = playerFleet.getStarSystem();
+            PlanetAPI targetPlanet = ctx.getPlanet();
+
+            String playerFactionId = Global.getSector().getPlayerFaction().getId();
+
+            String stationTag = "boggled_astropolis";
+            String customEntityStationTag = "boggled_astropolis_station";
+
+            int numAstro = boggledTools.numAstropoliInOrbit(targetPlanet, stationTag);
+
+            SectorEntityToken newAstropolis = system.addCustomEntity("boggled_astropolis" + numAstro, targetPlanet.getName() + " Astropolis " + getColonyNameString(numAstro), "boggled_astropolis_station_" + getGreekLetter(numAstro) + "_small", playerFactionId);
+            SectorEntityToken newAstropolisLights = system.addCustomEntity("boggled_astropolisLights", targetPlanet.getName() + " Astropolis " + getColonyNameString(numAstro) + " Lights Overlay", "boggled_astropolis_station_" + getGreekLetter(numAstro) + "_small_lights_overlay", playerFactionId);
+
+            float baseOrbitRadius = targetPlanet.getRadius() + this.orbitRadius;
+            float orbitRadius = targetPlanet.getRadius() + this.orbitRadius + (numAstro / numStationsPerLayer) * (this.orbitRadius / 2);
+            if (numAstro == 0) {
+                newAstropolis.setCircularOrbitPointingDown(targetPlanet, 0, orbitRadius, orbitRadius / 10f);
+            } else {
+                final List<String> greekAlphabet = getGreekAlphabetList();
+                List<SectorEntityToken> allEntitiesInSystem = playerFleet.getStarSystem().getAllEntities();
+                SectorEntityToken latestStation = null;
+                for (SectorEntityToken entity : allEntitiesInSystem) {
+                    if (!entity.hasTag(stationTag)) {
+                        continue;
+                    }
+                    if (entity.getOrbitFocus() == null) {
+                        continue;
+                    }
+                    if (!entity.getOrbitFocus().equals(targetPlanet)) {
+                        continue;
+                    }
+                    if (!entity.getCustomEntityType().contains(customEntityStationTag)) {
+                        continue;
+                    }
+                    latestStation = compareAndGetLatest(greekAlphabet, latestStation, entity);
+                }
+                float step = 360f / numStationsPerLayer;
+                if (numAstro % numStationsPerLayer == 0) {
+                    step += step / 2;
+                }
+                assert latestStation != null;
+                newAstropolis.setCircularOrbitPointingDown(targetPlanet, (latestStation.getCircularOrbitAngle() + step) % 360f, orbitRadius, baseOrbitRadius / 10f);
+            }
+            newAstropolisLights.setOrbit(newAstropolis.getOrbit().makeCopy());
+
+            newAstropolis.addScript(new BoggledUnderConstructionEveryFrameScript(newAstropolis));
+            Global.getSoundPlayer().playUISound("ui_boggled_station_start_building", 1.0f, 1.0f);
         }
     }
 }

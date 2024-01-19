@@ -191,7 +191,10 @@ public class BoggledTerraformingProjectEffectFactory {
         public BoggledTerraformingProjectEffect.TerraformingProjectEffect constructFromJSON(String id, String[] enableSettings, String data) throws JSONException {
             JSONObject jsonData = new JSONObject(data);
             String stationType = jsonData.getString("station_type");
-            return new BoggledTerraformingProjectEffect.AddStationToOrbit(id, enableSettings, stationType);
+            int numStationsPerLayer = jsonData.getInt("num_stations_per_layer");
+            float orbitRadius = (float) jsonData.getDouble("orbit_radius");
+            int numDaysToBuild = jsonData.getInt("num_days_to_build");
+            return new BoggledTerraformingProjectEffect.AddStationToOrbit(id, enableSettings, stationType, numStationsPerLayer, orbitRadius, numDaysToBuild);
         }
     }
 }

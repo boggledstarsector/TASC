@@ -116,9 +116,9 @@ BOGGLED_MESOZOIC_PARK,"Mesozoic Park",industry_mesozoic_park,,,,,"[
 	{ 'requirement_ids' : [ { 'requirement_id' : 'industry_option_colony_jungle_world' } ], 'category' : 'boggled', 'id' : 'mesozoic_park_jungle' },
 	{ 'requirement_ids' : [ { 'requirement_id' : 'industry_option_colony_arid_world' } ], 'category' : 'boggled', 'id' : 'mesozoic_park_desert' }
 ]",,,,
-BOGGLED_OUYANG_OPTIMIZER,"Ouyang Optimizer",industry_ouyang_optimizer ; Ouyang optimization ; Completed,,,,,,,,2,,,,,
+BOGGLED_OUYANG_OPTIMIZER,"Ouyang Optimizer",industry_ouyang_optimizer,,,,,,,,2,,,,,
 BOGGLED_PERIHELION_PROJECT,"Perihelion Project",industry_perihelion_project,,flat_demand_7_domain_artifacts | flat_demand_11_metals | flat_demand_9_rare_metals | flat_demand_7_heavy_machinery,,,,,,10,,,,,
-BOGGLED_PLANET_CRACKER,"Planet Cracket",industry_planet_cracker ; Planet cracking ; Completed,,,,,,,,2,,,,,
+BOGGLED_PLANET_CRACKER,"Planet Cracket",industry_planet_cracker,,,,,,,,2,,,,,
 BOGGLED_PLANETARY_AGRAV_FIELD,"Planetary Agrav Field",industry_planetary_agrav_field,,,,"[
 	'planetary_agrav_field_effect_with_requirement'
 ]",,,,2,,,,,

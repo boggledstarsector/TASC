@@ -533,6 +533,7 @@ public class boggledTools {
         addTerraformingRequirementFactory("TargetPlanetOrbitersWithinDistance", new BoggledTerraformingRequirementFactory.TargetPlanetOrbitersWithinDistance());
         addTerraformingRequirementFactory("TargetPlanetMoonCountLessThan", new BoggledTerraformingRequirementFactory.TargetPlanetMoonCountLessThan());
         addTerraformingRequirementFactory("TargetPlanetOrbitersTooClose", new BoggledTerraformingRequirementFactory.TargetPlanetOrbitersTooClose());
+        addTerraformingRequirementFactory("TargetPlanetStationCountLessThan", new BoggledTerraformingRequirementFactory.TargetPlanetStationCountLessThan());
 
     }
 
@@ -664,18 +665,6 @@ public class boggledTools {
         for (int i = 0; i < requirementArray.length(); ++i) {
             JSONObject requirementObject = requirementArray.getJSONObject(i);
             String requirementsString = requirementObject.getString("requirement_id");
-            String descriptionText = requirementObject.optString("description");
-            List<String> descriptionHighlightText = new ArrayList<>();
-            List<Color> descriptionHighlight = new ArrayList<>();
-
-            String descriptionHighlightString = requirementObject.optString("description_highlights");
-            if (!descriptionHighlightString.isEmpty()) {
-                JSONArray descriptionHighlightArray = new JSONArray(descriptionHighlightString);
-                for (int j = 0; j < descriptionHighlightArray.length(); ++j) {
-                    descriptionHighlightText.add(descriptionHighlightArray.getString(j));
-                    descriptionHighlight.add(Misc.getHighlightColor());
-                }
-            }
 
             JSONArray andThenArray = requirementObject.optJSONArray("and_then");
             BoggledProjectRequirementsAND andThen = null;
@@ -1171,17 +1160,19 @@ public class boggledTools {
 
                 int baseProjectDuration = row.optInt("base_project_duration", 0);
 
-                String[] projectDurationModifiers = row.getString("dynamic_project_duration_modifiers").split(boggledTools.csvOptionSeparator);
+                String projectDurationModifiersString = row.getString("dynamic_project_duration_modifiers");
                 List<BoggledTerraformingDurationModifier.TerraformingDurationModifier> terraformingDurationModifiers = new ArrayList<>();
-                for (String projectDurationModifier : projectDurationModifiers) {
-                    if (projectDurationModifier.isEmpty()) {
-                        continue;
-                    }
-                    BoggledTerraformingDurationModifier.TerraformingDurationModifier mod = boggledTools.durationModifiers.get(projectDurationModifier);
-                    if (mod != null) {
-                        terraformingDurationModifiers.add(mod);
-                    } else {
-                        log.info("Project " + id + " has invalid duration modifier " + projectDurationModifier);
+                if (!projectDurationModifiersString.isEmpty()) {
+                    JSONArray projectDurationModifiersArray = new JSONArray(projectDurationModifiersString);
+                    for (int j = 0; j < projectDurationModifiersArray.length(); ++j) {
+                        JSONObject projectDurationModifiersObject = projectDurationModifiersArray.getJSONObject(j);
+                        String durationModifiersKey = projectDurationModifiersObject.getString("modifier_id");
+                        BoggledTerraformingDurationModifier.TerraformingDurationModifier mod = durationModifiers.get(durationModifiersKey);
+                        if (mod == null) {
+                            log.info("Project " + id + " has invalid dynamic project duration modifier " + durationModifiersKey);
+                        } else {
+                            terraformingDurationModifiers.add(mod);
+                        }
                     }
                 }
 
@@ -1272,13 +1263,11 @@ public class boggledTools {
 
                 String abilityProjectString = row.getString("project");
                 BoggledTerraformingProject abilityProject = getProject(abilityProjectString);
-                if (abilityProject == null) {
+                if (abilityProject != null) {
+                    abilities.put(id, new BoggledBaseAbility(id, enableSettings, abilityProject));
+                } else {
                     log.info("Ability " + id + " has invalid project " + abilityProjectString);
                 }
-
-                List<BoggledBaseAbility.AbilityEffect> activateEffects = new ArrayList<>();
-
-                abilities.put(id, new BoggledBaseAbility(id, enableSettings, abilityProject, activateEffects));
             } catch (JSONException e) {
                 log.error("Error in ability options " + idForErrors + ": " + e);
             }
@@ -1507,6 +1496,26 @@ public class boggledTools {
     public static float getRandomOrbitalAngleFloat(float min, float max) {
         Random rand = new Random();
         return rand.nextFloat() * (max - min) + min;
+    }
+
+    public static int numAstropoliInOrbit(PlanetAPI targetPlanet, String stationTag) {
+        List<SectorEntityToken> allEntitiesInSystem = targetPlanet.getStarSystem().getAllEntities();
+
+        int numAstropoli = 0;
+        for(SectorEntityToken entity : allEntitiesInSystem) {
+            if (!entity.hasTag(stationTag)) {
+                continue;
+            }
+            if (entity.getOrbitFocus() == null) {
+                continue;
+            }
+            if (!entity.getOrbitFocus().equals(targetPlanet)) {
+                continue;
+            }
+            numAstropoli++;
+        }
+
+        return numAstropoli;
     }
 
     public static boolean gateInSystem(StarSystemAPI system)

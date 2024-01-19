@@ -197,6 +197,7 @@ target_planet_too_close_to_star,TargetPlanetStarWithinDistance,true,1400
 target_planet_moon_too_close,TargetPlanetOrbitersWithinDistance,true,500
 target_planet_too_many_moons,TargetPlanetMoonCountLessThan,false,4
 target_planet_too_crowded,TargetPlanetOrbitersTooClose,false,400
+target_planet_too_many_stations,TargetPlanetStationCountLessThan,false,"{ 'station_tag' : 'boggled_astropolis', 'max_num' : 24 }"
 
 astropolis_fleet_contains_credits,FleetContainsCreditsAtLeast,false,"{ 'quantity' : 500000 }"
 astropolis_fleet_contains_crew,FleetStorageContainsAtLeast,false,"{

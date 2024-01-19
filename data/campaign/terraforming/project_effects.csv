@@ -104,5 +104,10 @@ astropolis_station_remove_heavy_machinery_from_fleet,,RemoveCommodityFromFleetSt
 astropolis_station_remove_metals_from_fleet,,RemoveCommodityFromFleetStorage,"{ 'commodity_id' : 'metals', 'quantity' : 1000 }"
 astropolis_station_remove_transplutonics_from_fleet,,RemoveCommodityFromFleetStorage,"{ 'commodity_id' : 'rare_metals', 'quantity' : 250 }"
 astropolis_station_remove_credits_from_fleet,,RemoveCreditsFromFleet,"{ 'quantity' : 500000 }"
-add_astropolis_station_to_orbit,,AddStationToOrbit,"{ 'station_type' : 'astropolis' }"
+add_astropolis_station_to_orbit,,AddStationToOrbit,"{
+	'station_type' : 'astropolis',
+	'num_stations_per_layer' : 8,
+	'orbit_radius' : 450,
+	'num_days_to_build' : 90
+}"
 ,,

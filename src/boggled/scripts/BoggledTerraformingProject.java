@@ -127,7 +127,7 @@ public class BoggledTerraformingProject {
         return boggledTools.doTokenReplacement(projectTooltip, tokenReplacements);
     }
 
-    public Map<String, BoggledTerraformingProjectEffect.EffectTooltipPara> addEffectTooltipInfo(BoggledTerraformingRequirement.RequirementContext ctx) {
+    public Map<String, BoggledTerraformingProjectEffect.EffectTooltipPara> getEffectTooltipInfo(BoggledTerraformingRequirement.RequirementContext ctx) {
         Map<String, BoggledTerraformingProjectEffect.EffectTooltipPara> ret = new LinkedHashMap<>();
         for (BoggledTerraformingProjectEffect.ProjectEffectWithRequirement effect : projectEffects) {
             effect.effect.addEffectTooltipInfo(ctx, ret);

@@ -1,15 +1,15 @@
 id,enable_settings,project_type,tooltip,tooltip_highlights,intel_complete_message,requirements,requirements_hidden,base_project_duration,dynamic_project_duration_modifiers,requirements_stall,requirements_reset,project_effects,incomplete_message,incomplete_message_highlights
 # id is a string to identify the project
 # enable_setting is a | separated list of settings that must be true for this project to be enabled.
-# project_type is the type of the project. Currently supported ones are 'terraforming' and 'industry'
+# project_type is the type of the project. Currently supported ones are 'terraforming', 'industry', 'crafting', and 'ability'
 # tooltip is how this project is displayed on the buttons on the UI. Sorry it's a terrible name
 # intel_complete_message is what's shown when the project completes. If it's empty, no intel card is shown.
-# requirements is a | separated list of requirement IDs as specified in 'terraforming_requirements.csv'. These are checked in an AND manner, ie all of the requirements have to be true for this check to return true.
+# requirements is a JSON array of objects. Each object requires a 'requirement_id' field that is the requirement ID as specified in 'terraforming_requirements.csv'. These are checked in an AND manner, ie all of the requirements have to be true for this check to return true. Each object may have an optional 'and_then' field that is a requirement list. The requirements in the 'and_then' field are only checked if the initial requirement is satisfied.
 # requirements_hidden is the same as requirements, but they must be met for the project to be visible. Both this and requirements must be met for the project to be started
 # base_project_duration is the base number of days the project takes to complete
-# dynamic_project_duration_modifiers is a | separated list of duration modifier IDs that are specified in 'duration_modifiers.csv'
-# requirements_{stall,reset} is a | separated list of lists of requirements. Each list of requirements is a ; separated list of requirement IDs as specified in 'terraforming_requirements.csv'. Each list of ; separated requirements is checked in an AND manner, with only one of the | separated lists needing to be satisfied for the project to be {stalled,reset}.
-# project_effects is a | separated list of project effect IDs that are specified in 'project_effects.csv'
+# dynamic_project_duration_modifiers is a JSON array of objects. Each object requires a 'modifier_id' field that is the modifier ID as specified in 'duration_modifiers.csv'.
+# requirements_{stall,reset} is the same as 'requirements'. If any of the requirements is satisfied, the project is {stalled,reset}.
+# project_effects is a JSON array of objects. Each object requires an 'effect_id' field that is the effect ID as specified in 'project_effects.csv' that happens when the project is completed.
 # requirements_{incomplete,complete,disrupted} is a list of requirement IDs same as requirements. They're for determining whether the project is incomplete, complete, or disrupted, as well as the tooltip to show for each requirement
 arid_type_change,boggledTerraformingContentEnabled,terraforming,"Arid type change",,Completed,"[
 	{ 'requirement_id' : 'terraforming_world_type_allows_terraforming' },
@@ -250,7 +250,7 @@ industry_chameleon_decivilized,boggledDomainTechContentEnabled | boggledCHAMELEO
 industry_chameleon_rogue_ai,boggledDomainTechContentEnabled | boggledCHAMELEONEnabled,industry,Rogue AI core,,Terminated,"[ { 'requirement_id' : 'industry_colony_rogue_ai_core' } ]",,20,,,,"[ { 'effect_id' : 'market_remove_rogue_ai_core' } ]","An investigation into the whereabouts of the rogue AI core on $market is approximately $percentComplete% complete.",$percentComplete%
 industry_cloning,boggledCloningEnabled,industry,,,,,,,,,,,,
 industry_cryosanctum,boggledDomainTechContentEnabled | boggledCryosanctumPlayerBuildEnabled,industry,,,,,,,,,,,,
-industry_domain_archaeology,boggledDomainTechContentEnabled | boggledDomainArchaeologyEnabled,industry,,,,"[ { 'requirement_id' : 'industry_colony_has_ruins', 'description' : Requires ruins' } ]",,,,,,,,
+industry_domain_archaeology,boggledDomainTechContentEnabled | boggledDomainArchaeologyEnabled,industry,,,,"[ { 'requirement_id' : 'industry_colony_has_ruins' } ]",,,,,,,,
 industry_domed_cities,boggledTerraformingContentEnabled | boggledDomedCitiesEnabled,industry,,,,"[
 	{ 'requirement_id' : 'industry_colony_is_not_station' },
 	{ 'requirement_id' : 'industry_colony_not_has_tectonic_activity_unless_has_harmonic_damper' },
@@ -290,7 +290,7 @@ industry_mesozoic_park,boggledTerraformingContentEnabled | boggledMesozoicParkEn
 	{ 'requirement_id' : 'industry_mesozoic_park_colony_not_toxic_or_irradiated' }
 ]",,,,,,,,
 industry_ouyang_optimizer,boggledTerraformingContentEnabled | boggledOuyangOptimizerEnabled,industry,Ouyang optimization,,Completed,"[
-	{ 'requirement_id' : 'industry_colony_is_not_station' },
+	{ 'requirement_id' : 'industry_colony_is_station' },
 	{ 'requirement_id' : 'industry_ouyang_optimizer_orbited_planet_is_gas_giant' },
 	{ 'requirement_id' : 'industry_ouyang_optimizer_orbited_planet_not_has_extreme_weather' },
 	{ 'requirement_id' : 'industry_ouyang_optimizer_orbited_planet_not_has_volatiles_plentiful' }
@@ -487,7 +487,8 @@ ability_add_astropolis_station,,ability,"Construct an astropolis station in orbi
 				{ 'requirement_id' : 'ability_astropolis_station_target_planet_too_close_to_star' },
 				{ 'requirement_id' : 'ability_astropolis_station_target_planet_moon_too_close' },
 				{ 'requirement_id' : 'ability_astropolis_station_target_planet_too_many_moons' },
-				{ 'requirement_id' : 'ability_astropolis_station_target_planet_too_crowded' }
+				{ 'requirement_id' : 'ability_astropolis_station_target_planet_too_crowded' },
+				{ 'requirement_id' : 'ability_astropolis_station_target_planet_too_many_stations' }
 			] }
 		] }
 	] },

@@ -20,16 +20,8 @@ public class BoggledUnderConstructionEveryFrameScript implements EveryFrameScrip
         stationEntity.addTag("boggled_construction_progress_days_0");
     }
 
-    public boolean isDone()
-    {
-        if(isDone)
-        {
-            return true;
-        }
-        else
-        {
-            return false;
-        }
+    public boolean isDone() {
+        return isDone;
     }
 
     public boolean runWhilePaused()

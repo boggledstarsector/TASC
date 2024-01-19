@@ -118,7 +118,7 @@ industry_stellar_reflectors_colony_not_dark,"Stellar reflectors won't have any e
 
 industry_colony_decivilized,"$market has a decivilized population",,false,"market_decivilized | market_decivilized_subpop"
 industry_colony_rogue_ai_core,"$market has a rogue AI core",,false,"market_rogue_ai_core"
-industry_colony_has_ruins,"$market has Domain era ruins",,false,"market_ruins_scattered | market_ruins_widespread | market_ruins_extensive | market_ruins_vast"
+industry_colony_has_ruins,"Requires ruins",,false,"market_ruins_scattered | market_ruins_widespread | market_ruins_extensive | market_ruins_vast"
 ,,
 industry_colony_not_has_tectonic_activity_unless_has_harmonic_damper,"$market experiences frequent seismic events that could destroy megastructures. It would be too dangerous to construct one here.",,false,"market_not_has_extreme_tectonic_activity | market_has_harmonic_damper"
 industry_colony_has_domed_cities_or_is_gas_giant,,,false,"market_has_domed_cities | market_has_seafloor_cities | planet_gas_giant"
@@ -157,6 +157,7 @@ ability_astropolis_station_target_planet_too_close_to_star,"$planetName is too c
 ability_astropolis_station_target_planet_moon_too_close,"An astropolis would be unable to achieve a satisfactory orbit around $planetName because $focusPlanetName is orbiting too close to it.",,false,"target_planet_moon_too_close"
 ability_astropolis_station_target_planet_too_many_moons,"An astropolis would be unable to maintain a satisfactory orbit around $planetName because there are $moonCount moons orbiting it.",,false,"target_planet_too_many_moons"
 ability_astropolis_station_target_planet_too_crowded,"An astropolis would be unable to maintain a satisfactory orbit around $planetName because $focusPlanetName periodically approaches very near to this world.",,false,"target_planet_too_crowded"
+ability_astropolis_station_target_planet_too_many_stations,"$planetName is already host to $numAstropolisStations astropolis stations. It cannot host more.",,false,"target_planet_too_many_stations"
 
 ability_astropolis_station_fleet_contains_credits,"Requires $creditsQuantity credits. You have $currentCreditsQuantity.","[ '$creditsQuantity' ]",false,"astropolis_fleet_contains_credits"
 ability_astropolis_station_fleet_contains_crew,"Requires $commodityQuantity $commodityName. You have $currentCommodityQuantity.","[ '$commodityQuantity' ]",false,"astropolis_fleet_contains_crew"

@@ -329,4 +329,14 @@ public class BoggledTerraformingRequirementFactory {
             return new BoggledTerraformingRequirement.TargetPlanetOrbitersTooClose(requirementId, invert, Float.parseFloat(data));
         }
     }
+
+    public static class TargetPlanetStationCountLessThan implements TerraformingRequirementFactory {
+        @Override
+        public BoggledTerraformingRequirement.TerraformingRequirement constructFromJSON(String requirementId, boolean invert, String data) throws JSONException {
+            JSONObject jsonData = new JSONObject(data);
+            String stationTag = jsonData.getString("station_tag");
+            int maxNum = jsonData.getInt("max_num");
+            return new BoggledTerraformingRequirement.TargetPlanetStationCountLessThan(requirementId, invert, stationTag, maxNum);
+        }
+    }
 }

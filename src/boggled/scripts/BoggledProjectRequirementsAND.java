@@ -41,6 +41,14 @@ public class BoggledProjectRequirementsAND implements Iterable<BoggledProjectReq
             }
             return new ArrayList<>(asList(requirement.getTooltip(ctx, tokenReplacements)));
         }
+
+        public List<BoggledCommonIndustry.TooltipData> getTooltipFailedRequirements(BoggledTerraformingRequirement.RequirementContext ctx, Map<String, String> tokenReplacements) {
+            requirement.addTokenReplacements(ctx, tokenReplacements);
+            if (checkRequirementDontCascade(ctx) && andThen != null) {
+                return andThen.getTooltipFailedRequirements(ctx, tokenReplacements);
+            }
+            return new ArrayList<>(asList(requirement.getTooltip(ctx, tokenReplacements)));
+        }
     }
     private final List<RequirementAndThen> requirements;
 
@@ -64,6 +72,17 @@ public class BoggledProjectRequirementsAND implements Iterable<BoggledProjectReq
         List<BoggledCommonIndustry.TooltipData> ret = new ArrayList<>();
         for (RequirementAndThen req : requirements) {
             ret.addAll(req.getTooltip(ctx, tokenReplacements));
+        }
+        return ret;
+    }
+
+    public List<BoggledCommonIndustry.TooltipData> getTooltipFailedRequirements(BoggledTerraformingRequirement.RequirementContext ctx, Map<String, String> tokenReplacements) {
+        List<BoggledCommonIndustry.TooltipData> ret = new ArrayList<>();
+        for (RequirementAndThen req : requirements) {
+            if (req.checkRequirement(ctx)) {
+                continue;
+            }
+            ret.addAll(req.getTooltipFailedRequirements(ctx, tokenReplacements));
         }
         return ret;
     }
