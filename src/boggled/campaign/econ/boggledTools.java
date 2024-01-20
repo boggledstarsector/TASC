@@ -1250,38 +1250,6 @@ public class boggledTools {
         boggledTools.terraformingProjects = terraformingProjects;
     }
 
-    public static void initialiseAbilityOptionsFromJSON(@NotNull JSONArray abilityOptionsJSON) {
-        Logger log = Global.getLogger(boggledTools.class);
-
-        Map<String, BoggledBaseAbility> abilities = new LinkedHashMap<>();
-        String idForErrors = "";
-        for (int i = 0; i < abilityOptionsJSON.length(); ++i) {
-            try {
-                JSONObject row = abilityOptionsJSON.getJSONObject(i);
-
-                String id = row.getString("id");
-                if (id == null || id.isEmpty()) {
-                    continue;
-                }
-                idForErrors = id;
-
-                String[] enableSettings = row.getString("enable_settings").split(csvOptionSeparator);
-
-                String abilityProjectString = row.getString("project");
-                BoggledTerraformingProject abilityProject = getProject(abilityProjectString);
-                if (abilityProject != null) {
-                    abilities.put(id, new BoggledBaseAbility(id, enableSettings, abilityProject));
-                } else {
-                    log.info("Ability " + id + " has invalid project " + abilityProjectString);
-                }
-            } catch (JSONException e) {
-                log.error("Error in ability options " + idForErrors + ": " + e);
-            }
-        }
-
-        boggledTools.abilities = abilities;
-    }
-
     public static void initialiseTerraformingRequirementsOverrides(@NotNull JSONArray terraformingRequirementsOverrideJSON) {
         Logger log = Global.getLogger(boggledTools.class);
 
@@ -1380,7 +1348,12 @@ public class boggledTools {
     }
 
     public static BoggledBaseAbility getAbility(String abilityId) {
-        return abilities.get(abilityId);
+        BoggledTerraformingProject project = getProject(abilityId);
+        if (project == null) {
+            Global.getLogger(boggledTools.class).error("Ability " + abilityId + " has no associated project");
+            return null;
+        }
+        return new BoggledBaseAbility(project.getProjectId(), project.getEnableSettings(), project);
     }
 
     public static Map<Pair<String, String>, String> getResourceLimits() { return resourceLimits; }
@@ -1398,7 +1371,6 @@ public class boggledTools {
     private static Map<String, BoggledTerraformingProjectEffect.TerraformingProjectEffect> terraformingProjectEffects;
     private static Map<String, BoggledCommonIndustry> industryProjects;
     private static Map<String, BoggledTerraformingProject> terraformingProjects;
-    private static Map<String, BoggledBaseAbility> abilities;
 
     private static Map<String, ArrayList<String>> resourceProgressions;
     private static Map<Pair<String, String>, String> resourceLimits;

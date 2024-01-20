@@ -476,7 +476,7 @@ craft_dealmaker_holosuite,boggledDomainTechCraftingEnabled,crafting,"Craft $craf
 	{ 'effect_id' : 'remove_domain_artifacts_easy_from_storage' }
 ]",,
 ,,,,
-ability_add_astropolis_station,,ability,"Construct an astropolis station in orbit around a planet or moon.",,,"[
+construct_astropolis_station,boggledAstropolisEnabled,ability,"Construct an astropolis station in orbit around a planet or moon.",,,"[
 	{ 'requirement_id' : 'ability_astropolis_station_player_fleet_not_in_hyperspace', 'and_then' : [
 		{ 'requirement_id' : 'ability_astropolis_station_system_has_jump_points', 'and_then' : [
 			{ 'requirement_id' : 'ability_astropolis_station_system_has_planets', 'and_then' : [
@@ -506,7 +506,7 @@ ability_add_astropolis_station,,ability,"Construct an astropolis station in orbi
 	{ 'effect_id' : 'ability_astropolis_station_remove_transplutonics_from_fleet' },
 	{ 'effect_id' : 'add_astropolis_station_to_orbit' }
 ]",,
-ability_add_mining_station,,ability,"Construct a mining station in an asteroid belt or asteroid field.",,,"[
+construct_mining_station,boggledMiningStationEnabled,ability,"Construct a mining station in an asteroid belt or asteroid field.",,,"[
 	{ 'requirement_id' : 'ability_mining_station_player_fleet_not_in_hyperspace', 'and_then' : [
 		{ 'requirement_id' : 'ability_mining_station_system_has_jump_points', 'and_then' : [
 			{ 'requirement_id' : 'ability_mining_station_too_close_to_jump_point' },
@@ -528,7 +528,7 @@ ability_add_mining_station,,ability,"Construct a mining station in an asteroid b
 	{ 'effect_id' : 'ability_mining_station_remove_transplutonics_from_fleet' },
 	{ 'effect_id' : 'add_mining_station_to_entity' }
 ]",,
-ability_add_siphon_station,,ability,"Construct a siphon station in low orbit around a gas giant.",,,"[
+construct_siphon_station,boggledSiphonStationEnabled,ability,"Construct a siphon station in low orbit around a gas giant.",,,"[
 	{ 'requirement_id' : 'ability_siphon_station_player_fleet_not_in_hyperspace', 'and_then' : [
 		{ 'requirement_id' : 'ability_siphon_station_system_has_jump_points', 'and_then' : [
 			{ 'requirement_id' : 'ability_siphon_station_target_planet_is_gas_giant' },

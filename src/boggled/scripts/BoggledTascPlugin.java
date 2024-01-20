@@ -294,7 +294,6 @@ public class BoggledTascPlugin extends BaseModPlugin
             // Projects and industries both require requirements and duration modifiers
             JSONArray terraformingProjects = settings.getMergedSpreadsheetDataForMod("id", "data/campaign/terraforming/terraforming_projects.csv", boggledTools.BoggledMods.tascModId);
             JSONArray industryOptions = settings.getMergedSpreadsheetDataForMod("id", "data/campaign/terraforming/industry_options.csv", boggledTools.BoggledMods.tascModId);
-            JSONArray abilityOptions = settings.getMergedSpreadsheetDataForMod("id", "data/campaign/terraforming/ability_options.csv", boggledTools.BoggledMods.tascModId);
 
             // And finally mods
             JSONArray terraformingRequirementsOverrides = settings.getMergedSpreadsheetDataForMod("id", "data/campaign/terraforming/terraforming_requirements_mods.csv", boggledTools.BoggledMods.tascModId);
@@ -314,7 +313,6 @@ public class BoggledTascPlugin extends BaseModPlugin
 
             boggledTools.initialiseTerraformingProjectsFromJSON(terraformingProjects);
             boggledTools.initialiseIndustryOptionsFromJSON(industryOptions);
-            boggledTools.initialiseAbilityOptionsFromJSON(abilityOptions);
 
             boggledTools.initialiseTerraformingRequirementsOverrides(terraformingRequirementsOverrides);
             boggledTools.initialiseTerraformingProjectOverrides(terraformingProjectsOverrides);
