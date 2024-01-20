@@ -508,6 +508,7 @@ public class boggledTools {
         addTerraformingRequirementFactory("MarketStorageContainsAtLeast", new BoggledTerraformingRequirementFactory.MarketStorageContainsAtLeast());
         addTerraformingRequirementFactory("FleetContainsCreditsAtLeast", new BoggledTerraformingRequirementFactory.FleetContainsCreditsAtLeast());
         addTerraformingRequirementFactory("FleetStorageContainsAtLeast", new BoggledTerraformingRequirementFactory.FleetStorageContainsAtLeast());
+        addTerraformingRequirementFactory("FleetTooCloseToJumpPoint", new BoggledTerraformingRequirementFactory.FleetTooCloseToJumpPoint());
         addTerraformingRequirementFactory("PlayerHasStoryPointsAtLeast", new BoggledTerraformingRequirementFactory.PlayerHasStoryPointsAtLeast());
         addTerraformingRequirementFactory("WorldTypeSupportsResourceImprovement", new BoggledTerraformingRequirementFactory.WorldTypeSupportsResourceImprovement());
 
@@ -534,6 +535,10 @@ public class boggledTools {
         addTerraformingRequirementFactory("TargetPlanetMoonCountLessThan", new BoggledTerraformingRequirementFactory.TargetPlanetMoonCountLessThan());
         addTerraformingRequirementFactory("TargetPlanetOrbitersTooClose", new BoggledTerraformingRequirementFactory.TargetPlanetOrbitersTooClose());
         addTerraformingRequirementFactory("TargetPlanetStationCountLessThan", new BoggledTerraformingRequirementFactory.TargetPlanetStationCountLessThan());
+        addTerraformingRequirementFactory("TargetSystemStationCountLessThan", new BoggledTerraformingRequirementFactory.TargetSystemStationCountLessThan());
+
+        addTerraformingRequirementFactory("FleetInAsteroidBelt", new BoggledTerraformingRequirementFactory.FleetInAsteroidBelt());
+        addTerraformingRequirementFactory("FleetInAsteroidField", new BoggledTerraformingRequirementFactory.FleetInAsteroidField());
 
     }
 
@@ -637,6 +642,7 @@ public class boggledTools {
         addTerraformingProjectEffectFactory("AddItemToSubmarket", new BoggledTerraformingProjectEffectFactory.AddItemToSubmarket());
 
         addTerraformingProjectEffectFactory("AddStationToOrbit", new BoggledTerraformingProjectEffectFactory.AddStationToOrbit());
+        addTerraformingProjectEffectFactory("AddStationToEntity", new BoggledTerraformingProjectEffectFactory.AddStationToEntity());
     }
 
     public static void addTerraformingProjectEffectFactory(String key, BoggledTerraformingProjectEffectFactory.TerraformingProjectEffectFactory value) {
@@ -1498,35 +1504,38 @@ public class boggledTools {
         return rand.nextFloat() * (max - min) + min;
     }
 
-    public static int numAstropoliInOrbit(PlanetAPI targetPlanet, String stationTag) {
-        List<SectorEntityToken> allEntitiesInSystem = targetPlanet.getStarSystem().getAllEntities();
-
-        int numAstropoli = 0;
-        for(SectorEntityToken entity : allEntitiesInSystem) {
-            if (!entity.hasTag(stationTag)) {
-                continue;
+    public static int numStationsInOrbit(PlanetAPI targetPlanet, String... stationTags) {
+        int numStations = 0;
+        for (String stationTag : stationTags) {
+            List<SectorEntityToken> entities = targetPlanet.getStarSystem().getEntitiesWithTag(stationTag);
+            for (SectorEntityToken entity : entities) {
+                if (entity.getOrbitFocus() == null) {
+                    continue;
+                }
+                if (!entity.getOrbitFocus().equals(targetPlanet)) {
+                    continue;
+                }
+                numStations++;
             }
-            if (entity.getOrbitFocus() == null) {
-                continue;
-            }
-            if (!entity.getOrbitFocus().equals(targetPlanet)) {
-                continue;
-            }
-            numAstropoli++;
         }
-
-        return numAstropoli;
+        return numStations;
     }
 
-    public static boolean gateInSystem(StarSystemAPI system)
-    {
-        for (SectorEntityToken entity : system.getAllEntities()) {
-            if (entity.hasTag(Tags.GATE)) {
-                return true;
+    public static int numStationsInSystem(StarSystemAPI starSystem, String... stationTags) {
+        int numStations = 0;
+        for (String stationTag : stationTags) {
+            List<SectorEntityToken> entities = starSystem.getEntitiesWithTag(stationTag);
+            for (SectorEntityToken entity : entities) {
+                if (!entity.getFaction().getId().equals(Factions.NEUTRAL)) {
+                    numStations++;
+                }
             }
         }
+        return numStations;
+    }
 
-        return false;
+    public static boolean gateInSystem(StarSystemAPI system) {
+        return !system.getEntitiesWithTag(Tags.GATE).isEmpty();
     }
 
     public static boolean playerMarketInSystem(SectorEntityToken playerFleet) {
@@ -1886,16 +1895,13 @@ public class boggledTools {
         return null;
     }
 
-    public static SectorEntityToken getAsteroidFieldEntity(SectorEntityToken playerFleet)
-    {
-        for (SectorEntityToken entity : playerFleet.getStarSystem().getAllEntities()) {
-            if (entity instanceof CampaignTerrainAPI) {
-                CampaignTerrainAPI terrain = (CampaignTerrainAPI) entity;
-                CampaignTerrainPlugin terrainPlugin = terrain.getPlugin();
+    public static SectorEntityToken getAsteroidFieldEntity(SectorEntityToken playerFleet) {
+        for (Object object : playerFleet.getStarSystem().getEntities(CampaignTerrainAPI.class)) {
+            CampaignTerrainAPI terrain = (CampaignTerrainAPI) object;
+            CampaignTerrainPlugin terrainPlugin = terrain.getPlugin();
 
-                if (terrainPlugin instanceof AsteroidFieldTerrainPlugin && terrainPlugin.containsEntity(playerFleet)) {
-                    return terrain;
-                }
+            if (terrainPlugin instanceof AsteroidFieldTerrainPlugin && terrainPlugin.containsEntity(playerFleet)) {
+                return terrain;
             }
         }
 
@@ -1903,16 +1909,13 @@ public class boggledTools {
         return null;
     }
 
-    public static boolean playerFleetInAsteroidBelt(SectorEntityToken playerFleet)
-    {
-        for (SectorEntityToken entity : playerFleet.getStarSystem().getAllEntities()) {
-            if (entity instanceof CampaignTerrainAPI) {
-                CampaignTerrainAPI terrain = (CampaignTerrainAPI) entity;
-                CampaignTerrainPlugin terrainPlugin = terrain.getPlugin();
+    public static boolean playerFleetInAsteroidBelt(SectorEntityToken playerFleet) {
+        for (Object object : playerFleet.getStarSystem().getEntities(CampaignTerrainAPI.class)) {
+            CampaignTerrainAPI terrain = (CampaignTerrainAPI) object;
+            CampaignTerrainPlugin terrainPlugin = terrain.getPlugin();
 
-                if ((terrainPlugin instanceof AsteroidBeltTerrainPlugin && !(terrainPlugin instanceof AsteroidFieldTerrainPlugin)) && terrainPlugin.containsEntity(playerFleet)) {
-                    return true;
-                }
+            if ((terrainPlugin instanceof AsteroidBeltTerrainPlugin && !(terrainPlugin instanceof AsteroidFieldTerrainPlugin)) && terrainPlugin.containsEntity(playerFleet)) {
+                return true;
             }
         }
 
@@ -1921,14 +1924,12 @@ public class boggledTools {
 
     public static boolean playerFleetInAsteroidField(SectorEntityToken playerFleet)
     {
-        for (SectorEntityToken entity : playerFleet.getStarSystem().getAllEntities()) {
-            if (entity instanceof CampaignTerrainAPI) {
-                CampaignTerrainAPI terrain = (CampaignTerrainAPI) entity;
-                CampaignTerrainPlugin terrainPlugin = terrain.getPlugin();
+        for (Object object : playerFleet.getStarSystem().getEntities(CampaignTerrainAPI.class)) {
+            CampaignTerrainAPI terrain = (CampaignTerrainAPI) object;
+            CampaignTerrainPlugin terrainPlugin = terrain.getPlugin();
 
-                if (terrainPlugin instanceof AsteroidFieldTerrainPlugin && terrainPlugin.containsEntity(playerFleet)) {
-                    return true;
-                }
+            if (terrainPlugin instanceof AsteroidFieldTerrainPlugin && terrainPlugin.containsEntity(playerFleet)) {
+                return true;
             }
         }
 
@@ -1936,8 +1937,9 @@ public class boggledTools {
     }
 
     public static boolean playerFleetTooCloseToJumpPoint(SectorEntityToken playerFleet) {
-        for (SectorEntityToken entity : playerFleet.getStarSystem().getAllEntities()) {
-            if (entity instanceof JumpPointAPI && Misc.getDistance(playerFleet, entity) < 300f) {
+        for (Object object : playerFleet.getStarSystem().getEntities(JumpPointAPI.class)) {
+            JumpPointAPI entity = (JumpPointAPI) object;
+            if (Misc.getDistance(playerFleet, entity) < 300f) {
                 return true;
             }
         }
@@ -1948,41 +1950,36 @@ public class boggledTools {
     public static Integer getNumAsteroidTerrainsInSystem(SectorEntityToken playerFleet)
     {
         Integer numRoids = 0;
-        for (SectorEntityToken entity : playerFleet.getStarSystem().getAllEntities()) {
-            if (entity instanceof CampaignTerrainAPI) {
-                CampaignTerrainAPI terrain = (CampaignTerrainAPI) entity;
-                CampaignTerrainPlugin terrainPlugin = terrain.getPlugin();
+        for (Object object : playerFleet.getStarSystem().getEntities(CampaignTerrainAPI.class)) {
+            CampaignTerrainAPI terrain = (CampaignTerrainAPI) object;
+            CampaignTerrainPlugin terrainPlugin = terrain.getPlugin();
 
-                if (terrainPlugin instanceof AsteroidBeltTerrainPlugin) {
-                    numRoids++;
-                }
-
-                /*
-                // For testing purposes only
-                if(terrainId.equals("asteroid_belt"))
-                {
-                    AsteroidBeltTerrainPlugin belt = (AsteroidBeltTerrainPlugin) terrain.getPlugin();
-                    CampaignUIAPI ui = Global.getSector().getCampaignUI();
-                    ui.addMessage("Radius: " + belt.getRingParams().middleRadius, Color.YELLOW);
-                }
-                */
+            if (terrainPlugin instanceof AsteroidBeltTerrainPlugin) {
+                numRoids++;
             }
+
+            /*
+            // For testing purposes only
+            if(terrainId.equals("asteroid_belt"))
+            {
+                AsteroidBeltTerrainPlugin belt = (AsteroidBeltTerrainPlugin) terrain.getPlugin();
+                CampaignUIAPI ui = Global.getSector().getCampaignUI();
+                ui.addMessage("Radius: " + belt.getRingParams().middleRadius, Color.YELLOW);
+            }
+            */
         }
 
         return numRoids;
     }
 
-    public static Integer getNumAsteroidBeltsInSystem(SectorEntityToken playerFleet)
-    {
+    public static Integer getNumAsteroidBeltsInSystem(SectorEntityToken playerFleet) {
         Integer numBelts = 0;
-        for (SectorEntityToken entity : playerFleet.getStarSystem().getAllEntities()) {
-            if (entity instanceof CampaignTerrainAPI) {
-                CampaignTerrainAPI terrain = (CampaignTerrainAPI) entity;
-                CampaignTerrainPlugin terrainPlugin = terrain.getPlugin();
+        for (Object object : playerFleet.getStarSystem().getEntities(CampaignTerrainAPI.class)) {
+            CampaignTerrainAPI terrain = (CampaignTerrainAPI) object;
+            CampaignTerrainPlugin terrainPlugin = terrain.getPlugin();
 
-                if (terrainPlugin instanceof AsteroidBeltTerrainPlugin && !(terrainPlugin instanceof AsteroidFieldTerrainPlugin)) {
-                    numBelts++;
-                }
+            if (terrainPlugin instanceof AsteroidBeltTerrainPlugin && !(terrainPlugin instanceof AsteroidFieldTerrainPlugin)) {
+                numBelts++;
             }
         }
 
@@ -2018,26 +2015,18 @@ public class boggledTools {
         return 0;
     }
 
-    public static float randomOrbitalAngleFloat()
-    {
+    public static float randomOrbitalAngleFloat() {
         Random rand = new Random();
         return rand.nextFloat() * (360f);
     }
 
-    public static void refreshAquacultureAndFarming(MarketAPI market)
-    {
-        if(market == null || market.getPrimaryEntity() == null || market.getPlanetEntity() == null || market.hasTag(Tags.STATION) || market.getPrimaryEntity().hasTag(Tags.STATION))
-        {
+    public static void refreshAquacultureAndFarming(MarketAPI market) {
+        if(market == null || market.getPrimaryEntity() == null || market.getPlanetEntity() == null || market.hasTag(Tags.STATION) || market.getPrimaryEntity().hasTag(Tags.STATION)) {
             return;
-        }
-        else
-        {
-            if(market.hasIndustry(Industries.FARMING) && market.hasCondition(Conditions.WATER_SURFACE))
-            {
+        } else {
+            if(market.hasIndustry(Industries.FARMING) && market.hasCondition(Conditions.WATER_SURFACE)) {
                 market.getIndustry(Industries.FARMING).init(Industries.AQUACULTURE, market);
-            }
-            else if(market.hasIndustry(Industries.AQUACULTURE) && !market.hasCondition(Conditions.WATER_SURFACE))
-            {
+            } else if(market.hasIndustry(Industries.AQUACULTURE) && !market.hasCondition(Conditions.WATER_SURFACE)) {
                 market.getIndustry(Industries.AQUACULTURE).init(Industries.FARMING, market);
             }
         }
@@ -2080,8 +2069,7 @@ public class boggledTools {
         }
     }
 
-    public static int numReflectorsInOrbit(MarketAPI market)
-    {
+    public static int numReflectorsInOrbit(MarketAPI market) {
         int numReflectors = 0;
 
         for (SectorEntityToken entity : market.getStarSystem().getAllEntities()) {
@@ -2093,8 +2081,7 @@ public class boggledTools {
         return numReflectors;
     }
 
-    public static int numMirrorsInOrbit(MarketAPI market)
-    {
+    public static int numMirrorsInOrbit(MarketAPI market) {
         int numMirrors = 0;
 
         for (SectorEntityToken entity : market.getStarSystem().getAllEntities()) {
@@ -2119,11 +2106,9 @@ public class boggledTools {
         return numShades;
     }
 
-    public static void clearReflectorsInOrbit(MarketAPI market)
-    {
+    public static void clearReflectorsInOrbit(MarketAPI market) {
         Iterator<SectorEntityToken> allEntitiesInSystem = market.getStarSystem().getAllEntities().iterator();
-        while(allEntitiesInSystem.hasNext())
-        {
+        while(allEntitiesInSystem.hasNext()) {
             SectorEntityToken entity = allEntitiesInSystem.next();
             if (entity.getOrbitFocus() != null && entity.getOrbitFocus().equals(market.getPrimaryEntity()) && (entity.getId().contains(Entities.STELLAR_MIRROR) || entity.getId().contains(Entities.STELLAR_SHADE) || entity.hasTag(Entities.STELLAR_MIRROR) || entity.hasTag(Entities.STELLAR_SHADE)))
             {
@@ -2133,8 +2118,7 @@ public class boggledTools {
         }
     }
 
-    public static boolean hasIsmaraSling(MarketAPI market)
-    {
+    public static boolean hasIsmaraSling(MarketAPI market) {
         for (MarketAPI marketElement : Global.getSector().getEconomy().getMarkets(market.getStarSystem())) {
             if (!marketElement.getFactionId().equals(market.getFactionId())) {
                 continue;
@@ -2154,35 +2138,25 @@ public class boggledTools {
         return false;
     }
 
-    public static void swapStationSprite(SectorEntityToken station, String stationType, String stationGreekLetter, int targetSize)
-    {
+    public static void swapStationSprite(SectorEntityToken station, String stationType, String stationGreekLetter, int targetSize) {
         MarketAPI market = station.getMarket();
         StarSystemAPI system = market.getStarSystem();
         OrbitAPI orbit = null;
-        if(station.getOrbit() != null)
-        {
+        if(station.getOrbit() != null) {
             orbit = station.getOrbit();
         }
         CampaignClockAPI clock = Global.getSector().getClock();
         SectorEntityToken newStation;
         SectorEntityToken newStationLights = null;
 
-        String size = "null";
-        if(targetSize == 1)
-        {
+        String size = null;
+        if(targetSize == 1) {
             size = "small";
-        }
-        else if(targetSize == 2)
-        {
+        } else if(targetSize == 2) {
             size = "medium";
-        }
-        else if(targetSize == 3)
-        {
+        } else if(targetSize == 3) {
             size = "large";
-        }
-
-        if(size.equals("null"))
-        {
+        } else {
             //Do nothing if an erroneous size value was passed.
             return;
         }
@@ -2206,20 +2180,17 @@ public class boggledTools {
                 return;
         }
 
-        if(newStation == null)
-        {
+        if(newStation == null) {
             //Failed to create a new station likely because of erroneous passed values. Do nothing.
             return;
         }
 
         newStation.setContainingLocation(station.getContainingLocation());
-        if(newStationLights != null)
-        {
+        if(newStationLights != null) {
             newStationLights.setContainingLocation(station.getContainingLocation());
         }
 
-        if(orbit != null)
-        {
+        if(orbit != null) {
             newStation.setOrbit(orbit);
             if(newStationLights != null)
             {
@@ -2252,19 +2223,16 @@ public class boggledTools {
 
         // Handle Illustrated Entities custom images and/or description.
         // TASC uses classes from the Illustrated Entities to do this - the Illustrated Entities JAR is imported as a library into TASC.
-        if(Global.getSettings().getModManager().isModEnabled(BoggledMods.illustratedEntitiesModId))
-        {
+        if(Global.getSettings().getModManager().isModEnabled(BoggledMods.illustratedEntitiesModId)) {
             boolean customImageHasBeenSet = ImageHandler.hasImage(station);
-            if(customImageHasBeenSet)
-            {
+            if(customImageHasBeenSet) {
                 int customImageId = ImageHandler.getImageId(station);
                 ImageHandler.removeImageFrom(station);
                 ImageHandler.setImage(newStation, ImageDataMemory.getInstance().get(customImageId), false);
             }
 
             TextDataEntry textDataEntry = TextHandler.getDataForEntity(station);
-            if(textDataEntry != null)
-            {
+            if(textDataEntry != null) {
                 boggledTools.setEntityIllustratedEntitiesCustomDescription(newStation, textDataEntry);
             }
         }
@@ -2280,8 +2248,7 @@ public class boggledTools {
         refreshSupplyAndDemand(market);
     }
 
-    public static void setEntityIllustratedEntitiesCustomDescription(SectorEntityToken sectorEntityToken, TextDataEntry textDataEntry)
-    {
+    public static void setEntityIllustratedEntitiesCustomDescription(SectorEntityToken sectorEntityToken, TextDataEntry textDataEntry) {
         // The passed SectorEntityToken will have the description lines from the passed TextDataEntry copied onto its own TextDataEntry.
 
         TextDataMemory dataMemory = TextDataMemory.getInstance();
@@ -2302,14 +2269,8 @@ public class boggledTools {
         dataMemory.set(newTextDataEntry.descriptionNum, newTextDataEntry);
     }
 
-    public static void deleteOldLightsOverlay(SectorEntityToken station, String stationType, String stationGreekLetter)
-    {
+    public static void deleteOldLightsOverlay(SectorEntityToken station, String stationType, String stationGreekLetter) {
         StarSystemAPI system = station.getStarSystem();
-        OrbitAPI orbit = null;
-        if(station.getOrbit() != null)
-        {
-            orbit = station.getOrbit();
-        }
 
         SectorEntityToken targetTokenToDelete = null;
         switch (stationType) {
@@ -2379,8 +2340,7 @@ public class boggledTools {
         }
     }
 
-    public static void reapplyMiningStationLights(StarSystemAPI system)
-    {
+    public static void reapplyMiningStationLights(StarSystemAPI system) {
         SectorEntityToken stationToApplyOverlayTo = null;
         int stationsize = 0;
 
@@ -2398,29 +2358,23 @@ public class boggledTools {
             }
         }
 
-        if(stationToApplyOverlayTo != null)
-        {
-            if(stationsize == 1)
-            {
+        if(stationToApplyOverlayTo != null) {
+            if(stationsize == 1) {
                 if(!stationToApplyOverlayTo.getMarket().getFactionId().equals(Factions.NEUTRAL))
                 {
                     SectorEntityToken newMiningStationLights = system.addCustomEntity("boggled_miningStationLights", "Mining Station Lights Overlay", "boggled_mining_station_small_lights_overlay", stationToApplyOverlayTo.getFaction().getId());
                     newMiningStationLights.setOrbit(stationToApplyOverlayTo.getOrbit().makeCopy());
                 }
                 reapplyMiningStationLights(system);
-            }
-            else if(stationsize == 2)
-            {
-                if(!stationToApplyOverlayTo.getMarket().getFactionId().equals(Factions.NEUTRAL))
-                {
+            } else if(stationsize == 2) {
+                if(!stationToApplyOverlayTo.getMarket().getFactionId().equals(Factions.NEUTRAL)) {
                     SectorEntityToken newMiningStationLights = system.addCustomEntity("boggled_miningStationLights", "Mining Station Lights Overlay", "boggled_mining_station_medium_lights_overlay", stationToApplyOverlayTo.getFaction().getId());
                     newMiningStationLights.setOrbit(stationToApplyOverlayTo.getOrbit().makeCopy());
                 }
                 reapplyMiningStationLights(system);
             }
         }
-        else
-        {
+        else {
             for (SectorEntityToken entity : system.getAllEntities()) {
                 if (entity.hasTag(BoggledTags.alreadyReappliedLightsOverlay)) {
                     entity.removeTag(BoggledTags.alreadyReappliedLightsOverlay);
@@ -2429,8 +2383,7 @@ public class boggledTools {
         }
     }
 
-    public static boolean marketHasOrbitalStation(MarketAPI market)
-    {
+    public static boolean marketHasOrbitalStation(MarketAPI market) {
         for (SectorEntityToken entity : market.getStarSystem().getAllEntities()) {
             if (entity.getOrbitFocus() != null && entity.getOrbitFocus().equals(market.getPrimaryEntity()) && entity.hasTag(Tags.STATION)) {
                 return true;
@@ -2440,10 +2393,8 @@ public class boggledTools {
         return false;
     }
 
-    public static void addCondition(MarketAPI market, String condition)
-    {
-        if(!market.hasCondition(condition))
-        {
+    public static void addCondition(MarketAPI market, String condition) {
+        if(!market.hasCondition(condition)) {
             market.addCondition(condition);
             boggledTools.surveyAll(market);
             boggledTools.refreshSupplyAndDemand(market);
@@ -2451,10 +2402,8 @@ public class boggledTools {
         }
     }
 
-    public static void removeCondition(MarketAPI market, String condition)
-    {
-        if(market != null && market.hasCondition(condition))
-        {
+    public static void removeCondition(MarketAPI market, String condition) {
+        if(market != null && market.hasCondition(condition)) {
             market.removeCondition(condition);
             boggledTools.surveyAll(market);
             boggledTools.refreshSupplyAndDemand(market);
@@ -2462,13 +2411,10 @@ public class boggledTools {
         }
     }
 
-    public static void changePlanetType(PlanetAPI planet, String newType)
-    {
+    public static void changePlanetType(PlanetAPI planet, String newType) {
         PlanetSpecAPI planetSpec = planet.getSpec();
-        for(PlanetSpecAPI targetSpec : Global.getSettings().getAllPlanetSpecs())
-        {
-            if (targetSpec.getPlanetType().equals(newType))
-            {
+        for(PlanetSpecAPI targetSpec : Global.getSettings().getAllPlanetSpecs()) {
+            if (targetSpec.getPlanetType().equals(newType)) {
                 planetSpec.setAtmosphereColor(targetSpec.getAtmosphereColor());
                 planetSpec.setAtmosphereThickness(targetSpec.getAtmosphereThickness());
                 planetSpec.setAtmosphereThicknessMin(targetSpec.getAtmosphereThicknessMin());
@@ -2493,21 +2439,15 @@ public class boggledTools {
         planet.applySpecChanges();
     }
 
-    public static void applyPlanetKiller(MarketAPI market)
-    {
-        if(Misc.isStoryCritical(market) && !boggledTools.getBooleanSetting(BoggledSettings.planetKillerAllowDestructionOfColoniesMarkedAsEssentialForQuests))
-        {
+    public static void applyPlanetKiller(MarketAPI market) {
+        if(Misc.isStoryCritical(market) && !boggledTools.getBooleanSetting(BoggledSettings.planetKillerAllowDestructionOfColoniesMarkedAsEssentialForQuests)) {
             // Should never be reached because deployment will be disabled.
             return;
-        }
-        else if(marketIsStation(market))
-        {
+        } else if(marketIsStation(market)) {
             adjustRelationshipsDueToPlanetKillerUsage(market);
             triggerMilitaryResponseToPlanetKillerUsage(market);
             decivilizeMarketWithPlanetKiller(market);
-        }
-        else if(market.getPlanetEntity() != null && market.getPlanetEntity().getSpec() != null)
-        {
+        } else if(market.getPlanetEntity() != null && market.getPlanetEntity().getSpec() != null) {
             changePlanetTypeWithPlanetKiller(market);
             changePlanetConditionsWithPlanetKiller(market);
 
@@ -2517,8 +2457,7 @@ public class boggledTools {
         }
     }
 
-    public static void changePlanetTypeWithPlanetKiller(MarketAPI market)
-    {
+    public static void changePlanetTypeWithPlanetKiller(MarketAPI market) {
         String planetType = getPlanetType(market.getPlanetEntity()).getPlanetId();
         if(!planetType.equals(starPlanetId) && !planetType.equals(gasGiantPlanetId) && !planetType.equals(volcanicPlanetId) && !planetType.equals(unknownPlanetId))
         {
@@ -2527,8 +2466,7 @@ public class boggledTools {
         }
     }
 
-    public static void changePlanetConditionsWithPlanetKiller(MarketAPI market)
-    {
+    public static void changePlanetConditionsWithPlanetKiller(MarketAPI market) {
         // Modded conditions
 
         // Vanilla Conditions
@@ -2545,8 +2483,7 @@ public class boggledTools {
         removeCondition(market, Conditions.FARMLAND_BOUNTIFUL);
 
         String planetType = getPlanetType(market.getPlanetEntity()).getPlanetId();
-        if(!planetType.equals(gasGiantPlanetId) && !planetType.equals(unknownPlanetId))
-        {
+        if(!planetType.equals(gasGiantPlanetId) && !planetType.equals(unknownPlanetId)) {
             removeCondition(market, Conditions.ORGANICS_TRACE);
             removeCondition(market, Conditions.ORGANICS_COMMON);
             removeCondition(market, Conditions.ORGANICS_ABUNDANT);
@@ -2559,8 +2496,7 @@ public class boggledTools {
         }
     }
 
-    public static List<FactionAPI> factionsToMakeHostileDueToPlanetKillerUsage(MarketAPI market)
-    {
+    public static List<FactionAPI> factionsToMakeHostileDueToPlanetKillerUsage(MarketAPI market) {
         List<FactionAPI> factionsToMakeHostile = new ArrayList<>();
         for(FactionAPI faction : Global.getSector().getAllFactions())
         {
@@ -2579,16 +2515,13 @@ public class boggledTools {
         return factionsToMakeHostile;
     }
 
-    public static void adjustRelationshipsDueToPlanetKillerUsage(MarketAPI market)
-    {
-        for(FactionAPI faction : factionsToMakeHostileDueToPlanetKillerUsage(market))
-        {
+    public static void adjustRelationshipsDueToPlanetKillerUsage(MarketAPI market) {
+        for(FactionAPI faction : factionsToMakeHostileDueToPlanetKillerUsage(market)) {
             faction.setRelationship(Factions.PLAYER, -100f);
         }
     }
 
-    public static void decivilizeMarketWithPlanetKiller(MarketAPI market)
-    {
+    public static void decivilizeMarketWithPlanetKiller(MarketAPI market) {
         int atrocities = (int) Global.getSector().getCharacterData().getMemoryWithoutUpdate().getFloat(MemFlags.PLAYER_ATROCITIES);
         atrocities++;
         Global.getSector().getCharacterData().getMemoryWithoutUpdate().set(MemFlags.PLAYER_ATROCITIES, atrocities);
@@ -2608,10 +2541,8 @@ public class boggledTools {
 
         // Copied from MarketCMD saturation bombing code.
         InteractionDialogAPI dialog = Global.getSector().getCampaignUI().getCurrentInteractionDialog();
-        if (dialog != null && dialog.getPlugin() instanceof RuleBasedDialog)
-        {
-            if (dialog.getInteractionTarget() != null && dialog.getInteractionTarget().getMarket() != null)
-            {
+        if (dialog != null && dialog.getPlugin() instanceof RuleBasedDialog) {
+            if (dialog.getInteractionTarget() != null && dialog.getInteractionTarget().getMarket() != null) {
                 Global.getSector().setPaused(false);
                 dialog.getInteractionTarget().getMarket().getMemoryWithoutUpdate().advance(0.0001f);
                 Global.getSector().setPaused(true);
@@ -2620,20 +2551,16 @@ public class boggledTools {
             ((RuleBasedDialog) dialog.getPlugin()).updateMemory();
         }
 
-        if (dialog != null && dialog.getPlugin() instanceof RuleBasedDialog)
-        {
-                ((RuleBasedDialog) dialog.getPlugin()).updateMemory();
+        if (dialog != null && dialog.getPlugin() instanceof RuleBasedDialog) {
+            ((RuleBasedDialog) dialog.getPlugin()).updateMemory();
         }
     }
 
-    public static void triggerMilitaryResponseToPlanetKillerUsage(MarketAPI market)
-    {
+    public static void triggerMilitaryResponseToPlanetKillerUsage(MarketAPI market) {
         // Copied from MarketCMD addMilitaryResponse()
-
         if (market == null) return;
 
-        if (!market.getFaction().getCustomBoolean(Factions.CUSTOM_NO_WAR_SIM))
-        {
+        if (!market.getFaction().getCustomBoolean(Factions.CUSTOM_NO_WAR_SIM)) {
             MilitaryResponseScript.MilitaryResponseParams params = new MilitaryResponseScript.MilitaryResponseParams(CampaignFleetAIAPI.ActionType.HOSTILE,
                     "player_ground_raid_" + market.getId(),
                     market.getFaction(),
@@ -2644,10 +2571,8 @@ public class boggledTools {
         }
 
         List<CampaignFleetAPI> fleets = market.getContainingLocation().getFleets();
-        for (CampaignFleetAPI other : fleets)
-        {
-            if (other.getFaction() == market.getFaction())
-            {
+        for (CampaignFleetAPI other : fleets) {
+            if (other.getFaction() == market.getFaction()) {
                 MemoryAPI mem = other.getMemoryWithoutUpdate();
                 Misc.setFlagWithReason(mem, MemFlags.MEMORY_KEY_MAKE_HOSTILE_WHILE_TOFF, "raidAlarm", true, 1f);
             }
@@ -2705,29 +2630,6 @@ public class boggledTools {
         }
     }
 
-//    public static int getPlanetWaterLevel(MarketAPI market)
-//    {
-//        // There are checks present elsewhere that will prevent passing in a station market.
-//        // If that happens anyway, it's best to just throw an exception.
-//        if (hasIsmaraSling(market)) {
-//            return 2;
-//        }
-//
-//        PlanetAPI planet = market.getPlanetEntity();
-//        PlanetType planetType = getPlanetType(planet);
-//        return planetType.getWaterLevel(market);
-//    }
-
-//    public static boolean marketHasAtmoProblem(MarketAPI market)
-//    {
-//        BoggledProjectRequirementsOR reqs = terraformingRequirements.get("colony_has_atmo_problem");
-//        if (reqs == null) {
-//            // Abundance of caution
-//            return false;
-//        }
-//        return reqs.checkRequirement(market);
-//    }
-
     public static String getTooltipProjectName(BoggledTerraformingRequirement.RequirementContext ctx, BoggledTerraformingProject currentProject) {
         if(currentProject == null) {
             return noneProjectId;
@@ -2736,14 +2638,11 @@ public class boggledTools {
         return currentProject.getProjectTooltip(boggledTools.getTokenReplacements(ctx));
     }
 
-    public static MarketAPI createMiningStationMarket(SectorEntityToken stationEntity)
-    {
-        CampaignClockAPI clock = Global.getSector().getClock();
+    public static MarketAPI createMiningStationMarket(SectorEntityToken stationEntity) {
         StarSystemAPI system = stationEntity.getStarSystem();
-        String systemName = system.getName();
 
         //Create the mining station market
-        MarketAPI market = Global.getFactory().createMarket(systemName + clock.getCycle() + clock.getMonth() + clock.getDay() + "MiningStationMarket", stationEntity.getName(), 3);
+        MarketAPI market = Global.getFactory().createMarket(stationEntity.getId() + system.getName() + "MiningStationMarket", stationEntity.getName(), 3);
         market.setSize(3);
 
         market.setSurveyLevel(MarketAPI.SurveyLevel.FULL);
@@ -2754,15 +2653,12 @@ public class boggledTools {
 
         market.addCondition(Conditions.POPULATION_3);
 
-        if(boggledTools.getBooleanSetting(BoggledSettings.miningStationLinkToResourceBelts))
-        {
+        if(boggledTools.getBooleanSetting(BoggledSettings.miningStationLinkToResourceBelts)) {
             int numAsteroidBeltsInSystem = boggledTools.getNumAsteroidTerrainsInSystem(stationEntity);
             String resourceLevel = boggledTools.getMiningStationResourceString(numAsteroidBeltsInSystem);
             market.addCondition("ore_" + resourceLevel);
             market.addCondition("rare_ore_" + resourceLevel);
-        }
-        else
-        {
+        } else {
             String resourceLevel = "moderate";
             int staticAmountPerSettings = boggledTools.getIntSetting(BoggledSettings.miningStationStaticAmount);
             switch(staticAmountPerSettings)
@@ -2825,14 +2721,9 @@ public class boggledTools {
         return market;
     }
 
-    public static MarketAPI createSiphonStationMarket(SectorEntityToken stationEntity, SectorEntityToken hostGasGiant)
-    {
-        CampaignClockAPI clock = Global.getSector().getClock();
-        StarSystemAPI system = stationEntity.getStarSystem();
-        String systemName = system.getName();
-
+    public static MarketAPI createSiphonStationMarket(SectorEntityToken stationEntity, SectorEntityToken hostGasGiant) {
         //Create the siphon station market
-        MarketAPI market = Global.getFactory().createMarket(systemName + ":" + hostGasGiant.getName() + "SiphonStationMarket", stationEntity.getName(), 3);
+        MarketAPI market = Global.getFactory().createMarket(stationEntity.getId() + hostGasGiant.getName() + "SiphonStationMarket", stationEntity.getName(), 3);
         market.setSize(3);
 
         market.setSurveyLevel(MarketAPI.SurveyLevel.FULL);
@@ -2843,35 +2734,22 @@ public class boggledTools {
 
         market.addCondition(Conditions.POPULATION_3);
 
-        if(boggledTools.getBooleanSetting(BoggledSettings.siphonStationLinkToGasGiant))
-        {
-            if(hostGasGiant.getMarket().hasCondition(Conditions.VOLATILES_TRACE))
-            {
+        if(boggledTools.getBooleanSetting(BoggledSettings.siphonStationLinkToGasGiant)) {
+            if(hostGasGiant.getMarket().hasCondition(Conditions.VOLATILES_TRACE)) {
                 market.addCondition(Conditions.VOLATILES_TRACE);
-            }
-            else if(hostGasGiant.getMarket().hasCondition(Conditions.VOLATILES_DIFFUSE))
-            {
+            } else if(hostGasGiant.getMarket().hasCondition(Conditions.VOLATILES_DIFFUSE)) {
                 market.addCondition(Conditions.VOLATILES_DIFFUSE);
-            }
-            else if(hostGasGiant.getMarket().hasCondition(Conditions.VOLATILES_ABUNDANT))
-            {
+            } else if(hostGasGiant.getMarket().hasCondition(Conditions.VOLATILES_ABUNDANT)) {
                 market.addCondition(Conditions.VOLATILES_ABUNDANT);
-            }
-            else if(hostGasGiant.getMarket().hasCondition(Conditions.VOLATILES_PLENTIFUL))
-            {
+            } else if(hostGasGiant.getMarket().hasCondition(Conditions.VOLATILES_PLENTIFUL)) {
                 market.addCondition(Conditions.VOLATILES_PLENTIFUL);
-            }
-            else //Can a gas giant not have any volatiles at all?
-            {
+            } else { //Can a gas giant not have any volatiles at all?{
                 market.addCondition(Conditions.VOLATILES_TRACE);
             }
-        }
-        else
-        {
+        } else {
             String resourceLevel = "diffuse";
             int staticAmountPerSettings = boggledTools.getIntSetting(BoggledSettings.siphonStationStaticAmount);
-            switch(staticAmountPerSettings)
-            {
+            switch(staticAmountPerSettings) {
                 case 1:
                     resourceLevel = "trace";
                     break;
@@ -2923,12 +2801,9 @@ public class boggledTools {
         return market;
     }
 
-    public static MarketAPI createAstropolisStationMarket(SectorEntityToken stationEntity, SectorEntityToken hostPlanet)
-    {
-        CampaignClockAPI clock = Global.getSector().getClock();
-
+    public static MarketAPI createAstropolisStationMarket(SectorEntityToken stationEntity, SectorEntityToken hostPlanet) {
         //Create the astropolis market
-        MarketAPI market = Global.getFactory().createMarket(hostPlanet.getName() + "astropolisMarket" + clock.getCycle() + clock.getMonth() + clock.getDay(), stationEntity.getName(), 3);
+        MarketAPI market = Global.getFactory().createMarket(stationEntity.getId() + hostPlanet.getName() + "AstropolisMarket", stationEntity.getName(), 3);
         market.setSize(3);
 
         market.setSurveyLevel(MarketAPI.SurveyLevel.FULL);
@@ -2968,8 +2843,7 @@ public class boggledTools {
         return market;
     }
 
-    public static int getLastDayCheckedForConstruction(SectorEntityToken stationEntity)
-    {
+    public static int getLastDayCheckedForConstruction(SectorEntityToken stationEntity) {
         for (String tag : stationEntity.getTags()) {
             if (tag.contains(BoggledTags.constructionProgressLastDayChecked)) {
                 return Integer.parseInt(tag.replaceAll(BoggledTags.constructionProgressLastDayChecked, ""));
@@ -2979,8 +2853,7 @@ public class boggledTools {
         return 0;
     }
 
-    public static void clearClockCheckTagsForConstruction(SectorEntityToken stationEntity)
-    {
+    public static void clearClockCheckTagsForConstruction(SectorEntityToken stationEntity) {
         String tagToDelete = null;
         for (String tag : stationEntity.getTags()) {
             if (tag.contains(BoggledTags.constructionProgressLastDayChecked)) {
@@ -2996,8 +2869,7 @@ public class boggledTools {
         }
     }
 
-    public static void clearBoggledTerraformingControllerTags(MarketAPI market)
-    {
+    public static void clearBoggledTerraformingControllerTags(MarketAPI market) {
         String tagToDelete = null;
         for (String tag : market.getTags()) {
             if (tag.contains(BoggledTags.terraformingController)) {
@@ -3006,15 +2878,13 @@ public class boggledTools {
             }
         }
 
-        if(tagToDelete != null)
-        {
+        if(tagToDelete != null) {
             market.removeTag(tagToDelete);
             clearBoggledTerraformingControllerTags(market);
         }
     }
 
-    public static int getConstructionProgressDays(SectorEntityToken stationEntity)
-    {
+    public static int getConstructionProgressDays(SectorEntityToken stationEntity) {
         for (String tag : stationEntity.getTags()) {
             if (tag.contains(BoggledTags.constructionProgressDays)) {
                 return Integer.parseInt(tag.replaceAll(BoggledTags.constructionProgressDays, ""));
@@ -3024,8 +2894,7 @@ public class boggledTools {
         return 0;
     }
 
-    public static void clearProgressCheckTagsForConstruction(SectorEntityToken stationEntity)
-    {
+    public static void clearProgressCheckTagsForConstruction(SectorEntityToken stationEntity) {
         String tagToDelete = null;
         for (String tag : stationEntity.getTags()) {
             if (tag.contains(BoggledTags.constructionProgressDays)) {
@@ -3041,8 +2910,7 @@ public class boggledTools {
         }
     }
 
-    public static void incrementConstructionProgressDays(SectorEntityToken stationEntity, int amount)
-    {
+    public static void incrementConstructionProgressDays(SectorEntityToken stationEntity, int amount) {
         int currentDays = getConstructionProgressDays(stationEntity);
 
         clearProgressCheckTagsForConstruction(stationEntity);
@@ -3059,8 +2927,7 @@ public class boggledTools {
         stationEntity.addTag(BoggledTags.constructionProgressDays + strDays);
     }
 
-    public static int[] getQuantitiesForStableLocationConstruction(String type)
-    {
+    public static int[] getQuantitiesForStableLocationConstruction(String type) {
         ArrayList<Integer> ret = new ArrayList<>();
 
         if (type.equals(Entities.INACTIVE_GATE)) {
@@ -3088,54 +2955,33 @@ public class boggledTools {
         return ret2;
     }
 
-    public static SectorEntityToken getPlanetTokenForQuest(String systemId, String entityId)
-    {
+    public static SectorEntityToken getPlanetTokenForQuest(String systemId, String entityId) {
         StarSystemAPI system = Global.getSector().getStarSystem(systemId);
-        if(system != null)
-        {
-            SectorEntityToken possibleTarget = system.getEntityById(entityId);
-            if(possibleTarget != null)
-            {
-                if(possibleTarget instanceof PlanetAPI)
-                {
-                    return possibleTarget;
-                }
-                else
-                {
-                    return null;
-                }
-            }
-            else
-            {
-                return null;
-            }
-        }
-        else
-        {
+        if (system == null) {
             return null;
         }
+        SectorEntityToken possibleTarget = system.getEntityById(entityId);
+        if (possibleTarget == null) {
+            return null;
+        }
+        if(!(possibleTarget instanceof PlanetAPI)) {
+            return null;
+        }
+        return possibleTarget;
     }
 
-    public static int getIntSetting(String key)
-    {
-        if(Global.getSettings().getModManager().isModEnabled(BoggledMods.lunalibModId))
-        {
+    public static int getIntSetting(String key) {
+        if(Global.getSettings().getModManager().isModEnabled(BoggledMods.lunalibModId)) {
             return LunaSettings.getInt(BoggledMods.tascModId, key);
-        }
-        else
-        {
+        } else {
             return Global.getSettings().getInt(key);
         }
     }
 
-    public static boolean getBooleanSetting(String key)
-    {
-        if(Global.getSettings().getModManager().isModEnabled(BoggledMods.lunalibModId))
-        {
+    public static boolean getBooleanSetting(String key) {
+        if(Global.getSettings().getModManager().isModEnabled(BoggledMods.lunalibModId)) {
             return LunaSettings.getBoolean(BoggledMods.tascModId, key);
-        }
-        else
-        {
+        } else {
             return Global.getSettings().getBoolean(key);
         }
     }
@@ -3162,8 +3008,7 @@ public class boggledTools {
         Global.getLogger(boggledTools.class).info(message);
     }
 
-    public static void sendDebugIntelMessage(String message)
-    {
+    public static void sendDebugIntelMessage(String message) {
         MessageIntel intel = new MessageIntel(message, Misc.getBasePlayerColor());
         intel.addLine(message);
         intel.setIcon(Global.getSector().getPlayerFaction().getCrest());
@@ -3171,8 +3016,7 @@ public class boggledTools {
         Global.getSector().getCampaignUI().addMessage(intel, CommMessageAPI.MessageClickAction.COLONY_INFO, null);
     }
 
-    public static void terraformDebug(MarketAPI market)
-    {
+    public static void terraformDebug(MarketAPI market) {
         market.getPlanetEntity().changeType(boggledTools.waterPlanetId, null);
         sendDebugIntelMessage(market.getPlanetEntity().getTypeId());
         sendDebugIntelMessage(market.getPlanetEntity().getSpec().getPlanetType());

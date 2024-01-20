@@ -395,7 +395,7 @@
 		"showNameOnMap":false,
 		"scaleNameWithZoom":false,
 		"scaleIconWithZoom":true,
-		"tags":["station", "boggled_mining_station", "boggled_mining_station_small"],
+		"tags":["station", "boggled_mining", "boggled_mining_small"],
 		"layers":[STATIONS], # what layer(s) to render in. See CampaignEngineLayers.java for possible values
 	},
 	"boggled_mining_station_small_lights_overlay":{
@@ -437,7 +437,7 @@
 		"showNameOnMap":false,
 		"scaleNameWithZoom":false,
 		"scaleIconWithZoom":true,
-		"tags":["station", "boggled_mining_station", "boggled_mining_station_medium"],
+		"tags":["station", "boggled_mining", "boggled_mining_medium"],
 		"layers":[STATIONS], # what layer(s) to render in. See CampaignEngineLayers.java for possible values
 	},
 	"boggled_mining_station_medium_lights_overlay":{
@@ -479,7 +479,7 @@
 		"showNameOnMap":false,
 		"scaleNameWithZoom":false,
 		"scaleIconWithZoom":true,
-		"tags":["station", "boggled_siphon_station"],
+		"tags":["station", "boggled_siphon"],
 		"layers":[STATIONS], # what layer(s) to render in. See CampaignEngineLayers.java for possible values
 	},
 	"boggled_siphon_station_small_lights_overlay":{
@@ -521,7 +521,7 @@
 		"showNameOnMap":false,
 		"scaleNameWithZoom":false,
 		"scaleIconWithZoom":true,
-		"tags":["station", "boggled_siphon_station"],
+		"tags":["station", "boggled_siphon"],
 		"layers":[STATIONS], # what layer(s) to render in. See CampaignEngineLayers.java for possible values
 	},
 	"boggled_siphon_station_medium_lights_overlay":{

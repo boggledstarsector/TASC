@@ -480,9 +480,9 @@ ability_add_astropolis_station,,ability,"Construct an astropolis station in orbi
 	{ 'requirement_id' : 'ability_astropolis_station_player_fleet_not_in_hyperspace', 'and_then' : [
 		{ 'requirement_id' : 'ability_astropolis_station_system_has_jump_points', 'and_then' : [
 			{ 'requirement_id' : 'ability_astropolis_station_system_has_planets', 'and_then' : [
-				{ 'requirement_id' : 'ability_astropolis_station_target_planet_within_500_units' },
+				{ 'requirement_id' : 'ability_astropolis_station_target_planet_within_range' },
 				{ 'requirement_id' : 'ability_astropolis_station_target_planet_not_owned_by_player_or_neutral' },
-				{ 'requirement_id' : 'ability_astropolis_station_target_planet_size_at_least_125_units' },
+				{ 'requirement_id' : 'ability_astropolis_station_target_planet_too_small' },
 				{ 'requirement_id' : 'ability_astropolis_station_target_planet_too_close_to_orbit_focus' },
 				{ 'requirement_id' : 'ability_astropolis_station_target_planet_too_close_to_star' },
 				{ 'requirement_id' : 'ability_astropolis_station_target_planet_moon_too_close' },
@@ -499,10 +499,57 @@ ability_add_astropolis_station,,ability,"Construct an astropolis station in orbi
 	{ 'requirement_id' : 'ability_astropolis_station_fleet_contains_metals' },
 	{ 'requirement_id' : 'ability_astropolis_station_fleet_contains_transplutonics' }
 ]",,,,,,"[
-	{ 'effect_id' : 'astropolis_station_remove_credits_from_fleet' },
-	{ 'effect_id' : 'astropolis_station_remove_crew_from_fleet' },
-	{ 'effect_id' : 'astropolis_station_remove_heavy_machinery_from_fleet' },
-	{ 'effect_id' : 'astropolis_station_remove_metals_from_fleet' },
-	{ 'effect_id' : 'astropolis_station_remove_transplutonics_from_fleet' },
+	{ 'effect_id' : 'ability_astropolis_station_remove_credits_from_fleet' },
+	{ 'effect_id' : 'ability_astropolis_station_remove_crew_from_fleet' },
+	{ 'effect_id' : 'ability_astropolis_station_remove_heavy_machinery_from_fleet' },
+	{ 'effect_id' : 'ability_astropolis_station_remove_metals_from_fleet' },
+	{ 'effect_id' : 'ability_astropolis_station_remove_transplutonics_from_fleet' },
 	{ 'effect_id' : 'add_astropolis_station_to_orbit' }
+]",,
+ability_add_mining_station,,ability,"Construct a mining station in an asteroid belt or asteroid field.",,,"[
+	{ 'requirement_id' : 'ability_mining_station_player_fleet_not_in_hyperspace', 'and_then' : [
+		{ 'requirement_id' : 'ability_mining_station_system_has_jump_points', 'and_then' : [
+			{ 'requirement_id' : 'ability_mining_station_too_close_to_jump_point' },
+			{ 'requirement_id' : 'ability_mining_station_too_many_stations' },
+			{ 'requirement_id' : 'ability_mining_station_fleet_in_asteroid_belt_or_field' }
+		] }
+	] },
+
+	{ 'requirement_id' : 'ability_mining_station_fleet_contains_credits' },
+	{ 'requirement_id' : 'ability_mining_station_fleet_contains_crew' },
+	{ 'requirement_id' : 'ability_mining_station_fleet_contains_heavy_machinery' },
+	{ 'requirement_id' : 'ability_mining_station_fleet_contains_metals' },
+	{ 'requirement_id' : 'ability_mining_station_fleet_contains_transplutonics' }
+]",,,,,,"[
+	{ 'effect_id' : 'ability_mining_station_remove_credits_from_fleet' },
+	{ 'effect_id' : 'ability_mining_station_remove_crew_from_fleet' },
+	{ 'effect_id' : 'ability_mining_station_remove_heavy_machinery_from_fleet' },
+	{ 'effect_id' : 'ability_mining_station_remove_metals_from_fleet' },
+	{ 'effect_id' : 'ability_mining_station_remove_transplutonics_from_fleet' },
+	{ 'effect_id' : 'add_mining_station_to_entity' }
+]",,
+ability_add_siphon_station,,ability,"Construct a siphon station in low orbit around a gas giant.",,,"[
+	{ 'requirement_id' : 'ability_siphon_station_player_fleet_not_in_hyperspace', 'and_then' : [
+		{ 'requirement_id' : 'ability_siphon_station_system_has_jump_points', 'and_then' : [
+			{ 'requirement_id' : 'ability_siphon_station_target_planet_is_gas_giant' },
+			{ 'requirement_id' : 'ability_siphon_station_target_planet_within_range' },
+			{ 'requirement_id' : 'ability_siphon_station_target_planet_not_owned_by_player_or_neutral' },
+			{ 'requirement_id' : 'ability_siphon_station_target_planet_moon_too_close' },
+			
+			{ 'requirement_id' : 'ability_siphon_station_target_planet_too_many_stations' }
+		] }
+	] },
+	
+	{ 'requirement_id' : 'ability_siphon_station_fleet_contains_credits' },
+	{ 'requirement_id' : 'ability_siphon_station_fleet_contains_crew' },
+	{ 'requirement_id' : 'ability_siphon_station_fleet_contains_heavy_machinery' },
+	{ 'requirement_id' : 'ability_siphon_station_fleet_contains_metals' },
+	{ 'requirement_id' : 'ability_siphon_station_fleet_contains_transplutonics' }
+]",,,,,,"[
+	{ 'effect_id' : 'ability_siphon_station_remove_credits_from_fleet' },
+	{ 'effect_id' : 'ability_siphon_station_remove_crew_from_fleet' },
+	{ 'effect_id' : 'ability_siphon_station_remove_heavy_machinery_from_fleet' },
+	{ 'effect_id' : 'ability_siphon_station_remove_metals_from_fleet' },
+	{ 'effect_id' : 'ability_siphon_station_remove_transplutonics_from_fleet' },
+	{ 'effect_id' : 'add_siphon_station_to_orbit' }
 ]",,

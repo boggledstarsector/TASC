@@ -180,6 +180,14 @@ public class BoggledTerraformingRequirementFactory {
         }
     }
 
+    public static class FleetTooCloseToJumpPoint implements TerraformingRequirementFactory {
+        @Override
+        public BoggledTerraformingRequirement.TerraformingRequirement constructFromJSON(String requirementId, boolean invert, String data) throws JSONException {
+            float distance = Float.parseFloat(data);
+            return new BoggledTerraformingRequirement.FleetTooCloseToJumpPoint(requirementId, invert, distance);
+        }
+    }
+
     public static class PlayerHasStoryPointsAtLeast implements TerraformingRequirementFactory {
         @Override
         public BoggledTerraformingRequirement.TerraformingRequirement constructFromJSON(String requirementId, boolean invert, String data) {
@@ -334,9 +342,41 @@ public class BoggledTerraformingRequirementFactory {
         @Override
         public BoggledTerraformingRequirement.TerraformingRequirement constructFromJSON(String requirementId, boolean invert, String data) throws JSONException {
             JSONObject jsonData = new JSONObject(data);
-            String stationTag = jsonData.getString("station_tag");
+            JSONArray stationTagsArray = jsonData.getJSONArray("station_tags");
+            List<String> stationTags = new ArrayList<>();
+            for (int i = 0; i < stationTagsArray.length(); ++i) {
+                stationTags.add(stationTagsArray.getString(i));
+            }
             int maxNum = jsonData.getInt("max_num");
-            return new BoggledTerraformingRequirement.TargetPlanetStationCountLessThan(requirementId, invert, stationTag, maxNum);
+            return new BoggledTerraformingRequirement.TargetPlanetStationCountLessThan(requirementId, invert, stationTags, maxNum);
+        }
+    }
+
+    public static class TargetSystemStationCountLessThan implements TerraformingRequirementFactory {
+        @Override
+        public BoggledTerraformingRequirement.TerraformingRequirement constructFromJSON(String requirementId, boolean invert, String data) throws JSONException {
+            JSONObject jsonData = new JSONObject(data);
+            JSONArray stationTagsArray = jsonData.getJSONArray("station_tags");
+            List<String> stationTags = new ArrayList<>();
+            for (int i = 0; i < stationTagsArray.length(); ++i) {
+                stationTags.add(stationTagsArray.getString(i));
+            }
+            int maxNum = jsonData.getInt("max_num");
+            return new BoggledTerraformingRequirement.TargetSystemStationCountLessThan(requirementId, invert, stationTags, maxNum);
+        }
+    }
+
+    public static class FleetInAsteroidBelt implements TerraformingRequirementFactory {
+        @Override
+        public BoggledTerraformingRequirement.TerraformingRequirement constructFromJSON(String requirementId, boolean invert, String data) throws JSONException {
+            return new BoggledTerraformingRequirement.FleetInAsteroidBelt(requirementId, invert);
+        }
+    }
+
+    public static class FleetInAsteroidField implements TerraformingRequirementFactory {
+        @Override
+        public BoggledTerraformingRequirement.TerraformingRequirement constructFromJSON(String requirementId, boolean invert, String data) throws JSONException {
+            return new BoggledTerraformingRequirement.FleetInAsteroidField(requirementId, invert);
         }
     }
 }

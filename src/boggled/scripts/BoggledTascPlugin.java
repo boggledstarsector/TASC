@@ -83,14 +83,19 @@ public class BoggledTascPlugin extends BaseModPlugin
         }
     }
 
-    public void applyStationConstructionAbilitiesPerSettingsFile()
-    {
-        if (!Global.getSector().getPlayerFleet().hasAbility("construct_astropolis_station")) {
-            Global.getSector().getPlayerFleet().addAbility("construct_astropolis_station");
-        }
-
+    public void applyStationConstructionAbilitiesPerSettingsFile() {
         if(boggledTools.getBooleanSetting(boggledTools.BoggledSettings.stationConstructionContentEnabled))
         {
+            if (!Global.getSector().getPlayerFleet().hasAbility("construct_astropolis_station")) {
+                Global.getSector().getCharacterData().addAbility("construct_astropolis_station");
+            }
+            if (!Global.getSector().getPlayerFleet().hasAbility("construct_mining_station")) {
+                Global.getSector().getCharacterData().addAbility("construct_mining_station");
+            }
+            if (!Global.getSector().getPlayerFleet().hasAbility("construct_siphon_station")) {
+                Global.getSector().getCharacterData().addAbility("construct_siphon_station");
+            }
+
             if (!Global.getSector().getPlayerFleet().hasAbility("boggled_construct_astropolis_station")) {
                 if(boggledTools.getBooleanSetting(boggledTools.BoggledSettings.astropolisEnabled)) {
                     Global.getSector().getCharacterData().addAbility("boggled_construct_astropolis_station");
@@ -131,6 +136,10 @@ public class BoggledTascPlugin extends BaseModPlugin
                 }
             }
         } else {
+            Global.getSector().getCharacterData().removeAbility("construct_astropolis_station");
+            Global.getSector().getCharacterData().removeAbility("construct_mining_station");
+            Global.getSector().getCharacterData().removeAbility("construct_siphon_station");
+
             Global.getSector().getCharacterData().removeAbility("boggled_construct_astropolis_station");
             Global.getSector().getCharacterData().removeAbility("boggled_construct_mining_station");
             Global.getSector().getCharacterData().removeAbility("boggled_construct_siphon_station");
@@ -325,6 +334,7 @@ public class BoggledTascPlugin extends BaseModPlugin
         applyStationSettingsToAllStationsInSector();
     }
 
+    @Override
     public void afterGameSave()
     {
         enablePlanetKiller();
@@ -342,8 +352,13 @@ public class BoggledTascPlugin extends BaseModPlugin
         addDomainTechBuildingsToVanillaColonies();
     }
 
+    @Override
     public void beforeGameSave()
     {
+        Global.getSector().getCharacterData().removeAbility("construct_astropolis_station");
+        Global.getSector().getCharacterData().removeAbility("construct_mining_station");
+        Global.getSector().getCharacterData().removeAbility("construct_siphon_station");
+
         Global.getSector().getCharacterData().removeAbility("boggled_construct_astropolis_station");
         Global.getSector().getCharacterData().removeAbility("boggled_construct_mining_station");
         Global.getSector().getCharacterData().removeAbility("boggled_construct_siphon_station");
@@ -358,6 +373,7 @@ public class BoggledTascPlugin extends BaseModPlugin
         Global.getSector().getListenerManager().removeListenerOfClass(boggledPlanetKillerGroundRaidObjectiveListener.class);
     }
 
+    @Override
     public void onGameLoad(boolean newGame)
     {
         loadSettingsFromJSON();

@@ -443,23 +443,27 @@ public class BoggledTerraformingProjectEffect {
         }
     }
 
-    public static class AddStationToOrbit extends TerraformingProjectEffect {
+    public static abstract class AddStation extends TerraformingProjectEffect {
         String stationType;
+        String stationName;
+        List<String> variants;
 
         int numStationsPerLayer;
         float orbitRadius;
         int numDaysToBuild;
 
-        public AddStationToOrbit(String id, String[] enableSettings, String stationType, int numStationsPerLayer, float orbitRadius, int numDaysToBuild) {
+        public AddStation(String id, String[] enableSettings, String stationType, String stationName, List<String> variants, int numStationsPerLayer, float orbitRadius, int numDaysToBuild) {
             super(id, enableSettings);
             this.stationType = stationType;
+            this.stationName = stationName;
+            this.variants = variants;
             this.numStationsPerLayer = numStationsPerLayer;
             this.orbitRadius = orbitRadius;
             this.numDaysToBuild = numDaysToBuild;
         }
 
         @NotNull
-        private static List<String> getGreekAlphabetList() {
+        protected static List<String> getGreekAlphabetList() {
             List<String> greekAlphabetList = new ArrayList<>();
             greekAlphabetList.add("Alpha");
             greekAlphabetList.add("Beta");
@@ -488,7 +492,7 @@ public class BoggledTerraformingProjectEffect {
             return greekAlphabetList;
         }
 
-        private String getGreekLetter(int numAstroAlreadyPresent) {
+        protected String getGreekLetter(int numStationsAlreadyPresent) {
             int setting = boggledTools.getIntSetting("boggledAstropolisSpriteToUse");
             if(setting == 1)
             {
@@ -502,15 +506,23 @@ public class BoggledTerraformingProjectEffect {
             {
                 return "gamma";
             }
-            numAstroAlreadyPresent = Math.abs(numAstroAlreadyPresent);
-            return getGreekAlphabetList().get(numAstroAlreadyPresent % 3).toLowerCase();
+            numStationsAlreadyPresent = Math.abs(numStationsAlreadyPresent);
+            return getGreekAlphabetList().get(numStationsAlreadyPresent % 3).toLowerCase();
         }
 
-        private String getColonyNameString(int numAstroAlreadyPresent) {
-            numAstroAlreadyPresent = Math.abs(numAstroAlreadyPresent);
+        protected String getVariant(int numStationsAlreadyPresent) {
+            numStationsAlreadyPresent = Math.abs(numStationsAlreadyPresent);
+            if (variants.isEmpty()) {
+                return "";
+            }
+            return "_" + variants.get(numStationsAlreadyPresent % variants.size());
+        }
+
+        protected String getColonyNameString(int numStationsAlreadyPresent) {
+            numStationsAlreadyPresent = Math.abs(numStationsAlreadyPresent);
             List<String> greekAlphabetList = getGreekAlphabetList();
-            int letterNum = numAstroAlreadyPresent % greekAlphabetList.size();
-            int suffixNum = numAstroAlreadyPresent / greekAlphabetList.size();
+            int letterNum = numStationsAlreadyPresent % greekAlphabetList.size();
+            int suffixNum = numStationsAlreadyPresent / greekAlphabetList.size();
             String ret = greekAlphabetList.get(letterNum);
             if (suffixNum != 0) {
                 ret = ret + "-" + suffixNum;
@@ -518,7 +530,17 @@ public class BoggledTerraformingProjectEffect {
             return ret;
         }
 
-        private SectorEntityToken compareAndGetLatest(List<String> greekAlphabet, SectorEntityToken o1, SectorEntityToken o2) {
+        protected int greekAlphabetIndexOf(List<String> greekAlphabet, String name) {
+            for (int i = 0; i < greekAlphabet.size(); ++i) {
+                String greekLetter = greekAlphabet.get(i);
+                if (name.contains(greekLetter)) {
+                    return i;
+                }
+            }
+            return -1;
+        }
+
+        protected SectorEntityToken compareAndGetLatest(List<String> greekAlphabet, SectorEntityToken o1, SectorEntityToken o2) {
             if (o1 == null) {
                 return o2;
             }
@@ -529,17 +551,17 @@ public class BoggledTerraformingProjectEffect {
             int o2NumIndexStart = o2.getName().indexOf('-');
             if (o1NumIndexStart == -1 && o2NumIndexStart == -1) {
                 // Neither has a number at the end, so we compare according to the index in the alphabet
-                int o1GreekIndex = greekAlphabet.indexOf(o1.getName());
-                int o2GreekIndex = greekAlphabet.indexOf(o2.getName());
-                int comp =  Integer.compare(o1GreekIndex, o2GreekIndex);
+                int o1GreekIndex = greekAlphabetIndexOf(greekAlphabet, o1.getName());//greekAlphabet.indexOf(o1.getName());
+                int o2GreekIndex = greekAlphabetIndexOf(greekAlphabet, o2.getName());//greekAlphabet.indexOf(o2.getName());
+                int comp = Integer.compare(o1GreekIndex, o2GreekIndex);
                 if (comp < 0) {
-                    return o1;
+                    return o2;
                 }
                 // If they return equal, something else is broken
                 if (comp == 0) {
                     Global.getLogger(this.getClass()).error("Sector entity tokens " + o1.getName() + " and " + o2.getName() + " compared equal");
                 }
-                return o2;
+                return o1;
             }
             if (o1NumIndexStart == -1) {
                 // o2 has a number at the end, o1 doesn't, therefore o1 comes before o2
@@ -571,6 +593,12 @@ public class BoggledTerraformingProjectEffect {
             }
             return o2;
         }
+    }
+
+    public static class AddStationToOrbit extends AddStation {
+        public AddStationToOrbit(String id, String[] enableSettings, String stationType, String stationName, List<String> variants, int numStationsPerLayer, float orbitRadius, int numDaysToBuild) {
+            super(id, enableSettings, stationType, stationName, variants, numStationsPerLayer, orbitRadius, numDaysToBuild);
+        }
 
         @Override
         public void addTooltipInfoImpl(BoggledTerraformingRequirement.RequirementContext ctx, Map<String, EffectTooltipPara> effectTypeToPara) {
@@ -588,30 +616,32 @@ public class BoggledTerraformingProjectEffect {
 
         @Override
         protected void applyProjectEffectImpl(BoggledTerraformingRequirement.RequirementContext ctx) {
-            CampaignFleetAPI playerFleet = ctx.getFleet();
-            StarSystemAPI system = playerFleet.getStarSystem();
+            StarSystemAPI starSystem = ctx.getStarSystem();
             PlanetAPI targetPlanet = ctx.getPlanet();
 
             String playerFactionId = Global.getSector().getPlayerFaction().getId();
 
-            String stationTag = "boggled_astropolis";
-            String customEntityStationTag = "boggled_astropolis_station";
+            String customEntityStationTag = stationType + "_station";
 
-            int numAstro = boggledTools.numAstropoliInOrbit(targetPlanet, stationTag);
+            int numStations = boggledTools.numStationsInOrbit(targetPlanet, stationType);
 
-            SectorEntityToken newAstropolis = system.addCustomEntity("boggled_astropolis" + numAstro, targetPlanet.getName() + " Astropolis " + getColonyNameString(numAstro), "boggled_astropolis_station_" + getGreekLetter(numAstro) + "_small", playerFactionId);
-            SectorEntityToken newAstropolisLights = system.addCustomEntity("boggled_astropolisLights", targetPlanet.getName() + " Astropolis " + getColonyNameString(numAstro) + " Lights Overlay", "boggled_astropolis_station_" + getGreekLetter(numAstro) + "_small_lights_overlay", playerFactionId);
+            String variantLetter = getVariant(numStations);
+
+            String id = stationType + numStations + "_" + UUID.randomUUID();
+
+            SectorEntityToken newStation = starSystem.addCustomEntity(id, targetPlanet.getName() + " " + stationName + " " + getColonyNameString(numStations), customEntityStationTag + variantLetter + "_small", playerFactionId);
+            SectorEntityToken newStationLights = starSystem.addCustomEntity(id + "Lights", targetPlanet.getName() + " " + stationName + " " + getColonyNameString(numStations) + " Lights Overlay", customEntityStationTag + variantLetter + "_small_lights_overlay", playerFactionId);
 
             float baseOrbitRadius = targetPlanet.getRadius() + this.orbitRadius;
-            float orbitRadius = targetPlanet.getRadius() + this.orbitRadius + (numAstro / numStationsPerLayer) * (this.orbitRadius / 2);
-            if (numAstro == 0) {
-                newAstropolis.setCircularOrbitPointingDown(targetPlanet, 0, orbitRadius, orbitRadius / 10f);
+            float orbitRadius = targetPlanet.getRadius() + this.orbitRadius + (numStations / numStationsPerLayer) * (this.orbitRadius / 2); // Doing integer division stuff here
+            if (numStations == 0) {
+                newStation.setCircularOrbitPointingDown(targetPlanet, boggledTools.randomOrbitalAngleFloat(), orbitRadius, orbitRadius / 10f);
             } else {
                 final List<String> greekAlphabet = getGreekAlphabetList();
-                List<SectorEntityToken> allEntitiesInSystem = playerFleet.getStarSystem().getAllEntities();
+                List<SectorEntityToken> allEntitiesInSystem = starSystem.getEntitiesWithTag(stationType);
                 SectorEntityToken latestStation = null;
                 for (SectorEntityToken entity : allEntitiesInSystem) {
-                    if (!entity.hasTag(stationTag)) {
+                    if (entity.equals(newStation)) {
                         continue;
                     }
                     if (entity.getOrbitFocus() == null) {
@@ -626,15 +656,63 @@ public class BoggledTerraformingProjectEffect {
                     latestStation = compareAndGetLatest(greekAlphabet, latestStation, entity);
                 }
                 float step = 360f / numStationsPerLayer;
-                if (numAstro % numStationsPerLayer == 0) {
+                if (numStations % numStationsPerLayer == 0) {
                     step += step / 2;
                 }
                 assert latestStation != null;
-                newAstropolis.setCircularOrbitPointingDown(targetPlanet, (latestStation.getCircularOrbitAngle() + step) % 360f, orbitRadius, baseOrbitRadius / 10f);
+                newStation.setCircularOrbitPointingDown(targetPlanet, (latestStation.getCircularOrbitAngle() + step) % 360f, orbitRadius, baseOrbitRadius / 10f);
             }
-            newAstropolisLights.setOrbit(newAstropolis.getOrbit().makeCopy());
+            newStationLights.setOrbit(newStation.getOrbit().makeCopy());
 
-            newAstropolis.addScript(new BoggledUnderConstructionEveryFrameScript(newAstropolis));
+            newStation.addScript(new BoggledUnderConstructionEveryFrameScript(newStation));
+            Global.getSoundPlayer().playUISound("ui_boggled_station_start_building", 1.0f, 1.0f);
+        }
+    }
+
+    public static class AddStationToEntity extends AddStation {
+        public AddStationToEntity(String id, String[] enableSettings, String stationType, String stationName, List<String> variants, int numStationsPerLayer, float orbitRadius, int numDaysToBuild) {
+            super(id, enableSettings, stationType, stationName, variants, numStationsPerLayer, orbitRadius, numDaysToBuild);
+        }
+
+        @Override
+        protected void applyProjectEffectImpl(BoggledTerraformingRequirement.RequirementContext ctx) {
+            StarSystemAPI starSystem = ctx.getStarSystem();
+
+            String playerFactionId = Global.getSector().getPlayerFaction().getId();
+
+            String customEntityStationTag = stationType + "_station";
+
+            int numStations = boggledTools.numStationsInSystem(starSystem, stationType);
+
+            String variantLetter = getVariant(numStations);
+
+            String id = stationType + numStations + "_" + UUID.randomUUID();
+
+            SectorEntityToken newStation = starSystem.addCustomEntity(id, starSystem.getBaseName() + " " + stationName + " " + getColonyNameString(numStations), customEntityStationTag + variantLetter + "_small", playerFactionId);
+            SectorEntityToken newStationLights = starSystem.addCustomEntity(id + "Lights", starSystem.getName() + " " + stationName + " " + getColonyNameString(numStations) + " Lights Overlay", customEntityStationTag + variantLetter + "_small_lights_overlay", playerFactionId);
+
+            if (boggledTools.playerFleetInAsteroidBelt(ctx.getFleet())) {
+                SectorEntityToken focus = boggledTools.getFocusOfAsteroidBelt(ctx.getFleet());
+                float orbitRadius = Misc.getDistance(focus, ctx.getFleet());
+                float orbitAngle = Misc.getAngleInDegrees(focus.getLocation(), ctx.getFleet().getLocation());
+                newStation.setCircularOrbitPointingDown(focus, orbitAngle, orbitRadius, orbitRadius / 10f);
+            } else if (boggledTools.playerFleetInAsteroidField(ctx.getFleet())) {
+                OrbitAPI orbit = boggledTools.getAsteroidFieldOrbit(ctx.getFleet());
+                if (orbit != null) {
+                    float orbitRadius = Misc.getDistance(orbit.getFocus(), ctx.getFleet());
+                    float orbitAngle = Misc.getAngleInDegrees(orbit.getFocus().getLocation(), ctx.getFleet().getLocation());
+                    float orbitPeriod = orbit.getOrbitalPeriod();
+                    newStation.setCircularOrbitWithSpin(orbit.getFocus(), orbitAngle, orbitRadius, orbitPeriod, 5f, 10f);
+                } else {
+                    SectorEntityToken focus = boggledTools.getAsteroidFieldEntity(ctx.getFleet());
+                    float orbitRadius = Misc.getDistance(focus, ctx.getFleet());
+                    float orbitAngle = Misc.getAngleInDegrees(focus.getLocation(), ctx.getFleet().getLocation());
+                    newStation.setCircularOrbitWithSpin(focus, orbitAngle, orbitRadius, 40f, 5f, 10f);
+                }
+            }
+            newStationLights.setOrbit(newStation.getOrbit().makeCopy());
+
+            newStation.addScript(new BoggledUnderConstructionEveryFrameScript(newStation));
             Global.getSoundPlayer().playUISound("ui_boggled_station_start_building", 1.0f, 1.0f);
         }
     }

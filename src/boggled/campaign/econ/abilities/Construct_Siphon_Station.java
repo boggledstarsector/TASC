@@ -61,60 +61,35 @@ public class Construct_Siphon_Station extends BaseDurationAbility
     {
         SectorEntityToken playerFleet = Global.getSector().getPlayerFleet();
 
-        if (playerFleet.isInHyperspace() || Global.getSector().getPlayerFleet().isInHyperspaceTransition())
-        {
+        if (playerFleet.isInHyperspace() || Global.getSector().getPlayerFleet().isInHyperspaceTransition()) {
             return false;
         }
 
-        if(!(playerFleet.isInHyperspace() || Global.getSector().getPlayerFleet().isInHyperspaceTransition()))
-        {
-            SectorEntityToken closestGasGiantToken = null;
-            closestGasGiantToken = boggledTools.getClosestGasGiantToken(playerFleet);
-
-            if(closestGasGiantToken == null)
-            {
-                return false;
-            }
-            else if(!closestGasGiantToken.getMarket().getFactionId().equals(Factions.PLAYER) && !closestGasGiantToken.getMarket().getFactionId().equals(Factions.NEUTRAL))
-            {
-                return false;
-            }
-            else if((Misc.getDistance(closestGasGiantToken, playerFleet) - closestGasGiantToken.getRadius()) > 250f)
-            {
-                return false;
-            }
-        }
-
-        if(playerFleet.getStarSystem().getJumpPoints().isEmpty())
-        {
+        if(playerFleet.getStarSystem().getJumpPoints().isEmpty()) {
             return false;
         }
 
-        if(!(playerFleet.isInHyperspace() || Global.getSector().getPlayerFleet().isInHyperspaceTransition()))
-        {
-            SectorEntityToken closestGasGiantToken = null;
-            closestGasGiantToken = boggledTools.getClosestGasGiantToken(playerFleet);
+        SectorEntityToken closestGasGiantToken = boggledTools.getClosestGasGiantToken(playerFleet);
+        if(closestGasGiantToken == null) {
+            return false;
+        }
+        else if(!closestGasGiantToken.getMarket().getFactionId().equals(Factions.PLAYER) && !closestGasGiantToken.getMarket().getFactionId().equals(Factions.NEUTRAL)) {
+            return false;
+        }
+        else if((Misc.getDistance(closestGasGiantToken, playerFleet) - closestGasGiantToken.getRadius()) > 250f) {
+            return false;
+        }
 
-            if(closestGasGiantToken != null)
-            {
-                for (SectorEntityToken entity : Global.getSector().getPlayerFleet().getStarSystem().getAllEntities()) {
-                    if (entity.hasTag("station") && entity.getOrbitFocus() != null && entity.getOrbitFocus().equals(closestGasGiantToken) && (entity.getCustomEntitySpec().getDefaultName().equals("Side Station") || entity.getCustomEntitySpec().getDefaultName().equals("Siphon Station")) && !entity.getId().equals("beholder_station")) {
-                        return false;
-                    }
-                }
+        for (SectorEntityToken entity : Global.getSector().getPlayerFleet().getStarSystem().getAllEntities()) {
+            if (entity.hasTag("station") && entity.getOrbitFocus() != null && entity.getOrbitFocus().equals(closestGasGiantToken) && (entity.getCustomEntitySpec().getDefaultName().equals("Side Station") || entity.getCustomEntitySpec().getDefaultName().equals("Siphon Station")) && !entity.getId().equals("beholder_station")) {
+                return false;
             }
         }
 
         //check if the host gas giant has a moon that is too close to it
-        if(!(playerFleet.isInHyperspace() || Global.getSector().getPlayerFleet().isInHyperspaceTransition()))
-        {
-            SectorEntityToken closestGasGiantToken = null;
-            closestGasGiantToken = boggledTools.getClosestGasGiantToken(playerFleet);
-
-            for (PlanetAPI planet : playerFleet.getStarSystem().getPlanets()) {
-                if (planet.getOrbitFocus() != null && !planet.isStar() && planet.getOrbitFocus().equals(closestGasGiantToken) && planet.getCircularOrbitRadius() < (closestGasGiantToken.getRadius() + 250f)) {
-                    return false;
-                }
+        for (PlanetAPI planet : playerFleet.getStarSystem().getPlanets()) {
+            if (planet.getOrbitFocus() != null && !planet.isStar() && planet.getOrbitFocus().equals(closestGasGiantToken) && planet.getCircularOrbitRadius() < (closestGasGiantToken.getRadius() + 250f)) {
+                return false;
             }
         }
 

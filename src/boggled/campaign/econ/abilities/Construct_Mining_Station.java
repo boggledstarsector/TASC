@@ -69,12 +69,9 @@ public class Construct_Mining_Station extends BaseDurationAbility
         newMiningStationLights.setOrbit(newMiningStation.getOrbit().makeCopy());
 
         MarketAPI market = null;
-        if(!boggledTools.getBooleanSetting("boggledStationConstructionDelayEnabled"))
-        {
+        if(!boggledTools.getBooleanSetting("boggledStationConstructionDelayEnabled")) {
             market = boggledTools.createMiningStationMarket(newMiningStation);
-        }
-        else
-        {
+        } else {
             newMiningStation.addScript(new BoggledUnderConstructionEveryFrameScript(newMiningStation));
             Global.getSoundPlayer().playUISound("ui_boggled_station_start_building", 1.0F, 1.0F);
         }
@@ -105,12 +102,13 @@ public class Construct_Mining_Station extends BaseDurationAbility
     }
 
     @Override
-    public boolean isUsable()
-    {
+    public boolean isUsable() {
         SectorEntityToken playerFleet = Global.getSector().getPlayerFleet();
+        if (playerFleet.isInHyperspace() || Global.getSector().getPlayerFleet().isInHyperspaceTransition()) {
+            return false;
+        }
 
-        if (playerFleet.isInHyperspace() || Global.getSector().getPlayerFleet().isInHyperspaceTransition())
-        {
+        if(playerFleet.getStarSystem().getJumpPoints().isEmpty()) {
             return false;
         }
 
@@ -119,23 +117,11 @@ public class Construct_Mining_Station extends BaseDurationAbility
         int miningStationsInSystem = 0;
         int miningStationCap = boggledTools.getIntSetting("boggledMaxNumMiningStationsPerSystem");
 
-        if(!(boggledTools.playerFleetInAsteroidBelt(playerFleet) || boggledTools.playerFleetInAsteroidField(playerFleet)))
-        {
+        if(!(boggledTools.playerFleetInAsteroidBelt(playerFleet) || boggledTools.playerFleetInAsteroidField(playerFleet))) {
             return false;
         }
 
-        if(boggledTools.playerFleetTooCloseToJumpPoint(playerFleet))
-        {
-            return false;
-        }
-
-        if(playerFleet.getStarSystem().getJumpPoints().isEmpty())
-        {
-            return false;
-        }
-
-        if(miningStationCap == 0)
-        {
+        if(boggledTools.playerFleetTooCloseToJumpPoint(playerFleet)) {
             return false;
         }
 
@@ -145,34 +131,28 @@ public class Construct_Mining_Station extends BaseDurationAbility
             }
         }
 
-        if(miningStationsInSystem >= miningStationCap)
-        {
+        if(miningStationsInSystem >= miningStationCap) {
             miningStationCapReached = true;
         }
 
         CargoAPI playerCargo = playerFleet.getCargo();
-        if(playerCargo.getCredits().get() < creditCost)
-        {
+        if(playerCargo.getCredits().get() < creditCost) {
             playerHasResources = false;
         }
 
-        if(bogglesDefaultCargo.active.getCommodityAmount(bogglesDefaultCargo.Mining_Station,"metals") < metalCost)
-        {
+        if(bogglesDefaultCargo.active.getCommodityAmount(bogglesDefaultCargo.Mining_Station,"metals") < metalCost) {
             playerHasResources = false;
         }
 
-        if(bogglesDefaultCargo.active.getCommodityAmount(bogglesDefaultCargo.Mining_Station,"rare_metals") < transplutonicsCost)
-        {
+        if(bogglesDefaultCargo.active.getCommodityAmount(bogglesDefaultCargo.Mining_Station,"rare_metals") < transplutonicsCost) {
             playerHasResources = false;
         }
 
-        if(bogglesDefaultCargo.active.getCommodityAmount(bogglesDefaultCargo.Mining_Station,"crew") < crewCost)
-        {
+        if(bogglesDefaultCargo.active.getCommodityAmount(bogglesDefaultCargo.Mining_Station,"crew") < crewCost) {
             playerHasResources = false;
         }
 
-        if(bogglesDefaultCargo.active.getCommodityAmount(bogglesDefaultCargo.Mining_Station,"heavy_machinery") < heavyMachineryCost)
-        {
+        if(bogglesDefaultCargo.active.getCommodityAmount(bogglesDefaultCargo.Mining_Station,"heavy_machinery") < heavyMachineryCost) {
             playerHasResources = false;
         }
 
@@ -256,12 +236,9 @@ public class Construct_Mining_Station extends BaseDurationAbility
         int miningStationsInSystem = 0;
         int miningStationCap = boggledTools.getIntSetting("boggledMaxNumMiningStationsPerSystem");
 
-        if (!playerFleet.isInHyperspace() && !Global.getSector().getPlayerFleet().isInHyperspaceTransition())
-        {
-            for (SectorEntityToken entity : playerFleet.getStarSystem().getAllEntities()) {
-                if (entity.hasTag("boggled_mining_station") && !entity.getFaction().getId().equals(Factions.NEUTRAL)) {
-                    miningStationsInSystem++;
-                }
+        for (SectorEntityToken entity : playerFleet.getStarSystem().getAllEntities()) {
+            if (entity.hasTag("boggled_mining_station") && !entity.getFaction().getId().equals(Factions.NEUTRAL)) {
+                miningStationsInSystem++;
             }
         }
 
@@ -270,12 +247,9 @@ public class Construct_Mining_Station extends BaseDurationAbility
             miningStationCapReached = true;
         }
 
-        if (!playerFleet.isInHyperspace() && !Global.getSector().getPlayerFleet().isInHyperspaceTransition())
-        {
-            for (SectorEntityToken entity : playerFleet.getStarSystem().getAllEntities()) {
-                if (entity.hasTag("boggled_mining_station") && entity.getFaction().getId().equals(Factions.NEUTRAL)) {
-                    tooltip.addPara("There is at least one abandoned player-built mining station in this system. If you construct a new mining station, any abandoned stations will be destroyed and any cargo stored on them will be transferred to the new station.", pad, highlight, new String[]{});
-                }
+        for (SectorEntityToken entity : playerFleet.getStarSystem().getAllEntities()) {
+            if (entity.hasTag("boggled_mining_station") && entity.getFaction().getId().equals(Factions.NEUTRAL)) {
+                tooltip.addPara("There is at least one abandoned player-built mining station in this system. If you construct a new mining station, any abandoned stations will be destroyed and any cargo stored on them will be transferred to the new station.", pad, highlight);
             }
         }
 

@@ -132,6 +132,14 @@ public class BoggledTerraformingRequirement {
         }
 
         @Override
+        public void addTokenReplacements(RequirementContext ctx, Map<String, String> tokenReplacements) {
+            if (ctx.getPlanet() == null) {
+                return;
+            }
+            tokenReplacements.put("$planetType", boggledTools.getPlanetType(ctx.getPlanet()).getPlanetTypeName());
+        }
+
+        @Override
         protected boolean checkRequirementImpl(RequirementContext ctx) {
             if (ctx.getPlanet() == null) {
                 return false;
@@ -435,6 +443,29 @@ public class BoggledTerraformingRequirement {
                 return false;
             }
             return playerFleet.getCargo().getCredits().get() >= quantity;
+        }
+    }
+
+    public static class FleetTooCloseToJumpPoint extends TerraformingRequirement {
+        float distance;
+
+        protected FleetTooCloseToJumpPoint(String requirementId, boolean invert, float distance) {
+            super(requirementId, invert);
+            this.distance = distance;
+        }
+
+        @Override
+        protected boolean checkRequirementImpl(RequirementContext ctx) {
+            StarSystemAPI starSystem = ctx.getStarSystem();
+            if (starSystem == null) {
+                return false;
+            }
+            for (Object object : starSystem.getEntities(JumpPointAPI.class)) {
+                if (Misc.getDistance((JumpPointAPI) object, ctx.getFleet()) < distance) {
+                    return false;
+                }
+            }
+            return true;
         }
     }
 
@@ -1018,12 +1049,12 @@ public class BoggledTerraformingRequirement {
     }
 
     public static class TargetPlanetStationCountLessThan extends TerraformingRequirement {
-        String stationTag;
-        int numStations;
-        protected TargetPlanetStationCountLessThan(String requirementId, boolean invert, String stationTag, int numStations) {
+        List<String> stationTags;
+        int maxNumStations;
+        protected TargetPlanetStationCountLessThan(String requirementId, boolean invert, List<String> stationTags, int maxNumStations) {
             super(requirementId, invert);
-            this.stationTag = stationTag;
-            this.numStations = numStations;
+            this.stationTags = stationTags;
+            this.maxNumStations = maxNumStations;
         }
 
         @Override
@@ -1032,7 +1063,7 @@ public class BoggledTerraformingRequirement {
             if (targetPlanet == null) {
                 return false;
             }
-            return boggledTools.numAstropoliInOrbit(targetPlanet, stationTag) < numStations;
+            return boggledTools.numStationsInOrbit(targetPlanet, stationTags.toArray(new String[0])) < maxNumStations;
         }
 
         @Override
@@ -1040,9 +1071,72 @@ public class BoggledTerraformingRequirement {
             PlanetAPI targetPlanet = ctx.getPlanet();
             if (targetPlanet != null) {
                 tokenReplacements.put("$planetName", targetPlanet.getName());
-                int numAstropoli = boggledTools.numAstropoliInOrbit(targetPlanet, stationTag);
-                tokenReplacements.put("$numAstropolisStations", String.format("%,d", numAstropoli));
+                int numStations = boggledTools.numStationsInOrbit(targetPlanet, stationTags.toArray(new String[0]));
+                tokenReplacements.put("$maxNumStations", String.format("%,d", maxNumStations));
+                tokenReplacements.put("$numStations", String.format("%,d", numStations));
+                tokenReplacements.put("$stationOrStations", numStations == 1 ? "station" : "stations");
             }
+        }
+    }
+
+    public static class TargetSystemStationCountLessThan extends TerraformingRequirement {
+        List<String> stationTags;
+        int maxNumStations;
+        protected TargetSystemStationCountLessThan(String requirementId, boolean invert, List<String> stationTags, int maxNumStations) {
+            super(requirementId, invert);
+            this.stationTags = stationTags;
+            this.maxNumStations = maxNumStations;
+        }
+
+        @Override
+        protected boolean checkRequirementImpl(RequirementContext ctx) {
+            StarSystemAPI starSystem = ctx.getStarSystem();
+            if (starSystem == null) {
+                return false;
+            }
+            return boggledTools.numStationsInSystem(starSystem, stationTags.toArray(new String[0])) < maxNumStations;
+        }
+
+        @Override
+        public void addTokenReplacements(RequirementContext ctx, Map<String, String> tokenReplacements) {
+            StarSystemAPI starSystem = ctx.getStarSystem();
+            if (starSystem != null) {
+                tokenReplacements.put("$systemName", starSystem.getName());
+                int numStations = boggledTools.numStationsInSystem(starSystem, stationTags.toArray(new String[0]));
+                tokenReplacements.put("$maxNumStations", String.format("%,d", maxNumStations));
+                tokenReplacements.put("$numStations", String.format("%,d", numStations));
+                tokenReplacements.put("$stationOrStations", numStations == 1 ? "station" : "stations");
+            }
+        }
+    }
+
+    public static class FleetInAsteroidBelt extends TerraformingRequirement {
+        protected FleetInAsteroidBelt(String requirementId, boolean invert) {
+            super(requirementId, invert);
+        }
+
+        @Override
+        protected boolean checkRequirementImpl(RequirementContext ctx) {
+            CampaignFleetAPI playerFleet = ctx.getFleet();
+            if (playerFleet == null) {
+                return false;
+            }
+            return boggledTools.playerFleetInAsteroidBelt(playerFleet);
+        }
+    }
+
+    public static class FleetInAsteroidField extends TerraformingRequirement {
+        protected FleetInAsteroidField(String requirementId, boolean invert) {
+            super(requirementId, invert);
+        }
+
+        @Override
+        protected boolean checkRequirementImpl(RequirementContext ctx) {
+            CampaignFleetAPI playerFleet = ctx.getFleet();
+            if (playerFleet == null) {
+                return false;
+            }
+            return boggledTools.playerFleetInAsteroidField(playerFleet);
         }
     }
 }

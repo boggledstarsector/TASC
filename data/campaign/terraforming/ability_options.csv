@@ -1,2 +1,4 @@
 id,enable_settings,project,effects
 construct_astropolis_station,boggledAstropolisEnabled,ability_add_astropolis_station,
+construct_mining_station,boggledMiningStationEnabled,ability_add_mining_station,
+construct_siphon_station,boggledSiphonStationEnabled,ability_add_siphon_station,

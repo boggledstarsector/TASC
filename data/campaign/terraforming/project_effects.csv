@@ -99,15 +99,48 @@ remove_domain_artifacts_easy_from_storage,,RemoveCommodityFromSubmarket,"{ 'subm
 remove_domain_artifacts_medium_from_storage,,RemoveCommodityFromSubmarket,"{ 'submarket_id' : 'storage', 'commodity_id' : 'domain_artifacts', 'quantity' : 2000 }"
 remove_domain_artifacts_hard_from_storage,,RemoveCommodityFromSubmarket,"{ 'submarket_id' : 'storage', 'commodity_id' : 'domain_artifacts', 'quantity' : 4000 }"
 ,,
-astropolis_station_remove_crew_from_fleet,,RemoveCommodityFromFleetStorage,"{ 'commodity_id' : 'crew', 'quantity' : 1000 }"
-astropolis_station_remove_heavy_machinery_from_fleet,,RemoveCommodityFromFleetStorage,"{ 'commodity_id' : 'heavy_machinery', 'quantity' : 250 }"
-astropolis_station_remove_metals_from_fleet,,RemoveCommodityFromFleetStorage,"{ 'commodity_id' : 'metals', 'quantity' : 1000 }"
-astropolis_station_remove_transplutonics_from_fleet,,RemoveCommodityFromFleetStorage,"{ 'commodity_id' : 'rare_metals', 'quantity' : 250 }"
-astropolis_station_remove_credits_from_fleet,,RemoveCreditsFromFleet,"{ 'quantity' : 500000 }"
+ability_astropolis_station_remove_crew_from_fleet,,RemoveCommodityFromFleetStorage,"{ 'commodity_id' : 'crew', 'quantity' : 1000 }"
+ability_astropolis_station_remove_heavy_machinery_from_fleet,,RemoveCommodityFromFleetStorage,"{ 'commodity_id' : 'heavy_machinery', 'quantity' : 250 }"
+ability_astropolis_station_remove_metals_from_fleet,,RemoveCommodityFromFleetStorage,"{ 'commodity_id' : 'metals', 'quantity' : 1000 }"
+ability_astropolis_station_remove_transplutonics_from_fleet,,RemoveCommodityFromFleetStorage,"{ 'commodity_id' : 'rare_metals', 'quantity' : 250 }"
+ability_astropolis_station_remove_credits_from_fleet,,RemoveCreditsFromFleet,"{ 'quantity' : 500000 }"
 add_astropolis_station_to_orbit,,AddStationToOrbit,"{
-	'station_type' : 'astropolis',
+	'station_type' : 'boggled_astropolis',
+	'station_name' : 'Astropolis',
+	'variants' : [ 'alpha', 'beta', 'gamma' ],
 	'num_stations_per_layer' : 8,
 	'orbit_radius' : 450,
-	'num_days_to_build' : 90
+	'num_days_to_build' : 90,
+	
+	'industries_to_queue' : [ 'spaceport' ]
 }"
 ,,
+ability_mining_station_remove_crew_from_fleet,,RemoveCommodityFromFleetStorage,"{ 'commodity_id' : 'crew', 'quantity' : 1000 }"
+ability_mining_station_remove_heavy_machinery_from_fleet,,RemoveCommodityFromFleetStorage,"{ 'commodity_id' : 'heavy_machinery', 'quantity' : 250 }"
+ability_mining_station_remove_metals_from_fleet,,RemoveCommodityFromFleetStorage,"{ 'commodity_id' : 'metals', 'quantity' : 1000 }"
+ability_mining_station_remove_transplutonics_from_fleet,,RemoveCommodityFromFleetStorage,"{ 'commodity_id' : 'rare_metals', 'quantity' : 250 }"
+ability_mining_station_remove_credits_from_fleet,,RemoveCreditsFromFleet,"{ 'quantity' : 500000 }"
+add_mining_station_to_entity,,AddStationToEntity,"{
+	'station_type' : 'boggled_mining',
+	'station_name' : 'Mining Station',
+	'num_stations_per_layer' : 8,
+	'orbit_radius' : 450,
+	'num_days_to_build' : 90,
+	
+	'industries_to_queue' : [ 'spaceport', 'mining' ]
+}"
+,,
+ability_siphon_station_remove_crew_from_fleet,,RemoveCommodityFromFleetStorage,"{ 'commodity_id' : 'crew', 'quantity' : 1000 }"
+ability_siphon_station_remove_heavy_machinery_from_fleet,,RemoveCommodityFromFleetStorage,"{ 'commodity_id' : 'heavy_machinery', 'quantity' : 250 }"
+ability_siphon_station_remove_metals_from_fleet,,RemoveCommodityFromFleetStorage,"{ 'commodity_id' : 'metals', 'quantity' : 1000 }"
+ability_siphon_station_remove_transplutonics_from_fleet,,RemoveCommodityFromFleetStorage,"{ 'commodity_id' : 'rare_metals', 'quantity' : 250 }"
+ability_siphon_station_remove_credits_from_fleet,,RemoveCreditsFromFleet,"{ 'quantity' : 500000 }"
+add_siphon_station_to_orbit,,AddStationToOrbit,"{
+	'station_type' : 'boggled_siphon',
+	'station_name' : 'Siphon Station',
+	'num_stations_per_layer' : 8,
+	'orbit_radius' : 50,
+	'num_days_to_build' : 90,
+	
+	'industries_to_queue' : [ 'spaceport', 'mining' ]
+}"

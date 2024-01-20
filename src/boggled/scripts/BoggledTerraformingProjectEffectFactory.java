@@ -1,8 +1,12 @@
 package boggled.scripts;
 
 import boggled.campaign.econ.boggledTools;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class BoggledTerraformingProjectEffectFactory {
     public interface TerraformingProjectEffectFactory {
@@ -191,10 +195,38 @@ public class BoggledTerraformingProjectEffectFactory {
         public BoggledTerraformingProjectEffect.TerraformingProjectEffect constructFromJSON(String id, String[] enableSettings, String data) throws JSONException {
             JSONObject jsonData = new JSONObject(data);
             String stationType = jsonData.getString("station_type");
+            String stationName = jsonData.getString("station_name");
+            JSONArray variantsArray = jsonData.optJSONArray("variants");
+            List<String> variants = new ArrayList<>();
+            if (variantsArray != null) {
+                for (int i = 0; i < variantsArray.length(); ++i) {
+                    variants.add(variantsArray.getString(i));
+                }
+            }
             int numStationsPerLayer = jsonData.getInt("num_stations_per_layer");
             float orbitRadius = (float) jsonData.getDouble("orbit_radius");
             int numDaysToBuild = jsonData.getInt("num_days_to_build");
-            return new BoggledTerraformingProjectEffect.AddStationToOrbit(id, enableSettings, stationType, numStationsPerLayer, orbitRadius, numDaysToBuild);
+            return new BoggledTerraformingProjectEffect.AddStationToOrbit(id, enableSettings, stationType, stationName, variants, numStationsPerLayer, orbitRadius, numDaysToBuild);
+        }
+    }
+
+    public static class AddStationToEntity implements TerraformingProjectEffectFactory {
+        @Override
+        public BoggledTerraformingProjectEffect.TerraformingProjectEffect constructFromJSON(String id, String[] enableSettings, String data) throws JSONException {
+            JSONObject jsonData = new JSONObject(data);
+            String stationType = jsonData.getString("station_type");
+            String stationName = jsonData.getString("station_name");
+            JSONArray variantsArray = jsonData.optJSONArray("variants");
+            List<String> variants = new ArrayList<>();
+            if (variantsArray != null) {
+                for (int i = 0; i < variantsArray.length(); ++i) {
+                    variants.add(variantsArray.getString(i));
+                }
+            }
+            int numStationsPerLayer = jsonData.getInt("num_stations_per_layer");
+            float orbitRadius = (float) jsonData.getDouble("orbit_radius");
+            int numDaysToBuild = jsonData.getInt("num_days_to_build");
+            return new BoggledTerraformingProjectEffect.AddStationToEntity(id, enableSettings, stationType, stationName, variants, numStationsPerLayer, orbitRadius, numDaysToBuild);
         }
     }
 }

@@ -41,34 +41,31 @@ public class BoggledUnderConstructionEveryFrameScript implements EveryFrameScrip
         {
             return;
         }
-        else
+        // Add one day to the construction progress
+        boggledTools.incrementConstructionProgressDays(stationEntity, 1);
+
+        //Check if construction should be completed today
+        int progress = boggledTools.getConstructionProgressDays(stationEntity);
+        if(progress >= requiredDays)
         {
-            // Add one day to the construction progress
-            boggledTools.incrementConstructionProgressDays(stationEntity, 1);
-
-            //Check if construction should be completed today
-            int progress = boggledTools.getConstructionProgressDays(stationEntity);
-            if(progress >= requiredDays)
+            isDone = true;
+            String entityType = stationEntity.getCustomEntityType();
+            if(entityType.contains("boggled_mining_station"))
             {
-                isDone = true;
-                String entityType = stationEntity.getCustomEntityType();
-                if(entityType.contains("boggled_mining_station"))
-                {
-                    boggledTools.createMiningStationMarket(stationEntity);
-                }
-                else if(entityType.contains("boggled_siphon_station"))
-                {
-                    boggledTools.createSiphonStationMarket(stationEntity, stationEntity.getOrbitFocus());
-                }
-                else if(entityType.contains("boggled_astropolis_station"))
-                {
-                    boggledTools.createAstropolisStationMarket(stationEntity, stationEntity.getOrbitFocus());
-                }
+                boggledTools.createMiningStationMarket(stationEntity);
             }
-
-            //Update the lastDayChecked to today
-            boggledTools.clearClockCheckTagsForConstruction(stationEntity);
-            stationEntity.addTag("boggled_construction_progress_lastDayChecked_" + clock.getDay());
+            else if(entityType.contains("boggled_siphon_station"))
+            {
+                boggledTools.createSiphonStationMarket(stationEntity, stationEntity.getOrbitFocus());
+            }
+            else if(entityType.contains("boggled_astropolis_station"))
+            {
+                boggledTools.createAstropolisStationMarket(stationEntity, stationEntity.getOrbitFocus());
+            }
         }
+
+        //Update the lastDayChecked to today
+        boggledTools.clearClockCheckTagsForConstruction(stationEntity);
+        stationEntity.addTag("boggled_construction_progress_lastDayChecked_" + clock.getDay());
     }
 }

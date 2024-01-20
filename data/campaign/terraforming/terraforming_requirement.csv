@@ -190,29 +190,83 @@ player_fleet_not_in_hyperspace,FleetInHyperspace,true,
 system_has_jump_points,SystemHasJumpPoints,false,
 system_has_planets,SystemHasPlanets,false,
 target_planet_not_owned_by_player_or_neutral,TargetPlanetNotOwnedBy,false,"[ 'player', 'neutral' ]"
-target_planet_within_500_units,TargetPlanetWithinDistance,false,500
-target_planet_size_at_least_125_units,TargetPlanetIsAtLeastSize,false,125
 target_planet_too_close_to_orbit_focus,TargetPlanetOrbitFocusWithinDistance,true,900
 target_planet_too_close_to_star,TargetPlanetStarWithinDistance,true,1400
-target_planet_moon_too_close,TargetPlanetOrbitersWithinDistance,true,500
 target_planet_too_many_moons,TargetPlanetMoonCountLessThan,false,4
 target_planet_too_crowded,TargetPlanetOrbitersTooClose,false,400
-target_planet_too_many_stations,TargetPlanetStationCountLessThan,false,"{ 'station_tag' : 'boggled_astropolis', 'max_num' : 24 }"
 
-astropolis_fleet_contains_credits,FleetContainsCreditsAtLeast,false,"{ 'quantity' : 500000 }"
-astropolis_fleet_contains_crew,FleetStorageContainsAtLeast,false,"{
+ability_astropolis_station_target_planet_within_range,TargetPlanetWithinDistance,false,500
+ability_astropolis_station_target_planet_moon_too_close,TargetPlanetOrbitersWithinDistance,true,500
+ability_astropolis_station_target_planet_too_small,TargetPlanetIsAtLeastSize,false,125
+ability_astropolis_station_target_planet_too_many_stations,TargetPlanetStationCountLessThan,false,"{
+	'station_tags' : [ 'boggled_astropolis' ],
+	'max_num' : 24
+}"
+
+ability_astropolis_station_fleet_contains_credits,FleetContainsCreditsAtLeast,false,"{ 'quantity' : 500000 }"
+ability_astropolis_station_fleet_contains_crew,FleetStorageContainsAtLeast,false,"{
 	'commodity_id' : 'crew',
 	'quantity' : 1000
 }"
-astropolis_fleet_contains_heavy_machinery,FleetStorageContainsAtLeast,false,"{
+ability_astropolis_station_fleet_contains_heavy_machinery,FleetStorageContainsAtLeast,false,"{
 	'commodity_id' : 'heavy_machinery',
 	'quantity' : 250
 }"
-astropolis_fleet_contains_metals,FleetStorageContainsAtLeast,false,"{
+ability_astropolis_station_fleet_contains_metals,FleetStorageContainsAtLeast,false,"{
 	'commodity_id' : 'metals',
 	'quantity' : 1000
 }"
-astropolis_fleet_contains_transplutonics,FleetStorageContainsAtLeast,false,"{
+ability_astropolis_station_fleet_contains_transplutonics,FleetStorageContainsAtLeast,false,"{
+	'commodity_id' : 'rare_metals',
+	'quantity' : 250
+}"
+
+ability_mining_station_too_close_to_jump_point,FleetTooCloseToJumpPoint,false,300
+ability_mining_station_fleet_in_asteroid_belt,FleetInAsteroidBelt,false,
+ability_mining_station_fleet_in_asteroid_field,FleetInAsteroidField,false,
+ability_mining_station_too_many_stations,TargetSystemStationCountLessThan,false,"{
+	'station_tags' : [ 'boggled_mining' ],
+	'max_num' : 1
+}"
+ability_mining_station_fleet_contains_credits,FleetContainsCreditsAtLeast,false,"{ 'quantity' : 500000 }"
+ability_mining_station_fleet_contains_crew,FleetStorageContainsAtLeast,false,"{
+	'commodity_id' : 'crew',
+	'quantity' : 1000
+}"
+ability_mining_station_fleet_contains_heavy_machinery,FleetStorageContainsAtLeast,false,"{
+	'commodity_id' : 'heavy_machinery',
+	'quantity' : 250
+}"
+ability_mining_station_fleet_contains_metals,FleetStorageContainsAtLeast,false,"{
+	'commodity_id' : 'metals',
+	'quantity' : 1000
+}"
+ability_mining_station_fleet_contains_transplutonics,FleetStorageContainsAtLeast,false,"{
+	'commodity_id' : 'rare_metals',
+	'quantity' : 250
+}"
+
+ability_siphon_station_target_planet_within_range,TargetPlanetWithinDistance,false,250
+ability_siphon_station_target_planet_moon_too_close,TargetPlanetOrbitersWithinDistance,true,250
+ability_siphon_station_target_planet_too_many_stations,TargetPlanetStationCountLessThan,false,"{
+	'station_tags' : [ 'boggled_siphon' ],
+	'max_num' : 1
+}"
+
+ability_siphon_station_fleet_contains_credits,FleetContainsCreditsAtLeast,false,"{ 'quantity' : 500000 }"
+ability_siphon_station_fleet_contains_crew,FleetStorageContainsAtLeast,false,"{
+	'commodity_id' : 'crew',
+	'quantity' : 1000
+}"
+ability_siphon_station_fleet_contains_heavy_machinery,FleetStorageContainsAtLeast,false,"{
+	'commodity_id' : 'heavy_machinery',
+	'quantity' : 250
+}"
+ability_siphon_station_fleet_contains_metals,FleetStorageContainsAtLeast,false,"{
+	'commodity_id' : 'metals',
+	'quantity' : 1000
+}"
+ability_siphon_station_fleet_contains_transplutonics,FleetStorageContainsAtLeast,false,"{
 	'commodity_id' : 'rare_metals',
 	'quantity' : 250
 }"
