@@ -182,7 +182,7 @@ ability_siphon_station_player_fleet_not_in_hyperspace,"You cannot construct a si
 ability_siphon_station_system_has_jump_points,"You cannot construct a siphon station in a system with no jump points.",,false,"system_has_jump_points"
 
 ability_siphon_station_target_planet_not_owned_by_player_or_neutral,"You cannot construct a siphon station in orbit around a world already controlled by $factionName.",,false,"target_planet_not_owned_by_player_or_neutral"
-ability_siphon_station_target_planet_within_range,"The world closest to your location is $planetName. Your fleet is $distanceInSu stellar units away. You must be within $requiredDistanceInSu stellar units to construct siphon station.",,false,"ability_siphon_station_target_planet_within_range"
+ability_siphon_station_target_planet_within_range,"The world closest to your location is $planetName. Your fleet is $distanceInSu stellar units away. You must be within $requiredDistanceInSu stellar units to construct a siphon station.",,false,"ability_siphon_station_target_planet_within_range"
 ability_siphon_station_target_planet_moon_too_close,"A siphon station would be unable to achieve a satisfactory orbit around $planetName because $focusPlanetName is orbiting too close to it.",,false,"ability_siphon_station_target_planet_moon_too_close"
 ability_siphon_station_target_planet_is_gas_giant,"You cannot construct a siphon station around non-gas giant planets. $planetName is a $planetType.",,false,"planet_gas_giant"
 ability_siphon_station_target_planet_too_many_stations,"$planetName is already host to $numStations siphon $stationOrStations. It cannot host more.",,false,"ability_siphon_station_target_planet_too_many_stations"

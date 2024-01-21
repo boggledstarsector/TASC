@@ -3,6 +3,7 @@ package boggled.scripts;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CampaignClockAPI;
 import boggled.campaign.econ.boggledTools;
+import com.fs.starfarer.api.combat.MutableStat;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -128,6 +129,7 @@ public class BoggledTerraformingProject {
     }
 
     public Map<String, BoggledTerraformingProjectEffect.EffectTooltipPara> getEffectTooltipInfo(BoggledTerraformingRequirement.RequirementContext ctx) {
+        ctx = new BoggledTerraformingRequirement.RequirementContext(ctx, this);
         Map<String, BoggledTerraformingProjectEffect.EffectTooltipPara> ret = new LinkedHashMap<>();
         for (BoggledTerraformingProjectEffect.ProjectEffectWithRequirement effect : projectEffects) {
             effect.effect.addEffectTooltipInfo(ctx, ret);
@@ -150,11 +152,11 @@ public class BoggledTerraformingProject {
     public BoggledProjectRequirementsAND getProjectRequirements() { return projectRequirements; }
 
     public int getModifiedProjectDuration(BoggledTerraformingRequirement.RequirementContext ctx) {
-        float projectDuration = baseProjectDuration;
+        MutableStat projectDuration = new MutableStat(baseProjectDuration);
         for (BoggledTerraformingDurationModifier.TerraformingDurationModifier durationModifier : durationModifiers) {
-            projectDuration += durationModifier.getDurationModifier(ctx, baseProjectDuration);
+            projectDuration.applyMods(durationModifier.getDurationModifier(ctx));
         }
-        return Math.max((int) projectDuration, 0);
+        return Math.max(projectDuration.getModifiedInt(), 0);
     }
 
     public boolean requirementsHiddenMet(BoggledTerraformingRequirement.RequirementContext ctx) {
@@ -193,6 +195,7 @@ public class BoggledTerraformingProject {
     }
 
     public void finishProject(BoggledTerraformingRequirement.RequirementContext ctx) {
+        ctx = new BoggledTerraformingRequirement.RequirementContext(ctx, this);
         for (BoggledTerraformingProjectEffect.ProjectEffectWithRequirement effect : projectEffects) {
             effect.effect.applyProjectEffectImpl(ctx);
         }

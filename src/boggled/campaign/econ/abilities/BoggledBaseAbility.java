@@ -2,7 +2,6 @@ package boggled.campaign.econ.abilities;
 
 import boggled.campaign.econ.industries.BoggledCommonIndustry;
 import boggled.scripts.*;
-import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.impl.campaign.abilities.BaseDurationAbility;
@@ -44,8 +43,8 @@ public class BoggledBaseAbility extends BaseDurationAbility {
             this.ctx = new BoggledTerraformingRequirement.RequirementContext((CampaignFleetAPI) entity);
         }
         BoggledBaseAbility that = boggledTools.getAbility(id);
+        assert that != null;
         setFromThat(that);
-        Global.getLogger(this.getClass()).info("Doing init for ability " + id);
     }
 
     public Object readResolve() {

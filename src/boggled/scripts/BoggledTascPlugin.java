@@ -393,6 +393,7 @@ public class BoggledTascPlugin extends BaseModPlugin
 
     @Override
     public void onApplicationLoad()  {
+        boggledTools.initialiseDefaultStationConstructionFactories();
         boggledTools.initialiseDefaultTerraformingRequirementFactories();
         boggledTools.initialiseDefaultTerraformingDurationModifierFactories();
         boggledTools.initialiseDefaultCommoditySupplyAndDemandFactories();

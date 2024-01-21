@@ -110,9 +110,9 @@ add_astropolis_station_to_orbit,,AddStationToOrbit,"{
 	'variants' : [ 'alpha', 'beta', 'gamma' ],
 	'num_stations_per_layer' : 8,
 	'orbit_radius' : 450,
-	'num_days_to_build' : 90,
 	
-	'industries_to_queue' : [ 'spaceport' ]
+	'station_construction_data' : {
+	},
 }"
 ,,
 ability_mining_station_remove_crew_from_fleet,,RemoveCommodityFromFleetStorage,"{ 'commodity_id' : 'crew', 'quantity' : 1000 }"
@@ -120,14 +120,16 @@ ability_mining_station_remove_heavy_machinery_from_fleet,,RemoveCommodityFromFle
 ability_mining_station_remove_metals_from_fleet,,RemoveCommodityFromFleetStorage,"{ 'commodity_id' : 'metals', 'quantity' : 1000 }"
 ability_mining_station_remove_transplutonics_from_fleet,,RemoveCommodityFromFleetStorage,"{ 'commodity_id' : 'rare_metals', 'quantity' : 250 }"
 ability_mining_station_remove_credits_from_fleet,,RemoveCreditsFromFleet,"{ 'quantity' : 500000 }"
-add_mining_station_to_entity,,AddStationToEntity,"{
+add_mining_station_to_entity,,AddStationToAsteroids,"{
 	'station_type' : 'boggled_mining',
 	'station_name' : 'Mining Station',
 	'num_stations_per_layer' : 8,
 	'orbit_radius' : 450,
-	'num_days_to_build' : 90,
 	
-	'industries_to_queue' : [ 'spaceport', 'mining' ]
+	'station_construction_data' : {
+		'resources_to_highlight' : [ 'ore', 'rare_ore' ],
+		'industries_to_queue' : [ 'mining' ]
+	},
 }"
 ,,
 ability_siphon_station_remove_crew_from_fleet,,RemoveCommodityFromFleetStorage,"{ 'commodity_id' : 'crew', 'quantity' : 1000 }"
@@ -140,7 +142,9 @@ add_siphon_station_to_orbit,,AddStationToOrbit,"{
 	'station_name' : 'Siphon Station',
 	'num_stations_per_layer' : 8,
 	'orbit_radius' : 50,
-	'num_days_to_build' : 90,
 	
-	'industries_to_queue' : [ 'spaceport', 'mining' ]
+	'station_construction_data' : {
+		'resources_to_highlight' : [ 'volatiles' ],
+		'industries_to_queue' : [ 'mining' ]
+	},
 }"

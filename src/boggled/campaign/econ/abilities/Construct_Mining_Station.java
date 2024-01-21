@@ -70,9 +70,9 @@ public class Construct_Mining_Station extends BaseDurationAbility
 
         MarketAPI market = null;
         if(!boggledTools.getBooleanSetting("boggledStationConstructionDelayEnabled")) {
-            market = boggledTools.createMiningStationMarket(newMiningStation);
+//            market = boggledTools.createMiningStationMarket(newMiningStation);
         } else {
-            newMiningStation.addScript(new BoggledUnderConstructionEveryFrameScript(newMiningStation));
+//            newMiningStation.addScript(new BoggledUnderConstructionEveryFrameScript(newMiningStation));
             Global.getSoundPlayer().playUISound("ui_boggled_station_start_building", 1.0F, 1.0F);
         }
 
@@ -191,7 +191,7 @@ public class Construct_Mining_Station extends BaseDurationAbility
             if (!playerFleet.isInHyperspace() && !Global.getSector().getPlayerFleet().isInHyperspaceTransition())
             {
                 Integer numAsteroidBeltsInSystem = boggledTools.getNumAsteroidTerrainsInSystem(playerFleet);
-                tooltip.addPara("There are %s asteroid belts and/or asteroid fields in the " + playerFleet.getStarSystem().getName() + ". A mining station constructed here would have %s resources.", pad, highlight, new String[]{numAsteroidBeltsInSystem +"", boggledTools.getMiningStationResourceString(numAsteroidBeltsInSystem)});
+                tooltip.addPara("There are %s asteroid belts and/or asteroid fields in the " + playerFleet.getStarSystem().getName() + ". A mining station constructed here would have %s resources.", pad, highlight, numAsteroidBeltsInSystem + "", boggledTools.getMiningStationResourceString(numAsteroidBeltsInSystem));
             }
         }
         else

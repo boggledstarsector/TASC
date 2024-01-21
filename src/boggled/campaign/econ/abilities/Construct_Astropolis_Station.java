@@ -188,11 +188,11 @@ public class Construct_Astropolis_Station extends BaseDurationAbility
         MarketAPI market = null;
         if(!boggledTools.getBooleanSetting("boggledStationConstructionDelayEnabled"))
         {
-            market = boggledTools.createAstropolisStationMarket(newAstropolis, targetPlanet);
+//            market = boggledTools.createAstropolisStationMarket(newAstropolis, targetPlanet);
         }
         else
         {
-            newAstropolis.addScript(new BoggledUnderConstructionEveryFrameScript(newAstropolis));
+//            newAstropolis.addScript(new BoggledUnderConstructionEveryFrameScript(newAstropolis));
             Global.getSoundPlayer().playUISound("ui_boggled_station_start_building", 1.0F, 1.0F);
         }
     }

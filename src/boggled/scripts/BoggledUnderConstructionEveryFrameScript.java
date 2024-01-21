@@ -7,38 +7,41 @@ import boggled.campaign.econ.boggledTools;
 
 public class BoggledUnderConstructionEveryFrameScript implements EveryFrameScript
 {
-    private SectorEntityToken stationEntity;
+    private final SectorEntityToken stationEntity;
+    private final BoggledStationConstructors.StationConstructionData stationConstructionData;
     private boolean isDone = false;
-    private int requiredDays = boggledTools.getIntSetting("boggledStationConstructionDelayDays");
+    private final int requiredDays;
 
-    public BoggledUnderConstructionEveryFrameScript(SectorEntityToken station)
-    {
+    public BoggledUnderConstructionEveryFrameScript(BoggledTerraformingRequirement.RequirementContext ctx, SectorEntityToken station, BoggledStationConstructors.StationConstructionData stationConstructionData) {
         this.stationEntity = station;
+        this.stationConstructionData = stationConstructionData;
+        this.requiredDays = ctx.getProject().getModifiedProjectDuration(ctx);//this.stationConstructionData.getModifiedBuildDuration(ctx);
 
         CampaignClockAPI clock = Global.getSector().getClock();
         stationEntity.addTag("boggled_construction_progress_lastDayChecked_" + clock.getDay());
         stationEntity.addTag("boggled_construction_progress_days_0");
+        stationEntity.addTag("boggled_construction_required_days_" + requiredDays);
     }
 
+    @Override
     public boolean isDone() {
         return isDone;
     }
 
-    public boolean runWhilePaused()
-    {
+    @Override
+    public boolean runWhilePaused() {
         return false;
     }
 
-    public void advance(float var1)
-    {
+    @Override
+    public void advance(float var1) {
         CampaignClockAPI clock = Global.getSector().getClock();
 
         // Reload day check
         int lastDayChecked = boggledTools.getLastDayCheckedForConstruction(stationEntity);
 
         // Exit if a day has not passed
-        if(clock.getDay() == lastDayChecked)
-        {
+        if(clock.getDay() == lastDayChecked) {
             return;
         }
         // Add one day to the construction progress
@@ -46,22 +49,9 @@ public class BoggledUnderConstructionEveryFrameScript implements EveryFrameScrip
 
         //Check if construction should be completed today
         int progress = boggledTools.getConstructionProgressDays(stationEntity);
-        if(progress >= requiredDays)
-        {
+        if(progress >= requiredDays) {
             isDone = true;
-            String entityType = stationEntity.getCustomEntityType();
-            if(entityType.contains("boggled_mining_station"))
-            {
-                boggledTools.createMiningStationMarket(stationEntity);
-            }
-            else if(entityType.contains("boggled_siphon_station"))
-            {
-                boggledTools.createSiphonStationMarket(stationEntity, stationEntity.getOrbitFocus());
-            }
-            else if(entityType.contains("boggled_astropolis_station"))
-            {
-                boggledTools.createAstropolisStationMarket(stationEntity, stationEntity.getOrbitFocus());
-            }
+            stationConstructionData.createMarket(stationEntity);
         }
 
         //Update the lastDayChecked to today

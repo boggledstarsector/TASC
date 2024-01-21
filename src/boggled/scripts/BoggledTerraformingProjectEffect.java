@@ -450,16 +450,17 @@ public class BoggledTerraformingProjectEffect {
 
         int numStationsPerLayer;
         float orbitRadius;
-        int numDaysToBuild;
 
-        public AddStation(String id, String[] enableSettings, String stationType, String stationName, List<String> variants, int numStationsPerLayer, float orbitRadius, int numDaysToBuild) {
+        BoggledStationConstructors.StationConstructionData stationConstructionData;
+
+        public AddStation(String id, String[] enableSettings, String stationType, String stationName, List<String> variants, int numStationsPerLayer, float orbitRadius, BoggledStationConstructors.StationConstructionData stationConstructionData) {
             super(id, enableSettings);
             this.stationType = stationType;
             this.stationName = stationName;
             this.variants = variants;
             this.numStationsPerLayer = numStationsPerLayer;
             this.orbitRadius = orbitRadius;
-            this.numDaysToBuild = numDaysToBuild;
+            this.stationConstructionData = stationConstructionData;
         }
 
         @NotNull
@@ -490,24 +491,6 @@ public class BoggledTerraformingProjectEffect {
             greekAlphabetList.add("Psi");
             greekAlphabetList.add("Omega");
             return greekAlphabetList;
-        }
-
-        protected String getGreekLetter(int numStationsAlreadyPresent) {
-            int setting = boggledTools.getIntSetting("boggledAstropolisSpriteToUse");
-            if(setting == 1)
-            {
-                return "alpha";
-            }
-            else if(setting == 2)
-            {
-                return "beta";
-            }
-            else if(setting == 3)
-            {
-                return "gamma";
-            }
-            numStationsAlreadyPresent = Math.abs(numStationsAlreadyPresent);
-            return getGreekAlphabetList().get(numStationsAlreadyPresent % 3).toLowerCase();
         }
 
         protected String getVariant(int numStationsAlreadyPresent) {
@@ -596,8 +579,8 @@ public class BoggledTerraformingProjectEffect {
     }
 
     public static class AddStationToOrbit extends AddStation {
-        public AddStationToOrbit(String id, String[] enableSettings, String stationType, String stationName, List<String> variants, int numStationsPerLayer, float orbitRadius, int numDaysToBuild) {
-            super(id, enableSettings, stationType, stationName, variants, numStationsPerLayer, orbitRadius, numDaysToBuild);
+        public AddStationToOrbit(String id, String[] enableSettings, String stationType, String stationName, List<String> variants, int numStationsPerLayer, float orbitRadius, BoggledStationConstructors.StationConstructionData stationConstructionData) {
+            super(id, enableSettings, stationType, stationName, variants, numStationsPerLayer, orbitRadius, stationConstructionData);
         }
 
         @Override
@@ -612,6 +595,8 @@ public class BoggledTerraformingProjectEffect {
             EffectTooltipPara para = effectTypeToPara.get("StationConstructionTarget");
             para.infix.add(targetPlanet.getName());
             para.highlights.add(targetPlanet.getName());
+
+            stationConstructionData.addTooltipInfo(ctx, effectTypeToPara);
         }
 
         @Override
@@ -631,6 +616,8 @@ public class BoggledTerraformingProjectEffect {
 
             SectorEntityToken newStation = starSystem.addCustomEntity(id, targetPlanet.getName() + " " + stationName + " " + getColonyNameString(numStations), customEntityStationTag + variantLetter + "_small", playerFactionId);
             SectorEntityToken newStationLights = starSystem.addCustomEntity(id + "Lights", targetPlanet.getName() + " " + stationName + " " + getColonyNameString(numStations) + " Lights Overlay", customEntityStationTag + variantLetter + "_small_lights_overlay", playerFactionId);
+
+            newStation.addTag(boggledTools.BoggledTags.stationNamePrefix + stationName);
 
             float baseOrbitRadius = targetPlanet.getRadius() + this.orbitRadius;
             float orbitRadius = targetPlanet.getRadius() + this.orbitRadius + (numStations / numStationsPerLayer) * (this.orbitRadius / 2); // Doing integer division stuff here
@@ -664,14 +651,14 @@ public class BoggledTerraformingProjectEffect {
             }
             newStationLights.setOrbit(newStation.getOrbit().makeCopy());
 
-            newStation.addScript(new BoggledUnderConstructionEveryFrameScript(newStation));
+            newStation.addScript(new BoggledUnderConstructionEveryFrameScript(ctx, newStation, stationConstructionData));
             Global.getSoundPlayer().playUISound("ui_boggled_station_start_building", 1.0f, 1.0f);
         }
     }
 
     public static class AddStationToEntity extends AddStation {
-        public AddStationToEntity(String id, String[] enableSettings, String stationType, String stationName, List<String> variants, int numStationsPerLayer, float orbitRadius, int numDaysToBuild) {
-            super(id, enableSettings, stationType, stationName, variants, numStationsPerLayer, orbitRadius, numDaysToBuild);
+        public AddStationToEntity(String id, String[] enableSettings, String stationType, String stationName, List<String> variants, int numStationsPerLayer, float orbitRadius, BoggledStationConstructors.StationConstructionData stationConstructionData) {
+            super(id, enableSettings, stationType, stationName, variants, numStationsPerLayer, orbitRadius, stationConstructionData);
         }
 
         @Override
@@ -690,6 +677,8 @@ public class BoggledTerraformingProjectEffect {
 
             SectorEntityToken newStation = starSystem.addCustomEntity(id, starSystem.getBaseName() + " " + stationName + " " + getColonyNameString(numStations), customEntityStationTag + variantLetter + "_small", playerFactionId);
             SectorEntityToken newStationLights = starSystem.addCustomEntity(id + "Lights", starSystem.getName() + " " + stationName + " " + getColonyNameString(numStations) + " Lights Overlay", customEntityStationTag + variantLetter + "_small_lights_overlay", playerFactionId);
+
+            newStation.addTag(boggledTools.BoggledTags.stationNamePrefix + stationName);
 
             if (boggledTools.playerFleetInAsteroidBelt(ctx.getFleet())) {
                 SectorEntityToken focus = boggledTools.getFocusOfAsteroidBelt(ctx.getFleet());
@@ -712,8 +701,13 @@ public class BoggledTerraformingProjectEffect {
             }
             newStationLights.setOrbit(newStation.getOrbit().makeCopy());
 
-            newStation.addScript(new BoggledUnderConstructionEveryFrameScript(newStation));
+            newStation.addScript(new BoggledUnderConstructionEveryFrameScript(ctx, newStation, stationConstructionData));
             Global.getSoundPlayer().playUISound("ui_boggled_station_start_building", 1.0f, 1.0f);
+        }
+
+        @Override
+        protected void addTooltipInfoImpl(BoggledTerraformingRequirement.RequirementContext ctx, Map<String, EffectTooltipPara> effectTypeToPara) {
+            stationConstructionData.addTooltipInfo(ctx, effectTypeToPara);
         }
     }
 }

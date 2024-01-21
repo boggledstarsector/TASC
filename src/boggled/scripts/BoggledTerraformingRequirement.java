@@ -24,6 +24,18 @@ public class BoggledTerraformingRequirement {
         private PlanetAPI planet;
         private StarSystemAPI starSystem;
         private final CampaignFleetAPI fleet;
+        private final BoggledTerraformingProject project;
+
+        public RequirementContext(RequirementContext that, BoggledTerraformingProject project) {
+            this.contextName = that.contextName;
+            this.industry = that.industry;
+            this.industryInterface = that.industryInterface;
+            this.market = that.market;
+            this.planet = that.planet;
+            this.starSystem = that.starSystem;
+            this.fleet = that.fleet;
+            this.project = project;
+        }
 
         public RequirementContext(BaseIndustry industry) {
             this.contextName = "Industry " + industry.getCurrentName();
@@ -33,6 +45,7 @@ public class BoggledTerraformingRequirement {
             this.planet = this.market.getPlanetEntity();
             this.starSystem = this.market.getStarSystem();
             this.fleet = Global.getSector().getPlayerFleet();
+            this.project = null;
         }
 
         public RequirementContext(MarketAPI market) {
@@ -51,6 +64,7 @@ public class BoggledTerraformingRequirement {
                 this.planet = market.getPlanetEntity();
                 this.starSystem = this.planet.getStarSystem();
             }
+            this.project = null;
         }
 
         public RequirementContext(CampaignFleetAPI fleet) {
@@ -65,6 +79,7 @@ public class BoggledTerraformingRequirement {
             } else {
                 this.market = null;
             }
+            this.project = null;
         }
 
         public RequirementContext getFocusContext() {
@@ -86,6 +101,7 @@ public class BoggledTerraformingRequirement {
         public PlanetAPI getPlanet() { return planet; }
         public StarSystemAPI getStarSystem() { return starSystem; }
         public CampaignFleetAPI getFleet() { return fleet; }
+        public BoggledTerraformingProject getProject() { return project; }
     }
 
     public abstract static class TerraformingRequirement {

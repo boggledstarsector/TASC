@@ -498,7 +498,7 @@ construct_astropolis_station,boggledAstropolisEnabled,ability,"Construct an astr
 	{ 'requirement_id' : 'ability_astropolis_station_fleet_contains_heavy_machinery' },
 	{ 'requirement_id' : 'ability_astropolis_station_fleet_contains_metals' },
 	{ 'requirement_id' : 'ability_astropolis_station_fleet_contains_transplutonics' }
-]",,,,,,"[
+]",,90,,,,"[
 	{ 'effect_id' : 'ability_astropolis_station_remove_credits_from_fleet' },
 	{ 'effect_id' : 'ability_astropolis_station_remove_crew_from_fleet' },
 	{ 'effect_id' : 'ability_astropolis_station_remove_heavy_machinery_from_fleet' },
@@ -520,7 +520,7 @@ construct_mining_station,boggledMiningStationEnabled,ability,"Construct a mining
 	{ 'requirement_id' : 'ability_mining_station_fleet_contains_heavy_machinery' },
 	{ 'requirement_id' : 'ability_mining_station_fleet_contains_metals' },
 	{ 'requirement_id' : 'ability_mining_station_fleet_contains_transplutonics' }
-]",,,,,,"[
+]",,90,,,,"[
 	{ 'effect_id' : 'ability_mining_station_remove_credits_from_fleet' },
 	{ 'effect_id' : 'ability_mining_station_remove_crew_from_fleet' },
 	{ 'effect_id' : 'ability_mining_station_remove_heavy_machinery_from_fleet' },
@@ -545,7 +545,7 @@ construct_siphon_station,boggledSiphonStationEnabled,ability,"Construct a siphon
 	{ 'requirement_id' : 'ability_siphon_station_fleet_contains_heavy_machinery' },
 	{ 'requirement_id' : 'ability_siphon_station_fleet_contains_metals' },
 	{ 'requirement_id' : 'ability_siphon_station_fleet_contains_transplutonics' }
-]",,,,,,"[
+]",,90,,,,"[
 	{ 'effect_id' : 'ability_siphon_station_remove_credits_from_fleet' },
 	{ 'effect_id' : 'ability_siphon_station_remove_crew_from_fleet' },
 	{ 'effect_id' : 'ability_siphon_station_remove_heavy_machinery_from_fleet' },

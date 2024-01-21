@@ -7,12 +7,12 @@ FireAll PopulateOptions","""AIS code confirmed. Greetings $playerName. My direct
 ,,,,,,
 #stations under construction interactions
 ,,,,,,
-boggledMiningStationUnderConstructionOpenDialog,OpenInteractionDialog,"$tag:boggled_mining_station
+boggledMiningStationUnderConstructionOpenDialog,OpenInteractionDialog,"$tag:boggled_mining
 !$hasMarket","ShowDefaultVisual
 boggledStationUnderConstructionPrintDescription
 SetShortcut boggledMiningStationUnderConstructionLeave ""ESCAPE""",,boggledMiningStationUnderConstructionLeave:Leave,,
 boggledMiningStationUnderConstructionLeave,DialogOptionSelected,$option == boggledMiningStationUnderConstructionLeave,DismissDialog,,,,
-boggledSiphonStationUnderConstructionOpenDialog,OpenInteractionDialog,"$tag:boggled_siphon_station
+boggledSiphonStationUnderConstructionOpenDialog,OpenInteractionDialog,"$tag:boggled_siphon
 !$hasMarket","ShowDefaultVisual
 boggledStationUnderConstructionPrintDescription
 SetShortcut boggledSiphonStationUnderConstructionLeave ""ESCAPE""",,boggledSiphonStationUnderConstructionLeave:Leave,,
