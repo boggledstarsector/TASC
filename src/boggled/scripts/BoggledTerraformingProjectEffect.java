@@ -7,9 +7,7 @@ import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.campaign.econ.SubmarketSpecAPI;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import com.fs.starfarer.api.impl.campaign.CoronalTapParticleScript;
-import com.fs.starfarer.api.impl.campaign.ids.Entities;
-import com.fs.starfarer.api.impl.campaign.ids.StarTypes;
-import com.fs.starfarer.api.impl.campaign.ids.Tags;
+import com.fs.starfarer.api.impl.campaign.ids.*;
 import com.fs.starfarer.api.impl.campaign.procgen.StarSystemGenerator;
 import com.fs.starfarer.api.impl.campaign.rulecmd.salvage.FleetAdvanceScript;
 import com.fs.starfarer.api.util.Misc;
@@ -235,11 +233,11 @@ public class BoggledTerraformingProjectEffect {
         }
         @Override
         protected void applyProjectEffectImpl(BoggledTerraformingRequirement.RequirementContext ctx) {
-            StarSystemAPI system = ctx.getMarket().getStarSystem();
+            StarSystemAPI starSystem = ctx.getMarket().getStarSystem();
             SectorEntityToken tapToken = null;
 
-            if (system.getType() == StarSystemGenerator.StarSystemType.TRINARY_2CLOSE) {
-                tapToken = system.addCustomEntity("coronal_tap_" + system.getName(), null, "coronal_tap", Global.getSector().getPlayerFaction().getId());
+            if (starSystem.getType() == StarSystemGenerator.StarSystemType.TRINARY_2CLOSE) {
+                tapToken = starSystem.addCustomEntity("coronal_tap_" + starSystem.getName(), null, "coronal_tap", Global.getSector().getPlayerFaction().getId());
 
                 float minDist = Float.MAX_VALUE;
                 PlanetAPI closest = null;
@@ -263,7 +261,7 @@ public class BoggledTerraformingProjectEffect {
                 WeightedRandomPicker<PlanetAPI> picker = new WeightedRandomPicker<>();
                 WeightedRandomPicker<PlanetAPI> fallback = new WeightedRandomPicker<>();
 
-                for (PlanetAPI planet : system.getPlanets()) {
+                for (PlanetAPI planet : starSystem.getPlanets()) {
                     if (!planet.isNormalStar()) {
                         continue;
                     }
@@ -285,7 +283,7 @@ public class BoggledTerraformingProjectEffect {
                     float orbitRadius = star.getRadius() + spec.getDefaultRadius() + 100f;
                     float orbitDays = orbitRadius / 20f;
 
-                    tapToken = system.addCustomEntity("coronal_tap_" + system.getName(), null, "coronal_tap", Global.getSector().getPlayerFaction().getId());
+                    tapToken = starSystem.addCustomEntity("coronal_tap_" + starSystem.getName(), null, "coronal_tap", Global.getSector().getPlayerFaction().getId());
 
                     tapToken.setCircularOrbitPointingDown(star, boggledTools.getAngleFromEntity(ctx.getMarket().getPrimaryEntity(), star), orbitRadius, orbitDays);
                 }
@@ -295,8 +293,8 @@ public class BoggledTerraformingProjectEffect {
                 tapToken.addTag("BOGGLED_BUILT_BY_PERIHELION_PROJECT");
                 tapToken.removeScriptsOfClass(FleetAdvanceScript.class);
 
-                system.addScript(new CoronalTapParticleScript(tapToken));
-                system.addTag(Tags.HAS_CORONAL_TAP);
+                starSystem.addScript(new CoronalTapParticleScript(tapToken));
+                starSystem.addTag(Tags.HAS_CORONAL_TAP);
 
                 MemoryAPI memory = tapToken.getMemory();
                 memory.set("$usable", true);
@@ -590,7 +588,7 @@ public class BoggledTerraformingProjectEffect {
                 return;
             }
             if (!effectTypeToPara.containsKey("StationConstructionTarget")) {
-                effectTypeToPara.put("StationConstructionTarget", new EffectTooltipPara("Target host world: ", "."));
+                effectTypeToPara.put("StationConstructionTarget", new EffectTooltipPara("Target host world: ", ""));
             }
             EffectTooltipPara para = effectTypeToPara.get("StationConstructionTarget");
             para.infix.add(targetPlanet.getName());
@@ -601,8 +599,11 @@ public class BoggledTerraformingProjectEffect {
 
         @Override
         protected void applyProjectEffectImpl(BoggledTerraformingRequirement.RequirementContext ctx) {
-            StarSystemAPI starSystem = ctx.getStarSystem();
             PlanetAPI targetPlanet = ctx.getPlanet();
+            StarSystemAPI starSystem = ctx.getStarSystem();
+            if (targetPlanet == null || starSystem == null) {
+                return;
+            }
 
             String playerFactionId = Global.getSector().getPlayerFaction().getId();
 
@@ -620,7 +621,8 @@ public class BoggledTerraformingProjectEffect {
             newStation.addTag(boggledTools.BoggledTags.stationNamePrefix + stationName);
 
             float baseOrbitRadius = targetPlanet.getRadius() + this.orbitRadius;
-            float orbitRadius = targetPlanet.getRadius() + this.orbitRadius + (numStations / numStationsPerLayer) * (this.orbitRadius / 2); // Doing integer division stuff here
+            int orbitRadiusMultiplier = numStations / numStationsPerLayer;
+            float orbitRadius = targetPlanet.getRadius() + this.orbitRadius + orbitRadiusMultiplier * (this.orbitRadius / 2);
             if (numStations == 0) {
                 newStation.setCircularOrbitPointingDown(targetPlanet, boggledTools.randomOrbitalAngleFloat(), orbitRadius, orbitRadius / 10f);
             } else {
@@ -663,7 +665,11 @@ public class BoggledTerraformingProjectEffect {
 
         @Override
         protected void applyProjectEffectImpl(BoggledTerraformingRequirement.RequirementContext ctx) {
+            SectorEntityToken playerFleet = ctx.getFleet();
             StarSystemAPI starSystem = ctx.getStarSystem();
+            if (playerFleet == null || starSystem == null) {
+                return;
+            }
 
             String playerFactionId = Global.getSector().getPlayerFaction().getId();
 
@@ -680,22 +686,22 @@ public class BoggledTerraformingProjectEffect {
 
             newStation.addTag(boggledTools.BoggledTags.stationNamePrefix + stationName);
 
-            if (boggledTools.playerFleetInAsteroidBelt(ctx.getFleet())) {
-                SectorEntityToken focus = boggledTools.getFocusOfAsteroidBelt(ctx.getFleet());
-                float orbitRadius = Misc.getDistance(focus, ctx.getFleet());
-                float orbitAngle = Misc.getAngleInDegrees(focus.getLocation(), ctx.getFleet().getLocation());
+            if (boggledTools.playerFleetInAsteroidBelt(playerFleet)) {
+                SectorEntityToken focus = boggledTools.getFocusOfAsteroidBelt(playerFleet);
+                float orbitRadius = Misc.getDistance(focus, playerFleet);
+                float orbitAngle = Misc.getAngleInDegrees(focus.getLocation(), playerFleet.getLocation());
                 newStation.setCircularOrbitPointingDown(focus, orbitAngle, orbitRadius, orbitRadius / 10f);
-            } else if (boggledTools.playerFleetInAsteroidField(ctx.getFleet())) {
-                OrbitAPI orbit = boggledTools.getAsteroidFieldOrbit(ctx.getFleet());
+            } else if (boggledTools.playerFleetInAsteroidField(playerFleet)) {
+                OrbitAPI orbit = boggledTools.getAsteroidFieldOrbit(playerFleet);
                 if (orbit != null) {
-                    float orbitRadius = Misc.getDistance(orbit.getFocus(), ctx.getFleet());
-                    float orbitAngle = Misc.getAngleInDegrees(orbit.getFocus().getLocation(), ctx.getFleet().getLocation());
+                    float orbitRadius = Misc.getDistance(orbit.getFocus(), playerFleet);
+                    float orbitAngle = Misc.getAngleInDegrees(orbit.getFocus().getLocation(), playerFleet.getLocation());
                     float orbitPeriod = orbit.getOrbitalPeriod();
                     newStation.setCircularOrbitWithSpin(orbit.getFocus(), orbitAngle, orbitRadius, orbitPeriod, 5f, 10f);
                 } else {
-                    SectorEntityToken focus = boggledTools.getAsteroidFieldEntity(ctx.getFleet());
-                    float orbitRadius = Misc.getDistance(focus, ctx.getFleet());
-                    float orbitAngle = Misc.getAngleInDegrees(focus.getLocation(), ctx.getFleet().getLocation());
+                    SectorEntityToken focus = boggledTools.getAsteroidFieldEntity(playerFleet);
+                    float orbitRadius = Misc.getDistance(focus, playerFleet);
+                    float orbitAngle = Misc.getAngleInDegrees(focus.getLocation(), playerFleet.getLocation());
                     newStation.setCircularOrbitWithSpin(focus, orbitAngle, orbitRadius, 40f, 5f, 10f);
                 }
             }
@@ -708,6 +714,87 @@ public class BoggledTerraformingProjectEffect {
         @Override
         protected void addTooltipInfoImpl(BoggledTerraformingRequirement.RequirementContext ctx, Map<String, EffectTooltipPara> effectTypeToPara) {
             stationConstructionData.addTooltipInfo(ctx, effectTypeToPara);
+        }
+    }
+
+    public static class ColonizeAbandonedStation extends TerraformingProjectEffect {
+        BoggledStationConstructors.StationConstructionData defaultStationConstructionData;
+        List<BoggledStationConstructors.StationConstructionData> stationConstructionData;
+        protected ColonizeAbandonedStation(String id, String[] enableSettings, BoggledStationConstructors.StationConstructionData defaultStationConstructionData, List<BoggledStationConstructors.StationConstructionData> stationConstructionData) {
+            super(id, enableSettings);
+            this.defaultStationConstructionData = defaultStationConstructionData;
+            this.stationConstructionData = stationConstructionData;
+        }
+
+        @Override
+        protected void applyProjectEffectImpl(BoggledTerraformingRequirement.RequirementContext ctx) {
+            SectorEntityToken playerFleet = ctx.getFleet();
+            SectorEntityToken targetStation = ctx.getStation();
+            StarSystemAPI starSystem = ctx.getStarSystem();
+            if (playerFleet == null || targetStation == null || starSystem == null) {
+                return;
+            }
+
+            targetStation.setInteractionImage("illustrations", "orbital_construction");
+            targetStation.getMemoryWithoutUpdate().set("$abandonedStation", false);
+            targetStation.setFaction(playerFleet.getFaction().getId());
+
+            String id = "NewMarketForStation" + "_" + UUID.randomUUID();
+
+            MarketAPI market = null;
+            for (BoggledStationConstructors.StationConstructionData scd : stationConstructionData) {
+                if (targetStation.hasTag(scd.getStationType())) {
+                    market = scd.createMarket(targetStation);
+                }
+            }
+
+            if (market == null) {
+                market = defaultStationConstructionData.createMarket(targetStation);
+            }
+
+            if (targetStation.hasTag("boggled_astropolis") || targetStation.hasTag("boggled_mining") || targetStation.hasTag("boggled_siphon")) {
+                SectorEntityToken newLightsOnColonize = starSystem.addCustomEntity("boggled_newLightsOnColonize", "New Lights Overlay From Colonizing Abandoned Station", targetStation.getCustomEntityType() + "_lights_overlay", playerFleet.getFaction().getId());
+                newLightsOnColonize.setOrbit(targetStation.getOrbit().makeCopy());
+            } else if(targetStation.hasTag("boggled_gatekeeper_station")) {
+                targetStation.setCustomDescriptionId("gatekeeper_station");
+
+                SectorEntityToken newLightsOnColonize = starSystem.addCustomEntity("boggled_newLightsOnColonize", "New Lights Overlay From Colonizing Abandoned Station", targetStation.getCustomEntityType() + "_lights_overlay", playerFleet.getFaction().getId());
+                newLightsOnColonize.setOrbit(targetStation.getOrbit().makeCopy());
+            } else if(targetStation.getId().contains("new_maxios")) {
+                market.addCondition(Conditions.ORE_MODERATE);
+                market.getConstructionQueue().addToEnd(Industries.MINING, 0);
+            } else if(targetStation.getId().contains("laicaille_habitat")) {
+                market.addCondition(Conditions.ORE_ABUNDANT);
+                market.getConstructionQueue().addToEnd(Industries.MINING, 0);
+            } else if(targetStation.getId().contains("thule_pirate_station")) {
+                market.addCondition(Conditions.VOLATILES_DIFFUSE);
+                market.addCondition(Conditions.COLD);
+                market.getConstructionQueue().addToEnd(Industries.MINING, 0);
+            } else if(targetStation.getId().contains("port_tse")) {
+                market.addCondition(Conditions.ORE_ABUNDANT);
+                market.addCondition(Conditions.RARE_ORE_RICH);
+                market.getConstructionQueue().addToEnd(Industries.MINING, 0);
+            } else if(targetStation.getId().contains("arcadia_station")) {
+                market.addCondition(Conditions.VOLATILES_ABUNDANT);
+                market.getConstructionQueue().addToEnd(Industries.MINING, 0);
+            } else if(targetStation.getId().contains("tigra_city")) {
+                market.addCondition(Conditions.ORE_MODERATE);
+                market.getConstructionQueue().addToEnd(Industries.MINING, 0);
+            }
+        }
+
+        @Override
+        protected void addTooltipInfoImpl(BoggledTerraformingRequirement.RequirementContext ctx, Map<String, EffectTooltipPara> effectTypeToPara) {
+            SectorEntityToken targetStation = ctx.getStation();
+            if (targetStation == null) {
+                return;
+            }
+            if (!effectTypeToPara.containsKey("StationColonizationTarget")) {
+                effectTypeToPara.put("StationColonizationTarget", new EffectTooltipPara("Colonization target: ", ""));
+            }
+            EffectTooltipPara para = effectTypeToPara.get("StationColonizationTarget");
+            para.infix.add(targetStation.getName());
+            para.highlights.add(targetStation.getName());
         }
     }
 }

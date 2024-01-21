@@ -511,9 +511,12 @@ public class boggledTools {
         addTerraformingRequirementFactory("FleetInHyperspace", new BoggledTerraformingRequirementFactory.FleetInHyperspace());
         addTerraformingRequirementFactory("SystemHasJumpPoints", new BoggledTerraformingRequirementFactory.SystemHasJumpPoints());
         addTerraformingRequirementFactory("SystemHasPlanets", new BoggledTerraformingRequirementFactory.SystemHasPlanets());
-        addTerraformingRequirementFactory("TargetPlanetNotOwnedBy", new BoggledTerraformingRequirementFactory.TargetPlanetNotOwnedBy());
+        addTerraformingRequirementFactory("TargetPlanetOwnedBy", new BoggledTerraformingRequirementFactory.TargetPlanetOwnedBy());
+        addTerraformingRequirementFactory("TargetStationOwnedBy", new BoggledTerraformingRequirementFactory.TargetStationOwnedBy());
         addTerraformingRequirementFactory("TargetPlanetGovernedByPlayer", new BoggledTerraformingRequirementFactory.TargetPlanetGovernedByPlayer());
         addTerraformingRequirementFactory("TargetPlanetWithinDistance", new BoggledTerraformingRequirementFactory.TargetPlanetWithinDistance());
+        addTerraformingRequirementFactory("TargetStationWithinDistance", new BoggledTerraformingRequirementFactory.TargetStationWithinDistance());
+        addTerraformingRequirementFactory("TargetStationColonizable", new BoggledTerraformingRequirementFactory.TargetStationColonizable());
         addTerraformingRequirementFactory("TargetPlanetIsAtLeastSize", new BoggledTerraformingRequirementFactory.TargetPlanetIsAtLeastSize());
         addTerraformingRequirementFactory("TargetPlanetOrbitFocusWithinDistance", new BoggledTerraformingRequirementFactory.TargetPlanetOrbitFocusWithinDistance());
         addTerraformingRequirementFactory("TargetPlanetStarWithinDistance", new BoggledTerraformingRequirementFactory.TargetPlanetStarWithinDistance());
@@ -629,6 +632,8 @@ public class boggledTools {
 
         addTerraformingProjectEffectFactory("AddStationToOrbit", new BoggledTerraformingProjectEffectFactory.AddStationToOrbit());
         addTerraformingProjectEffectFactory("AddStationToAsteroids", new BoggledTerraformingProjectEffectFactory.AddStationToAsteroids());
+
+        addTerraformingProjectEffectFactory("ColonizeAbandonedStation", new BoggledTerraformingProjectEffectFactory.ColonizeAbandonedStation());
     }
 
     public static void addTerraformingProjectEffectFactory(String key, BoggledTerraformingProjectEffectFactory.TerraformingProjectEffectFactory value) {
@@ -1560,25 +1565,11 @@ public class boggledTools {
         return closestMarket;
     }
 
-    public static boolean gasGiantInSystem(SectorEntityToken playerFleet) {
+    public static SectorEntityToken getClosestGasGiantToken(SectorEntityToken playerFleet) {
+        List<SectorEntityToken> allGasGiantsInSystem = new ArrayList<>();
         for (Object object : playerFleet.getStarSystem().getEntities(PlanetAPI.class)) {
             PlanetAPI planet = (PlanetAPI) object;
             if (planet.isGasGiant()) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    public static SectorEntityToken getClosestGasGiantToken(SectorEntityToken playerFleet) {
-        if (!gasGiantInSystem(playerFleet)) {
-            return null;
-        }
-        ArrayList<SectorEntityToken> allGasGiantsInSystem = new ArrayList<>();
-
-        for (SectorEntityToken planet : playerFleet.getStarSystem().getAllEntities()) {
-            if (planet instanceof PlanetAPI && ((PlanetAPI) planet).isGasGiant()) {
                 allGasGiantsInSystem.add(planet);
             }
         }
@@ -1595,24 +1586,10 @@ public class boggledTools {
         return closestGasGiant;
     }
 
-    public static boolean colonizableStationInSystem(SectorEntityToken playerFleet) {
+    public static SectorEntityToken getClosestColonizableStationInSystem(SectorEntityToken playerFleet) {
+        List<SectorEntityToken> allColonizableStationsInSystem = new ArrayList<>();
         for (SectorEntityToken entity : playerFleet.getStarSystem().getEntitiesWithTag(Tags.STATION)) {
             if (entity.getMarket() != null && entity.getMarket().hasCondition(Conditions.ABANDONED_STATION)) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    public static SectorEntityToken getClosestColonizableStationInSystem(SectorEntityToken playerFleet) {
-        if (!colonizableStationInSystem(playerFleet)) {
-            return null;
-        }
-        ArrayList<SectorEntityToken> allColonizableStationsInSystem = new ArrayList<>();
-
-        for (SectorEntityToken entity : playerFleet.getStarSystem().getAllEntities()) {
-            if (entity.hasTag(Tags.STATION) && entity.getMarket() != null && entity.getMarket().hasCondition(Conditions.ABANDONED_STATION)) {
                 allColonizableStationsInSystem.add(entity);
             }
         }
@@ -1629,21 +1606,12 @@ public class boggledTools {
         return closestStation;
     }
 
-    public static boolean stationInSystem(SectorEntityToken playerFleet) {
-        return !playerFleet.getStarSystem().getEntitiesWithTag(Tags.STATION).isEmpty();
-    }
-
     public static SectorEntityToken getClosestStationInSystem(SectorEntityToken playerFleet) {
-        if (!stationInSystem(playerFleet)) {
+        StarSystemAPI starSystem = playerFleet.getStarSystem();
+        if (starSystem == null) {
             return null;
         }
-        ArrayList<SectorEntityToken> allStationsInSystem = new ArrayList<>();
-
-        for (SectorEntityToken entity : playerFleet.getStarSystem().getAllEntities()) {
-            if (entity.hasTag(Tags.STATION)) {
-                allStationsInSystem.add(entity);
-            }
-        }
+        List<SectorEntityToken> allStationsInSystem = playerFleet.getStarSystem().getEntitiesWithTag(Tags.STATION);
 
         SectorEntityToken closestStation = null;
         for (SectorEntityToken entity : allStationsInSystem) {

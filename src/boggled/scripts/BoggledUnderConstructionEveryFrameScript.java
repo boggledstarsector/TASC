@@ -15,7 +15,7 @@ public class BoggledUnderConstructionEveryFrameScript implements EveryFrameScrip
     public BoggledUnderConstructionEveryFrameScript(BoggledTerraformingRequirement.RequirementContext ctx, SectorEntityToken station, BoggledStationConstructors.StationConstructionData stationConstructionData) {
         this.stationEntity = station;
         this.stationConstructionData = stationConstructionData;
-        this.requiredDays = ctx.getProject().getModifiedProjectDuration(ctx);//this.stationConstructionData.getModifiedBuildDuration(ctx);
+        this.requiredDays = ctx.getProject().getModifiedProjectDuration(ctx);
 
         CampaignClockAPI clock = Global.getSector().getClock();
         stationEntity.addTag("boggled_construction_progress_lastDayChecked_" + clock.getDay());

@@ -192,3 +192,16 @@ ability_siphon_station_fleet_contains_crew,"Requires $commodityQuantity $commodi
 ability_siphon_station_fleet_contains_heavy_machinery,"Requires $commodityQuantity $commodityName. You have $currentCommodityQuantity.","[ '$commodityQuantity' ]",false,"ability_siphon_station_fleet_contains_heavy_machinery"
 ability_siphon_station_fleet_contains_metals,"Requires $commodityQuantity $commodityName. You have $currentCommodityQuantity.","[ '$commodityQuantity' ]",false,"ability_siphon_station_fleet_contains_metals"
 ability_siphon_station_fleet_contains_transplutonics,"Requires $commodityQuantity $commodityName. You have $currentCommodityQuantity.","[ '$commodityQuantity' ]",false,"ability_siphon_station_fleet_contains_transplutonics"
+
+ability_colonize_abandoned_station_player_fleet_not_in_hyperspace,"You cannot colonize stations located in hyperspace.",,false,"player_fleet_not_in_hyperspace"
+ability_colonize_abandoned_station_system_has_jump_points,"You cannot colonize a station in a system with no jump points.",,false,"system_has_jump_points"
+ability_colonize_abandoned_station_target_station_not_owned_by_player_or_neutral,"You cannot colonize a station that is already controlled by $factionName.",,false,"target_station_not_owned_by_player_or_neutral"
+ability_colonize_abandoned_station_target_station_not_colonizable,"$stationName is in a state of extreme disrepair and is not a viable target for colonization.",,false,"target_station_not_colonizable"
+ability_colonize_abandoned_station_target_station_within_range,"The station closest to your location is $stationName. Your fleet is $distanceInSu stellar units away. You must be within $requiredDistanceInSu stellar units to colonize the station.",,false,"ability_colonize_abandoned_station_target_station_within_range"
+ability_colonize_abandoned_station_target_station_colonizable,"$stationName is in a state of extreme disrepair and is not a viable target for colonization.",,false,"ability_colonize_abandoned_station_target_station_colonizable"
+
+ability_colonize_abandoned_station_fleet_contains_credits,"Requires $creditsQuantity credits. You have $currentCreditsQuantity.","[ '$creditsQuantity' ]",false,"ability_colonize_abandoned_station_fleet_contains_credits"
+ability_colonize_abandoned_station_fleet_contains_crew,"Requires $commodityQuantity $commodityName. You have $currentCommodityQuantity.","[ '$commodityQuantity' ]",false,"ability_colonize_abandoned_station_fleet_contains_crew"
+ability_colonize_abandoned_station_fleet_contains_heavy_machinery,"Requires $commodityQuantity $commodityName. You have $currentCommodityQuantity.","[ '$commodityQuantity' ]",false,"ability_colonize_abandoned_station_fleet_contains_heavy_machinery"
+ability_colonize_abandoned_station_fleet_contains_metals,"Requires $commodityQuantity $commodityName. You have $currentCommodityQuantity.","[ '$commodityQuantity' ]",false,"ability_colonize_abandoned_station_fleet_contains_metals"
+ability_colonize_abandoned_station_fleet_contains_transplutonics,"Requires $commodityQuantity $commodityName. You have $currentCommodityQuantity.","[ '$commodityQuantity' ]",false,"ability_colonize_abandoned_station_fleet_contains_transplutonics"

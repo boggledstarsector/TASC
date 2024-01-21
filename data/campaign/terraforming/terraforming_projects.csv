@@ -553,3 +553,25 @@ construct_siphon_station,boggledSiphonStationEnabled,ability,"Construct a siphon
 	{ 'effect_id' : 'ability_siphon_station_remove_transplutonics_from_fleet' },
 	{ 'effect_id' : 'add_siphon_station_to_orbit' }
 ]",,
+colonize_abandoned_station,boggledStationColonizationEnabled,ability,"Colonize an abandoned station.",,,"[
+	{ 'requirement_id' : 'ability_colonize_abandoned_station_player_fleet_not_in_hyperspace', 'and_then' : [
+		{ 'requirement_id' : 'ability_colonize_abandoned_station_system_has_jump_points', 'and_then' : [
+			{ 'requirement_id' : 'ability_colonize_abandoned_station_target_station_within_range' },
+			{ 'requirement_id' : 'ability_colonize_abandoned_station_target_station_not_owned_by_player_or_neutral' },
+			{ 'requirement_id' : 'ability_colonize_abandoned_station_target_station_colonizable' }
+		] }
+	] },
+	
+	{ 'requirement_id' : 'ability_colonize_abandoned_station_fleet_contains_credits' },
+	{ 'requirement_id' : 'ability_colonize_abandoned_station_fleet_contains_crew' },
+	{ 'requirement_id' : 'ability_colonize_abandoned_station_fleet_contains_heavy_machinery' },
+	{ 'requirement_id' : 'ability_colonize_abandoned_station_fleet_contains_metals' },
+	{ 'requirement_id' : 'ability_colonize_abandoned_station_fleet_contains_transplutonics' }
+]",,30,,,,"[
+	{ 'effect_id' : 'ability_colonize_abandoned_station_remove_credits_from_fleet' },
+	{ 'effect_id' : 'ability_colonize_abandoned_station_remove_crew_from_fleet' },
+	{ 'effect_id' : 'ability_colonize_abandoned_station_remove_heavy_machinery_from_fleet' },
+	{ 'effect_id' : 'ability_colonize_abandoned_station_remove_metals_from_fleet' },
+	{ 'effect_id' : 'ability_colonize_abandoned_station_remove_transplutonics_from_fleet' },
+	{ 'effect_id' : 'colonize_abandoned_station' }
+]",,

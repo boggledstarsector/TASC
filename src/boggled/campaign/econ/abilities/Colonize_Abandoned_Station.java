@@ -84,7 +84,7 @@ public class Colonize_Abandoned_Station extends BaseDurationAbility
             SectorEntityToken newLightsOnColonize = system.addCustomEntity("boggled_newLightsOnColonize", "New Lights Overlay From Colonizing Abandoned Station", targetEntityForMarket.getCustomEntityType() + "_lights_overlay", playerFleet.getFaction().getId());
             newLightsOnColonize.setOrbit(targetEntityForMarket.getOrbit().makeCopy());
         }
-        else if(targetEntityForMarket.hasTag("boggled_siphon_station") || targetEntityForMarket.getFullName().contains("Abandoned Siphon Station"))
+        else if(targetEntityForMarket.hasTag("boggled_siphon") || targetEntityForMarket.getFullName().contains("Abandoned Siphon Station"))
         {
             SectorEntityToken hostGasGiant = null;
             if(targetEntityForMarket.getOrbitFocus() != null && targetEntityForMarket.getOrbitFocus() instanceof PlanetAPI && targetEntityForMarket.getOrbitFocus().getMarket() != null && boggledTools.getPlanetType((PlanetAPI)targetEntityForMarket.getOrbitFocus()).equals(boggledTools.gasGiantPlanetId))
@@ -92,7 +92,7 @@ public class Colonize_Abandoned_Station extends BaseDurationAbility
                 hostGasGiant = targetEntityForMarket.getOrbitFocus();
             }
 
-            if(hostGasGiant != null && !market.hasTag("boggled_astropolis") && !market.hasTag("boggled_mining_station"))
+            if(hostGasGiant != null && !market.hasTag("boggled_astropolis") && !market.hasTag("boggled_mining"))
             {
                 if(hostGasGiant.getMarket().hasCondition(Conditions.VOLATILES_TRACE))
                 {
@@ -132,6 +132,7 @@ public class Colonize_Abandoned_Station extends BaseDurationAbility
                 newLightsOnColonize.setOrbit(targetEntityForMarket.getOrbit().makeCopy());
             }
         }
+
         else if(targetEntityForMarket.getId().contains("new_maxios"))
         {
             market.addCondition(Conditions.ORE_MODERATE);

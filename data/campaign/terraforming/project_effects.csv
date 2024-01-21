@@ -111,8 +111,7 @@ add_astropolis_station_to_orbit,,AddStationToOrbit,"{
 	'num_stations_per_layer' : 8,
 	'orbit_radius' : 450,
 	
-	'station_construction_data' : {
-	},
+	'station_construction_data' : {}
 }"
 ,,
 ability_mining_station_remove_crew_from_fleet,,RemoveCommodityFromFleetStorage,"{ 'commodity_id' : 'crew', 'quantity' : 1000 }"
@@ -147,4 +146,26 @@ add_siphon_station_to_orbit,,AddStationToOrbit,"{
 		'resources_to_highlight' : [ 'volatiles' ],
 		'industries_to_queue' : [ 'mining' ]
 	},
+}"
+,,
+ability_colonize_abandoned_station_remove_crew_from_fleet,,RemoveCommodityFromFleetStorage,"{ 'commodity_id' : 'crew', 'quantity' : 500 }"
+ability_colonize_abandoned_station_remove_heavy_machinery_from_fleet,,RemoveCommodityFromFleetStorage,"{ 'commodity_id' : 'heavy_machinery', 'quantity' : 125 }"
+ability_colonize_abandoned_station_remove_metals_from_fleet,,RemoveCommodityFromFleetStorage,"{ 'commodity_id' : 'metals', 'quantity' : 500 }"
+ability_colonize_abandoned_station_remove_transplutonics_from_fleet,,RemoveCommodityFromFleetStorage,"{ 'commodity_id' : 'rare_metals', 'quantity' : 125 }"
+ability_colonize_abandoned_station_remove_credits_from_fleet,,RemoveCreditsFromFleet,"{ 'quantity' : 250000 }"
+colonize_abandoned_station,,ColonizeAbandonedStation,"{
+	'station_colonization_data' : {
+		'boggled_astropolis' : {},
+		'boggled_mining' : {
+			'resources_to_highlight' : [ 'ore', 'rare_ore' ],
+			'industries_to_queue' : [ 'mining' ]
+		},
+		'boggled_siphon' : {
+			'resources_to_highlight' : [ 'volatiles' ],
+			'industries_to_queue' : [ 'mining' ]
+		},
+		'boggled_gatekeeper_station' : {
+			'industries_to_queue' : [ 'ASTRAL_GATE' ]
+		}
+	}
 }"

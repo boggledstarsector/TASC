@@ -270,7 +270,7 @@ public class BoggledTerraformingRequirementFactory {
         }
     }
 
-    public static class TargetPlanetNotOwnedBy implements TerraformingRequirementFactory {
+    public static class TargetPlanetOwnedBy implements TerraformingRequirementFactory {
         @Override
         public BoggledTerraformingRequirement.TerraformingRequirement constructFromJSON(String requirementId, boolean invert, String data) throws JSONException {
             JSONArray jsonData = new JSONArray(data);
@@ -278,7 +278,19 @@ public class BoggledTerraformingRequirementFactory {
             for (int i = 0; i < jsonData.length(); ++i) {
                 factions.add(jsonData.getString(i));
             }
-            return new BoggledTerraformingRequirement.TargetPlanetNotOwnedBy(requirementId, invert, factions);
+            return new BoggledTerraformingRequirement.TargetPlanetOwnedBy(requirementId, invert, factions);
+        }
+    }
+
+    public static class TargetStationOwnedBy implements TerraformingRequirementFactory {
+        @Override
+        public BoggledTerraformingRequirement.TerraformingRequirement constructFromJSON(String requirementId, boolean invert, String data) throws JSONException {
+            JSONArray jsonData = new JSONArray(data);
+            List<String> factions = new ArrayList<>();
+            for (int i = 0; i < jsonData.length(); ++i) {
+                factions.add(jsonData.getString(i));
+            }
+            return new BoggledTerraformingRequirement.TargetStationOwnedBy(requirementId, invert, factions);
         }
     }
 
@@ -293,6 +305,20 @@ public class BoggledTerraformingRequirementFactory {
         @Override
         public BoggledTerraformingRequirement.TerraformingRequirement constructFromJSON(String requirementId, boolean invert, String data) throws JSONException {
             return new BoggledTerraformingRequirement.TargetPlanetWithinDistance(requirementId, invert, Float.parseFloat(data));
+        }
+    }
+
+    public static class TargetStationWithinDistance implements TerraformingRequirementFactory {
+        @Override
+        public BoggledTerraformingRequirement.TerraformingRequirement constructFromJSON(String requirementId, boolean invert, String data) throws JSONException {
+            return new BoggledTerraformingRequirement.TargetStationWithinDistance(requirementId, invert, Float.parseFloat(data));
+        }
+    }
+
+    public static class TargetStationColonizable implements TerraformingRequirementFactory {
+        @Override
+        public BoggledTerraformingRequirement.TerraformingRequirement constructFromJSON(String requirementId, boolean invert, String data) throws JSONException {
+            return new BoggledTerraformingRequirement.TargetStationColonizable(requirementId, invert);
         }
     }
 

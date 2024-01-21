@@ -6,6 +6,7 @@ import com.fs.starfarer.api.campaign.econ.Industry;
 import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.campaign.econ.SubmarketSpecAPI;
 import com.fs.starfarer.api.impl.campaign.econ.impl.BaseIndustry;
+import com.fs.starfarer.api.impl.campaign.ids.Conditions;
 import com.fs.starfarer.api.util.Misc;
 import com.fs.starfarer.api.util.Pair;
 import boggled.campaign.econ.boggledTools;
@@ -21,6 +22,7 @@ public class BoggledTerraformingRequirement {
         private final BaseIndustry industry;
         private final BoggledIndustryInterface industryInterface;
         private MarketAPI market;
+        private SectorEntityToken station;
         private PlanetAPI planet;
         private StarSystemAPI starSystem;
         private final CampaignFleetAPI fleet;
@@ -32,6 +34,7 @@ public class BoggledTerraformingRequirement {
             this.industryInterface = that.industryInterface;
             this.market = that.market;
             this.planet = that.planet;
+            this.station = that.station;
             this.starSystem = that.starSystem;
             this.fleet = that.fleet;
             this.project = project;
@@ -88,6 +91,7 @@ public class BoggledTerraformingRequirement {
 
         public void updatePlanet() {
             this.planet = boggledTools.getClosestPlanetToken(fleet);
+            this.station = boggledTools.getClosestStationInSystem(fleet);
             this.starSystem = fleet.getStarSystem();
             if (this.planet != null) {
                 this.market = this.planet.getMarket();
@@ -99,6 +103,7 @@ public class BoggledTerraformingRequirement {
         public BoggledIndustryInterface getIndustryInterface() { return industryInterface; }
         public MarketAPI getMarket() { return market; }
         public PlanetAPI getPlanet() { return planet; }
+        public SectorEntityToken getStation() { return station; }
         public StarSystemAPI getStarSystem() { return starSystem; }
         public CampaignFleetAPI getFleet() { return fleet; }
         public BoggledTerraformingProject getProject() { return project; }
@@ -699,10 +704,10 @@ public class BoggledTerraformingRequirement {
         }
     }
 
-    public static class TargetPlanetNotOwnedBy extends TerraformingRequirement {
+    public static class TargetPlanetOwnedBy extends TerraformingRequirement {
         List<String> factions;
 
-        protected TargetPlanetNotOwnedBy(String requirementId, boolean invert, List<String> factions) {
+        protected TargetPlanetOwnedBy(String requirementId, boolean invert, List<String> factions) {
             super(requirementId, invert);
             this.factions = factions;
         }
@@ -720,10 +725,10 @@ public class BoggledTerraformingRequirement {
             }
 
             if (!market.isPlayerOwned()) {
-                return factions.contains(market.getFactionId());
+                return !factions.contains(market.getFactionId());
             }
 
-            return true;
+            return false;
         }
 
         @Override
@@ -733,6 +738,42 @@ public class BoggledTerraformingRequirement {
                 return;
             }
             tokenReplacements.put("$factionName", targetPlanet.getFaction().getDisplayNameWithArticle());
+        }
+    }
+
+    public static class TargetStationOwnedBy extends TerraformingRequirement {
+        List<String> factions;
+        protected TargetStationOwnedBy(String requirementId, boolean invert, List<String> factions) {
+            super(requirementId, invert);
+            this.factions = factions;
+        }
+
+        @Override
+        protected boolean checkRequirementImpl(RequirementContext ctx) {
+            SectorEntityToken targetStation = ctx.getStation();
+            if (targetStation == null) {
+                return false;
+            }
+
+            MarketAPI market = targetStation.getMarket();
+            if (market == null) {
+                return false;
+            }
+
+            if (!market.isPlayerOwned()) {
+                return !factions.contains(market.getFactionId());
+            }
+
+            return false;
+        }
+
+        @Override
+        public void addTokenReplacements(RequirementContext ctx, Map<String, String> tokenReplacements) {
+            SectorEntityToken targetStation = ctx.getStation();
+            if (targetStation == null) {
+                return;
+            }
+            tokenReplacements.put("$factionName", targetStation.getFaction().getDisplayNameWithArticle());
         }
     }
 
@@ -783,15 +824,72 @@ public class BoggledTerraformingRequirement {
 
         @Override
         public void addTokenReplacements(RequirementContext ctx, Map<String, String> tokenReplacements) {
-            PlanetAPI targetPlanet = ctx.getPlanet();
-            if (targetPlanet == null) {
+            SectorEntityToken targetPlanet = ctx.getPlanet();
+            SectorEntityToken playerFleet = ctx.getFleet();
+            if (targetPlanet == null || playerFleet == null) {
                 return;
             }
-            float distanceInSu = (Misc.getDistance(ctx.getFleet(), ctx.getPlanet()) - ctx.getPlanet().getRadius()) / 2000f;
+            float distanceInSu = (Misc.getDistance(playerFleet, targetPlanet) - targetPlanet.getRadius()) / 2000f;
             float requiredDistanceInSu = distance / 2000f;
-            tokenReplacements.put("$planetName", ctx.getPlanet().getName());
+            tokenReplacements.put("$planetName", targetPlanet.getName());
             tokenReplacements.put("$distanceInSu", String.format("%.2f", distanceInSu));
             tokenReplacements.put("$requiredDistanceInSu", String.format("%.2f", requiredDistanceInSu));
+        }
+    }
+
+    public static class TargetStationWithinDistance extends TerraformingRequirement {
+        float distance;
+        protected TargetStationWithinDistance(String requirementId, boolean invert, float distance) {
+            super(requirementId, invert);
+            this.distance = distance;
+        }
+
+        @Override
+        protected boolean checkRequirementImpl(RequirementContext ctx) {
+            SectorEntityToken targetStation = ctx.getStation();
+            SectorEntityToken playerFleet = ctx.getFleet();
+            if (targetStation == null || playerFleet == null) {
+                return false;
+            }
+            return Misc.getDistance(ctx.getFleet(), targetStation) < distance;
+        }
+
+        @Override
+        public void addTokenReplacements(RequirementContext ctx, Map<String, String> tokenReplacements) {
+            SectorEntityToken targetStation = ctx.getStation();
+            SectorEntityToken playerFleet = ctx.getFleet();
+            if (targetStation == null || playerFleet == null) {
+                return;
+            }
+            float distanceInSu = Misc.getDistance(playerFleet, targetStation) / 2000f;
+            float requiredDistanceInSu = distance / 2000f;
+            tokenReplacements.put("$stationName", targetStation.getName());
+            tokenReplacements.put("$distanceInSu", String.format("%.2f", distanceInSu));
+            tokenReplacements.put("$requiredDistanceInSu", String.format("%.2f", requiredDistanceInSu));
+        }
+    }
+
+    public static class TargetStationColonizable extends TerraformingRequirement {
+        protected TargetStationColonizable(String requirementId, boolean invert) {
+            super(requirementId, invert);
+        }
+
+        @Override
+        protected boolean checkRequirementImpl(RequirementContext ctx) {
+            SectorEntityToken targetStation = ctx.getStation();
+            if (targetStation == null) {
+                return false;
+            }
+            return targetStation.getMarket() != null && targetStation.getMarket().hasCondition(Conditions.ABANDONED_STATION);
+        }
+
+        @Override
+        public void addTokenReplacements(RequirementContext ctx, Map<String, String> tokenReplacements) {
+            SectorEntityToken targetStation = ctx.getStation();
+            if (targetStation == null) {
+                return;
+            }
+            tokenReplacements.put("$stationName", targetStation.getName());
         }
     }
 

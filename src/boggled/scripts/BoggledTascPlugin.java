@@ -95,6 +95,9 @@ public class BoggledTascPlugin extends BaseModPlugin
             if (!Global.getSector().getPlayerFleet().hasAbility("construct_siphon_station")) {
                 Global.getSector().getCharacterData().addAbility("construct_siphon_station");
             }
+            if (!Global.getSector().getPlayerFleet().hasAbility("colonize_abandoned_station")) {
+                Global.getSector().getCharacterData().addAbility("colonize_abandoned_station");
+            }
 
             if (!Global.getSector().getPlayerFleet().hasAbility("boggled_construct_astropolis_station")) {
                 if(boggledTools.getBooleanSetting(boggledTools.BoggledSettings.astropolisEnabled)) {
@@ -139,6 +142,7 @@ public class BoggledTascPlugin extends BaseModPlugin
             Global.getSector().getCharacterData().removeAbility("construct_astropolis_station");
             Global.getSector().getCharacterData().removeAbility("construct_mining_station");
             Global.getSector().getCharacterData().removeAbility("construct_siphon_station");
+            Global.getSector().getCharacterData().removeAbility("colonize_abandoned_station");
 
             Global.getSector().getCharacterData().removeAbility("boggled_construct_astropolis_station");
             Global.getSector().getCharacterData().removeAbility("boggled_construct_mining_station");

@@ -7,7 +7,6 @@ import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.campaign.StarSystemAPI;
 import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.campaign.econ.MarketConditionAPI;
-import com.fs.starfarer.api.combat.MutableStat;
 import com.fs.starfarer.api.impl.campaign.ids.Conditions;
 import com.fs.starfarer.api.impl.campaign.ids.Industries;
 import com.fs.starfarer.api.impl.campaign.ids.Submarkets;
@@ -18,13 +17,17 @@ import java.util.Map;
 
 public class BoggledStationConstructors {
     public static abstract class StationConstructionData {
-        String stationType;
+        private String stationType;
 
-        List<String> industriesToQueue;
+        private List<String> industriesToQueue;
 
         public StationConstructionData(String stationType, List<String> industriesToQueue) {
             this.stationType = stationType;
             this.industriesToQueue = industriesToQueue;
+        }
+
+        public String getStationType() {
+            return stationType;
         }
 
         protected MarketAPI createDefaultMarket(SectorEntityToken stationEntity, String hostName, String marketType) {
@@ -41,11 +44,11 @@ public class BoggledStationConstructors {
             market.addCondition(boggledTools.BoggledConditions.spriteControllerConditionId);
             market.addCondition(boggledTools.BoggledConditions.crampedQuartersConditionId);
 
-            //Adds the no atmosphere condition, then suppresses it so it won't increase hazard
-            //market_conditions.csv overwrites the vanilla no_atmosphere condition
-            //the only change made is to hide the icon on markets where primary entity has station tag
-            //This is done so refining and fuel production can slot the special items
-            //Hopefully Alex will fix the no_atmosphere detection in the future so this hack can be removed
+            // Adds the no atmosphere condition, then suppresses it so it won't increase hazard
+            // market_conditions.csv overwrites the vanilla no_atmosphere condition
+            // The only change made is to hide the icon on markets where primary entity has station tag
+            // This is done so refining and fuel production can slot the special items
+            // Hopefully Alex will fix the no_atmosphere detection in the future so this hack can be removed
             market.addCondition(Conditions.NO_ATMOSPHERE);
             market.suppressCondition(Conditions.NO_ATMOSPHERE);
 
@@ -64,7 +67,7 @@ public class BoggledStationConstructors {
             Global.getSector().getCampaignUI().showInteractionDialog(stationEntity);
 
             market.addSubmarket(Submarkets.SUBMARKET_STORAGE);
-            StoragePlugin storage = (StoragePlugin)market.getSubmarket(Submarkets.SUBMARKET_STORAGE).getPlugin();
+            StoragePlugin storage = (StoragePlugin) market.getSubmarket(Submarkets.SUBMARKET_STORAGE).getPlugin();
             storage.setPlayerPaidToUnlock(true);
             market.addSubmarket(Submarkets.LOCAL_RESOURCES);
 
@@ -74,7 +77,7 @@ public class BoggledStationConstructors {
             return market;
         }
 
-        public abstract void createMarket(SectorEntityToken stationEntity);
+        public abstract MarketAPI createMarket(SectorEntityToken stationEntity);
 
         public void addTooltipInfo(BoggledTerraformingRequirement.RequirementContext ctx, Map<String, BoggledTerraformingProjectEffect.EffectTooltipPara> effectTypeToPara) {
             String durationString = String.format("%,d", ctx.getProject().getModifiedProjectDuration(ctx));
@@ -84,17 +87,37 @@ public class BoggledStationConstructors {
         }
     }
 
+    public static class DefaultConstructionData extends StationConstructionData {
+        public DefaultConstructionData(String stationType, List<String> industriesToQueue) {
+            super(stationType, industriesToQueue);
+        }
+
+        @Override
+        public MarketAPI createMarket(SectorEntityToken stationEntity) {
+            SectorEntityToken hostPlanet = stationEntity.getOrbitFocus();
+            String hostName = "";
+            if (hostPlanet != null) {
+                hostName = hostPlanet.getName();
+            }
+            MarketAPI market = createDefaultMarket(stationEntity, hostName, "DefaultMarket");
+
+            Global.getSoundPlayer().playUISound(boggledTools.BoggledSounds.stationConstructed, 1.0F, 1.0F);
+            return market;
+        }
+    }
+
     public static class AstropolisConstructionData extends StationConstructionData {
         public AstropolisConstructionData(String stationType, List<String> industriesToQueue) {
             super(stationType, industriesToQueue);
         }
 
         @Override
-        public void createMarket(SectorEntityToken stationEntity) {
+        public MarketAPI createMarket(SectorEntityToken stationEntity) {
             SectorEntityToken hostPlanet = stationEntity.getOrbitFocus();
             MarketAPI market = createDefaultMarket(stationEntity, hostPlanet.getName(), "AstropolisMarket");
 
             Global.getSoundPlayer().playUISound(boggledTools.BoggledSounds.stationConstructed, 1.0F, 1.0F);
+            return market;
         }
     }
 
@@ -125,7 +148,7 @@ public class BoggledStationConstructors {
         }
 
         @Override
-        public void createMarket(SectorEntityToken stationEntity) {
+        public MarketAPI createMarket(SectorEntityToken stationEntity) {
             StarSystemAPI system = stationEntity.getStarSystem();
 
             MarketAPI market = createDefaultMarket(stationEntity, system.getName(), "MiningStationMarket");
@@ -160,11 +183,12 @@ public class BoggledStationConstructors {
             }
 
             Global.getSoundPlayer().playUISound(boggledTools.BoggledSounds.stationConstructed, 1.0F, 1.0F);
+            return market;
         }
     }
 
     public static class SiphonStationConstructionData extends StationConstructionData {
-        private List<String> resourcesToHighlight;
+        private final List<String> resourcesToHighlight;
 
         public SiphonStationConstructionData(String stationType, List<String> industriesToQueue, List<String> resourcesToHighlight) {
             super(stationType,  industriesToQueue);
@@ -196,7 +220,7 @@ public class BoggledStationConstructors {
         }
 
         @Override
-        public void createMarket(SectorEntityToken stationEntity) {
+        public MarketAPI createMarket(SectorEntityToken stationEntity) {
             SectorEntityToken hostPlanet = stationEntity.getOrbitFocus();
             MarketAPI market = createDefaultMarket(stationEntity, hostPlanet.getName(), "MiningStationMarket");
 
@@ -233,6 +257,7 @@ public class BoggledStationConstructors {
             }
 
             Global.getSoundPlayer().playUISound(boggledTools.BoggledSounds.stationConstructed, 1.0F, 1.0F);
+            return market;
         }
     }
 }

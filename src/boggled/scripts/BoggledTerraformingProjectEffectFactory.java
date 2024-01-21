@@ -1,12 +1,18 @@
 package boggled.scripts;
 
 import boggled.campaign.econ.boggledTools;
+import com.fs.starfarer.api.Global;
+import com.fs.starfarer.api.impl.campaign.ids.Industries;
+import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+
+import static java.util.Arrays.asList;
 
 public class BoggledTerraformingProjectEffectFactory {
     public interface TerraformingProjectEffectFactory {
@@ -233,6 +239,35 @@ public class BoggledTerraformingProjectEffectFactory {
             BoggledStationConstructors.StationConstructionData stationConstructionData = factory.constructFromJSON(id, jsonData.getJSONObject("station_construction_data").toString());
 
             return new BoggledTerraformingProjectEffect.AddStationToEntity(id, enableSettings, stationType, stationName, variants, numStationsPerLayer, orbitRadius, stationConstructionData);
+        }
+    }
+
+    public static class ColonizeAbandonedStation implements TerraformingProjectEffectFactory {
+        @Override
+        public BoggledTerraformingProjectEffect.TerraformingProjectEffect constructFromJSON(String id, String[] enableSettings, String data) throws JSONException {
+            Logger log = Global.getLogger(this.getClass());
+            JSONObject jsonData = new JSONObject(data);
+            JSONObject stationColonizationDataObject = jsonData.optJSONObject("station_colonization_data");
+            List<BoggledStationConstructors.StationConstructionData> stationConstructionData = new ArrayList<>();
+            if (stationColonizationDataObject != null) {
+                for (Iterator<String> it = stationColonizationDataObject.keys(); it.hasNext(); ) {
+                    String key = it.next();
+                    String stationColonizationDataString = stationColonizationDataObject.getJSONObject(key).toString();
+                    BoggledStationConstructionFactory.StationConstructionFactory factory = boggledTools.stationConstructionFactories.get(key);
+                    if (factory == null) {
+                        log.error("ColonizeAbandonedStation " + id + " has invalid station construction factory " + key);
+                        continue;
+                    }
+                    BoggledStationConstructors.StationConstructionData scd = factory.constructFromJSON(id, stationColonizationDataString);
+                    if (scd != null) {
+                        stationConstructionData.add(scd);
+                    } else {
+                        log.error("ColonizeAbandonedStation " + id + " has invalid station construction data " + key);
+                    }
+                }
+            }
+            BoggledStationConstructors.StationConstructionData defaultStationConstructionData = new BoggledStationConstructors.DefaultConstructionData("default_station", new ArrayList<String>());
+            return new BoggledTerraformingProjectEffect.ColonizeAbandonedStation(id, enableSettings, defaultStationConstructionData, stationConstructionData);
         }
     }
 }

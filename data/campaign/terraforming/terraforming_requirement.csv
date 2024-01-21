@@ -189,11 +189,14 @@ kletka_simulator_has_gamma_core,MarketHasIndustryWithAICore,false,"{
 player_fleet_not_in_hyperspace,FleetInHyperspace,true,
 system_has_jump_points,SystemHasJumpPoints,false,
 system_has_planets,SystemHasPlanets,false,
-target_planet_not_owned_by_player_or_neutral,TargetPlanetNotOwnedBy,false,"[ 'player', 'neutral' ]"
+target_planet_not_owned_by_player_or_neutral,TargetPlanetOwnedBy,true,"[ 'player', 'neutral' ]"
 target_planet_too_close_to_orbit_focus,TargetPlanetOrbitFocusWithinDistance,true,900
 target_planet_too_close_to_star,TargetPlanetStarWithinDistance,true,1400
 target_planet_too_many_moons,TargetPlanetMoonCountLessThan,false,4
 target_planet_too_crowded,TargetPlanetOrbitersTooClose,false,400
+
+target_station_not_owned_by_player_or_neutral,TargetStationOwnedBy,true,"[ 'player', 'neutral' ]"
+target_station_not_colonizable,TargetStationColonizable,true,
 
 ability_astropolis_station_target_planet_within_range,TargetPlanetWithinDistance,false,500
 ability_astropolis_station_target_planet_moon_too_close,TargetPlanetOrbitersWithinDistance,true,500
@@ -269,4 +272,25 @@ ability_siphon_station_fleet_contains_metals,FleetStorageContainsAtLeast,false,"
 ability_siphon_station_fleet_contains_transplutonics,FleetStorageContainsAtLeast,false,"{
 	'commodity_id' : 'rare_metals',
 	'quantity' : 250
+}"
+
+ability_colonize_abandoned_station_target_station_within_range,TargetStationWithinDistance,false,400
+ability_colonize_abandoned_station_target_station_colonizable,TargetStationColonizable,false,
+
+ability_colonize_abandoned_station_fleet_contains_credits,FleetContainsCreditsAtLeast,false,"{ 'quantity' : 250000 }"
+ability_colonize_abandoned_station_fleet_contains_crew,FleetStorageContainsAtLeast,false,"{
+	'commodity_id' : 'crew',
+	'quantity' : 500
+}"
+ability_colonize_abandoned_station_fleet_contains_heavy_machinery,FleetStorageContainsAtLeast,false,"{
+	'commodity_id' : 'heavy_machinery',
+	'quantity' : 125
+}"
+ability_colonize_abandoned_station_fleet_contains_metals,FleetStorageContainsAtLeast,false,"{
+	'commodity_id' : 'metals',
+	'quantity' : 500
+}"
+ability_colonize_abandoned_station_fleet_contains_transplutonics,FleetStorageContainsAtLeast,false,"{
+	'commodity_id' : 'rare_metals',
+	'quantity' : 125
 }"

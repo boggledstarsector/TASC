@@ -197,7 +197,7 @@ public class BoggledTerraformingProject {
     public void finishProject(BoggledTerraformingRequirement.RequirementContext ctx) {
         ctx = new BoggledTerraformingRequirement.RequirementContext(ctx, this);
         for (BoggledTerraformingProjectEffect.ProjectEffectWithRequirement effect : projectEffects) {
-            effect.effect.applyProjectEffectImpl(ctx);
+            effect.effect.applyProjectEffect(ctx);
         }
 
         String intelTooltip = getProjectTooltip(boggledTools.getTokenReplacements(ctx));
