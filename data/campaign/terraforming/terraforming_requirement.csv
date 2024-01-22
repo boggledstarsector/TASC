@@ -296,10 +296,10 @@ ability_colonize_abandoned_station_fleet_contains_transplutonics,FleetStorageCon
 	'quantity' : 125
 }"
 
-ability_deploy_planet_killer_target_planet_story_critical,TargetPlanetStoryCritical,false,
+ability_deploy_planet_killer_target_planet_story_critical,TargetPlanetStoryCritical,true,
 ability_deploy_planet_killer_target_planet_story_critical_setting,BooleanSettingIsTrue,false,"{
 	'setting_id' : 'boggledPlanetKillerAllowDestructionOfColoniesMarkedAsEssentialForQuests',
-	'invert_setting' : 'false',
+	'invert_setting' : 'true',
 	'requirement_id' : 'ability_deploy_planet_killer_target_planet_story_critical'
 }"
 ability_deploy_planet_killer_target_planet_within_range,TargetPlanetWithinDistance,false,500

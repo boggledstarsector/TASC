@@ -1056,8 +1056,6 @@ public class boggledTools {
                     continue;
                 }
 
-                String[] enableSettings = row.getString("enable_settings").split(csvOptionSeparator);
-
                 String tooltipText = row.getString("tooltip");
                 List<String> tooltipHighlightText = new ArrayList<>();
                 List<Color> tooltipHighlight = new ArrayList<>();

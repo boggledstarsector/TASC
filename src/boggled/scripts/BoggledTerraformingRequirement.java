@@ -1371,7 +1371,7 @@ public class BoggledTerraformingRequirement {
             if (settingValue) {
                 return req.checkRequirement(ctx);
             }
-            return false;
+            return true;
         }
     }
 }
