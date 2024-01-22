@@ -246,8 +246,8 @@ industry_chameleon,boggledDomainTechContentEnabled | boggledCHAMELEONEnabled,ind
 industry_chameleon_decivilized,boggledDomainTechContentEnabled | boggledCHAMELEONEnabled,industry,Decivilized subpopulation,,Eradicated,"[ { 'requirement_id' : 'industry_colony_decivilized' } ]",,20,,,,"[
 	{ 'effect_id' : 'market_remove_decivilized' },
 	{ 'effect_id' : 'market_remove_decivilized_subpop' }
-]","Approximately $percentComplete% of the decivilized subpopulation on $market has been eradicated.",$percentComplete%
-industry_chameleon_rogue_ai,boggledDomainTechContentEnabled | boggledCHAMELEONEnabled,industry,Rogue AI core,,Terminated,"[ { 'requirement_id' : 'industry_colony_rogue_ai_core' } ]",,20,,,,"[ { 'effect_id' : 'market_remove_rogue_ai_core' } ]","An investigation into the whereabouts of the rogue AI core on $market is approximately $percentComplete% complete.",$percentComplete%
+]","Approximately $percentComplete% of the decivilized subpopulation on $marketName has been eradicated.",$percentComplete%
+industry_chameleon_rogue_ai,boggledDomainTechContentEnabled | boggledCHAMELEONEnabled,industry,Rogue AI core,,Terminated,"[ { 'requirement_id' : 'industry_colony_rogue_ai_core' } ]",,20,,,,"[ { 'effect_id' : 'market_remove_rogue_ai_core' } ]","An investigation into the whereabouts of the rogue AI core on $marketName is approximately $percentComplete% complete.",$percentComplete%
 industry_cloning,boggledCloningEnabled,industry,,,,,,,,,,,,
 industry_cryosanctum,boggledDomainTechContentEnabled | boggledCryosanctumPlayerBuildEnabled,industry,,,,,,,,,,,,
 industry_domain_archaeology,boggledDomainTechContentEnabled | boggledDomainArchaeologyEnabled,industry,,,,"[ { 'requirement_id' : 'industry_colony_has_ruins' } ]",,,,,,,,
@@ -574,4 +574,15 @@ colonize_abandoned_station,boggledStationColonizationEnabled,ability,"Colonize a
 	{ 'effect_id' : 'ability_colonize_abandoned_station_remove_metals_from_fleet' },
 	{ 'effect_id' : 'ability_colonize_abandoned_station_remove_transplutonics_from_fleet' },
 	{ 'effect_id' : 'colonize_abandoned_station' }
+]",,
+deploy_planet_killer,boggledDomainTechContentEnabled | boggledPlanetKillerEnabled,ability,"Make the best decision.",,,"[
+	{ 'requirement_id' : 'ability_deploy_planet_killer_player_fleet_not_in_hyperspace', 'and_then' : [
+		{ 'requirement_id' : 'ability_deploy_planet_killer_target_planet_within_range' },
+		{ 'requirement_id' : 'ability_deploy_planet_killer_target_planet_story_critical' },
+		{ 'requirement_id' : 'ability_deploy_planet_killer_target_planet_not_owned_by_player' }
+	] },
+	{ 'requirement_id' : 'ability_deploy_planet_killer_fleet_contains_planet_killer_device' }
+]",,,,,,"[
+	{ 'effect_id' : 'ability_deploy_planet_killer_remove_planet_killer_device_from_fleet' },
+	{ 'effect_id' : 'deploy_planet_killer' }
 ]",,

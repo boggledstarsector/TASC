@@ -52,67 +52,76 @@ import java.util.ArrayList;
 import static java.util.Arrays.asList;
 
 public class boggledTools {
-    public static void CheckSubmarketExists(String submarketId) {
+    public static void CheckSubmarketExists(String source, String submarketId) {
         for (SubmarketSpecAPI submarketSpec : Global.getSettings().getAllSubmarketSpecs()) {
             if (submarketSpec.getId().equals(submarketId)) {
                 return;
             }
         }
-        throw new IllegalArgumentException("Market condition ID '" + submarketId + "' doesn't exist");
+        throw new IllegalArgumentException(source + ": Market condition ID '" + submarketId + "' doesn't exist");
     }
 
-    public static void CheckMarketConditionExists(String conditionId) {
+    public static void CheckMarketConditionExists(String source, String conditionId) {
         for (MarketConditionSpecAPI marketConditionSpec : Global.getSettings().getAllMarketConditionSpecs()) {
             if (marketConditionSpec.getId().equals(conditionId)) {
                 return;
             }
         }
-        throw new IllegalArgumentException("Condition ID '" + conditionId + "' doesn't exist");
+        throw new IllegalArgumentException(source + ": Condition ID '" + conditionId + "' doesn't exist");
     }
 
-    public static void CheckCommodityExists(String commodityId) {
+    public static void CheckCommodityExists(String source, String commodityId) {
         for (CommoditySpecAPI commoditySpec : Global.getSettings().getAllCommoditySpecs()) {
             if (commoditySpec.getId().equals(commodityId)) {
                 return;
             }
         }
-        throw new IllegalArgumentException("Commodity ID '" + commodityId + "' doesn't exist");
+        throw new IllegalArgumentException(source + ": Commodity ID '" + commodityId + "' doesn't exist");
     }
 
-    public static void CheckResourceExists(String resourceId) {
+    public static void CheckSpecialItemExists(String source, String specialItemId) {
+        for (SpecialItemSpecAPI itemSpec : Global.getSettings().getAllSpecialItemSpecs()) {
+            if (itemSpec.getId().equals(specialItemId)) {
+                return;
+            }
+        }
+        throw new IllegalArgumentException(source + ": Special Item ID '" + specialItemId + "' doesn't exist");
+    }
+
+    public static void CheckResourceExists(String source, String resourceId) {
         for (Map.Entry<String, ArrayList<String>> resourceProgression : getResourceProgressions().entrySet()) {
             if (resourceProgression.getKey().equals(resourceId)) {
                 return;
             }
         }
-        throw new IllegalArgumentException("Resource ID '" + resourceId + "' doesn't exist");
+        throw new IllegalArgumentException(source + ": Resource ID '" + resourceId + "' doesn't exist");
     }
 
-    public static void CheckPlanetTypeExists(String planetType) {
+    public static void CheckPlanetTypeExists(String source, String planetType) {
         for (PlanetSpecAPI planetSpec : Global.getSettings().getAllPlanetSpecs()) {
             if (planetSpec.getPlanetType().equals(planetType)) {
                 return;
             }
         }
-        throw new IllegalArgumentException("Planet type '" + planetType + "' doesn't exist");
+        throw new IllegalArgumentException(source + ": Planet type '" + planetType + "' doesn't exist");
     }
 
-    public static void CheckIndustryExists(String industryId) {
+    public static void CheckIndustryExists(String source, String industryId) {
         for (IndustrySpecAPI industrySpec : Global.getSettings().getAllIndustrySpecs()) {
             if (industrySpec.getId().equals(industryId)) {
                 return;
             }
         }
-        throw new IllegalArgumentException("Industry ID '" + industryId + "' doesn't exist");
+        throw new IllegalArgumentException(source + ": Industry ID '" + industryId + "' doesn't exist");
     }
 
-    public static void CheckItemExists(String itemId) {
+    public static void CheckItemExists(String source, String itemId) {
         for (SpecialItemSpecAPI specialItemSpec : Global.getSettings().getAllSpecialItemSpecs()) {
             if (specialItemSpec.getId().equals(itemId)) {
                 return;
             }
         }
-        throw new IllegalArgumentException("Item ID '" + itemId + "' doesn't exist");
+        throw new IllegalArgumentException(source + ": Item ID '" + itemId + "' doesn't exist");
     }
 
     public static void CheckSkillExists(String skillId) {
@@ -529,6 +538,10 @@ public class boggledTools {
         addTerraformingRequirementFactory("FleetInAsteroidBelt", new BoggledTerraformingRequirementFactory.FleetInAsteroidBelt());
         addTerraformingRequirementFactory("FleetInAsteroidField", new BoggledTerraformingRequirementFactory.FleetInAsteroidField());
 
+        addTerraformingRequirementFactory("TargetPlanetStoryCritical", new BoggledTerraformingRequirementFactory.TargetPlanetStoryCritical());
+        addTerraformingRequirementFactory("TargetStationStoryCritical", new BoggledTerraformingRequirementFactory.TargetStationStoryCritical());
+
+        addTerraformingRequirementFactory("BooleanSettingIsTrue", new BoggledTerraformingRequirementFactory.BooleanSettingIsTrue());
     }
 
     public static void addTerraformingRequirementFactory(String key, BoggledTerraformingRequirementFactory.TerraformingRequirementFactory value) {
@@ -624,8 +637,8 @@ public class boggledTools {
 
         addTerraformingProjectEffectFactory("MarketRemoveIndustry", new BoggledTerraformingProjectEffectFactory.MarketRemoveIndustry());
 
-        addTerraformingProjectEffectFactory("RemoveCommodityFromSubmarket", new BoggledTerraformingProjectEffectFactory.RemoveCommodityFromSubmarket());
-        addTerraformingProjectEffectFactory("RemoveCommodityFromFleetStorage", new BoggledTerraformingProjectEffectFactory.RemoveCommodityFromFleetStorage());
+        addTerraformingProjectEffectFactory("RemoveItemFromSubmarket", new BoggledTerraformingProjectEffectFactory.RemoveItemFromSubmarket());
+        addTerraformingProjectEffectFactory("RemoveItemFromFleetStorage", new BoggledTerraformingProjectEffectFactory.RemoveItemFromFleetStorage());
         addTerraformingProjectEffectFactory("RemoveCreditsFromFleet", new BoggledTerraformingProjectEffectFactory.RemoveCreditsFromFleet());
         addTerraformingProjectEffectFactory("RemoveStoryPointsFromPlayer", new BoggledTerraformingProjectEffectFactory.RemoveStoryPointsFromPlayer());
         addTerraformingProjectEffectFactory("AddItemToSubmarket", new BoggledTerraformingProjectEffectFactory.AddItemToSubmarket());
@@ -1004,7 +1017,7 @@ public class boggledTools {
     public static void initialiseTerraformingRequirementFromJSON(@NotNull JSONArray terraformingRequirementJSON) {
         Logger log = Global.getLogger(boggledTools.class);
 
-        Map<String, BoggledTerraformingRequirement.TerraformingRequirement> terraformingRequirement = new HashMap<>();
+        terraformingRequirement = new HashMap<>();
         String idForErrors = "";
         for (int i = 0; i < terraformingRequirementJSON.length(); ++i) {
             try {
@@ -1028,8 +1041,6 @@ public class boggledTools {
                 log.error("Error in terraforming requirement " + idForErrors + ": " + e);
             }
         }
-
-        boggledTools.terraformingRequirement = terraformingRequirement;
     }
 
     public static void initialiseTerraformingRequirementsFromJSON(@NotNull JSONArray terraformingRequirementsJSON) {
@@ -1044,6 +1055,8 @@ public class boggledTools {
                 if (id.isEmpty()) {
                     continue;
                 }
+
+                String[] enableSettings = row.getString("enable_settings").split(csvOptionSeparator);
 
                 String tooltipText = row.getString("tooltip");
                 List<String> tooltipHighlightText = new ArrayList<>();
@@ -1360,6 +1373,7 @@ public class boggledTools {
 
     public static Map<Pair<String, String>, String> getResourceLimits() { return resourceLimits; }
     public static Map<String, ArrayList<String>> getResourceProgressions() { return resourceProgressions; }
+    public static Map<String, BoggledTerraformingRequirement.TerraformingRequirement> getTerraformingRequirements() { return terraformingRequirement; }
 
     private static Map<String, BoggledTerraformingRequirement.TerraformingRequirement> terraformingRequirement;
     private static Map<String, BoggledProjectRequirementsOR> terraformingRequirements;
@@ -1424,11 +1438,11 @@ public class boggledTools {
         ret.put("$player", Global.getSector().getPlayerPerson().getNameString());
         MarketAPI market = ctx.getMarket();
         if (market != null) {
-            ret.put("$market", market.getName());
+            ret.put("$marketName", market.getName());
         }
         MarketAPI focusMarket = ctx.getFocusContext().getMarket();
         if (focusMarket != null) {
-            ret.put("$focusMarket", focusMarket.getName());
+            ret.put("$focusMarketName", focusMarket.getName());
         }
         PlanetAPI targetPlanet = ctx.getPlanet();
         if (targetPlanet != null) {

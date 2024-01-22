@@ -1,6 +1,5 @@
 package boggled.scripts;
 
-import boggled.scripts.PlayerCargoCalculations.bogglesDefaultCargo;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.*;
 import com.fs.starfarer.api.campaign.econ.MarketAPI;
@@ -319,20 +318,79 @@ public class BoggledTerraformingProjectEffect {
         }
     }
 
-    public static class RemoveCommodityFromSubmarket extends TerraformingProjectEffect {
-        String submarketId;
+    public static abstract class RemoveItemFromCargo extends TerraformingProjectEffect {
+        CargoAPI.CargoItemType itemType;
         String itemId;
         int quantity;
-        public RemoveCommodityFromSubmarket(String id, String[] enableSettings, String submarketId, String itemId, int quantity) {
+        public RemoveItemFromCargo(String id, String[] enableSettings, CargoAPI.CargoItemType itemType, String itemId, int quantity) {
             super(id, enableSettings);
-            this.submarketId = submarketId;
+            this.itemType = itemType;
             this.itemId = itemId;
             this.quantity = quantity;
         }
 
+        protected void removeItemFromCargo(CargoAPI cargo) {
+            switch (itemType) {
+                case RESOURCES:
+                    cargo.removeItems(itemType, itemId, quantity);
+                    break;
+                case SPECIAL:
+                    cargo.removeItems(itemType, new SpecialItemData(itemId, null), quantity);
+                    break;
+            }
+        }
+
+        @Override
+        public void addTokenReplacements(Map<String, String> tokenReplacements) {
+            switch (itemType) {
+                case RESOURCES:
+                    tokenReplacements.put("$itemName", Global.getSettings().getCommoditySpec(itemId).getLowerCaseName());
+                    tokenReplacements.put("$ItemName", Global.getSettings().getCommoditySpec(itemId).getName());
+                    break;
+                case SPECIAL:
+                    tokenReplacements.put("$itemName", Global.getSettings().getSpecialItemSpec(itemId).getName().toLowerCase());
+                    tokenReplacements.put("$ItemName", Global.getSettings().getSpecialItemSpec(itemId).getName());
+                    break;
+            }
+
+            tokenReplacements.put("$itemQuantity", String.format("%,d", quantity));
+        }
+
+        @Override
+        protected void addTooltipInfoImpl(BoggledTerraformingRequirement.RequirementContext ctx, Map<String, EffectTooltipPara> effectTypeToPara) {
+            if (!effectTypeToPara.containsKey("ItemCost")) {
+                effectTypeToPara.put("ItemCost", new EffectTooltipPara("Expends ", "."));
+            }
+            EffectTooltipPara para = effectTypeToPara.get("ItemCost");
+            String itemString = "";
+            switch (itemType) {
+                case RESOURCES:
+                    itemString = Global.getSettings().getCommoditySpec(itemId).getLowerCaseName();
+                    break;
+                case SPECIAL:
+                    itemString = Global.getSettings().getSpecialItemSpec(itemId).getName().toLowerCase();
+                    break;
+            }
+            String quantityString = String.format("%,d", quantity);
+            para.infix.add(quantityString + " " + itemString);
+            para.highlights.add(quantityString);
+        }
+    }
+
+    public static class RemoveItemFromSubmarket extends RemoveItemFromCargo {
+        String submarketId;
+        public RemoveItemFromSubmarket(String id, String[] enableSettings, String submarketId, CargoAPI.CargoItemType itemType, String itemId, int quantity) {
+            super(id, enableSettings, itemType, itemId, quantity);
+            this.submarketId = submarketId;
+        }
+
         @Override
         protected void applyProjectEffectImpl(BoggledTerraformingRequirement.RequirementContext ctx) {
-            ctx.getMarket().getSubmarket(submarketId).getCargo().removeCommodity(itemId, quantity);
+            MarketAPI market = ctx.getMarket();
+            if (market == null) {
+                return;
+            }
+            removeItemFromCargo(market.getSubmarket(submarketId).getCargo());
         }
     }
 
@@ -349,37 +407,19 @@ public class BoggledTerraformingProjectEffect {
         }
     }
 
-    public static class RemoveCommodityFromFleetStorage extends TerraformingProjectEffect {
-        String commodityId;
-        int quantity;
-        protected RemoveCommodityFromFleetStorage(String id, String[] enableSettings, String commodityId, int quantity) {
-            super(id, enableSettings);
-            this.commodityId = commodityId;
-            this.quantity = quantity;
+    public static class RemoveItemFromFleetStorage extends RemoveItemFromCargo {
+        protected RemoveItemFromFleetStorage(String id, String[] enableSettings, CargoAPI.CargoItemType itemType, String commodityId, int quantity) {
+            super(id, enableSettings, itemType, commodityId, quantity);
         }
 
         @Override
         protected void applyProjectEffectImpl(BoggledTerraformingRequirement.RequirementContext ctx) {
-            bogglesDefaultCargo.active.removeCommodity("station_type", commodityId, quantity);
-        }
-
-        @Override
-        public void addTokenReplacements(Map<String, String> tokenReplacements) {
-            tokenReplacements.put("$commodityName", Global.getSettings().getCommoditySpec(commodityId).getLowerCaseName());
-            tokenReplacements.put("$CommodityName", Global.getSettings().getCommoditySpec(commodityId).getName());
-            tokenReplacements.put("$commodityQuantity", Integer.toString(quantity));
-        }
-
-        @Override
-        public void addTooltipInfoImpl(BoggledTerraformingRequirement.RequirementContext ctx, Map<String, EffectTooltipPara> effectTypeToPara) {
-            if (!effectTypeToPara.containsKey("CommodityCost")) {
-                effectTypeToPara.put("CommodityCost", new EffectTooltipPara("Expends ", "."));
+            CampaignFleetAPI playerFleet = ctx.getFleet();
+            if (playerFleet == null) {
+                return;
             }
-            EffectTooltipPara para = effectTypeToPara.get("CommodityCost");
-            String commodityString = Global.getSettings().getCommoditySpec(commodityId).getLowerCaseName();
-            String quantityString = String.format("%,d", quantity);
-            para.infix.add(quantityString + " " + commodityString);
-            para.highlights.add(quantityString);
+            removeItemFromCargo(playerFleet.getCargo());
+//            bogglesDefaultCargo.active.removeCommodity("station_type", commodityId, quantity);
         }
     }
 

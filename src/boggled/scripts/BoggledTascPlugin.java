@@ -276,6 +276,7 @@ public class BoggledTascPlugin extends BaseModPlugin
             // Global.getSector().getListenerManager().addListener(new boggledPlanetKillerGroundRaidObjectiveListener());
 
             Global.getSector().getCharacterData().addAbility("boggled_deploy_planet_killer");
+            Global.getSector().getCharacterData().addAbility("deploy_planet_killer");
         }
     }
 

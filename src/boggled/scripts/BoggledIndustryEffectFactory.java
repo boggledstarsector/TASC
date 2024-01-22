@@ -182,7 +182,7 @@ public class BoggledIndustryEffectFactory {
     public static class RemoveIndustry implements IndustryEffectFactory {
         @Override
         public BoggledIndustryEffect.IndustryEffect constructFromJSON(String id, String[] enableSettings, String data) throws JSONException {
-            boggledTools.CheckIndustryExists(data);
+            boggledTools.CheckIndustryExists(id, data);
             return new BoggledIndustryEffect.RemoveIndustry(id, enableSettings, data);
         }
     }
@@ -228,7 +228,7 @@ public class BoggledIndustryEffectFactory {
     public static class AddCondition implements IndustryEffectFactory {
         @Override
         public BoggledIndustryEffect.IndustryEffect constructFromJSON(String id, String[] enableSettings, String data) throws JSONException {
-            boggledTools.CheckMarketConditionExists(data);
+            boggledTools.CheckMarketConditionExists(id, data);
             return new BoggledIndustryEffect.AddCondition(id, enableSettings, data);
         }
     }

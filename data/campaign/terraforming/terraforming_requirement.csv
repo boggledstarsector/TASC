@@ -190,6 +190,7 @@ player_fleet_not_in_hyperspace,FleetInHyperspace,true,
 system_has_jump_points,SystemHasJumpPoints,false,
 system_has_planets,SystemHasPlanets,false,
 target_planet_not_owned_by_player_or_neutral,TargetPlanetOwnedBy,true,"[ 'player', 'neutral' ]"
+target_planet_owned_by_player,TargetPlanetOwnedBy,false,"[ 'player' ]"
 target_planet_too_close_to_orbit_focus,TargetPlanetOrbitFocusWithinDistance,true,900
 target_planet_too_close_to_star,TargetPlanetStarWithinDistance,true,1400
 target_planet_too_many_moons,TargetPlanetMoonCountLessThan,false,4
@@ -293,4 +294,16 @@ ability_colonize_abandoned_station_fleet_contains_metals,FleetStorageContainsAtL
 ability_colonize_abandoned_station_fleet_contains_transplutonics,FleetStorageContainsAtLeast,false,"{
 	'commodity_id' : 'rare_metals',
 	'quantity' : 125
+}"
+
+ability_deploy_planet_killer_target_planet_story_critical,TargetPlanetStoryCritical,false,
+ability_deploy_planet_killer_target_planet_story_critical_setting,BooleanSettingIsTrue,false,"{
+	'setting_id' : 'boggledPlanetKillerAllowDestructionOfColoniesMarkedAsEssentialForQuests',
+	'invert_setting' : 'false',
+	'requirement_id' : 'ability_deploy_planet_killer_target_planet_story_critical'
+}"
+ability_deploy_planet_killer_target_planet_within_range,TargetPlanetWithinDistance,false,500
+ability_deploy_planet_killer_fleet_contains_planet_killer_device,FleetStorageContainsAtLeast,false,"{
+	'special_item_id' : 'boggled_planetkiller',
+	'quantity' : 1
 }"
