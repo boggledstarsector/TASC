@@ -44,6 +44,7 @@ public class BoggledTerraformingProject {
             lastDayChecked = clock.getDay();
 
             if (!project.requirementsMet(ctx)) {
+                this.daysCompleted = 0;
                 return false;
             }
 

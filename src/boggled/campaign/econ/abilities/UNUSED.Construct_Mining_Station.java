@@ -12,7 +12,6 @@ import com.fs.starfarer.api.util.Misc;
 import java.awt.Color;
 import java.util.ArrayList;
 import boggled.campaign.econ.boggledTools;
-import boggled.scripts.BoggledUnderConstructionEveryFrameScript;
 import boggled.scripts.PlayerCargoCalculations.bogglesDefaultCargo;
 
 public class Construct_Mining_Station extends BaseDurationAbility

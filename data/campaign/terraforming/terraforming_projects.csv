@@ -19,7 +19,7 @@ arid_type_change,boggledTerraformingContentEnabled,terraforming,"Arid type chang
 	{ 'requirement_id' : 'terraforming_colony_temperate_or_hot' },
 	{ 'requirement_id' : 'terraforming_colony_has_stellar_reflectors' },
 	{ 'requirement_id' : 'terraforming_colony_has_moderate_water_present' }
-]",,2,,,,"[
+]",,400,,,,"[
 	{ 'effect_id' : 'arid_type_change' },
 	{ 'effect_id' : 'market_add_habitable' },
 	{ 'effect_id' : 'market_add_farmland_adequate' },
@@ -45,7 +45,7 @@ jungle_type_change,boggledTerraformingContentEnabled,terraforming,"Jungle type c
 	{ 'requirement_id' : 'terraforming_colony_temperate_or_hot' },
 	{ 'requirement_id' : 'terraforming_colony_has_stellar_reflectors' },
 	{ 'requirement_id' : 'terraforming_colony_has_moderate_water_present' }
-]",,2,,,,"[
+]",,400,,,,"[
 	{ 'effect_id' : 'jungle_type_change' },
 	{ 'effect_id' : 'market_add_habitable' },
 	{ 'effect_id' : 'market_add_farmland_adequate' },
@@ -71,7 +71,7 @@ terran_type_change,boggledTerraformingContentEnabled,terraforming,"Terran type c
 	{ 'requirement_id' : 'terraforming_colony_not_very_cold_or_very_hot' },
 	{ 'requirement_id' : 'terraforming_colony_has_stellar_reflectors' },
 	{ 'requirement_id' : 'terraforming_colony_has_moderate_water_present' }
-]",,2,,,,"[
+]",,400,,,,"[
 	{ 'effect_id' : 'terran_type_change' },
 	{ 'effect_id' : 'market_add_habitable' },
 	{ 'effect_id' : 'market_add_farmland_adequate' },
@@ -97,7 +97,7 @@ water_type_change,boggledTerraformingContentEnabled,terraforming,"Water type cha
 	{ 'requirement_id' : 'terraforming_colony_not_very_cold_or_very_hot' },
 	{ 'requirement_id' : 'terraforming_colony_has_stellar_reflectors' },
 	{ 'requirement_id' : 'terraforming_colony_has_large_water_present' }
-]",,2,,,,"[
+]",,400,,,,"[
 	{ 'effect_id' : 'water_type_change' },
 	{ 'effect_id' : 'market_add_habitable' },
 	{ 'effect_id' : 'market_add_water_surface' },
@@ -122,7 +122,7 @@ tundra_type_change,boggledTerraformingContentEnabled,terraforming,"Tundra type c
 	{ 'requirement_id' : 'terraforming_colony_temperate_or_cold' },
 	{ 'requirement_id' : 'terraforming_colony_has_stellar_reflectors' },
 	{ 'requirement_id' : 'terraforming_colony_has_moderate_water_present' }
-]",,2,,,,"[
+]",,400,,,,"[
 	{ 'effect_id' : 'tundra_type_change' },
 	{ 'effect_id' : 'market_add_habitable' },
 	{ 'effect_id' : 'market_add_farmland_adequate' },
@@ -146,7 +146,7 @@ frozen_type_change,boggledTerraformingContentEnabled,terraforming,"Frozen type c
 	{ 'requirement_id' : 'terraforming_colony_atmospheric_density_normal' },
 	{ 'requirement_id' : 'terraforming_colony_very_cold' },
 	{ 'requirement_id' : 'terraforming_colony_has_large_water_present' }
-]",,2,,,,"[
+]",,400,,,,"[
 	{ 'effect_id' : 'frozen_type_change' },
 	{ 'effect_id' : 'market_add_volatiles_abundant' },
 	{ 'effect_id' : 'market_remove_habitable' },
@@ -170,23 +170,23 @@ farmland_resource_improvement,boggledTerraformingContentEnabled,terraforming,"Fa
 	{ 'requirement_id' : 'terraforming_colony_atmospheric_density_normal' },
 	{ 'requirement_id' : 'terraforming_colony_atmosphere_not_toxic_or_irradiated' },
 	{ 'requirement_id' : 'terraforming_colony_has_large_water_present' }
-]",,2,,,,"[ { 'effect_id' : 'market_progress_farmland' } ]",,
-organics_resource_improvement,boggledTerraformingContentEnabled,terraforming,"Organics resource improvement",,Completed,"[ { 'requirement_id' : 'terraforming_world_type_supports_organics_improvement' } ]",,2,,,,"[ { 'effect_id' : 'market_progress_organics' } ]",,
-volatiles_resource_improvement,boggledTerraformingContentEnabled,terraforming,"Volatiles resource improvement",,Completed,"[ { 'requirement_id' : 'terraforming_world_type_supports_volatiles_improvement' } ]",,20,,,,"[ { 'effect_id' : 'market_progress_volatiles' } ]",,
+]",,200,,,,"[ { 'effect_id' : 'market_progress_farmland' } ]",,
+organics_resource_improvement,boggledTerraformingContentEnabled,terraforming,"Organics resource improvement",,Completed,"[ { 'requirement_id' : 'terraforming_world_type_supports_organics_improvement' } ]",,200,,,,"[ { 'effect_id' : 'market_progress_organics' } ]",,
+volatiles_resource_improvement,boggledTerraformingContentEnabled,terraforming,"Volatiles resource improvement",,Completed,"[ { 'requirement_id' : 'terraforming_world_type_supports_volatiles_improvement' } ]",,200,,,,"[ { 'effect_id' : 'market_progress_volatiles' } ]",,
 ,,,,,,,,,,,,,,
 extreme_weather_condition_improvement,boggledTerraformingContentEnabled,terraforming,"Stabilize weather patterns",,Completed,"[
 	{ 'requirement_id' : 'terraforming_world_type_allows_terraforming' },
 	{ 'requirement_id' : 'terraforming_colony_has_extreme_weather' },
 	{ 'requirement_id' : 'terraforming_colony_atmospheric_density_normal' },
 	{ 'requirement_id' : 'terraforming_colony_has_atmosphere_processor' }
-]",,2,,,,"[ { 'effect_id' : 'market_remove_extreme_weather' } ]",,
+]",,200,,,,"[ { 'effect_id' : 'market_remove_extreme_weather' } ]",,
 mild_climate_condition_improvement,boggledTerraformingContentEnabled,terraforming,"Make climate mild",,Completed,"[
 	{ 'requirement_id' : 'terraforming_colony_has_normal_climate' },
 	{ 'requirement_id' : 'terraforming_colony_habitable' },
 	{ 'requirement_id' : 'terraforming_world_type_allows_mild_climate' },
 	{ 'requirement_id' : 'terraforming_colony_atmospheric_density_normal' },
 	{ 'requirement_id' : 'terraforming_colony_has_atmosphere_processor' }
-]",,2,,,,"[ { 'effect_id' : 'market_add_mild_climate' } ]",,
+]",,200,,,,"[ { 'effect_id' : 'market_add_mild_climate' } ]",,
 habitable_condition_improvement,boggledTerraformingContentEnabled,terraforming,"Make atmosphere habitable",,Completed,"[
 	{ 'requirement_id' : 'terraforming_colony_not_habitable' },
 	{ 'requirement_id' : 'terraforming_world_type_allows_human_habitability' },
@@ -194,12 +194,12 @@ habitable_condition_improvement,boggledTerraformingContentEnabled,terraforming,"
 	{ 'requirement_id' : 'terraforming_colony_not_very_cold_or_very_hot' },
 	{ 'requirement_id' : 'terraforming_colony_atmosphere_not_toxic_or_irradiated' },
 	{ 'requirement_id' : 'terraforming_colony_has_atmosphere_processor' }
-]",,2,,,,"[ { 'effect_id' : 'market_add_habitable' } ]",,
+]",,200,,,,"[ { 'effect_id' : 'market_add_habitable' } ]",,
 atmosphere_density_condition_improvement,boggledTerraformingContentEnabled,terraforming,"Normalize atmospheric density",,Completed,"[
 	{ 'requirement_id' : 'terraforming_colony_atmosphere_suboptimal_density' },
 	{ 'requirement_id' : 'terraforming_world_type_allows_terraforming' },
 	{ 'requirement_id' : 'terraforming_colony_has_atmosphere_processor' }
-]",,2,,,,"[
+]",,200,,,,"[
 	{ 'effect_id' : 'market_remove_no_atmosphere' },
 	{ 'effect_id' : 'market_remove_thin_atmosphere' },
 	{ 'effect_id' : 'market_remove_dense_atmosphere' }
@@ -208,16 +208,16 @@ toxic_atmosphere_condition_improvement,boggledTerraformingContentEnabled,terrafo
 	{ 'requirement_id' : 'terraforming_colony_atmosphere_toxic' },
 	{ 'requirement_id' : 'terraforming_world_type_allows_terraforming' },
 	{ 'requirement_id' : 'terraforming_colony_has_atmosphere_processor' }
-]",,2,,,,"[ { 'effect_id' : 'market_remove_toxic_atmosphere' } ]",,
+]",,200,,,,"[ { 'effect_id' : 'market_remove_toxic_atmosphere' } ]",,
 irradiated_condition_improvement,boggledTerraformingContentEnabled | boggledTerraformingRemoveRadiationProjectEnabled,terraforming,"Remove atmospheric radiation",,Completed,"[
 	{ 'requirement_id' : 'terraforming_colony_irradiated' },
 	{ 'requirement_id' : 'terraforming_colony_has_genelab' }
-]",,2,,,,"[ { 'effect_id' : 'market_remove_irradiated' } ]",,
+]",,200,,,,"[ { 'effect_id' : 'market_remove_irradiated' } ]",,
 remove_atmosphere_condition_improvement,boggledTerraformingContentEnabled | boggledTerraformingRemoveAtmosphereProjectEnabled,terraforming,"Remove the atmosphere",,Completed,"[
 	{ 'requirement_id' : 'terraforming_colony_has_atmosphere' },
 	{ 'requirement_id' : 'terraforming_colony_barren_or_frozen' },
 	{ 'requirement_id' : 'terraforming_colony_has_atmosphere_processor' }
-]",,2,,,,"[
+]",,200,,,,"[
 	{ 'effect_id' : 'market_add_no_atmosphere' },
 	{ 'effect_id' : 'market_remove_thin_atmosphere' },
 	{ 'effect_id' : 'market_remove_toxic_atmosphere' },
@@ -243,11 +243,11 @@ industry_atmosphere_processor,boggledTerraformingContentEnabled,industry,,,,"[
 	{ 'requirement_id' : 'industry_atmosphere_processor_colony_has_atmo_problem' }
 ]",,,,,,,,
 industry_chameleon,boggledDomainTechContentEnabled | boggledCHAMELEONEnabled,industry,,,,,,,,,,,,
-industry_chameleon_decivilized,boggledDomainTechContentEnabled | boggledCHAMELEONEnabled,industry,Decivilized subpopulation,,Eradicated,"[ { 'requirement_id' : 'industry_colony_decivilized' } ]",,20,,,,"[
+industry_chameleon_decivilized,boggledDomainTechContentEnabled | boggledCHAMELEONEnabled,industry,Decivilized subpopulation,,Eradicated,"[ { 'requirement_id' : 'industry_colony_decivilized' } ]",,200,,,,"[
 	{ 'effect_id' : 'market_remove_decivilized' },
 	{ 'effect_id' : 'market_remove_decivilized_subpop' }
 ]","Approximately $percentComplete% of the decivilized subpopulation on $marketName has been eradicated.",$percentComplete%
-industry_chameleon_rogue_ai,boggledDomainTechContentEnabled | boggledCHAMELEONEnabled,industry,Rogue AI core,,Terminated,"[ { 'requirement_id' : 'industry_colony_rogue_ai_core' } ]",,20,,,,"[ { 'effect_id' : 'market_remove_rogue_ai_core' } ]","An investigation into the whereabouts of the rogue AI core on $marketName is approximately $percentComplete% complete.",$percentComplete%
+industry_chameleon_rogue_ai,boggledDomainTechContentEnabled | boggledCHAMELEONEnabled,industry,Rogue AI core,,Terminated,"[ { 'requirement_id' : 'industry_colony_rogue_ai_core' } ]",,200,,,,"[ { 'effect_id' : 'market_remove_rogue_ai_core' } ]","An investigation into the whereabouts of the rogue AI core on $marketName is approximately $percentComplete% complete.",$percentComplete%
 industry_cloning,boggledCloningEnabled,industry,,,,,,,,,,,,
 industry_cryosanctum,boggledDomainTechContentEnabled | boggledCryosanctumPlayerBuildEnabled,industry,,,,,,,,,,,,
 industry_domain_archaeology,boggledDomainTechContentEnabled | boggledDomainArchaeologyEnabled,industry,,,,"[ { 'requirement_id' : 'industry_colony_has_ruins' } ]",,,,,,,,
@@ -274,7 +274,7 @@ industry_expand_station,boggledStationCrampedQuartersEnabled | boggledStationCra
 industry_genelab_pollution,boggledTerraformingContentEnabled | boggledGenelabEnabled,industry,"Pollution",,"Remediated","[ { 'requirement_id' : 'industry_colony_is_not_station' } ]",,2,,,"[
 	[ { 'requirement_id' : 'industry_colony_has_heavy_industry_or_orbital_works_with_nanoforge' } ]
 ]","[ { 'effect_id' : 'market_remove_pollution' } ]",,
-industry_genelab_lobster,boggledTerraformingContentEnabled | boggledGenelabEnabled,industry,"Lobster seeding",,"Completed","[ { 'requirement_id' : 'industry_colony_water_surface' } ]",,20,,,,,,
+industry_genelab_lobster,boggledTerraformingContentEnabled | boggledGenelabEnabled,industry,"Lobster seeding",,"Completed","[ { 'requirement_id' : 'industry_colony_water_surface' } ]",,200,,,,,,
 industry_gpa,,industry,,,,,,,,,,,,
 industry_harmonic_damper,boggledHarmonicDamperEnabled,industry,,,,"[ { 'requirement_id' : 'industry_colony_is_not_station' } ]",,,,,,,,
 industry_hydroponics,boggledHydroponicsEnabled,industry,,,,,,,,,,,,
@@ -301,7 +301,7 @@ industry_ouyang_optimizer,boggledTerraformingContentEnabled | boggledOuyangOptim
 industry_perihelion_project,boggledDomainTechContentEnabled | boggledPerihelionProjectEnabled,industry,Perihelion project,,Completed,"[
 	{ 'requirement_id' : 'industry_system_star_not_has_coronal_tap' },
 	{ 'requirement_id' : 'industry_system_star_coronal_tap_viable' }
-]",,2,,,,"[
+]",,600,,,,"[
 	{ 'effect_id' : 'system_add_coronal_tap' },
 	{ 'effect_id' : 'market_remove_perihelion_project' }
 ]",,
@@ -310,7 +310,7 @@ industry_planet_cracker,boggledTerraformingContentEnabled | boggledPlanetCracker
 	{ 'requirement_id' : 'industry_planet_cracker_orbited_planet_is_not_gas_giant' },
 	{ 'requirement_id' : 'industry_planet_cracker_orbited_planet_not_has_tectonic_or_extreme_tectonic_activity' },
 	{ 'requirement_id' : 'industry_planet_cracker_orbited_planet_not_has_ore_and_rare_ore_ultrarich' }
-]",,2,,,,"[
+]",,200,,,,"[
 	{ 'effect_id' : 'focus_market_progress_ore_planet_cracker' },
 	{ 'effect_id' : 'focus_market_progress_rare_ore_planet_cracker' },
 	{ 'effect_id' : 'focus_market_add_tectonic_activity' }
@@ -476,7 +476,7 @@ craft_dealmaker_holosuite,boggledDomainTechCraftingEnabled,crafting,"Craft $craf
 	{ 'effect_id' : 'remove_domain_artifacts_easy_from_storage' }
 ]",,
 ,,,,
-construct_astropolis_station,boggledAstropolisEnabled,ability,"Construct an astropolis station in orbit around a planet or moon.",,,"[
+boggled_construct_astropolis_station,boggledAstropolisEnabled,ability,"Construct an astropolis station in orbit around a planet or moon.",,,"[
 	{ 'requirement_id' : 'ability_astropolis_station_player_fleet_not_in_hyperspace', 'and_then' : [
 		{ 'requirement_id' : 'ability_astropolis_station_system_has_jump_points', 'and_then' : [
 			{ 'requirement_id' : 'ability_astropolis_station_system_has_planets', 'and_then' : [
@@ -506,7 +506,7 @@ construct_astropolis_station,boggledAstropolisEnabled,ability,"Construct an astr
 	{ 'effect_id' : 'ability_astropolis_station_remove_transplutonics_from_fleet' },
 	{ 'effect_id' : 'add_astropolis_station_to_orbit' }
 ]",,
-construct_mining_station,boggledMiningStationEnabled,ability,"Construct a mining station in an asteroid belt or asteroid field.",,,"[
+boggled_construct_mining_station,boggledMiningStationEnabled,ability,"Construct a mining station in an asteroid belt or asteroid field.",,,"[
 	{ 'requirement_id' : 'ability_mining_station_player_fleet_not_in_hyperspace', 'and_then' : [
 		{ 'requirement_id' : 'ability_mining_station_system_has_jump_points', 'and_then' : [
 			{ 'requirement_id' : 'ability_mining_station_too_close_to_jump_point' },
@@ -528,7 +528,7 @@ construct_mining_station,boggledMiningStationEnabled,ability,"Construct a mining
 	{ 'effect_id' : 'ability_mining_station_remove_transplutonics_from_fleet' },
 	{ 'effect_id' : 'add_mining_station_to_entity' }
 ]",,
-construct_siphon_station,boggledSiphonStationEnabled,ability,"Construct a siphon station in low orbit around a gas giant.",,,"[
+boggled_construct_siphon_station,boggledSiphonStationEnabled,ability,"Construct a siphon station in low orbit around a gas giant.",,,"[
 	{ 'requirement_id' : 'ability_siphon_station_player_fleet_not_in_hyperspace', 'and_then' : [
 		{ 'requirement_id' : 'ability_siphon_station_system_has_jump_points', 'and_then' : [
 			{ 'requirement_id' : 'ability_siphon_station_target_planet_is_gas_giant' },
@@ -553,7 +553,7 @@ construct_siphon_station,boggledSiphonStationEnabled,ability,"Construct a siphon
 	{ 'effect_id' : 'ability_siphon_station_remove_transplutonics_from_fleet' },
 	{ 'effect_id' : 'add_siphon_station_to_orbit' }
 ]",,
-colonize_abandoned_station,boggledStationColonizationEnabled,ability,"Colonize an abandoned station.",,,"[
+boggled_colonize_abandoned_station,boggledStationColonizationEnabled,ability,"Colonize an abandoned station.",,,"[
 	{ 'requirement_id' : 'ability_colonize_abandoned_station_player_fleet_not_in_hyperspace', 'and_then' : [
 		{ 'requirement_id' : 'ability_colonize_abandoned_station_system_has_jump_points', 'and_then' : [
 			{ 'requirement_id' : 'ability_colonize_abandoned_station_target_station_within_range' },
@@ -575,7 +575,7 @@ colonize_abandoned_station,boggledStationColonizationEnabled,ability,"Colonize a
 	{ 'effect_id' : 'ability_colonize_abandoned_station_remove_transplutonics_from_fleet' },
 	{ 'effect_id' : 'colonize_abandoned_station' }
 ]",,
-deploy_planet_killer,boggledDomainTechContentEnabled | boggledPlanetKillerEnabled,ability,"Make the best decision.",,,"[
+boggled_deploy_planet_killer,boggledDomainTechContentEnabled | boggledPlanetKillerEnabled,ability,"Use a planet-killer device to destroy a colony. This will severely damage relations with most major factions in the Sector.",,,"[
 	{ 'requirement_id' : 'ability_deploy_planet_killer_player_fleet_not_in_hyperspace', 'and_then' : [
 		{ 'requirement_id' : 'ability_deploy_planet_killer_target_planet_within_range' },
 		{ 'requirement_id' : 'ability_deploy_planet_killer_target_planet_story_critical' },
@@ -583,8 +583,8 @@ deploy_planet_killer,boggledDomainTechContentEnabled | boggledPlanetKillerEnable
 	] },
 	{ 'requirement_id' : 'ability_deploy_planet_killer_fleet_contains_planet_killer_device' }
 ]",,,,,,"[
-	{ 'effect_id' : 'ability_deploy_planet_killer_remove_planet_killer_device_from_fleet' },
 	{ 'effect_id' : 'ability_deploy_planet_killer_decivilize_market' },
+	{ 'effect_id' : 'ability_deploy_planet_killer_remove_planet_killer_device_from_fleet' },
 	{ 'effect_id' : 'ability_deploy_planet_killer_adjust_faction_relations' },
 	{ 'effect_id' : 'ability_deploy_planet_killer_trigger_military_response' },
 	{ 'effect_id' : 'ability_deploy_planet_killer_change_conditions_1' },

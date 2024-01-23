@@ -11,7 +11,6 @@ import com.fs.starfarer.api.util.Misc;
 import java.awt.Color;
 
 import boggled.campaign.econ.boggledTools;
-import boggled.scripts.BoggledUnderConstructionEveryFrameScript;
 import boggled.scripts.PlayerCargoCalculations.bogglesDefaultCargo;
 
 public class Construct_Siphon_Station extends BaseDurationAbility

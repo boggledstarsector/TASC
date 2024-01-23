@@ -998,10 +998,10 @@ public class BoggledTerraformingProjectEffect {
             if (targetStation == null) {
                 return;
             }
-            if (!effectTypeToPara.containsKey("StationColonizationTarget")) {
-                effectTypeToPara.put("StationColonizationTarget", new EffectTooltipPara("Colonization target: ", ""));
+            if (!effectTypeToPara.containsKey("DecivilizationTarget")) {
+                effectTypeToPara.put("DecivilizationTarget", new EffectTooltipPara("Target colony: ", ""));
             }
-            EffectTooltipPara para = effectTypeToPara.get("StationColonizationTarget");
+            EffectTooltipPara para = effectTypeToPara.get("DecivilizationTarget");
             para.infix.add(targetStation.getName());
             para.highlights.add(targetStation.getName());
         }

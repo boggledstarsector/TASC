@@ -184,7 +184,7 @@ public class BoggledCommonIndustry {
             return;
         }
 
-        if (ctx.getIndustry().isDisrupted() || !marketSuitableBoth(ctx)) {
+        if (ctx.getIndustry().isDisrupted()) {
             return;
         }
 

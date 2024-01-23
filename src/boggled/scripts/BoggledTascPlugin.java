@@ -20,8 +20,7 @@ import org.json.JSONException;
 
 import java.io.IOException;
 
-public class BoggledTascPlugin extends BaseModPlugin
-{
+public class BoggledTascPlugin extends BaseModPlugin {
     static {
         ResourceDepositsCondition.COMMODITY.put(Conditions.RUINS_SCATTERED, boggledTools.BoggledCommodities.domainArtifacts);
         ResourceDepositsCondition.COMMODITY.put(Conditions.RUINS_WIDESPREAD, boggledTools.BoggledCommodities.domainArtifacts);
@@ -40,10 +39,8 @@ public class BoggledTascPlugin extends BaseModPlugin
 
     private static final Logger log = Global.getLogger(BoggledTascPlugin.class);
 
-    public void applyStationSettingsToAllStationsInSector()
-    {
-        if(boggledTools.getBooleanSetting("boggledApplyStationSettingsToAllStationsInSector"))
-        {
+    public void applyStationSettingsToAllStationsInSector() {
+        if(boggledTools.getBooleanSetting("boggledApplyStationSettingsToAllStationsInSector")) {
             for (StarSystemAPI system : Global.getSector().getStarSystems()) {
                 for (MarketAPI market : Global.getSector().getEconomy().getMarkets(system)) {
                     SectorEntityToken primaryEntity = market.getPrimaryEntity();
@@ -68,37 +65,18 @@ public class BoggledTascPlugin extends BaseModPlugin
         }
     }
 
-    public void applyTerraformingAbilitiesPerSettingsFile()
-    {
-        if(boggledTools.getBooleanSetting(boggledTools.BoggledSettings.terraformingContentEnabled))
-        {
-            if (!Global.getSector().getPlayerFleet().hasAbility("boggled_open_terraforming_control_panel"))
-            {
+    public void applyTerraformingAbilitiesPerSettingsFile() {
+        if(boggledTools.getBooleanSetting(boggledTools.BoggledSettings.terraformingContentEnabled)) {
+            if (!Global.getSector().getPlayerFleet().hasAbility("boggled_open_terraforming_control_panel")) {
                 Global.getSector().getCharacterData().addAbility("boggled_open_terraforming_control_panel");
             }
-        }
-        else
-        {
+        } else {
             Global.getSector().getCharacterData().removeAbility("boggled_open_terraforming_control_panel");
         }
     }
 
     public void applyStationConstructionAbilitiesPerSettingsFile() {
-        if(boggledTools.getBooleanSetting(boggledTools.BoggledSettings.stationConstructionContentEnabled))
-        {
-            if (!Global.getSector().getPlayerFleet().hasAbility("construct_astropolis_station")) {
-                Global.getSector().getCharacterData().addAbility("construct_astropolis_station");
-            }
-            if (!Global.getSector().getPlayerFleet().hasAbility("construct_mining_station")) {
-                Global.getSector().getCharacterData().addAbility("construct_mining_station");
-            }
-            if (!Global.getSector().getPlayerFleet().hasAbility("construct_siphon_station")) {
-                Global.getSector().getCharacterData().addAbility("construct_siphon_station");
-            }
-            if (!Global.getSector().getPlayerFleet().hasAbility("colonize_abandoned_station")) {
-                Global.getSector().getCharacterData().addAbility("colonize_abandoned_station");
-            }
-
+        if(boggledTools.getBooleanSetting(boggledTools.BoggledSettings.stationConstructionContentEnabled)) {
             if (!Global.getSector().getPlayerFleet().hasAbility("boggled_construct_astropolis_station")) {
                 if(boggledTools.getBooleanSetting(boggledTools.BoggledSettings.astropolisEnabled)) {
                     Global.getSector().getCharacterData().addAbility("boggled_construct_astropolis_station");
@@ -139,11 +117,6 @@ public class BoggledTascPlugin extends BaseModPlugin
                 }
             }
         } else {
-            Global.getSector().getCharacterData().removeAbility("construct_astropolis_station");
-            Global.getSector().getCharacterData().removeAbility("construct_mining_station");
-            Global.getSector().getCharacterData().removeAbility("construct_siphon_station");
-            Global.getSector().getCharacterData().removeAbility("colonize_abandoned_station");
-
             Global.getSector().getCharacterData().removeAbility("boggled_construct_astropolis_station");
             Global.getSector().getCharacterData().removeAbility("boggled_construct_mining_station");
             Global.getSector().getCharacterData().removeAbility("boggled_construct_siphon_station");
@@ -151,92 +124,70 @@ public class BoggledTascPlugin extends BaseModPlugin
         }
     }
 
-    public void applyDomainArchaeologySettings()
-    {
+    public void applyDomainArchaeologySettings() {
         //Enable/disable Domain-tech content
-        if(boggledTools.getBooleanSetting(boggledTools.BoggledSettings.domainTechContentEnabled) && boggledTools.getBooleanSetting(boggledTools.BoggledSettings.domainArchaeologyEnabled))
-        {
-            if(Global.getSector().getFaction(Factions.LUDDIC_CHURCH) != null && !Global.getSector().getFaction(Factions.LUDDIC_CHURCH).isIllegal(boggledTools.BoggledCommodities.domainArtifacts))
-            {
+        if(boggledTools.getBooleanSetting(boggledTools.BoggledSettings.domainTechContentEnabled) && boggledTools.getBooleanSetting(boggledTools.BoggledSettings.domainArchaeologyEnabled)) {
+            if(Global.getSector().getFaction(Factions.LUDDIC_CHURCH) != null && !Global.getSector().getFaction(Factions.LUDDIC_CHURCH).isIllegal(boggledTools.BoggledCommodities.domainArtifacts)) {
                 Global.getSector().getFaction(Factions.LUDDIC_CHURCH).makeCommodityIllegal(boggledTools.BoggledCommodities.domainArtifacts);
             }
 
-            if(Global.getSector().getFaction(Factions.LUDDIC_PATH) != null && !Global.getSector().getFaction(Factions.LUDDIC_PATH).isIllegal(boggledTools.BoggledCommodities.domainArtifacts))
-            {
+            if(Global.getSector().getFaction(Factions.LUDDIC_PATH) != null && !Global.getSector().getFaction(Factions.LUDDIC_PATH).isIllegal(boggledTools.BoggledCommodities.domainArtifacts)) {
                 Global.getSector().getFaction(Factions.LUDDIC_PATH).makeCommodityIllegal(boggledTools.BoggledCommodities.domainArtifacts);
             }
 
             Global.getSettings().getCommoditySpec(boggledTools.BoggledCommodities.domainArtifacts).getTags().clear();
 
-            if(boggledTools.getBooleanSetting(boggledTools.BoggledSettings.replaceAgreusTechMiningWithDomainArchaeology))
-            {
+            if(boggledTools.getBooleanSetting(boggledTools.BoggledSettings.replaceAgreusTechMiningWithDomainArchaeology)) {
                 SectorEntityToken agreusPlanet = boggledTools.getPlanetTokenForQuest("Arcadia", "agreus");
-                if(agreusPlanet != null)
-                {
+                if(agreusPlanet != null) {
                     MarketAPI agreusMarket = agreusPlanet.getMarket();
-                    if(agreusMarket != null && agreusMarket.hasIndustry(Industries.TECHMINING) && !agreusMarket.hasIndustry(boggledTools.BoggledIndustries.domainArchaeologyIndustryId) && !agreusMarket.isPlayerOwned())
-                    {
+                    if(agreusMarket != null && agreusMarket.hasIndustry(Industries.TECHMINING) && !agreusMarket.hasIndustry(boggledTools.BoggledIndustries.domainArchaeologyIndustryId) && !agreusMarket.isPlayerOwned()) {
                         // See boggledAgreusTechMiningEveryFrameScript for solution to Agreus Everybody loves KoC Techmining/Domain Archaeology issue
-                        if(!Global.getSettings().getModManager().isModEnabled("Everybody loves KoC"))
-                        {
+                        if(!Global.getSettings().getModManager().isModEnabled("Everybody loves KoC")) {
                             agreusMarket.addIndustry(boggledTools.BoggledIndustries.domainArchaeologyIndustryId);
                             agreusMarket.removeIndustry(Industries.TECHMINING, null, false);
-                        }
-                        else
-                        {
+                        } else {
                             Global.getSector().addTransientScript(new boggledAgreusTechMiningEveryFrameScript());
                         }
                     }
                 }
             }
-        }
-        else
-        {
+        } else {
             Global.getSettings().getCommoditySpec(boggledTools.BoggledCommodities.domainArtifacts).getTags().add("nonecon");
         }
     }
 
-    public void addDomainTechBuildingsToVanillaColonies()
-    {
+    public void addDomainTechBuildingsToVanillaColonies() {
         // Check to avoid null pointer exception if player has modified/randomized sector
-        if(Global.getSector() == null || Global.getSector().getStarSystem("Askonia") == null)
-        {
+        if(Global.getSector() == null || Global.getSector().getStarSystem("Askonia") == null) {
             return;
         }
 
-        if(!Global.getSector().getPlayerPerson().hasTag("boggledDomainTechBuildingPlacementFinished"))
-        {
+        if(!Global.getSector().getPlayerPerson().hasTag("boggledDomainTechBuildingPlacementFinished")) {
             // Add Genelab on Volturn
             // Add LLN on Fikenhild
             // Add GPA on Ancyra
-            if(boggledTools.getBooleanSetting(boggledTools.BoggledSettings.domainTechContentEnabled) && boggledTools.getBooleanSetting(boggledTools.BoggledSettings.domainArchaeologyEnabled) && boggledTools.getBooleanSetting(boggledTools.BoggledSettings.addDomainTechBuildingsToVanillaColonies))
-            {
+            if(boggledTools.getBooleanSetting(boggledTools.BoggledSettings.domainTechContentEnabled) && boggledTools.getBooleanSetting(boggledTools.BoggledSettings.domainArchaeologyEnabled) && boggledTools.getBooleanSetting(boggledTools.BoggledSettings.addDomainTechBuildingsToVanillaColonies)) {
                 SectorEntityToken volturnPlanet = boggledTools.getPlanetTokenForQuest("Askonia", "volturn");
-                if(volturnPlanet != null)
-                {
+                if(volturnPlanet != null) {
                     MarketAPI volturnMarket = volturnPlanet.getMarket();
-                    if(volturnMarket != null && !volturnMarket.hasIndustry(boggledTools.BoggledIndustries.genelabIndustryId))
-                    {
+                    if(volturnMarket != null && !volturnMarket.hasIndustry(boggledTools.BoggledIndustries.genelabIndustryId)) {
                         volturnMarket.addIndustry(boggledTools.BoggledIndustries.genelabIndustryId);
                     }
                 }
 
                 SectorEntityToken fikenhildPlanet = boggledTools.getPlanetTokenForQuest("Westernesse", "fikenhild");
-                if(fikenhildPlanet != null)
-                {
+                if(fikenhildPlanet != null) {
                     MarketAPI fikenhildMarket = fikenhildPlanet.getMarket();
-                    if(fikenhildMarket != null && !fikenhildMarket.hasIndustry("BOGGLED_LIMELIGHT_NETWORK"))
-                    {
+                    if(fikenhildMarket != null && !fikenhildMarket.hasIndustry("BOGGLED_LIMELIGHT_NETWORK")) {
                         fikenhildMarket.addIndustry("BOGGLED_LIMELIGHT_NETWORK");
                     }
                 }
 
                 SectorEntityToken ancyraPlanet = boggledTools.getPlanetTokenForQuest("Galatia", "ancyra");
-                if(ancyraPlanet != null)
-                {
+                if(ancyraPlanet != null) {
                     MarketAPI ancyraMarket = ancyraPlanet.getMarket();
-                    if(ancyraMarket != null && !ancyraMarket.hasIndustry("BOGGLED_GPA"))
-                    {
+                    if(ancyraMarket != null && !ancyraMarket.hasIndustry("BOGGLED_GPA")) {
                         ancyraMarket.addIndustry("BOGGLED_GPA");
                     }
                 }
@@ -246,17 +197,12 @@ public class BoggledTascPlugin extends BaseModPlugin
         }
     }
 
-    public void replaceCryosanctums()
-    {
+    public void replaceCryosanctums() {
         // Replace all Cryosanctums
-        if(!Global.getSector().getPlayerPerson().hasTag("boggledCryosanctumReplacementFinished") && boggledTools.getBooleanSetting(boggledTools.BoggledSettings.domainTechContentEnabled) && boggledTools.getBooleanSetting(boggledTools.BoggledSettings.domainArchaeologyEnabled) && boggledTools.getBooleanSetting(boggledTools.BoggledSettings.cryosanctumReplaceEverywhere))
-        {
-            for(StarSystemAPI system : Global.getSector().getStarSystems())
-            {
-                for(MarketAPI market : Global.getSector().getEconomy().getMarkets(system))
-                {
-                    if(market != null && market.hasIndustry(Industries.CRYOSANCTUM) && !market.hasIndustry(boggledTools.BoggledIndustries.cryosanctumIndustryId))
-                    {
+        if(!Global.getSector().getPlayerPerson().hasTag("boggledCryosanctumReplacementFinished") && boggledTools.getBooleanSetting(boggledTools.BoggledSettings.domainTechContentEnabled) && boggledTools.getBooleanSetting(boggledTools.BoggledSettings.domainArchaeologyEnabled) && boggledTools.getBooleanSetting(boggledTools.BoggledSettings.cryosanctumReplaceEverywhere)) {
+            for(StarSystemAPI system : Global.getSector().getStarSystems()) {
+                for(MarketAPI market : Global.getSector().getEconomy().getMarkets(system)) {
+                    if(market != null && market.hasIndustry(Industries.CRYOSANCTUM) && !market.hasIndustry(boggledTools.BoggledIndustries.cryosanctumIndustryId)) {
                         market.removeIndustry(Industries.CRYOSANCTUM, null, false);
                         market.addIndustry(boggledTools.BoggledIndustries.cryosanctumIndustryId);
                     }
@@ -267,16 +213,13 @@ public class BoggledTascPlugin extends BaseModPlugin
         }
     }
 
-    public void enablePlanetKiller()
-    {
-        if(boggledTools.getBooleanSetting(boggledTools.BoggledSettings.domainTechContentEnabled) && boggledTools.getBooleanSetting(boggledTools.BoggledSettings.planetKillerEnabled))
-        {
+    public void enablePlanetKiller() {
+        if(boggledTools.getBooleanSetting(boggledTools.BoggledSettings.domainTechContentEnabled) && boggledTools.getBooleanSetting(boggledTools.BoggledSettings.planetKillerEnabled)) {
             // PK weapons are deployed via ability, not a ground raid.
             // I left the mostly finished code for ground raid deployment in here in case I want to enable it in a future update.
             // Global.getSector().getListenerManager().addListener(new boggledPlanetKillerGroundRaidObjectiveListener());
 
             Global.getSector().getCharacterData().addAbility("boggled_deploy_planet_killer");
-            Global.getSector().getCharacterData().addAbility("deploy_planet_killer");
         }
     }
 
@@ -330,16 +273,14 @@ public class BoggledTascPlugin extends BaseModPlugin
     }
 
     @Override
-    public void onNewGame()
-    {
+    public void onNewGame() {
         loadSettingsFromJSON();
 
         applyStationSettingsToAllStationsInSector();
     }
 
     @Override
-    public void afterGameSave()
-    {
+    public void afterGameSave() {
         enablePlanetKiller();
 
         applyStationSettingsToAllStationsInSector();
@@ -356,8 +297,7 @@ public class BoggledTascPlugin extends BaseModPlugin
     }
 
     @Override
-    public void beforeGameSave()
-    {
+    public void beforeGameSave() {
         Global.getSector().getCharacterData().removeAbility("construct_astropolis_station");
         Global.getSector().getCharacterData().removeAbility("construct_mining_station");
         Global.getSector().getCharacterData().removeAbility("construct_siphon_station");
@@ -377,8 +317,7 @@ public class BoggledTascPlugin extends BaseModPlugin
     }
 
     @Override
-    public void onGameLoad(boolean newGame)
-    {
+    public void onGameLoad(boolean newGame) {
         loadSettingsFromJSON();
 
         enablePlanetKiller();

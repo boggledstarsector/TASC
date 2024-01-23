@@ -1,6 +1,5 @@
 package boggled.campaign.econ.abilities;
 
-import boggled.scripts.BoggledUnderConstructionEveryFrameScript;
 import boggled.scripts.PlayerCargoCalculations.bogglesDefaultCargo;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.*;
