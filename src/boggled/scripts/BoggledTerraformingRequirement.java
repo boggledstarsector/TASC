@@ -67,7 +67,7 @@ public class BoggledTerraformingRequirement {
             this.project = null;
         }
 
-        public RequirementContext(MarketAPI market) {
+        public RequirementContext(MarketAPI market, BoggledTerraformingProject project) {
             this.industry = null;
             this.industryInterface = null;
             this.fleet = Global.getSector().getPlayerFleet();
@@ -86,7 +86,7 @@ public class BoggledTerraformingRequirement {
                 this.planet = market.getPlanetEntity();
                 this.starSystem = this.planet.getStarSystem();
             }
-            this.project = null;
+            this.project = project;
         }
 
         public RequirementContext(CampaignFleetAPI fleet) {
@@ -114,7 +114,7 @@ public class BoggledTerraformingRequirement {
         }
 
         public RequirementContext getFocusContext() {
-            return new RequirementContext(BoggledCommonIndustry.getFocusMarketOrMarket(this.getPlanetMarket()));
+            return new RequirementContext(BoggledCommonIndustry.getFocusMarketOrMarket(this.getPlanetMarket()), this.project);
         }
 
         public void updatePlanet() {
@@ -272,7 +272,7 @@ public class BoggledTerraformingRequirement {
             if (ctx.getPlanetMarket().getPrimaryEntity().getOrbitFocus().getMarket() == null) {
                 return false;
             }
-            return super.checkRequirementImpl(new RequirementContext(ctx.getPlanetMarket().getPrimaryEntity().getOrbitFocus().getMarket()));
+            return super.checkRequirementImpl(new RequirementContext(ctx.getPlanetMarket().getPrimaryEntity().getOrbitFocus().getMarket(), ctx.getProject()));
         }
     }
 
@@ -305,7 +305,7 @@ public class BoggledTerraformingRequirement {
             if (ctx.getPlanetMarket().getPrimaryEntity().getOrbitFocus().getMarket() == null) {
                 return false;
             }
-            return super.checkRequirementImpl(new RequirementContext(ctx.getPlanetMarket().getPrimaryEntity().getOrbitFocus().getMarket()));
+            return super.checkRequirementImpl(new RequirementContext(ctx.getPlanetMarket().getPrimaryEntity().getOrbitFocus().getMarket(), ctx.getProject()));
         }
     }
 

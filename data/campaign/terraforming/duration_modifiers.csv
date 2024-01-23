@@ -1,2 +1,6 @@
-id,duration_modifier_type,data
-planet_size,PlanetSize,
+id,enable_settings,duration_modifier_type,data
+planet_size,,PlanetSize,
+terraforming_type_change_setting,,Setting,boggledTerraformingTime
+resource_improvement_setting,,Setting,boggledResourceImprovementTime
+condition_improvement_setting,,Setting,boggledConditionImprovementTime
+station_construction_setting,boggledStationConstructionDelayEnabled,Setting,boggledStationConstructionDelayDays

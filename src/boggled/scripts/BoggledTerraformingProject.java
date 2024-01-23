@@ -152,10 +152,11 @@ public class BoggledTerraformingProject {
 
     public BoggledProjectRequirementsAND getProjectRequirements() { return projectRequirements; }
 
+    public int getBaseProjectDuration() { return baseProjectDuration; }
     public int getModifiedProjectDuration(BoggledTerraformingRequirement.RequirementContext ctx) {
         MutableStat projectDuration = new MutableStat(baseProjectDuration);
         for (BoggledTerraformingDurationModifier.TerraformingDurationModifier durationModifier : durationModifiers) {
-            projectDuration.applyMods(durationModifier.getDurationModifier(ctx));
+            projectDuration.applyMods(durationModifier.getDurationModifierImpl(ctx));
         }
         return Math.max(projectDuration.getModifiedInt(), 0);
     }

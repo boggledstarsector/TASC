@@ -337,7 +337,7 @@ public class boggledTools {
     }
 
     @Nullable
-    public static BoggledTerraformingDurationModifier.TerraformingDurationModifier getDurationModifier(String durationModifierType, String id, String data) {
+    public static BoggledTerraformingDurationModifier.TerraformingDurationModifier getDurationModifier(String durationModifierType, String id, String[] enableSettings, String data) {
         Logger log = Global.getLogger(boggledTools.class);
 
         BoggledTerraformingDurationModifierFactory.TerraformingDurationModifierFactory factory = terraformingDurationModifierFactories.get(durationModifierType);
@@ -345,7 +345,7 @@ public class boggledTools {
             log.error("Duration modifier " + id + " of type " + durationModifierType + " has no assigned factory");
             return null;
         }
-        BoggledTerraformingDurationModifier.TerraformingDurationModifier mod = factory.constructFromJSON(data);
+        BoggledTerraformingDurationModifier.TerraformingDurationModifier mod = factory.constructFromJSON(id, enableSettings, data);
         if (mod == null) {
             log.error("Duration modifier " + id + " of type " + durationModifierType + " was null when created with data " + data);
             return null;
@@ -551,6 +551,8 @@ public class boggledTools {
 
     public static void initialiseDefaultTerraformingDurationModifierFactories() {
         addTerraformingDurationModifierFactory("PlanetSize", new BoggledTerraformingDurationModifierFactory.PlanetSize());
+
+        addTerraformingDurationModifierFactory("Setting", new BoggledTerraformingDurationModifierFactory.Setting());
     }
 
     public static void addTerraformingDurationModifierFactory(String key, BoggledTerraformingDurationModifierFactory.TerraformingDurationModifierFactory value) {
@@ -1114,10 +1116,12 @@ public class boggledTools {
                     continue;
                 }
 
+                String[] enableSettings = row.getString("enable_settings").split(csvOptionSeparator);
+
                 String durationModifierType = row.getString("duration_modifier_type");
                 String data = row.getString("data");
 
-                BoggledTerraformingDurationModifier.TerraformingDurationModifier mod = getDurationModifier(durationModifierType, id, data);
+                BoggledTerraformingDurationModifier.TerraformingDurationModifier mod = getDurationModifier(durationModifierType, id, enableSettings, data);
                 if (mod != null) {
                     durationModifiers.put(id, mod);
                 }

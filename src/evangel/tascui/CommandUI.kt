@@ -109,7 +109,7 @@ class ProjectRequirementsTooltip(width : Float) : TooltipCreator {
     }
 
     override fun createTooltip(tooltip : TooltipMakerAPI, expanded : Boolean, tooltipParam : Any?) {
-        val ctx = RequirementContext(market!!)
+        val ctx = RequirementContext(market!!, terraformingProject!!)
         tooltip.addPara("Project duration: %s days", 0f, Misc.getHighlightColor(), terraformingProject!!.getModifiedProjectDuration(ctx).toString());
 
         tooltip.addSpacer(5f);
@@ -422,19 +422,21 @@ class CommandUIIntelK : LunaBaseCustomPanelPlugin() {
         startProjectButton!!.position.inTL(BUTTON_OFF_SCREEN_POSITION, BUTTON_OFF_SCREEN_POSITION)
         requirementsNotMetButton!!.position.inTL(BUTTON_OFF_SCREEN_POSITION, BUTTON_OFF_SCREEN_POSITION)
 
+        val ctx = RequirementContext(selectedPlanet!!.market, null)
+
         val sortProjects = fun(projectOptions : LinkedHashMap<String, BoggledTerraformingProject>?, validOptions : ArrayList<BoggledTerraformingProject>, invalidOptions : ArrayList<BoggledTerraformingProject>) {
             if (projectOptions == null) {
                 return;
             }
             for (projectOption in projectOptions) {
-                if (projectOption.value.requirementsMet(RequirementContext(selectedPlanet!!.market))) {
+                if (projectOption.value.requirementsMet(ctx)) {
                     validOptions.add(projectOption.value)
                 } else {
                     invalidOptions.add(projectOption.value)
                 }
             }
         }
-        val visibleProjects = boggledTools.getVisibleProjects(RequirementContext(selectedPlanet!!.market))
+        val visibleProjects = boggledTools.getVisibleProjects(ctx)
 
         val validTerraformingOptions : ArrayList<BoggledTerraformingProject> = ArrayList()
         val invalidTerraformingOptions : ArrayList<BoggledTerraformingProject> = ArrayList()
@@ -459,7 +461,6 @@ class CommandUIIntelK : LunaBaseCustomPanelPlugin() {
             }
             return terraformingOptions.size + buttonsStart
         }
-        val ctx = RequirementContext(selectedPlanet!!.market)
         val validTerraformingEnd = positionButtons(ctx, validTerraformingOptions, requirementsMetButtons, 0)
         val invalidTerraformingEnd = positionButtons(ctx, invalidTerraformingOptions, requirementsNotMetButtons, validTerraformingEnd)
 
@@ -504,7 +505,7 @@ class CommandUIIntelK : LunaBaseCustomPanelPlugin() {
 
     private fun handleTerraformingOptionButtonPress() {
         val terraformingProject = (selectedProject?.customData as ProjectRequirementsTooltip).terraformingProject!!
-        if (terraformingProject.requirementsMet(RequirementContext(selectedPlanet?.market))) {
+        if (terraformingProject.requirementsMet(RequirementContext(selectedPlanet?.market, terraformingProject))) {
             moveButtonsOffscreen(startProjectButton!!.position::inTL, requirementsNotMetButton!!, inactiveStartProjectButton!!)
         } else {
             moveButtonsOffscreen(requirementsNotMetButton!!.position::inTL, startProjectButton!!, inactiveStartProjectButton!!)
@@ -518,7 +519,7 @@ class CommandUIIntelK : LunaBaseCustomPanelPlugin() {
 
         terraformingController.setProject(terraformingProject)
 
-        selectedPlanet?.projectLabel?.text = terraformingProject.getProjectTooltip(boggledTools.getTokenReplacements(RequirementContext(selectedPlanet?.market)))
+        selectedPlanet?.projectLabel?.text = terraformingProject.getProjectTooltip(boggledTools.getTokenReplacements(RequirementContext(selectedPlanet?.market, terraformingProject)))
         selectedPlanet?.projectTimeRemaining?.text = getTerraformingDaysRemainingComplete(terraformingController)
         selectedPlanet?.projectTimeRemaining?.setHighlight("${getTerraformingDaysRemaining(terraformingController)}")
 
@@ -697,7 +698,7 @@ class CommandUIIntelK : LunaBaseCustomPanelPlugin() {
             button.position.inTL(0f, 0f)
 
             val buttonData = CommandUIButtonData(button, marketVar, this)
-            val ctx = RequirementContext(marketVar)
+            val ctx = RequirementContext(marketVar, null)
 
             createPlanetsNamePanel(cardHolder.innerElement, ctx)
 

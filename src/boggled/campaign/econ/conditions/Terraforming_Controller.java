@@ -22,7 +22,7 @@ public class Terraforming_Controller extends BaseHazardCondition {
 
     public void init(MarketAPI market, MarketConditionAPI condition) {
         super.init(market, condition);
-        this.ctx = new BoggledTerraformingRequirement.RequirementContext(market);
+        this.ctx = new BoggledTerraformingRequirement.RequirementContext(market, currentProject == null ? null : currentProject.getProject());
     }
 
     @Override
