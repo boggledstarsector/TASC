@@ -584,5 +584,9 @@ deploy_planet_killer,boggledDomainTechContentEnabled | boggledPlanetKillerEnable
 	{ 'requirement_id' : 'ability_deploy_planet_killer_fleet_contains_planet_killer_device' }
 ]",,,,,,"[
 	{ 'effect_id' : 'ability_deploy_planet_killer_remove_planet_killer_device_from_fleet' },
-	{ 'effect_id' : 'deploy_planet_killer' }
+	{ 'effect_id' : 'ability_deploy_planet_killer_decivilize_market' },
+	{ 'effect_id' : 'ability_deploy_planet_killer_adjust_faction_relations' },
+	{ 'effect_id' : 'ability_deploy_planet_killer_trigger_military_response' },
+	{ 'effect_id' : 'ability_deploy_planet_killer_change_conditions_1' },
+	{ 'effect_id' : 'ability_deploy_planet_killer_change_conditions_2' }
 ]",,

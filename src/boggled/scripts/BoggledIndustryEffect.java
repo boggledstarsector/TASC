@@ -268,7 +268,7 @@ public class BoggledIndustryEffect {
         protected MutableStat createModifier(BoggledTerraformingRequirement.RequirementContext ctx, String effectSource) {
             MutableStat mod = new MutableStat(0);
             switch (modType) {
-                case MARKET_SIZE: mod.modifyFlat(id, ctx.getMarket().getSize() + value, effectSource); break;
+                case MARKET_SIZE: mod.modifyFlat(id, ctx.getPlanetMarket().getSize() + value, effectSource); break;
                 case FLAT: mod.modifyFlat(id, value, effectSource); break;
                 case MULT: mod.modifyMult(id, value, effectSource); break;
                 case PERCENT: mod.modifyPercent(id, value, effectSource); break;
@@ -339,7 +339,7 @@ public class BoggledIndustryEffect {
                 switch (modType) {
                     case MARKET_SIZE:
                         suffix = "(based on colony size)";
-                        value += ctx.getMarket().getSize();
+                        value += ctx.getPlanetMarket().getSize();
                     case FLAT: {
                         if (value < 0) {
                             setToReduce();
@@ -408,12 +408,12 @@ public class BoggledIndustryEffect {
 
         @Override
         protected void applyEffectImpl(BoggledTerraformingRequirement.RequirementContext ctx, String effectSource) {
-            ctx.getMarket().getAccessibilityMod().applyMods(createModifier(ctx, effectSource));
+            ctx.getPlanetMarket().getAccessibilityMod().applyMods(createModifier(ctx, effectSource));
         }
 
         @Override
         protected void unapplyEffectImpl(BoggledTerraformingRequirement.RequirementContext ctx) {
-            ctx.getMarket().getAccessibilityMod().unmodifyFlat(id);
+            ctx.getPlanetMarket().getAccessibilityMod().unmodifyFlat(id);
         }
 
         @Override
@@ -431,12 +431,12 @@ public class BoggledIndustryEffect {
 
         @Override
         protected void applyEffectImpl(BoggledTerraformingRequirement.RequirementContext ctx, String effectSource) {
-            ctx.getMarket().getStability().applyMods(createModifier(ctx, effectSource));
+            ctx.getPlanetMarket().getStability().applyMods(createModifier(ctx, effectSource));
         }
 
         @Override
         protected void unapplyEffectImpl(BoggledTerraformingRequirement.RequirementContext ctx) {
-            ctx.getMarket().getStability().unmodifyFlat(id);
+            ctx.getPlanetMarket().getStability().unmodifyFlat(id);
         }
 
         @Override
@@ -468,7 +468,7 @@ public class BoggledIndustryEffect {
                 return;
             }
 
-            Industry industryTo = ctx.getMarket().getIndustry(industryId);
+            Industry industryTo = ctx.getPlanetMarket().getIndustry(industryId);
             if (industryTo == null) {
                 return;
             }
@@ -481,7 +481,7 @@ public class BoggledIndustryEffect {
 
         @Override
         protected void unapplyEffectImpl(BoggledTerraformingRequirement.RequirementContext ctx) {
-            Industry industryTo = ctx.getMarket().getIndustry(industryId);
+            Industry industryTo = ctx.getPlanetMarket().getIndustry(industryId);
             if (industryTo == null) {
                 return;
             }
@@ -569,11 +569,11 @@ public class BoggledIndustryEffect {
             // Otherwise chattering
             float patherInterest = ctx.getIndustryInterface().getBasePatherInterest();
 
-            if (ctx.getMarket().getAdmin().getAICoreId() != null) {
+            if (ctx.getPlanetMarket().getAdmin().getAICoreId() != null) {
                 patherInterest += 10;
             }
 
-            for (Industry otherIndustry : ctx.getMarket().getIndustries()) {
+            for (Industry otherIndustry : ctx.getPlanetMarket().getIndustries()) {
                 if (otherIndustry.isHidden()) {
                     continue;
                 }
@@ -659,15 +659,15 @@ public class BoggledIndustryEffect {
 
         @Override
         protected void applyEffectImpl(BoggledTerraformingRequirement.RequirementContext ctx, String effectSource) {
-            for (String tag : ctx.getMarket().getTags()) {
+            for (String tag : ctx.getPlanetMarket().getTags()) {
                 if (tag.contains(this.tag)) {
                     int tagValueOld = Integer.parseInt(tag.substring(this.tag.length()));
-                    ctx.getMarket().removeTag(tag);
-                    ctx.getMarket().addTag(this.tag + (tagValueOld + step));
+                    ctx.getPlanetMarket().removeTag(tag);
+                    ctx.getPlanetMarket().addTag(this.tag + (tagValueOld + step));
                     return;
                 }
             }
-            ctx.getMarket().addTag(this.tag + 1);
+            ctx.getPlanetMarket().addTag(this.tag + 1);
         }
 
         @Override
@@ -685,7 +685,7 @@ public class BoggledIndustryEffect {
 
         @Override
         protected void applyEffectImpl(BoggledTerraformingRequirement.RequirementContext ctx, String effectSource) {
-            CargoAPI cargo = ctx.getMarket().getSubmarket(Submarkets.SUBMARKET_STORAGE).getCargo();
+            CargoAPI cargo = ctx.getPlanetMarket().getSubmarket(Submarkets.SUBMARKET_STORAGE).getCargo();
             if (cargo != null) {
                 if (ctx.getIndustry().getAICoreId() != null) {
                     cargo.addCommodity(ctx.getIndustry().getAICoreId(), 1);
@@ -700,7 +700,7 @@ public class BoggledIndustryEffect {
                     cargo.addSpecial(installableItem.getCurrentlyInstalledItemData(), 1);
                 }
             }
-            ctx.getMarket().removeIndustry(industryId, null, false);
+            ctx.getPlanetMarket().removeIndustry(industryId, null, false);
         }
 
         @Override
@@ -721,12 +721,12 @@ public class BoggledIndustryEffect {
         @Override
         protected void applyEffectImpl(BoggledTerraformingRequirement.RequirementContext ctx, String effectSource) {
             for (String conditionId : conditionIds) {
-                if (conditionId.equals(Conditions.WATER_SURFACE) && ctx.getMarket().hasCondition(conditionId)) {
+                if (conditionId.equals(Conditions.WATER_SURFACE) && ctx.getPlanetMarket().hasCondition(conditionId)) {
                     // Suppress water surface without actually suppressing it
                     // Actually suppressing it causes aquaculture to produce no food
-                    ctx.getMarket().getHazard().modifyFlat(id, -0.25f, effectSource);
+                    ctx.getPlanetMarket().getHazard().modifyFlat(id, -0.25f, effectSource);
                 } else {
-                    ctx.getMarket().suppressCondition(conditionId);
+                    ctx.getPlanetMarket().suppressCondition(conditionId);
                 }
             }
         }
@@ -734,10 +734,10 @@ public class BoggledIndustryEffect {
         @Override
         protected void unapplyEffectImpl(BoggledTerraformingRequirement.RequirementContext ctx) {
             for (String conditionId : conditionIds) {
-                if (conditionId.equals(Conditions.WATER_SURFACE) && ctx.getMarket().hasCondition(conditionId)) {
-                    ctx.getMarket().getHazard().unmodifyFlat(id);
+                if (conditionId.equals(Conditions.WATER_SURFACE) && ctx.getPlanetMarket().hasCondition(conditionId)) {
+                    ctx.getPlanetMarket().getHazard().unmodifyFlat(id);
                 } else {
-                    ctx.getMarket().unsuppressCondition(conditionId);
+                    ctx.getPlanetMarket().unsuppressCondition(conditionId);
                 }
             }
         }
@@ -753,7 +753,7 @@ public class BoggledIndustryEffect {
 
             int conditionsCountered = 0;
             for (String conditionId : conditionIds) {
-                if (!ctx.getMarket().hasCondition(conditionId)) {
+                if (!ctx.getPlanetMarket().hasCondition(conditionId)) {
                     continue;
                 }
                 String conditionName = Global.getSettings().getMarketConditionSpec(conditionId).getName();
@@ -774,12 +774,12 @@ public class BoggledIndustryEffect {
 
         @Override
         protected void applyEffectImpl(BoggledTerraformingRequirement.RequirementContext ctx, String effectSource) {
-            ctx.getMarket().getStats().getDynamic().getMod(Stats.GROUND_DEFENSES_MOD).applyMods(createModifier(ctx, effectSource));
+            ctx.getPlanetMarket().getStats().getDynamic().getMod(Stats.GROUND_DEFENSES_MOD).applyMods(createModifier(ctx, effectSource));
         }
 
         @Override
         protected void unapplyEffectImpl(BoggledTerraformingRequirement.RequirementContext ctx) {
-            ctx.getMarket().getStats().getDynamic().getMod(Stats.GROUND_DEFENSES_MOD).unmodifyMult(id);
+            ctx.getPlanetMarket().getStats().getDynamic().getMod(Stats.GROUND_DEFENSES_MOD).unmodifyMult(id);
         }
 
         @Override
@@ -799,12 +799,12 @@ public class BoggledIndustryEffect {
 
         @Override
         protected void applyEffectImpl(BoggledTerraformingRequirement.RequirementContext ctx, String effectSource) {
-            boggledTools.addCondition(ctx.getMarket(), conditionId);
+            boggledTools.addCondition(ctx.getPlanetMarket(), conditionId);
         }
 
         @Override
         protected void unapplyEffectImpl(BoggledTerraformingRequirement.RequirementContext ctx) {
-            boggledTools.removeCondition(ctx.getMarket(), conditionId);
+            boggledTools.removeCondition(ctx.getPlanetMarket(), conditionId);
         }
     }
 
@@ -943,12 +943,12 @@ public class BoggledIndustryEffect {
 
         @Override
         protected void applyEffectImpl(BoggledTerraformingRequirement.RequirementContext ctx, String effectSource) {
-            createMirrorsOrShades(ctx.getMarket());
+            createMirrorsOrShades(ctx.getPlanetMarket());
         }
 
         @Override
         protected void unapplyEffectImpl(BoggledTerraformingRequirement.RequirementContext ctx) {
-            boggledTools.clearReflectorsInOrbit(ctx.getMarket());
+            boggledTools.clearReflectorsInOrbit(ctx.getPlanetMarket());
         }
     }
 
@@ -966,7 +966,7 @@ public class BoggledIndustryEffect {
         @Override
         protected void applyEffectImpl(BoggledTerraformingRequirement.RequirementContext ctx, String effectSource) {
             int tagCount = tagCountDefault;
-            for (String tag : ctx.getMarket().getTags()) {
+            for (String tag : ctx.getPlanetMarket().getTags()) {
                 if (tag.contains(tagSubstring)) {
                     tagCount = Integer.parseInt(tag.substring(tagSubstring.length()));
                     break;

@@ -42,23 +42,23 @@ kletka_simulator_station_upkeep_modifier,,ModifyUpkeep,"{ 'type' : 'mult', 'valu
 
 kletka_simulator_very_cold_modifier,boggledKletkaSimulatorTemperatureBasedUpkeep,IndustryEffectWithRequirement,"{
 	'requirement_ids' : [ { 'requirement_id' : 'industry_effect_kletka_simulator_colony_very_cold' } ],
-	'industry_effects' : [ 'kletka_simulator_very_cold_upkeep_modifier' ]
+	'effects' : [ 'kletka_simulator_very_cold_upkeep_modifier' ]
 }"
 kletka_simulator_cold_modifier,boggledKletkaSimulatorTemperatureBasedUpkeep,IndustryEffectWithRequirement,"{
 	'requirement_ids' : [ { 'requirement_id' : 'industry_effect_kletka_simulator_colony_cold' } ],
-	'industry_effects' : [ 'kletka_simulator_cold_upkeep_modifier' ]
+	'effects' : [ 'kletka_simulator_cold_upkeep_modifier' ]
 }"
 kletka_simulator_hot_modifier,boggledKletkaSimulatorTemperatureBasedUpkeep,IndustryEffectWithRequirement,"{
 	'requirement_ids' : [ { 'requirement_id' : 'industry_effect_kletka_simulator_colony_hot' } ],
-	'industry_effects' : [ 'kletka_simulator_hot_upkeep_modifier' ]
+	'effects' : [ 'kletka_simulator_hot_upkeep_modifier' ]
 }"
 kletka_simulator_very_hot_modifier,boggledKletkaSimulatorTemperatureBasedUpkeep,IndustryEffectWithRequirement,"{
 	'requirement_ids' : [ { 'requirement_id' : 'industry_effect_kletka_simulator_colony_very_hot' } ],
-	'industry_effects' : [ 'kletka_simulator_very_hot_upkeep_modifier' ]
+	'effects' : [ 'kletka_simulator_very_hot_upkeep_modifier' ]
 }"
 kletka_simulator_station_modifier,boggledKletkaSimulatorTemperatureBasedUpkeep,IndustryEffectWithRequirement,"{
 	'requirement_ids' : [ { 'requirement_id' : 'industry_effect_kletka_simulator_colony_is_station' } ],
-	'industry_effects' : [ 'kletka_simulator_station_upkeep_modifier' ]
+	'effects' : [ 'kletka_simulator_station_upkeep_modifier' ]
 }"
 kletka_simulator_item_production_effect,,MonthlyItemProductionChance,"[
 	{ 'commodity_priority' : 0, 'commodity_id' : 'alpha_core', 'chance' : 0, 'requirement_ids' : [
@@ -130,19 +130,19 @@ domain_archaeology_ruins_vast_pather_interest,,ModifyPatherInterest,"{ 'type' : 
 
 domain_archaeology_ruins_scattered_effect,boggledKletkaSimulatorTemperatureBasedUpkeep,IndustryEffectWithRequirement,"{
 	'requirement_ids' : [ { 'requirement_id' : 'industry_effects_domain_archaeology_colony_ruins_scattered' } ],
-	'industry_effects' : [ 'domain_archaeology_ruins_scattered_pather_interest' ]
+	'effects' : [ 'domain_archaeology_ruins_scattered_pather_interest' ]
 }"
 domain_archaeology_ruins_widespread_effect,boggledKletkaSimulatorTemperatureBasedUpkeep,IndustryEffectWithRequirement,"{
 	'requirement_ids' : [ { 'requirement_id' : 'industry_effects_domain_archaeology_colony_ruins_widespread' } ],
-	'industry_effects' : [ 'domain_archaeology_ruins_widespread_pather_interest' ]
+	'effects' : [ 'domain_archaeology_ruins_widespread_pather_interest' ]
 }"
 domain_archaeology_ruins_extensive_effect,boggledKletkaSimulatorTemperatureBasedUpkeep,IndustryEffectWithRequirement,"{
 	'requirement_ids' : [ { 'requirement_id' : 'industry_effects_domain_archaeology_colony_ruins_extensive' } ],
-	'industry_effects' : [ 'domain_archaeology_ruins_extensive_pather_interest' ]
+	'effects' : [ 'domain_archaeology_ruins_extensive_pather_interest' ]
 }"
 domain_archaeology_ruins_vast_effect,boggledKletkaSimulatorTemperatureBasedUpkeep,IndustryEffectWithRequirement,"{
 	'requirement_ids' : [ { 'requirement_id' : 'industry_effects_domain_archaeology_colony_ruins_vast' } ],
-	'industry_effects' : [ 'domain_archaeology_ruins_vast_pather_interest' ]
+	'effects' : [ 'domain_archaeology_ruins_vast_pather_interest' ]
 }"
 
 just_break_the_damn_thing,,DeficitToInactive,"{
@@ -185,7 +185,7 @@ mesozoic_park_gamma_core_increase_income_bonus,,ModifyIncome,"{ 'type' : 'mult',
 planetary_agrav_field_suppress_conditions,,SuppressConditions,high_gravity | low_gravity
 planetary_agrav_field_effect_with_requirement,,IndustryEffectWithRequirement,"{
 	'requirement_ids' : [ { 'requirement_id' : 'industry_colony_has_domed_cities_or_is_gas_giant' } ],
-	'industry_effects' : [ 'planetary_agrav_field_suppress_conditions' ]
+	'effects' : [ 'planetary_agrav_field_suppress_conditions' ]
 }"
 
 stellar_reflector_array_suppress_conditions,,SuppressConditions,hot | cold | poor_light

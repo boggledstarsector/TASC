@@ -5,6 +5,7 @@ terran_type_change,,PlanetTypeChange,"terran"
 water_type_change,,PlanetTypeChange,"water"
 tundra_type_change,,PlanetTypeChange,"tundra"
 frozen_type_change,,PlanetTypeChange,"frozen"
+irradiated_type_change,,PlanetTypeChange,"irradiated"
 ,,,
 market_add_habitable,,MarketAddCondition,"habitable"
 market_add_mild_climate,,MarketAddCondition,"mild_climate"
@@ -12,6 +13,7 @@ market_add_no_atmosphere,,MarketAddCondition,"no_atmosphere"
 market_add_extreme_weather,,MarketAddCondition,"extreme_weather"
 market_add_tectonic_activity,,MarketAddCondition,"tectonic_activity"
 market_add_water_surface,,MarketAddCondition,"water_surface"
+market_add_irradiated,,MarketAddCondition,"irradiated"
 ,,,
 market_add_farmland_poor,,MarketAddCondition,"farmland_poor"
 market_add_farmland_adequate,,MarketAddCondition,"farmland_adequate"
@@ -171,3 +173,32 @@ colonize_abandoned_station,,ColonizeAbandonedStation,"{
 }"
 
 ability_deploy_planet_killer_remove_planet_killer_device_from_fleet,,RemoveItemFromFleetStorage,"{ 'special_item_id' : 'boggled_planetkiller', 'quantity' : 1 }"
+ability_deploy_planet_killer_adjust_faction_relations,,AdjustRelationsWithAllExcept,"{
+	'faction_id_to_adjust_relations_to' : 'player',
+	'faction_ids_to_not_adjust_relations' : [ 'player', 'derelict', 'omega', 'remnant', 'sleeper' ],
+	'new_relation_value' : -100
+}"
+ability_deploy_planet_killer_trigger_military_response,,TriggerMilitaryResponse,"{
+	'response_fraction' : 0.75,
+	'response_duration' : 30
+}"
+ability_deploy_planet_killer_decivilize_market,,DecivilizeMarket,"{
+	'faction_ids_to_not_make_hostile' : [ 'player', 'derelict', 'omega', 'remnant', 'sleeper' ]
+}"
+ability_deploy_planet_killer_change_conditions_1,,EffectWithRequirement,"{
+	'requirement_ids' : [
+		{ 'requirement_id' : 'market_is_not_station' },
+		{ 'requirement_id' : 'planet_not_star' },
+		{ 'requirement_id' : 'planet_not_gas_giant', },
+		{ 'requirement_id' : 'planet_not_volcanic', },
+		{ 'requirement_id' : 'planet_not_unknown' }
+	],
+	'effects' : [ 'irradiated_type_change', 'market_add_irradiated', 'market_remove_habitable', 'market_remove_mild_climate', 'market_remove_water_surface', 'market_remove_volturnian_lobster_pens', 'market_remove_inimical_biosphere', 'market_remove_farmland_poor', 'market_remove_farmland_adequate', 'market_remove_farmland_rich', 'market_remove_farmland_bountiful' ]
+}"
+ability_deploy_planet_killer_change_conditions_2,,EffectWithRequirement,"{
+	'requirement_ids' : [
+		{ 'requirement_id' : 'planet_not_gas_giant' },
+		{ 'requirement_id' : 'planet_not_unknown' }
+	],
+	'effects' : [ 'market_remove_organics_trace', 'market_remove_organics_common', 'market_remove_organics_abundant', 'market_remove_organics_plentiful', 'market_remove_volatiles_trace', 'market_remove_volatiles_diffuse', 'market_remove_volatiles_abundant', 'market_remove_volatiles_plentiful' ]
+}"

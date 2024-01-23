@@ -581,8 +581,8 @@ class CommandUIIntelK : LunaBaseCustomPanelPlugin() {
 
         nameHolder.innerElement.showPlanetInfo(ctx.planet, NAME_WIDTH, PLANET_CARD_HEIGHT, false, 0f)
 
-        val nameLabel = nameHolder.innerElement.addPara(ctx.market.name, ctx.market.textColorForFactionOrPlanet, 0f)
-        val nameLength = nameLabel.computeTextWidth(ctx.market.name)
+        val nameLabel = nameHolder.innerElement.addPara(ctx.planetMarket.name, ctx.planetMarket.textColorForFactionOrPlanet, 0f)
+        val nameLength = nameLabel.computeTextWidth(ctx.planetMarket.name)
 
         nameLabel.position.inTL(NAME_WIDTH / 2 - (nameLength * 0.9f) / 2, PLANET_CARD_HEIGHT - HEADER_HEIGHT)
     }
@@ -600,7 +600,7 @@ class CommandUIIntelK : LunaBaseCustomPanelPlugin() {
 
         var conditionHorizontalSpacing = 2f
         var conditionVerticalSpacing = PLANET_CARD_HEIGHT / 2
-        val planetaryConditionsCount = ctx.market.conditions.filter { it.isPlanetary }.size
+        val planetaryConditionsCount = ctx.planetMarket.conditions.filter { it.isPlanetary }.size
 
         var conditionSpriteSize = CONDITION_SPRITE_SIZE
         val conditionSpriteCapacity = PLANET_CARD_HEIGHT / 2
@@ -622,7 +622,7 @@ class CommandUIIntelK : LunaBaseCustomPanelPlugin() {
         planetTypeLabel.position.inTL(0f, 0f)
         conditionHolder.elementPanel.addUIElement(planetTypeLabelElement)
 
-        for (condition in ctx.market.conditions) {
+        for (condition in ctx.planetMarket.conditions) {
             if (!condition.isPlanetary) continue
 
             val conditionSprite = LunaSpriteElement(condition.spec.icon, LunaSpriteElement.ScalingTypes.STRETCH_SPRITE, conditionHolder.innerElement, conditionSpriteSize, conditionSpriteSize)
@@ -653,11 +653,11 @@ class CommandUIIntelK : LunaBaseCustomPanelPlugin() {
         hazardHolder.renderBorder = false
         hazardHolder.position.inTL(HAZARD_PANEL_OFFSET, 0f)
 
-        val hazardLabelRating = (ctx.market.hazard.modified * 100).toInt()
+        val hazardLabelRating = (ctx.planetMarket.hazard.modified * 100).toInt()
         val hazardLabel = hazardHolder.innerElement.addPara("Hazard rating: $hazardLabelRating%%", 0f, faction.baseUIColor, Misc.getHighlightColor(), "$hazardLabelRating%")
         hazardLabel.position.inTL(0f, PLANET_CARD_HEIGHT - HEADER_HEIGHT)
 
-        val terraformingController = getTerraformingControllerFromMarket(ctx.market)
+        val terraformingController = getTerraformingControllerFromMarket(ctx.planetMarket)
         val projectNameNicer = boggledTools.getTooltipProjectName(ctx, terraformingController.project)
         buttonData.projectLabel = hazardHolder.innerElement.addPara(projectNameNicer, faction.baseUIColor, 0f)
         buttonData.projectLabel!!.position.inTL(0f, SORT_SPACING)

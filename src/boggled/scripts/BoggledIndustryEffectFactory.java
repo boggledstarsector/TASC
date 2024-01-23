@@ -210,18 +210,18 @@ public class BoggledIndustryEffectFactory {
         public BoggledIndustryEffect.IndustryEffect constructFromJSON(String id, String[] enableSettings, String data) throws JSONException {
             JSONObject jsonData = new JSONObject(data);
             JSONArray reqsArray = jsonData.getJSONArray("requirement_ids");
-            JSONArray industryEffectsArray = jsonData.getJSONArray("industry_effects");
+            JSONArray effectsArray = jsonData.getJSONArray("effects");
 
-            BoggledProjectRequirementsAND reqs = boggledTools.requirementsFromRequirementsArray(reqsArray, id, "requirements");
-            List<BoggledIndustryEffect.IndustryEffect> industryEffects = new ArrayList<>();
-            for (int i = 0; i < industryEffectsArray.length(); ++i) {
-                String industryEffectString = industryEffectsArray.getString(i);
-                BoggledIndustryEffect.IndustryEffect effect = boggledTools.getIndustryEffect(industryEffectString);
+            BoggledProjectRequirementsAND reqs = boggledTools.requirementsFromRequirementsArray(reqsArray, "IndustryEffectWithRequirement", id, "requirements");
+            List<BoggledIndustryEffect.IndustryEffect> effects = new ArrayList<>();
+            for (int i = 0; i < effectsArray.length(); ++i) {
+                String effectString = effectsArray.getString(i);
+                BoggledIndustryEffect.IndustryEffect effect = boggledTools.getIndustryEffect(effectString);
                 if (effect != null) {
-                    industryEffects.add(effect);
+                    effects.add(effect);
                 }
             }
-            return new BoggledIndustryEffect.IndustryEffectWithRequirement(id, enableSettings, reqs, industryEffects);
+            return new BoggledIndustryEffect.IndustryEffectWithRequirement(id, enableSettings, reqs, effects);
         }
     }
 
@@ -261,7 +261,7 @@ public class BoggledIndustryEffectFactory {
                 String commodityId = jsonObject.getString("commodity_id");
                 int chance = jsonObject.getInt("chance");
                 JSONArray requirementsArray = jsonObject.optJSONArray("requirement_ids");
-                BoggledProjectRequirementsAND reqs = boggledTools.requirementsFromRequirementsArray(requirementsArray, id, "MonthlyItemProductionChance");
+                BoggledProjectRequirementsAND reqs = boggledTools.requirementsFromRequirementsArray(requirementsArray, "MonthlyItemProductionChance", id, "MonthlyItemProductionChance");
 
                 productionData.add(new BoggledCommonIndustry.ProductionData(priority, commodityId, chance, reqs));
             }
@@ -285,4 +285,6 @@ public class BoggledIndustryEffectFactory {
             return new BoggledIndustryEffect.MonthlyItemProductionChanceModifier(id, enableSettings, productionData);
         }
     }
+
+
 }

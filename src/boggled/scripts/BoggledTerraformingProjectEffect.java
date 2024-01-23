@@ -2,13 +2,18 @@ package boggled.scripts;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.*;
+import com.fs.starfarer.api.campaign.ai.CampaignFleetAIAPI;
 import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.campaign.econ.SubmarketSpecAPI;
+import com.fs.starfarer.api.campaign.listeners.ListenerUtil;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import com.fs.starfarer.api.impl.campaign.CoronalTapParticleScript;
+import com.fs.starfarer.api.impl.campaign.MilitaryResponseScript;
 import com.fs.starfarer.api.impl.campaign.ids.*;
+import com.fs.starfarer.api.impl.campaign.intel.deciv.DecivTracker;
 import com.fs.starfarer.api.impl.campaign.procgen.StarSystemGenerator;
 import com.fs.starfarer.api.impl.campaign.rulecmd.salvage.FleetAdvanceScript;
+import com.fs.starfarer.api.impl.campaign.rulecmd.salvage.MarketCMD;
 import com.fs.starfarer.api.util.Misc;
 import com.fs.starfarer.api.util.WeightedRandomPicker;
 import boggled.campaign.econ.boggledTools;
@@ -103,7 +108,7 @@ public class BoggledTerraformingProjectEffect {
 
         @Override
         protected void applyProjectEffectImpl(BoggledTerraformingRequirement.RequirementContext ctx) {
-            boggledTools.addCondition(ctx.getMarket(), condition);
+            boggledTools.addCondition(ctx.getPlanetMarket(), condition);
         }
     }
 
@@ -117,7 +122,7 @@ public class BoggledTerraformingProjectEffect {
 
         @Override
         protected void applyProjectEffectImpl(BoggledTerraformingRequirement.RequirementContext ctx) {
-            boggledTools.removeCondition(ctx.getMarket(), condition);
+            boggledTools.removeCondition(ctx.getPlanetMarket(), condition);
         }
     }
 
@@ -156,7 +161,7 @@ public class BoggledTerraformingProjectEffect {
                 return;
             }
 
-            incrementResourceWithDefault(ctx.getMarket(), boggledTools.getResourceProgressions().get(resource));
+            incrementResourceWithDefault(ctx.getPlanetMarket(), boggledTools.getResourceProgressions().get(resource));
         }
     }
 
@@ -201,7 +206,7 @@ public class BoggledTerraformingProjectEffect {
         protected void applyProjectEffectImpl(BoggledTerraformingRequirement.RequirementContext ctx) {
             super.applyProjectEffectImpl(ctx.getFocusContext());
 
-            SectorEntityToken closestGasGiantToken = ctx.getMarket().getPrimaryEntity();
+            SectorEntityToken closestGasGiantToken = ctx.getPlanetMarket().getPrimaryEntity();
             if (closestGasGiantToken == null) {
                 return;
             }
@@ -232,7 +237,7 @@ public class BoggledTerraformingProjectEffect {
         }
         @Override
         protected void applyProjectEffectImpl(BoggledTerraformingRequirement.RequirementContext ctx) {
-            StarSystemAPI starSystem = ctx.getMarket().getStarSystem();
+            StarSystemAPI starSystem = ctx.getPlanetMarket().getStarSystem();
             SectorEntityToken tapToken = null;
 
             if (starSystem.getType() == StarSystemGenerator.StarSystemType.TRINARY_2CLOSE) {
@@ -284,7 +289,7 @@ public class BoggledTerraformingProjectEffect {
 
                     tapToken = starSystem.addCustomEntity("coronal_tap_" + starSystem.getName(), null, "coronal_tap", Global.getSector().getPlayerFaction().getId());
 
-                    tapToken.setCircularOrbitPointingDown(star, boggledTools.getAngleFromEntity(ctx.getMarket().getPrimaryEntity(), star), orbitRadius, orbitDays);
+                    tapToken.setCircularOrbitPointingDown(star, boggledTools.getAngleFromEntity(ctx.getPlanetMarket().getPrimaryEntity(), star), orbitRadius, orbitDays);
                 }
             }
 
@@ -314,7 +319,7 @@ public class BoggledTerraformingProjectEffect {
 
         @Override
         protected void applyProjectEffectImpl(BoggledTerraformingRequirement.RequirementContext ctx) {
-            ctx.getMarket().removeIndustry(industryId, null, false);
+            ctx.getPlanetMarket().removeIndustry(industryId, null, false);
         }
     }
 
@@ -386,7 +391,7 @@ public class BoggledTerraformingProjectEffect {
 
         @Override
         protected void applyProjectEffectImpl(BoggledTerraformingRequirement.RequirementContext ctx) {
-            MarketAPI market = ctx.getMarket();
+            MarketAPI market = ctx.getPlanetMarket();
             if (market == null) {
                 return;
             }
@@ -477,7 +482,7 @@ public class BoggledTerraformingProjectEffect {
 
         @Override
         protected void applyProjectEffectImpl(BoggledTerraformingRequirement.RequirementContext ctx) {
-            ctx.getMarket().getSubmarket(submarketId).getCargo().addSpecial(new SpecialItemData(itemId, null), quantity);
+            ctx.getPlanetMarket().getSubmarket(submarketId).getCargo().addSpecial(new SpecialItemData(itemId, null), quantity);
         }
     }
 
@@ -820,6 +825,170 @@ public class BoggledTerraformingProjectEffect {
             } else if(targetStation.getId().contains("tigra_city")) {
                 market.addCondition(Conditions.ORE_MODERATE);
                 market.getConstructionQueue().addToEnd(Industries.MINING, 0);
+            }
+        }
+
+        @Override
+        protected void addTooltipInfoImpl(BoggledTerraformingRequirement.RequirementContext ctx, Map<String, EffectTooltipPara> effectTypeToPara) {
+            SectorEntityToken targetStation = ctx.getStation();
+            if (targetStation == null) {
+                return;
+            }
+            if (!effectTypeToPara.containsKey("StationColonizationTarget")) {
+                effectTypeToPara.put("StationColonizationTarget", new EffectTooltipPara("Colonization target: ", ""));
+            }
+            EffectTooltipPara para = effectTypeToPara.get("StationColonizationTarget");
+            para.infix.add(targetStation.getName());
+            para.highlights.add(targetStation.getName());
+        }
+    }
+
+    public static class EffectWithRequirement extends TerraformingProjectEffect {
+        BoggledProjectRequirementsAND requirements;
+        List<TerraformingProjectEffect> effects;
+
+        protected EffectWithRequirement(String id, String[] enableSettings, BoggledProjectRequirementsAND requirements, List<TerraformingProjectEffect> effects) {
+            super(id, enableSettings);
+            this.requirements = requirements;
+            this.effects = effects;
+        }
+
+        @Override
+        protected void applyProjectEffectImpl(BoggledTerraformingRequirement.RequirementContext ctx) {
+            if (!requirements.requirementsMet(ctx)) {
+                return;
+            }
+            for (TerraformingProjectEffect effect : effects) {
+                effect.applyProjectEffect(ctx);
+            }
+        }
+    }
+
+    public static class AdjustRelationsWith extends TerraformingProjectEffect {
+        String factionIdToAdjustRelationsTo;
+        List<String> factionIdsToAdjustRelations;
+        float newRelationValue;
+        protected AdjustRelationsWith(String id, String[] enableSettings, String factionIdToAdjustRelationsTo, List<String> factionIdsToAdjustRelations, float newRelationValue) {
+            super(id, enableSettings);
+            this.factionIdToAdjustRelationsTo = factionIdToAdjustRelationsTo;
+            this.factionIdsToAdjustRelations = factionIdsToAdjustRelations;
+            this.newRelationValue = newRelationValue;
+        }
+
+        @Override
+        protected void applyProjectEffectImpl(BoggledTerraformingRequirement.RequirementContext ctx) {
+            for (String factionId : factionIdsToAdjustRelations) {
+                Global.getSector().getFaction(factionId).setRelationship(factionIdToAdjustRelationsTo, newRelationValue);
+            }
+        }
+    }
+
+    public static class AdjustRelationsWithAllExcept extends TerraformingProjectEffect {
+        String factionIdToAdjustRelationsTo;
+        List<String> factionIdsToNotAdjustRelations;
+        float newRelationValue;
+        protected AdjustRelationsWithAllExcept(String id, String[] enableSettings, String factionIdToAdjustRelationsTo, List<String> factionIdsToNotAdjustRelations, float newRelationValue) {
+            super(id, enableSettings);
+            this.factionIdToAdjustRelationsTo = factionIdToAdjustRelationsTo;
+            this.factionIdsToNotAdjustRelations = factionIdsToNotAdjustRelations;
+            this.newRelationValue = newRelationValue;
+        }
+
+        @Override
+        protected void applyProjectEffectImpl(BoggledTerraformingRequirement.RequirementContext ctx) {
+            MarketAPI market = ctx.getPlanetMarket();
+            FactionAPI marketFaction = null;
+            if (market != null) {
+                marketFaction = market.getFaction();
+            }
+            for (FactionAPI faction : Global.getSector().getAllFactions()) {
+                if (factionIdsToNotAdjustRelations.contains(faction.getId()) && (faction != marketFaction)) {
+                    continue;
+                }
+                faction.setRelationship(factionIdToAdjustRelationsTo, newRelationValue);
+            }
+        }
+    }
+
+    public static class TriggerMilitaryResponse extends TerraformingProjectEffect {
+        float responseFraction;
+        float responseDuration;
+
+        protected TriggerMilitaryResponse(String id, String[] enableSettings, float responseFraction, float responseDuration) {
+            super(id, enableSettings);
+            this.responseFraction = responseFraction;
+            this.responseDuration = responseDuration;
+        }
+
+        @Override
+        protected void applyProjectEffectImpl(BoggledTerraformingRequirement.RequirementContext ctx) {
+            MarketAPI market = ctx.getPlanetMarket();
+            if (market == null) {
+                return;
+            }
+
+            if (!market.getFaction().getCustomBoolean(Factions.CUSTOM_NO_WAR_SIM)) {
+                MilitaryResponseScript.MilitaryResponseParams params = new MilitaryResponseScript.MilitaryResponseParams(CampaignFleetAIAPI.ActionType.HOSTILE, "player_ground_raid_" + market.getId(), market.getFaction(), market.getPrimaryEntity(), responseFraction, responseDuration);
+                market.getContainingLocation().addScript(new MilitaryResponseScript(params));
+            }
+
+            for (CampaignFleetAPI fleet : market.getContainingLocation().getFleets()) {
+                if (fleet.getFaction() == market.getFaction()) {
+                    Misc.setFlagWithReason(fleet.getMemoryWithoutUpdate(),  MemFlags.MEMORY_KEY_MAKE_HOSTILE_WHILE_TOFF, "raidAlarm", true, 1f);
+                }
+            }
+        }
+    }
+
+    public static class DecivilizeMarket extends TerraformingProjectEffect {
+        List<String> factionIdsToNotMakeHostile;
+        protected DecivilizeMarket(String id, String[] enableSettings, List<String> factionIdsToNotMakeHostile) {
+            super(id, enableSettings);
+            this.factionIdsToNotMakeHostile = factionIdsToNotMakeHostile;
+        }
+
+        @Override
+        protected void applyProjectEffectImpl(BoggledTerraformingRequirement.RequirementContext ctx) {
+            MarketAPI market = ctx.getClosestMarket();
+            if (market == null) {
+                return;
+            }
+            MemoryAPI mem = Global.getSector().getCharacterData().getMemoryWithoutUpdate();
+            int atrocities = (int) mem.getFloat(MemFlags.PLAYER_ATROCITIES);
+            atrocities++;
+            mem.set(MemFlags.PLAYER_ATROCITIES, atrocities);
+
+            List<FactionAPI> factionsToNotMakeHostile = new ArrayList<>();
+            for (FactionAPI faction : Global.getSector().getAllFactions()) {
+                if (factionIdsToNotMakeHostile.contains(faction.getId())) {
+                    continue;
+                }
+                factionsToNotMakeHostile.add(faction);
+            }
+
+            // Added per Histidine's comments in the forum - see Page 148, comment #2210 in the TASC thread.
+            // If you're reading this because it's not working properly for what you're trying to do, let me know!
+            MarketCMD.TempData actionData = new MarketCMD.TempData();
+            actionData.bombardType = MarketCMD.BombardType.SATURATION;
+            actionData.willBecomeHostile = factionsToNotMakeHostile;
+
+            ListenerUtil.reportSaturationBombardmentFinished(null, market, actionData);
+
+            DecivTracker.decivilize(market, true);
+            MarketCMD.addBombardVisual(market.getPrimaryEntity());
+            MarketCMD.addBombardVisual(market.getPrimaryEntity());
+            MarketCMD.addBombardVisual(market.getPrimaryEntity());
+
+            // Copied from MarketCMD saturation bombing code.
+            InteractionDialogAPI dialog = Global.getSector().getCampaignUI().getCurrentInteractionDialog();
+            if (dialog != null && dialog.getPlugin() instanceof RuleBasedDialog) {
+                if (dialog.getInteractionTarget() != null && dialog.getInteractionTarget().getMarket() != null) {
+                    Global.getSector().setPaused(false);
+                    dialog.getInteractionTarget().getMarket().getMemoryWithoutUpdate().advance(0.0001f);
+                    Global.getSector().setPaused(true);
+                }
+
+                ((RuleBasedDialog) dialog.getPlugin()).updateMemory();
             }
         }
 

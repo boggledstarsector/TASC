@@ -307,4 +307,80 @@ public class BoggledTerraformingProjectEffectFactory {
             return new BoggledTerraformingProjectEffect.ColonizeAbandonedStation(id, enableSettings, defaultStationConstructionData, stationConstructionData);
         }
     }
+
+    public static class EffectWithRequirement implements TerraformingProjectEffectFactory {
+        @Override
+        public BoggledTerraformingProjectEffect.TerraformingProjectEffect constructFromJSON(String id, String[] enableSettings, String data) throws JSONException {
+            Logger log = Global.getLogger(this.getClass());
+            JSONObject jsonData = new JSONObject(data);
+            JSONArray reqsArray = jsonData.getJSONArray("requirement_ids");
+            JSONArray effectsArray = jsonData.getJSONArray("effects");
+
+            BoggledProjectRequirementsAND reqs = boggledTools.requirementsFromRequirementsArray(reqsArray, "EffectWithRequirement", id, "requirements");
+            List<BoggledTerraformingProjectEffect.TerraformingProjectEffect> effects = new ArrayList<>();
+            for (int i = 0; i < effectsArray.length(); ++i) {
+                String effectString = effectsArray.getString(i);
+                BoggledTerraformingProjectEffect.TerraformingProjectEffect effect = boggledTools.getProjectEffect(effectString);
+                if (effect != null) {
+                    effects.add(effect);
+                } else {
+                    log.info("EffectWithRequirement " + id + " has invalid effect " + effectString);
+                }
+            }
+            return new BoggledTerraformingProjectEffect.EffectWithRequirement(id, enableSettings, reqs, effects);
+        }
+    }
+
+    public static class AdjustRelationsWith implements TerraformingProjectEffectFactory {
+        @Override
+        public BoggledTerraformingProjectEffect.TerraformingProjectEffect constructFromJSON(String id, String[] enableSettings, String data) throws JSONException {
+            JSONObject jsonData = new JSONObject(data);
+            String factionIdToAdjustRelationsTo = jsonData.getString("faction_id_to_adjust_relations_to");
+            JSONArray factionIdsToAdjustRelationsArray = jsonData.getJSONArray("faction_ids_to_adjust_relations");
+            List<String> factionIdsToAdjustRelations = new ArrayList<>();
+            for (int i = 0; i < factionIdsToAdjustRelationsArray.length(); ++i) {
+                factionIdsToAdjustRelations.add(factionIdsToAdjustRelationsArray.getString(i));
+            }
+            float newRelationValue = (float) jsonData.getDouble("new_relation_value");
+            return new BoggledTerraformingProjectEffect.AdjustRelationsWith(id, enableSettings, factionIdToAdjustRelationsTo, factionIdsToAdjustRelations, newRelationValue);
+        }
+    }
+
+    public static class AdjustRelationsWithAllExcept implements TerraformingProjectEffectFactory {
+        @Override
+        public BoggledTerraformingProjectEffect.TerraformingProjectEffect constructFromJSON(String id, String[] enableSettings, String data) throws JSONException {
+            JSONObject jsonData = new JSONObject(data);
+            String factionIdToAdjustRelationsTo = jsonData.getString("faction_id_to_adjust_relations_to");
+            JSONArray factionIdsToNotAdjustRelationsArray = jsonData.getJSONArray("faction_ids_to_not_adjust_relations");
+            List<String> factionIdsToNotAdjustRelations = new ArrayList<>();
+            for (int i = 0; i < factionIdsToNotAdjustRelationsArray.length(); ++i) {
+                factionIdsToNotAdjustRelations.add(factionIdsToNotAdjustRelationsArray.getString(i));
+            }
+            float newRelationValue = (float) jsonData.getDouble("new_relation_value");
+            return new BoggledTerraformingProjectEffect.AdjustRelationsWithAllExcept(id, enableSettings, factionIdToAdjustRelationsTo, factionIdsToNotAdjustRelations, newRelationValue);
+        }
+    }
+
+    public static class TriggerMilitaryResponse implements TerraformingProjectEffectFactory {
+        @Override
+        public BoggledTerraformingProjectEffect.TerraformingProjectEffect constructFromJSON(String id, String[] enableSettings, String data) throws JSONException {
+            JSONObject jsonData = new JSONObject(data);
+            float responseFraction = (float) jsonData.getDouble("response_fraction");
+            float responseDuration = (float) jsonData.getDouble("response_duration");
+            return new BoggledTerraformingProjectEffect.TriggerMilitaryResponse(id, enableSettings, responseFraction, responseDuration);
+        }
+    }
+
+    public static class DecivilizeMarket implements TerraformingProjectEffectFactory {
+        @Override
+        public BoggledTerraformingProjectEffect.TerraformingProjectEffect constructFromJSON(String id, String[] enableSettings, String data) throws JSONException {
+            JSONObject jsonData = new JSONObject(data);
+            JSONArray factionIdsToNotMakeHostileArray = jsonData.getJSONArray("faction_ids_to_not_make_hostile");
+            List<String> factionIdsToNotMakeHostile = new ArrayList<>();
+            for (int i = 0; i < factionIdsToNotMakeHostileArray.length(); ++i) {
+                factionIdsToNotMakeHostile.add(factionIdsToNotMakeHostileArray.getString(i));
+            }
+            return new BoggledTerraformingProjectEffect.DecivilizeMarket(id, enableSettings, factionIdsToNotMakeHostile);
+        }
+    }
 }

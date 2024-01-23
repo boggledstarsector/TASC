@@ -647,6 +647,13 @@ public class boggledTools {
         addTerraformingProjectEffectFactory("AddStationToAsteroids", new BoggledTerraformingProjectEffectFactory.AddStationToAsteroids());
 
         addTerraformingProjectEffectFactory("ColonizeAbandonedStation", new BoggledTerraformingProjectEffectFactory.ColonizeAbandonedStation());
+
+        addTerraformingProjectEffectFactory("EffectWithRequirement", new BoggledTerraformingProjectEffectFactory.EffectWithRequirement());
+
+        addTerraformingProjectEffectFactory("AdjustRelationsWith", new BoggledTerraformingProjectEffectFactory.AdjustRelationsWith());
+        addTerraformingProjectEffectFactory("AdjustRelationsWithAllExcept", new BoggledTerraformingProjectEffectFactory.AdjustRelationsWithAllExcept());
+        addTerraformingProjectEffectFactory("TriggerMilitaryResponse", new BoggledTerraformingProjectEffectFactory.TriggerMilitaryResponse());
+        addTerraformingProjectEffectFactory("DecivilizeMarket", new BoggledTerraformingProjectEffectFactory.DecivilizeMarket());
     }
 
     public static void addTerraformingProjectEffectFactory(String key, BoggledTerraformingProjectEffectFactory.TerraformingProjectEffectFactory value) {
@@ -675,7 +682,7 @@ public class boggledTools {
         return new ArrayList<>(Arrays.asList(toSplit.split(regex)));
     }
 
-    public static BoggledProjectRequirementsAND requirementsFromRequirementsArray(JSONArray requirementArray, String id, String requirementType) throws JSONException {
+    public static BoggledProjectRequirementsAND requirementsFromRequirementsArray(JSONArray requirementArray, String type, String id, String requirementType) throws JSONException {
         Logger log = Global.getLogger(boggledTools.class);
 
         if (requirementArray == null) {
@@ -690,12 +697,12 @@ public class boggledTools {
             JSONArray andThenArray = requirementObject.optJSONArray("and_then");
             BoggledProjectRequirementsAND andThen = null;
             if (andThenArray != null) {
-                andThen = requirementsFromRequirementsArray(andThenArray, id, requirementType);
+                andThen = requirementsFromRequirementsArray(andThenArray, type, id, requirementType);
             }
 
             BoggledProjectRequirementsOR req = terraformingRequirements.get(requirementsString);
             if (req == null) {
-                log.info("Project " + id + " has invalid " + requirementType + " " + requirementsString);
+                log.info(type + " " + id + " has invalid " + requirementType + " " + requirementsString);
             } else {
                 reqs.add(new BoggledProjectRequirementsAND.RequirementAndThen(req, andThen));
             }
@@ -924,7 +931,7 @@ public class boggledTools {
                     for (int j = 0; j < imageOverridesJson.length(); ++j) {
                         JSONObject imageOverride = imageOverridesJson.getJSONObject(j);
                         JSONArray requirementsArray = imageOverride.getJSONArray("requirement_ids");
-                        BoggledProjectRequirementsAND imageReqs = requirementsFromRequirementsArray(requirementsArray, id, "image_overrides");
+                        BoggledProjectRequirementsAND imageReqs = requirementsFromRequirementsArray(requirementsArray, "Industry Options", id, "image_overrides");
                         String category = imageOverride.getString("category");
                         String imageId = imageOverride.getString("id");
 
@@ -1125,7 +1132,7 @@ public class boggledTools {
     public static void initialiseTerraformingProjectEffectsFromJSON(@NotNull JSONArray projectEffectsJSON) {
         Logger log = Global.getLogger(boggledTools.class);
 
-        Map<String, BoggledTerraformingProjectEffect.TerraformingProjectEffect> terraformingProjectEffects = new HashMap<>();
+        terraformingProjectEffects = new HashMap<>();
         String idForErrors = "";
         for (int i = 0; i < projectEffectsJSON.length(); ++i) {
             try {
@@ -1149,7 +1156,6 @@ public class boggledTools {
                 log.error("Error in project effect " + idForErrors + ": " + e);
             }
         }
-        boggledTools.terraformingProjectEffects = terraformingProjectEffects;
     }
 
     public static void initialiseTerraformingProjectsFromJSON(@NotNull JSONArray terraformingProjectsJSON) {
@@ -1201,7 +1207,7 @@ public class boggledTools {
                     JSONArray requirementsStallArray = new JSONArray(requirementsStallArrayString);
                     for (int j = 0; j < requirementsStallArray.length(); ++j) {
                         JSONArray reqArray = requirementsStallArray.getJSONArray(j);
-                        BoggledProjectRequirementsAND reqsAnd = requirementsFromRequirementsArray(reqArray, id, "requirements_stall");
+                        BoggledProjectRequirementsAND reqsAnd = requirementsFromRequirementsArray(reqArray, "Terraforming Projects", id, "requirements_stall");
                         reqsStall.add(reqsAnd);
                     }
                 }
@@ -1212,7 +1218,7 @@ public class boggledTools {
                     JSONArray requirementsResetArray = new JSONArray(requirementsResetArrayString);
                     for (int j = 0; j < requirementsResetArray.length(); ++j) {
                         JSONArray reqArray = requirementsResetArray.getJSONArray(j);
-                        BoggledProjectRequirementsAND reqsAnd = requirementsFromRequirementsArray(reqArray, id, "requirements_reset");
+                        BoggledProjectRequirementsAND reqsAnd = requirementsFromRequirementsArray(reqArray, "Terraforming Projects", id, "requirements_reset");
                         reqsReset.add(reqsAnd);
                     }
                 }
@@ -1224,7 +1230,7 @@ public class boggledTools {
                     for (int j = 0; j < projectEffectsArray.length(); ++j) {
                         JSONObject projectEffect = projectEffectsArray.getJSONObject(j);
                         JSONArray reqArray = projectEffect.optJSONArray("requirement_ids");
-                        BoggledProjectRequirementsAND req = requirementsFromRequirementsArray(reqArray, id, "project_effects");;
+                        BoggledProjectRequirementsAND req = requirementsFromRequirementsArray(reqArray, "Terraforming Projects", id, "project_effects");;
                         String effectId = projectEffect.getString("effect_id");
                         BoggledTerraformingProjectEffect.TerraformingProjectEffect effect = boggledTools.terraformingProjectEffects.get(effectId);
                         if (effect != null) {
@@ -1239,7 +1245,7 @@ public class boggledTools {
                 String requirementsArrayString = row.getString("requirements");
                 if (!requirementsArrayString.isEmpty()) {
                     JSONArray reqsArray = new JSONArray(requirementsArrayString);
-                    reqs = requirementsFromRequirementsArray(reqsArray, id, "requirements");
+                    reqs = requirementsFromRequirementsArray(reqsArray, "Terraforming Projects", id, "requirements");
                 } else {
                     reqs = new BoggledProjectRequirementsAND();
                 }
@@ -1248,7 +1254,7 @@ public class boggledTools {
                 String requirementsHiddenArrayString = row.getString("requirements_hidden");
                 if (!requirementsHiddenArrayString.isEmpty()) {
                     JSONArray reqsHiddenArray = new JSONArray(requirementsHiddenArrayString);
-                    reqsHidden = requirementsFromRequirementsArray(reqsHiddenArray, id, "requirements_hidden");
+                    reqsHidden = requirementsFromRequirementsArray(reqsHiddenArray, "Terraforming Projects", id, "requirements_hidden");
                 } else {
                     reqsHidden = new BoggledProjectRequirementsAND();
                 }
@@ -1360,6 +1366,10 @@ public class boggledTools {
         return industryEffects.get(industryEffectId);
     }
 
+    public static BoggledTerraformingProjectEffect.TerraformingProjectEffect getProjectEffect(String effectId) {
+        return terraformingProjectEffects.get(effectId);
+    }
+
     public static BoggledBaseAbility getAbility(String abilityId) {
         BoggledTerraformingProject project = getProject(abilityId);
         if (project == null) {
@@ -1434,11 +1444,11 @@ public class boggledTools {
     public static Map<String, String> getTokenReplacements(BoggledTerraformingRequirement.RequirementContext ctx) {
         LinkedHashMap<String, String> ret = new LinkedHashMap<>();
         ret.put("$player", Global.getSector().getPlayerPerson().getNameString());
-        MarketAPI market = ctx.getMarket();
+        MarketAPI market = ctx.getPlanetMarket();
         if (market != null) {
             ret.put("$marketName", market.getName());
         }
-        MarketAPI focusMarket = ctx.getFocusContext().getMarket();
+        MarketAPI focusMarket = ctx.getFocusContext().getPlanetMarket();
         if (focusMarket != null) {
             ret.put("$focusMarketName", focusMarket.getName());
         }
@@ -2344,17 +2354,14 @@ public class boggledTools {
         if(Misc.isStoryCritical(market) && !boggledTools.getBooleanSetting(BoggledSettings.planetKillerAllowDestructionOfColoniesMarkedAsEssentialForQuests)) {
             // Should never be reached because deployment will be disabled.
             return;
-        } else if(marketIsStation(market)) {
-            adjustRelationshipsDueToPlanetKillerUsage(market);
-            triggerMilitaryResponseToPlanetKillerUsage(market);
-            decivilizeMarketWithPlanetKiller(market);
-        } else if(market.getPlanetEntity() != null && market.getPlanetEntity().getSpec() != null) {
+        }
+
+        adjustRelationshipsDueToPlanetKillerUsage(market);
+        triggerMilitaryResponseToPlanetKillerUsage(market);
+        decivilizeMarketWithPlanetKiller(market);
+        if(market.getPlanetEntity() != null && market.getPlanetEntity().getSpec() != null) {
             changePlanetTypeWithPlanetKiller(market);
             changePlanetConditionsWithPlanetKiller(market);
-
-            adjustRelationshipsDueToPlanetKillerUsage(market);
-            triggerMilitaryResponseToPlanetKillerUsage(market);
-            decivilizeMarketWithPlanetKiller(market);
         }
     }
 

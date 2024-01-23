@@ -203,11 +203,11 @@ public class BoggledTerraformingProject {
         String intelTooltip = getProjectTooltip(boggledTools.getTokenReplacements(ctx));
         String intelCompletedMessage = getIntelCompleteMessage();
 
-        boggledTools.surveyAll(ctx.getMarket());
-        boggledTools.refreshSupplyAndDemand(ctx.getMarket());
-        boggledTools.refreshAquacultureAndFarming(ctx.getMarket());
+        boggledTools.surveyAll(ctx.getPlanetMarket());
+        boggledTools.refreshSupplyAndDemand(ctx.getPlanetMarket());
+        boggledTools.refreshAquacultureAndFarming(ctx.getPlanetMarket());
 
-        boggledTools.showProjectCompleteIntelMessage(intelTooltip, intelCompletedMessage, ctx.getMarket());
+        boggledTools.showProjectCompleteIntelMessage(intelTooltip, intelCompletedMessage, ctx.getPlanetMarket());
     }
 
 //    public void overrideAddTooltip(String tooltipOverride, String tooltipAddition) {

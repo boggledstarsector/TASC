@@ -7,6 +7,13 @@ id,tooltip,tooltip_highlights,invert_all,requirements
 # Token replacements can be used in tooltips. Available token replacements depend on the specific requirement used. Some token replacements may themselves be replaced if there are multiple requirements listed.
 true,"True",,false,"true"
 false,"False",,false,"false"
+market_is_station,,,false,"market_is_station"
+market_is_not_station,,,false,"market_is_not_station"
+,,
+planet_not_star,,,false,"planet_not_star"
+planet_not_gas_giant,,,false,"planet_not_gas_giant"
+planet_not_volcanic,,,false,"planet_not_volcanic"
+planet_not_unknown,,,false,"planet_not_unknown"
 ,,
 terraforming_colony_not_arid_world,"$marketName is not already an arid world",,false,"planet_not_arid"
 terraforming_colony_not_jungle_world,"$marketName is not already a jungle world",,false,"planet_not_jungle"
