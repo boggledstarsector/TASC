@@ -145,10 +145,6 @@ domain_archaeology_ruins_vast_effect,boggledKletkaSimulatorTemperatureBasedUpkee
 	'effects' : [ 'domain_archaeology_ruins_vast_pather_interest' ]
 }"
 
-just_break_the_damn_thing,,DeficitToInactive,"{
-	'commodities_demanded' : [ 'heavy_machinery', 'supplies', 'fuel' ]
-}"
-
 domed_cities_suppress_conditions,,SuppressConditions,no_atmosphere | thin_atmosphere | dense_atmosphere | toxic_atmosphere | extreme_weather | inimical_biosphere
 domed_cities_ground_defenses,boggledDomedCitiesDefensePenaltyEnabled,ModifyGroundDefense,"{ 'type' : 'mult', 'value' : 0.05 }"
 domed_cities_improve_stability_bonus,,ModifyStability,"{ 'type' : 'flat', 'value' : 1 }"

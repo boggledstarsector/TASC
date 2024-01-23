@@ -10,9 +10,8 @@ BOGGLED_AI_MINING_DRONES,"AI Mining Drones",industry_ai_mining_drones,,market_si
 	'beta_core' : [ 'ai_mining_drones_beta_core_bonus_to_mining' ],
 	'gamma_core' : [ 'ai_mining_drones_gamma_core_bonus_to_mining' ]
 }",false,10,,,,,
-BOGGLED_ATMOSPHERE_PROCESSOR,"Atmosphere Processor",industry_atmosphere_processor,,market_size_demand_heavy_machinery | just_break_the_damn_thing1 | just_break_the_damn_thing2 | just_break_the_damn_thing3,,"[
-	'heavy_machinery_deficit_to_inactive',
-	'just_break_the_damn_thing'
+BOGGLED_ATMOSPHERE_PROCESSOR,"Atmosphere Processor",industry_atmosphere_processor,,market_size_demand_heavy_machinery,,"[
+	'heavy_machinery_deficit_to_inactive'
 ]",,,,2,,
 BOGGLED_CHAMELEON,"CHAMELEON",industry_chameleon_decivilized | industry_chameleon_rogue_ai,,market_size_demand_domain_artifacts,,,"[
 	'chameleon_improve_bonus_to_stability'

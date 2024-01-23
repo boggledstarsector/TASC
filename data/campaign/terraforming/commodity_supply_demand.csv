@@ -32,7 +32,3 @@ flat_demand_7_heavy_machinery,,demand,FlatCommodityDemand,heavy_machinery,7
 ,,
 flat_demand_7_supplies,,demand,MarketSizeDemand,supplies,7
 ,,
-just_break_the_damn_thing1,,demand,FlatCommodityDemand,heavy_machinery,99
-just_break_the_damn_thing2,,demand,FlatCommodityDemand,supplies,99
-just_break_the_damn_thing3,,demand,FlatCommodityDemand,fuel,99
-just_break_the_damn_thing4,,demand,FlatCommodityDemand,domain_artifacts,99
