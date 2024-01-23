@@ -16,7 +16,7 @@ public class BoggledTerraformingDurationModifier {
             this.enableSettings = enableSettings;
         }
 
-        public MutableStat getDurationmodifier(BoggledTerraformingRequirement.RequirementContext ctx) {
+        public MutableStat getDurationModifier(BoggledTerraformingRequirement.RequirementContext ctx) {
             if (!isEnabled()) {
                 return new MutableStat(0);
             }
