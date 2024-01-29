@@ -11,6 +11,7 @@ import com.fs.starfarer.api.impl.campaign.ids.Conditions;
 import com.fs.starfarer.api.impl.campaign.ids.Industries;
 import com.fs.starfarer.api.impl.campaign.ids.Submarkets;
 import com.fs.starfarer.api.impl.campaign.submarkets.StoragePlugin;
+import com.fs.starfarer.api.util.Misc;
 
 import java.util.List;
 import java.util.Map;
@@ -83,6 +84,7 @@ public class BoggledStationConstructors {
             String durationString = String.format("%,d", ctx.getProject().getModifiedProjectDuration(ctx));
             BoggledTerraformingProjectEffect.EffectTooltipPara para = new BoggledTerraformingProjectEffect.EffectTooltipPara("Building a station here will take " + durationString + " days.", "");
             para.highlights.add(durationString);
+            para.highlightColors.add(Misc.getHighlightColor());
             effectTypeToPara.put("StationConstructionModifiedBuildTime", para);
         }
     }
@@ -144,6 +146,8 @@ public class BoggledStationConstructors {
             BoggledTerraformingProjectEffect.EffectTooltipPara para = new BoggledTerraformingProjectEffect.EffectTooltipPara("There are " + numAsteroidBeltsInSystemString + " asteroid belts in the " + ctx.getStarSystem() + ". A mining station would have " + resourceString + " resources.", "");
             para.highlights.add(numAsteroidBeltsInSystemString);
             para.highlights.add(resourceString);
+            para.highlightColors.add(Misc.getHighlightColor());
+            para.highlightColors.add(Misc.getHighlightColor());
             effectTypeToPara.put("StationConditionsAndReason", para);
         }
 
@@ -214,6 +218,7 @@ public class BoggledStationConstructors {
                 if (resourceName != null) {
                     BoggledTerraformingProjectEffect.EffectTooltipPara para = new BoggledTerraformingProjectEffect.EffectTooltipPara("A siphon station constructed here would have " + resourceName + " " + resource + ".", "");
                     para.highlights.add(resourceName);
+                    para.highlightColors.add(Misc.getHighlightColor());
                     effectTypeToPara.put("StationConditionsAndReason", para);
                 }
             }

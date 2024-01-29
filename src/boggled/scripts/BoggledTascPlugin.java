@@ -230,7 +230,6 @@ public class BoggledTascPlugin extends BaseModPlugin {
             JSONArray planetTypes = settings.getMergedSpreadsheetDataForMod("id", "data/campaign/terraforming/planet_types.csv", boggledTools.BoggledMods.tascModId);
             JSONArray resourceProgressions = settings.getMergedSpreadsheetDataForMod("id", "data/campaign/terraforming/resource_progression.csv", boggledTools.BoggledMods.tascModId);
             JSONArray resourceLimits = settings.getMergedSpreadsheetDataForMod("id", "data/campaign/terraforming/planet_max_resource.csv", boggledTools.BoggledMods.tascModId);
-            JSONArray commoditySupplyAndDemand = settings.getMergedSpreadsheetDataForMod("id", "data/campaign/terraforming/commodity_supply_demand.csv", boggledTools.BoggledMods.tascModId);
             JSONArray industryEffects = settings.getMergedSpreadsheetDataForMod("id", "data/campaign/terraforming/industry_effects.csv", boggledTools.BoggledMods.tascModId);
 
             // Terraforming requirement, requirements, and project duration modifiers next
@@ -244,8 +243,8 @@ public class BoggledTascPlugin extends BaseModPlugin {
             JSONArray industryOptions = settings.getMergedSpreadsheetDataForMod("id", "data/campaign/terraforming/industry_options.csv", boggledTools.BoggledMods.tascModId);
 
             // And finally mods
-            JSONArray terraformingRequirementsOverrides = settings.getMergedSpreadsheetDataForMod("id", "data/campaign/terraforming/terraforming_requirements_mods.csv", boggledTools.BoggledMods.tascModId);
-            JSONArray terraformingProjectsOverrides = settings.getMergedSpreadsheetDataForMod("id", "data/campaign/terraforming/terraforming_projects_mods.csv", boggledTools.BoggledMods.tascModId);
+            JSONArray industryOptionOverrides = settings.getMergedSpreadsheetDataForMod("id", "data/campaign/terraforming/industry_options_mods.csv", boggledTools.BoggledMods.tascModId);
+            JSONArray terraformingProjectOverrides = settings.getMergedSpreadsheetDataForMod("id", "data/campaign/terraforming/terraforming_projects_mods.csv", boggledTools.BoggledMods.tascModId);
 
             boggledTools.initialiseResourceProgressionsFromJSON(resourceProgressions);
             boggledTools.initialiseResourceLimitsFromJSON(resourceLimits);
@@ -254,7 +253,6 @@ public class BoggledTascPlugin extends BaseModPlugin {
             boggledTools.initialiseTerraformingRequirementsFromJSON(terraformingRequirements);
 
             boggledTools.initialiseTerraformingDurationModifiersFromJSON(terraformingDurationModifiers);
-            boggledTools.initialiseCommoditySupplyAndDemandFromJSON(commoditySupplyAndDemand);
 
             boggledTools.initialiseIndustryEffectsFromJSON(industryEffects);
             boggledTools.initialiseTerraformingProjectEffectsFromJSON(terraformingProjectEffects);
@@ -262,8 +260,8 @@ public class BoggledTascPlugin extends BaseModPlugin {
             boggledTools.initialiseTerraformingProjectsFromJSON(terraformingProjects);
             boggledTools.initialiseIndustryOptionsFromJSON(industryOptions);
 
-            boggledTools.initialiseTerraformingRequirementsOverrides(terraformingRequirementsOverrides);
-            boggledTools.initialiseTerraformingProjectOverrides(terraformingProjectsOverrides);
+            boggledTools.initialiseTerraformingProjectOverrides(terraformingProjectOverrides);
+            boggledTools.initialiseIndustryOptionOverrides(industryOptionOverrides);
 
             boggledTools.initialisePlanetTypesFromJSON(planetTypes);
 

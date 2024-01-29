@@ -146,7 +146,7 @@ boggledPerihelionProjectDaysToFinish,Days to finish Perihelion Project,Int,600,,
 boggled_DomainArchaeologyHeader,Domain-tech building settings,Header,Domain-tech building settings,,,,,Domain-tech Content
 boggledDomainArchaeologyEnabled,Enable Domain Archaeology,Boolean,True,,"Set this to false to disable the Domain Archaeology building.
 
-The Domain Archaeology building is an industry that produces Domain-era artifacts based on the level of ruins on the planet. Setting this to false will disable crafting, and buildings that require Domain-era artifacts will no longer require them.",,,Domain-tech Content
+The Domain Archaeology building is an industry that produces Domain-era artifacts based on the level of ruins on the planet. DurationSettingModifier this to false will disable crafting, and buildings that require Domain-era artifacts will no longer require them.",,,Domain-tech Content
 boggledReplaceAgreusTechMiningWithDomainArchaeology,Replace techmining building on Agreus with Domain Archaeology,Boolean,True,,"Set this to false to prevent the techmining building on Agreus from being removed and replaced with a Domain Archaeology building.",,,Domain-tech Content
 boggledAddDomainTechBuildingsToVanillaColonies,Add Domain-tech buildings to several colonies,Boolean,True,,"Adds buildings that demand Domain-era artifacts to several vanilla colonies.
 

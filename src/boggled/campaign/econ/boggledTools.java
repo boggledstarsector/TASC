@@ -37,7 +37,6 @@ import illustratedEntities.memory.TextDataEntry;
 import illustratedEntities.memory.TextDataMemory;
 import lunalib.lunaSettings.LunaSettings;
 import org.apache.log4j.Logger;
-import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.json.JSONArray;
@@ -89,7 +88,7 @@ public class boggledTools {
     }
 
     public static void CheckResourceExists(String source, String resourceId) {
-        for (Map.Entry<String, ArrayList<String>> resourceProgression : getResourceProgressions().entrySet()) {
+        for (Map.Entry<String, List<String>> resourceProgression : getResourceProgressions().entrySet()) {
             if (resourceProgression.getKey().equals(resourceId)) {
                 return;
             }
@@ -458,7 +457,7 @@ public class boggledTools {
         List<Color> highlightColors = new ArrayList<>();
         List<String> highlights = new ArrayList<>();
         for (BoggledTerraformingProject.ProjectInstance project : projects) {
-            for (BoggledProjectRequirementsAND.RequirementAndThen req : project.getProject().getProjectRequirements()) {
+            for (BoggledProjectRequirementsAND.RequirementAndThen req : project.getProject().getRequirements()) {
                 if (!req.checkRequirement(ctx)) {
                     tooltips.addAll(req.getTooltip(ctx, tokenReplacements));
                 }
@@ -501,7 +500,6 @@ public class boggledTools {
         addTerraformingRequirementFactory("TerraformingPossibleOnMarket", new BoggledTerraformingRequirementFactory.TerraformingPossibleOnMarket());
         addTerraformingRequirementFactory("MarketHasTags", new BoggledTerraformingRequirementFactory.MarketHasTags());
         addTerraformingRequirementFactory("MarketStorageContainsAtLeast", new BoggledTerraformingRequirementFactory.MarketStorageContainsAtLeast());
-        addTerraformingRequirementFactory("FleetContainsCreditsAtLeast", new BoggledTerraformingRequirementFactory.FleetContainsCreditsAtLeast());
         addTerraformingRequirementFactory("FleetStorageContainsAtLeast", new BoggledTerraformingRequirementFactory.FleetStorageContainsAtLeast());
         addTerraformingRequirementFactory("FleetTooCloseToJumpPoint", new BoggledTerraformingRequirementFactory.FleetTooCloseToJumpPoint());
         addTerraformingRequirementFactory("PlayerHasStoryPointsAtLeast", new BoggledTerraformingRequirementFactory.PlayerHasStoryPointsAtLeast());
@@ -552,7 +550,7 @@ public class boggledTools {
     public static void initialiseDefaultTerraformingDurationModifierFactories() {
         addTerraformingDurationModifierFactory("PlanetSize", new BoggledTerraformingDurationModifierFactory.PlanetSize());
 
-        addTerraformingDurationModifierFactory("Setting", new BoggledTerraformingDurationModifierFactory.Setting());
+        addTerraformingDurationModifierFactory("DurationSettingModifier", new BoggledTerraformingDurationModifierFactory.DurationSettingModifier());
     }
 
     public static void addTerraformingDurationModifierFactory(String key, BoggledTerraformingDurationModifierFactory.TerraformingDurationModifierFactory value) {
@@ -625,6 +623,7 @@ public class boggledTools {
 
     public static void initialiseDefaultTerraformingProjectEffectFactories() {
         addTerraformingProjectEffectFactory("PlanetTypeChange", new BoggledTerraformingProjectEffectFactory.PlanetTypeChange());
+        addTerraformingProjectEffectFactory("IndustrySwap", new BoggledTerraformingProjectEffectFactory.IndustrySwap());
         addTerraformingProjectEffectFactory("MarketAddCondition", new BoggledTerraformingProjectEffectFactory.MarketAddCondition());
         addTerraformingProjectEffectFactory("MarketRemoveCondition", new BoggledTerraformingProjectEffectFactory.MarketRemoveCondition());
         addTerraformingProjectEffectFactory("MarketOptionalCondition", new BoggledTerraformingProjectEffectFactory.MarketOptionalCondition());
@@ -641,7 +640,6 @@ public class boggledTools {
 
         addTerraformingProjectEffectFactory("RemoveItemFromSubmarket", new BoggledTerraformingProjectEffectFactory.RemoveItemFromSubmarket());
         addTerraformingProjectEffectFactory("RemoveItemFromFleetStorage", new BoggledTerraformingProjectEffectFactory.RemoveItemFromFleetStorage());
-        addTerraformingProjectEffectFactory("RemoveCreditsFromFleet", new BoggledTerraformingProjectEffectFactory.RemoveCreditsFromFleet());
         addTerraformingProjectEffectFactory("RemoveStoryPointsFromPlayer", new BoggledTerraformingProjectEffectFactory.RemoveStoryPointsFromPlayer());
         addTerraformingProjectEffectFactory("AddItemToSubmarket", new BoggledTerraformingProjectEffectFactory.AddItemToSubmarket());
 
@@ -656,6 +654,34 @@ public class boggledTools {
         addTerraformingProjectEffectFactory("AdjustRelationsWithAllExcept", new BoggledTerraformingProjectEffectFactory.AdjustRelationsWithAllExcept());
         addTerraformingProjectEffectFactory("TriggerMilitaryResponse", new BoggledTerraformingProjectEffectFactory.TriggerMilitaryResponse());
         addTerraformingProjectEffectFactory("DecivilizeMarket", new BoggledTerraformingProjectEffectFactory.DecivilizeMarket());
+
+        addTerraformingProjectEffectFactory("ModifyPatherInterest", new BoggledTerraformingProjectEffectFactory.ModifyPatherInterest());
+        addTerraformingProjectEffectFactory("ModifyColonyGrowthRate", new BoggledTerraformingProjectEffectFactory.ModifyColonyGrowthRate());
+        addTerraformingProjectEffectFactory("ModifyColonyGroundDefense", new BoggledTerraformingProjectEffectFactory.ModifyColonyGroundDefense());
+        addTerraformingProjectEffectFactory("ModifyColonyAccessibility", new BoggledTerraformingProjectEffectFactory.ModifyColonyAccessibility());
+        addTerraformingProjectEffectFactory("ModifyColonyStability", new BoggledTerraformingProjectEffectFactory.ModifyColonyStability());
+        addTerraformingProjectEffectFactory("ModifyIndustryUpkeep", new BoggledTerraformingProjectEffectFactory.ModifyIndustryUpkeep());
+        addTerraformingProjectEffectFactory("ModifyIndustryIncome", new BoggledTerraformingProjectEffectFactory.ModifyIndustryIncome());
+        addTerraformingProjectEffectFactory("ModifyIndustrySupplyWithDeficit", new BoggledTerraformingProjectEffectFactory.ModifyIndustrySupplyWithDeficit());
+        addTerraformingProjectEffectFactory("ModifyIndustryDemand", new BoggledTerraformingProjectEffectFactory.ModifyIndustryDemand());
+
+        addTerraformingProjectEffectFactory("EffectToIndustry", new BoggledTerraformingProjectEffectFactory.EffectToIndustry());
+
+        addTerraformingProjectEffectFactory("SuppressConditions", new BoggledTerraformingProjectEffectFactory.SuppressConditions());
+
+        addTerraformingProjectEffectFactory("IndustryMonthlyItemProductionChance", new BoggledTerraformingProjectEffectFactory.IndustryMonthlyItemProductionChance());
+        addTerraformingProjectEffectFactory("IndustryMonthlyItemProductionChanceModifier", new BoggledTerraformingProjectEffectFactory.IndustryMonthlyItemProductionChanceModifier());
+
+        addTerraformingProjectEffectFactory("CommodityDemandFlat", new BoggledTerraformingProjectEffectFactory.CommodityDemandFlat());
+        addTerraformingProjectEffectFactory("CommodityDemandMarketSize", new BoggledTerraformingProjectEffectFactory.CommodityDemandMarketSize());
+        addTerraformingProjectEffectFactory("CommodityDemandPlayerMarketSizeElseFlat", new BoggledTerraformingProjectEffectFactory.CommodityDemandPlayerMarketSizeElseFlat());
+
+        addTerraformingProjectEffectFactory("CommoditySupplyFlat", new BoggledTerraformingProjectEffectFactory.CommoditySupplyFlat());
+        addTerraformingProjectEffectFactory("CommoditySupplyMarketSize", new BoggledTerraformingProjectEffectFactory.CommoditySupplyMarketSize());
+
+        addTerraformingProjectEffectFactory("CommodityDeficitToInactive", new BoggledTerraformingProjectEffectFactory.CommodityDeficitToInactive());
+        addTerraformingProjectEffectFactory("CommodityDeficitToProduction", new BoggledTerraformingProjectEffectFactory.CommodityDeficitToProduction());
+        addTerraformingProjectEffectFactory("CommodityDeficitModifierToUpkeep", new BoggledTerraformingProjectEffectFactory.CommodityDeficitModifierToUpkeep());
     }
 
     public static void addTerraformingProjectEffectFactory(String key, BoggledTerraformingProjectEffectFactory.TerraformingProjectEffectFactory value) {
@@ -675,8 +701,7 @@ public class boggledTools {
     }
 
     @NotNull
-    @Contract("_, _, _ -> new")
-    private static ArrayList<String> arrayListFromJSON(@NotNull JSONObject data, String key, String regex) throws JSONException {
+    private static List<String> arrayListFromJSON(@NotNull JSONObject data, String key, String regex) throws JSONException {
         String toSplit = data.getString(key);
         if (toSplit.isEmpty()) {
             return new ArrayList<>();
@@ -684,9 +709,25 @@ public class boggledTools {
         return new ArrayList<>(Arrays.asList(toSplit.split(regex)));
     }
 
-    public static BoggledProjectRequirementsAND requirementsFromRequirementsArray(JSONArray requirementArray, String type, String id, String requirementType) throws JSONException {
+    public static BoggledProjectRequirementsAND.RequirementAndThen requirementFromRequirementObject(JSONObject requirementObject, String sourceInfo, String id, String key) throws JSONException {
         Logger log = Global.getLogger(boggledTools.class);
+        String requirementsString = requirementObject.getString("requirement_id");
 
+        JSONArray andThenArray = requirementObject.optJSONArray("and_then");
+        BoggledProjectRequirementsAND andThen = null;
+        if (andThenArray != null) {
+            andThen = requirementsFromRequirementsArray(andThenArray, sourceInfo, id, key);
+        }
+
+        BoggledProjectRequirementsOR req = terraformingRequirements.get(requirementsString);
+        if (req == null) {
+            log.info(sourceInfo + " " + id + " has invalid " + key + " " + requirementsString);
+            return null;
+        }
+        return new BoggledProjectRequirementsAND.RequirementAndThen(req, andThen);
+    }
+
+    public static BoggledProjectRequirementsAND requirementsFromRequirementsArray(JSONArray requirementArray, String sourceInfo, String id, String key) throws JSONException {
         if (requirementArray == null) {
             return new BoggledProjectRequirementsAND();
         }
@@ -694,23 +735,54 @@ public class boggledTools {
         List<BoggledProjectRequirementsAND.RequirementAndThen> reqs = new ArrayList<>();
         for (int i = 0; i < requirementArray.length(); ++i) {
             JSONObject requirementObject = requirementArray.getJSONObject(i);
-            String requirementsString = requirementObject.getString("requirement_id");
 
-            JSONArray andThenArray = requirementObject.optJSONArray("and_then");
-            BoggledProjectRequirementsAND andThen = null;
-            if (andThenArray != null) {
-                andThen = requirementsFromRequirementsArray(andThenArray, type, id, requirementType);
-            }
+            BoggledProjectRequirementsAND.RequirementAndThen req = requirementFromRequirementObject(requirementObject, sourceInfo, id, key);
 
-            BoggledProjectRequirementsOR req = terraformingRequirements.get(requirementsString);
-            if (req == null) {
-                log.info(type + " " + id + " has invalid " + requirementType + " " + requirementsString);
-            } else {
-                reqs.add(new BoggledProjectRequirementsAND.RequirementAndThen(req, andThen));
+            if (req != null) {
+                reqs.add(req);
             }
         }
 
         return new BoggledProjectRequirementsAND(reqs);
+    }
+
+    public static BoggledProjectRequirementsAND requirementsFromJSON(JSONObject object, String sourceInfo, String id, String key) throws JSONException {
+        String requirementsArrayString = object.getString(key);
+        if (!requirementsArrayString.isEmpty()) {
+            JSONArray reqsArray = new JSONArray(requirementsArrayString);
+            return requirementsFromRequirementsArray(reqsArray, sourceInfo, id, key);
+        }
+        return null;
+    }
+
+    public static BoggledProjectRequirementsAND requirementsFromJSONNeverNull(JSONObject object, String sourceInfo, String id, String key) throws JSONException {
+        BoggledProjectRequirementsAND ret = requirementsFromJSON(object, sourceInfo, id, key);
+        if (ret == null) {
+            return new BoggledProjectRequirementsAND();
+        }
+        return ret;
+    }
+
+    public static List<BoggledTerraformingProject.RequirementsWithId> requirementsWithIdFromJSON(JSONObject object, String sourceInfo, String id, String key) throws JSONException {
+        Logger log = Global.getLogger(boggledTools.class);
+
+        List<BoggledTerraformingProject.RequirementsWithId> ret = new ArrayList<>();
+        String requirementsString = object.getString(key);
+        if (!requirementsString.isEmpty()) {
+            JSONArray requirementsWithIdArray = new JSONArray(requirementsString);
+            for (int i = 0; i < requirementsWithIdArray.length(); ++i) {
+                JSONObject requirementsObject = requirementsWithIdArray.getJSONObject(i);
+
+                String requirementsId = requirementsObject.getString("requirements_id");
+                BoggledProjectRequirementsAND req = requirementsFromJSON(requirementsObject, sourceInfo, requirementsId, "requirements");
+                if (req != null) {
+                    ret.add(new BoggledTerraformingProject.RequirementsWithId(requirementsId, req));
+                } else {
+                    log.warn(sourceInfo + " " + id + " has empty invalid requirement " + requirementsId);
+                }
+            }
+        }
+        return ret;
     }
 
     private static List<BoggledIndustryEffect.IndustryEffect> industryEffectsFromObject(JSONObject object, String key, String id, String type) throws JSONException {
@@ -737,10 +809,10 @@ public class boggledTools {
         return ret;
     }
 
-    private static Map<String, List<BoggledIndustryEffect.IndustryEffect>> aiCoreEffectsFromJsonObject(JSONObject object, String key, String id, String type) throws JSONException {
+    private static Map<String, List<BoggledTerraformingProjectEffect.TerraformingProjectEffect>> aiCoreEffectsFromJSON(JSONObject object, String key, String id) throws JSONException {
         Logger log = Global.getLogger(boggledTools.class);
 
-        Map<String, List<BoggledIndustryEffect.IndustryEffect>> ret = new HashMap<>();
+        Map<String, List<BoggledTerraformingProjectEffect.TerraformingProjectEffect>> ret = new HashMap<>();
         String aiCoreEffectsString = object.optString(key);
         if (aiCoreEffectsString.isEmpty()) {
             return ret;
@@ -749,7 +821,7 @@ public class boggledTools {
         JSONObject aiCoreEffects = new JSONObject(aiCoreEffectsString);
         for (Iterator<String> it = aiCoreEffects.keys(); it.hasNext(); ) {
             String aiCoreId = it.next();
-            List<BoggledIndustryEffect.IndustryEffect> aiCoreEffect = industryEffectsFromObject(aiCoreEffects, aiCoreId, id, type);
+            List<BoggledTerraformingProjectEffect.TerraformingProjectEffect> aiCoreEffect = projectEffectsFromJSON(aiCoreEffects, "AI Core Effects", id, aiCoreId);
             ret.put(aiCoreId, aiCoreEffect);
         }
 
@@ -810,7 +882,7 @@ public class boggledTools {
     public static void initialiseResourceProgressionsFromJSON(@NotNull JSONArray resourceProgressionsJSON) {
         Logger log = Global.getLogger(boggledTools.class);
 
-        HashMap<String, ArrayList<String>> resourceProgressions = new HashMap<>();
+        HashMap<String, List<String>> resourceProgressions = new HashMap<>();
 
         for (int i = 0; i < resourceProgressionsJSON.length(); ++i) {
             try {
@@ -821,7 +893,7 @@ public class boggledTools {
                     continue;
                 }
 
-                ArrayList<String> resource_progression = arrayListFromJSON(row, "resource_progression", boggledTools.csvOptionSeparator);
+                List<String> resource_progression = arrayListFromJSON(row, "resource_progression", boggledTools.csvOptionSeparator);
 
                 resourceProgressions.put(id, resource_progression);
             } catch (JSONException e) {
@@ -886,41 +958,12 @@ public class boggledTools {
                         projects.add(project);
                     }
                 }
-                
-                String[] commoditySupplyStrings = row.getString("commodity_supply").split(boggledTools.csvOptionSeparator);
-                List<BoggledCommoditySupplyDemand.CommoditySupply> commoditySupply = new ArrayList<>();
-                for (String commoditySupplyString : commoditySupplyStrings) {
-                    if (commoditySupplyString.isEmpty()) {
-                        continue;
-                    }
-                    BoggledCommoditySupplyDemand.CommoditySupply supply = boggledTools.commoditySupply.get(commoditySupplyString);
-                    if (supply != null) {
-                        commoditySupply.add(supply);
-                    } else {
-                        log.info("Industry " + id + " has invalid commodity supply " + commoditySupplyString);
-                    }
-                }
-
-                String[] commodityDemandStrings = row.getString("commodity_demand").split(boggledTools.csvOptionSeparator);
-                List<BoggledCommoditySupplyDemand.CommodityDemand> commodityDemand = new ArrayList<>();
-                for (String commodityDemandString : commodityDemandStrings) {
-                    if (commodityDemandString.isEmpty()) {
-                        continue;
-                    }
-                    BoggledCommoditySupplyDemand.CommodityDemand demand = boggledTools.commodityDemand.get(commodityDemandString);
-                    if (demand != null) {
-                        commodityDemand.add(demand);
-                    } else {
-                        log.info("Industry " + id + " has invalid commodity demand " + commodityDemandString);
-                    }
-                }
 
                 List<BoggledIndustryEffect.IndustryEffect> buildingFinishedEffects = industryEffectsFromObject(row, "building_finished_effects",id, "Industry");
-                List<BoggledIndustryEffect.IndustryEffect> industryEffects = industryEffectsFromObject(row, "industry_effects", id, "Industry");
-                List<BoggledIndustryEffect.IndustryEffect> improveEffects = industryEffectsFromObject(row, "improve_effects", id, "Industry");
+                List<BoggledTerraformingProjectEffect.TerraformingProjectEffect> improveEffects = projectEffectsFromJSON(row, "Industry Options", id, "improve_effects");
                 List<BoggledIndustryEffect.IndustryEffect> preBuildEffects = industryEffectsFromObject(row, "pre_build_effects", id, "Industry");
 
-                Map<String, List<BoggledIndustryEffect.IndustryEffect>> aiCoreEffects = aiCoreEffectsFromJsonObject(row, "ai_core_effects", id, "Industry");
+                Map<String, List<BoggledTerraformingProjectEffect.TerraformingProjectEffect>> aiCoreEffects = aiCoreEffectsFromJSON(row, "ai_core_effects", id);
 
                 List<BoggledProjectRequirementsAND> disruptRequirements = new ArrayList<>();
 
@@ -941,56 +984,12 @@ public class boggledTools {
                     }
                 }
 
-                industryProjects.put(id, new BoggledCommonIndustry(id, industry, projects, commoditySupply, commodityDemand, buildingFinishedEffects, industryEffects, improveEffects, aiCoreEffects, disruptRequirements, basePatherInterest, imageOverrides, preBuildEffects));
+                industryProjects.put(id, new BoggledCommonIndustry(id, industry, projects, buildingFinishedEffects, improveEffects, aiCoreEffects, disruptRequirements, basePatherInterest, imageOverrides, preBuildEffects));
             } catch (JSONException e) {
                 log.error("Error in industry options " + idForErrors + ": " + e);
             }
         }
         boggledTools.industryProjects = industryProjects;
-    }
-
-    public static void initialiseCommoditySupplyAndDemandFromJSON(@NotNull JSONArray commodityDemandsJSON) {
-        Logger log = Global.getLogger(boggledTools.class);
-
-        HashMap<String, BoggledCommoditySupplyDemand.CommodityDemand> commodityDemand = new HashMap<>();
-        HashMap<String, BoggledCommoditySupplyDemand.CommoditySupply> commoditySupply = new HashMap<>();
-
-        for (int i = 0; i < commodityDemandsJSON.length(); ++i) {
-            try {
-                JSONObject row = commodityDemandsJSON.getJSONObject(i);
-
-                String id = row.getString("id");
-                if (id == null || id.isEmpty()) {
-                    continue;
-                }
-
-                String supplyOrDemand = row.getString("supply_or_demand");
-
-                String[] enableSettings = row.getString("enable_settings").split(csvOptionSeparator);
-
-                String commodityDemandType = row.getString("commodity_quantity_type");
-                String commodityId = row.getString("commodity_id");
-                String data = row.getString("data");
-
-                switch (supplyOrDemand) {
-                    case "supply":
-                        BoggledCommoditySupplyDemand.CommoditySupply supply = getCommoditySupply(commodityDemandType, id, enableSettings, commodityId, data);
-
-                        commoditySupply.put(id, supply);
-                        break;
-                    case "demand":
-                        BoggledCommoditySupplyDemand.CommodityDemand demand = getCommodityDemand(commodityDemandType, id, enableSettings, commodityId, data);
-
-                        commodityDemand.put(id, demand);
-                        break;
-                }
-
-            } catch (JSONException e) {
-                log.error("Error in commodity supply and demand: " + e);
-            }
-        }
-        boggledTools.commodityDemand = commodityDemand;
-        boggledTools.commoditySupply = commoditySupply;
     }
 
     public static void initialiseIndustryEffectsFromJSON(@NotNull JSONArray industryEffectsJSON) {
@@ -1165,7 +1164,7 @@ public class boggledTools {
     public static void initialiseTerraformingProjectsFromJSON(@NotNull JSONArray terraformingProjectsJSON) {
         Logger log = Global.getLogger(boggledTools.class);
 
-        Map<String, BoggledTerraformingProject> terraformingProjects = new LinkedHashMap<>();
+        boggledTools.terraformingProjects = new LinkedHashMap<>();
         String idForErrors = "";
         for (int i = 0; i < terraformingProjectsJSON.length(); ++i) {
             try {
@@ -1185,130 +1184,134 @@ public class boggledTools {
                 String intelCompleteMessage = row.getString("intel_complete_message");
 
                 String incompleteMessage = row.getString("incomplete_message");
-                List<String> incompleteHighlights = arrayListFromJSON(row, "incomplete_message_highlights", boggledTools.csvOptionSeparator);
+                List<String> incompleteMessageHighlights = arrayListFromJSON(row, "incomplete_message_highlights", boggledTools.csvOptionSeparator);
+
+                BoggledProjectRequirementsAND requirements = requirementsFromJSONNeverNull(row, "Terraforming Projects", id, "requirements");
+
+                BoggledProjectRequirementsAND requirementsHidden = requirementsFromJSONNeverNull(row, "Terraforming Projects", id, "requirements_hidden");
+
+                List<BoggledTerraformingProject.RequirementsWithId> requirementsStall = requirementsWithIdFromJSON(row, "Terraforming Projects", id, "requirements_stall");
+
+                List<BoggledTerraformingProject.RequirementsWithId> requirementsReset = requirementsWithIdFromJSON(row, "Terraforming Projects", id, "requirements_reset");
 
                 int baseProjectDuration = row.optInt("base_project_duration", 0);
 
-                String projectDurationModifiersString = row.getString("dynamic_project_duration_modifiers");
-                List<BoggledTerraformingDurationModifier.TerraformingDurationModifier> terraformingDurationModifiers = new ArrayList<>();
-                if (!projectDurationModifiersString.isEmpty()) {
-                    JSONArray projectDurationModifiersArray = new JSONArray(projectDurationModifiersString);
-                    for (int j = 0; j < projectDurationModifiersArray.length(); ++j) {
-                        JSONObject projectDurationModifiersObject = projectDurationModifiersArray.getJSONObject(j);
-                        String durationModifiersKey = projectDurationModifiersObject.getString("modifier_id");
-                        BoggledTerraformingDurationModifier.TerraformingDurationModifier mod = durationModifiers.get(durationModifiersKey);
-                        if (mod == null) {
-                            log.info("Project " + id + " has invalid dynamic project duration modifier " + durationModifiersKey);
-                        } else {
-                            terraformingDurationModifiers.add(mod);
-                        }
-                    }
-                }
+                List<BoggledTerraformingDurationModifier.TerraformingDurationModifier> terraformingDurationModifiers = durationModifiersFromJSON(row, "Terraforming project", id, "dynamic_project_duration_modifiers");
 
-                List<BoggledProjectRequirementsAND> reqsStall = new ArrayList<>();
-                String requirementsStallArrayString = row.getString("requirements_stall");
-                if (!requirementsStallArrayString.isEmpty()) {
-                    JSONArray requirementsStallArray = new JSONArray(requirementsStallArrayString);
-                    for (int j = 0; j < requirementsStallArray.length(); ++j) {
-                        JSONArray reqArray = requirementsStallArray.getJSONArray(j);
-                        BoggledProjectRequirementsAND reqsAnd = requirementsFromRequirementsArray(reqArray, "Terraforming Projects", id, "requirements_stall");
-                        reqsStall.add(reqsAnd);
-                    }
-                }
+                List<BoggledTerraformingProjectEffect.TerraformingProjectEffect> projectCompleteEffects = projectEffectsFromJSON(row, "Terraforming Projects", id, "project_complete_effects");
 
-                List<BoggledProjectRequirementsAND> reqsReset = new ArrayList<>();
-                String requirementsResetArrayString = row.getString("requirements_reset");
-                if (!requirementsResetArrayString.isEmpty()) {
-                    JSONArray requirementsResetArray = new JSONArray(requirementsResetArrayString);
-                    for (int j = 0; j < requirementsResetArray.length(); ++j) {
-                        JSONArray reqArray = requirementsResetArray.getJSONArray(j);
-                        BoggledProjectRequirementsAND reqsAnd = requirementsFromRequirementsArray(reqArray, "Terraforming Projects", id, "requirements_reset");
-                        reqsReset.add(reqsAnd);
-                    }
-                }
+                List<BoggledTerraformingProjectEffect.TerraformingProjectEffect> projectOngoingEffects = projectEffectsFromJSON(row, "Terraforming Projects", id, "project_ongoing_effects");
 
-                List<BoggledTerraformingProjectEffect.ProjectEffectWithRequirement> terraformingProjectEffects = new ArrayList<>();
-                String projectEffectsString = row.getString("project_effects");
-                if (!projectEffectsString.isEmpty()) {
-                    JSONArray projectEffectsArray = new JSONArray(projectEffectsString);
-                    for (int j = 0; j < projectEffectsArray.length(); ++j) {
-                        JSONObject projectEffect = projectEffectsArray.getJSONObject(j);
-                        JSONArray reqArray = projectEffect.optJSONArray("requirement_ids");
-                        BoggledProjectRequirementsAND req = requirementsFromRequirementsArray(reqArray, "Terraforming Projects", id, "project_effects");;
-                        String effectId = projectEffect.getString("effect_id");
-                        BoggledTerraformingProjectEffect.TerraformingProjectEffect effect = boggledTools.terraformingProjectEffects.get(effectId);
-                        if (effect != null) {
-                            terraformingProjectEffects.add(new BoggledTerraformingProjectEffect.ProjectEffectWithRequirement(effect, req));
-                        } else {
-                            log.info("Project " + id + " has invalid project effect " + effectId);
-                        }
-                    }
-                }
-
-                BoggledProjectRequirementsAND reqs;
-                String requirementsArrayString = row.getString("requirements");
-                if (!requirementsArrayString.isEmpty()) {
-                    JSONArray reqsArray = new JSONArray(requirementsArrayString);
-                    reqs = requirementsFromRequirementsArray(reqsArray, "Terraforming Projects", id, "requirements");
-                } else {
-                    reqs = new BoggledProjectRequirementsAND();
-                }
-
-                BoggledProjectRequirementsAND reqsHidden;
-                String requirementsHiddenArrayString = row.getString("requirements_hidden");
-                if (!requirementsHiddenArrayString.isEmpty()) {
-                    JSONArray reqsHiddenArray = new JSONArray(requirementsHiddenArrayString);
-                    reqsHidden = requirementsFromRequirementsArray(reqsHiddenArray, "Terraforming Projects", id, "requirements_hidden");
-                } else {
-                    reqsHidden = new BoggledProjectRequirementsAND();
-                }
-
-                BoggledTerraformingProject terraformingProj = new BoggledTerraformingProject(id, enableSettings, projectType, tooltip, intelCompleteMessage, incompleteMessage, incompleteHighlights, reqs, reqsHidden, baseProjectDuration, terraformingDurationModifiers, reqsStall, reqsReset, terraformingProjectEffects);
-                terraformingProjects.put(id, terraformingProj);
-
+                BoggledTerraformingProject terraformingProj = new BoggledTerraformingProject(id, enableSettings, projectType, tooltip, intelCompleteMessage, incompleteMessage, incompleteMessageHighlights, requirements, requirementsHidden, requirementsStall, requirementsReset, baseProjectDuration, terraformingDurationModifiers, projectCompleteEffects, projectOngoingEffects);
+                boggledTools.terraformingProjects.put(id, terraformingProj);
             } catch (JSONException e) {
                 log.error("Error in terraforming projects " + idForErrors + ": " + e);
             }
         }
-        boggledTools.terraformingProjects = terraformingProjects;
     }
 
-    public static void initialiseTerraformingRequirementsOverrides(@NotNull JSONArray terraformingRequirementsOverrideJSON) {
+    private static List<BoggledTerraformingDurationModifier.TerraformingDurationModifier> durationModifiersFromJSON(JSONObject object, String sourceInfo, String id, String key) throws JSONException {
         Logger log = Global.getLogger(boggledTools.class);
 
-        try {
-            for (int i = 0; i < terraformingRequirementsOverrideJSON.length(); ++i) {
-                JSONObject row = terraformingRequirementsOverrideJSON.getJSONObject(i);
-
-                String id = row.getString("id");
-                if (id == null || id.isEmpty()) {
-                    continue;
+        String projectDurationModifiersString = object.optString(key);
+        List<BoggledTerraformingDurationModifier.TerraformingDurationModifier> ret = new ArrayList<>();
+        if (!projectDurationModifiersString.isEmpty()) {
+            JSONArray projectDurationModifiersArray = new JSONArray(projectDurationModifiersString);
+            for (int j = 0; j < projectDurationModifiersArray.length(); ++j) {
+                JSONObject projectDurationModifiersObject = projectDurationModifiersArray.getJSONObject(j);
+                String durationModifiersKey = projectDurationModifiersObject.getString("modifier_id");
+                BoggledTerraformingDurationModifier.TerraformingDurationModifier mod = durationModifiers.get(durationModifiersKey);
+                if (mod == null) {
+                    log.info(sourceInfo + " " + id + " has invalid dynamic project duration modifier " + durationModifiersKey);
+                } else {
+                    ret.add(mod);
                 }
-
-                String requirementsId = row.getString("requirements_id");
-                BoggledProjectRequirementsOR reqs = terraformingRequirements.get(requirementsId);
-                if (reqs == null) {
-                    log.error("Mod " + id + " terraforming requirements " + requirementsId + " not found, ignoring");
-                    continue;
-                }
-
-                String[] requirementAddedStrings = row.getString("requirement_added").split(boggledTools.csvOptionSeparator);
-                String[] requirementRemovedStrings = row.getString("requirement_removed").split(boggledTools.csvOptionSeparator);
-
-                ArrayList<BoggledTerraformingRequirement.TerraformingRequirement> requirementAdded = new ArrayList<>();
-                for (String requirementAddedString : requirementAddedStrings) {
-                    BoggledTerraformingRequirement.TerraformingRequirement req = terraformingRequirement.get(requirementAddedString);
-                    if (req != null) {
-                        requirementAdded.add(req);
-                    }
-                }
-
-                reqs.addRemoveProjectRequirement(requirementAdded, requirementRemovedStrings);
-
             }
-        } catch (JSONException e) {
-            log.error("Error in terraforming requirements overrides: " + e);
         }
+
+        return ret;
+    }
+
+    private static List<BoggledTerraformingProjectEffect.TerraformingProjectEffect> projectEffectsFromJSON(JSONObject object, String sourceInfo, String id, String key) throws JSONException {
+        Logger log = Global.getLogger(boggledTools.class);
+
+        String projectEffectsString = object.optString(key);
+        List<BoggledTerraformingProjectEffect.TerraformingProjectEffect> ret = new ArrayList<>();
+        if (!projectEffectsString.isEmpty()) {
+            JSONArray projectEffectsArray = new JSONArray(projectEffectsString);
+            for (int i = 0; i < projectEffectsArray.length(); ++i) {
+                JSONObject projectEffect = projectEffectsArray.getJSONObject(i);
+                String effectId = projectEffect.getString("effect_id");
+                BoggledTerraformingProjectEffect.TerraformingProjectEffect effect = boggledTools.terraformingProjectEffects.get(effectId);
+                if (effect != null) {
+                    ret.add(effect);
+                } else {
+                    log.info(sourceInfo + " " + id + " has invalid project effect " + effectId);
+                }
+            }
+        }
+
+        return ret;
+    }
+
+    private static List<BoggledProjectRequirementsAND.RequirementAdd> requirementAddFromJSON(JSONObject object, String sourceInfo, String id, String requirementType) throws JSONException {
+        List<BoggledProjectRequirementsAND.RequirementAdd> ret = new ArrayList<>();
+        String requirementAddString = object.optString(requirementType);
+        if (!requirementAddString.isEmpty()) {
+            JSONArray requirementsAddedArray = new JSONArray(requirementAddString);
+            for (int i = 0; i < requirementsAddedArray.length(); ++i) {
+                JSONObject requirementObject = requirementsAddedArray.getJSONObject(i);
+                BoggledProjectRequirementsAND.RequirementAndThen req = requirementFromRequirementObject(requirementObject, sourceInfo, id, requirementType);
+                String parentId = requirementObject.optString("parent_id");
+                if (req != null) {
+                    ret.add(new BoggledProjectRequirementsAND.RequirementAdd(req, parentId));
+                }
+            }
+        }
+        return ret;
+    }
+
+    private static List<BoggledTerraformingProject.RequirementAddInfo> keyedRequirementAddFromJSON(JSONObject object, String sourceInfo, String id, String baseKey, String key) throws JSONException {
+        List<BoggledTerraformingProject.RequirementAddInfo> ret = new ArrayList<>();
+        String requirementAddString = object.optString(baseKey);
+        if (!requirementAddString.isEmpty()) {
+            JSONArray requirementAddArray = new JSONArray(requirementAddString);
+            for (int i = 0; i < requirementAddArray.length(); ++i) {
+                JSONObject requirementAddObject = requirementAddArray.getJSONObject(i);
+                String containingId = requirementAddObject.getString("containing_id");
+                List<BoggledProjectRequirementsAND.RequirementAdd> requirementsAdded = requirementAddFromJSON(object, sourceInfo, id, key);
+                ret.add(new BoggledTerraformingProject.RequirementAddInfo(containingId, requirementsAdded));
+            }
+        }
+
+        return ret;
+    }
+
+    private static List<String> stringListFromJSON(JSONObject object, String key) throws JSONException {
+        List<String> ret = new ArrayList<>();
+        String jsonString = object.optString(key);
+        if (!jsonString.isEmpty()) {
+            JSONArray jsonStringArray = new JSONArray(jsonString);
+            for (int i = 0; i < jsonStringArray.length(); ++i) {
+                ret.add(jsonStringArray.getString(i));
+            }
+        }
+        return ret;
+    }
+
+    private static List<BoggledTerraformingProject.RequirementRemoveInfo> keyedRequirementRemoveFromJSON(JSONObject object, String baseKey) throws JSONException {
+        List<BoggledTerraformingProject.RequirementRemoveInfo> ret = new ArrayList<>();
+        String requirementRemoveString = object.optString(baseKey);
+        if (!requirementRemoveString.isEmpty()) {
+            JSONArray requirementRemoveArray = new JSONArray(requirementRemoveString);
+            for (int i = 0; i < requirementRemoveArray.length(); ++i) {
+                JSONObject requirementRemoveObject = requirementRemoveArray.getJSONObject(i);
+                String containingId = requirementRemoveObject.getString("containing_id");
+                List<String> requirementsRemoved = stringListFromJSON(requirementRemoveObject, "requirements_removed");
+                ret.add(new BoggledTerraformingProject.RequirementRemoveInfo(containingId, requirementsRemoved));
+            }
+        }
+        return ret;
     }
 
     public static void initialiseTerraformingProjectOverrides(@NotNull JSONArray terraformingProjectsOverrideJSON) {
@@ -1330,35 +1333,46 @@ public class boggledTools {
                     continue;
                 }
 
-                String tooltipOverride = row.getString("tooltip_override");
-                String tooltipAddition = row.getString("tooltip_addition");
+                List<BoggledProjectRequirementsAND.RequirementAdd> reqsAdded = requirementAddFromJSON(row, "Terraforming Project Mods", id, "requirements_added");
+                List<String> reqsRemoved = stringListFromJSON(row, "requirements_removed");
 
-                String[] requirementsAddedStrings = row.getString("requirements_added").split(boggledTools.csvOptionSeparator);
-                String[] requirementsRemovedStrings = row.getString("requirements_removed").split(boggledTools.csvOptionSeparator);
-                String planetTypeChangeOverride = row.getString("planet_type_change_override");
-                ArrayList<String> conditionsAdded = arrayListFromJSON(row, "conditions_added", boggledTools.csvOptionSeparator);
-                ArrayList<String> conditionsRemoved = arrayListFromJSON(row, "conditions_removed", boggledTools.csvOptionSeparator);
-                ArrayList<String> conditionsOption = arrayListFromJSON(row, "conditions_option", boggledTools.csvOptionSeparator);
-                String optionName = row.getString("option_name");
-                ArrayList<String> conditionProgressAdded = arrayListFromJSON(row, "condition_progress_added", boggledTools.csvOptionSeparator);
-                ArrayList<String> conditionProgressRemoved = arrayListFromJSON(row, "condition_progress_removed", boggledTools.csvOptionSeparator);
+                List<BoggledProjectRequirementsAND.RequirementAdd> reqsHiddenAdded = requirementAddFromJSON(row, "Terraforming Project Mods", id, "requirements_hidden_added");
+                List<String> reqsHiddenRemoved = stringListFromJSON(row, "requirements_hidden_added");
 
-                ArrayList<BoggledProjectRequirementsOR> requirementsAdded = new ArrayList<>();
-                for (String requirementAddedString : requirementsAddedStrings) {
-                    BoggledProjectRequirementsOR req = terraformingRequirements.get(requirementAddedString);
-                    if (req != null) {
-                        requirementsAdded.add(terraformingRequirements.get(requirementAddedString));
-                    }
+                List<BoggledTerraformingProject.RequirementAddInfo> reqsStallAdded = keyedRequirementAddFromJSON(row, "Terraforming Project Mods", id, "requirements_reset_added", "requirements_added");
+                List<BoggledTerraformingProject.RequirementRemoveInfo> reqsStallRemoved = keyedRequirementRemoveFromJSON(row, "requirements_stall_removed");
+
+                List<BoggledTerraformingProject.RequirementAddInfo> reqsResetAdded = keyedRequirementAddFromJSON(row, "Terraforming Project Mods", id, "requirements_stall_added", "requirements_added");
+                List<BoggledTerraformingProject.RequirementRemoveInfo> reqsResetRemoved = keyedRequirementRemoveFromJSON(row, "requirements_reset_removed");
+
+                Integer baseProjectDurationOverride = null;
+                if (row.has("base_project_duration_override")) {
+                    baseProjectDurationOverride = row.getInt("base_project_duration_override");
                 }
+                List<BoggledTerraformingDurationModifier.TerraformingDurationModifier> durationModifiersAdded = durationModifiersFromJSON(row, "Terraforming Project Mods", id, "dynamic_project_duration_modifiers_added");
+                List<String> durationModifiersRemoved = stringListFromJSON(row, "dynamic_project_duration_modifiers_removed");
 
-//                proj.overrideAddTooltip(tooltipOverride, tooltipAddition);
-//                proj.addRemoveProjectRequirements(requirementsAdded, requirementsRemovedStrings);
-//                proj.overridePlanetTypeChange(planetTypeChangeOverride);
-//                proj.addRemoveConditionsAddedRemoved(conditionsAdded, conditionsRemoved);
-//                proj.addRemoveConditionProgress(conditionProgressAdded, conditionProgressRemoved);
+                List<BoggledTerraformingProjectEffect.TerraformingProjectEffect> projectEffectsAdded = projectEffectsFromJSON(row, "Terraforming Project Mods", id, "project_complete_effects_added");
+                List<String> projectEffectsRemoved = stringListFromJSON(row, "project_complete_effects_removed");
+
+                proj.addRemoveProjectRequirements(reqsAdded, reqsRemoved, reqsHiddenAdded, reqsHiddenRemoved, reqsStallAdded, reqsStallRemoved, reqsResetAdded, reqsResetRemoved);
+                proj.addRemoveDurationModifiersAndDuration(baseProjectDurationOverride, durationModifiersAdded, durationModifiersRemoved);
+                proj.addRemoveProjectEffects(projectEffectsAdded, projectEffectsRemoved);
             }
         } catch (JSONException e) {
             log.error("Error in terraforming projects overrides: " + e);
+        }
+    }
+
+    public static void initialiseIndustryOptionOverrides(@NotNull JSONArray industryOptionOverridesJSON) {
+        Logger log = Global.getLogger(boggledTools.class);
+
+        for (int i = 0; i < industryOptionOverridesJSON.length(); ++i) {
+            try {
+                JSONObject row = industryOptionOverridesJSON.getJSONObject(i);
+            } catch (JSONException e) {
+                log.error("Error in industry options overrides: " + e);
+            }
         }
     }
 
@@ -1380,19 +1394,16 @@ public class boggledTools {
             Global.getLogger(boggledTools.class).error("Ability " + abilityId + " has no associated project");
             return null;
         }
-        return new BoggledBaseAbility(project.getProjectId(), project.getEnableSettings(), project);
+        return new BoggledBaseAbility(project.getId(), project.getEnableSettings(), project);
     }
 
     public static Map<Pair<String, String>, String> getResourceLimits() { return resourceLimits; }
-    public static Map<String, ArrayList<String>> getResourceProgressions() { return resourceProgressions; }
+    public static Map<String, List<String>> getResourceProgressions() { return resourceProgressions; }
     public static Map<String, BoggledTerraformingRequirement.TerraformingRequirement> getTerraformingRequirements() { return terraformingRequirement; }
 
     private static Map<String, BoggledTerraformingRequirement.TerraformingRequirement> terraformingRequirement;
     private static Map<String, BoggledProjectRequirementsOR> terraformingRequirements;
     private static Map<String, BoggledTerraformingDurationModifier.TerraformingDurationModifier> durationModifiers;
-
-    private static Map<String, BoggledCommoditySupplyDemand.CommoditySupply> commoditySupply;
-    private static Map<String, BoggledCommoditySupplyDemand.CommodityDemand> commodityDemand;
 
     private static Map<String, BoggledIndustryEffect.IndustryEffect> industryEffects;
 
@@ -1400,7 +1411,7 @@ public class boggledTools {
     private static Map<String, BoggledCommonIndustry> industryProjects;
     private static Map<String, BoggledTerraformingProject> terraformingProjects;
 
-    private static Map<String, ArrayList<String>> resourceProgressions;
+    private static Map<String, List<String>> resourceProgressions;
     private static Map<Pair<String, String>, String> resourceLimits;
 
     private static Map<String, PlanetType> planetTypesMap;
@@ -2547,7 +2558,7 @@ public class boggledTools {
             return noneProjectId;
         }
 
-        return currentProject.getProjectTooltip(boggledTools.getTokenReplacements(ctx));
+        return currentProject.getProjectTooltip();
     }
 
     public static int getLastDayCheckedForConstruction(SectorEntityToken stationEntity) {

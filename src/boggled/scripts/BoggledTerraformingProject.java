@@ -5,10 +5,7 @@ import com.fs.starfarer.api.campaign.CampaignClockAPI;
 import boggled.campaign.econ.boggledTools;
 import com.fs.starfarer.api.combat.MutableStat;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class BoggledTerraformingProject {
     public static class ProjectInstance {
@@ -28,7 +25,7 @@ public class BoggledTerraformingProject {
 
         public Object readResolve() {
             Global.getLogger(this.getClass()).info("Doing readResolve for ProjectInstance");
-            this.project = boggledTools.getProject(project.getProjectId());
+            this.project = boggledTools.getProject(project.getId());
             return this;
         }
 
@@ -62,12 +59,55 @@ public class BoggledTerraformingProject {
                 return false;
             }
 
-            project.finishProject(ctx);
+            project.finishProject(ctx, project.getProjectTooltip());
             return true;
         }
     }
 
-    private final String projectId;
+    public static class RequirementsWithId {
+        String id;
+        BoggledProjectRequirementsAND requirements;
+
+        public RequirementsWithId(String id, BoggledProjectRequirementsAND requirements) {
+            this.id = id;
+            this.requirements = requirements;
+        }
+
+        @Override
+        public boolean equals(Object object) {
+            if (this == object) return true;
+            if (object == null || getClass() != object.getClass()) return false;
+            RequirementsWithId that = (RequirementsWithId) object;
+            return Objects.equals(id, that.id);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(id);
+        }
+    }
+
+    public static class RequirementAddInfo {
+        String containingId;
+        List<BoggledProjectRequirementsAND.RequirementAdd> requirements;
+
+        public RequirementAddInfo(String containingId, List<BoggledProjectRequirementsAND.RequirementAdd> requirements) {
+            this.containingId = containingId;
+            this.requirements = requirements;
+        }
+    }
+
+    public static class RequirementRemoveInfo {
+        String containingId;
+        List<String> requirementIds;
+
+        public RequirementRemoveInfo(String containingId, List<String> requirementIds) {
+            this.containingId = containingId;
+            this.requirementIds = requirementIds;
+        }
+    }
+
+    private final String id;
     private final String[] enableSettings;
     private final String projectType;
     private final String projectTooltip;
@@ -81,19 +121,20 @@ public class BoggledTerraformingProject {
     // But then all the TerraformingRequirements must be fulfilled for the project to be allowed
     // two is an optional description override
 
-    private final BoggledProjectRequirementsAND projectRequirements;
-    private final BoggledProjectRequirementsAND projectRequirementsHidden;
+    private final BoggledProjectRequirementsAND requirements;
+    private final BoggledProjectRequirementsAND requirementsHidden;
 
-    private final int baseProjectDuration;
+    private final List<RequirementsWithId> requirementsStall;
+    private final List<RequirementsWithId> requirementsReset;
+
+    private int baseProjectDuration;
     private final List<BoggledTerraformingDurationModifier.TerraformingDurationModifier> durationModifiers;
 
-    private final List<BoggledProjectRequirementsAND> requirementsStall;
-    private final List<BoggledProjectRequirementsAND> requirementsReset;
+    private final List<BoggledTerraformingProjectEffect.TerraformingProjectEffect> projectCompleteEffects;
+    private final List<BoggledTerraformingProjectEffect.TerraformingProjectEffect> projectOngoingEffects;
 
-    private final List<BoggledTerraformingProjectEffect.ProjectEffectWithRequirement> projectEffects;
-
-    public BoggledTerraformingProject(String projectId, String[] enableSettings, String projectType, String projectTooltip, String intelCompleteMessage, String incompleteMessage, List<String> incompleteMessageHighlights, BoggledProjectRequirementsAND projectRequirements, BoggledProjectRequirementsAND projectRequirementsHidden, int baseProjectDuration, List<BoggledTerraformingDurationModifier.TerraformingDurationModifier> durationModifiers, List<BoggledProjectRequirementsAND> requirementsStall, List<BoggledProjectRequirementsAND> requirementsReset, List<BoggledTerraformingProjectEffect.ProjectEffectWithRequirement> projectEffects) {
-        this.projectId = projectId;
+    public BoggledTerraformingProject(String id, String[] enableSettings, String projectType, String projectTooltip, String intelCompleteMessage, String incompleteMessage, List<String> incompleteMessageHighlights, BoggledProjectRequirementsAND requirements, BoggledProjectRequirementsAND requirementsHidden, List<RequirementsWithId> requirementsStall, List<RequirementsWithId> requirementsReset, int baseProjectDuration, List<BoggledTerraformingDurationModifier.TerraformingDurationModifier> durationModifiers, List<BoggledTerraformingProjectEffect.TerraformingProjectEffect> projectCompleteEffects, List<BoggledTerraformingProjectEffect.TerraformingProjectEffect> projectOngoingEffects) {
+        this.id = id;
         this.enableSettings = enableSettings;
         this.projectType = projectType;
         this.projectTooltip = projectTooltip;
@@ -102,19 +143,20 @@ public class BoggledTerraformingProject {
         this.incompleteMessage = incompleteMessage;
         this.incompleteMessageHighlights = incompleteMessageHighlights;
 
-        this.projectRequirements = projectRequirements;
-        this.projectRequirementsHidden = projectRequirementsHidden;
-
-        this.baseProjectDuration = baseProjectDuration;
-        this.durationModifiers = durationModifiers;
+        this.requirements = requirements;
+        this.requirementsHidden = requirementsHidden;
 
         this.requirementsStall = requirementsStall;
         this.requirementsReset = requirementsReset;
 
-        this.projectEffects = projectEffects;
+        this.baseProjectDuration = baseProjectDuration;
+        this.durationModifiers = durationModifiers;
+
+        this.projectCompleteEffects = projectCompleteEffects;
+        this.projectOngoingEffects = projectOngoingEffects;
     }
 
-    public String getProjectId() { return projectId; }
+    public String getId() { return id; }
 
     public String[] getEnableSettings() { return enableSettings; }
 
@@ -122,18 +164,25 @@ public class BoggledTerraformingProject {
 
     public String getProjectType() { return projectType; }
 
-    public String getProjectTooltip(Map<String, String> tokenReplacements) {
-        for (BoggledTerraformingProjectEffect.ProjectEffectWithRequirement projectEffect : projectEffects) {
-            projectEffect.effect.addTokenReplacements(tokenReplacements);
-        }
-        return boggledTools.doTokenReplacement(projectTooltip, tokenReplacements);
+    public String getProjectTooltip() {
+        return projectTooltip;
     }
 
     public Map<String, BoggledTerraformingProjectEffect.EffectTooltipPara> getEffectTooltipInfo(BoggledTerraformingRequirement.RequirementContext ctx) {
+        BoggledTerraformingProjectEffect.TerraformingProjectEffect.DescriptionMode descMode = BoggledTerraformingProjectEffect.TerraformingProjectEffect.DescriptionMode.TO_APPLY;
         ctx = new BoggledTerraformingRequirement.RequirementContext(ctx, this);
         Map<String, BoggledTerraformingProjectEffect.EffectTooltipPara> ret = new LinkedHashMap<>();
-        for (BoggledTerraformingProjectEffect.ProjectEffectWithRequirement effect : projectEffects) {
-            effect.effect.addEffectTooltipInfo(ctx, ret);
+        for (BoggledTerraformingProjectEffect.TerraformingProjectEffect effect : projectCompleteEffects) {
+            effect.addEffectTooltipInfo(ctx, ret, descMode, BoggledTerraformingProjectEffect.TerraformingProjectEffect.DescriptionSource.GENERIC);
+        }
+        return ret;
+    }
+
+    public Map<String, BoggledTerraformingProjectEffect.EffectTooltipPara> getOngoingEffectTooltipInfo(BoggledTerraformingRequirement.RequirementContext ctx, BoggledTerraformingProjectEffect.TerraformingProjectEffect.DescriptionMode mode, BoggledTerraformingProjectEffect.TerraformingProjectEffect.DescriptionSource source) {
+        ctx = new BoggledTerraformingRequirement.RequirementContext(ctx, this);
+        Map<String, BoggledTerraformingProjectEffect.EffectTooltipPara> ret = new LinkedHashMap<>();
+        for (BoggledTerraformingProjectEffect.TerraformingProjectEffect effect : projectOngoingEffects) {
+            effect.addEffectTooltipInfo(ctx, ret, mode, source);
         }
         return ret;
     }
@@ -150,7 +199,7 @@ public class BoggledTerraformingProject {
         return replaced.toArray(new String[0]);
     }
 
-    public BoggledProjectRequirementsAND getProjectRequirements() { return projectRequirements; }
+    public BoggledProjectRequirementsAND getRequirements() { return requirements; }
 
     public int getBaseProjectDuration() { return baseProjectDuration; }
     public int getModifiedProjectDuration(BoggledTerraformingRequirement.RequirementContext ctx) {
@@ -162,25 +211,25 @@ public class BoggledTerraformingProject {
     }
 
     public boolean requirementsHiddenMet(BoggledTerraformingRequirement.RequirementContext ctx) {
-        if (projectRequirementsHidden == null) {
-            Global.getLogger(this.getClass()).error("Terraforming hidden project requirements is null for project " + getProjectId() + " and context " + ctx.getName());
+        if (requirementsHidden == null) {
+            Global.getLogger(this.getClass()).error("Terraforming hidden project requirements is null for project " + getId() + " and context " + ctx.getName());
             return false;
         }
 
-        return projectRequirementsHidden.requirementsMet(ctx);
+        return requirementsHidden.requirementsMet(ctx);
     }
 
     public boolean requirementsMet(BoggledTerraformingRequirement.RequirementContext ctx) {
-        if (projectRequirements == null) {
-            Global.getLogger(this.getClass()).error("Terraforming project requirements is null for project " + getProjectId() + " and context " + ctx.getName());
+        if (requirements == null) {
+            Global.getLogger(this.getClass()).error("Terraforming project requirements is null for project " + getId() + " and context " + ctx.getName());
             return false;
         }
-        return requirementsHiddenMet(ctx) && projectRequirements.requirementsMet(ctx);
+        return requirementsHiddenMet(ctx) && requirements.requirementsMet(ctx);
     }
 
     public boolean requirementsStall(BoggledTerraformingRequirement.RequirementContext ctx) {
-        for (BoggledProjectRequirementsAND requirementStall : requirementsStall) {
-            if (requirementStall.requirementsMet(ctx)) {
+        for (RequirementsWithId requirementStall : requirementsStall) {
+            if (requirementStall.requirements.requirementsMet(ctx)) {
                 return true;
             }
         }
@@ -188,21 +237,21 @@ public class BoggledTerraformingProject {
     }
 
     public boolean requirementsReset(BoggledTerraformingRequirement.RequirementContext ctx) {
-        for (BoggledProjectRequirementsAND requirementReset : requirementsReset) {
-            if (requirementReset.requirementsMet(ctx)) {
+        for (RequirementsWithId requirementReset : requirementsReset) {
+            if (requirementReset.requirements.requirementsMet(ctx)) {
                 return true;
             }
         }
         return false;
     }
 
-    public void finishProject(BoggledTerraformingRequirement.RequirementContext ctx) {
+    public void finishProject(BoggledTerraformingRequirement.RequirementContext ctx, String effectSource) {
         ctx = new BoggledTerraformingRequirement.RequirementContext(ctx, this);
-        for (BoggledTerraformingProjectEffect.ProjectEffectWithRequirement effect : projectEffects) {
-            effect.effect.applyProjectEffect(ctx);
+        for (BoggledTerraformingProjectEffect.TerraformingProjectEffect effect : projectCompleteEffects) {
+            effect.applyProjectEffect(ctx, effectSource);
         }
 
-        String intelTooltip = getProjectTooltip(boggledTools.getTokenReplacements(ctx));
+        String intelTooltip = getProjectTooltip();
         String intelCompletedMessage = getIntelCompleteMessage();
 
         boggledTools.surveyAll(ctx.getPlanetMarket());
@@ -212,26 +261,109 @@ public class BoggledTerraformingProject {
         boggledTools.showProjectCompleteIntelMessage(intelTooltip, intelCompletedMessage, ctx.getPlanetMarket());
     }
 
-//    public void overrideAddTooltip(String tooltipOverride, String tooltipAddition) {
-//        if (!tooltipOverride.isEmpty()) {
-//            projectTooltip = tooltipOverride;
-//        }
-//        projectTooltip += tooltipAddition;
-//    }
+    public void applyOngoingEffects(BoggledTerraformingRequirement.RequirementContext ctx, String effectSource) {
+        for (BoggledTerraformingProjectEffect.TerraformingProjectEffect effect : projectOngoingEffects) {
+            effect.applyProjectEffect(ctx, effectSource);
+        }
+    }
 
-//    public void addRemoveProjectRequirements(ArrayList<BoggledProjectRequirementsAND.RequirementWithTooltipOverride> add, String[] remove) {
-//        Logger log = Global.getLogger(BoggledTerraformingProject.class);
-//        for (String r : remove) {
-//            for (int i = 0; i < projectRequirements.size(); ++i) {
-//                BoggledProjectRequirementsOR projectReqs = projectRequirements.get(i).requirements;
-//                if (r.equals(projectReqs.getRequirementId())) {
-//                    log.info("Project " + projectId + " removing project requirement " + r);
-//                    projectRequirements.remove(i);
-//                    break;
-//                }
-//            }
-//        }
-//
-//        projectRequirements.addAll(add);
-//    }
+    public void unapplyOngoingEffects(BoggledTerraformingRequirement.RequirementContext ctx) {
+        for (BoggledTerraformingProjectEffect.TerraformingProjectEffect effect : projectOngoingEffects) {
+            effect.unapplyProjectEffect(ctx);
+        }
+    }
+
+    private void addProjectRequirements(BoggledProjectRequirementsAND reqToModify, List<BoggledProjectRequirementsAND.RequirementAdd> reqsToAdd) {
+        for (BoggledProjectRequirementsAND.RequirementAdd reqToAdd : reqsToAdd) {
+            reqToModify.addRequirement(reqToAdd);
+        }
+    }
+
+    private void addProjectRequirements(List<RequirementsWithId> requirements, List<RequirementAddInfo> requirementsToAdd) {
+        for (RequirementAddInfo reqAddInfo : requirementsToAdd) {
+            BoggledProjectRequirementsAND req = null;
+            for (RequirementsWithId reqWithId : requirements) {
+                if (reqWithId.id.equals(reqAddInfo.containingId)) {
+                    req = reqWithId.requirements;
+                }
+            }
+            if (req == null) {
+                continue;
+            }
+            addProjectRequirements(req, reqAddInfo.requirements);
+        }
+    }
+
+    private void removeProjectRequirements(BoggledProjectRequirementsAND reqToModify, List<String> reqsToRemove) {
+        for (String reqToRemove : reqsToRemove) {
+            reqToModify.removeRequirement(reqToRemove);
+        }
+    }
+
+    private void removeProjectRequirements(List<RequirementsWithId> requirements, List<RequirementRemoveInfo> requirementRemoveInfo) {
+        for (RequirementRemoveInfo reqRemoveInfo : requirementRemoveInfo) {
+            BoggledProjectRequirementsAND req = null;
+            for (RequirementsWithId reqWithId : requirements) {
+                if (reqWithId.id.equals(reqRemoveInfo.containingId)) {
+                    req = reqWithId.requirements;
+                }
+            }
+            if (req == null) {
+                continue;
+            }
+            removeProjectRequirements(req, reqRemoveInfo.requirementIds);
+        }
+    }
+
+    public void addRemoveProjectRequirements(List<BoggledProjectRequirementsAND.RequirementAdd> reqsAdded, List<String> reqsRemove, List<BoggledProjectRequirementsAND.RequirementAdd> reqsHiddenAdded, List<String> reqsHiddenRemove, List<RequirementAddInfo> reqsStallAdded, List<RequirementRemoveInfo> reqsStallRemove, List<RequirementAddInfo> reqsResetAdded, List<RequirementRemoveInfo> reqsResetRemove) {
+        addProjectRequirements(requirements, reqsAdded);
+        removeProjectRequirements(requirements, reqsRemove);
+
+        addProjectRequirements(requirementsHidden, reqsHiddenAdded);
+        removeProjectRequirements(requirementsHidden, reqsHiddenRemove);
+
+        addProjectRequirements(requirementsStall, reqsStallAdded);
+        removeProjectRequirements(requirementsStall, reqsStallRemove);
+
+        addProjectRequirements(requirementsReset, reqsResetAdded);
+        removeProjectRequirements(requirementsReset, reqsResetRemove);
+    }
+
+    public void addRemoveDurationModifiersAndDuration(Integer baseProjectDurationOverride, List<BoggledTerraformingDurationModifier.TerraformingDurationModifier> durationModifiersAdded, List<String> durationModifiersRemoved) {
+        if (baseProjectDurationOverride != null) {
+            baseProjectDuration = baseProjectDurationOverride;
+        }
+
+        durationModifiers.addAll(durationModifiersAdded);
+        for (String durationModifierRemoved : durationModifiersRemoved) {
+            int idx;
+            for (idx = 0; idx < durationModifiers.size(); ++idx) {
+                BoggledTerraformingDurationModifier.TerraformingDurationModifier durationModifier = durationModifiers.get(idx);
+                if (durationModifier.id.equals(durationModifierRemoved)) {
+                    break;
+                }
+            }
+            if (idx == durationModifiers.size()) {
+                continue;
+            }
+            durationModifiers.remove(idx);
+        }
+    }
+
+    public void addRemoveProjectEffects(List<BoggledTerraformingProjectEffect.TerraformingProjectEffect> projectEffectsAdded, List<String> projectEffectsRemoved) {
+        projectCompleteEffects.addAll(projectEffectsAdded);
+        for (String projectEffectRemoved : projectEffectsRemoved) {
+            int idx;
+            for (idx = 0; idx < projectCompleteEffects.size(); ++idx) {
+                BoggledTerraformingProjectEffect.TerraformingProjectEffect projectEffect = projectCompleteEffects.get(idx);
+                if (projectEffect.id.equals(projectEffectRemoved)) {
+                    break;
+                }
+            }
+            if (idx == projectCompleteEffects.size()) {
+                continue;
+            }
+            projectCompleteEffects.remove(idx);
+        }
+    }
 }

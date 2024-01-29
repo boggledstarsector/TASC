@@ -52,6 +52,16 @@ public class BoggledProjectRequirementsAND implements Iterable<BoggledProjectReq
     }
     private final List<RequirementAndThen> requirements;
 
+    public static class RequirementAdd {
+        RequirementAndThen requirementAndThen;
+        String parentId;
+
+        public RequirementAdd(RequirementAndThen requirementAndThen, String parentId) {
+            this.requirementAndThen = requirementAndThen;
+            this.parentId = parentId;
+        }
+    }
+
     public BoggledProjectRequirementsAND() {
         this.requirements = new ArrayList<>();
     }
@@ -106,5 +116,33 @@ public class BoggledProjectRequirementsAND implements Iterable<BoggledProjectReq
             }
         }
         return true;
+    }
+
+    private void addRequirement(RequirementAndThen reqToAdd) {
+        requirements.add(reqToAdd);
+    }
+
+    public void addRequirement(RequirementAdd reqToAdd) {
+        if (reqToAdd.parentId.isEmpty()) {
+            addRequirement(reqToAdd.requirementAndThen);
+        }
+
+        for (RequirementAndThen req : requirements) {
+            if (req.requirement.getRequirementId().equals(reqToAdd.parentId)) {
+                req.andThen.addRequirement(reqToAdd.requirementAndThen);
+                return;
+            }
+            req.andThen.addRequirement(reqToAdd);
+        }
+    }
+
+    public void removeRequirement(String reqToRemove) {
+        for (Iterator<RequirementAndThen> it = requirements.iterator(); it.hasNext(); ) {
+            RequirementAndThen req = it.next();
+            if (req.requirement.getRequirementId().equals(reqToRemove)) {
+                it.remove();
+                return;
+            }
+        }
     }
 }

@@ -166,7 +166,7 @@ ability_astropolis_station_target_planet_too_many_moons,"An astropolis would be 
 ability_astropolis_station_target_planet_too_crowded,"An astropolis would be unable to maintain a satisfactory orbit around $planetName because $focusPlanetName periodically approaches very near to this world.",,false,"target_planet_too_crowded"
 ability_astropolis_station_target_planet_too_many_stations,"$planetName is already host to $numStations astropolis $stationOrStations. It cannot host more.",,false,"ability_astropolis_station_target_planet_too_many_stations"
 
-ability_astropolis_station_fleet_contains_credits,"Requires $creditsQuantity credits. You have $currentCreditsQuantity.","[ '$creditsQuantity' ]",false,"ability_astropolis_station_fleet_contains_credits"
+ability_astropolis_station_fleet_contains_credits,"Requires $itemQuantity credits. You have $currentItemQuantity.","[ '$creditsQuantity' ]",false,"ability_astropolis_station_fleet_contains_credits"
 ability_astropolis_station_fleet_contains_crew,"Requires $itemQuantity $itemName. You have $currentItemQuantity.","[ '$itemQuantity' ]",false,"ability_astropolis_station_fleet_contains_crew"
 ability_astropolis_station_fleet_contains_heavy_machinery,"Requires $itemQuantity $itemName. You have $currentItemQuantity.","[ '$itemQuantity' ]",false,"ability_astropolis_station_fleet_contains_heavy_machinery"
 ability_astropolis_station_fleet_contains_metals,"Requires $itemQuantity $itemName. You have $currentItemQuantity.","[ '$itemQuantity' ]",false,"ability_astropolis_station_fleet_contains_metals"
@@ -179,7 +179,7 @@ ability_mining_station_fleet_in_asteroid_belt_or_field,"Your fleet is too far aw
 
 ability_mining_station_too_many_stations,"$systemName is already host to $numStations mining $stationOrStations. It cannot host more.",,false,"ability_mining_station_too_many_stations"
 
-ability_mining_station_fleet_contains_credits,"Requires $creditsQuantity credits. You have $currentCreditsQuantity.","[ '$creditsQuantity' ]",false,"ability_mining_station_fleet_contains_credits"
+ability_mining_station_fleet_contains_credits,"Requires $itemQuantity credits. You have $currentItemQuantity.","[ '$creditsQuantity' ]",false,"ability_mining_station_fleet_contains_credits"
 ability_mining_station_fleet_contains_crew,"Requires $itemQuantity $itemName. You have $currentItemQuantity.","[ '$itemQuantity' ]",false,"ability_mining_station_fleet_contains_crew"
 ability_mining_station_fleet_contains_heavy_machinery,"Requires $itemQuantity $itemName. You have $currentItemQuantity.","[ '$itemQuantity' ]",false,"ability_mining_station_fleet_contains_heavy_machinery"
 ability_mining_station_fleet_contains_metals,"Requires $itemQuantity $itemName. You have $currentItemQuantity.","[ '$itemQuantity' ]",false,"ability_mining_station_fleet_contains_metals"
@@ -194,7 +194,7 @@ ability_siphon_station_target_planet_moon_too_close,"A siphon station would be u
 ability_siphon_station_target_planet_is_gas_giant,"You cannot construct a siphon station around non-gas giant planets. $planetName is a $planetType.",,false,"planet_gas_giant"
 ability_siphon_station_target_planet_too_many_stations,"$planetName is already host to $numStations siphon $stationOrStations. It cannot host more.",,false,"ability_siphon_station_target_planet_too_many_stations"
 
-ability_siphon_station_fleet_contains_credits,"Requires $creditsQuantity credits. You have $currentCreditsQuantity.","[ '$creditsQuantity' ]",false,"ability_siphon_station_fleet_contains_credits"
+ability_siphon_station_fleet_contains_credits,"Requires $itemQuantity credits. You have $currentItemQuantity.","[ '$creditsQuantity' ]",false,"ability_siphon_station_fleet_contains_credits"
 ability_siphon_station_fleet_contains_crew,"Requires $itemQuantity $itemName. You have $currentItemQuantity.","[ '$itemQuantity' ]",false,"ability_siphon_station_fleet_contains_crew"
 ability_siphon_station_fleet_contains_heavy_machinery,"Requires $itemQuantity $itemName. You have $currentItemQuantity.","[ '$itemQuantity' ]",false,"ability_siphon_station_fleet_contains_heavy_machinery"
 ability_siphon_station_fleet_contains_metals,"Requires $itemQuantity $itemName. You have $currentItemQuantity.","[ '$itemQuantity' ]",false,"ability_siphon_station_fleet_contains_metals"
@@ -207,7 +207,7 @@ ability_colonize_abandoned_station_target_station_not_colonizable,"$stationName 
 ability_colonize_abandoned_station_target_station_within_range,"The station closest to your location is $stationName. Your fleet is $distanceInSu stellar units away. You must be within $requiredDistanceInSu stellar units to colonize the station.",,false,"ability_colonize_abandoned_station_target_station_within_range"
 ability_colonize_abandoned_station_target_station_colonizable,"$stationName is in a state of extreme disrepair and is not a viable target for colonization.",,false,"ability_colonize_abandoned_station_target_station_colonizable"
 
-ability_colonize_abandoned_station_fleet_contains_credits,"Requires $creditsQuantity credits. You have $currentCreditsQuantity.","[ '$creditsQuantity' ]",false,"ability_colonize_abandoned_station_fleet_contains_credits"
+ability_colonize_abandoned_station_fleet_contains_credits,"Requires $itemQuantity credits. You have $currentItemQuantity.","[ '$creditsQuantity' ]",false,"ability_colonize_abandoned_station_fleet_contains_credits"
 ability_colonize_abandoned_station_fleet_contains_crew,"Requires $itemQuantity $itemName. You have $currentItemQuantity.","[ '$itemQuantity' ]",false,"ability_colonize_abandoned_station_fleet_contains_crew"
 ability_colonize_abandoned_station_fleet_contains_heavy_machinery,"Requires $itemQuantity $itemName. You have $currentItemQuantity.","[ '$itemQuantity' ]",false,"ability_colonize_abandoned_station_fleet_contains_heavy_machinery"
 ability_colonize_abandoned_station_fleet_contains_metals,"Requires $itemQuantity $itemName. You have $currentItemQuantity.","[ '$itemQuantity' ]",false,"ability_colonize_abandoned_station_fleet_contains_metals"

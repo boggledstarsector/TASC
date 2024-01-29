@@ -115,7 +115,7 @@ class ProjectRequirementsTooltip(width : Float) : TooltipCreator {
         tooltip.addSpacer(5f);
 
         val tokenReplacements = boggledTools.getTokenReplacements(ctx)
-        for (projectRequirement in terraformingProject!!.projectRequirements) {
+        for (projectRequirement in terraformingProject!!.requirements) {
             val requirementMet = projectRequirement.checkRequirement(ctx)
             val color = if (requirementMet) Misc.getPositiveHighlightColor() else Misc.getNegativeHighlightColor()
             val tts = projectRequirement.getTooltip(ctx, tokenReplacements)
@@ -447,12 +447,12 @@ class CommandUIIntelK : LunaBaseCustomPanelPlugin() {
         sortProjects(visibleProjects["crafting"], validCraftingOptions, invalidCraftingOptions)
 
         var buttonVerticalSpacing = 0f
-        val positionButtons = fun(ctx : RequirementContext, terraformingOptions : ArrayList<BoggledTerraformingProject>, buttons : ArrayList<ButtonAPI>, buttonsStart : Int) : Int {
+        val positionButtons = fun(terraformingOptions : ArrayList<BoggledTerraformingProject>, buttons : ArrayList<ButtonAPI>, buttonsStart : Int) : Int {
             for (i in 0 until terraformingOptions.size) {
                 val button = buttons[i + buttonsStart]
 
                 val projectRequirementsTooltip = button.customData as ProjectRequirementsTooltip
-                button.text = terraformingOptions[i].getProjectTooltip(boggledTools.getTokenReplacements(ctx))
+                button.text = terraformingOptions[i].projectTooltip
                 button.position.inTL(0f, buttonVerticalSpacing)
                 projectRequirementsTooltip.market = selectedPlanet?.market
                 projectRequirementsTooltip.setProject(terraformingOptions[i])
@@ -461,13 +461,13 @@ class CommandUIIntelK : LunaBaseCustomPanelPlugin() {
             }
             return terraformingOptions.size + buttonsStart
         }
-        val validTerraformingEnd = positionButtons(ctx, validTerraformingOptions, requirementsMetButtons, 0)
-        val invalidTerraformingEnd = positionButtons(ctx, invalidTerraformingOptions, requirementsNotMetButtons, validTerraformingEnd)
+        val validTerraformingEnd = positionButtons(validTerraformingOptions, requirementsMetButtons, 0)
+        val invalidTerraformingEnd = positionButtons(invalidTerraformingOptions, requirementsNotMetButtons, validTerraformingEnd)
 
         buttonVerticalSpacing += SORT_SPACING
 
-        val validCraftingEnd = positionButtons(ctx, validCraftingOptions, requirementsMetButtons, invalidTerraformingEnd)
-        positionButtons(ctx, invalidCraftingOptions, requirementsNotMetButtons, validCraftingEnd)
+        val validCraftingEnd = positionButtons(validCraftingOptions, requirementsMetButtons, invalidTerraformingEnd)
+        positionButtons(invalidCraftingOptions, requirementsNotMetButtons, validCraftingEnd)
     }
 
     private fun moveButtonsOffscreen(positionInPlacer : (x : Float, y : Float) -> PositionAPI, vararg inactiveButtons : ButtonAPI) {
@@ -519,7 +519,7 @@ class CommandUIIntelK : LunaBaseCustomPanelPlugin() {
 
         terraformingController.setProject(terraformingProject)
 
-        selectedPlanet?.projectLabel?.text = terraformingProject.getProjectTooltip(boggledTools.getTokenReplacements(RequirementContext(selectedPlanet?.market, terraformingProject)))
+        selectedPlanet?.projectLabel?.text = terraformingProject.projectTooltip
         selectedPlanet?.projectTimeRemaining?.text = getTerraformingDaysRemainingComplete(terraformingController)
         selectedPlanet?.projectTimeRemaining?.setHighlight("${getTerraformingDaysRemaining(terraformingController)}")
 

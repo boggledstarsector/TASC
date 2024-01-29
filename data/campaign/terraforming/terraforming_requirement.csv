@@ -207,21 +207,28 @@ ability_astropolis_station_target_planet_too_many_stations,TargetPlanetStationCo
 	'max_num' : 24
 }"
 
-ability_astropolis_station_fleet_contains_credits,FleetContainsCreditsAtLeast,false,"{ 'quantity' : 500000 }"
+ability_astropolis_station_fleet_contains_credits,FleetStorageContainsAtLeast,false,"{
+	'setting_id' : 'boggledAstropolisStationBuildCreditCost',
+	'quantity' : 500000
+}"
 ability_astropolis_station_fleet_contains_crew,FleetStorageContainsAtLeast,false,"{
 	'commodity_id' : 'crew',
+	'setting_id' : 'boggledAstropolisStationBuildCrewCost',
 	'quantity' : 1000
 }"
 ability_astropolis_station_fleet_contains_heavy_machinery,FleetStorageContainsAtLeast,false,"{
 	'commodity_id' : 'heavy_machinery',
+	'setting_id' : 'boggledAstropolisStationBuildHeavyMachineryCost',
 	'quantity' : 250
 }"
 ability_astropolis_station_fleet_contains_metals,FleetStorageContainsAtLeast,false,"{
 	'commodity_id' : 'metals',
+	'setting_id' : 'boggledAstropolisStationBuildMetalCost',
 	'quantity' : 1000
 }"
 ability_astropolis_station_fleet_contains_transplutonics,FleetStorageContainsAtLeast,false,"{
 	'commodity_id' : 'rare_metals',
+	'setting_id' : 'boggledAstropolisStationBuildTransplutonicsCost',
 	'quantity' : 250
 }"
 
@@ -232,21 +239,28 @@ ability_mining_station_too_many_stations,TargetSystemStationCountLessThan,false,
 	'station_tags' : [ 'boggled_mining' ],
 	'max_num' : 1
 }"
-ability_mining_station_fleet_contains_credits,FleetContainsCreditsAtLeast,false,"{ 'quantity' : 500000 }"
+ability_mining_station_fleet_contains_credits,FleetStorageContainsAtLeast,false,"{
+	'setting_id' : 'boggledMiningStationBuildCreditCost',
+	'quantity' : 500000
+}"
 ability_mining_station_fleet_contains_crew,FleetStorageContainsAtLeast,false,"{
 	'commodity_id' : 'crew',
+	'setting_id' : 'boggledMiningStationBuildCrewCost',
 	'quantity' : 1000
 }"
 ability_mining_station_fleet_contains_heavy_machinery,FleetStorageContainsAtLeast,false,"{
 	'commodity_id' : 'heavy_machinery',
+	'setting_id' : 'boggledMiningStationBuildHeavyMachineryCost',
 	'quantity' : 250
 }"
 ability_mining_station_fleet_contains_metals,FleetStorageContainsAtLeast,false,"{
 	'commodity_id' : 'metals',
+	'setting_id' : 'boggledMiningStationBuildMetalCost',
 	'quantity' : 1000
 }"
 ability_mining_station_fleet_contains_transplutonics,FleetStorageContainsAtLeast,false,"{
 	'commodity_id' : 'rare_metals',
+	'setting_id' : 'boggledMiningStationBuildTransplutonicsCost',
 	'quantity' : 250
 }"
 
@@ -257,42 +271,56 @@ ability_siphon_station_target_planet_too_many_stations,TargetPlanetStationCountL
 	'max_num' : 1
 }"
 
-ability_siphon_station_fleet_contains_credits,FleetContainsCreditsAtLeast,false,"{ 'quantity' : 500000 }"
+ability_siphon_station_fleet_contains_credits,FleetStorageContainsAtLeast,false,"{
+	'setting_id' : 'boggledSiphonStationBuildCreditCost',
+	'quantity' : 500000
+}"
 ability_siphon_station_fleet_contains_crew,FleetStorageContainsAtLeast,false,"{
 	'commodity_id' : 'crew',
+	'setting_id' : 'boggledSiphonStationBuildCrewCost',
 	'quantity' : 1000
 }"
 ability_siphon_station_fleet_contains_heavy_machinery,FleetStorageContainsAtLeast,false,"{
 	'commodity_id' : 'heavy_machinery',
+	'setting_id' : 'boggledSiphonStationBuildHeavyMachineryCost',
 	'quantity' : 250
 }"
 ability_siphon_station_fleet_contains_metals,FleetStorageContainsAtLeast,false,"{
 	'commodity_id' : 'metals',
+	'setting_id' : 'boggledSiphonStationBuildMetalCost',
 	'quantity' : 1000
 }"
 ability_siphon_station_fleet_contains_transplutonics,FleetStorageContainsAtLeast,false,"{
 	'commodity_id' : 'rare_metals',
+	'setting_id' : 'boggledSiphonStationBuildTransplutonicsCost',
 	'quantity' : 250
 }"
 
 ability_colonize_abandoned_station_target_station_within_range,TargetStationWithinDistance,false,400
 ability_colonize_abandoned_station_target_station_colonizable,TargetStationColonizable,false,
 
-ability_colonize_abandoned_station_fleet_contains_credits,FleetContainsCreditsAtLeast,false,"{ 'quantity' : 250000 }"
+ability_colonize_abandoned_station_fleet_contains_credits,FleetStorageContainsAtLeast,false,"{
+	'setting_id' : 'boggledStationRecolonizeCreditCost',
+	'quantity' : 250000
+}"
 ability_colonize_abandoned_station_fleet_contains_crew,FleetStorageContainsAtLeast,false,"{
 	'commodity_id' : 'crew',
+	'setting_id' : 'boggledStationRecolonizeCrewCost',
 	'quantity' : 500
 }"
 ability_colonize_abandoned_station_fleet_contains_heavy_machinery,FleetStorageContainsAtLeast,false,"{
 	'commodity_id' : 'heavy_machinery',
+	'setting_id' : 'boggledStationRecolonizeHeavyMachineryCost',
 	'quantity' : 125
 }"
 ability_colonize_abandoned_station_fleet_contains_metals,FleetStorageContainsAtLeast,false,"{
 	'commodity_id' : 'metals',
+	'setting_id' : 'boggledStationRecolonizeMetalCost',
 	'quantity' : 500
 }"
 ability_colonize_abandoned_station_fleet_contains_transplutonics,FleetStorageContainsAtLeast,false,"{
 	'commodity_id' : 'rare_metals',
+	'setting_id' : 'boggledStationRecolonizeTransplutonicsCost',
 	'quantity' : 125
 }"
 

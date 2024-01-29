@@ -9,6 +9,7 @@ import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
 import boggled.campaign.econ.boggledTools;
 
+import java.awt.*;
 import java.util.List;
 import java.util.Map;
 
@@ -31,7 +32,7 @@ public class BoggledBaseAbility extends BaseDurationAbility {
 
     public BoggledBaseAbility(String id, String[] enableSettings, BoggledTerraformingProject project) {
         super();
-        this.projectId = project.getProjectId();
+        this.projectId = project.getId();
         this.enableSettings = enableSettings;
         this.project = project;
     }
@@ -55,7 +56,7 @@ public class BoggledBaseAbility extends BaseDurationAbility {
 
     @Override
     protected void activateImpl() {
-        project.finishProject(ctx);
+        project.finishProject(ctx, project.getProjectTooltip());
     }
 
     @Override
@@ -92,8 +93,7 @@ public class BoggledBaseAbility extends BaseDurationAbility {
         float pad = 4f;
         float space = 10f;
 
-        Map<String, String> tokenReplacements = boggledTools.getTokenReplacements(ctx);
-        String projectTooltip = project.getProjectTooltip(tokenReplacements);
+        String projectTooltip = project.getProjectTooltip();
 
         tooltip.addTitle(getSpec().getName());
         tooltip.addPara(projectTooltip, pad);
@@ -101,11 +101,12 @@ public class BoggledBaseAbility extends BaseDurationAbility {
         Map<String, BoggledTerraformingProjectEffect.EffectTooltipPara> effectTypeToPara = project.getEffectTooltipInfo(ctx);
         for (Map.Entry<String, BoggledTerraformingProjectEffect.EffectTooltipPara> entry : effectTypeToPara.entrySet()) {
             String infixAnd = Misc.getAndJoined(entry.getValue().infix.toArray(new String[0]));
-            tooltip.addPara(entry.getValue().prefix + infixAnd + entry.getValue().suffix, pad, Misc.getHighlightColor(), entry.getValue().highlights.toArray(new String[0]));
+            tooltip.addPara(entry.getValue().prefix + infixAnd + entry.getValue().suffix, pad, entry.getValue().highlightColors.toArray(new Color[0]), entry.getValue().highlights.toArray(new String[0]));
         }
 
+        Map<String, String> tokenReplacements = boggledTools.getTokenReplacements(ctx);
         boolean first = true;
-        for (BoggledProjectRequirementsAND.RequirementAndThen req : project.getProjectRequirements()) {
+        for (BoggledProjectRequirementsAND.RequirementAndThen req : project.getRequirements()) {
             if (req.checkRequirement(ctx)) {
                 continue;
             }

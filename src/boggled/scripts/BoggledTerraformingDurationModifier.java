@@ -37,11 +37,17 @@ public class BoggledTerraformingDurationModifier {
         }
     }
 
-    public static class Setting extends TerraformingDurationModifier {
+    public static abstract class SettingModifier extends TerraformingDurationModifier {
         String settingId;
-        public Setting(String id, String[] enableSettings, String settingId) {
+        public SettingModifier(String id, String[] enableSettings, String settingId) {
             super(id, enableSettings);
             this.settingId = settingId;
+        }
+    }
+
+    public static class DurationSettingModifier extends SettingModifier {
+        public DurationSettingModifier(String id, String[] enableSettings, String settingId) {
+            super(id, enableSettings, settingId);
         }
         @Override
         public MutableStat getDurationModifierImpl(BoggledTerraformingRequirement.RequirementContext ctx) {
@@ -53,6 +59,18 @@ public class BoggledTerraformingDurationModifier {
             int baseDuration = project.getBaseProjectDuration();
             MutableStat ret = new MutableStat(0);
             ret.modifyFlat(settingId, requestedDuration - baseDuration);
+            return ret;
+        }
+    }
+
+    public static class IntSettingModifier extends SettingModifier {
+        public IntSettingModifier(String id, String[] enableSettings, String settingId) {
+            super(id, enableSettings, settingId);
+        }
+
+        @Override
+        protected MutableStat getDurationModifierImpl(BoggledTerraformingRequirement.RequirementContext ctx) {
+            MutableStat ret = new MutableStat(0);
             return ret;
         }
     }

@@ -12,10 +12,10 @@ public class BoggledTerraformingDurationModifierFactory {
         }
     }
 
-    public static class Setting implements TerraformingDurationModifierFactory {
+    public static class DurationSettingModifier implements TerraformingDurationModifierFactory {
         @Override
         public BoggledTerraformingDurationModifier.TerraformingDurationModifier constructFromJSON(String id, String[] enableSettings, String data) {
-            return new BoggledTerraformingDurationModifier.Setting(id, enableSettings, data);
+            return new BoggledTerraformingDurationModifier.DurationSettingModifier(id, enableSettings, data);
         }
     }
 }

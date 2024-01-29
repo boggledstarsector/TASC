@@ -1,7 +1,6 @@
 package boggled.scripts;
 
 import boggled.campaign.econ.boggledTools;
-import com.fs.starfarer.api.campaign.CargoAPI;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -152,32 +151,34 @@ public class BoggledTerraformingRequirementFactory {
             JSONObject jsonData = new JSONObject(data);
 
             String submarketId = jsonData.getString("submarket_id");
-            CargoAPI.CargoItemType itemType = null;
+            BoggledTerraformingRequirement.ItemRequirement.ItemType itemType = null;
             String itemId = null;
 
             String commodityId = jsonData.optString("commodity_id");
             if (!commodityId.isEmpty()) {
-                itemType = CargoAPI.CargoItemType.RESOURCES;
+                itemType = BoggledTerraformingRequirement.ItemRequirement.ItemType.RESOURCES;
                 itemId = commodityId;
                 boggledTools.CheckCommodityExists(id, commodityId);
             }
 
             String specialItemId = jsonData.optString("special_item_id");
             if (!specialItemId.isEmpty()) {
-                itemType = CargoAPI.CargoItemType.SPECIAL;
+                itemType = BoggledTerraformingRequirement.ItemRequirement.ItemType.SPECIAL;
                 itemId = specialItemId;
                 boggledTools.CheckSpecialItemExists(id, specialItemId);
             }
 
             if (itemType == null) {
-                throw new IllegalArgumentException(this.getClass().getName() + " " + id + " does not have a valid item ID specified");
+                itemType = BoggledTerraformingRequirement.ItemRequirement.ItemType.CREDITS;
             }
+
+            String settingId = jsonData.optString("setting_id");
 
             int quantity = jsonData.getInt("quantity");
 
             boggledTools.CheckSubmarketExists(id, submarketId);
 
-            return new BoggledTerraformingRequirement.MarketStorageContainsAtLeast(id, invert, submarketId, itemType, itemId, quantity);
+            return new BoggledTerraformingRequirement.MarketStorageContainsAtLeast(id, invert, submarketId, itemType, itemId, settingId, quantity);
         }
     }
 
@@ -186,40 +187,32 @@ public class BoggledTerraformingRequirementFactory {
         public BoggledTerraformingRequirement.TerraformingRequirement constructFromJSON(String id, boolean invert, String data) throws JSONException {
             JSONObject jsonData = new JSONObject(data);
 
-            CargoAPI.CargoItemType itemType = null;
+            BoggledTerraformingRequirement.ItemRequirement.ItemType itemType = null;
             String itemId = null;
 
             String commodityId = jsonData.optString("commodity_id");
             if (!commodityId.isEmpty()) {
-                itemType = CargoAPI.CargoItemType.RESOURCES;
+                itemType = BoggledTerraformingRequirement.ItemRequirement.ItemType.RESOURCES;
                 itemId = commodityId;
                 boggledTools.CheckCommodityExists(id, commodityId);
             }
 
             String specialItemId = jsonData.optString("special_item_id");
             if (!specialItemId.isEmpty()) {
-                itemType = CargoAPI.CargoItemType.SPECIAL;
+                itemType = BoggledTerraformingRequirement.ItemRequirement.ItemType.SPECIAL;
                 itemId = specialItemId;
                 boggledTools.CheckSpecialItemExists(id, specialItemId);
             }
 
             if (itemType == null) {
-                throw new IllegalArgumentException(this.getClass().getName() + " " + id + " does not have a valid item ID specified");
+                itemType = BoggledTerraformingRequirement.ItemRequirement.ItemType.CREDITS;
             }
 
+            String settingId = jsonData.optString("setting_id");
 
             int quantity = jsonData.getInt("quantity");
 
-            return new BoggledTerraformingRequirement.FleetStorageContainsAtLeast(id, invert, itemType, itemId, quantity);
-        }
-    }
-
-    public static class FleetContainsCreditsAtLeast implements TerraformingRequirementFactory {
-        @Override
-        public BoggledTerraformingRequirement.TerraformingRequirement constructFromJSON(String id, boolean invert, String data) throws JSONException {
-            JSONObject jsonData = new JSONObject(data);
-            int quantity = jsonData.getInt("quantity");
-            return new BoggledTerraformingRequirement.FleetContainsCreditsAtLeast(id, invert, quantity);
+            return new BoggledTerraformingRequirement.FleetStorageContainsAtLeast(id, invert, itemType, itemId, settingId, quantity);
         }
     }
 

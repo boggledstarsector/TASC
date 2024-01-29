@@ -20,8 +20,10 @@ import java.util.Map;
 public class BoggledTerraformingRequirement {
     public static class RequirementContext {
         private final String contextName;
-        private final BaseIndustry industry;
-        private final BoggledIndustryInterface industryInterface;
+        private final BaseIndustry sourceIndustry;
+        private final BoggledIndustryInterface sourceIndustryInterface;
+        private final BaseIndustry targetIndustry;
+        private final BoggledIndustryInterface targetIndustryInterface;
         private MarketAPI closestMarket;
         private MarketAPI planetMarket;
         private MarketAPI stationMarket;
@@ -33,8 +35,10 @@ public class BoggledTerraformingRequirement {
 
         public RequirementContext(RequirementContext that, BoggledTerraformingProject project) {
             this.contextName = that.contextName;
-            this.industry = that.industry;
-            this.industryInterface = that.industryInterface;
+            this.sourceIndustry = that.sourceIndustry;
+            this.sourceIndustryInterface = that.sourceIndustryInterface;
+            this.targetIndustry = that.targetIndustry;
+            this.targetIndustryInterface = that.targetIndustryInterface;
             this.closestMarket = that.closestMarket;
             this.planetMarket = that.planetMarket;
             this.stationMarket = that.stationMarket;
@@ -45,11 +49,13 @@ public class BoggledTerraformingRequirement {
             this.project = project;
         }
 
-        public RequirementContext(BaseIndustry industry) {
-            this.contextName = "Industry " + industry.getCurrentName();
-            this.industry = industry;
-            this.industryInterface = (industry instanceof BoggledIndustryInterface) ? (BoggledIndustryInterface) industry : null;
-            this.closestMarket = industry.getMarket();
+        public RequirementContext(BaseIndustry sourceIndustry, BoggledTerraformingProject project) {
+            this.contextName = "Industry " + sourceIndustry.getCurrentName();
+            this.sourceIndustry = sourceIndustry;
+            this.sourceIndustryInterface = (sourceIndustry instanceof BoggledIndustryInterface) ? (BoggledIndustryInterface) sourceIndustry : null;
+            this.targetIndustry = this.sourceIndustry;
+            this.targetIndustryInterface = this.sourceIndustryInterface;
+            this.closestMarket = sourceIndustry.getMarket();
 
             if (this.closestMarket.getPrimaryEntity().hasTag(Tags.STATION)) {
                 this.station = this.closestMarket.getPrimaryEntity();
@@ -64,12 +70,30 @@ public class BoggledTerraformingRequirement {
             }
             this.starSystem = this.closestMarket.getStarSystem();
             this.fleet = Global.getSector().getPlayerFleet();
-            this.project = null;
+            this.project = project;
+        }
+
+        public RequirementContext(RequirementContext that, BaseIndustry targetIndustry) {
+            this.contextName = that.contextName;
+            this.sourceIndustry = that.sourceIndustry;
+            this.sourceIndustryInterface = that.sourceIndustryInterface;
+            this.targetIndustry = targetIndustry;
+            this.targetIndustryInterface = (targetIndustry instanceof BoggledIndustryInterface) ? (BoggledIndustryInterface) targetIndustry : null;
+            this.closestMarket = that.closestMarket;
+            this.planetMarket = that.planetMarket;
+            this.stationMarket = that.stationMarket;
+            this.planet = that.planet;
+            this.station = that.station;
+            this.starSystem = that.starSystem;
+            this.fleet = that.fleet;
+            this.project = that.project;
         }
 
         public RequirementContext(MarketAPI market, BoggledTerraformingProject project) {
-            this.industry = null;
-            this.industryInterface = null;
+            this.sourceIndustry = null;
+            this.sourceIndustryInterface = null;
+            this.targetIndustry = null;
+            this.targetIndustryInterface = null;
             this.fleet = Global.getSector().getPlayerFleet();
 
             this.closestMarket = market;
@@ -91,8 +115,10 @@ public class BoggledTerraformingRequirement {
 
         public RequirementContext(CampaignFleetAPI fleet) {
             this.contextName = "Fleet " + fleet.getName();
-            this.industry = null;
-            this.industryInterface = null;
+            this.sourceIndustry = null;
+            this.sourceIndustryInterface = null;
+            this.targetIndustry = null;
+            this.targetIndustryInterface = null;
             this.fleet = fleet;
             this.planet = boggledTools.getClosestPlanetToken(fleet);
             this.closestMarket = boggledTools.getClosestMarketToEntity(fleet);
@@ -150,8 +176,10 @@ public class BoggledTerraformingRequirement {
         }
 
         public String getName() { return contextName; }
-        public BaseIndustry getIndustry() { return industry; }
-        public BoggledIndustryInterface getIndustryInterface() { return industryInterface; }
+        public BaseIndustry getSourceIndustry() { return sourceIndustry; }
+        public BoggledIndustryInterface getSourceIndustryInterface() { return sourceIndustryInterface; }
+        public BaseIndustry getTargetIndustry() { return targetIndustry; }
+        public BoggledIndustryInterface getTargetIndustryInterface() { return targetIndustryInterface; }
         public MarketAPI getClosestMarket() { return closestMarket; }
         public MarketAPI getPlanetMarket() { return planetMarket; }
         public MarketAPI getStationMarket() { return stationMarket; }
@@ -187,39 +215,60 @@ public class BoggledTerraformingRequirement {
     }
 
     public static abstract class ItemRequirement extends TerraformingRequirement {
-        CargoAPI.CargoItemType itemType;
+        public enum ItemType {
+            CREDITS,
+            RESOURCES,
+            SPECIAL
+        }
+        ItemType itemType;
         String itemId;
+        String settingId;
         int quantity;
 
-        protected ItemRequirement(String requirementId, boolean invert, CargoAPI.CargoItemType itemType, String itemId, int quantity) {
+        protected ItemRequirement(String requirementId, boolean invert, ItemType itemType, String itemId, String settingId, int quantity) {
             super(requirementId, invert);
             this.itemType = itemType;
             this.itemId = itemId;
+            this.settingId = settingId;
             this.quantity = quantity;
         }
 
         protected final boolean checkCargoHasItem(CargoAPI cargo) {
+            int quantityToCheck = quantity;
+            if (!settingId.isEmpty()) {
+                quantityToCheck = boggledTools.getIntSetting(settingId);
+            }
             switch (itemType) {
-                case RESOURCES: return cargo.getQuantity(itemType, itemId) >= quantity;
-                case SPECIAL: return cargo.getQuantity(itemType, new SpecialItemData(itemId, null)) >= quantity;
+                case CREDITS: return cargo.getCredits().get() >= quantityToCheck;
+                case RESOURCES: return cargo.getQuantity(CargoAPI.CargoItemType.RESOURCES, itemId) >= quantityToCheck;
+                case SPECIAL: return cargo.getQuantity(CargoAPI.CargoItemType.SPECIAL, new SpecialItemData(itemId, null)) >= quantityToCheck;
             }
             return false;
         }
 
         protected void addTokenReplacements(CargoAPI cargo, RequirementContext ctx, Map<String, String> tokenReplacements) {
             switch (itemType) {
+                case CREDITS:
+                    tokenReplacements.put("$itemName", "credits");
+                    tokenReplacements.put("$ItemName", "Credits");
+                    tokenReplacements.put("$currentItemQuantity", String.format("%,d", (int) cargo.getCredits().get()));
+                    break;
                 case RESOURCES:
                     tokenReplacements.put("$itemName", Global.getSettings().getCommoditySpec(itemId).getName().toLowerCase());
                     tokenReplacements.put("$ItemName", Global.getSettings().getCommoditySpec(itemId).getName());
-                    tokenReplacements.put("$currentItemQuantity", String.format("%,d", (int) cargo.getQuantity(itemType, itemId)));
+                    tokenReplacements.put("$currentItemQuantity", String.format("%,d", (int) cargo.getQuantity(CargoAPI.CargoItemType.RESOURCES, itemId)));
                     break;
                 case SPECIAL:
                     tokenReplacements.put("$itemName", Global.getSettings().getSpecialItemSpec(itemId).getName().toLowerCase());
                     tokenReplacements.put("$ItemName", Global.getSettings().getSpecialItemSpec(itemId).getName().toLowerCase());
-                    tokenReplacements.put("$currentItemQuantity", String.format("%,d", (int) cargo.getQuantity(itemType, new SpecialItemData(itemId, null))));
+                    tokenReplacements.put("$currentItemQuantity", String.format("%,d", (int) cargo.getQuantity(CargoAPI.CargoItemType.SPECIAL, new SpecialItemData(itemId, null))));
                     break;
             }
-            tokenReplacements.put("$itemQuantity", Integer.toString(quantity));
+            int quantityToCheck = quantity;
+            if (!settingId.isEmpty()) {
+                quantityToCheck = boggledTools.getIntSetting(settingId);
+            }
+            tokenReplacements.put("$itemQuantity", Integer.toString(quantityToCheck));
         }
     }
 
@@ -476,8 +525,8 @@ public class BoggledTerraformingRequirement {
 
     public static class MarketStorageContainsAtLeast extends ItemRequirement {
         String submarketId;
-        public MarketStorageContainsAtLeast(String requirementId, boolean invert, String submarketId, CargoAPI.CargoItemType itemType, String itemId, int quantity) {
-            super(requirementId, invert, itemType, itemId, quantity);
+        public MarketStorageContainsAtLeast(String requirementId, boolean invert, String submarketId, ItemType itemType, String itemId, String settingId, int quantity) {
+            super(requirementId, invert, itemType, itemId, settingId, quantity);
             this.submarketId = submarketId;
         }
 
@@ -507,8 +556,8 @@ public class BoggledTerraformingRequirement {
     }
 
     public static class FleetStorageContainsAtLeast extends ItemRequirement {
-        protected FleetStorageContainsAtLeast(String requirementId, boolean invert, CargoAPI.CargoItemType itemType, String itemId, int quantity) {
-            super(requirementId, invert, itemType, itemId, quantity);
+        protected FleetStorageContainsAtLeast(String requirementId, boolean invert, ItemType itemType, String itemId, String settingId, int quantity) {
+            super(requirementId, invert, itemType, itemId, settingId, quantity);
         }
 
         @Override
@@ -527,29 +576,6 @@ public class BoggledTerraformingRequirement {
                 return false;
             }
             return super.checkCargoHasItem(playerFleet.getCargo());
-        }
-    }
-
-    public static class FleetContainsCreditsAtLeast extends TerraformingRequirement {
-        int quantity;
-        protected FleetContainsCreditsAtLeast(String requirementId, boolean invert, int quantity) {
-            super(requirementId, invert);
-            this.quantity = quantity;
-        }
-
-        @Override
-        public void addTokenReplacements(RequirementContext ctx, Map<String, String> tokenReplacements) {
-            tokenReplacements.put("$creditsQuantity", String.format("%,d", quantity));
-            tokenReplacements.put("$currentCreditsQuantity", String.format("%,d", (int)ctx.getFleet().getCargo().getCredits().get()));
-        }
-
-        @Override
-        protected boolean checkRequirementImpl(RequirementContext ctx) {
-            CampaignFleetAPI playerFleet = ctx.getFleet();
-            if (playerFleet == null) {
-                return false;
-            }
-            return playerFleet.getCargo().getCredits().get() >= quantity;
         }
     }
 

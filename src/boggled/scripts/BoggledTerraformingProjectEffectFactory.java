@@ -1,8 +1,9 @@
 package boggled.scripts;
 
 import boggled.campaign.econ.boggledTools;
+import boggled.campaign.econ.industries.BoggledCommonIndustry;
 import com.fs.starfarer.api.Global;
-import com.fs.starfarer.api.campaign.CargoAPI;
+import com.fs.starfarer.api.util.Pair;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -21,7 +22,17 @@ public class BoggledTerraformingProjectEffectFactory {
         @Override
         public BoggledTerraformingProjectEffect.TerraformingProjectEffect constructFromJSON(String id, String[] enableSettings, String data) {
             boggledTools.CheckPlanetTypeExists(id, data);
-            return new BoggledTerraformingProjectEffect.PlanetTypeChangeProjectEffect(id, enableSettings, data);
+            return new BoggledTerraformingProjectEffect.PlanetTypeChange(id, enableSettings, data);
+        }
+    }
+
+    public static class IndustrySwap implements TerraformingProjectEffectFactory {
+        @Override
+        public BoggledTerraformingProjectEffect.TerraformingProjectEffect constructFromJSON(String id, String[] enableSettings, String data) throws JSONException {
+            JSONObject jsonData = new JSONObject(data);
+            String industryIdToRemove = jsonData.getString("industry_to_remove");
+            String industryIdToAdd = jsonData.getString("industry_to_add");
+            return new BoggledTerraformingProjectEffect.IndustrySwap(id, enableSettings, industryIdToRemove, industryIdToAdd);
         }
     }
 
@@ -29,7 +40,7 @@ public class BoggledTerraformingProjectEffectFactory {
         @Override
         public BoggledTerraformingProjectEffect.TerraformingProjectEffect constructFromJSON(String id, String[] enableSettings, String data) {
             boggledTools.CheckMarketConditionExists(id, data);
-            return new BoggledTerraformingProjectEffect.MarketAddConditionProjectEffect(id, enableSettings, data);
+            return new BoggledTerraformingProjectEffect.MarketAddCondition(id, enableSettings, data);
         }
     }
 
@@ -37,7 +48,7 @@ public class BoggledTerraformingProjectEffectFactory {
         @Override
         public BoggledTerraformingProjectEffect.TerraformingProjectEffect constructFromJSON(String id, String[] enableSettings, String data) {
             boggledTools.CheckMarketConditionExists(id, data);
-            return new BoggledTerraformingProjectEffect.MarketRemoveConditionProjectEffect(id, enableSettings, data);
+            return new BoggledTerraformingProjectEffect.MarketRemoveCondition(id, enableSettings, data);
         }
     }
 
@@ -51,9 +62,9 @@ public class BoggledTerraformingProjectEffectFactory {
             boggledTools.CheckMarketConditionExists(id, conditionId);
 
             if (boggledTools.getBooleanSetting(option)) {
-                return new BoggledTerraformingProjectEffect.MarketAddConditionProjectEffect(id, enableSettings, conditionId);
+                return new BoggledTerraformingProjectEffect.MarketAddCondition(id, enableSettings, conditionId);
             }
-            return new BoggledTerraformingProjectEffect.MarketRemoveConditionProjectEffect(id, enableSettings, conditionId);
+            return new BoggledTerraformingProjectEffect.MarketRemoveCondition(id, enableSettings, conditionId);
         }
     }
 
@@ -66,7 +77,7 @@ public class BoggledTerraformingProjectEffectFactory {
 
             boggledTools.CheckResourceExists(id, resourceId);
 
-            return new BoggledTerraformingProjectEffect.MarketProgressResourceProjectEffect(id, enableSettings, resourceId, step);
+            return new BoggledTerraformingProjectEffect.MarketProgressResource(id, enableSettings, resourceId, step);
         }
     }
 
@@ -74,7 +85,7 @@ public class BoggledTerraformingProjectEffectFactory {
         @Override
         public BoggledTerraformingProjectEffect.TerraformingProjectEffect constructFromJSON(String id, String[] enableSettings, String data) {
             boggledTools.CheckMarketConditionExists(id, data);
-            return new BoggledTerraformingProjectEffect.FocusMarketAddConditionProjectEffect(id, enableSettings, data);
+            return new BoggledTerraformingProjectEffect.FocusMarketAddCondition(id, enableSettings, data);
         }
     }
 
@@ -82,7 +93,7 @@ public class BoggledTerraformingProjectEffectFactory {
         @Override
         public BoggledTerraformingProjectEffect.TerraformingProjectEffect constructFromJSON(String id, String[] enableSettings, String data) {
             boggledTools.CheckMarketConditionExists(id, data);
-            return new BoggledTerraformingProjectEffect.FocusMarketRemoveConditionProjectEffect(id, enableSettings, data);
+            return new BoggledTerraformingProjectEffect.FocusMarketRemoveCondition(id, enableSettings, data);
         }
     }
 
@@ -95,7 +106,7 @@ public class BoggledTerraformingProjectEffectFactory {
 
             boggledTools.CheckResourceExists(id, resourceId);
 
-            return new BoggledTerraformingProjectEffect.FocusMarketProgressResourceProjectEffect(id, enableSettings, resourceId, step);
+            return new BoggledTerraformingProjectEffect.FocusMarketProgressResource(id, enableSettings, resourceId, step);
         }
     }
 
@@ -108,7 +119,7 @@ public class BoggledTerraformingProjectEffectFactory {
 
             boggledTools.CheckResourceExists(id, resourceId);
 
-            return new BoggledTerraformingProjectEffect.FocusMarketAndSiphonStationProgressResourceProjectEffect(id, enableSettings, resourceId, step);
+            return new BoggledTerraformingProjectEffect.FocusMarketAndSiphonStationProgressResource(id, enableSettings, resourceId, step);
         }
     }
 
@@ -139,32 +150,34 @@ public class BoggledTerraformingProjectEffectFactory {
             JSONObject jsonData = new JSONObject(data);
             String submarketId = jsonData.getString("submarket_id");
 
-            CargoAPI.CargoItemType itemType = null;
+            BoggledTerraformingRequirement.ItemRequirement.ItemType itemType = null;
             String itemId = null;
 
             String commodityId = jsonData.optString("commodity_id");
             if (!commodityId.isEmpty()) {
-                itemType = CargoAPI.CargoItemType.RESOURCES;
+                itemType = BoggledTerraformingRequirement.ItemRequirement.ItemType.RESOURCES;
                 itemId = commodityId;
                 boggledTools.CheckCommodityExists(id, commodityId);
             }
 
             String specialItemId = jsonData.optString("special_item_id");
             if (!specialItemId.isEmpty()) {
-                itemType = CargoAPI.CargoItemType.SPECIAL;
+                itemType = BoggledTerraformingRequirement.ItemRequirement.ItemType.SPECIAL;
                 itemId = specialItemId;
                 boggledTools.CheckSpecialItemExists(id, specialItemId);
             }
 
             if (itemType == null) {
-                throw new IllegalArgumentException(this.getClass().getName() + " " + id + " does not have a valid item ID specified");
+                itemType = BoggledTerraformingRequirement.ItemRequirement.ItemType.CREDITS;
             }
+
+            String settingId = jsonData.optString("setting_id");
 
             int quantity = jsonData.getInt("quantity");
 
             boggledTools.CheckSubmarketExists(id, submarketId);
 
-            return new BoggledTerraformingProjectEffect.RemoveItemFromSubmarket(id, enableSettings, submarketId, itemType, itemId, quantity);
+            return new BoggledTerraformingProjectEffect.RemoveItemFromSubmarket(id, enableSettings, submarketId, itemType, itemId, settingId, quantity);
         }
     }
 
@@ -182,41 +195,43 @@ public class BoggledTerraformingProjectEffectFactory {
         public BoggledTerraformingProjectEffect.TerraformingProjectEffect constructFromJSON(String id, String[] enableSettings, String data) throws JSONException {
             JSONObject jsonData = new JSONObject(data);
 
-            CargoAPI.CargoItemType itemType = null;
+            BoggledTerraformingRequirement.ItemRequirement.ItemType itemType = null;
             String itemId = null;
 
             String commodityId = jsonData.optString("commodity_id");
             if (!commodityId.isEmpty()) {
-                itemType = CargoAPI.CargoItemType.RESOURCES;
+                itemType = BoggledTerraformingRequirement.ItemRequirement.ItemType.RESOURCES;
                 itemId = commodityId;
                 boggledTools.CheckCommodityExists(id, commodityId);
             }
 
             String specialItemId = jsonData.optString("special_item_id");
             if (!specialItemId.isEmpty()) {
-                itemType = CargoAPI.CargoItemType.SPECIAL;
+                itemType = BoggledTerraformingRequirement.ItemRequirement.ItemType.SPECIAL;
                 itemId = specialItemId;
                 boggledTools.CheckSpecialItemExists(id, specialItemId);
             }
 
             if (itemType == null) {
-                throw new IllegalArgumentException(this.getClass().getName() + " " + id + " does not have a valid item ID specified");
+                itemType = BoggledTerraformingRequirement.ItemRequirement.ItemType.CREDITS;
             }
 
+            String settingId = jsonData.optString("setting_id");
+
             int quantity = jsonData.getInt("quantity");
 
-            return new BoggledTerraformingProjectEffect.RemoveItemFromFleetStorage(id, enableSettings, itemType, itemId, quantity);
+            return new BoggledTerraformingProjectEffect.RemoveItemFromFleetStorage(id, enableSettings, itemType, itemId, settingId, quantity);
         }
     }
 
-    public static class RemoveCreditsFromFleet implements TerraformingProjectEffectFactory {
-        @Override
-        public BoggledTerraformingProjectEffect.TerraformingProjectEffect constructFromJSON(String id, String[] enableSettings, String data) throws JSONException {
-            JSONObject jsonData = new JSONObject(data);
-            int quantity = jsonData.getInt("quantity");
-            return new BoggledTerraformingProjectEffect.RemoveCreditsFromFleet(id, enableSettings, quantity);
-        }
-    }
+//    public static class RemoveCreditsFromFleet implements TerraformingProjectEffectFactory {
+//        @Override
+//        public BoggledTerraformingProjectEffect.TerraformingProjectEffect constructFromJSON(String id, String[] enableSettings, String data) throws JSONException {
+//            JSONObject jsonData = new JSONObject(data);
+//            int quantity = jsonData.getInt("quantity");
+//            return new BoggledTerraformingProjectEffect.RemoveCreditsFromFleet(id, enableSettings, quantity);
+//        }
+//    }
 
     public static class AddItemToSubmarket implements TerraformingProjectEffectFactory {
         @Override
@@ -381,6 +396,255 @@ public class BoggledTerraformingProjectEffectFactory {
                 factionIdsToNotMakeHostile.add(factionIdsToNotMakeHostileArray.getString(i));
             }
             return new BoggledTerraformingProjectEffect.DecivilizeMarket(id, enableSettings, factionIdsToNotMakeHostile);
+        }
+    }
+
+    public static class ModifyPatherInterest implements TerraformingProjectEffectFactory {
+        @Override
+        public BoggledTerraformingProjectEffect.TerraformingProjectEffect constructFromJSON(String id, String[] enableSettings, String data) throws JSONException {
+            JSONObject jsonData = new JSONObject(data);
+            String modifierType = jsonData.getString("modifier_type");
+            float value = (float) jsonData.getDouble("value");
+            return new BoggledTerraformingProjectEffect.ModifyPatherInterest(id, enableSettings, modifierType, value);
+        }
+    }
+
+    public static class ModifyColonyGrowthRate implements TerraformingProjectEffectFactory {
+        @Override
+        public BoggledTerraformingProjectEffect.TerraformingProjectEffect constructFromJSON(String id, String[] enableSettings, String data) throws JSONException {
+            JSONObject jsonData = new JSONObject(data);
+            String modifierType = jsonData.getString("modifier_type");
+            float value = (float) jsonData.getDouble("value");
+            return new BoggledTerraformingProjectEffect.ModifyColonyGrowthRate(id, enableSettings, modifierType, value);
+        }
+    }
+
+    public static class ModifyColonyGroundDefense implements TerraformingProjectEffectFactory {
+        @Override
+        public BoggledTerraformingProjectEffect.TerraformingProjectEffect constructFromJSON(String id, String[] enableSettings, String data) throws JSONException {
+            JSONObject jsonData = new JSONObject(data);
+            String modifierType = jsonData.getString("modifier_type");
+            float value = (float) jsonData.getDouble("value");
+            return new BoggledTerraformingProjectEffect.ModifyColonyGroundDefense(id, enableSettings, modifierType, value);
+        }
+    }
+
+    public static class ModifyColonyAccessibility implements TerraformingProjectEffectFactory {
+        @Override
+        public BoggledTerraformingProjectEffect.TerraformingProjectEffect constructFromJSON(String id, String[] enableSettings, String data) throws JSONException {
+            JSONObject jsonData = new JSONObject(data);
+            String modifierType = jsonData.getString("modifier_type");
+            float value = (float) jsonData.getDouble("value");
+            return new BoggledTerraformingProjectEffect.ModifyColonyAccessibility(id, enableSettings, modifierType, value);
+        }
+    }
+
+    public static class ModifyColonyStability implements TerraformingProjectEffectFactory {
+        @Override
+        public BoggledTerraformingProjectEffect.TerraformingProjectEffect constructFromJSON(String id, String[] enableSettings, String data) throws JSONException {
+            JSONObject jsonData = new JSONObject(data);
+            String modifierType = jsonData.getString("modifier_type");
+            float value = (float) jsonData.getDouble("value");
+            return new BoggledTerraformingProjectEffect.ModifyColonyStability(id, enableSettings, modifierType, value);
+        }
+    }
+
+    public static class ModifyIndustryUpkeep implements TerraformingProjectEffectFactory {
+        @Override
+        public BoggledTerraformingProjectEffect.TerraformingProjectEffect constructFromJSON(String id, String[] enableSettings, String data) throws JSONException {
+            JSONObject jsonData = new JSONObject(data);
+            String modifierType = jsonData.getString("modifier_type");
+            float value = (float) jsonData.getDouble("value");
+            return new BoggledTerraformingProjectEffect.ModifyIndustryUpkeep(id, enableSettings, modifierType, value);
+        }
+    }
+
+    public static class ModifyIndustryIncome implements TerraformingProjectEffectFactory {
+        @Override
+        public BoggledTerraformingProjectEffect.TerraformingProjectEffect constructFromJSON(String id, String[] enableSettings, String data) throws JSONException {
+            JSONObject jsonData = new JSONObject(data);
+            String modifierType = jsonData.getString("modifier_type");
+            float value = (float) jsonData.getDouble("value");
+            return new BoggledTerraformingProjectEffect.ModifyIndustryIncome(id, enableSettings, modifierType, value);
+        }
+    }
+
+    public static class ModifyIndustrySupplyWithDeficit implements TerraformingProjectEffectFactory {
+        @Override
+        public BoggledTerraformingProjectEffect.TerraformingProjectEffect constructFromJSON(String id, String[] enableSettings, String data) throws JSONException {
+            JSONObject jsonData = new JSONObject(data);
+            JSONArray jsonCommoditiesDemanded = jsonData.getJSONArray("commodities_demanded");
+            List<String> commoditiesDemanded = new ArrayList<>();
+            for (int i = 0; i < jsonCommoditiesDemanded.length(); ++i) {
+                commoditiesDemanded.add(jsonCommoditiesDemanded.getString(i));
+            }
+            int supplyBonus = jsonData.getInt("bonus");
+            return new BoggledTerraformingProjectEffect.ModifyIndustrySupplyWithDeficit(id, enableSettings, commoditiesDemanded, "flat", supplyBonus);
+        }
+    }
+
+    public static class ModifyIndustryDemand implements TerraformingProjectEffectFactory {
+        @Override
+        public BoggledTerraformingProjectEffect.TerraformingProjectEffect constructFromJSON(String id, String[] enableSettings, String data) throws JSONException {
+            JSONObject jsonData = new JSONObject(data);
+            String modifierType = jsonData.getString("modifier_type");
+            float value = (float) jsonData.getDouble("value");
+            return new BoggledTerraformingProjectEffect.ModifyIndustryDemand(id, enableSettings, modifierType, value);
+        }
+    }
+
+    public static class EffectToIndustry implements TerraformingProjectEffectFactory {
+        @Override
+        public BoggledTerraformingProjectEffect.TerraformingProjectEffect constructFromJSON(String id, String[] enableSettings, String data) throws JSONException {
+            JSONObject jsonData = new JSONObject(data);
+            String industryId = jsonData.getString("industry_id");
+            String effectId = jsonData.getString("effect_id");
+            BoggledTerraformingProjectEffect.TerraformingProjectEffect effect = boggledTools.getProjectEffect(effectId);
+            return new BoggledTerraformingProjectEffect.EffectToIndustry(id, enableSettings, industryId, effect);
+        }
+    }
+
+    public static class SuppressConditions implements TerraformingProjectEffectFactory {
+        @Override
+        public BoggledTerraformingProjectEffect.TerraformingProjectEffect constructFromJSON(String id, String[] enableSettings, String data) throws JSONException {
+            JSONObject jsonData = new JSONObject(data);
+            JSONArray conditionIdsArray = jsonData.getJSONArray("condition_ids");
+            List<String> conditionIds = new ArrayList<>();
+            for (int i = 0; i < conditionIdsArray.length(); ++i) {
+                conditionIds.add(conditionIdsArray.getString(i));
+            }
+            return new BoggledTerraformingProjectEffect.SuppressConditions(id, enableSettings, conditionIds);
+        }
+    }
+
+    public static class IndustryMonthlyItemProductionChance implements TerraformingProjectEffectFactory {
+        @Override
+        public BoggledTerraformingProjectEffect.TerraformingProjectEffect constructFromJSON(String id, String[] enableSettings, String data) throws JSONException {
+            JSONArray jsonArray = new JSONArray(data);
+            List<BoggledCommonIndustry.ProductionData> productionData = new ArrayList<>();
+            for (int i = 0; i < jsonArray.length(); ++i) {
+                JSONObject jsonObject = jsonArray.getJSONObject(i);
+                int priority = jsonObject.getInt("commodity_priority");
+                String commodityId = jsonObject.getString("commodity_id");
+                int chance = jsonObject.getInt("chance");
+                JSONArray requirementsArray = jsonObject.optJSONArray("requirement_ids");
+                BoggledProjectRequirementsAND reqs = boggledTools.requirementsFromRequirementsArray(requirementsArray, "MonthlyItemProductionChance", id, "MonthlyItemProductionChance");
+
+                productionData.add(new BoggledCommonIndustry.ProductionData(priority, commodityId, chance, reqs));
+            }
+            return new BoggledTerraformingProjectEffect.IndustryMonthlyItemProductionChance(id, enableSettings, productionData);
+        }
+    }
+
+    public static class IndustryMonthlyItemProductionChanceModifier implements TerraformingProjectEffectFactory {
+        @Override
+        public BoggledTerraformingProjectEffect.TerraformingProjectEffect constructFromJSON(String id, String[] enableSettings, String data) throws JSONException {
+            JSONArray jsonArray = new JSONArray(data);
+            List<Pair<String, Integer>> productionData = new ArrayList<>();
+            for (int i = 0; i < jsonArray.length(); ++i) {
+                JSONObject jsonObject = jsonArray.getJSONObject(i);
+                String commodityId = jsonObject.getString("commodity_id");
+                int chanceModifier = jsonObject.getInt("chance_modifier");
+
+                productionData.add(new Pair<>(commodityId, chanceModifier));
+            }
+            return new BoggledTerraformingProjectEffect.IndustryMonthlyItemProductionChanceModifier(id, enableSettings, productionData);
+        }
+    }
+
+    public static class CommodityDemandFlat implements TerraformingProjectEffectFactory {
+        @Override
+        public BoggledTerraformingProjectEffect.TerraformingProjectEffect constructFromJSON(String id, String[] enableSettings, String data) throws JSONException {
+            JSONObject jsonData = new JSONObject(data);
+            String commodityId = jsonData.getString("commodity_id");
+            int quantity = jsonData.getInt("quantity");
+            return new BoggledTerraformingProjectEffect.CommodityDemandFlat(id, enableSettings, commodityId, quantity);
+        }
+    }
+
+    public static class CommodityDemandMarketSize implements TerraformingProjectEffectFactory {
+        @Override
+        public BoggledTerraformingProjectEffect.TerraformingProjectEffect constructFromJSON(String id, String[] enableSettings, String data) throws JSONException {
+            JSONObject jsonData = new JSONObject(data);
+            String commodityId = jsonData.getString("commodity_id");
+            int quantity = jsonData.getInt("quantity");
+            return new BoggledTerraformingProjectEffect.CommodityDemandMarketSize(id, enableSettings, commodityId, quantity);
+        }
+    }
+
+    public static class CommodityDemandPlayerMarketSizeElseFlat implements TerraformingProjectEffectFactory {
+        @Override
+        public BoggledTerraformingProjectEffect.TerraformingProjectEffect constructFromJSON(String id, String[] enableSettings, String data) throws JSONException {
+            JSONObject jsonData = new JSONObject(data);
+            String commodityId = jsonData.getString("commodity_id");
+            int quantity = jsonData.getInt("quantity");
+            return new BoggledTerraformingProjectEffect.CommodityDemandPlayerMarketSizeElseFlat(id, enableSettings, commodityId, quantity);
+        }
+    }
+
+    public static class CommoditySupplyFlat implements TerraformingProjectEffectFactory {
+        @Override
+        public BoggledTerraformingProjectEffect.TerraformingProjectEffect constructFromJSON(String id, String[] enableSettings, String data) throws JSONException {
+            JSONObject jsonData = new JSONObject(data);
+            String commodityId = jsonData.getString("commodity_id");
+            int quantity = jsonData.getInt("quantity");
+            return new BoggledTerraformingProjectEffect.CommoditySupplyFlat(id, enableSettings, commodityId, quantity);
+        }
+    }
+
+    public static class CommoditySupplyMarketSize implements TerraformingProjectEffectFactory {
+        @Override
+        public BoggledTerraformingProjectEffect.TerraformingProjectEffect constructFromJSON(String id, String[] enableSettings, String data) throws JSONException {
+            JSONObject jsonData = new JSONObject(data);
+            String commodityId = jsonData.getString("commodity_id");
+            int quantity = jsonData.getInt("quantity");
+            return new BoggledTerraformingProjectEffect.CommoditySupplyMarketSize(id, enableSettings, commodityId, quantity);
+        }
+    }
+
+    public static class CommodityDeficitToInactive implements TerraformingProjectEffectFactory {
+        @Override
+        public BoggledTerraformingProjectEffect.TerraformingProjectEffect constructFromJSON(String id, String[] enableSettings, String data) throws JSONException {
+            JSONObject jsonData = new JSONObject(data);
+            JSONArray commoditiesDemandedArray = jsonData.getJSONArray("commodities_demanded");
+            List<String> commoditiesDemanded = new ArrayList<>();
+            for (int i = 0; i < commoditiesDemandedArray.length(); ++i) {
+                commoditiesDemanded.add(commoditiesDemandedArray.getString(i));
+            }
+            return new BoggledTerraformingProjectEffect.CommodityDeficitToInactive(id, enableSettings, commoditiesDemanded);
+        }
+    }
+
+    public static class CommodityDeficitToProduction implements TerraformingProjectEffectFactory {
+        @Override
+        public BoggledTerraformingProjectEffect.TerraformingProjectEffect constructFromJSON(String id, String[] enableSettings, String data) throws JSONException {
+            JSONObject jsonData = new JSONObject(data);
+            JSONArray commoditiesDemandedArray = jsonData.getJSONArray("commodities_demanded");
+            List<String> commoditiesDemanded = new ArrayList<>();
+            for (int i = 0; i < commoditiesDemandedArray.length(); ++i) {
+                commoditiesDemanded.add(commoditiesDemandedArray.getString(i));
+            }
+            JSONArray commoditiesDeficitedArray = jsonData.getJSONArray("commodities_deficited");
+            List<String> commoditiesDeficited = new ArrayList<>();
+            for (int i = 0; i < commoditiesDeficitedArray.length(); ++i) {
+                commoditiesDeficited.add(commoditiesDeficitedArray.getString(i));
+            }
+            return new BoggledTerraformingProjectEffect.CommodityDeficitToProduction(id, enableSettings, commoditiesDemanded, commoditiesDeficited);
+        }
+    }
+
+    public static class CommodityDeficitModifierToUpkeep implements TerraformingProjectEffectFactory {
+        @Override
+        public BoggledTerraformingProjectEffect.TerraformingProjectEffect constructFromJSON(String id, String[] enableSettings, String data) throws JSONException {
+            JSONObject jsonData = new JSONObject(data);
+            JSONArray commoditiesDemandedArray = jsonData.getJSONArray("commodities_demanded");
+            List<String> commoditiesDemanded = new ArrayList<>();
+            for (int i = 0; i < commoditiesDemandedArray.length(); ++i) {
+                commoditiesDemanded.add(commoditiesDemandedArray.getString(i));
+            }
+            String modifierType = jsonData.getString("modifier_type");
+            float value = (float) jsonData.getDouble("value");
+            return new BoggledTerraformingProjectEffect.CommodityDeficitModifierToUpkeep(id, enableSettings, commoditiesDemanded, modifierType, value);
         }
     }
 }
