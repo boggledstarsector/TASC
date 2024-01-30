@@ -552,6 +552,49 @@ public class BoggledTerraformingProjectEffectFactory {
         }
     }
 
+    public static class StepTag implements TerraformingProjectEffectFactory {
+        @Override
+        public BoggledTerraformingProjectEffect.TerraformingProjectEffect constructFromJSON(String id, String[] enableSettings, String data) throws JSONException {
+            JSONObject jsonData = new JSONObject(data);
+            String tag = jsonData.getString("tag");
+            int step = jsonData.getInt("step");
+            return new BoggledTerraformingProjectEffect.StepTag(id, enableSettings, tag, step);
+        }
+    }
+
+    public static class IndustryRemove implements TerraformingProjectEffectFactory {
+        @Override
+        public BoggledTerraformingProjectEffect.TerraformingProjectEffect constructFromJSON(String id, String[] enableSettings, String data) throws JSONException {
+            JSONObject jsonData = new JSONObject(data);
+            String industryIdToRemove = jsonData.getString("industry_id");
+            return new BoggledTerraformingProjectEffect.IndustryRemove(id, enableSettings, industryIdToRemove);
+        }
+    }
+
+    public static class TagSubstringPowerModifyBuildCost implements TerraformingProjectEffectFactory {
+        @Override
+        public BoggledTerraformingProjectEffect.TerraformingProjectEffect constructFromJSON(String id, String[] enableSettings, String data) throws JSONException {
+            JSONObject jsonData = new JSONObject(data);
+            String tag = jsonData.getString("tag");
+            int tagDefault = jsonData.getInt("default");
+            return new BoggledTerraformingProjectEffect.TagSubstringPowerModifyBuildCost(id, enableSettings, tag, tagDefault);
+        }
+    }
+
+    public static class EliminatePatherInterest implements TerraformingProjectEffectFactory {
+        @Override
+        public BoggledTerraformingProjectEffect.TerraformingProjectEffect constructFromJSON(String id, String[] enableSettings, String data) throws JSONException {
+            return new BoggledTerraformingProjectEffect.EliminatePatherInterest(id, enableSettings);
+        }
+    }
+
+    public static class AddStellarReflectorsToOrbit implements TerraformingProjectEffectFactory {
+        @Override
+        public BoggledTerraformingProjectEffect.TerraformingProjectEffect constructFromJSON(String id, String[] enableSettings, String data) throws JSONException {
+            return new BoggledTerraformingProjectEffect.AddStellarReflectorsToOrbit(id, enableSettings);
+        }
+    }
+
     public static class CommodityDemandFlat implements TerraformingProjectEffectFactory {
         @Override
         public BoggledTerraformingProjectEffect.TerraformingProjectEffect constructFromJSON(String id, String[] enableSettings, String data) throws JSONException {

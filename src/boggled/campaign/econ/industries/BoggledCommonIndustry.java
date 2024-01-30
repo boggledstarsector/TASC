@@ -31,7 +31,7 @@ public class BoggledCommonIndustry {
 
     public List<BoggledTerraformingProject.ProjectInstance> projects;
 
-    private List<BoggledIndustryEffect.IndustryEffect> buildingFinishedEffects;
+    private List<BoggledTerraformingProjectEffect.TerraformingProjectEffect> buildingFinishedEffects;
     private List<BoggledTerraformingProjectEffect.TerraformingProjectEffect> improveEffects;
 
     private Map<String, List<BoggledTerraformingProjectEffect.TerraformingProjectEffect>> aiCoreEffects;
@@ -42,7 +42,7 @@ public class BoggledCommonIndustry {
     MutableStat modifiedPatherInterest;
 
     private List<ImageOverrideWithRequirement> imageReqs;
-    private List<BoggledIndustryEffect.IndustryEffect> preBuildEffects;
+    private List<BoggledTerraformingProjectEffect.TerraformingProjectEffect> preBuildEffects;
 
     public static class ProductionData {
         int priority;
@@ -114,7 +114,7 @@ public class BoggledCommonIndustry {
         this.productionDataModifiers = new HashMap<>();
     }
 
-    public BoggledCommonIndustry(String industryId, String industryTooltip, List<BoggledTerraformingProject> projects, List<BoggledIndustryEffect.IndustryEffect> buildingFinishedEffects, List<BoggledTerraformingProjectEffect.TerraformingProjectEffect> improveEffects, Map<String, List<BoggledTerraformingProjectEffect.TerraformingProjectEffect>> aiCoreEffects, List<BoggledProjectRequirementsAND> disruptRequirements, float basePatherInterest, List<ImageOverrideWithRequirement> imageReqs, List<BoggledIndustryEffect.IndustryEffect> preBuildEffects) {
+    public BoggledCommonIndustry(String industryId, String industryTooltip, List<BoggledTerraformingProject> projects, List<BoggledTerraformingProjectEffect.TerraformingProjectEffect> buildingFinishedEffects, List<BoggledTerraformingProjectEffect.TerraformingProjectEffect> improveEffects, Map<String, List<BoggledTerraformingProjectEffect.TerraformingProjectEffect>> aiCoreEffects, List<BoggledProjectRequirementsAND> disruptRequirements, float basePatherInterest, List<ImageOverrideWithRequirement> imageReqs, List<BoggledTerraformingProjectEffect.TerraformingProjectEffect> preBuildEffects) {
         this.ctx = null;
         this.industryId = industryId;
         this.industryTooltip = industryTooltip;
@@ -274,8 +274,8 @@ public class BoggledCommonIndustry {
     public void buildingFinished() {
         building = false;
         built = true;
-        for (BoggledIndustryEffect.IndustryEffect buildingFinishedEffect : buildingFinishedEffects) {
-            buildingFinishedEffect.applyEffect(ctx, ctx.getSourceIndustry().getNameForModifier());
+        for (BoggledTerraformingProjectEffect.TerraformingProjectEffect buildingFinishedEffect : buildingFinishedEffects) {
+            buildingFinishedEffect.applyProjectEffect(ctx, ctx.getSourceIndustry().getNameForModifier());
         }
     }
 
@@ -331,8 +331,8 @@ public class BoggledCommonIndustry {
     }
 
     public void notifyBeingRemoved(MarketAPI.MarketInteractionMode mode, boolean forUpgrade) {
-        for (BoggledIndustryEffect.IndustryEffect buildingFinishedEffect : buildingFinishedEffects) {
-            buildingFinishedEffect.unapplyEffect(ctx);
+        for (BoggledTerraformingProjectEffect.TerraformingProjectEffect buildingFinishedEffect : buildingFinishedEffects) {
+            buildingFinishedEffect.unapplyProjectEffect(ctx);
         }
     }
 
@@ -735,8 +735,8 @@ public class BoggledCommonIndustry {
     }
 
     public float getBuildCost() {
-        for (BoggledIndustryEffect.IndustryEffect preBuildEffect : preBuildEffects) {
-            preBuildEffect.applyEffect(ctx, "Prebuild lol");
+        for (BoggledTerraformingProjectEffect.TerraformingProjectEffect preBuildEffect : preBuildEffects) {
+            preBuildEffect.applyProjectEffect(ctx, industryTooltip);
         }
         return buildCostModifier.getModifiedValue();
     }

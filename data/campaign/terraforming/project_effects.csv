@@ -397,6 +397,10 @@ domed_cities_gamma_core_stability_bonus,,ModifyColonyStability,"{ 'modifier_type
 
 domed_cities_improve_stability_bonus,,ModifyColonyStability,"{ 'modifier_type' : 'flat', 'value' : 1 }"
 
+expand_station_increment_tag,,StepTag,"{ 'tag' : 'boggled_station_construction_numExpansions_', 'step' : 1 }"
+expand_station_build_cost_modifier,boggledStationProgressiveIncreaseInCostsToExpandStation,TagSubstringPowerModifyBuildCost,"{ 'tag' : 'boggled_station_construction_numExpansions_', 'default' : 0 }"
+expand_station_remove_on_completion,,IndustryRemove,"{ 'industry_id' : 'BOGGLED_STATION_EXPANSION' }"
+
 genelab_income_bonus_to_mesozoic_park,,ModifyIndustryIncome,"{ 'modifier_type' : 'mult', 'value' : 1.5 }"
 genelab_apply_effect_to_mesozoic_park,,EffectToIndustry,"{
 	'industry_id' : 'BOGGLED_MESOZOIC_PARK',
@@ -493,5 +497,5 @@ planetary_agrav_field_domed_cities_effect,,EffectWithRequirement,"{
 }"
 
 stellar_reflector_suppress_conditions,,SuppressConditions,"{ 'condition_ids' : [ 'hot', 'cold', 'poor_light' ] }"
-# stellar_reflector_add_stellar_reflectors_to_market,,AddStellarReflectorsToMarket,
-# stellar_reflector_array_add_solar_array_condition,,AddCondition,solar_array
+stellar_reflector_add_stellar_reflectors_to_market,,AddStellarReflectorsToOrbit,
+stellar_reflector_array_add_solar_array_condition,,MarketAddCondition,solar_array

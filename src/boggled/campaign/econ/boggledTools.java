@@ -28,7 +28,6 @@ import com.fs.starfarer.campaign.CircularOrbit;
 import com.fs.starfarer.campaign.CircularOrbitPointDown;
 import com.fs.starfarer.campaign.CircularOrbitWithSpin;
 import com.fs.starfarer.loading.specs.PlanetSpec;
-import boggled.scripts.BoggledIndustryEffect;
 import illustratedEntities.helper.ImageHandler;
 import illustratedEntities.helper.Settings;
 import illustratedEntities.helper.TextHandler;
@@ -306,8 +305,6 @@ public class boggledTools {
     public static final HashMap<String, BoggledCommoditySupplyDemandFactory.CommodityDemandFactory> commodityDemandFactories = new HashMap<>();
     public static final HashMap<String, BoggledCommoditySupplyDemandFactory.CommoditySupplyFactory> commoditySupplyFactories = new HashMap<>();
 
-    public static final HashMap<String, BoggledIndustryEffectFactory.IndustryEffectFactory> industryEffectFactories = new HashMap<>();
-
     @Nullable
     public static BoggledTerraformingRequirement.TerraformingRequirement getTerraformingRequirement(String terraformingRequirementType, String id, boolean invert, String data) throws JSONException {
         Logger log = Global.getLogger(boggledTools.class);
@@ -384,23 +381,6 @@ public class boggledTools {
             return null;
         }
         return supply;
-    }
-
-    @Nullable
-    public static BoggledIndustryEffect.IndustryEffect getIndustryEffect(String industryEffectType, String id, String[] enableSettings, String data) throws JSONException {
-        Logger log = Global.getLogger(boggledTools.class);
-
-        BoggledIndustryEffectFactory.IndustryEffectFactory factory = industryEffectFactories.get(industryEffectType);
-        if (factory == null) {
-            log.error("Industry effect " + id + " of type " + industryEffectType + " has no assigned factory");
-            return null;
-        }
-        BoggledIndustryEffect.IndustryEffect effect = factory.constructFromJSON(id, enableSettings, data);
-        if (effect == null) {
-            log.error("Industry effect " + id + " of type " + industryEffectType + " was null when created with data " + data);
-            return null;
-        }
-        return effect;
     }
 
     @Nullable
@@ -577,50 +557,6 @@ public class boggledTools {
         commodityDemandFactories.put(key, value);
     }
 
-    public static void initialiseDefaultIndustryEffectFactories() {
-        addIndustryEffectFactory("DeficitToInactive", new BoggledIndustryEffectFactory.DeficitToInactive());
-        addIndustryEffectFactory("DeficitToCommodity", new BoggledIndustryEffectFactory.DeficitToCommodity());
-        addIndustryEffectFactory("DeficitMultiplierToUpkeep", new BoggledIndustryEffectFactory.DeficitMultiplierToUpkeep());
-
-        addIndustryEffectFactory("EffectToIndustry", new BoggledIndustryEffectFactory.EffectToIndustry());
-
-        addIndustryEffectFactory("ModifyIncome", new BoggledIndustryEffectFactory.ModifyIncome());
-
-        addIndustryEffectFactory("ModifyAccessibility", new BoggledIndustryEffectFactory.ModifyAccessibility());
-        addIndustryEffectFactory("ModifyStability", new BoggledIndustryEffectFactory.ModifyStability());
-
-        addIndustryEffectFactory("SupplyBonusToIndustryWithDeficit", new BoggledIndustryEffectFactory.SupplyBonusToIndustryWithDeficit());
-        addIndustryEffectFactory("ModifyAllDemand", new BoggledIndustryEffectFactory.ModifyAllDemand());
-        addIndustryEffectFactory("ModifyUpkeep", new BoggledIndustryEffectFactory.ModifyUpkeep());
-
-        addIndustryEffectFactory("EliminatePatherInterest", new BoggledIndustryEffectFactory.EliminatePatherInterest());
-        addIndustryEffectFactory("ModifyPatherInterest", new BoggledIndustryEffectFactory.ModifyPatherInterest());
-
-        addIndustryEffectFactory("IncrementTag", new BoggledIndustryEffectFactory.IncrementTag());
-        addIndustryEffectFactory("RemoveIndustry", new BoggledIndustryEffectFactory.RemoveIndustry());
-
-        addIndustryEffectFactory("SuppressConditions", new BoggledIndustryEffectFactory.SuppressConditions());
-        addIndustryEffectFactory("ModifyGroundDefense", new BoggledIndustryEffectFactory.ModifyGroundDefense());
-
-        addIndustryEffectFactory("IndustryEffectWithRequirement", new BoggledIndustryEffectFactory.IndustryEffectWithRequirement());
-
-        addIndustryEffectFactory("AddCondition", new BoggledIndustryEffectFactory.AddCondition());
-
-        addIndustryEffectFactory("AddStellarReflectorsToMarket", new BoggledIndustryEffectFactory.AddStellarReflectorsToMarket());
-
-        addIndustryEffectFactory("ModifyColonyGrowthRate", new BoggledIndustryEffectFactory.ModifyColonyGrowthRate());
-
-        addIndustryEffectFactory("TagSubstringPowerModifyBuildCostFactory", new BoggledIndustryEffectFactory.TagSubstringPowerModifyBuildCost());
-
-        addIndustryEffectFactory("MonthlyItemProductionChance", new BoggledIndustryEffectFactory.MonthlyItemProductionChance());
-        addIndustryEffectFactory("MonthlyItemProductionChanceModifier", new BoggledIndustryEffectFactory.MonthlyItemProductionChanceModifier());
-    }
-
-    public static void addIndustryEffectFactory(String key, BoggledIndustryEffectFactory.IndustryEffectFactory value) {
-        Global.getLogger(boggledTools.class).info("Adding industry effect factory " + key);
-        industryEffectFactories.put(key, value);
-    }
-
     public static void initialiseDefaultTerraformingProjectEffectFactories() {
         addTerraformingProjectEffectFactory("PlanetTypeChange", new BoggledTerraformingProjectEffectFactory.PlanetTypeChange());
         addTerraformingProjectEffectFactory("IndustrySwap", new BoggledTerraformingProjectEffectFactory.IndustrySwap());
@@ -671,6 +607,12 @@ public class boggledTools {
 
         addTerraformingProjectEffectFactory("IndustryMonthlyItemProductionChance", new BoggledTerraformingProjectEffectFactory.IndustryMonthlyItemProductionChance());
         addTerraformingProjectEffectFactory("IndustryMonthlyItemProductionChanceModifier", new BoggledTerraformingProjectEffectFactory.IndustryMonthlyItemProductionChanceModifier());
+
+        addTerraformingProjectEffectFactory("StepTag", new BoggledTerraformingProjectEffectFactory.StepTag());
+        addTerraformingProjectEffectFactory("IndustryRemove", new BoggledTerraformingProjectEffectFactory.IndustryRemove());
+        addTerraformingProjectEffectFactory("TagSubstringPowerModifyBuildCost", new BoggledTerraformingProjectEffectFactory.TagSubstringPowerModifyBuildCost());
+        addTerraformingProjectEffectFactory("EliminatePatherInterest", new BoggledTerraformingProjectEffectFactory.EliminatePatherInterest());
+        addTerraformingProjectEffectFactory("AddStellarReflectorsToOrbit", new BoggledTerraformingProjectEffectFactory.AddStellarReflectorsToOrbit());
 
         addTerraformingProjectEffectFactory("CommodityDemandFlat", new BoggledTerraformingProjectEffectFactory.CommodityDemandFlat());
         addTerraformingProjectEffectFactory("CommodityDemandMarketSize", new BoggledTerraformingProjectEffectFactory.CommodityDemandMarketSize());
@@ -780,30 +722,6 @@ public class boggledTools {
                 } else {
                     log.warn(sourceInfo + " " + id + " has empty invalid requirement " + requirementsId);
                 }
-            }
-        }
-        return ret;
-    }
-
-    private static List<BoggledIndustryEffect.IndustryEffect> industryEffectsFromObject(JSONObject object, String key, String id, String type) throws JSONException {
-        Logger log = Global.getLogger(boggledTools.class);
-
-        String effectsString = object.getString(key);
-        List<BoggledIndustryEffect.IndustryEffect> ret = new ArrayList<>();
-        if (effectsString.isEmpty()) {
-            return ret;
-        }
-        JSONArray effectArray = new JSONArray(effectsString);
-        for (int i = 0; i < effectArray.length(); ++i) {
-            String effectString = effectArray.getString(i);
-            if (effectString.isEmpty()) {
-                continue;
-            }
-            BoggledIndustryEffect.IndustryEffect effect = boggledTools.industryEffects.get(effectString);
-            if (effect != null) {
-                ret.add(effect);
-            } else {
-                log.info(type + " " + id + " has invalid " + key + " effect " + effectString);
             }
         }
         return ret;
@@ -959,9 +877,9 @@ public class boggledTools {
                     }
                 }
 
-                List<BoggledIndustryEffect.IndustryEffect> buildingFinishedEffects = industryEffectsFromObject(row, "building_finished_effects",id, "Industry");
+                List<BoggledTerraformingProjectEffect.TerraformingProjectEffect> buildingFinishedEffects = projectEffectsFromJSON(row, "Industry Options", id, "building_finished_effects");
                 List<BoggledTerraformingProjectEffect.TerraformingProjectEffect> improveEffects = projectEffectsFromJSON(row, "Industry Options", id, "improve_effects");
-                List<BoggledIndustryEffect.IndustryEffect> preBuildEffects = industryEffectsFromObject(row, "pre_build_effects", id, "Industry");
+                List<BoggledTerraformingProjectEffect.TerraformingProjectEffect> preBuildEffects = projectEffectsFromJSON(row, "Industry Options", id, "pre_build_effects");
 
                 Map<String, List<BoggledTerraformingProjectEffect.TerraformingProjectEffect>> aiCoreEffects = aiCoreEffectsFromJSON(row, "ai_core_effects", id);
 
@@ -990,36 +908,6 @@ public class boggledTools {
             }
         }
         boggledTools.industryProjects = industryProjects;
-    }
-
-    public static void initialiseIndustryEffectsFromJSON(@NotNull JSONArray industryEffectsJSON) {
-        Logger log = Global.getLogger(boggledTools.class);
-
-        boggledTools.industryEffects = new HashMap<>();
-
-        String idForErrors = "";
-        for (int i = 0; i < industryEffectsJSON.length(); ++i) {
-            try {
-                JSONObject row = industryEffectsJSON.getJSONObject(i);
-
-                String id = row.getString("id");
-                if (id == null || id.isEmpty()) {
-                    continue;
-                }
-                idForErrors = id;
-
-                String[] enableSettings = row.getString("enable_settings").split(csvOptionSeparator);
-
-                String industryEffectType = row.getString("industry_effect_type");
-                String data = row.getString("data");
-
-                BoggledIndustryEffect.IndustryEffect effect = getIndustryEffect(industryEffectType, id, enableSettings, data);
-
-                boggledTools.industryEffects.put(id, effect);
-            } catch (JSONException e) {
-                log.error("Error in industry effect '" + idForErrors + "': " + e);
-            }
-        }
     }
 
     public static void initialiseTerraformingRequirementFromJSON(@NotNull JSONArray terraformingRequirementJSON) {
@@ -1380,10 +1268,6 @@ public class boggledTools {
         return terraformingProjects.get(projectId);
     }
 
-    public static BoggledIndustryEffect.IndustryEffect getIndustryEffect(String industryEffectId) {
-        return industryEffects.get(industryEffectId);
-    }
-
     public static BoggledTerraformingProjectEffect.TerraformingProjectEffect getProjectEffect(String effectId) {
         return terraformingProjectEffects.get(effectId);
     }
@@ -1404,8 +1288,6 @@ public class boggledTools {
     private static Map<String, BoggledTerraformingRequirement.TerraformingRequirement> terraformingRequirement;
     private static Map<String, BoggledProjectRequirementsOR> terraformingRequirements;
     private static Map<String, BoggledTerraformingDurationModifier.TerraformingDurationModifier> durationModifiers;
-
-    private static Map<String, BoggledIndustryEffect.IndustryEffect> industryEffects;
 
     private static Map<String, BoggledTerraformingProjectEffect.TerraformingProjectEffect> terraformingProjectEffects;
     private static Map<String, BoggledCommonIndustry> industryProjects;
