@@ -70,7 +70,7 @@ public class BoggledTerraformingProjectEffect {
         public boolean isEnabled() { return boggledTools.optionsAllowThis(enableSettings); }
 
         protected abstract void applyProjectEffectImpl(BoggledTerraformingRequirement.RequirementContext ctx, String effectSource);
-        protected void unapplyProjectEffectImpl(BoggledTerraformingRequirement.RequirementContext ctx) {}
+        protected abstract void unapplyProjectEffectImpl(BoggledTerraformingRequirement.RequirementContext ctx);
 
         protected void addTooltipInfoImpl(BoggledTerraformingRequirement.RequirementContext ctx, Map<String, EffectTooltipPara> effectTypeToPara, DescriptionMode mode, DescriptionSource source) {}
 
@@ -110,6 +110,11 @@ public class BoggledTerraformingProjectEffect {
         protected void applyProjectEffectImpl(BoggledTerraformingRequirement.RequirementContext ctx, String effectSource) {
             ctx.getPlanet().changeType(newPlanetType, null);
         }
+
+        @Override
+        protected void unapplyProjectEffectImpl(BoggledTerraformingRequirement.RequirementContext ctx) {
+
+        }
     }
 
     public static class IndustrySwap extends TerraformingProjectEffect {
@@ -129,6 +134,11 @@ public class BoggledTerraformingProjectEffect {
             }
             market.removeIndustry(industryIdToRemove, MarketAPI.MarketInteractionMode.REMOTE, false);
             market.addIndustry(industryIdToAdd);
+        }
+
+        @Override
+        protected void unapplyProjectEffectImpl(BoggledTerraformingRequirement.RequirementContext ctx) {
+
         }
     }
 
@@ -196,14 +206,20 @@ public class BoggledTerraformingProjectEffect {
             this.step = step;
         }
 
-        private void incrementResourceWithDefault(MarketAPI market, List<String> resourceProgression) {
+        int clamp(int val, int min, int max) {
+            return Math.max(min, Math.min(max, val));
+        }
+
+        private void incrementResourceWithDefault(MarketAPI market, List<String> resourceProgression, int step) {
             // Step because OuyangOptimization goes volatiles_trace (0) to volatiles_abundant (2), etc
-            String defaultResource = resourceProgression.get(Math.max(0, step - 1));
+            int defaultResourceIdx = clamp(step, 0, resourceProgression.size() - 1);
+            String defaultResource = resourceProgression.get(defaultResourceIdx);
             boolean resourceFound = false;
             for (int i = 0; i < resourceProgression.size() - 1; ++i) {
                 if (market.hasCondition(resourceProgression.get(i))) {
                     boggledTools.removeCondition(market, resourceProgression.get(i));
-                    boggledTools.addCondition(market, resourceProgression.get(Math.min(i + step, resourceProgression.size() - 1)));
+                    int newConditionIdx = clamp(i + step, 0, resourceProgression.size() - 1);
+                    boggledTools.addCondition(market, resourceProgression.get(newConditionIdx));
                     resourceFound = true;
                     break;
                 }
@@ -216,12 +232,24 @@ public class BoggledTerraformingProjectEffect {
 
         @Override
         protected void applyProjectEffectImpl(BoggledTerraformingRequirement.RequirementContext ctx, String effectSource) {
+            MarketAPI market = ctx.getClosestMarket();
             List<String> resourcesProgression = boggledTools.getResourceProgressions().get(resource);
             if (resourcesProgression == null || resourcesProgression.isEmpty()) {
                 return;
             }
 
-            incrementResourceWithDefault(ctx.getPlanetMarket(), boggledTools.getResourceProgressions().get(resource));
+            incrementResourceWithDefault(market, boggledTools.getResourceProgressions().get(resource), step);
+        }
+
+        @Override
+        protected void unapplyProjectEffectImpl(BoggledTerraformingRequirement.RequirementContext ctx) {
+            MarketAPI market = ctx.getClosestMarket();
+            List<String> resourcesProgression = boggledTools.getResourceProgressions().get(resource);
+            if (resourcesProgression == null || resourcesProgression.isEmpty()) {
+                return;
+            }
+
+            incrementResourceWithDefault(market, boggledTools.getResourceProgressions().get(resource), -step);
         }
     }
 
@@ -234,6 +262,11 @@ public class BoggledTerraformingProjectEffect {
         protected void applyProjectEffectImpl(BoggledTerraformingRequirement.RequirementContext ctx, String effectSource) {
             super.applyProjectEffectImpl(ctx.getFocusContext(), effectSource);
         }
+
+        @Override
+        protected void unapplyProjectEffectImpl(BoggledTerraformingRequirement.RequirementContext ctx) {
+            super.unapplyProjectEffectImpl(ctx.getFocusContext());
+        }
     }
 
     public static class FocusMarketRemoveCondition extends MarketRemoveCondition {
@@ -245,6 +278,11 @@ public class BoggledTerraformingProjectEffect {
         protected void applyProjectEffectImpl(BoggledTerraformingRequirement.RequirementContext ctx, String effectSource) {
             super.applyProjectEffectImpl(ctx.getFocusContext(), effectSource);
         }
+
+        @Override
+        protected void unapplyProjectEffectImpl(BoggledTerraformingRequirement.RequirementContext ctx) {
+            super.unapplyProjectEffectImpl(ctx.getFocusContext());
+        }
     }
 
     public static class FocusMarketProgressResource extends MarketProgressResource {
@@ -254,6 +292,11 @@ public class BoggledTerraformingProjectEffect {
         @Override
         protected void applyProjectEffectImpl(BoggledTerraformingRequirement.RequirementContext ctx, String effectSource) {
             super.applyProjectEffectImpl(ctx.getFocusContext(), effectSource);
+        }
+
+        @Override
+        protected void unapplyProjectEffectImpl(BoggledTerraformingRequirement.RequirementContext ctx) {
+            super.unapplyProjectEffectImpl(ctx.getFocusContext());
         }
     }
 
@@ -286,6 +329,34 @@ public class BoggledTerraformingProjectEffect {
                     && !entity.getId().equals("beholder_station"))
                 {
                     super.applyProjectEffectImpl(ctx, effectSource);
+                }
+            }
+        }
+
+        @Override
+        protected void unapplyProjectEffectImpl(BoggledTerraformingRequirement.RequirementContext ctx) {
+            super.unapplyProjectEffectImpl(ctx.getFocusContext());
+
+            SectorEntityToken closestGasGiantToken = ctx.getPlanetMarket().getPrimaryEntity();
+            if (closestGasGiantToken == null) {
+                return;
+            }
+            for (SectorEntityToken entity : closestGasGiantToken.getStarSystem().getAllEntities()) {
+                /*
+                Search through all entities in the system
+                Just to find any siphon stations attached to the gas giant this station is orbiting
+                Because gas giants can have both acropolis stations and siphon stations
+                Should make this more flexible in the future, but for now, eh
+                 */
+                if (entity.hasTag(Tags.STATION)
+                        && entity.getOrbitFocus() != null
+                        && entity.getOrbitFocus().equals(closestGasGiantToken)
+                        && entity.getMarket() != null
+                        && (entity.getCustomEntitySpec().getDefaultName().equals("Side Station")
+                        || entity.getCustomEntitySpec().getDefaultName().equals("Siphon Station"))
+                        && !entity.getId().equals("beholder_station"))
+                {
+                    super.unapplyProjectEffectImpl(ctx);
                 }
             }
         }
@@ -368,6 +439,11 @@ public class BoggledTerraformingProjectEffect {
                 memory.unset("$defenderFleet");
             }
         }
+
+        @Override
+        protected void unapplyProjectEffectImpl(BoggledTerraformingRequirement.RequirementContext ctx) {
+
+        }
     }
 
     public static class MarketRemoveIndustry extends TerraformingProjectEffect {
@@ -384,6 +460,11 @@ public class BoggledTerraformingProjectEffect {
                 return;
             }
             targetIndustry.getMarket().removeIndustry(industryId, null, false);
+        }
+
+        @Override
+        protected void unapplyProjectEffectImpl(BoggledTerraformingRequirement.RequirementContext ctx) {
+
         }
     }
 
@@ -482,6 +563,11 @@ public class BoggledTerraformingProjectEffect {
             }
             removeItemFromCargo(market.getSubmarket(submarketId).getCargo());
         }
+
+        @Override
+        protected void unapplyProjectEffectImpl(BoggledTerraformingRequirement.RequirementContext ctx) {
+
+        }
     }
 
     public static class RemoveStoryPointsFromPlayer extends TerraformingProjectEffect {
@@ -494,6 +580,11 @@ public class BoggledTerraformingProjectEffect {
         @Override
         protected void applyProjectEffectImpl(BoggledTerraformingRequirement.RequirementContext ctx, String effectSource) {
             Global.getSector().getPlayerStats().spendStoryPoints(quantity, false, null, false, null);
+        }
+
+        @Override
+        protected void unapplyProjectEffectImpl(BoggledTerraformingRequirement.RequirementContext ctx) {
+
         }
     }
 
@@ -511,35 +602,10 @@ public class BoggledTerraformingProjectEffect {
             removeItemFromCargo(playerFleet.getCargo());
 //            bogglesDefaultCargo.active.removeCommodity("station_type", commodityId, quantity);
         }
-    }
-
-    public static class RemoveCreditsFromFleet extends TerraformingProjectEffect {
-        int quantity;
-        public RemoveCreditsFromFleet(String id, String[] enableSettings, int quantity) {
-            super(id, enableSettings);
-            this.quantity = quantity;
-        }
 
         @Override
-        protected void applyProjectEffectImpl(BoggledTerraformingRequirement.RequirementContext ctx, String effectSource) {
-            ctx.getFleet().getCargo().getCredits().subtract(quantity);
-        }
+        protected void unapplyProjectEffectImpl(BoggledTerraformingRequirement.RequirementContext ctx) {
 
-        @Override
-        public void addTokenReplacements(Map<String, String> tokenReplacements) {
-            tokenReplacements.put("$creditsQuantity", Integer.toString(quantity));
-        }
-
-        @Override
-        public void addTooltipInfoImpl(BoggledTerraformingRequirement.RequirementContext ctx, Map<String, EffectTooltipPara> effectTypeToPara, DescriptionMode mode, DescriptionSource source) {
-            if (!effectTypeToPara.containsKey("CommodityCost")) {
-                effectTypeToPara.put("CommodityCost", new EffectTooltipPara("Expends ", "."));
-            }
-            EffectTooltipPara para = effectTypeToPara.get("CommodityCost");
-            String quantityString = String.format("%,d", quantity);
-            para.infix.add(quantityString + " credits");
-            para.highlights.add(quantityString);
-            para.highlightColors.add(Misc.getHighlightColor());
         }
     }
 
@@ -569,6 +635,11 @@ public class BoggledTerraformingProjectEffect {
         @Override
         protected void applyProjectEffectImpl(BoggledTerraformingRequirement.RequirementContext ctx, String effectSource) {
             ctx.getPlanetMarket().getSubmarket(submarketId).getCargo().addSpecial(new SpecialItemData(itemId, null), quantity);
+        }
+
+        @Override
+        protected void unapplyProjectEffectImpl(BoggledTerraformingRequirement.RequirementContext ctx) {
+
         }
     }
 
@@ -788,6 +859,11 @@ public class BoggledTerraformingProjectEffect {
             newStation.addScript(new BoggledUnderConstructionEveryFrameScript(ctx, newStation, stationConstructionData));
             Global.getSoundPlayer().playUISound("ui_boggled_station_start_building", 1.0f, 1.0f);
         }
+
+        @Override
+        protected void unapplyProjectEffectImpl(BoggledTerraformingRequirement.RequirementContext ctx) {
+
+        }
     }
 
     public static class AddStationToEntity extends AddStation {
@@ -841,6 +917,11 @@ public class BoggledTerraformingProjectEffect {
 
             newStation.addScript(new BoggledUnderConstructionEveryFrameScript(ctx, newStation, stationConstructionData));
             Global.getSoundPlayer().playUISound("ui_boggled_station_start_building", 1.0f, 1.0f);
+        }
+
+        @Override
+        protected void unapplyProjectEffectImpl(BoggledTerraformingRequirement.RequirementContext ctx) {
+
         }
 
         @Override
@@ -916,6 +997,11 @@ public class BoggledTerraformingProjectEffect {
         }
 
         @Override
+        protected void unapplyProjectEffectImpl(BoggledTerraformingRequirement.RequirementContext ctx) {
+
+        }
+
+        @Override
         protected void addTooltipInfoImpl(BoggledTerraformingRequirement.RequirementContext ctx, Map<String, EffectTooltipPara> effectTypeToPara, DescriptionMode mode, DescriptionSource source) {
             SectorEntityToken targetStation = ctx.getStation();
             if (targetStation == null) {
@@ -977,6 +1063,11 @@ public class BoggledTerraformingProjectEffect {
                 Global.getSector().getFaction(factionId).setRelationship(factionIdToAdjustRelationsTo, newRelationValue);
             }
         }
+
+        @Override
+        protected void unapplyProjectEffectImpl(BoggledTerraformingRequirement.RequirementContext ctx) {
+
+        }
     }
 
     public static class AdjustRelationsWithAllExcept extends TerraformingProjectEffect {
@@ -1003,6 +1094,11 @@ public class BoggledTerraformingProjectEffect {
                 }
                 faction.setRelationship(factionIdToAdjustRelationsTo, newRelationValue);
             }
+        }
+
+        @Override
+        protected void unapplyProjectEffectImpl(BoggledTerraformingRequirement.RequirementContext ctx) {
+
         }
     }
 
@@ -1033,6 +1129,11 @@ public class BoggledTerraformingProjectEffect {
                     Misc.setFlagWithReason(fleet.getMemoryWithoutUpdate(),  MemFlags.MEMORY_KEY_MAKE_HOSTILE_WHILE_TOFF, "raidAlarm", true, 1f);
                 }
             }
+        }
+
+        @Override
+        protected void unapplyProjectEffectImpl(BoggledTerraformingRequirement.RequirementContext ctx) {
+
         }
     }
 
@@ -1086,6 +1187,11 @@ public class BoggledTerraformingProjectEffect {
 
                 ((RuleBasedDialog) dialog.getPlugin()).updateMemory();
             }
+        }
+
+        @Override
+        protected void unapplyProjectEffectImpl(BoggledTerraformingRequirement.RequirementContext ctx) {
+
         }
 
         @Override
@@ -1765,6 +1871,11 @@ public class BoggledTerraformingProjectEffect {
             }
             market.addTag(this.tag + step);
         }
+
+        @Override
+        protected void unapplyProjectEffectImpl(BoggledTerraformingRequirement.RequirementContext ctx) {
+
+        }
     }
 
     public static class IndustryRemove extends TerraformingProjectEffect {
@@ -1799,6 +1910,11 @@ public class BoggledTerraformingProjectEffect {
                 }
             }
             market.removeIndustry(industryIdToRemove, null, false);
+        }
+
+        @Override
+        protected void unapplyProjectEffectImpl(BoggledTerraformingRequirement.RequirementContext ctx) {
+
         }
     }
 
@@ -2004,6 +2120,11 @@ public class BoggledTerraformingProjectEffect {
             boolean hasDeficit = sourceIndustry.getMaxDeficit(commodityIds.toArray(new String[0])).two > 0;
             targetIndustryInterface.setFunctional(hasDeficit);
         }
+
+        @Override
+        protected void unapplyProjectEffectImpl(BoggledTerraformingRequirement.RequirementContext ctx) {
+
+        }
     }
 
     public static class CommodityDeficitToProduction extends CommodityDeficit {
@@ -2023,6 +2144,11 @@ public class BoggledTerraformingProjectEffect {
             }
             Pair<String, Integer> deficit = sourceIndustry.getMaxDeficit(commodityIds.toArray(new String[0]));
             targetIndustryInterface.applyDeficitToProduction(id + "_DeficitToCommodity", deficit, commoditiesDeficited.toArray(new String[0]));
+        }
+
+        @Override
+        protected void unapplyProjectEffectImpl(BoggledTerraformingRequirement.RequirementContext ctx) {
+
         }
     }
 
@@ -2085,6 +2211,11 @@ public class BoggledTerraformingProjectEffect {
             int quantityToDemand = getQuantity(ctx);
             targetIndustry.demand(id, commodityId, quantityToDemand, sourceIndustry.getNameForModifier());
         }
+
+        @Override
+        protected void unapplyProjectEffectImpl(BoggledTerraformingRequirement.RequirementContext ctx) {
+
+        }
     }
 
     public static class CommodityDemandFlat extends CommodityDemand {
@@ -2137,6 +2268,11 @@ public class BoggledTerraformingProjectEffect {
             }
             int quantityToDemand = getQuantity(ctx);
             targetIndustry.supply(id, commodityId, quantityToDemand, sourceIndustry.getNameForModifier());
+        }
+
+        @Override
+        protected void unapplyProjectEffectImpl(BoggledTerraformingRequirement.RequirementContext ctx) {
+
         }
     }
 

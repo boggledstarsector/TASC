@@ -224,15 +224,6 @@ public class BoggledTerraformingProjectEffectFactory {
         }
     }
 
-//    public static class RemoveCreditsFromFleet implements TerraformingProjectEffectFactory {
-//        @Override
-//        public BoggledTerraformingProjectEffect.TerraformingProjectEffect constructFromJSON(String id, String[] enableSettings, String data) throws JSONException {
-//            JSONObject jsonData = new JSONObject(data);
-//            int quantity = jsonData.getInt("quantity");
-//            return new BoggledTerraformingProjectEffect.RemoveCreditsFromFleet(id, enableSettings, quantity);
-//        }
-//    }
-
     public static class AddItemToSubmarket implements TerraformingProjectEffectFactory {
         @Override
         public BoggledTerraformingProjectEffect.TerraformingProjectEffect constructFromJSON(String id, String[] enableSettings, String data) throws JSONException {
