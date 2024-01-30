@@ -242,21 +242,23 @@ remove_atmosphere_condition_improvement,boggledTerraformingContentEnabled | bogg
 ]",,,
 ,,,,,,,,,,,,,,,
 industry_ai_mining_drones,boggledStationConstructionContentEnabled | boggledEnableAIMiningDronesStructure,industry,,,,"[
-	{ 'requirement_id' : 'industry_colony_is_station' },
-	{ 'requirement_id' : 'industry_ai_mining_drones_colony_has_mining' }
+	{ 'requirement_id' : 'industry_colony_is_station', 'and_then' : [
+		{ 'requirement_id' : 'industry_ai_mining_drones_colony_has_mining' }
+	] }
 ]",,,,,,,"[
 	{ 'effect_id' : 'ongoing_market_size_demand_fuel' },
 	{ 'effect_id' : 'ongoing_market_size_demand_supplies' },
 	{ 'effect_id' : 'ongoing_market_size_demand_ships' }
 ]",,
 industry_atmosphere_processor,boggledTerraformingContentEnabled,industry,,,,"[
-	{ 'requirement_id' : 'industry_colony_is_not_station' },
-	{ 'requirement_id' : 'industry_colony_not_unknown_world' },
-	{ 'requirement_id' : 'industry_colony_not_star' },
-	{ 'requirement_id' : 'industry_colony_not_gas_giant' },
-	{ 'requirement_id' : 'industry_colony_not_volcanic' },
-	{ 'requirement_id' : 'industry_colony_not_irradiated' },
-	{ 'requirement_id' : 'industry_atmosphere_processor_colony_has_atmo_problem' }
+	{ 'requirement_id' : 'industry_colony_is_not_station', 'and_then' : [
+		{ 'requirement_id' : 'industry_colony_not_unknown_world' },
+		{ 'requirement_id' : 'industry_colony_not_star' },
+		{ 'requirement_id' : 'industry_colony_not_gas_giant' },
+		{ 'requirement_id' : 'industry_colony_not_volcanic' },
+		{ 'requirement_id' : 'industry_colony_not_irradiated' },
+		{ 'requirement_id' : 'industry_atmosphere_processor_colony_has_atmo_problem' }
+	] }
 ]",,,,,,,"[
 	{ 'effect_id' : 'ongoing_market_size_demand_heavy_machinery' },
 	{ 'effect_id' : 'ongoing_heavy_machinery_deficit_to_inactive' }
@@ -281,10 +283,11 @@ industry_domain_archaeology,boggledDomainTechContentEnabled | boggledDomainArcha
 	{ 'effect_id' : 'domain_archaeology_ruins_vast_effect' }
 ]",,
 industry_domed_cities,boggledTerraformingContentEnabled | boggledDomedCitiesEnabled,industry,,,,"[
-	{ 'requirement_id' : 'industry_colony_is_not_station' },
-	{ 'requirement_id' : 'industry_colony_not_has_tectonic_activity_unless_has_harmonic_damper' },
-	{ 'requirement_id' : 'industry_colony_not_has_meteor_impacts' },
-	{ 'requirement_id' : 'industry_domed_cities_colony_not_gas_giant' }
+	{ 'requirement_id' : 'industry_colony_is_not_station', 'and_then' : [
+		{ 'requirement_id' : 'industry_colony_not_has_tectonic_activity_unless_has_harmonic_damper' },
+		{ 'requirement_id' : 'industry_colony_not_has_meteor_impacts' },
+		{ 'requirement_id' : 'industry_domed_cities_colony_not_gas_giant' }
+	] }
 ]","[
 	{ 'requirement_id' : 'industry_colony_not_water_surface' }
 ]",,,,,,"[
@@ -293,10 +296,11 @@ industry_domed_cities,boggledTerraformingContentEnabled | boggledDomedCitiesEnab
 	{ 'effect_id' : 'domed_cities_modify_ground_defense' }
 ]",,
 industry_seafloor_cities,boggledTerraformingContentEnabled | boggledDomedCitiesEnabled,industry,,,,"[
-	{ 'requirement_id' : 'industry_colony_is_not_station' },
-	{ 'requirement_id' : 'industry_colony_not_has_tectonic_activity_unless_has_harmonic_damper' },
-	{ 'requirement_id' : 'industry_colony_not_has_meteor_impacts' },
-	{ 'requirement_id' : 'industry_colony_not_gas_giant' }
+	{ 'requirement_id' : 'industry_colony_is_not_station', 'and_then' : [
+		{ 'requirement_id' : 'industry_colony_not_has_tectonic_activity_unless_has_harmonic_damper' },
+		{ 'requirement_id' : 'industry_colony_not_has_meteor_impacts' },
+		{ 'requirement_id' : 'industry_colony_not_gas_giant' }
+	] }
 ]","[
 	{ 'requirement_id' : 'industry_colony_water_surface' }
 ]",,,,,,"[
@@ -306,9 +310,10 @@ industry_seafloor_cities,boggledTerraformingContentEnabled | boggledDomedCitiesE
 	{ 'effect_id' : 'seafloor_cities_modify_accessibility' }
 ]",,
 industry_expand_station,boggledStationCrampedQuartersEnabled | boggledStationCrampedQuartersPlayerCanPayToIncreaseStationSize,industry,,,,"[
-	{ 'requirement_id' : 'industry_colony_is_station' },
 	{ 'requirement_id' : 'industry_station_construction_num_expansions' }
-]",,,,,,,,,
+]","[
+	{ 'requirement_id' : 'industry_colony_is_station' }
+]",,,,,,,,
 industry_genelab,boggledTerraformingContentEnabled | boggledGenelabEnabled,industry,,,,,,,,,,,"[
 	{ 'effect_id' : 'ongoing_player_market_size_else_flat_demand_domain_artifacts' },
 	{ 'effect_id' : 'genelab_apply_effect_to_mesozoic_park' }
@@ -348,16 +353,19 @@ industry_magnetoshield,boggledTerraformingContentEnabled | boggledMagnetoshieldE
 	{ 'effect_id' : 'magnetoshield_suppress_conditions' }
 ]",,
 industry_mesozoic_park,boggledTerraformingContentEnabled | boggledMesozoicParkEnabled,industry,,,,"[
-	{ 'requirement_id' : 'industry_colony_habitable' },
-	{ 'requirement_id' : 'industry_mesozoic_park_colony_not_no_or_thin_atmosphere' },
-	{ 'requirement_id' : 'industry_mesozoic_park_colony_not_dense_atmosphere' },
-	{ 'requirement_id' : 'industry_mesozoic_park_colony_not_toxic_or_irradiated' }
+	{ 'requirement_id' : 'industry_colony_is_not_station', 'and_then' : [
+		{ 'requirement_id' : 'industry_colony_habitable' },
+		{ 'requirement_id' : 'industry_mesozoic_park_colony_not_no_or_thin_atmosphere' },
+		{ 'requirement_id' : 'industry_mesozoic_park_colony_not_dense_atmosphere' },
+		{ 'requirement_id' : 'industry_mesozoic_park_colony_not_toxic_or_irradiated' }
+	] }
 ]",,,,,,,,,
 industry_ouyang_optimizer,boggledTerraformingContentEnabled | boggledOuyangOptimizerEnabled,industry,Ouyang optimization,,Completed,"[
-	{ 'requirement_id' : 'industry_colony_is_station' },
-	{ 'requirement_id' : 'industry_ouyang_optimizer_orbited_planet_is_gas_giant' },
-	{ 'requirement_id' : 'industry_ouyang_optimizer_orbited_planet_not_has_extreme_weather' },
-	{ 'requirement_id' : 'industry_ouyang_optimizer_orbited_planet_not_has_volatiles_plentiful' }
+	{ 'requirement_id' : 'industry_colony_is_station', 'and_then' : [
+		{ 'requirement_id' : 'industry_ouyang_optimizer_orbited_planet_is_gas_giant' },
+		{ 'requirement_id' : 'industry_ouyang_optimizer_orbited_planet_not_has_extreme_weather' },
+		{ 'requirement_id' : 'industry_ouyang_optimizer_orbited_planet_not_has_volatiles_plentiful' }
+	] }
 ]",,200,,,,"[
 	{ 'effect_id' : 'focus_market_progress_volatiles_ouyang_optimizer' },
 	{ 'effect_id' : 'focus_market_add_extreme_weather' }
@@ -377,23 +385,27 @@ industry_perihelion_project,boggledDomainTechContentEnabled | boggledPerihelionP
 	{ 'effect_id' : 'perihelion_deficit_to_inactive' }
 ]",,
 industry_planet_cracker,boggledTerraformingContentEnabled | boggledPlanetCrackerEnabled,industry,Planet cracking,,Completed,"[
-	{ 'requirement_id' : 'industry_colony_is_station' },
-	{ 'requirement_id' : 'industry_planet_cracker_orbited_planet_is_not_gas_giant' },
-	{ 'requirement_id' : 'industry_planet_cracker_orbited_planet_not_has_tectonic_or_extreme_tectonic_activity' },
-	{ 'requirement_id' : 'industry_planet_cracker_orbited_planet_not_has_ore_and_rare_ore_ultrarich' }
+	{ 'requirement_id' : 'industry_colony_is_station', 'and_then' : [
+		{ 'requirement_id' : 'industry_planet_cracker_orbited_planet_is_not_gas_giant' },
+		{ 'requirement_id' : 'industry_planet_cracker_orbited_planet_not_has_tectonic_or_extreme_tectonic_activity' },
+		{ 'requirement_id' : 'industry_planet_cracker_orbited_planet_not_has_ore_and_rare_ore_ultrarich' }
+	] }
 ]",,200,,,,"[
 	{ 'effect_id' : 'focus_market_progress_ore_planet_cracker' },
 	{ 'effect_id' : 'focus_market_progress_rare_ore_planet_cracker' },
 	{ 'effect_id' : 'focus_market_add_tectonic_activity' }
 ]",,,
 industry_planetary_agrav_field,boggledTerraformingContentEnabled | boggledPlanetaryAgravFieldEnabled,industry,,,,"[
-	{ 'requirement_id' : 'industry_planetary_agrav_field_colony_has_low_or_high_gravity' },
-	{ 'requirement_id' : 'industry_planetary_agrav_field_colony_has_domed_cities' }
+	{ 'requirement_id' : 'industry_colony_is_not_station', 'and_then' : [
+		{ 'requirement_id' : 'industry_planetary_agrav_field_colony_has_low_or_high_gravity' },
+		{ 'requirement_id' : 'industry_planetary_agrav_field_colony_has_domed_cities' }
+	] }
 ]",,,,,,,"[ { 'effect_id' : 'planetary_agrav_field_domed_cities_effect' } ]",,
 industry_remnant_station,boggledRemnantStationEnabled,industry,,,,"[ { 'requirement_id' : 'industry_player_has_skill_automated_ships' } ]",,,,,,,"[ { 'effect_id' : 'ongoing_flat_demand_7_supplies' } ]",,
 industry_stellar_reflector_array,boggledTerraformingContentEnabled | boggledStellarReflectorArrayEnabled,industry,,,,"[
-	{ 'requirement_id' : 'industry_colony_is_not_station' },
-	{ 'requirement_id' : 'industry_stellar_reflectors_colony_not_dark' }
+	{ 'requirement_id' : 'industry_colony_is_not_station', 'and_then' : [
+		{ 'requirement_id' : 'industry_stellar_reflectors_colony_not_dark' }
+	] }
 ]",,,,,,,"[
 	{ 'effect_id' : 'ongoing_flat_demand_1_domain_artifacts' },
 	{ 'effect_id' : 'ongoing_domain_artifacts_deficit_to_5_times_upkeep' },

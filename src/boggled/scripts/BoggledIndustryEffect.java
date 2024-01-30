@@ -962,8 +962,12 @@ public class BoggledIndustryEffect {
 
         @Override
         protected void applyEffectImpl(BoggledTerraformingRequirement.RequirementContext ctx, String effectSource) {
+            MarketAPI market = ctx.getClosestMarket();
+            if (market == null) {
+                return;
+            }
             int tagCount = tagCountDefault;
-            for (String tag : ctx.getPlanetMarket().getTags()) {
+            for (String tag : market.getTags()) {
                 if (tag.contains(tagSubstring)) {
                     tagCount = Integer.parseInt(tag.substring(tagSubstring.length()));
                     break;

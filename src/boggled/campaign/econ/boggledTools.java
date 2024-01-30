@@ -1459,11 +1459,11 @@ public class boggledTools {
     public static Map<String, String> getTokenReplacements(BoggledTerraformingRequirement.RequirementContext ctx) {
         LinkedHashMap<String, String> ret = new LinkedHashMap<>();
         ret.put("$player", Global.getSector().getPlayerPerson().getNameString());
-        MarketAPI market = ctx.getPlanetMarket();
+        MarketAPI market = ctx.getClosestMarket();
         if (market != null) {
             ret.put("$marketName", market.getName());
         }
-        MarketAPI focusMarket = ctx.getFocusContext().getPlanetMarket();
+        MarketAPI focusMarket = ctx.getFocusContext().getClosestMarket();
         if (focusMarket != null) {
             ret.put("$focusMarketName", focusMarket.getName());
         }

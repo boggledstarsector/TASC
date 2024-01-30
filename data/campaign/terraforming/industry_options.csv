@@ -11,7 +11,7 @@ BOGGLED_AI_MINING_DRONES,"AI Mining Drones",industry_ai_mining_drones,,,"[
 	'gamma_core' : [ { 'effect_id' : 'ai_mining_drones_gamma_core_effect_to_mining' } ]
 }",false,10,,,,,
 BOGGLED_ATMOSPHERE_PROCESSOR,"Atmosphere Processor",industry_atmosphere_processor,,,,,,2,,
-BOGGLED_CHAMELEON,"CHAMELEON",industry_chameleon_decivilized | industry_chameleon_rogue_ai,,,"[
+BOGGLED_CHAMELEON,"CHAMELEON",industry_chameleon | industry_chameleon_decivilized | industry_chameleon_rogue_ai,,,"[
 	{ 'effect_id' : 'chameleon_improve_bonus_to_stability' }
 ]","{
 	'alpha_core' : [
@@ -67,8 +67,7 @@ BOGGLED_LIMELIGHT_NETWORK,"Limelight Network",industry_limelight_network,,,,"{
 }",,10,,,,,
 BOGGLED_MAGNETOSHIELD,"Magnetoshield",industry_magnetoshield,,,,,,0,,,,,
 BOGGLED_MESOZOIC_PARK,"Mesozoic Park",industry_mesozoic_park,,,"[
-	{ 'effect_id' : 'mesozoic_park_improve_increase_income_bonus' },
-	{ 'effect_id' : 'ai_mining_drones_improve_bonus_to_accessibility' }
+	{ 'effect_id' : 'mesozoic_park_improve_increase_income_bonus' }
 ]","{
 	'alpha_core' : [ { 'effect_id' : 'mesozoic_park_alpha_core_increase_income_bonus' } ],
 	'beta_core' : [ { 'effect_id' : 'mesozoic_park_beta_core_increase_income_bonus' } ],

@@ -1111,7 +1111,7 @@ public class BoggledTerraformingProjectEffect {
         public MutableStat createModifier(BoggledTerraformingRequirement.RequirementContext ctx, String effectSource) {
             MutableStat mod = new MutableStat(0);
             switch (modifierType) {
-                case MARKET_SIZE: mod.modifyFlat(id, ctx.getPlanetMarket().getSize() + value, effectSource); break;
+                case MARKET_SIZE: mod.modifyFlat(id, ctx.getClosestMarket().getSize() + value, effectSource); break;
                 case FLAT: mod.modifyFlat(id, value, effectSource); break;
                 case MULT: mod.modifyMult(id, value, effectSource); break;
                 case PERCENT: mod.modifyPercent(id, value, effectSource); break;
@@ -1131,10 +1131,12 @@ public class BoggledTerraformingProjectEffect {
 
             String bonusString;
             String highlightString;
+            Color highlightColor;
 
             String suffix;
 
             private void setToIncrease() {
+                highlightColor = Misc.getHighlightColor();
                 this.increasesOrReduces = "increases";
                 this.IncreasesOrReduces = "Increases";
                 this.increasedOrReduced = "increased";
@@ -1142,6 +1144,7 @@ public class BoggledTerraformingProjectEffect {
             }
 
             private void setToReduce() {
+                highlightColor = Misc.getNegativeHighlightColor();
                 this.increasesOrReduces = "reduces";
                 this.IncreasesOrReduces = "Reduces";
                 this.increasedOrReduced = "reduced";
@@ -1149,7 +1152,10 @@ public class BoggledTerraformingProjectEffect {
             }
 
             private String formatBonusString(float value) {
-                return String.format("%.0f", value);
+                if (value % 1 == 0.0f) {
+                    return String.format("%.0f", value);
+                }
+                return String.format("%.2f", value);
             }
 
             ModifierStrings(BoggledTerraformingRequirement.RequirementContext ctx, StatModType modType, float baseValue) {
@@ -1158,7 +1164,7 @@ public class BoggledTerraformingProjectEffect {
                 switch (modType) {
                     case MARKET_SIZE:
                         suffix = "(based on colony size)";
-                        value += ctx.getPlanetMarket().getSize();
+                        value += ctx.getClosestMarket().getSize();
                     case FLAT: {
                         if (value < 0) {
                             setToReduce();
@@ -1173,22 +1179,20 @@ public class BoggledTerraformingProjectEffect {
                     case MULT: {
                         if (value < 1) {
                             setToReduce();
-                            highlightString = formatBonusString((1 - value) * 100) + "%";
                         } else {
                             setToIncrease();
-                            highlightString = formatBonusString((value - 1) * 100) + "%";
                         }
-                        bonusString = highlightString + "%";
+                        highlightString = Strings.X + formatBonusString(value);
+                        bonusString = highlightString;
                         break;
                     }
                     case PERCENT: {
-                        if (value < 100) {
+                        if (value < 0) {
                             setToReduce();
-                            highlightString = formatBonusString(100 - value) + "%";
                         } else {
                             setToIncrease();
-                            highlightString = formatBonusString(value - 100) + "%";
                         }
+                        highlightString = formatBonusString(value) + "%";
                         bonusString = highlightString + "%";
                         break;
                     }
@@ -1207,20 +1211,28 @@ public class BoggledTerraformingProjectEffect {
         protected EffectTooltipPara createTooltipData(BoggledTerraformingRequirement.RequirementContext ctx, String effect, String suffix, DescriptionMode mode, DescriptionSource source) {
             Modifier.ModifierStrings modStrings = mod.getModifierStrings(ctx);
             String text;
-            if (mode == DescriptionMode.APPLIED) {
-                text = Misc.ucFirst(effect) + " " + modStrings.increasedOrReduced + " by " + modStrings.bonusString;
+            if (source == DescriptionSource.POST_DEMAND_SECTION) {
+                text = Misc.ucFirst(effect) + ": " + modStrings.bonusString;
             } else {
-                text = modStrings.IncreasesOrReduces + " " + Misc.lcFirst(effect) + " by " + modStrings.bonusString;
+                if (mode == DescriptionMode.APPLIED) {
+                    text = Misc.ucFirst(effect) + " " + modStrings.increasedOrReduced + " by " + modStrings.bonusString;
+                } else {
+                    text = modStrings.IncreasesOrReduces + " " + Misc.lcFirst(effect) + " by " + modStrings.bonusString;
+                }
             }
 
             if (!suffix.isEmpty()) {
                 text += " " + suffix;
             }
-            text += ".";
+
+            if (source != DescriptionSource.POST_DEMAND_SECTION) {
+                text += ".";
+            }
+
 
             EffectTooltipPara ret = new EffectTooltipPara(text, "");
             ret.highlights.add(modStrings.highlightString);
-            ret.highlightColors.add(Misc.getHighlightColor());
+            ret.highlightColors.add(modStrings.highlightColor);
             return ret;
         }
 
@@ -1316,7 +1328,13 @@ public class BoggledTerraformingProjectEffect {
 
         @Override
         protected void addTooltipInfoImpl(BoggledTerraformingRequirement.RequirementContext ctx, Map<String, EffectTooltipPara> effectTypeToPara, DescriptionMode mode, DescriptionSource source) {
-            effectTypeToPara.put("ModifyColonyGroundDefense", createTooltipData(ctx, "ground defense", "", mode, source));
+            String effect;
+            if (source == DescriptionSource.POST_DEMAND_SECTION) {
+                effect = "ground defense strength";
+            } else {
+                effect = "ground defenses";
+            }
+            effectTypeToPara.put("ModifyColonyGroundDefense", createTooltipData(ctx, effect, "", mode, source));
         }
     }
 
@@ -1552,6 +1570,9 @@ public class BoggledTerraformingProjectEffect {
         @Override
         protected void addTooltipInfoImpl(BoggledTerraformingRequirement.RequirementContext ctx, Map<String, EffectTooltipPara> effectTypeToPara, DescriptionMode mode, DescriptionSource source) {
             effect.addTooltipInfoImpl(ctx, effectTypeToPara, mode, source);
+            for (EffectTooltipPara para : effectTypeToPara.values()) {
+                para.prefix = Global.getSettings().getIndustrySpec(industryId).getName() + " " + Misc.lcFirst(para.prefix);
+            }
         }
     }
 

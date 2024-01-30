@@ -103,13 +103,22 @@ public class BoggledTerraformingRequirement {
                 this.stationMarket = null;
                 this.planet = null;
                 this.station = null;
-                this.starSystem = this.fleet.getStarSystem();
             } else {
                 this.contextName = "Market " + market.getName();
-                this.planetMarket = market;
-                this.planet = market.getPlanetEntity();
-                this.starSystem = this.planet.getStarSystem();
+
+                if (this.closestMarket.hasTag("station") || this.closestMarket.getPrimaryEntity().hasTag("station")) {
+                    this.planetMarket = null;
+                    this.planet = null;
+                    this.stationMarket = this.closestMarket;
+                    this.station = this.stationMarket.getPrimaryEntity();
+                } else {
+                    this.planetMarket = this.closestMarket;
+                    this.planet = this.planetMarket.getPlanetEntity();
+                    this.stationMarket = null;
+                    this.station = null;
+                }
             }
+            this.starSystem = this.fleet.getStarSystem();
             this.project = project;
         }
 
@@ -140,7 +149,7 @@ public class BoggledTerraformingRequirement {
         }
 
         public RequirementContext getFocusContext() {
-            return new RequirementContext(BoggledCommonIndustry.getFocusMarketOrMarket(this.getPlanetMarket()), this.project);
+            return new RequirementContext(BoggledCommonIndustry.getFocusMarketOrMarket(this.getClosestMarket()), this.project);
         }
 
         public void updatePlanet() {
@@ -315,13 +324,15 @@ public class BoggledTerraformingRequirement {
 
         @Override
         protected boolean checkRequirementImpl(RequirementContext ctx) {
-            if (ctx.getPlanetMarket() == null) {
+            MarketAPI market = ctx.getClosestMarket();
+            if (market == null) {
                 return false;
             }
-            if (ctx.getPlanetMarket().getPrimaryEntity().getOrbitFocus().getMarket() == null) {
+            MarketAPI focusMarket = market.getPrimaryEntity().getOrbitFocus().getMarket();
+            if (focusMarket == null) {
                 return false;
             }
-            return super.checkRequirementImpl(new RequirementContext(ctx.getPlanetMarket().getPrimaryEntity().getOrbitFocus().getMarket(), ctx.getProject()));
+            return super.checkRequirementImpl(new RequirementContext(focusMarket, ctx.getProject()));
         }
     }
 
@@ -334,10 +345,11 @@ public class BoggledTerraformingRequirement {
 
         @Override
         protected boolean checkRequirementImpl(RequirementContext ctx) {
-            if (ctx.getPlanetMarket() == null) {
+            MarketAPI market = ctx.getClosestMarket();
+            if (market == null) {
                 return false;
             }
-            return ctx.getPlanetMarket().hasCondition(conditionId);
+            return market.hasCondition(conditionId);
         }
     }
 
@@ -348,13 +360,15 @@ public class BoggledTerraformingRequirement {
 
         @Override
         protected boolean checkRequirementImpl(RequirementContext ctx) {
-            if (ctx.getPlanetMarket() == null) {
+            MarketAPI market = ctx.getClosestMarket();
+            if (market == null) {
                 return false;
             }
-            if (ctx.getPlanetMarket().getPrimaryEntity().getOrbitFocus().getMarket() == null) {
+            MarketAPI focusMarket = market.getPrimaryEntity().getOrbitFocus().getMarket();
+            if (focusMarket == null) {
                 return false;
             }
-            return super.checkRequirementImpl(new RequirementContext(ctx.getPlanetMarket().getPrimaryEntity().getOrbitFocus().getMarket(), ctx.getProject()));
+            return super.checkRequirementImpl(new RequirementContext(focusMarket, ctx.getProject()));
         }
     }
 
@@ -372,11 +386,12 @@ public class BoggledTerraformingRequirement {
 
         @Override
         protected boolean checkRequirementImpl(RequirementContext ctx) {
-            if (ctx.getPlanetMarket() == null) {
+            MarketAPI market = ctx.getClosestMarket();
+            if (market == null) {
                 return false;
             }
-            Industry industry = ctx.getPlanetMarket().getIndustry(industryId);
-            return industry != null && industry.isFunctional() && ctx.getPlanetMarket().hasIndustry(industryId);
+            Industry industry = market.getIndustry(industryId);
+            return industry != null && industry.isFunctional() && market.hasIndustry(industryId);
         }
     }
 
@@ -395,10 +410,11 @@ public class BoggledTerraformingRequirement {
 
         @Override
         protected boolean checkRequirementImpl(RequirementContext ctx) {
-            if (!super.checkRequirementImpl(ctx)) {
+            MarketAPI market = ctx.getClosestMarket();
+            if (market == null) {
                 return false;
             }
-            Industry industry = ctx.getPlanetMarket().getIndustry(industryId);
+            Industry industry = market.getIndustry(industryId);
             for (SpecialItemData specialItemData : industry.getVisibleInstalledItems()) {
                 if (itemId.equals(specialItemData.getId())) {
                     return true;
@@ -426,7 +442,8 @@ public class BoggledTerraformingRequirement {
             if (!super.checkRequirementImpl(ctx)) {
                 return false;
             }
-            Industry industry = ctx.getPlanetMarket().getIndustry(industryId);
+            MarketAPI market = ctx.getClosestMarket();
+            Industry industry = market.getIndustry(industryId);
             return industry.getAICoreId() != null && industry.getAICoreId().equals(aiCoreId);
         }
     }
@@ -458,10 +475,11 @@ public class BoggledTerraformingRequirement {
 
         @Override
         protected boolean checkRequirementImpl(RequirementContext ctx) {
-            if (ctx.getPlanetMarket() == null) {
+            MarketAPI market = ctx.getClosestMarket();
+            if (market == null) {
                 return false;
             }
-            return super.checkRequirementImpl(ctx) || boggledTools.hasIsmaraSling(ctx.getPlanetMarket());
+            return super.checkRequirementImpl(ctx) || boggledTools.hasIsmaraSling(market);
         }
     }
 
@@ -474,11 +492,12 @@ public class BoggledTerraformingRequirement {
 
         @Override
         protected boolean checkRequirementImpl(RequirementContext ctx) {
-            if (ctx.getPlanetMarket() == null) {
+            MarketAPI market = ctx.getClosestMarket();
+            if (market == null) {
                 return false;
             }
             for (String invalidatingCondition : invalidatingConditions) {
-                if (ctx.getPlanetMarket().hasCondition(invalidatingCondition)) {
+                if (market.hasCondition(invalidatingCondition)) {
                     return false;
                 }
             }
@@ -495,11 +514,12 @@ public class BoggledTerraformingRequirement {
 
         @Override
         protected boolean checkRequirementImpl(RequirementContext ctx) {
-            if (ctx.getPlanetMarket() == null) {
+            MarketAPI market = ctx.getClosestMarket();
+            if (market == null) {
                 return false;
             }
             for (String tag : tags) {
-                if (!ctx.getPlanetMarket().hasTag(tag) && !ctx.getPlanetMarket().getPrimaryEntity().hasTag(tag)) {
+                if (!market.hasTag(tag) && !market.getPrimaryEntity().hasTag(tag)) {
                     return false;
                 }
             }
@@ -516,10 +536,11 @@ public class BoggledTerraformingRequirement {
 
         @Override
         protected boolean checkRequirementImpl(RequirementContext ctx) {
-            if (ctx.getPlanetMarket() == null) {
+            MarketAPI market = ctx.getClosestMarket();
+            if (market == null) {
                 return false;
             }
-            return ctx.getPlanetMarket().getSize() >= colonySize;
+            return market.getSize() >= colonySize;
         }
     }
 
@@ -532,7 +553,7 @@ public class BoggledTerraformingRequirement {
 
         @Override
         public void addTokenReplacements(RequirementContext ctx, Map<String, String> tokenReplacements) {
-            MarketAPI market = ctx.getPlanetMarket();
+            MarketAPI market = ctx.getClosestMarket();
             if (market == null) {
                 return;
             }
@@ -548,10 +569,11 @@ public class BoggledTerraformingRequirement {
 
         @Override
         protected boolean checkRequirementImpl(RequirementContext ctx) {
-            if (ctx.getPlanetMarket() == null) {
+            MarketAPI market = ctx.getClosestMarket();
+            if (market == null) {
                 return false;
             }
-            return checkCargoHasItem(ctx.getPlanetMarket().getSubmarket(submarketId).getCargo());
+            return checkCargoHasItem(market.getSubmarket(submarketId).getCargo());
         }
     }
 
@@ -629,18 +651,24 @@ public class BoggledTerraformingRequirement {
 
         @Override
         protected boolean checkRequirementImpl(RequirementContext ctx) {
-            if (ctx.getPlanet() == null) {
+            PlanetAPI planet = ctx.getPlanet();
+            if (planet == null) {
                 return false;
             }
 
-            Pair<String, String> key = new Pair<>(boggledTools.getPlanetType(ctx.getPlanet()).getPlanetId(), resourceId);
+            MarketAPI market = ctx.getPlanetMarket();
+            if (market == null) {
+                return false;
+            }
+
+            Pair<String, String> key = new Pair<>(boggledTools.getPlanetType(planet).getPlanetId(), resourceId);
             String maxResource = boggledTools.getResourceLimits().get(key);
 
             if (maxResource == null || maxResource.isEmpty()) {
                 return false;
             }
 
-            if (ctx.getPlanetMarket().hasCondition(maxResource)) {
+            if (market.hasCondition(maxResource)) {
                 return false;
             }
 
@@ -651,7 +679,7 @@ public class BoggledTerraformingRequirement {
                 if (resource.equals(maxResource)) {
                     maxResourcePassed = true;
                 }
-                if (ctx.getPlanetMarket().hasCondition(resource) && maxResourcePassed) {
+                if (market.hasCondition(resource) && maxResourcePassed) {
                     return false;
                 }
             }
@@ -674,7 +702,8 @@ public class BoggledTerraformingRequirement {
 
         @Override
         protected boolean checkRequirementImpl(RequirementContext ctx) {
-            if (ctx.getPlanetMarket() == null) {
+            MarketAPI market = ctx.getClosestMarket();
+            if (market == null) {
                 return false;
             }
 
@@ -682,7 +711,7 @@ public class BoggledTerraformingRequirement {
             if (!option.isEmpty()) {
                 testValue += boggledTools.getIntSetting(option);
             }
-            for (String tag : ctx.getPlanetMarket().getTags()) {
+            for (String tag : market.getTags()) {
                 if (tag.contains(tagSubstring)) {
                     testValue += Integer.parseInt(tag.substring(tagSubstring.length()));
                     break;

@@ -79,7 +79,7 @@ terraforming_world_type_allows_human_habitability,"World type allows for human h
 planet_types_colony_habitable_with_atmosphere,"$marketName is habitable and has an atmosphere",,false,"market_habitable | market_any_atmosphere"
 ,,
 industry_colony_is_station,"$marketName must be a station.",,false,"market_is_station"
-industry_colony_is_not_station,"$marketName must be on a planet.",,false,"market_is_not_station"
+industry_colony_is_not_station,"$marketName must be a planet.",,false,"market_is_not_station"
 ,,
 industry_colony_not_gas_giant,"Gas giants cannot be terraformed.",,false,"planet_not_gas_giant"
 industry_colony_not_volcanic,"Volcanic worlds cannot be terraformed.",,false,"planet_not_volcanic"
