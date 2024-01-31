@@ -381,7 +381,9 @@ public class BoggledTerraformingRequirement {
 
         @Override
         public void addTokenReplacements(RequirementContext ctx, Map<String, String> tokenReplacements) {
-            tokenReplacements.put("$industry", Global.getSettings().getIndustrySpec(industryId).getName());
+            String industryName = Global.getSettings().getIndustrySpec(industryId).getName();
+            tokenReplacements.put("$industry", industryName.toLowerCase());
+            tokenReplacements.put("$Industry", industryName);
         }
 
         @Override
@@ -405,11 +407,16 @@ public class BoggledTerraformingRequirement {
         @Override
         public void addTokenReplacements(RequirementContext ctx, Map<String, String> tokenReplacements) {
             super.addTokenReplacements(ctx, tokenReplacements);
-            tokenReplacements.put("$item", Global.getSettings().getSpecialItemSpec(itemId).getName());
+            String industryItem = Global.getSettings().getSpecialItemSpec(itemId).getName();
+            tokenReplacements.put("$industryItem", industryItem.toLowerCase());
+            tokenReplacements.put("$IndustryItem", industryItem);
         }
 
         @Override
         protected boolean checkRequirementImpl(RequirementContext ctx) {
+            if (!super.checkRequirementImpl(ctx)) {
+                return false;
+            }
             MarketAPI market = ctx.getClosestMarket();
             if (market == null) {
                 return false;

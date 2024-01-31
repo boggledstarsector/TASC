@@ -46,6 +46,7 @@ import java.awt.*;
 import java.util.*;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.regex.Pattern;
 
 import static java.util.Arrays.asList;
 
@@ -413,7 +414,7 @@ public class boggledTools {
 
     public static String doTokenReplacement(String replace, Map<String, String> tokenReplacements) {
         for (Map.Entry<String, String> replacement : tokenReplacements.entrySet()) {
-            replace = replace.replace(replacement.getKey(), replacement.getValue());
+            replace = replace.replaceAll("(?!\\b)" + Pattern.quote(replacement.getKey()) + "(?=\\b)", replacement.getValue());
         }
         return replace;
     }
