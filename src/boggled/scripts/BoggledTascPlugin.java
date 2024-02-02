@@ -37,7 +37,8 @@ public class BoggledTascPlugin extends BaseModPlugin {
         ResourceDepositsCondition.BASE_MODIFIER.put(boggledTools.BoggledCommodities.domainArtifacts, -2);
     }
 
-    private static final Logger log = Global.getLogger(BoggledTascPlugin.class);
+    static int lastGameLoad = 0;
+    static int thisGameLoad = 0;
 
     public void applyStationSettingsToAllStationsInSector() {
         if(boggledTools.getBooleanSetting("boggledApplyStationSettingsToAllStationsInSector")) {
@@ -223,7 +224,12 @@ public class BoggledTascPlugin extends BaseModPlugin {
         }
     }
 
-    private void loadSettingsFromJSON() {
+    public static void loadSettingsFromJSON() {
+        if (lastGameLoad != thisGameLoad) {
+            return;
+        }
+
+        Logger log = Global.getLogger(BoggledTascPlugin.class);
         try {
             SettingsAPI settings = Global.getSettings();
             // Utility stuff first, planet types, max planet resources, resource progressions, etc
@@ -265,6 +271,10 @@ public class BoggledTascPlugin extends BaseModPlugin {
 
         } catch (IOException | JSONException ex) {
             log.error(ex);
+        }
+
+        if (lastGameLoad == thisGameLoad) {
+            thisGameLoad++;
         }
     }
 
@@ -314,7 +324,8 @@ public class BoggledTascPlugin extends BaseModPlugin {
 
     @Override
     public void onGameLoad(boolean newGame) {
-        loadSettingsFromJSON();
+        lastGameLoad = thisGameLoad;
+//        loadSettingsFromJSON();
 
         enablePlanetKiller();
 
@@ -339,7 +350,7 @@ public class BoggledTascPlugin extends BaseModPlugin {
         boggledTools.initialiseDefaultCommoditySupplyAndDemandFactories();
         boggledTools.initialiseDefaultTerraformingProjectEffectFactories();
 
-        loadSettingsFromJSON();
+//        loadSettingsFromJSON();
         if (Global.getSettings().getModManager().isModEnabled("aaacrew_replacer")){
             bogglesDefaultCargo.active = new booglesCrewReplacerCargo();
         }else{

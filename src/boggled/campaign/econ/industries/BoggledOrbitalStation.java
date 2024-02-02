@@ -8,6 +8,8 @@ import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Pair;
 import boggled.campaign.econ.boggledTools;
 
+import java.util.List;
+
 public class BoggledOrbitalStation extends OrbitalStation implements BoggledIndustryInterface {
     private BoggledCommonIndustry thisIndustry;
 
@@ -117,8 +119,18 @@ public class BoggledOrbitalStation extends OrbitalStation implements BoggledIndu
     }
 
     @Override
-    public void setFunctional(boolean functional) {
-        thisIndustry.setFunctional(functional);
+    public void setShortages(List<Pair<String, Integer>> shortages) {
+        thisIndustry.setShortages(shortages);
+    }
+
+    @Override
+    public List<Pair<String, Integer>> getShortages() {
+        return thisIndustry.getShortages();
+    }
+
+    @Override
+    public boolean hasShortage() {
+        return thisIndustry.hasShortage();
     }
 
     @Override
@@ -235,5 +247,10 @@ public class BoggledOrbitalStation extends OrbitalStation implements BoggledIndu
     @Override
     public void unmodifyProductionChance(String commodityId, String source) {
         thisIndustry.unmodifyProductionChance(commodityId, source);
+    }
+
+    @Override
+    public Pair<Integer, Integer> getProductionChance(String commodityId) {
+        return thisIndustry.getProductionChance(commodityId);
     }
 }

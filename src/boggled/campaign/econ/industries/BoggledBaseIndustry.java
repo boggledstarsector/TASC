@@ -11,6 +11,7 @@ import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Pair;
 import boggled.campaign.econ.boggledTools;
 
+import java.util.List;
 import java.util.Random;
 
 public class BoggledBaseIndustry extends BaseIndustry implements BoggledIndustryInterface, MarketImmigrationModifier {
@@ -102,14 +103,14 @@ public class BoggledBaseIndustry extends BaseIndustry implements BoggledIndustry
 
     @Override
     public final void apply() {
-        super.apply(true);
         thisIndustry.apply();
+        super.apply(true);
     }
 
     @Override
     public final void unapply() {
-        super.unapply();
         thisIndustry.unapply();
+        super.unapply();
     }
 
     @Override
@@ -120,6 +121,7 @@ public class BoggledBaseIndustry extends BaseIndustry implements BoggledIndustry
     @Override
     protected final void addPostDemandSection(TooltipMakerAPI tooltip, boolean hasDemand, Industry.IndustryTooltipMode mode) {
         thisIndustry.addPostDemandSection(tooltip, hasDemand, mode);
+        super.addPostDemandSection(tooltip, hasDemand, mode);
     }
 
     @Override
@@ -133,8 +135,18 @@ public class BoggledBaseIndustry extends BaseIndustry implements BoggledIndustry
     }
 
     @Override
-    public final void setFunctional(boolean functional) {
-        thisIndustry.setFunctional(functional);
+    public final void setShortages(List<Pair<String, Integer>> shortages) {
+        thisIndustry.setShortages(shortages);
+    }
+
+    @Override
+    public List<Pair<String, Integer>> getShortages() {
+        return thisIndustry.getShortages();
+    }
+
+    @Override
+    public boolean hasShortage() {
+        return thisIndustry.hasShortage();
     }
 
     @Override
@@ -224,6 +236,7 @@ public class BoggledBaseIndustry extends BaseIndustry implements BoggledIndustry
     @Override
     protected final void applyImproveModifiers() {
         thisIndustry.applyImproveModifiers();
+        super.applyImproveModifiers();
     }
 
     @Override
@@ -270,5 +283,10 @@ public class BoggledBaseIndustry extends BaseIndustry implements BoggledIndustry
     @Override
     public void unmodifyProductionChance(String commodityId, String source) {
         thisIndustry.unmodifyProductionChance(commodityId, source);
+    }
+
+    @Override
+    public Pair<Integer, Integer> getProductionChance(String commodityId) {
+        return thisIndustry.getProductionChance(commodityId);
     }
 }

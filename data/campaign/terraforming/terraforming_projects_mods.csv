@@ -1,6 +1,5 @@
 id,project_id,requirements_added,requirements_removed,requirements_hidden_added,requirements_hidden_removed,base_project_duration_override,dynamic_project_duration_modifiers_added,dynamic_project_duration_modifiers_removed,requirements_stall_removed,requirements_stall_added,requirements_reset_added,requirements_reset_removed,project_complete_effects_added,project_complete_effects_removed
 # This file is just here to provide structure, it should be empty in the Terraforming & Station Construction mod
-# All fields are | separated lists of the same field minus (added,removed,override) from 'terraforming_projects.csv'
 # requirements_added and requirements_hidden_added is a JSON array of objects with a required 'requirement_id' field and an optional 'parent_id' field. If the 'parent_id' field is missing, the requirement has no pre-requisite requirements
 # requirements_stall_added and requirements_reset_added are the same as requirements_added and requirements_hidden_added except with an optional additional 'requirement_add_id' that specifies which requirement they're added to. If it doesn't exist, it makes a new requirement with that id
 # Other mods add their stuff here

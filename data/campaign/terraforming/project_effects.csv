@@ -98,11 +98,11 @@ add_drone_replicator_to_storage,,AddItemToSubmarket,"{ 'submarket_id' : 'storage
 add_biofactory_embryo_to_storage,,AddItemToSubmarket,"{ 'submarket_id' : 'storage', 'item_id' : 'biofactory_embryo', 'quantity' : 1 }"
 add_dealmaker_holosuite_to_storage,,AddItemToSubmarket,"{ 'submarket_id' : 'storage', 'item_id' : 'dealmaker_holosuite', 'quantity' : 1 }"
 ,,
-remove_2_story_points_from_player,,RemoveStoryPointsFromPlayer,"{ 'quantity' : 2 }"
+remove_2_story_points_from_player,,RemoveStoryPointsFromPlayer,"{ 'setting_id' : 'boggledDomainTechCraftingStoryPointCost', 'quantity' : 2 }"
 ,,
-remove_domain_artifacts_easy_from_storage,,RemoveItemFromSubmarket,"{ 'submarket_id' : 'storage', 'commodity_id' : 'domain_artifacts', 'quantity' : 1000 }"
-remove_domain_artifacts_medium_from_storage,,RemoveItemFromSubmarket,"{ 'submarket_id' : 'storage', 'commodity_id' : 'domain_artifacts', 'quantity' : 2000 }"
-remove_domain_artifacts_hard_from_storage,,RemoveItemFromSubmarket,"{ 'submarket_id' : 'storage', 'commodity_id' : 'domain_artifacts', 'quantity' : 4000 }"
+remove_domain_artifacts_easy_from_storage,,RemoveItemFromSubmarket,"{ 'submarket_id' : 'storage', 'commodity_id' : 'domain_artifacts', 'setting_id' : 'domainTechCraftingArtifactCostEasy', 'quantity' : 1000 }"
+remove_domain_artifacts_medium_from_storage,,RemoveItemFromSubmarket,"{ 'submarket_id' : 'storage', 'commodity_id' : 'domain_artifacts', 'setting_id' : 'domainTechCraftingArtifactCostMedium', 'quantity' : 2000 }"
+remove_domain_artifacts_hard_from_storage,,RemoveItemFromSubmarket,"{ 'submarket_id' : 'storage', 'commodity_id' : 'domain_artifacts', 'setting_id' : 'domainTechCraftingArtifactCostHard', 'quantity' : 4000 }"
 ,,
 ability_astropolis_station_remove_crew_from_fleet,,RemoveItemFromFleetStorage,"{
 	'commodity_id' : 'crew',
@@ -309,9 +309,6 @@ ongoing_market_size_supply_food,,CommoditySupplyMarketSize,"{ 'commodity_id' : '
 
 ongoing_market_size_minus_2_supply_organs,,CommoditySupplyMarketSize,"{ 'commodity_id' : 'organs', 'quantity' : -2 }"
 
-ongoing_heavy_machinery_deficit_to_inactive,,CommodityDeficitToInactive,"{ 'commodities_demanded' : [ 'heavy_machinery' ] }"
-ongoing_domain_artifacts_deficit_to_inactive,,CommodityDeficitToInactive,"{ 'commodities_demanded' : [ 'domain_artifacts' ] }"
-
 ongoing_heavy_machinery_deficit_to_food,,CommodityDeficitToProduction,"{
 	'commodities_demanded' : [ 'heavy_machinery' ],
 	'commodities_deficited' : [ 'food' ]
@@ -358,6 +355,8 @@ ai_mining_drones_gamma_core_effect_to_mining,,EffectToIndustry,"{
 }"
 
 ai_mining_drones_improve_bonus_to_accessibility,,ModifyColonyAccessibility,"{ 'modifier_type' : 'mult', 'value' : 1.20 }"
+
+atmosphere_processor_deficit_to_inactive,,CommodityDeficitToInactive,"{ 'commodities_demanded' : [ 'heavy_machinery' ] }"
 
 chameleon_alpha_core_reduce_demand,,ModifyIndustryDemand,"{ 'modifier_type' : 'flat', 'value' : -1 }"
 chameleon_alpha_core_reduce_upkeep,,ModifyIndustryUpkeep,"{ 'modifier_type' : 'mult', 'value' : 0.75 }"

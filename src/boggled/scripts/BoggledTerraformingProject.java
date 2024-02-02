@@ -24,6 +24,7 @@ public class BoggledTerraformingProject {
         }
 
         public Object readResolve() {
+            BoggledTascPlugin.loadSettingsFromJSON();
             Global.getLogger(this.getClass()).info("Doing readResolve for ProjectInstance");
             this.project = boggledTools.getProject(project.getId());
             return this;
@@ -173,16 +174,16 @@ public class BoggledTerraformingProject {
         ctx = new BoggledTerraformingRequirement.RequirementContext(ctx, this);
         Map<String, BoggledTerraformingProjectEffect.EffectTooltipPara> ret = new LinkedHashMap<>();
         for (BoggledTerraformingProjectEffect.TerraformingProjectEffect effect : projectCompleteEffects) {
-            effect.addEffectTooltipInfo(ctx, ret, descMode, BoggledTerraformingProjectEffect.TerraformingProjectEffect.DescriptionSource.GENERIC);
+            effect.addEffectTooltipInfo(ctx, ret, "Terraforming", descMode, BoggledTerraformingProjectEffect.TerraformingProjectEffect.DescriptionSource.GENERIC);
         }
         return ret;
     }
 
-    public Map<String, BoggledTerraformingProjectEffect.EffectTooltipPara> getOngoingEffectTooltipInfo(BoggledTerraformingRequirement.RequirementContext ctx, BoggledTerraformingProjectEffect.TerraformingProjectEffect.DescriptionMode mode, BoggledTerraformingProjectEffect.TerraformingProjectEffect.DescriptionSource source) {
+    public Map<String, BoggledTerraformingProjectEffect.EffectTooltipPara> getOngoingEffectTooltipInfo(BoggledTerraformingRequirement.RequirementContext ctx, String effectSource, BoggledTerraformingProjectEffect.TerraformingProjectEffect.DescriptionMode mode, BoggledTerraformingProjectEffect.TerraformingProjectEffect.DescriptionSource source) {
         ctx = new BoggledTerraformingRequirement.RequirementContext(ctx, this);
         Map<String, BoggledTerraformingProjectEffect.EffectTooltipPara> ret = new LinkedHashMap<>();
         for (BoggledTerraformingProjectEffect.TerraformingProjectEffect effect : projectOngoingEffects) {
-            effect.addEffectTooltipInfo(ctx, ret, mode, source);
+            effect.addEffectTooltipInfo(ctx, ret, effectSource, mode, source);
         }
         return ret;
     }
@@ -254,11 +255,11 @@ public class BoggledTerraformingProject {
         String intelTooltip = getProjectTooltip();
         String intelCompletedMessage = getIntelCompleteMessage();
 
-        boggledTools.surveyAll(ctx.getPlanetMarket());
-        boggledTools.refreshSupplyAndDemand(ctx.getPlanetMarket());
-        boggledTools.refreshAquacultureAndFarming(ctx.getPlanetMarket());
+        boggledTools.surveyAll(ctx.getClosestMarket());
+        boggledTools.refreshSupplyAndDemand(ctx.getClosestMarket());
+        boggledTools.refreshAquacultureAndFarming(ctx.getClosestMarket());
 
-        boggledTools.showProjectCompleteIntelMessage(intelTooltip, intelCompletedMessage, ctx.getPlanetMarket());
+        boggledTools.showProjectCompleteIntelMessage(intelTooltip, intelCompletedMessage, ctx.getClosestMarket());
     }
 
     public void applyOngoingEffects(BoggledTerraformingRequirement.RequirementContext ctx, String effectSource) {

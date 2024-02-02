@@ -261,7 +261,8 @@ industry_atmosphere_processor,boggledTerraformingContentEnabled,industry,,,,"[
 	] }
 ]",,,,,,,"[
 	{ 'effect_id' : 'ongoing_market_size_demand_heavy_machinery' },
-	{ 'effect_id' : 'ongoing_heavy_machinery_deficit_to_inactive' }
+	
+	{ 'effect_id' : 'atmosphere_processor_deficit_to_inactive' }
 ]",,
 industry_chameleon,boggledDomainTechContentEnabled | boggledCHAMELEONEnabled,industry,,,,,,,,,,,"[ { 'effect_id' : 'ongoing_market_size_demand_domain_artifacts' } ]",,
 industry_chameleon_decivilized,boggledDomainTechContentEnabled | boggledCHAMELEONEnabled,industry,Decivilized subpopulation,,Eradicated,"[ { 'requirement_id' : 'industry_colony_decivilized' } ]",,200,,,,"[
@@ -336,14 +337,16 @@ industry_ismara_sling,boggledTerraformingContentEnabled,industry,,,,"[ { 'requir
 industry_asteroid_processing,boggledTerraformingContentEnabled,industry,,,,,"[ { 'requirement_id' : 'industry_colony_is_station' } ]",,,,,,"[ { 'effect_id' : 'ongoing_flat_demand_6_heavy_machinery' } ]",,
 industry_kletka_simulator,boggledDomainTechContentEnabled | boggledKletkaSimulatorEnabled,industry,,,,,,,,,,,"[
  	{ 'effect_id' : 'ongoing_flat_demand_4_domain_artifacts' },
- 	{ 'effect_id' : 'ongoing_domain_artifacts_deficit_to_inactive' },
  	
  	{ 'effect_id' : 'kletka_simulator_very_cold_modifier' },
 	{ 'effect_id' : 'kletka_simulator_cold_modifier' },
 	{ 'effect_id' : 'kletka_simulator_hot_modifier' },
 	{ 'effect_id' : 'kletka_simulator_very_hot_modifier' },
 	{ 'effect_id' : 'kletka_simulator_station_modifier' },
-	{ 'effect_id' : 'kletka_simulator_deficit_to_inactive' }
+	
+	{ 'effect_id' : 'kletka_simulator_deficit_to_inactive' },
+	
+	{ 'effect_id' : 'kletka_simulator_item_production_effect' }
  ]",,
 industry_limelight_network,boggledDomainTechContentEnabled | boggledLimelightNetworkPlayerBuildEnabled,industry,,,,,,,,,,,"[
 	{ 'effect_id' : 'ongoing_market_size_minus_2_demand_domain_artifacts' },

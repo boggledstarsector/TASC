@@ -130,13 +130,6 @@ public class BoggledTerraformingProjectEffectFactory {
         }
     }
 
-//    public static class MarketAddStellarReflectorsFactory implements TerraformingProjectEffectFactory {
-//        @Override
-//        public BoggledTerraformingProjectEffect.TerraformingProjectEffect constructFromJSON(String data) {
-//            return new BoggledTerraformingProjectEffect.MarketAddStellarReflectors();
-//        }
-//    }
-
     public static class MarketRemoveIndustry implements TerraformingProjectEffectFactory {
         @Override
         public BoggledTerraformingProjectEffect.TerraformingProjectEffect constructFromJSON(String id, String[] enableSettings, String data) {
@@ -186,7 +179,8 @@ public class BoggledTerraformingProjectEffectFactory {
         public BoggledTerraformingProjectEffect.TerraformingProjectEffect constructFromJSON(String id, String[] enableSettings, String data) throws JSONException {
             JSONObject jsonData = new JSONObject(data);
             int quantity = jsonData.getInt("quantity");
-            return new BoggledTerraformingProjectEffect.RemoveStoryPointsFromPlayer(id, enableSettings, quantity);
+            String settingId = jsonData.optString("setting_id");
+            return new BoggledTerraformingProjectEffect.RemoveStoryPointsFromPlayer(id, enableSettings, quantity, settingId);
         }
     }
 

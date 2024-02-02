@@ -151,7 +151,7 @@ industry_effects_domain_archaeology_colony_ruins_widespread,,,false,"market_ruin
 industry_effects_domain_archaeology_colony_ruins_extensive,,,false,"market_ruins_extensive"
 industry_effects_domain_archaeology_colony_ruins_vast,,,false,"market_ruins_vast"
 ,,
-industry_effects_kletka_simulator_has_ai_core,"Requires AI core.",,false,"kletka_simulator_has_alpha_core | kletka_simulator_has_beta_core | kletka_simulator_has_gamma_core"
+industry_effects_kletka_simulator_has_ai_core,"Requires AI core",,false,"kletka_simulator_has_alpha_core | kletka_simulator_has_beta_core | kletka_simulator_has_gamma_core"
 ,,
 ability_astropolis_station_player_fleet_not_in_hyperspace,"You cannot construct an astropolis station in hyperspace.",,false,"player_fleet_not_in_hyperspace"
 ability_astropolis_station_system_has_jump_points,"You cannot construct an astropolis station in a system with no jump points.",,false,"system_has_jump_points"

@@ -125,6 +125,7 @@ public class BoggledProjectRequirementsAND implements Iterable<BoggledProjectReq
     public void addRequirement(RequirementAdd reqToAdd) {
         if (reqToAdd.parentId.isEmpty()) {
             addRequirement(reqToAdd.requirementAndThen);
+            return;
         }
 
         for (RequirementAndThen req : requirements) {

@@ -1235,7 +1235,8 @@ public class boggledTools {
                 List<BoggledTerraformingProject.RequirementRemoveInfo> reqsResetRemoved = keyedRequirementRemoveFromJSON(row, "requirements_reset_removed");
 
                 Integer baseProjectDurationOverride = null;
-                if (row.has("base_project_duration_override")) {
+                String baseProjectDurationOverrideString =  row.optString("base_project_duration_override");
+                if (!baseProjectDurationOverrideString.isEmpty()) {
                     baseProjectDurationOverride = row.getInt("base_project_duration_override");
                 }
                 List<BoggledTerraformingDurationModifier.TerraformingDurationModifier> durationModifiersAdded = durationModifiersFromJSON(row, "Terraforming Project Mods", id, "dynamic_project_duration_modifiers_added");
@@ -2594,7 +2595,11 @@ public class boggledTools {
 
     public static int getIntSetting(String key) {
         if(Global.getSettings().getModManager().isModEnabled(BoggledMods.lunalibModId)) {
-            return LunaSettings.getInt(BoggledMods.tascModId, key);
+            Integer val = LunaSettings.getInt(BoggledMods.tascModId, key);
+            if (val != null) {
+                return val;
+            }
+            return 0;
         } else {
             return Global.getSettings().getInt(key);
         }
@@ -2602,7 +2607,11 @@ public class boggledTools {
 
     public static boolean getBooleanSetting(String key) {
         if(Global.getSettings().getModManager().isModEnabled(BoggledMods.lunalibModId)) {
-            return LunaSettings.getBoolean(BoggledMods.tascModId, key);
+            Boolean val = LunaSettings.getBoolean(BoggledMods.tascModId, key);
+            if (val != null) {
+                return val;
+            }
+            return false;
         } else {
             return Global.getSettings().getBoolean(key);
         }

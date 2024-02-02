@@ -55,15 +55,21 @@ public class BoggledCommonIndustry {
             this.chance = new MutableStat(chance);
             this.requirements = requirements;
         }
+
+        public ProductionData(ProductionData that) {
+            this.priority = that.priority;
+            this.commodityId = that.commodityId;
+            this.chance = new MutableStat(that.chance.getBaseValue());
+            this.requirements = that.requirements;
+        }
     }
 
     Map<String, ProductionData> productionData;
-    Map<String, MutableStat> productionDataModifiers;
 
     MutableStat buildCostModifier = new MutableStat(0f);
     MutableStat immigrationBonus = new MutableStat(0f);
 
-    private boolean functional = true;
+    private List<Pair<String, Integer>> shortages = null;
 
     private boolean building = false;
     private boolean built = false;
@@ -88,7 +94,6 @@ public class BoggledCommonIndustry {
         this.buildCostModifier = that.buildCostModifier;
 
         this.productionData = that.productionData;
-        this.productionDataModifiers = that.productionDataModifiers;
     }
 
     public BoggledCommonIndustry() {
@@ -111,7 +116,6 @@ public class BoggledCommonIndustry {
         this.preBuildEffects = new ArrayList<>();
 
         this.productionData = new HashMap<>();
-        this.productionDataModifiers = new HashMap<>();
     }
 
     public BoggledCommonIndustry(String industryId, String industryTooltip, List<BoggledTerraformingProject> projects, List<BoggledTerraformingProjectEffect.TerraformingProjectEffect> buildingFinishedEffects, List<BoggledTerraformingProjectEffect.TerraformingProjectEffect> improveEffects, Map<String, List<BoggledTerraformingProjectEffect.TerraformingProjectEffect>> aiCoreEffects, List<BoggledProjectRequirementsAND> disruptRequirements, float basePatherInterest, List<ImageOverrideWithRequirement> imageReqs, List<BoggledTerraformingProjectEffect.TerraformingProjectEffect> preBuildEffects) {
@@ -139,7 +143,6 @@ public class BoggledCommonIndustry {
         this.buildCostModifier = new MutableStat(Global.getSettings().getIndustrySpec(industryId).getCost());
 
         this.productionData = new HashMap<>();
-        this.productionDataModifiers = new HashMap<>();
     }
 
     public BoggledCommonIndustry(BoggledCommonIndustry that, BaseIndustry industry) {
@@ -310,12 +313,20 @@ public class BoggledCommonIndustry {
         return false;
     }
 
-    public void setFunctional(boolean functional) {
-        this.functional = functional;
+    public void setShortages(List<Pair<String, Integer>> shortages) {
+        this.shortages = shortages;
+    }
+
+    public List<Pair<String, Integer>> getShortages() {
+        return shortages;
+    }
+
+    public boolean hasShortage() {
+        return shortages != null && !shortages.isEmpty();
     }
 
     public boolean isFunctional() {
-        return functional;
+        return !building && built;
     }
 
     public boolean isUpgrading() {
@@ -451,10 +462,10 @@ public class BoggledCommonIndustry {
             }
         }
 
-        if (!ctx.getSourceIndustry().isFunctional()) {
-            ctx.getSourceIndustry().getAllSupply().clear();
-            ctx.getSourceIndustry().unapply();
-        }
+//        if (!ctx.getSourceIndustry().isFunctional()) {
+//            ctx.getSourceIndustry().getAllSupply().clear();
+//            ctx.getSourceIndustry().unapply();
+//        }
     }
 
     public void unapply() {
@@ -529,7 +540,7 @@ public class BoggledCommonIndustry {
 
         for (BoggledTerraformingProject.ProjectInstance projectInstance : projects) {
             BoggledTerraformingProject project = projectInstance.getProject();
-            Map<String, BoggledTerraformingProjectEffect.EffectTooltipPara> paras = project.getOngoingEffectTooltipInfo(ctx, descMode, BoggledTerraformingProjectEffect.TerraformingProjectEffect.DescriptionSource.POST_DEMAND_SECTION);
+            Map<String, BoggledTerraformingProjectEffect.EffectTooltipPara> paras = project.getOngoingEffectTooltipInfo(ctx, ctx.getSourceIndustry().getCurrentName(), descMode, BoggledTerraformingProjectEffect.TerraformingProjectEffect.DescriptionSource.POST_DEMAND_SECTION);
             for (BoggledTerraformingProjectEffect.EffectTooltipPara para : paras.values()) {
                 StringBuilder text = new StringBuilder(para.prefix);
                 for (String infix : para.infix) {
@@ -567,8 +578,9 @@ public class BoggledCommonIndustry {
         List<BoggledTerraformingProjectEffect.TerraformingProjectEffect> coreEffects = aiCoreEffects.get(coreId);
         if (coreEffects != null) {
             for (BoggledTerraformingProjectEffect.TerraformingProjectEffect effect : coreEffects) {
+                String effectSource = Global.getSettings().getCommoditySpec(coreId).getName() + " assigned";
                 Map<String, BoggledTerraformingProjectEffect.EffectTooltipPara> effectTypeToPara = new LinkedHashMap<>();
-                effect.addEffectTooltipInfo(ctx, effectTypeToPara, descMode, BoggledTerraformingProjectEffect.TerraformingProjectEffect.DescriptionSource.AI_CORE_DESCRIPTION);
+                effect.addEffectTooltipInfo(ctx, effectTypeToPara, effectSource, descMode, BoggledTerraformingProjectEffect.TerraformingProjectEffect.DescriptionSource.AI_CORE_DESCRIPTION);
                 for (BoggledTerraformingProjectEffect.EffectTooltipPara effectTooltipPara : effectTypeToPara.values()) {
                     StringBuilder text = new StringBuilder(effectTooltipPara.prefix);
                     for (String infix : effectTooltipPara.infix) {
@@ -627,9 +639,10 @@ public class BoggledCommonIndustry {
             descMode = BoggledTerraformingProjectEffect.TerraformingProjectEffect.DescriptionMode.TO_APPLY;
         }
 
+        String effectSource = "Improvements (" + ctx.getSourceIndustry().getCurrentName() + ")";
         for (BoggledTerraformingProjectEffect.TerraformingProjectEffect effect : improveEffects) {
             Map<String, BoggledTerraformingProjectEffect.EffectTooltipPara> effectTypeToPara = new LinkedHashMap<>();
-            effect.addEffectTooltipInfo(ctx, effectTypeToPara, descMode, BoggledTerraformingProjectEffect.TerraformingProjectEffect.DescriptionSource.IMPROVE_DESCRIPTION);
+            effect.addEffectTooltipInfo(ctx, effectTypeToPara, effectSource, descMode, BoggledTerraformingProjectEffect.TerraformingProjectEffect.DescriptionSource.IMPROVE_DESCRIPTION);
             for (BoggledTerraformingProjectEffect.EffectTooltipPara para : effectTypeToPara.values()) {
                 StringBuilder text = new StringBuilder(para.prefix);
                 for (String infix : para.infix) {
@@ -742,10 +755,7 @@ public class BoggledCommonIndustry {
     }
 
     public void addProductionData(ProductionData data) {
-        productionData.put(data.commodityId, data);
-        if (!productionDataModifiers.containsKey(data.commodityId)) {
-            productionDataModifiers.put(data.commodityId, new MutableStat(0));
-        }
+        productionData.put(data.commodityId, new ProductionData(data));
     }
 
     public void removeProductionData(ProductionData data) {
@@ -753,25 +763,44 @@ public class BoggledCommonIndustry {
     }
 
     public void modifyProductionChance(String commodityId, String source, int value) {
-        MutableStat modifier = productionDataModifiers.get(commodityId);
-        if (modifier == null) {
-            productionDataModifiers.put(commodityId, new MutableStat(0));
-            modifier = productionDataModifiers.get(commodityId);
+        ProductionData pd = productionData.get(commodityId);
+        if (pd == null) {
+            return;
         }
-        modifier.modifyFlat(source, value);
+        pd.chance.modifyFlat(source, value);
     }
 
     public void unmodifyProductionChance(String commodityId, String source) {
-        MutableStat modifier = productionDataModifiers.get(commodityId);
-        if (modifier == null) {
-            productionDataModifiers.put(commodityId, new MutableStat(0));
-            modifier = productionDataModifiers.get(commodityId);
+        ProductionData pd = productionData.get(commodityId);
+        if (pd == null) {
+            return;
         }
-        modifier.unmodify(source);
+        pd.chance.unmodify(source);
+    }
+
+    public Pair<Integer, Integer> getProductionChance(String commodityId) {
+        ProductionData pd = productionData.get(commodityId);
+        if (pd == null) {
+            return new Pair<>(0, 0);
+        }
+        int two = pd.chance.getModifiedInt();
+        if (!building && !built) {
+
+        } else if (hasShortage()) {
+            two = 0;
+        } else if (!ctx.getSourceIndustry().isFunctional()) {
+            two = 0;
+        } else if (!pd.requirements.requirementsMet(ctx)) {
+            two = 0;
+        }
+        return new Pair<>((int) pd.chance.getBaseValue(), two);
     }
 
     public CargoAPI generateCargoForGatheringPoint(Random random) {
         if (!ctx.getSourceIndustry().isFunctional()) {
+            return null;
+        }
+        if (ctx.getSourceIndustryInterface().hasShortage()) {
             return null;
         }
         // As each item is checked, offset is incremented by the chance of the item
@@ -797,8 +826,7 @@ public class BoggledCommonIndustry {
                 offset += pd.chance.getModifiedInt();
                 continue;
             }
-            MutableStat modifier = productionDataModifiers.get(pd.commodityId);
-            int value = pd.chance.getModifiedInt() + modifier.getModifiedInt();
+            int value = pd.chance.getModifiedInt();
             if (value == 0) {
                 continue;
             }

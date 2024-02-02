@@ -127,9 +127,9 @@ boggled_CraftingHeader,Domain-tech Crafting Settings,Header,Domain-tech Crafting
 boggledDomainTechCraftingEnabled,Enable Domain-tech crafting,Boolean,True,,"Set this to false to disable Domain-tech crafting.
 
 Domain-tech crafting allows the player to use Domain-era artifacts and story points to craft powerful special items that can usually only be obtained via exploring.",,,Domain-tech Content
-boggledDomainTechCraftingArtifactCost,Domain-tech crafting cost,Int,2000,,"How many Domain-era artifacts are required to craft one special item.
-
-This amount is increased for more powerful items and decreased for less powerful items.",0,10000,Domain-tech Content
+boggledDomainTechCraftingArtifactCostEasy,Domain-tech crafting cost,Int,1000,,"How many Domain-era artifacts are required to craft one easy special item.",0,5000,Domain-tech Content
+boggledDomainTechCraftingArtifactCostMedium,Domain-tech crafting cost,Int,2000,,"How many Domain-era artifacts are required to craft one medium special item.",0,10000,Domain-tech Content
+boggledDomainTechCraftingArtifactCostHard,Domain-tech crafting cost,Int,4000,,"How many Domain-era artifacts are required to craft one hard special item.",0,20000,Domain-tech Content
 boggledDomainTechCraftingStoryPointCost,Domain-tech story point crafting cost,Int,2,,"How many story points are required to craft one special item.",0,10,Domain-tech Content
 boggled_PlanetKillerHeader,Planet-killer device settings,Header,Planet-killer device settings,,,,,Domain-tech Content
 boggledPlanetKillerEnabled,Enable planet-killer device,Boolean,False,,"Set this to true to enable the planet-killer device.
