@@ -12,6 +12,7 @@ import com.fs.starfarer.api.util.Pair;
 import boggled.campaign.econ.boggledTools;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 public class BoggledBaseIndustry extends BaseIndustry implements BoggledIndustryInterface, MarketImmigrationModifier {
@@ -266,6 +267,11 @@ public class BoggledBaseIndustry extends BaseIndustry implements BoggledIndustry
     }
 
     @Override
+    public void setEnableMonthlyProduction(boolean enabled) {
+        thisIndustry.setEnableMonthlyProduction(enabled);
+    }
+
+    @Override
     public void addProductionData(BoggledCommonIndustry.ProductionData data) {
         thisIndustry.addProductionData(data);
     }
@@ -273,6 +279,11 @@ public class BoggledBaseIndustry extends BaseIndustry implements BoggledIndustry
     @Override
     public void removeProductionData(BoggledCommonIndustry.ProductionData data) {
         thisIndustry.removeProductionData(data);
+    }
+
+    @Override
+    public List<BoggledCommonIndustry.ProductionData> getProductionData() {
+        return thisIndustry.getProductionData();
     }
 
     @Override

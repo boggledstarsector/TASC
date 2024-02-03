@@ -22,8 +22,10 @@ public interface BoggledIndustryInterface {
     void modifyBuildCost(MutableStat modifier);
     void unmodifyBuildCost(String source);
 
+    void setEnableMonthlyProduction(boolean enabled);
     void addProductionData(BoggledCommonIndustry.ProductionData data);
     void removeProductionData(BoggledCommonIndustry.ProductionData data);
+    List<BoggledCommonIndustry.ProductionData> getProductionData();
     void modifyProductionChance(String commodityId, String source, int value);
     void unmodifyProductionChance(String commodityId, String source);
 

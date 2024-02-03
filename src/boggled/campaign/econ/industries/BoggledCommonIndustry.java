@@ -64,6 +64,7 @@ public class BoggledCommonIndustry {
         }
     }
 
+    boolean monthlyProductionEnabled;
     Map<String, ProductionData> productionData;
 
     MutableStat buildCostModifier = new MutableStat(0f);
@@ -93,6 +94,7 @@ public class BoggledCommonIndustry {
 
         this.buildCostModifier = that.buildCostModifier;
 
+        this.monthlyProductionEnabled = that.monthlyProductionEnabled;
         this.productionData = that.productionData;
     }
 
@@ -115,6 +117,7 @@ public class BoggledCommonIndustry {
         this.imageReqs = new ArrayList<>();
         this.preBuildEffects = new ArrayList<>();
 
+        this.monthlyProductionEnabled = false;
         this.productionData = new HashMap<>();
     }
 
@@ -142,6 +145,7 @@ public class BoggledCommonIndustry {
 
         this.buildCostModifier = new MutableStat(Global.getSettings().getIndustrySpec(industryId).getCost());
 
+        this.monthlyProductionEnabled = false;
         this.productionData = new HashMap<>();
     }
 
@@ -154,7 +158,6 @@ public class BoggledCommonIndustry {
     }
 
     protected Object readResolve() {
-        Global.getLogger(this.getClass()).info("Doing readResolve for " + industryId + " " + industryTooltip);
         BoggledCommonIndustry that = boggledTools.getIndustryProject(industryId);
         setFromThat(that);
 
@@ -754,6 +757,10 @@ public class BoggledCommonIndustry {
         return buildCostModifier.getModifiedValue();
     }
 
+    public void setEnableMonthlyProduction(boolean enabled) {
+        monthlyProductionEnabled = enabled;
+    }
+
     public void addProductionData(ProductionData data) {
         productionData.put(data.commodityId, new ProductionData(data));
     }
@@ -786,7 +793,7 @@ public class BoggledCommonIndustry {
         int two = pd.chance.getModifiedInt();
         if (!building && !built) {
 
-        } else if (hasShortage()) {
+        } else if (!monthlyProductionEnabled) {
             two = 0;
         } else if (!ctx.getSourceIndustry().isFunctional()) {
             two = 0;
@@ -796,11 +803,22 @@ public class BoggledCommonIndustry {
         return new Pair<>((int) pd.chance.getBaseValue(), two);
     }
 
+    public List<ProductionData> getProductionData() {
+        List<ProductionData> ret = new ArrayList<>(productionData.values());
+        Collections.sort(ret, new Comparator<ProductionData>() {
+            @Override
+            public int compare(ProductionData o1, ProductionData o2) {
+                return Integer.compare(o1.priority, o2.priority);
+            }
+        });
+        return ret;
+    }
+
     public CargoAPI generateCargoForGatheringPoint(Random random) {
-        if (!ctx.getSourceIndustry().isFunctional()) {
+        if (!monthlyProductionEnabled) {
             return null;
         }
-        if (ctx.getSourceIndustryInterface().hasShortage()) {
+        if (!ctx.getSourceIndustry().isFunctional()) {
             return null;
         }
         // As each item is checked, offset is incremented by the chance of the item

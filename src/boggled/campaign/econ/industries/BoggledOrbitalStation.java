@@ -9,6 +9,7 @@ import com.fs.starfarer.api.util.Pair;
 import boggled.campaign.econ.boggledTools;
 
 import java.util.List;
+import java.util.Map;
 
 public class BoggledOrbitalStation extends OrbitalStation implements BoggledIndustryInterface {
     private BoggledCommonIndustry thisIndustry;
@@ -230,6 +231,11 @@ public class BoggledOrbitalStation extends OrbitalStation implements BoggledIndu
     }
 
     @Override
+    public void setEnableMonthlyProduction(boolean enabled) {
+        thisIndustry.setEnableMonthlyProduction(enabled);
+    }
+
+    @Override
     public void addProductionData(BoggledCommonIndustry.ProductionData data) {
         thisIndustry.addProductionData(data);
     }
@@ -237,6 +243,11 @@ public class BoggledOrbitalStation extends OrbitalStation implements BoggledIndu
     @Override
     public void removeProductionData(BoggledCommonIndustry.ProductionData data) {
         thisIndustry.removeProductionData(data);
+    }
+
+    @Override
+    public List<BoggledCommonIndustry.ProductionData> getProductionData() {
+        return thisIndustry.getProductionData();
     }
 
     @Override

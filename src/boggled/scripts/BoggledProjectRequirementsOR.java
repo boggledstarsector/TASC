@@ -27,7 +27,7 @@ public class BoggledProjectRequirementsOR {
         for (String r : remove) {
             for (int i = 0; i < terraformingRequirements.size(); ++i) {
                 BoggledTerraformingRequirement.TerraformingRequirement terraformingReq = terraformingRequirements.get(i);
-                if (r.equals(terraformingReq.getRequirementId())) {
+                if (r.equals(terraformingReq.getId())) {
                     log.info("Terraforming requirements " + requirementId + " removing requirement " + r);
                     terraformingRequirements.remove(i);
                     break;
@@ -63,8 +63,18 @@ public class BoggledProjectRequirementsOR {
 
     public final boolean checkRequirement(BoggledTerraformingRequirement.RequirementContext ctx) {
         boolean requirementsMet = false;
+        int numRequirementsSkipped = 0;
         for (BoggledTerraformingRequirement.TerraformingRequirement terraformingRequirement : terraformingRequirements) {
+            if (!terraformingRequirement.isEnabled()) {
+                // Ignore a requirement that is disabled
+                numRequirementsSkipped++;
+                continue;
+            }
             requirementsMet = requirementsMet || terraformingRequirement.checkRequirement(ctx);
+        }
+        if (numRequirementsSkipped == terraformingRequirements.size()) {
+            // If all the requirements are disabled via settings, ignore this requirement
+            return true;
         }
         if (invertAll) {
             requirementsMet = !requirementsMet;

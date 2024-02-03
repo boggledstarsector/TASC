@@ -93,6 +93,7 @@ public class BoggledBaseAbility extends BaseDurationAbility {
         float pad = 4f;
         float space = 10f;
 
+        ctx.updatePlanet();
         String projectTooltip = project.getProjectTooltip();
 
         tooltip.addTitle(getSpec().getName());

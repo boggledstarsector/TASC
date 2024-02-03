@@ -307,7 +307,7 @@ public class boggledTools {
     public static final HashMap<String, BoggledCommoditySupplyDemandFactory.CommoditySupplyFactory> commoditySupplyFactories = new HashMap<>();
 
     @Nullable
-    public static BoggledTerraformingRequirement.TerraformingRequirement getTerraformingRequirement(String terraformingRequirementType, String id, boolean invert, String data) throws JSONException {
+    public static BoggledTerraformingRequirement.TerraformingRequirement getTerraformingRequirement(String terraformingRequirementType, String id, String[] enableSettings, boolean invert, String data) throws JSONException {
         Logger log = Global.getLogger(boggledTools.class);
 
         BoggledTerraformingRequirementFactory.TerraformingRequirementFactory factory = terraformingRequirementFactories.get(terraformingRequirementType);
@@ -315,7 +315,7 @@ public class boggledTools {
             log.error("Requirement " + id + " of type " + terraformingRequirementType + " has no assigned factory");
             return null;
         }
-        BoggledTerraformingRequirement.TerraformingRequirement req = factory.constructFromJSON(id, invert, data);
+        BoggledTerraformingRequirement.TerraformingRequirement req = factory.constructFromJSON(id, enableSettings, invert, data);
         if (req == null) {
             log.error("Requirement " + id + " of type " + terraformingRequirementType + " was null when created with data " + data);
         }
@@ -475,6 +475,7 @@ public class boggledTools {
         addTerraformingRequirementFactory("MarketHasIndustry", new BoggledTerraformingRequirementFactory.MarketHasIndustry());
         addTerraformingRequirementFactory("MarketHasIndustryWithItem", new BoggledTerraformingRequirementFactory.MarketHasIndustryWithItem());
         addTerraformingRequirementFactory("MarketHasIndustryWithAICore", new BoggledTerraformingRequirementFactory.MarketHasIndustryWithAICore());
+        addTerraformingRequirementFactory("IndustryHasShortage", new BoggledTerraformingRequirementFactory.IndustryHasShortage());
         addTerraformingRequirementFactory("PlanetWaterLevel", new BoggledTerraformingRequirementFactory.PlanetWaterLevel());
         addTerraformingRequirementFactory("MarketHasWaterPresent", new BoggledTerraformingRequirementFactory.MarketHasWaterPresent());
         addTerraformingRequirementFactory("MarketIsAtLeastSize", new BoggledTerraformingRequirementFactory.MarketIsAtLeastSize());
@@ -606,6 +607,7 @@ public class boggledTools {
 
         addTerraformingProjectEffectFactory("SuppressConditions", new BoggledTerraformingProjectEffectFactory.SuppressConditions());
 
+        addTerraformingProjectEffectFactory("IndustryMonthlyItemProduction", new BoggledTerraformingProjectEffectFactory.IndustryMonthlyItemProduction());
         addTerraformingProjectEffectFactory("IndustryMonthlyItemProductionChance", new BoggledTerraformingProjectEffectFactory.IndustryMonthlyItemProductionChance());
         addTerraformingProjectEffectFactory("IndustryMonthlyItemProductionChanceModifier", new BoggledTerraformingProjectEffectFactory.IndustryMonthlyItemProductionChanceModifier());
 
@@ -926,11 +928,13 @@ public class boggledTools {
                 }
                 idForErrors = id;
 
+                String[] enableSettings = row.getString("enable_settings").split(csvOptionSeparator);
+
                 String requirementType = row.getString("requirement_type");
                 boolean invert = row.getBoolean("invert");
                 String data = row.getString("data");
 
-                BoggledTerraformingRequirement.TerraformingRequirement req = getTerraformingRequirement(requirementType, id, invert, data);
+                BoggledTerraformingRequirement.TerraformingRequirement req = getTerraformingRequirement(requirementType, id, enableSettings, invert, data);
                 if (req != null) {
                     terraformingRequirement.put(id, req);
                 }
@@ -944,6 +948,7 @@ public class boggledTools {
         Logger log = Global.getLogger(boggledTools.class);
 
         HashMap<String, BoggledProjectRequirementsOR> terraformingRequirements = new HashMap<>();
+        String idForErrors = "";
         for (int i = 0; i < terraformingRequirementsJSON.length(); ++i) {
             try {
                 JSONObject row = terraformingRequirementsJSON.getJSONObject(i);
@@ -952,6 +957,7 @@ public class boggledTools {
                 if (id.isEmpty()) {
                     continue;
                 }
+                idForErrors = id;
 
                 String tooltipText = row.getString("tooltip");
                 List<String> tooltipHighlightText = new ArrayList<>();
@@ -985,7 +991,7 @@ public class boggledTools {
                 terraformingRequirements.put(id, terraformingReqs);
 
             } catch (JSONException e) {
-                log.error("Error in terraforming requirements: " + e);
+                log.error("Error in terraforming requirements " + idForErrors + ": " + e);
             }
         }
         boggledTools.terraformingRequirements = terraformingRequirements;
@@ -1055,46 +1061,64 @@ public class boggledTools {
 
         boggledTools.terraformingProjects = new LinkedHashMap<>();
         String idForErrors = "";
+        String stage = "";
         for (int i = 0; i < terraformingProjectsJSON.length(); ++i) {
             try {
                 JSONObject row = terraformingProjectsJSON.getJSONObject(i);
 
+                stage = "id";
                 String id = row.getString("id");
                 if (id == null || id.isEmpty()) {
                     continue;
                 }
                 idForErrors = id;
 
+                stage = "enable_settings";
                 String[] enableSettings = row.getString("enable_settings").split(csvOptionSeparator);
 
+                stage = "project_type";
                 String projectType = row.getString("project_type");
 
+                stage = "tooltip";
                 String tooltip = row.getString("tooltip");
+
+                stage = "intel_complete_message";
                 String intelCompleteMessage = row.getString("intel_complete_message");
 
+                stage = "incomplete_message";
                 String incompleteMessage = row.getString("incomplete_message");
+
+                stage = "incomplete_message_highlights";
                 List<String> incompleteMessageHighlights = arrayListFromJSON(row, "incomplete_message_highlights", boggledTools.csvOptionSeparator);
 
+                stage = "requirements";
                 BoggledProjectRequirementsAND requirements = requirementsFromJSONNeverNull(row, "Terraforming Projects", id, "requirements");
 
+                stage = "requirements_hidden";
                 BoggledProjectRequirementsAND requirementsHidden = requirementsFromJSONNeverNull(row, "Terraforming Projects", id, "requirements_hidden");
 
+                stage = "requirements_stall";
                 List<BoggledTerraformingProject.RequirementsWithId> requirementsStall = requirementsWithIdFromJSON(row, "Terraforming Projects", id, "requirements_stall");
 
+                stage = "requirements_reset";
                 List<BoggledTerraformingProject.RequirementsWithId> requirementsReset = requirementsWithIdFromJSON(row, "Terraforming Projects", id, "requirements_reset");
 
+                stage = "base_project_duration";
                 int baseProjectDuration = row.optInt("base_project_duration", 0);
 
+                stage = "dynamic_project_duration_modifiers";
                 List<BoggledTerraformingDurationModifier.TerraformingDurationModifier> terraformingDurationModifiers = durationModifiersFromJSON(row, "Terraforming project", id, "dynamic_project_duration_modifiers");
 
+                stage = "project_complete_effects";
                 List<BoggledTerraformingProjectEffect.TerraformingProjectEffect> projectCompleteEffects = projectEffectsFromJSON(row, "Terraforming Projects", id, "project_complete_effects");
 
+                stage = "project_ongoing_effects";
                 List<BoggledTerraformingProjectEffect.TerraformingProjectEffect> projectOngoingEffects = projectEffectsFromJSON(row, "Terraforming Projects", id, "project_ongoing_effects");
 
                 BoggledTerraformingProject terraformingProj = new BoggledTerraformingProject(id, enableSettings, projectType, tooltip, intelCompleteMessage, incompleteMessage, incompleteMessageHighlights, requirements, requirementsHidden, requirementsStall, requirementsReset, baseProjectDuration, terraformingDurationModifiers, projectCompleteEffects, projectOngoingEffects);
                 boggledTools.terraformingProjects.put(id, terraformingProj);
             } catch (JSONException e) {
-                log.error("Error in terraforming projects " + idForErrors + ": " + e);
+                log.error("Error in terraforming projects " + idForErrors + " at stage " + stage + ": " + e);
             }
         }
     }

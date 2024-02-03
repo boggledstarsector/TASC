@@ -240,6 +240,11 @@ public class Boggled_Cryosanctum extends Cryosanctum implements BoggledIndustryI
     }
 
     @Override
+    public void setEnableMonthlyProduction(boolean enabled) {
+        thisIndustry.setEnableMonthlyProduction(enabled);
+    }
+
+    @Override
     public void addProductionData(BoggledCommonIndustry.ProductionData data) {
         thisIndustry.addProductionData(data);
     }
@@ -247,6 +252,11 @@ public class Boggled_Cryosanctum extends Cryosanctum implements BoggledIndustryI
     @Override
     public void removeProductionData(BoggledCommonIndustry.ProductionData data) {
         thisIndustry.removeProductionData(data);
+    }
+
+    @Override
+    public List<BoggledCommonIndustry.ProductionData> getProductionData() {
+        return thisIndustry.getProductionData();
     }
 
     @Override

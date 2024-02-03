@@ -356,8 +356,6 @@ ai_mining_drones_gamma_core_effect_to_mining,,EffectToIndustry,"{
 
 ai_mining_drones_improve_bonus_to_accessibility,,ModifyColonyAccessibility,"{ 'modifier_type' : 'mult', 'value' : 1.20 }"
 
-atmosphere_processor_deficit_to_inactive,,CommodityDeficitToInactive,"{ 'commodities_demanded' : [ 'heavy_machinery' ] }"
-
 chameleon_alpha_core_reduce_demand,,ModifyIndustryDemand,"{ 'modifier_type' : 'flat', 'value' : -1 }"
 chameleon_alpha_core_reduce_upkeep,,ModifyIndustryUpkeep,"{ 'modifier_type' : 'mult', 'value' : 0.75 }"
 chameleon_alpha_core_eliminate_pather_interest,,EliminatePatherInterest,
@@ -441,11 +439,15 @@ kletka_simulator_station_modifier,boggledKletkaSimulatorTemperatureBasedUpkeep,E
 	'effects' : [ 'kletka_simulator_station_upkeep_modifier' ]
 }"
 
-kletka_simulator_deficit_to_inactive,boggledDomainArchaeologyEnabled,CommodityDeficitToInactive,"{
-	'commodities_demanded' : [ 'domain_artifacts' ]
+kletka_simulator_item_production_effect,,IndustryMonthlyItemProduction,
+kletka_simulator_item_production_requires_no_shortage,,EffectWithRequirement,"{
+	'display_requirement_tooltip_on_requirement_failure' : 'true',
+	'display_effect_tooltip_on_requirement_failure' : 'true',
+	'requirement_ids' : [ { 'requirement_id' : 'industry_effect_kletka_simulator_does_not_have_shortage' } ],
+	'effects' : [ 'kletka_simulator_item_production_effect' ]
 }"
 
-kletka_simulator_item_production_effect,,IndustryMonthlyItemProductionChance,"[
+kletka_simulator_item_production_chance_effect,,IndustryMonthlyItemProductionChance,"[
 	{ 'commodity_priority' : 0, 'commodity_id' : 'alpha_core', 'chance' : 0, 'requirement_ids' : [
 		{ 'requirement_id' : 'industry_effects_kletka_simulator_has_ai_core' }
 	] },
@@ -486,8 +488,6 @@ mesozoic_park_beta_core_increase_income_bonus,,ModifyIndustryIncome,"{ 'modifier
 mesozoic_park_gamma_core_increase_income_bonus,,ModifyIndustryIncome,"{ 'modifier_type' : 'mult', 'value' : 1.05 }"
 
 mesozoic_park_improve_increase_income_bonus,,ModifyIndustryIncome,"{ 'modifier_type' : 'mult', 'value' : 1.2 }"
-
-perihelion_deficit_to_inactive,,CommodityDeficitToInactive,"{ 'commodities_demanded' : [ 'domain_artifacts', 'metals', 'rare_metals', 'heavy_machinery' ] }"
 
 planetary_agrav_field_suppress_conditions,,SuppressConditions,"{ 'condition_ids' : [ 'high_gravity', 'low_gravity' ] }"
 planetary_agrav_field_domed_cities_effect,,EffectWithRequirement,"{

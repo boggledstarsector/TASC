@@ -25,7 +25,6 @@ public class BoggledTerraformingProject {
 
         public Object readResolve() {
             BoggledTascPlugin.loadSettingsFromJSON();
-            Global.getLogger(this.getClass()).info("Doing readResolve for ProjectInstance");
             this.project = boggledTools.getProject(project.getId());
             return this;
         }

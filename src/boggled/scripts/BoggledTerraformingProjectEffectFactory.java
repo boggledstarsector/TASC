@@ -327,7 +327,9 @@ public class BoggledTerraformingProjectEffectFactory {
                     log.info("EffectWithRequirement " + id + " has invalid effect " + effectString);
                 }
             }
-            return new BoggledTerraformingProjectEffect.EffectWithRequirement(id, enableSettings, reqs, effects);
+            boolean displayRequirementTooltipOnRequirementFailure = jsonData.optBoolean("display_requirement_tooltip_on_requirement_failure", false);
+            boolean displayEffectTooltipOnRequirementFailure = jsonData.optBoolean("display_effect_tooltip_on_requirement_failure", false);
+            return new BoggledTerraformingProjectEffect.EffectWithRequirement(id, enableSettings, reqs, effects, displayRequirementTooltipOnRequirementFailure, displayEffectTooltipOnRequirementFailure);
         }
     }
 
@@ -499,6 +501,13 @@ public class BoggledTerraformingProjectEffectFactory {
                 conditionIds.add(conditionIdsArray.getString(i));
             }
             return new BoggledTerraformingProjectEffect.SuppressConditions(id, enableSettings, conditionIds);
+        }
+    }
+
+    public static class IndustryMonthlyItemProduction implements TerraformingProjectEffectFactory {
+        @Override
+        public BoggledTerraformingProjectEffect.TerraformingProjectEffect constructFromJSON(String id, String[] enableSettings, String data) throws JSONException {
+            return new BoggledTerraformingProjectEffect.IndustryMonthlyItemProduction(id, enableSettings);
         }
     }
 

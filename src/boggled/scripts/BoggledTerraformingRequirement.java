@@ -14,6 +14,7 @@ import boggled.campaign.econ.boggledTools;
 import boggled.campaign.econ.industries.BoggledCommonIndustry;
 import boggled.campaign.econ.industries.BoggledIndustryInterface;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -200,14 +201,21 @@ public class BoggledTerraformingRequirement {
     }
 
     public abstract static class TerraformingRequirement {
-        private final String requirementId;
+        private final String id;
         private final boolean invert;
 
-        public String getRequirementId() { return requirementId; }
+        private final String[] enableSettings;
 
-        protected TerraformingRequirement(String requirementId, boolean invert) {
-            this.requirementId = requirementId;
+        public String getId() { return id; }
+
+        protected TerraformingRequirement(String id, String[] enableSettings, boolean invert) {
+            this.id = id;
             this.invert = invert;
+            this.enableSettings = enableSettings;
+        }
+
+        public boolean isEnabled() {
+            return boggledTools.optionsAllowThis(enableSettings);
         }
 
         public void addTokenReplacements(RequirementContext ctx, Map<String, String> tokenReplacements) {}
@@ -234,8 +242,8 @@ public class BoggledTerraformingRequirement {
         String settingId;
         int quantity;
 
-        protected ItemRequirement(String requirementId, boolean invert, ItemType itemType, String itemId, String settingId, int quantity) {
-            super(requirementId, invert);
+        protected ItemRequirement(String id, String[] enableSettings, boolean invert, ItemType itemType, String itemId, String settingId, int quantity) {
+            super(id, enableSettings, invert);
             this.itemType = itemType;
             this.itemId = itemId;
             this.settingId = settingId;
@@ -282,8 +290,8 @@ public class BoggledTerraformingRequirement {
     }
 
     public static class AlwaysTrue extends TerraformingRequirement {
-        public AlwaysTrue(String requirementId, boolean invert) {
-            super(requirementId, invert);
+        public AlwaysTrue(String id, String[] enableSettings, boolean invert) {
+            super(id, enableSettings, invert);
         }
 
         @Override
@@ -295,8 +303,8 @@ public class BoggledTerraformingRequirement {
     public static class PlanetType extends TerraformingRequirement {
         String planetTypeId;
 
-        public PlanetType(String requirementId, boolean invert, String planetTypeId) {
-            super(requirementId, invert);
+        public PlanetType(String id, String[] enableSettings, boolean invert, String planetTypeId) {
+            super(id, enableSettings, invert);
             this.planetTypeId = planetTypeId;
         }
 
@@ -318,8 +326,8 @@ public class BoggledTerraformingRequirement {
     }
 
     public static class FocusPlanetType extends PlanetType {
-        public FocusPlanetType(String requirementId, boolean invert, String planetTypeId) {
-            super(requirementId, invert, planetTypeId);
+        public FocusPlanetType(String id, String[] enableSettings, boolean invert, String planetTypeId) {
+            super(id, enableSettings, invert, planetTypeId);
         }
 
         @Override
@@ -338,8 +346,8 @@ public class BoggledTerraformingRequirement {
 
     public static class MarketHasCondition extends TerraformingRequirement {
         String conditionId;
-        public MarketHasCondition(String requirementId, boolean invert, String conditionId) {
-            super(requirementId, invert);
+        public MarketHasCondition(String id, String[] enableSettings, boolean invert, String conditionId) {
+            super(id, enableSettings, invert);
             this.conditionId = conditionId;
         }
 
@@ -354,8 +362,8 @@ public class BoggledTerraformingRequirement {
     }
 
     public static class FocusMarketHasCondition extends MarketHasCondition {
-        public FocusMarketHasCondition(String requirementId, boolean invert, String conditionId) {
-            super(requirementId, invert, conditionId);
+        public FocusMarketHasCondition(String id, String[] enableSettings, boolean invert, String conditionId) {
+            super(id, enableSettings, invert, conditionId);
         }
 
         @Override
@@ -374,8 +382,8 @@ public class BoggledTerraformingRequirement {
 
     public static class MarketHasIndustry extends TerraformingRequirement {
         String industryId;
-        public MarketHasIndustry(String requirementId, boolean invert, String industryId) {
-            super(requirementId, invert);
+        public MarketHasIndustry(String id, String[] enableSettings, boolean invert, String industryId) {
+            super(id, enableSettings, invert);
             this.industryId = industryId;
         }
 
@@ -399,8 +407,8 @@ public class BoggledTerraformingRequirement {
 
     public static class MarketHasIndustryWithItem extends MarketHasIndustry {
         String itemId;
-        public MarketHasIndustryWithItem(String requirementId, boolean invert, String industryId, String itemId) {
-            super(requirementId, invert, industryId);
+        public MarketHasIndustryWithItem(String id, String[] enableSettings, boolean invert, String industryId, String itemId) {
+            super(id, enableSettings, invert, industryId);
             this.itemId = itemId;
         }
 
@@ -433,8 +441,8 @@ public class BoggledTerraformingRequirement {
 
     public static class MarketHasIndustryWithAICore extends MarketHasIndustry {
         String aiCoreId;
-        public MarketHasIndustryWithAICore(String requirementId, boolean invert, String industryId, String aiCoreId) {
-            super(requirementId, invert, industryId);
+        public MarketHasIndustryWithAICore(String id, String[] enableSettings, boolean invert, String industryId, String aiCoreId) {
+            super(id, enableSettings, invert, industryId);
             this.aiCoreId = aiCoreId;
         }
 
@@ -455,11 +463,37 @@ public class BoggledTerraformingRequirement {
         }
     }
 
+    public static class IndustryHasShortage extends TerraformingRequirement {
+        List<String> commodityIds;
+        protected IndustryHasShortage(String id, String[] enableSettings, boolean invert, List<String> commodityIds) {
+            super(id, enableSettings, invert);
+            this.commodityIds = commodityIds;
+        }
+
+        @Override
+        protected boolean checkRequirementImpl(RequirementContext ctx) {
+            BaseIndustry sourceIndustry = ctx.getSourceIndustry();;
+            if (sourceIndustry == null) {
+                return false;
+            }
+            return !sourceIndustry.getAllDeficit(commodityIds.toArray(new String[0])).isEmpty();
+        }
+
+        @Override
+        public void addTokenReplacements(RequirementContext ctx, Map<String, String> tokenReplacements) {
+            List<String> commodities = new ArrayList<>();
+            for (String commodityId : commodityIds) {
+                commodities.add(Global.getSettings().getCommoditySpec(commodityId).getName());
+            }
+            tokenReplacements.put("$commodityDeficit", Misc.getAndJoined(commodities));
+        }
+    }
+
     public static class PlanetWaterLevel extends TerraformingRequirement {
         int minWaterLevel;
         int maxWaterLevel;
-        protected PlanetWaterLevel(String requirementId, boolean invert, int minWaterLevel, int maxWaterLevel) {
-            super(requirementId, invert);
+        protected PlanetWaterLevel(String id, String[] enableSettings, boolean invert, int minWaterLevel, int maxWaterLevel) {
+            super(id, enableSettings, invert);
             this.minWaterLevel = minWaterLevel;
             this.maxWaterLevel = maxWaterLevel;
         }
@@ -476,8 +510,8 @@ public class BoggledTerraformingRequirement {
     }
 
     public static class MarketHasWaterPresent extends PlanetWaterLevel {
-        public MarketHasWaterPresent(String requirementId, boolean invert, int minWaterLevel, int maxWaterLevel) {
-            super(requirementId, invert, minWaterLevel, maxWaterLevel);
+        public MarketHasWaterPresent(String id, String[] enableSettings, boolean invert, int minWaterLevel, int maxWaterLevel) {
+            super(id, enableSettings, invert, minWaterLevel, maxWaterLevel);
         }
 
         @Override
@@ -492,8 +526,8 @@ public class BoggledTerraformingRequirement {
 
     public static class TerraformingPossibleOnMarket extends TerraformingRequirement {
         List<String> invalidatingConditions;
-        public TerraformingPossibleOnMarket(String requirementId, boolean invert, List<String> invalidatingConditions) {
-            super(requirementId, invert);
+        public TerraformingPossibleOnMarket(String id, String[] enableSettings, boolean invert, List<String> invalidatingConditions) {
+            super(id, enableSettings, invert);
             this.invalidatingConditions = invalidatingConditions;
         }
 
@@ -514,8 +548,8 @@ public class BoggledTerraformingRequirement {
 
     public static class MarketHasTags extends TerraformingRequirement {
         List<String> tags;
-        public MarketHasTags(String requirementId, boolean invert, List<String> tags) {
-            super(requirementId, invert);
+        public MarketHasTags(String id, String[] enableSettings, boolean invert, List<String> tags) {
+            super(id, enableSettings, invert);
             this.tags = tags;
         }
 
@@ -536,8 +570,8 @@ public class BoggledTerraformingRequirement {
 
     public static class MarketIsAtLeastSize extends TerraformingRequirement {
         int colonySize;
-        public MarketIsAtLeastSize(String requirementId, boolean invert, int colonySize) {
-            super(requirementId, invert);
+        public MarketIsAtLeastSize(String id, String[] enableSettings, boolean invert, int colonySize) {
+            super(id, enableSettings, invert);
             this.colonySize = colonySize;
         }
 
@@ -553,8 +587,8 @@ public class BoggledTerraformingRequirement {
 
     public static class MarketStorageContainsAtLeast extends ItemRequirement {
         String submarketId;
-        public MarketStorageContainsAtLeast(String requirementId, boolean invert, String submarketId, ItemType itemType, String itemId, String settingId, int quantity) {
-            super(requirementId, invert, itemType, itemId, settingId, quantity);
+        public MarketStorageContainsAtLeast(String id, String[] enableSettings, boolean invert, String submarketId, ItemType itemType, String itemId, String settingId, int quantity) {
+            super(id, enableSettings, invert, itemType, itemId, settingId, quantity);
             this.submarketId = submarketId;
         }
 
@@ -585,8 +619,8 @@ public class BoggledTerraformingRequirement {
     }
 
     public static class FleetStorageContainsAtLeast extends ItemRequirement {
-        protected FleetStorageContainsAtLeast(String requirementId, boolean invert, ItemType itemType, String itemId, String settingId, int quantity) {
-            super(requirementId, invert, itemType, itemId, settingId, quantity);
+        protected FleetStorageContainsAtLeast(String id, String[] enableSettings, boolean invert, ItemType itemType, String itemId, String settingId, int quantity) {
+            super(id, enableSettings, invert, itemType, itemId, settingId, quantity);
         }
 
         @Override
@@ -611,8 +645,8 @@ public class BoggledTerraformingRequirement {
     public static class FleetTooCloseToJumpPoint extends TerraformingRequirement {
         float distance;
 
-        protected FleetTooCloseToJumpPoint(String requirementId, boolean invert, float distance) {
-            super(requirementId, invert);
+        protected FleetTooCloseToJumpPoint(String id, String[] enableSettings, boolean invert, float distance) {
+            super(id, enableSettings, invert);
             this.distance = distance;
         }
 
@@ -633,8 +667,8 @@ public class BoggledTerraformingRequirement {
 
     public static class PlayerHasStoryPointsAtLeast extends TerraformingRequirement {
         int quantity;
-        public PlayerHasStoryPointsAtLeast(String requirementId, boolean invert, int quantity) {
-            super(requirementId, invert);
+        public PlayerHasStoryPointsAtLeast(String id, String[] enableSettings, boolean invert, int quantity) {
+            super(id, enableSettings, invert);
             this.quantity = quantity;
         }
 
@@ -651,8 +685,8 @@ public class BoggledTerraformingRequirement {
 
     public static class WorldTypeSupportsResourceImprovement extends TerraformingRequirement {
         String resourceId;
-        public WorldTypeSupportsResourceImprovement(String requirementId, boolean invert, String resourceId) {
-            super(requirementId, invert);
+        public WorldTypeSupportsResourceImprovement(String id, String[] enableSettings, boolean invert, String resourceId) {
+            super(id, enableSettings, invert);
             this.resourceId = resourceId;
         }
 
@@ -700,8 +734,8 @@ public class BoggledTerraformingRequirement {
         String tagSubstring;
         int maxValue;
 
-        public IntegerFromTagSubstring(String requirementId, boolean invert, String option, String tagSubstring, int maxValue) {
-            super(requirementId, invert);
+        public IntegerFromTagSubstring(String id, String[] enableSettings, boolean invert, String option, String tagSubstring, int maxValue) {
+            super(id, enableSettings, invert);
             this.tagSubstring = tagSubstring;
             this.maxValue = maxValue;
             this.option = option;
@@ -730,8 +764,8 @@ public class BoggledTerraformingRequirement {
 
     public static class PlayerHasSkill extends TerraformingRequirement {
         String skill;
-        public PlayerHasSkill(String requirementId, boolean invert, String skill) {
-            super(requirementId, invert);
+        public PlayerHasSkill(String id, String[] enableSettings, boolean invert, String skill) {
+            super(id, enableSettings, invert);
             this.skill = skill;
         }
 
@@ -743,8 +777,8 @@ public class BoggledTerraformingRequirement {
 
     public static class SystemStarHasTags extends TerraformingRequirement {
         List<String> tags;
-        public SystemStarHasTags(String requirementId, boolean invert, List<String> tags) {
-            super(requirementId, invert);
+        public SystemStarHasTags(String id, String[] enableSettings, boolean invert, List<String> tags) {
+            super(id, enableSettings, invert);
             this.tags = tags;
         }
 
@@ -774,8 +808,8 @@ public class BoggledTerraformingRequirement {
 
     public static class SystemStarType extends TerraformingRequirement {
         String starType;
-        public SystemStarType(String requirementId, boolean invert, String starType) {
-            super(requirementId, invert);
+        public SystemStarType(String id, String[] enableSettings, boolean invert, String starType) {
+            super(id, enableSettings, invert);
             this.starType = starType;
         }
 
@@ -804,8 +838,8 @@ public class BoggledTerraformingRequirement {
     }
 
     public static class FleetInHyperspace extends TerraformingRequirement {
-        protected FleetInHyperspace(String requirementId, boolean invert) {
-            super(requirementId, invert);
+        protected FleetInHyperspace(String id, String[] enableSettings, boolean invert) {
+            super(id, enableSettings, invert);
         }
 
         @Override
@@ -816,8 +850,8 @@ public class BoggledTerraformingRequirement {
 
     public static class SystemHasJumpPoints extends TerraformingRequirement {
         int numJumpPoints;
-        protected SystemHasJumpPoints(String requirementId, boolean invert, int numJumpPoints) {
-            super(requirementId, invert);
+        protected SystemHasJumpPoints(String id, String[] enableSettings, boolean invert, int numJumpPoints) {
+            super(id, enableSettings, invert);
             this.numJumpPoints = numJumpPoints;
         }
 
@@ -832,8 +866,8 @@ public class BoggledTerraformingRequirement {
 
     public static class SystemHasPlanets extends TerraformingRequirement {
         int numPlanets;
-        protected SystemHasPlanets(String requirementId, boolean invert, int numPlanets) {
-            super(requirementId, invert);
+        protected SystemHasPlanets(String id, String[] enableSettings, boolean invert, int numPlanets) {
+            super(id, enableSettings, invert);
             this.numPlanets = numPlanets;
         }
 
@@ -855,8 +889,8 @@ public class BoggledTerraformingRequirement {
     public static class TargetPlanetOwnedBy extends TerraformingRequirement {
         List<String> factions;
 
-        protected TargetPlanetOwnedBy(String requirementId, boolean invert, List<String> factions) {
-            super(requirementId, invert);
+        protected TargetPlanetOwnedBy(String id, String[] enableSettings, boolean invert, List<String> factions) {
+            super(id, enableSettings, invert);
             this.factions = factions;
         }
 
@@ -891,8 +925,8 @@ public class BoggledTerraformingRequirement {
 
     public static class TargetStationOwnedBy extends TerraformingRequirement {
         List<String> factions;
-        protected TargetStationOwnedBy(String requirementId, boolean invert, List<String> factions) {
-            super(requirementId, invert);
+        protected TargetStationOwnedBy(String id, String[] enableSettings, boolean invert, List<String> factions) {
+            super(id, enableSettings, invert);
             this.factions = factions;
         }
 
@@ -926,8 +960,8 @@ public class BoggledTerraformingRequirement {
     }
 
     public static class TargetPlanetGovernedByPlayer extends TerraformingRequirement {
-        protected TargetPlanetGovernedByPlayer(String requirementId, boolean invert) {
-            super(requirementId, invert);
+        protected TargetPlanetGovernedByPlayer(String id, String[] enableSettings, boolean invert) {
+            super(id, enableSettings, invert);
         }
 
         @Override
@@ -956,8 +990,8 @@ public class BoggledTerraformingRequirement {
 
     public static class TargetPlanetWithinDistance extends TerraformingRequirement {
         float distance;
-        protected TargetPlanetWithinDistance(String requirementId, boolean invert, float distance) {
-            super(requirementId, invert);
+        protected TargetPlanetWithinDistance(String id, String[] enableSettings, boolean invert, float distance) {
+            super(id, enableSettings, invert);
             this.distance = distance;
         }
 
@@ -987,8 +1021,8 @@ public class BoggledTerraformingRequirement {
 
     public static class TargetStationWithinDistance extends TerraformingRequirement {
         float distance;
-        protected TargetStationWithinDistance(String requirementId, boolean invert, float distance) {
-            super(requirementId, invert);
+        protected TargetStationWithinDistance(String id, String[] enableSettings, boolean invert, float distance) {
+            super(id, enableSettings, invert);
             this.distance = distance;
         }
 
@@ -1018,8 +1052,8 @@ public class BoggledTerraformingRequirement {
     }
 
     public static class TargetStationColonizable extends TerraformingRequirement {
-        protected TargetStationColonizable(String requirementId, boolean invert) {
-            super(requirementId, invert);
+        protected TargetStationColonizable(String id, String[] enableSettings, boolean invert) {
+            super(id, enableSettings, invert);
         }
 
         @Override
@@ -1043,8 +1077,8 @@ public class BoggledTerraformingRequirement {
 
     public static class TargetPlanetIsAtLeastSize extends TerraformingRequirement {
         float size;
-        protected TargetPlanetIsAtLeastSize(String requirementId, boolean invert, float size) {
-            super(requirementId, invert);
+        protected TargetPlanetIsAtLeastSize(String id, String[] enableSettings, boolean invert, float size) {
+            super(id, enableSettings, invert);
             this.size = size;
         }
 
@@ -1069,8 +1103,8 @@ public class BoggledTerraformingRequirement {
 
     public static class TargetPlanetOrbitFocusWithinDistance extends TerraformingRequirement {
         float distance;
-        protected TargetPlanetOrbitFocusWithinDistance(String requirementId, boolean invert, float distance) {
-            super(requirementId, invert);
+        protected TargetPlanetOrbitFocusWithinDistance(String id, String[] enableSettings, boolean invert, float distance) {
+            super(id, enableSettings, invert);
             this.distance = distance;
         }
 
@@ -1107,8 +1141,8 @@ public class BoggledTerraformingRequirement {
     }
 
     public static class TargetPlanetStarWithinDistance extends TargetPlanetOrbitFocusWithinDistance {
-        protected TargetPlanetStarWithinDistance(String requirementId, boolean invert, float distance) {
-            super(requirementId, invert, distance);
+        protected TargetPlanetStarWithinDistance(String id, String[] enableSettings, boolean invert, float distance) {
+            super(id, enableSettings, invert, distance);
         }
 
         @Override
@@ -1145,8 +1179,8 @@ public class BoggledTerraformingRequirement {
     }
 
     public static class TargetPlanetOrbitersWithinDistance extends TargetPlanetOrbitFocusWithinDistance {
-        protected TargetPlanetOrbitersWithinDistance(String requirementId, boolean invert, float distance) {
-            super(requirementId, invert, distance);
+        protected TargetPlanetOrbitersWithinDistance(String id, String[] enableSettings, boolean invert, float distance) {
+            super(id, enableSettings, invert, distance);
         }
 
         PlanetAPI check(SectorEntityToken targetPlanet, StarSystemAPI starSystem) {
@@ -1205,8 +1239,8 @@ public class BoggledTerraformingRequirement {
 
     public static class TargetPlanetMoonCountLessThan extends TerraformingRequirement {
         int maxMoons;
-        protected TargetPlanetMoonCountLessThan(String requirementId, boolean invert, int maxMoons) {
-            super(requirementId, invert);
+        protected TargetPlanetMoonCountLessThan(String id, String[] enableSettings, boolean invert, int maxMoons) {
+            super(id, enableSettings, invert);
             this.maxMoons = maxMoons;
         }
 
@@ -1252,8 +1286,8 @@ public class BoggledTerraformingRequirement {
     public static class TargetPlanetOrbitersTooClose extends TerraformingRequirement {
         float distance;
 
-        protected TargetPlanetOrbitersTooClose(String requirementId, boolean invert, float distance) {
-            super(requirementId, invert);
+        protected TargetPlanetOrbitersTooClose(String id, String[] enableSettings, boolean invert, float distance) {
+            super(id, enableSettings, invert);
             this.distance = distance;
         }
 
@@ -1313,8 +1347,8 @@ public class BoggledTerraformingRequirement {
     public static class TargetPlanetStationCountLessThan extends TerraformingRequirement {
         List<String> stationTags;
         int maxNumStations;
-        protected TargetPlanetStationCountLessThan(String requirementId, boolean invert, List<String> stationTags, int maxNumStations) {
-            super(requirementId, invert);
+        protected TargetPlanetStationCountLessThan(String id, String[] enableSettings, boolean invert, List<String> stationTags, int maxNumStations) {
+            super(id, enableSettings, invert);
             this.stationTags = stationTags;
             this.maxNumStations = maxNumStations;
         }
@@ -1344,8 +1378,8 @@ public class BoggledTerraformingRequirement {
     public static class TargetSystemStationCountLessThan extends TerraformingRequirement {
         List<String> stationTags;
         int maxNumStations;
-        protected TargetSystemStationCountLessThan(String requirementId, boolean invert, List<String> stationTags, int maxNumStations) {
-            super(requirementId, invert);
+        protected TargetSystemStationCountLessThan(String id, String[] enableSettings, boolean invert, List<String> stationTags, int maxNumStations) {
+            super(id, enableSettings, invert);
             this.stationTags = stationTags;
             this.maxNumStations = maxNumStations;
         }
@@ -1373,8 +1407,8 @@ public class BoggledTerraformingRequirement {
     }
 
     public static class FleetInAsteroidBelt extends TerraformingRequirement {
-        protected FleetInAsteroidBelt(String requirementId, boolean invert) {
-            super(requirementId, invert);
+        protected FleetInAsteroidBelt(String id, String[] enableSettings, boolean invert) {
+            super(id, enableSettings, invert);
         }
 
         @Override
@@ -1388,8 +1422,8 @@ public class BoggledTerraformingRequirement {
     }
 
     public static class FleetInAsteroidField extends TerraformingRequirement {
-        protected FleetInAsteroidField(String requirementId, boolean invert) {
-            super(requirementId, invert);
+        protected FleetInAsteroidField(String id, String[] enableSettings, boolean invert) {
+            super(id, enableSettings, invert);
         }
 
         @Override
@@ -1403,8 +1437,8 @@ public class BoggledTerraformingRequirement {
     }
 
     public static class TargetPlanetStoryCritical extends TerraformingRequirement {
-        protected TargetPlanetStoryCritical(String requirementId, boolean invert) {
-            super(requirementId, invert);
+        protected TargetPlanetStoryCritical(String id, String[] enableSettings, boolean invert) {
+            super(id, enableSettings, invert);
         }
 
         @Override
@@ -1435,8 +1469,8 @@ public class BoggledTerraformingRequirement {
     }
 
     public static class TargetStationStoryCritical extends TerraformingRequirement {
-        protected TargetStationStoryCritical(String requirementId, boolean invert) {
-            super(requirementId, invert);
+        protected TargetStationStoryCritical(String id, String[] enableSettings, boolean invert) {
+            super(id, enableSettings, invert);
         }
 
         @Override
@@ -1470,8 +1504,8 @@ public class BoggledTerraformingRequirement {
         String settingId;
         boolean invertSetting;
         TerraformingRequirement req;
-        protected BooleanSettingIsTrue(String requirementId, boolean invert, String settingId, boolean invertSetting, TerraformingRequirement req) {
-            super(requirementId, invert);
+        protected BooleanSettingIsTrue(String id, String[] enableSettings, boolean invert, String settingId, boolean invertSetting, TerraformingRequirement req) {
+            super(id, enableSettings, invert);
             this.settingId = settingId;
             this.invertSetting = invertSetting;
             this.req = req;

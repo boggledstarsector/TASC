@@ -1030,11 +1030,15 @@ public class BoggledTerraformingProjectEffect {
     public static class EffectWithRequirement extends TerraformingProjectEffect {
         BoggledProjectRequirementsAND requirements;
         List<TerraformingProjectEffect> effects;
+        boolean displayRequirementTooltipOnRequirementFailure;
+        boolean displayEffectTooltipOnRequirementFailure;
 
-        public EffectWithRequirement(String id, String[] enableSettings, BoggledProjectRequirementsAND requirements, List<TerraformingProjectEffect> effects) {
+        public EffectWithRequirement(String id, String[] enableSettings, BoggledProjectRequirementsAND requirements, List<TerraformingProjectEffect> effects, boolean displayRequirementTooltipOnRequirementFailure, boolean displayEffectTooltipOnRequirementFailure) {
             super(id, enableSettings);
             this.requirements = requirements;
             this.effects = effects;
+            this.displayRequirementTooltipOnRequirementFailure = displayRequirementTooltipOnRequirementFailure;
+            this.displayEffectTooltipOnRequirementFailure = displayEffectTooltipOnRequirementFailure;
         }
 
         private String getRequirementsString(BoggledTerraformingRequirement.RequirementContext ctx) {
@@ -1068,7 +1072,26 @@ public class BoggledTerraformingProjectEffect {
         @Override
         protected void addTooltipInfoImpl(BoggledTerraformingRequirement.RequirementContext ctx, Map<String, EffectTooltipPara> effectTypeToPara, String effectSource, DescriptionMode mode, DescriptionSource source) {
             if (!requirements.requirementsMet(ctx)) {
-                return;
+                if (displayRequirementTooltipOnRequirementFailure) {
+                    Map<String, String> tokenReplacements = boggledTools.getTokenReplacements(ctx);
+                    List<BoggledCommonIndustry.TooltipData> tooltips = requirements.getTooltip(ctx, tokenReplacements);
+                    EffectTooltipPara para = new EffectTooltipPara("", "");
+                    for (BoggledCommonIndustry.TooltipData tooltip : tooltips) {
+                        if (!para.infix.isEmpty()) {
+                            para.infix.add("\n");
+                        }
+                        para.infix.add(tooltip.text);
+                        for (Color highlightColor : tooltip.highlightColors) {
+                            para.highlightColors.add(Misc.getNegativeHighlightColor());
+                        }
+                        para.highlights.addAll(tooltip.highlights);
+                    }
+                    effectTypeToPara.put(id, para);
+                }
+
+                if (!displayEffectTooltipOnRequirementFailure) {
+                    return;
+                }
             }
             String suffix = getRequirementsString(ctx);
             for (TerraformingProjectEffect effect : effects) {
@@ -1827,6 +1850,79 @@ public class BoggledTerraformingProjectEffect {
         }
     }
 
+    public static class IndustryMonthlyItemProduction extends TerraformingProjectEffect {
+        protected IndustryMonthlyItemProduction(String id, String[] enableSettings) {
+            super(id, enableSettings);
+        }
+
+        @Override
+        protected void applyProjectEffectImpl(BoggledTerraformingRequirement.RequirementContext ctx, String effectSource) {
+            BoggledIndustryInterface industryInterface = ctx.getTargetIndustryInterface();
+            if (industryInterface == null) {
+                return;
+            }
+            industryInterface.setEnableMonthlyProduction(true);
+        }
+
+        @Override
+        protected void unapplyProjectEffectImpl(BoggledTerraformingRequirement.RequirementContext ctx) {
+            BoggledIndustryInterface industryInterface = ctx.getTargetIndustryInterface();
+            if (industryInterface == null) {
+                return;
+            }
+            industryInterface.setEnableMonthlyProduction(false);
+        }
+
+        @Override
+        protected void addTooltipInfoImpl(BoggledTerraformingRequirement.RequirementContext ctx, Map<String, EffectTooltipPara> effectTypeToPara, String effectSource, DescriptionMode mode, DescriptionSource source) {
+            BoggledIndustryInterface targetIndustryInterface = ctx.getTargetIndustryInterface();
+            if (targetIndustryInterface == null) {
+                return;
+            }
+            List<BoggledCommonIndustry.ProductionData> data = targetIndustryInterface.getProductionData();
+
+            String chanceOrChances = data.size() == 1 ? "Chance" : "Chances";
+
+            EffectTooltipPara para = effectTypeToPara.get("IndustryMonthlyItemProductionChance");
+            if (para == null) {
+                effectTypeToPara.put("IndustryMonthlyItemProductionChance", new EffectTooltipPara(chanceOrChances + " of producing items (base): ", ""));
+                para = effectTypeToPara.get("IndustryMonthlyItemProductionChance");
+            }
+
+            Map<String, String> tokenReplacements = boggledTools.getTokenReplacements(ctx);
+            for (BoggledCommonIndustry.ProductionData datum : data) {
+                boolean requirementsMet = datum.requirements.requirementsMet(ctx);
+                Pair<Integer, Integer> chance = targetIndustryInterface.getProductionChance(datum.commodityId);
+                Color highlightColor = Misc.getHighlightColor();
+                if (!requirementsMet) {
+                    highlightColor = Misc.getNegativeHighlightColor();
+                }
+                String modifiedPercentString = chance.two + "%";
+                String basePercentString = chance.one + "%";
+                para.highlights.add(modifiedPercentString);
+                para.highlights.add(basePercentString);
+                para.highlightColors.add(highlightColor);
+                para.highlightColors.add(highlightColor);
+
+                modifiedPercentString += "%";
+                basePercentString += "%";
+                StringBuilder chanceString = new StringBuilder("\n    ").append(Global.getSettings().getCommoditySpec(datum.commodityId).getName()).append(": ").append(modifiedPercentString).append(" (").append(basePercentString).append(")");
+
+                if (!requirementsMet) {
+                    List<BoggledCommonIndustry.TooltipData> requirementTooltips = datum.requirements.getTooltip(ctx, tokenReplacements);
+                    for (BoggledCommonIndustry.TooltipData tooltip : requirementTooltips) {
+                        String tooltipText = Misc.lcFirst(tooltip.text);
+                        chanceString.append(", ").append(tooltipText);
+                        para.highlights.add(tooltipText);
+                        para.highlightColors.add(Misc.getNegativeHighlightColor());
+                    }
+                }
+
+                para.infix.add(chanceString.toString());
+            }
+        }
+    }
+
     public static class IndustryMonthlyItemProductionChance extends TerraformingProjectEffect {
         protected List<BoggledCommonIndustry.ProductionData> data;
         public IndustryMonthlyItemProductionChance(String id, String[] enableSettings, List<BoggledCommonIndustry.ProductionData> data) {
@@ -1858,64 +1954,7 @@ public class BoggledTerraformingProjectEffect {
 
         @Override
         protected void addTooltipInfoImpl(BoggledTerraformingRequirement.RequirementContext ctx, Map<String, EffectTooltipPara> effectTypeToPara, String effectSource, DescriptionMode mode, DescriptionSource source) {
-            BoggledIndustryInterface targetIndustryInterface = ctx.getTargetIndustryInterface();
-            if (targetIndustryInterface == null) {
-                return;
-            }
 
-            String chanceOrChances = data.size() == 1 ? "Chance" : "Chances";
-
-            EffectTooltipPara para = effectTypeToPara.get("IndustryMonthlyItemProductionChance");
-            if (para == null) {
-                effectTypeToPara.put("IndustryMonthlyItemProductionChance", new EffectTooltipPara(chanceOrChances + " of producing items (base): ", ""));
-                para = effectTypeToPara.get("IndustryMonthlyItemProductionChance");
-            }
-
-            boolean hasShortage = targetIndustryInterface.hasShortage();
-            if (hasShortage) {
-                List<Pair<String, Integer>> shortages = targetIndustryInterface.getShortages();
-                List<String> shortageStrings = new ArrayList<>();
-                for (Pair<String, Integer> shortage : shortages) {
-                    shortageStrings.add(Global.getSettings().getCommoditySpec(shortage.one).getName());
-                }
-                String shortageText = "Production suspended due to a shortage of " + Misc.getAndJoined(shortageStrings);
-                para.highlights.add(shortageText);
-                para.highlightColors.add(Misc.getNegativeHighlightColor());
-                para.infix.add("\n" + shortageText);
-            }
-
-            Map<String, String> tokenReplacements = boggledTools.getTokenReplacements(ctx);
-
-            for (BoggledCommonIndustry.ProductionData datum : data) {
-                boolean requirementsMet = datum.requirements.requirementsMet(ctx);
-                Pair<Integer, Integer> chance = targetIndustryInterface.getProductionChance(datum.commodityId);
-                Color highlightColor = Misc.getHighlightColor();
-                if (!requirementsMet) {
-                    highlightColor = Misc.getNegativeHighlightColor();
-                }
-                String modifiedPercentString = chance.two + "%";
-                String basePercentString = chance.one + "%";
-                para.highlights.add(modifiedPercentString);
-                para.highlights.add(basePercentString);
-                para.highlightColors.add(highlightColor);
-                para.highlightColors.add(highlightColor);
-
-                modifiedPercentString += "%";
-                basePercentString += "%";
-                StringBuilder chanceString = new StringBuilder("\n    ").append(Global.getSettings().getCommoditySpec(datum.commodityId).getName()).append(": ").append(modifiedPercentString).append(" (").append(basePercentString).append(")");
-
-                if (!requirementsMet) {
-                    List<BoggledCommonIndustry.TooltipData> requirementTooltips = datum.requirements.getTooltip(ctx, tokenReplacements);
-                    for (BoggledCommonIndustry.TooltipData tooltip : requirementTooltips) {
-                        String tooltipText = Misc.lcFirst(tooltip.text);
-                        chanceString.append(", ").append(tooltipText);
-                        para.highlights.add(tooltipText);
-                        para.highlightColors.add(Misc.getNegativeHighlightColor());
-                    }
-                }
-
-                para.infix.add(chanceString.toString());
-            }
         }
     }
 

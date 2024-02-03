@@ -6,7 +6,7 @@ import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import boggled.campaign.econ.boggledTools;
 import lunalib.lunaExtensions.openLunaCustomPanel;
 
-public final class CommandUIAbilityK : BaseDurationAbility() {
+class CommandUIAbilityK : BaseDurationAbility() {
     @Override
     override fun isUsable() : Boolean {
         if (!boggledTools.getBooleanSetting(boggledTools.BoggledSettings.terraformingContentEnabled)) {
@@ -23,12 +23,12 @@ public final class CommandUIAbilityK : BaseDurationAbility() {
 
     @Override
     override fun createTooltip(tooltip : TooltipMakerAPI, expanded : Boolean) {
-        tooltip.addTitle("Open Terraforming Control Panel");
+        tooltip.addTitle("Open Terraforming Control Panel")
     }
 
     @Override
     override fun activateImpl() {
-        Global.getSector().openLunaCustomPanel(CommandUIIntelK());
+        Global.getSector().openLunaCustomPanel(CommandUIIntelK())
     }
 
     @Override
@@ -42,6 +42,4 @@ public final class CommandUIAbilityK : BaseDurationAbility() {
     @Override
     override fun cleanupImpl() {
     }
-
-
 }

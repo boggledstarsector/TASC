@@ -32,12 +32,6 @@ terraforming_colony_barren_or_frozen,"$marketName is barren or frozen",,false,"p
 terraforming_colony_atmospheric_density_normal,"$marketName has normal atmospheric density",,true,"market_no_atmosphere | market_thin_atmosphere | market_dense_atmosphere"
 terraforming_colony_atmosphere_not_toxic_or_irradiated,"$marketName atmosphere is not toxic or irradiated",,true,"market_toxic_atmosphere | market_irradiated"
 ,,
-industry_effect_kletka_simulator_colony_very_cold,"Very Cold",,false,"market_very_cold"
-industry_effect_kletka_simulator_colony_cold,"Cold",,false,"market_cold"
-industry_effect_kletka_simulator_colony_hot,"Hot",,false,"market_hot"
-industry_effect_kletka_simulator_colony_very_hot,"Very Hot",,false,"market_very_hot"
-industry_effect_kletka_simulator_colony_is_station,"Station",,false,"market_is_station"
-,,
 terraforming_colony_not_cold_or_very_cold,"$marketName is not cold or very cold",,true,"market_cold | market_very_cold"
 terraforming_colony_hot_or_very_hot,"$marketName is hot or very hot",,false,"market_hot | market_very_hot"
 terraforming_colony_not_very_cold_or_very_hot,"$marketName is not very cold or very hot",,true,"market_very_cold | market_very_hot"
@@ -98,11 +92,21 @@ industry_system_star_coronal_tap_viable,"Coronal hypershunts can only function i
 
 industry_ai_mining_drones_colony_has_mining,"$marketName must have a mining industry.",,false,"market_has_mining"
 ,,
+industry_atmosphere_processor_does_not_have_shortage,,,false,"atmosphere_processor_does_not_have_shortage"
 industry_atmosphere_processor_colony_has_atmo_problem,"Atmospheric conditions on $marketName are already optimal. There is no reason to build an atmosphere processor here.",,false,"market_not_has_mild_climate | market_not_habitable | market_no_atmosphere | market_thin_atmosphere | market_dense_atmosphere | market_toxic_atmosphere"
 ,,
 industry_domed_cities_colony_not_gas_giant,"There is no solid ground on $marketName upon which to build a dome.",,false,"planet_not_gas_giant"
 ,,
 industry_ismaras_sling_colony_water_or_frozen,"Ismara's Sling can only be built on cryovolcanic, frozen, and water covered world. $marketName is on a $planetTypeName.",,false,"planet_water | planet_frozen"
+
+industry_effects_kletka_simulator_has_ai_core,"Requires AI core",,false,"kletka_simulator_has_alpha_core | kletka_simulator_has_beta_core | kletka_simulator_has_gamma_core"
+
+industry_effect_kletka_simulator_colony_very_cold,"Very Cold",,false,"market_very_cold"
+industry_effect_kletka_simulator_colony_cold,"Cold",,false,"market_cold"
+industry_effect_kletka_simulator_colony_hot,"Hot",,false,"market_hot"
+industry_effect_kletka_simulator_colony_very_hot,"Very Hot",,false,"market_very_hot"
+industry_effect_kletka_simulator_colony_is_station,"Station",,false,"market_is_station"
+industry_effect_kletka_simulator_does_not_have_shortage,"Production suspended due to a shortage of $commodityDeficit","[ 'Production suspended due to a shortage of $commodityDeficit' ]",false,"kletka_simulator_does_not_have_shortage"
 
 industry_magnetoshield_colony_irradiated,"$marketName is not irradiated. There is no reason to build a magnetoshield.",,false,"market_irradiated"
 ,,
@@ -113,6 +117,8 @@ industry_mesozoic_park_colony_not_toxic_or_irradiated,"Surface conditions on $ma
 industry_ouyang_optimizer_orbited_planet_is_gas_giant,"Only gas giants can undergo Ouyang optimization.",,false,"focus_planet_gas_giant"
 industry_ouyang_optimizer_orbited_planet_not_has_extreme_weather,"$focusMarketName already has extreme weather. Making it worse won't increase volatiles availability.",,true,"focus_market_has_extreme_weather"
 industry_ouyang_optimizer_orbited_planet_not_has_volatiles_plentiful,"$focusMarketName is already extremely rich in volatiles. An Ouyang optimization would not yield any improvement.",,true,"focus_market_has_volatiles_plentiful"
+
+industry_perihelion_project_does_not_have_shortage,,,false,"perihelion_project_does_not_have_shortage"
 
 industry_planet_cracker_orbited_planet_is_not_gas_giant,"Gas giants cannot be cracked.",,false,"focus_planet_not_gas_giant"
 industry_planet_cracker_orbited_planet_not_has_tectonic_or_extreme_tectonic_activity,"$focusMarketName already has tectonic activity. Making it worse won't increase ore availability.",,true,"focus_market_has_tectonic_activity | focus_market_has_extreme_tectonic_activity"
@@ -150,8 +156,6 @@ industry_effects_domain_archaeology_colony_ruins_scattered,,,false,"market_ruins
 industry_effects_domain_archaeology_colony_ruins_widespread,,,false,"market_ruins_widespread"
 industry_effects_domain_archaeology_colony_ruins_extensive,,,false,"market_ruins_extensive"
 industry_effects_domain_archaeology_colony_ruins_vast,,,false,"market_ruins_vast"
-,,
-industry_effects_kletka_simulator_has_ai_core,"Requires AI core",,false,"kletka_simulator_has_alpha_core | kletka_simulator_has_beta_core | kletka_simulator_has_gamma_core"
 ,,
 ability_astropolis_station_player_fleet_not_in_hyperspace,"You cannot construct an astropolis station in hyperspace.",,false,"player_fleet_not_in_hyperspace"
 ability_astropolis_station_system_has_jump_points,"You cannot construct an astropolis station in a system with no jump points.",,false,"system_has_jump_points"
