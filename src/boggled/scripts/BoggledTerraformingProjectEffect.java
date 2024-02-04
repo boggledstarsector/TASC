@@ -67,6 +67,7 @@ public class BoggledTerraformingProjectEffect {
             this.enableSettings = enableSettings;
         }
 
+        public String getId() { return id; }
         public boolean isEnabled() { return boggledTools.optionsAllowThis(enableSettings); }
 
         protected abstract void applyProjectEffectImpl(BoggledTerraformingRequirement.RequirementContext ctx, String effectSource);

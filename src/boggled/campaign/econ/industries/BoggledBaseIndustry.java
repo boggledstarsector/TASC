@@ -12,7 +12,6 @@ import com.fs.starfarer.api.util.Pair;
 import boggled.campaign.econ.boggledTools;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
 
 public class BoggledBaseIndustry extends BaseIndustry implements BoggledIndustryInterface, MarketImmigrationModifier {

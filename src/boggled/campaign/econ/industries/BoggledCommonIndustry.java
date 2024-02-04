@@ -14,8 +14,6 @@ import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
 import com.fs.starfarer.api.util.Pair;
 import boggled.campaign.econ.boggledTools;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.awt.*;
 import java.util.*;
@@ -162,10 +160,6 @@ public class BoggledCommonIndustry {
         setFromThat(that);
 
         return this;
-    }
-
-    public void overridesFromJSON(JSONObject data) throws JSONException {
-
     }
 
     public void advance(float amount) {
@@ -453,6 +447,10 @@ public class BoggledCommonIndustry {
     }
 
     public void apply() {
+        if (!ctx.getSourceIndustry().isFunctional()) {
+            return;
+        }
+
         for (BoggledTerraformingProject.ProjectInstance project : projects) {
             project.getProject().applyOngoingEffects(ctx, ctx.getSourceIndustry().getNameForModifier());
         }
@@ -464,11 +462,6 @@ public class BoggledCommonIndustry {
                 coreEffect.applyProjectEffect(ctx, effectSource);
             }
         }
-
-//        if (!ctx.getSourceIndustry().isFunctional()) {
-//            ctx.getSourceIndustry().getAllSupply().clear();
-//            ctx.getSourceIndustry().unapply();
-//        }
     }
 
     public void unapply() {
@@ -721,21 +714,23 @@ public class BoggledCommonIndustry {
     }
 
     public static class ImageOverrideWithRequirement {
+        String id;
         BoggledProjectRequirementsAND requirements;
         String category;
-        String id;
+        String imageId;
 
-        public ImageOverrideWithRequirement(BoggledProjectRequirementsAND requirements, String category, String id) {
+        public ImageOverrideWithRequirement(String id, BoggledProjectRequirementsAND requirements, String category, String imageId) {
+            this.id = id;
             this.requirements = requirements;
             this.category = category;
-            this.id = id;
+            this.imageId = imageId;
         }
     }
 
     public String getCurrentImage() {
         for (ImageOverrideWithRequirement req : imageReqs) {
             if (req.requirements.requirementsMet(ctx)) {
-                return Global.getSettings().getSpriteName(req.category, req.id);
+                return Global.getSettings().getSpriteName(req.category, req.imageId);
             }
         }
 
@@ -855,5 +850,94 @@ public class BoggledCommonIndustry {
             offset += value;
         }
         return null;
+    }
+
+    /*
+    From here on are mod helper functions
+     */
+    private void addEffects(List<BoggledTerraformingProjectEffect.TerraformingProjectEffect> effects, List<BoggledTerraformingProjectEffect.TerraformingProjectEffect> effectsToAdd) {
+        effects.addAll(effectsToAdd);
+    }
+
+    private void removeEffects(List<BoggledTerraformingProjectEffect.TerraformingProjectEffect> effects, List<String> effectsToRemove) {
+        for (String effectToRemove : effectsToRemove) {
+            int idx;
+            for (idx = 0; idx < effects.size(); ++idx) {
+                BoggledTerraformingProjectEffect.TerraformingProjectEffect effect = effects.get(idx);
+                if (effect.getId().equals(effectToRemove)) {
+                    break;
+                }
+            }
+            if (idx == effects.size()) {
+                continue;
+            }
+            effects.remove(idx);
+        }
+    }
+
+    public void addRemoveProjects(List<BoggledTerraformingProject> projectsAdded, List<String> projectsRemoved) {
+        for (BoggledTerraformingProject projectAdded : projectsAdded) {
+            projects.add(new BoggledTerraformingProject.ProjectInstance(projectAdded));
+        }
+
+        for (String projectRemoved : projectsRemoved) {
+            int idx;
+            for (idx = 0; idx < projects.size(); ++idx) {
+                BoggledTerraformingProject.ProjectInstance project = projects.get(idx);
+                if (project.getProject().getId().equals(projectRemoved)) {
+                    break;
+                }
+            }
+            if (idx == projects.size()) {
+                continue;
+            }
+            projects.remove(idx);
+        }
+    }
+
+    public void addRemoveBuildingFinishImproveAiCorePrebuildEffects(List<BoggledTerraformingProjectEffect.TerraformingProjectEffect> buildingFinishedEffectsAdded, List<String> buildingFinishedEffectsRemoved, List<BoggledTerraformingProjectEffect.TerraformingProjectEffect> improveEffectsAdded, List<String> improveEffectsRemoved, Map<String, List<BoggledTerraformingProjectEffect.TerraformingProjectEffect>> aiCoreEffectsAdded, Map<String, List<String>> aiCoreEffectsRemoved, List<BoggledTerraformingProjectEffect.TerraformingProjectEffect> preBuildEffectsAdded, List<String> preBuildEffectsRemoved) {
+        addEffects(buildingFinishedEffects, buildingFinishedEffectsAdded);
+        removeEffects(buildingFinishedEffects, buildingFinishedEffectsRemoved);
+
+        addEffects(improveEffects, improveEffectsAdded);
+        removeEffects(improveEffects, improveEffectsRemoved);
+
+        for (Map.Entry<String, List<BoggledTerraformingProjectEffect.TerraformingProjectEffect>> aiCoreEffectAdded : aiCoreEffectsAdded.entrySet()) {
+            List<BoggledTerraformingProjectEffect.TerraformingProjectEffect> aiCoreEffect = aiCoreEffects.get(aiCoreEffectAdded.getKey());
+            if (aiCoreEffect != null) {
+                addEffects(aiCoreEffect, aiCoreEffectAdded.getValue());
+            }
+        }
+
+        for (Map.Entry<String, List<String>> aiCoreEffectRemoved : aiCoreEffectsRemoved.entrySet()) {
+            List<BoggledTerraformingProjectEffect.TerraformingProjectEffect> aiCoreEffect = aiCoreEffects.get(aiCoreEffectRemoved.getKey());
+            if (aiCoreEffect != null) {
+                removeEffects(aiCoreEffect, aiCoreEffectRemoved.getValue());
+            }
+        }
+
+        addEffects(preBuildEffects, preBuildEffectsAdded);
+        removeEffects(preBuildEffects, preBuildEffectsRemoved);
+    }
+
+    public void addRemoveImageOverrides(List<ImageOverrideWithRequirement> imageOverridesAdded, List<String> imageOverridesRemoved) {
+        imageReqs.addAll(imageOverridesAdded);
+        for (String imageOverrideRemoved : imageOverridesRemoved) {
+            int idx;
+            for (idx = 0; idx < imageReqs.size(); ++idx) {
+                ImageOverrideWithRequirement imageReq = imageReqs.get(idx);
+                if (imageReq.id.equals(imageOverrideRemoved)) {
+                    break;
+                }
+            }
+            if (idx == imageReqs.size()) {
+                continue;
+            }
+            imageReqs.remove(idx);
+        }
+    }
+
+    public void overrideCanBeDisruptedAndBasePatherInterest(boolean canBeDisruptedOverride, float basePatherInterestOverride) {
+        basePatherInterest = basePatherInterestOverride;
     }
 }

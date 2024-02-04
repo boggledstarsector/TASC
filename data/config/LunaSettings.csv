@@ -64,9 +64,9 @@ boggledAstropolisEnabled,Enable Astropolis construction,Boolean,True,,"Set this 
 Astropolis stations can be constructed using an ability when the player is close to a planet they have already colonized. The station will orbit the planet and have a separate market from the market on the colony. Astropolis stations have no resource deposits.",,,Station Construction
 boggledMaxNumAstropoliPerPlanet,Maximum number of astropolis stations per planet,Int,3,,"Controls how many astropolis stations can be constructed in orbit around a single planet.
 
-Three is the maximum value for this setting - modifying the CSV to increase the value will do nothing.",0,3,Station Construction
+Three is the maximum value for this setting - modifying the CSV to increase the value will do nothing.",0,300,Station Construction
 boggledCanBuildAstropolisOnPurchasedGovernorshipPlanets,Astropolis stations can be built on purchased planets,Boolean,False,,"Set this to true to allow astropolis stations to be constructed in orbit around planets where the player purchased governorship.",,,Station Construction
-boggledAstropolisIgnoreOrbitalRequirements,Astropolis stations ignore orbital requirements,Boolean,False,,"Set this to true to allow construction of astropolis stations in orbit around planets that otherwise do not meet the criteria for astropolis construction.
+boggledAstropolisFollowOrbitalRequirements,Astropolis stations follow orbital requirements,Boolean,True,,"Set this to false to allow construction of astropolis stations in orbit around planets that otherwise do not meet the criteria for astropolis construction.
 
 The criteria for astropolis construction are factors like the size of the planet, other planets or moons orbiting close to it, etc.",,,Station Construction
 boggledAstropolisStationBuildCreditCost,Astropolis station credit build cost,Int,500000,,"How many credits are required to construct an astropolis station.",0,2500000,Station Construction

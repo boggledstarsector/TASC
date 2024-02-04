@@ -713,26 +713,27 @@ public class boggledTools {
 
         List<BoggledTerraformingProject.RequirementsWithId> ret = new ArrayList<>();
         String requirementsString = object.getString(key);
-        if (!requirementsString.isEmpty()) {
-            JSONArray requirementsWithIdArray = new JSONArray(requirementsString);
-            for (int i = 0; i < requirementsWithIdArray.length(); ++i) {
-                JSONObject requirementsObject = requirementsWithIdArray.getJSONObject(i);
+        if (requirementsString.isEmpty()) {
+            return ret;
+        }
 
-                String requirementsId = requirementsObject.getString("requirements_id");
-                BoggledProjectRequirementsAND req = requirementsFromJSON(requirementsObject, sourceInfo, requirementsId, "requirements");
-                if (req != null) {
-                    ret.add(new BoggledTerraformingProject.RequirementsWithId(requirementsId, req));
-                } else {
-                    log.warn(sourceInfo + " " + id + " has empty invalid requirement " + requirementsId);
-                }
+        JSONArray requirementsWithIdArray = new JSONArray(requirementsString);
+        for (int i = 0; i < requirementsWithIdArray.length(); ++i) {
+            JSONObject requirementsObject = requirementsWithIdArray.getJSONObject(i);
+
+            String requirementsId = requirementsObject.getString("requirements_id");
+            BoggledProjectRequirementsAND req = requirementsFromJSON(requirementsObject, sourceInfo, requirementsId, "requirements");
+            if (req != null) {
+                ret.add(new BoggledTerraformingProject.RequirementsWithId(requirementsId, req));
+            } else {
+                log.warn(sourceInfo + " " + id + " has empty invalid requirement " + requirementsId);
             }
         }
+
         return ret;
     }
 
-    private static Map<String, List<BoggledTerraformingProjectEffect.TerraformingProjectEffect>> aiCoreEffectsFromJSON(JSONObject object, String key, String id) throws JSONException {
-        Logger log = Global.getLogger(boggledTools.class);
-
+    private static Map<String, List<BoggledTerraformingProjectEffect.TerraformingProjectEffect>> aiCoreEffectsFromJSON(JSONObject object, String sourceInfo, String id, String key) throws JSONException {
         Map<String, List<BoggledTerraformingProjectEffect.TerraformingProjectEffect>> ret = new HashMap<>();
         String aiCoreEffectsString = object.optString(key);
         if (aiCoreEffectsString.isEmpty()) {
@@ -742,8 +743,27 @@ public class boggledTools {
         JSONObject aiCoreEffects = new JSONObject(aiCoreEffectsString);
         for (Iterator<String> it = aiCoreEffects.keys(); it.hasNext(); ) {
             String aiCoreId = it.next();
-            List<BoggledTerraformingProjectEffect.TerraformingProjectEffect> aiCoreEffect = projectEffectsFromJSON(aiCoreEffects, "AI Core Effects", id, aiCoreId);
+            List<BoggledTerraformingProjectEffect.TerraformingProjectEffect> aiCoreEffect = projectEffectsFromJSON(aiCoreEffects, sourceInfo, id, aiCoreId);
             ret.put(aiCoreId, aiCoreEffect);
+        }
+
+        return ret;
+    }
+
+    private static Map<String, List<String>> aiCoreEffectRemoveInfoFromJSON(JSONObject object, String sourceInfo, String id, String key) throws JSONException {
+        Map<String, List<String>> ret = new HashMap<>();
+        String aiCoreEffectsRemovedString = object.optString(key);
+        if (aiCoreEffectsRemovedString.isEmpty()) {
+            return ret;
+        }
+
+        JSONObject aiCoreEffectsRemoved = new JSONObject(aiCoreEffectsRemovedString);
+        for (Iterator<String> it = aiCoreEffectsRemoved.keys(); it.hasNext(); ) {
+            String aiCoreId = it.next();
+            JSONArray aiCoreEffectsArray = aiCoreEffectsRemoved.getJSONArray(aiCoreId);
+            List<String> aiCoreEffects = stringListFromJSON(aiCoreEffectsArray);
+
+            ret.put(aiCoreId, aiCoreEffects);
         }
 
         return ret;
@@ -853,6 +873,29 @@ public class boggledTools {
         boggledTools.resourceLimits = resourceLimits;
     }
 
+    private static List<BoggledCommonIndustry.ImageOverrideWithRequirement> imageOverridesFromJSON(JSONObject object, String key) throws JSONException {
+        List<BoggledCommonIndustry.ImageOverrideWithRequirement> ret = new ArrayList<>();
+
+        String imageOverridesString = object.getString(key);
+        if (!imageOverridesString.isEmpty()) {
+            JSONArray imageOverridesJson = new JSONArray(imageOverridesString);
+            for (int j = 0; j < imageOverridesJson.length(); ++j) {
+                JSONObject imageOverride = imageOverridesJson.getJSONObject(j);
+                String id = imageOverride.getString("id");
+
+                JSONArray requirementsArray = imageOverride.getJSONArray("requirement_ids");
+                BoggledProjectRequirementsAND imageReqs = requirementsFromRequirementsArray(requirementsArray, "Industry Options", id, "image_overrides");
+
+                String category = imageOverride.getString("category");
+                String imageId = imageOverride.getString("image_id");
+
+                ret.add(new BoggledCommonIndustry.ImageOverrideWithRequirement(id, imageReqs, category, imageId));
+            }
+        }
+
+        return ret;
+    }
+
     public static void initialiseIndustryOptionsFromJSON(@NotNull JSONArray industryOptionsJSON) {
         Logger log = Global.getLogger(boggledTools.class);
 
@@ -884,26 +927,13 @@ public class boggledTools {
                 List<BoggledTerraformingProjectEffect.TerraformingProjectEffect> improveEffects = projectEffectsFromJSON(row, "Industry Options", id, "improve_effects");
                 List<BoggledTerraformingProjectEffect.TerraformingProjectEffect> preBuildEffects = projectEffectsFromJSON(row, "Industry Options", id, "pre_build_effects");
 
-                Map<String, List<BoggledTerraformingProjectEffect.TerraformingProjectEffect>> aiCoreEffects = aiCoreEffectsFromJSON(row, "ai_core_effects", id);
+                Map<String, List<BoggledTerraformingProjectEffect.TerraformingProjectEffect>> aiCoreEffects = aiCoreEffectsFromJSON(row, "AI Core Effects", id, "ai_core_effects");
 
                 List<BoggledProjectRequirementsAND> disruptRequirements = new ArrayList<>();
 
                 float basePatherInterest = (float) row.getDouble("base_pather_interest");
 
-                String imageOverridesString = row.getString("image_overrides");
-                List<BoggledCommonIndustry.ImageOverrideWithRequirement> imageOverrides = new ArrayList<>();
-                if (!imageOverridesString.isEmpty()) {
-                    JSONArray imageOverridesJson = new JSONArray(imageOverridesString);
-                    for (int j = 0; j < imageOverridesJson.length(); ++j) {
-                        JSONObject imageOverride = imageOverridesJson.getJSONObject(j);
-                        JSONArray requirementsArray = imageOverride.getJSONArray("requirement_ids");
-                        BoggledProjectRequirementsAND imageReqs = requirementsFromRequirementsArray(requirementsArray, "Industry Options", id, "image_overrides");
-                        String category = imageOverride.getString("category");
-                        String imageId = imageOverride.getString("id");
-
-                        imageOverrides.add(new BoggledCommonIndustry.ImageOverrideWithRequirement(imageReqs, category, imageId));
-                    }
-                }
+                List<BoggledCommonIndustry.ImageOverrideWithRequirement> imageOverrides = imageOverridesFromJSON(row, "image_overrides");
 
                 industryProjects.put(id, new BoggledCommonIndustry(id, industry, projects, buildingFinishedEffects, improveEffects, aiCoreEffects, disruptRequirements, basePatherInterest, imageOverrides, preBuildEffects));
             } catch (JSONException e) {
@@ -1151,16 +1181,18 @@ public class boggledTools {
         String projectEffectsString = object.optString(key);
         List<BoggledTerraformingProjectEffect.TerraformingProjectEffect> ret = new ArrayList<>();
         if (!projectEffectsString.isEmpty()) {
-            JSONArray projectEffectsArray = new JSONArray(projectEffectsString);
-            for (int i = 0; i < projectEffectsArray.length(); ++i) {
-                JSONObject projectEffect = projectEffectsArray.getJSONObject(i);
-                String effectId = projectEffect.getString("effect_id");
-                BoggledTerraformingProjectEffect.TerraformingProjectEffect effect = boggledTools.terraformingProjectEffects.get(effectId);
-                if (effect != null) {
-                    ret.add(effect);
-                } else {
-                    log.info(sourceInfo + " " + id + " has invalid project effect " + effectId);
-                }
+            return ret;
+        }
+
+        JSONArray projectEffectsArray = new JSONArray(projectEffectsString);
+        for (int i = 0; i < projectEffectsArray.length(); ++i) {
+            JSONObject projectEffect = projectEffectsArray.getJSONObject(i);
+            String effectId = projectEffect.getString("effect_id");
+            BoggledTerraformingProjectEffect.TerraformingProjectEffect effect = boggledTools.terraformingProjectEffects.get(effectId);
+            if (effect != null) {
+                ret.add(effect);
+            } else {
+                log.info(sourceInfo + " " + id + " has invalid project effect " + effectId);
             }
         }
 
@@ -1197,6 +1229,14 @@ public class boggledTools {
             }
         }
 
+        return ret;
+    }
+
+    private static List<String> stringListFromJSON(JSONArray object) throws JSONException {
+        List<String> ret = new ArrayList<>();
+        for (int i = 0; i < object.length(); ++i) {
+            ret.add(object.getString(i));
+        }
         return ret;
     }
 
@@ -1259,7 +1299,7 @@ public class boggledTools {
                 List<BoggledTerraformingProject.RequirementRemoveInfo> reqsResetRemoved = keyedRequirementRemoveFromJSON(row, "requirements_reset_removed");
 
                 Integer baseProjectDurationOverride = null;
-                String baseProjectDurationOverrideString =  row.optString("base_project_duration_override");
+                String baseProjectDurationOverrideString = row.optString("base_project_duration_override");
                 if (!baseProjectDurationOverrideString.isEmpty()) {
                     baseProjectDurationOverride = row.getInt("base_project_duration_override");
                 }
@@ -1278,14 +1318,84 @@ public class boggledTools {
         }
     }
 
+    private static List<BoggledTerraformingProject> projectsFromJSON(JSONObject object, String sourceInfo, String id, String key) throws JSONException {
+        Logger log = Global.getLogger(boggledTools.class);
+
+        String projectsString = object.optString(key);
+        List<BoggledTerraformingProject> ret = new ArrayList<>();
+        if (!projectsString.isEmpty()) {
+            JSONArray projectsArray = new JSONArray(projectsString);
+            for (int i = 0; i < projectsArray.length(); ++i) {
+                String projectId = projectsArray.getString(i);
+                BoggledTerraformingProject project = boggledTools.getProject(projectId);
+                if (project != null) {
+                    ret.add(project);
+                } else {
+                    log.info(sourceInfo + " " + id + " has invalid project " + projectId);
+                }
+            }
+        }
+
+        return ret;
+    }
+
     public static void initialiseIndustryOptionOverrides(@NotNull JSONArray industryOptionOverridesJSON) {
         Logger log = Global.getLogger(boggledTools.class);
 
+        String idForErrors = "";
         for (int i = 0; i < industryOptionOverridesJSON.length(); ++i) {
             try {
                 JSONObject row = industryOptionOverridesJSON.getJSONObject(i);
+
+                String id = row.getString("id");
+                if (id.isEmpty()) {
+                    continue;
+                }
+                idForErrors = id;
+
+                String industryId = row.getString("industry_id");
+                BoggledCommonIndustry industry = industryProjects.get(industryId);
+                if (industry == null) {
+                    log.error("Industry option override " + idForErrors + " has invalid industry ID " + industryId);
+                    continue;
+                }
+
+                List<BoggledTerraformingProject> projectsAdded = projectsFromJSON(row, "Industry Option Mods", id, "projects_added");
+                List<String> projectsRemoved = stringListFromJSON(row, "projects_removed");
+
+                List<BoggledTerraformingProjectEffect.TerraformingProjectEffect> buildingFinishedEffectsAdded = projectEffectsFromJSON(row, "Industry Option Mods", id, "building_finished_effects_added");
+                List<String> buildingFinishedEffectsRemoved = stringListFromJSON(row, "building_finished_effects_removed");
+
+                List<BoggledTerraformingProjectEffect.TerraformingProjectEffect> improveEffectsAdded = projectEffectsFromJSON(row, "Industry Option Mods", id, "improve_effects_added");
+                List<String> improveEffectsRemoved = stringListFromJSON(row, "improve_effects_removed");
+
+                Map<String, List<BoggledTerraformingProjectEffect.TerraformingProjectEffect>> aiCoreEffectsAdded = aiCoreEffectsFromJSON(row, "Industry Option Mods", id, "ai_core_effects_added");
+                Map<String, List<String>> aiCoreEffectsRemoved = aiCoreEffectRemoveInfoFromJSON(row, "Industry Option Mods", id, "ai_core_effects_removed");
+
+                String canBeDisruptedOverrideString = row.getString("can_be_disrupted_override");
+                boolean canBeDisruptedOverride = industry.canBeDisrupted();
+                if (!canBeDisruptedOverrideString.isEmpty()) {
+                    canBeDisruptedOverride = row.getBoolean("can_be_disrupted_override");
+                }
+                String basePatherInterestOverrideString = row.getString("base_pather_interest_override");
+                float basePatherInterestOverride = industry.getBasePatherInterest();
+                if (!basePatherInterestOverrideString.isEmpty()) {
+                    basePatherInterestOverride = (float) row.getDouble("base_pather_interest_override");
+                }
+
+                List<BoggledCommonIndustry.ImageOverrideWithRequirement> imageOverridesAdded = imageOverridesFromJSON(row, "image_overrides_added");
+                List<String> imageOverridesRemoved = stringListFromJSON(row, "image_overrides_removed");
+
+                List<BoggledTerraformingProjectEffect.TerraformingProjectEffect> preBuildEffectsAdded = projectEffectsFromJSON(row, "Industry Option Mods", id, "pre_build_effects_added");
+                List<String> preBuildEffectsRemoved = stringListFromJSON(row, "pre_build_effects_removed");
+
+                industry.addRemoveProjects(projectsAdded, projectsRemoved);
+                industry.addRemoveBuildingFinishImproveAiCorePrebuildEffects(buildingFinishedEffectsAdded, buildingFinishedEffectsRemoved, improveEffectsAdded, improveEffectsRemoved, aiCoreEffectsAdded, aiCoreEffectsRemoved, preBuildEffectsAdded, preBuildEffectsRemoved);
+                industry.addRemoveImageOverrides(imageOverridesAdded, imageOverridesRemoved);
+                industry.overrideCanBeDisruptedAndBasePatherInterest(canBeDisruptedOverride, basePatherInterestOverride);
+
             } catch (JSONException e) {
-                log.error("Error in industry options overrides: " + e);
+                log.error("Error in industry options overrides " + idForErrors + ": " + e);
             }
         }
     }

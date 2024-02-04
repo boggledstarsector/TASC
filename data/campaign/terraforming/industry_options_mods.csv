@@ -1,3 +1,6 @@
-id,industry_id,dynamic_project_duration_modifiers_added,dynamic_project_duration_modifiers_added_data,dynamic_project_duration_modifiers_removed,resources_added,resources_removed,requirement_needed_added,requirement_needed_removed,requirement_suitable_added,requirement_suitable_removed,requirement_suitable_hidden_added,requirement_suitable_hidden_removed,conditions_added_on_completion_added,conditions_added_on_completion_removed,conditions_removed_on_completion_added,conditions_removed_on_completion_removed
+id,industry_id,projects_added,projects_removed,building_finished_effects_added,building_finished_effects_removed,improve_effects_added,improve_effects_removed,ai_core_effects_added,ai_core_effects_removed,can_be_disrupted_override,base_pather_interest_override,image_overrides_added,image_overrides_removed,pre_build_effects_added,pre_build_effects_removed
 # This file is just here to provide structure, it should be empty in the Terraforming & Station Construction mod
 # Other mods add their stuff here
+,,,,,,,,"{
+	'alpha_core' : [ { 'effect_id' : 'new_effect_id' } ],
+}"
