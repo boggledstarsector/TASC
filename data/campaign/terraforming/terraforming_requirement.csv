@@ -218,6 +218,7 @@ ability_astropolis_station_target_planet_moon_too_close,boggledAstropolisFollowO
 ability_astropolis_station_target_planet_too_small,boggledAstropolisFollowOrbitalRequirements,TargetPlanetIsAtLeastSize,false,125
 ability_astropolis_station_target_planet_too_many_stations,,TargetPlanetStationCountLessThan,false,"{
 	'station_tags' : [ 'boggled_astropolis' ],
+	'setting_id' : 'boggledMaxNumAstropoliPerPlanet',
 	'max_num' : 24
 }"
 ,

@@ -1366,11 +1366,20 @@ public class BoggledTerraformingRequirement {
 
     public static class TargetPlanetStationCountLessThan extends TerraformingRequirement {
         List<String> stationTags;
+        String settingId;
         int maxNumStations;
-        protected TargetPlanetStationCountLessThan(String id, String[] enableSettings, boolean invert, List<String> stationTags, int maxNumStations) {
+        public TargetPlanetStationCountLessThan(String id, String[] enableSettings, boolean invert, List<String> stationTags, String settingId, int maxNumStations) {
             super(id, enableSettings, invert);
             this.stationTags = stationTags;
+            this.settingId = settingId;
             this.maxNumStations = maxNumStations;
+        }
+
+        private int getMaxNumStations() {
+            if (!settingId.isEmpty()) {
+                return boggledTools.getIntSetting(settingId);
+            }
+            return maxNumStations;
         }
 
         @Override
@@ -1379,7 +1388,7 @@ public class BoggledTerraformingRequirement {
             if (targetPlanet == null) {
                 return false;
             }
-            return boggledTools.numStationsInOrbit(targetPlanet, stationTags.toArray(new String[0])) < maxNumStations;
+            return boggledTools.numStationsInOrbit(targetPlanet, stationTags.toArray(new String[0])) < getMaxNumStations();
         }
 
         @Override
@@ -1388,7 +1397,7 @@ public class BoggledTerraformingRequirement {
             if (targetPlanet != null) {
                 tokenReplacements.put("$planetName", targetPlanet.getName());
                 int numStations = boggledTools.numStationsInOrbit(targetPlanet, stationTags.toArray(new String[0]));
-                tokenReplacements.put("$maxNumStations", String.format("%,d", maxNumStations));
+                tokenReplacements.put("$maxNumStations", String.format("%,d", getMaxNumStations()));
                 tokenReplacements.put("$numStations", String.format("%,d", numStations));
                 tokenReplacements.put("$stationOrStations", numStations == 1 ? "station" : "stations");
             }

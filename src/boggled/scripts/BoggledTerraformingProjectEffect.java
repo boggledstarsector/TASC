@@ -727,7 +727,7 @@ public class BoggledTerraformingProjectEffect {
         protected int greekAlphabetIndexOf(List<String> greekAlphabet, String name) {
             for (int i = 0; i < greekAlphabet.size(); ++i) {
                 String greekLetter = greekAlphabet.get(i);
-                if (name.contains(greekLetter)) {
+                if (name.endsWith(greekLetter)) {
                     return i;
                 }
             }
@@ -745,8 +745,8 @@ public class BoggledTerraformingProjectEffect {
             int o2NumIndexStart = o2.getName().indexOf('-');
             if (o1NumIndexStart == -1 && o2NumIndexStart == -1) {
                 // Neither has a number at the end, so we compare according to the index in the alphabet
-                int o1GreekIndex = greekAlphabetIndexOf(greekAlphabet, o1.getName());//greekAlphabet.indexOf(o1.getName());
-                int o2GreekIndex = greekAlphabetIndexOf(greekAlphabet, o2.getName());//greekAlphabet.indexOf(o2.getName());
+                int o1GreekIndex = greekAlphabetIndexOf(greekAlphabet, o1.getName());
+                int o2GreekIndex = greekAlphabetIndexOf(greekAlphabet, o2.getName());
                 int comp = Integer.compare(o1GreekIndex, o2GreekIndex);
                 if (comp < 0) {
                     return o2;
@@ -770,22 +770,22 @@ public class BoggledTerraformingProjectEffect {
             int o2Num = Integer.parseInt(o2.getName().substring(o2NumIndexStart + 1));
             int comp = Integer.compare(o1Num, o2Num);
             if (comp < 0) {
-                return o1;
-            } else if (comp > 0) {
                 return o2;
+            } else if (comp > 0) {
+                return o1;
             }
             // The numbers are the same, so compare based on the index in the alphabet
-            int o1GreekIndex = greekAlphabet.indexOf(o1.getName());
-            int o2GreekIndex = greekAlphabet.indexOf(o2.getName());
+            int o1GreekIndex = greekAlphabetIndexOf(greekAlphabet, o1.getName().substring(0, o1NumIndexStart));
+            int o2GreekIndex = greekAlphabetIndexOf(greekAlphabet, o2.getName().substring(0, o2NumIndexStart));
             comp = Integer.compare(o1GreekIndex, o2GreekIndex);
             if (comp < 0) {
-                return o1;
+                return o2;
             }
             // If they return equal, something else is broken
             if (comp == 0) {
                 Global.getLogger(this.getClass()).error("Sector entity tokens " + o1.getName() + " and " + o2.getName() + " compared equal");
             }
-            return o2;
+            return o1;
         }
     }
 
