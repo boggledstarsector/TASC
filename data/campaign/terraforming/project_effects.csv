@@ -298,6 +298,7 @@ ongoing_market_size_demand_heavy_machinery,,CommodityDemandMarketSize,"{ 'commod
 ongoing_market_size_minus_2_demand_heavy_machinery,,CommodityDemandMarketSize,"{ 'commodity_id' : 'heavy_machinery', 'quantity' : -2 }"
 
 ongoing_flat_demand_6_heavy_machinery,,CommodityDemandFlat,"{ 'commodity_id' : 'heavy_machinery', 'quantity' : 6 }"
+ongoing_heavy_machinery_deficit_to_shortage,,CommodityDeficitToShortage,"{ 'commodities_demanded' : [ 'heavy_machinery' ] }"
 
 ongoing_flat_demand_7_domain_artifacts,boggledDomainTechContentEnabled | boggledDomainArchaeologyEnabled,CommodityDemandFlat,"{ 'commodity_id' : 'domain_artifacts', 'quantity' : 7 }"
 ongoing_flat_demand_11_metals,,CommodityDemandFlat,"{ 'commodity_id' : 'metals', 'quantity' : 11 }"

@@ -2269,8 +2269,8 @@ public class BoggledTerraformingProjectEffect {
         }
     }
 
-    public static class CommodityDeficitToInactive extends CommodityDeficit {
-        public CommodityDeficitToInactive(String id, String[] enableSettings, List<String> commodityIds) {
+    public static class CommodityDeficitToShortage extends CommodityDeficit {
+        public CommodityDeficitToShortage(String id, String[] enableSettings, List<String> commodityIds) {
             super(id, enableSettings, commodityIds);
         }
 

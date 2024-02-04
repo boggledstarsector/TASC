@@ -266,8 +266,6 @@ public class boggledTools {
         public static final String cryosanctumIndustryId = "BOGGLED_CRYOSANCTUM";
         public static final String domainArchaeologyIndustryId = "BOGGLED_DOMAIN_ARCHAEOLOGY";
         public static final String genelabIndustryId = "BOGGLED_GENELAB";
-        public static final String ismaraSlingIndustryId = "BOGGLED_ISMARA_SLING";
-        public static final String asteroidProcessingIndustryId = "BOGGLED_ASTEROID_PROCESSING";
         public static final String remnantStationIndustryId = "BOGGLED_REMNANT_STATION";
         public static final String stellarReflectorArrayIndustryId = "BOGGLED_STELLAR_REFLECTOR_ARRAY";
     }
@@ -624,7 +622,7 @@ public class boggledTools {
         addTerraformingProjectEffectFactory("CommoditySupplyFlat", new BoggledTerraformingProjectEffectFactory.CommoditySupplyFlat());
         addTerraformingProjectEffectFactory("CommoditySupplyMarketSize", new BoggledTerraformingProjectEffectFactory.CommoditySupplyMarketSize());
 
-        addTerraformingProjectEffectFactory("CommodityDeficitToInactive", new BoggledTerraformingProjectEffectFactory.CommodityDeficitToInactive());
+        addTerraformingProjectEffectFactory("CommodityDeficitToShortage", new BoggledTerraformingProjectEffectFactory.CommodityDeficitToShortage());
         addTerraformingProjectEffectFactory("CommodityDeficitToProduction", new BoggledTerraformingProjectEffectFactory.CommodityDeficitToProduction());
         addTerraformingProjectEffectFactory("CommodityDeficitModifierToUpkeep", new BoggledTerraformingProjectEffectFactory.CommodityDeficitModifierToUpkeep());
     }
@@ -1180,7 +1178,7 @@ public class boggledTools {
 
         String projectEffectsString = object.optString(key);
         List<BoggledTerraformingProjectEffect.TerraformingProjectEffect> ret = new ArrayList<>();
-        if (!projectEffectsString.isEmpty()) {
+        if (projectEffectsString.isEmpty()) {
             return ret;
         }
 
@@ -1202,15 +1200,17 @@ public class boggledTools {
     private static List<BoggledProjectRequirementsAND.RequirementAdd> requirementAddFromJSON(JSONObject object, String sourceInfo, String id, String requirementType) throws JSONException {
         List<BoggledProjectRequirementsAND.RequirementAdd> ret = new ArrayList<>();
         String requirementAddString = object.optString(requirementType);
-        if (!requirementAddString.isEmpty()) {
-            JSONArray requirementsAddedArray = new JSONArray(requirementAddString);
-            for (int i = 0; i < requirementsAddedArray.length(); ++i) {
-                JSONObject requirementObject = requirementsAddedArray.getJSONObject(i);
-                BoggledProjectRequirementsAND.RequirementAndThen req = requirementFromRequirementObject(requirementObject, sourceInfo, id, requirementType);
-                String parentId = requirementObject.optString("parent_id");
-                if (req != null) {
-                    ret.add(new BoggledProjectRequirementsAND.RequirementAdd(req, parentId));
-                }
+        if (requirementAddString.isEmpty()) {
+            return ret;
+        }
+
+        JSONArray requirementsAddedArray = new JSONArray(requirementAddString);
+        for (int i = 0; i < requirementsAddedArray.length(); ++i) {
+            JSONObject requirementObject = requirementsAddedArray.getJSONObject(i);
+            BoggledProjectRequirementsAND.RequirementAndThen req = requirementFromRequirementObject(requirementObject, sourceInfo, id, requirementType);
+            String parentId = requirementObject.optString("parent_id");
+            if (req != null) {
+                ret.add(new BoggledProjectRequirementsAND.RequirementAdd(req, parentId));
             }
         }
         return ret;
@@ -1219,20 +1219,21 @@ public class boggledTools {
     private static List<BoggledTerraformingProject.RequirementAddInfo> keyedRequirementAddFromJSON(JSONObject object, String sourceInfo, String id, String baseKey, String key) throws JSONException {
         List<BoggledTerraformingProject.RequirementAddInfo> ret = new ArrayList<>();
         String requirementAddString = object.optString(baseKey);
-        if (!requirementAddString.isEmpty()) {
-            JSONArray requirementAddArray = new JSONArray(requirementAddString);
-            for (int i = 0; i < requirementAddArray.length(); ++i) {
-                JSONObject requirementAddObject = requirementAddArray.getJSONObject(i);
-                String containingId = requirementAddObject.getString("containing_id");
-                List<BoggledProjectRequirementsAND.RequirementAdd> requirementsAdded = requirementAddFromJSON(object, sourceInfo, id, key);
-                ret.add(new BoggledTerraformingProject.RequirementAddInfo(containingId, requirementsAdded));
-            }
+        if (requirementAddString.isEmpty()) {
+            return ret;
+        }
+        JSONArray requirementAddArray = new JSONArray(requirementAddString);
+        for (int i = 0; i < requirementAddArray.length(); ++i) {
+            JSONObject requirementAddObject = requirementAddArray.getJSONObject(i);
+            String containingId = requirementAddObject.getString("containing_id");
+            List<BoggledProjectRequirementsAND.RequirementAdd> requirementsAdded = requirementAddFromJSON(object, sourceInfo, id, key);
+            ret.add(new BoggledTerraformingProject.RequirementAddInfo(containingId, requirementsAdded));
         }
 
         return ret;
     }
 
-    private static List<String> stringListFromJSON(JSONArray object) throws JSONException {
+    public static List<String> stringListFromJSON(JSONArray object) throws JSONException {
         List<String> ret = new ArrayList<>();
         for (int i = 0; i < object.length(); ++i) {
             ret.add(object.getString(i));
@@ -1243,11 +1244,12 @@ public class boggledTools {
     private static List<String> stringListFromJSON(JSONObject object, String key) throws JSONException {
         List<String> ret = new ArrayList<>();
         String jsonString = object.optString(key);
-        if (!jsonString.isEmpty()) {
-            JSONArray jsonStringArray = new JSONArray(jsonString);
-            for (int i = 0; i < jsonStringArray.length(); ++i) {
-                ret.add(jsonStringArray.getString(i));
-            }
+        if (jsonString.isEmpty()) {
+            return ret;
+        }
+        JSONArray jsonStringArray = new JSONArray(jsonString);
+        for (int i = 0; i < jsonStringArray.length(); ++i) {
+            ret.add(jsonStringArray.getString(i));
         }
         return ret;
     }
@@ -1255,14 +1257,15 @@ public class boggledTools {
     private static List<BoggledTerraformingProject.RequirementRemoveInfo> keyedRequirementRemoveFromJSON(JSONObject object, String baseKey) throws JSONException {
         List<BoggledTerraformingProject.RequirementRemoveInfo> ret = new ArrayList<>();
         String requirementRemoveString = object.optString(baseKey);
-        if (!requirementRemoveString.isEmpty()) {
-            JSONArray requirementRemoveArray = new JSONArray(requirementRemoveString);
-            for (int i = 0; i < requirementRemoveArray.length(); ++i) {
-                JSONObject requirementRemoveObject = requirementRemoveArray.getJSONObject(i);
-                String containingId = requirementRemoveObject.getString("containing_id");
-                List<String> requirementsRemoved = stringListFromJSON(requirementRemoveObject, "requirements_removed");
-                ret.add(new BoggledTerraformingProject.RequirementRemoveInfo(containingId, requirementsRemoved));
-            }
+        if (requirementRemoveString.isEmpty()) {
+            return ret;
+        }
+        JSONArray requirementRemoveArray = new JSONArray(requirementRemoveString);
+        for (int i = 0; i < requirementRemoveArray.length(); ++i) {
+            JSONObject requirementRemoveObject = requirementRemoveArray.getJSONObject(i);
+            String containingId = requirementRemoveObject.getString("containing_id");
+            List<String> requirementsRemoved = stringListFromJSON(requirementRemoveObject, "requirements_removed");
+            ret.add(new BoggledTerraformingProject.RequirementRemoveInfo(containingId, requirementsRemoved));
         }
         return ret;
     }
@@ -1323,16 +1326,17 @@ public class boggledTools {
 
         String projectsString = object.optString(key);
         List<BoggledTerraformingProject> ret = new ArrayList<>();
-        if (!projectsString.isEmpty()) {
-            JSONArray projectsArray = new JSONArray(projectsString);
-            for (int i = 0; i < projectsArray.length(); ++i) {
-                String projectId = projectsArray.getString(i);
-                BoggledTerraformingProject project = boggledTools.getProject(projectId);
-                if (project != null) {
-                    ret.add(project);
-                } else {
-                    log.info(sourceInfo + " " + id + " has invalid project " + projectId);
-                }
+        if (projectsString.isEmpty()) {
+            return ret;
+        }
+        JSONArray projectsArray = new JSONArray(projectsString);
+        for (int i = 0; i < projectsArray.length(); ++i) {
+            String projectId = projectsArray.getString(i);
+            BoggledTerraformingProject project = boggledTools.getProject(projectId);
+            if (project != null) {
+                ret.add(project);
+            } else {
+                log.info(sourceInfo + " " + id + " has invalid project " + projectId);
             }
         }
 
@@ -2059,26 +2063,6 @@ public class boggledTools {
                 market.getStarSystem().removeEntity(entity);
             }
         }
-    }
-
-    public static boolean hasIsmaraSling(MarketAPI market) {
-        for (MarketAPI marketElement : Global.getSector().getEconomy().getMarkets(market.getStarSystem())) {
-            if (!marketElement.getFactionId().equals(market.getFactionId())) {
-                continue;
-            }
-
-            Industry ismaraSlingIndustry = marketElement.getIndustry(BoggledIndustries.ismaraSlingIndustryId);
-            if (ismaraSlingIndustry != null && ismaraSlingIndustry.isFunctional()) {
-                return true;
-            }
-
-            Industry asteroidProcessingIndustry = marketElement.getIndustry(BoggledIndustries.asteroidProcessingIndustryId);
-            if (asteroidProcessingIndustry != null && asteroidProcessingIndustry.isFunctional()) {
-                return true;
-            }
-        }
-
-        return false;
     }
 
     public static void swapStationSprite(SectorEntityToken station, String stationType, String stationGreekLetter, int targetSize) {

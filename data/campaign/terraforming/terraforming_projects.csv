@@ -336,8 +336,14 @@ industry_hydroponics,boggledHydroponicsEnabled,industry,,,,,,,,,,,"[
 	{ 'effect_id' : 'ongoing_market_size_minus_2_demand_heavy_machinery' },
 	{ 'effect_id' : 'ongoing_heavy_machinery_deficit_to_food' }
 ]",,
-industry_ismara_sling,boggledTerraformingContentEnabled,industry,,,,"[ { 'requirement_id' : 'industry_ismaras_sling_colony_water_or_frozen' } ]","[ { 'requirement_id' : 'industry_colony_is_not_station' } ]",,,,,,"[ { 'effect_id' : 'ongoing_flat_demand_6_heavy_machinery' } ]",,
-industry_asteroid_processing,boggledTerraformingContentEnabled,industry,,,,,"[ { 'requirement_id' : 'industry_colony_is_station' } ]",,,,,,"[ { 'effect_id' : 'ongoing_flat_demand_6_heavy_machinery' } ]",,
+industry_ismara_sling,boggledTerraformingContentEnabled,industry,,,,"[ { 'requirement_id' : 'industry_ismaras_sling_colony_water_or_frozen' } ]","[ { 'requirement_id' : 'industry_colony_is_not_station' } ]",,,,,,"[
+	{ 'effect_id' : 'ongoing_flat_demand_6_heavy_machinery' },
+	{ 'effect_id' : 'ongoing_heavy_machinery_deficit_to_shortage' }
+]",,
+industry_asteroid_processing,boggledTerraformingContentEnabled,industry,,,,,"[ { 'requirement_id' : 'industry_colony_is_station' } ]",,,,,,"[
+	{ 'effect_id' : 'ongoing_flat_demand_6_heavy_machinery' },
+	{ 'effect_id' : 'ongoing_heavy_machinery_deficit_to_shortage' }
+]",,
 industry_kletka_simulator,boggledDomainTechContentEnabled | boggledKletkaSimulatorEnabled,industry,,,,,,,,,,,"[
  	{ 'effect_id' : 'ongoing_flat_demand_4_domain_artifacts' },
  	

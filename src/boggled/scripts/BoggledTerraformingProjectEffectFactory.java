@@ -639,7 +639,7 @@ public class BoggledTerraformingProjectEffectFactory {
         }
     }
 
-    public static class CommodityDeficitToInactive implements TerraformingProjectEffectFactory {
+    public static class CommodityDeficitToShortage implements TerraformingProjectEffectFactory {
         @Override
         public BoggledTerraformingProjectEffect.TerraformingProjectEffect constructFromJSON(String id, String[] enableSettings, String data) throws JSONException {
             JSONObject jsonData = new JSONObject(data);
@@ -648,7 +648,7 @@ public class BoggledTerraformingProjectEffectFactory {
             for (int i = 0; i < commoditiesDemandedArray.length(); ++i) {
                 commoditiesDemanded.add(commoditiesDemandedArray.getString(i));
             }
-            return new BoggledTerraformingProjectEffect.CommodityDeficitToInactive(id, enableSettings, commoditiesDemanded);
+            return new BoggledTerraformingProjectEffect.CommodityDeficitToShortage(id, enableSettings, commoditiesDemanded);
         }
     }
 

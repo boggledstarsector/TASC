@@ -5,8 +5,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class BoggledTerraformingRequirementFactory {
@@ -94,11 +92,9 @@ public class BoggledTerraformingRequirementFactory {
         @Override
         public BoggledTerraformingRequirement.TerraformingRequirement constructFromJSON(String id, String[] enableSettings, boolean invert, String data) throws JSONException {
             JSONObject jsonData = new JSONObject(data);
-            List<String> commodityIds = new ArrayList<>();
             JSONArray commodityIdsArray = jsonData.getJSONArray("commodity_ids");
-            for (int i = 0; i < commodityIdsArray.length(); ++i) {
-                String commodityId = commodityIdsArray.getString(i);
-                commodityIds.add(commodityId);
+            List<String> commodityIds = boggledTools.stringListFromJSON(commodityIdsArray);
+            for (String commodityId : commodityIds) {
                 boggledTools.CheckCommodityExists("IndustryHasShortage", commodityId);
             }
             return new BoggledTerraformingRequirement.IndustryHasShortage(id, enableSettings, invert, commodityIds);
@@ -125,7 +121,9 @@ public class BoggledTerraformingRequirementFactory {
             int minWaterLevel = jsonData.getInt("min_water_level");
             int maxWaterLevel = jsonData.getInt("max_water_level");
 
-            return new BoggledTerraformingRequirement.MarketHasWaterPresent(id, enableSettings, invert, minWaterLevel, maxWaterLevel);
+            List<String> waterIndustryIds = boggledTools.stringListFromJSON(jsonData.getJSONArray("water_industry_ids"));
+
+            return new BoggledTerraformingRequirement.MarketHasWaterPresent(id, enableSettings, invert, minWaterLevel, maxWaterLevel, waterIndustryIds);
         }
     }
 
@@ -134,10 +132,7 @@ public class BoggledTerraformingRequirementFactory {
         public BoggledTerraformingRequirement.TerraformingRequirement constructFromJSON(String id, String[] enableSettings, boolean invert, String data) throws JSONException {
             JSONArray jsonArray = new JSONArray(data);
 
-            ArrayList<String> invalidatingConditions = new ArrayList<>(jsonArray.length());
-            for (int i = 0; i < jsonArray.length(); ++i) {
-                invalidatingConditions.add(jsonArray.getString(i));
-            }
+            List<String> invalidatingConditions = boggledTools.stringListFromJSON(jsonArray);
 
             return new BoggledTerraformingRequirement.TerraformingPossibleOnMarket(id, enableSettings, invert, invalidatingConditions);
         }
@@ -145,8 +140,9 @@ public class BoggledTerraformingRequirementFactory {
 
     public static class MarketHasTags implements TerraformingRequirementFactory {
         @Override
-        public BoggledTerraformingRequirement.TerraformingRequirement constructFromJSON(String id, String[] enableSettings, boolean invert, String data) {
-            ArrayList<String> tags = new ArrayList<>(Arrays.asList(data.split(boggledTools.csvOptionSeparator)));
+        public BoggledTerraformingRequirement.TerraformingRequirement constructFromJSON(String id, String[] enableSettings, boolean invert, String data) throws JSONException {
+            JSONArray jsonArray = new JSONArray(data);
+            List<String> tags = boggledTools.stringListFromJSON(jsonArray);
 
             return new BoggledTerraformingRequirement.MarketHasTags(id, enableSettings, invert, tags);
         }
@@ -278,8 +274,9 @@ public class BoggledTerraformingRequirementFactory {
 
     public static class SystemStarHasTags implements TerraformingRequirementFactory {
         @Override
-        public BoggledTerraformingRequirement.TerraformingRequirement constructFromJSON(String id, String[] enableSettings, boolean invert, String data) {
-            ArrayList<String> tags = new ArrayList<>(Arrays.asList(data.split(boggledTools.csvOptionSeparator)));
+        public BoggledTerraformingRequirement.TerraformingRequirement constructFromJSON(String id, String[] enableSettings, boolean invert, String data) throws JSONException {
+            JSONArray jsonArray = new JSONArray(data);
+            List<String> tags = boggledTools.stringListFromJSON(jsonArray);
 
             return new BoggledTerraformingRequirement.SystemStarHasTags(id, enableSettings, invert, tags);
         }
@@ -324,11 +321,9 @@ public class BoggledTerraformingRequirementFactory {
     public static class TargetPlanetOwnedBy implements TerraformingRequirementFactory {
         @Override
         public BoggledTerraformingRequirement.TerraformingRequirement constructFromJSON(String id, String[] enableSettings, boolean invert, String data) throws JSONException {
-            JSONArray jsonData = new JSONArray(data);
-            List<String> factions = new ArrayList<>();
-            for (int i = 0; i < jsonData.length(); ++i) {
-                factions.add(jsonData.getString(i));
-            }
+            JSONArray jsonArray = new JSONArray(data);
+            List<String> factions = boggledTools.stringListFromJSON(jsonArray);
+
             return new BoggledTerraformingRequirement.TargetPlanetOwnedBy(id, enableSettings, invert, factions);
         }
     }
@@ -336,11 +331,9 @@ public class BoggledTerraformingRequirementFactory {
     public static class TargetStationOwnedBy implements TerraformingRequirementFactory {
         @Override
         public BoggledTerraformingRequirement.TerraformingRequirement constructFromJSON(String id, String[] enableSettings, boolean invert, String data) throws JSONException {
-            JSONArray jsonData = new JSONArray(data);
-            List<String> factions = new ArrayList<>();
-            for (int i = 0; i < jsonData.length(); ++i) {
-                factions.add(jsonData.getString(i));
-            }
+            JSONArray jsonArray = new JSONArray(data);
+            List<String> factions = boggledTools.stringListFromJSON(jsonArray);
+
             return new BoggledTerraformingRequirement.TargetStationOwnedBy(id, enableSettings, invert, factions);
         }
     }
@@ -420,11 +413,9 @@ public class BoggledTerraformingRequirementFactory {
         public BoggledTerraformingRequirement.TerraformingRequirement constructFromJSON(String id, String[] enableSettings, boolean invert, String data) throws JSONException {
             JSONObject jsonData = new JSONObject(data);
             JSONArray stationTagsArray = jsonData.getJSONArray("station_tags");
-            List<String> stationTags = new ArrayList<>();
-            for (int i = 0; i < stationTagsArray.length(); ++i) {
-                stationTags.add(stationTagsArray.getString(i));
-            }
+            List<String> stationTags = boggledTools.stringListFromJSON(stationTagsArray);
             int maxNum = jsonData.getInt("max_num");
+
             return new BoggledTerraformingRequirement.TargetPlanetStationCountLessThan(id, enableSettings, invert, stationTags, maxNum);
         }
     }
@@ -434,11 +425,9 @@ public class BoggledTerraformingRequirementFactory {
         public BoggledTerraformingRequirement.TerraformingRequirement constructFromJSON(String id, String[] enableSettings, boolean invert, String data) throws JSONException {
             JSONObject jsonData = new JSONObject(data);
             JSONArray stationTagsArray = jsonData.getJSONArray("station_tags");
-            List<String> stationTags = new ArrayList<>();
-            for (int i = 0; i < stationTagsArray.length(); ++i) {
-                stationTags.add(stationTagsArray.getString(i));
-            }
+            List<String> stationTags = boggledTools.stringListFromJSON(stationTagsArray);
             int maxNum = jsonData.getInt("max_num");
+
             return new BoggledTerraformingRequirement.TargetSystemStationCountLessThan(id, enableSettings, invert, stationTags, maxNum);
         }
     }

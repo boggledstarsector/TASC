@@ -510,8 +510,28 @@ public class BoggledTerraformingRequirement {
     }
 
     public static class MarketHasWaterPresent extends PlanetWaterLevel {
-        public MarketHasWaterPresent(String id, String[] enableSettings, boolean invert, int minWaterLevel, int maxWaterLevel) {
+        List<String> waterIndustryIds;
+        public MarketHasWaterPresent(String id, String[] enableSettings, boolean invert, int minWaterLevel, int maxWaterLevel, List<String> waterIndustryIds) {
             super(id, enableSettings, invert, minWaterLevel, maxWaterLevel);
+            this.waterIndustryIds = waterIndustryIds;
+        }
+
+        private boolean hasWaterIndustry(MarketAPI market) {
+            StarSystemAPI system = market.getStarSystem();
+            for (MarketAPI systemMarket : Global.getSector().getEconomy().getMarkets(system)) {
+                if (systemMarket.getFaction() != market.getFaction()) {
+                    continue;
+                }
+
+                for (String waterIndustryId : waterIndustryIds) {
+                    Industry industry = systemMarket.getIndustry(waterIndustryId);
+                    BoggledIndustryInterface industryInterface = (BoggledIndustryInterface) industry;
+                    if (industry != null && industry.isFunctional() && !industryInterface.hasShortage()) {
+                        return true;
+                    }
+                }
+            }
+            return false;
         }
 
         @Override
@@ -520,7 +540,7 @@ public class BoggledTerraformingRequirement {
             if (market == null) {
                 return false;
             }
-            return super.checkRequirementImpl(ctx) || boggledTools.hasIsmaraSling(market);
+            return super.checkRequirementImpl(ctx) || hasWaterIndustry(market);
         }
     }
 

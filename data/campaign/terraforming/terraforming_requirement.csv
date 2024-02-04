@@ -36,8 +36,8 @@ planet_volcanic,,PlanetType,false,"volcanic"
 planet_irradiated,,PlanetType,false,"irradiated"
 planet_unknown,,PlanetType,false,"unknown"
 ,
-market_is_station,,MarketHasTags,false,"station"
-market_is_not_station,,MarketHasTags,true,"station"
+market_is_station,,MarketHasTags,false,"[ 'station' ]"
+market_is_not_station,,MarketHasTags,true,"[ 'station' ]"
 ,
 market_no_atmosphere,,MarketHasCondition,false,"no_atmosphere"
 market_thin_atmosphere,,MarketHasCondition,false,"thin_atmosphere"
@@ -95,11 +95,13 @@ market_ruins_vast,,MarketHasCondition,false,"ruins_vast"
 ,
 market_has_moderate_water_present,,MarketHasWaterPresent,false,"{
 	'min_water_level' : 1,
-	'max_water_level' : 2
+	'max_water_level' : 2,
+	'water_industry_ids' : [ 'BOGGLED_ISMARA_SLING', 'BOGGLED_ASTEROID_PROCESSING' ]
 }"
 market_has_large_water_present,,MarketHasWaterPresent,false,"{
 	'min_water_level' : 2,
-	'max_water_level' : 2
+	'max_water_level' : 2,
+	'water_industry_ids' : [ 'BOGGLED_ISMARA_SLING', 'BOGGLED_ASTEROID_PROCESSING' ]
 }"
 ,
 market_has_atmosphere_processor,,MarketHasIndustry,false,"BOGGLED_ATMOSPHERE_PROCESSOR"
@@ -147,7 +149,7 @@ station_construction_num_expansions,,IntegerFromMarketTagSubstring,false,"{
 	'max_value' : 11
 }"
 ,
-system_star_not_has_coronal_tap,,SystemStarHasTags,true,"has_coronal_tap"
+system_star_not_has_coronal_tap,,SystemStarHasTags,true,"[ 'has_coronal_tap' ]"
 system_star_blue_giant,,SystemStarType,false,"star_blue_giant"
 system_star_blue_supergiant,,SystemStarType,false,"star_blue_supergiant"
 ,
