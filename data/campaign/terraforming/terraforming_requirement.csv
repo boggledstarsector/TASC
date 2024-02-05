@@ -144,7 +144,7 @@ focus_market_has_rare_ore_ultrarich,,FocusMarketHasCondition,false,"rare_ore_ult
 focus_market_has_volatiles_plentiful,,FocusMarketHasCondition,false,"volatiles_plentiful"
 ,
 station_construction_num_expansions,,IntegerFromMarketTagSubstring,false,"{
-	'option' : 'boggledStationCrampedQuartersSizeGrowthReductionStarts',
+	'setting_id' : 'boggledStationCrampedQuartersSizeGrowthReductionStarts',
 	'tag_substring' : 'boggled_station_construction_numExpansions_',
 	'max_value' : 11
 }"
@@ -175,9 +175,7 @@ player_has_at_least_2_story_points,,PlayerHasStoryPointsAtLeast,false,2
 ,
 market_has_at_least_100k_residents,,MarketIsAtLeastSize,false,5
 ,
-atmosphere_processor_does_not_have_shortage,,IndustryHasShortage,true,"{
-	'commodity_ids' : [ 'heavy_machinery' ]
-}"
+atmosphere_processor_does_not_have_shortage,,IndustryHasShortage,true,"[ 'heavy_machinery' ]"
 ,
 kletka_simulator_has_alpha_core,,MarketHasIndustryWithAICore,false,"{
 	'industry_id' : 'BOGGLED_KLETKA_SIMULATOR',
@@ -192,13 +190,9 @@ kletka_simulator_has_gamma_core,,MarketHasIndustryWithAICore,false,"{
 	'ai_core_id' : 'gamma_core'
 }"
 ,
-kletka_simulator_does_not_have_shortage,,IndustryHasShortage,true,"{
-	'commodity_ids' : [ 'domain_artifacts' ]
-}"
+kletka_simulator_does_not_have_shortage,,IndustryHasShortage,true,"[ 'domain_artifacts' ]"
 ,
-perihelion_project_does_not_have_shortage,,IndustryHasShortage,true,"{
-	'commodity_ids' : [ 'domain_artifacts', 'metals', 'rare_metals', 'heavy_machinery' ]
-}"
+perihelion_project_does_not_have_shortage,,IndustryHasShortage,true,"[ 'domain_artifacts', 'metals', 'rare_metals', 'heavy_machinery' ]"
 ,
 player_fleet_not_in_hyperspace,,FleetInHyperspace,true,
 system_has_jump_points,,SystemHasJumpPoints,false,

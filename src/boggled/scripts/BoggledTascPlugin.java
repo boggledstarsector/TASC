@@ -257,6 +257,8 @@ public class BoggledTascPlugin extends BaseModPlugin {
             boggledTools.initialiseTerraformingRequirementFromJSON(terraformingRequirement);
             boggledTools.initialiseTerraformingRequirementsFromJSON(terraformingRequirements);
 
+            boggledTools.initialisePlanetTypesFromJSON(planetTypes);
+
             boggledTools.initialiseTerraformingDurationModifiersFromJSON(terraformingDurationModifiers);
 
             boggledTools.initialiseTerraformingProjectEffectsFromJSON(terraformingProjectEffects);
@@ -266,8 +268,6 @@ public class BoggledTascPlugin extends BaseModPlugin {
 
             boggledTools.initialiseTerraformingProjectOverrides(terraformingProjectOverrides);
             boggledTools.initialiseIndustryOptionOverrides(industryOptionOverrides);
-
-            boggledTools.initialisePlanetTypesFromJSON(planetTypes);
 
         } catch (IOException | JSONException ex) {
             log.error(ex);
@@ -325,7 +325,6 @@ public class BoggledTascPlugin extends BaseModPlugin {
     @Override
     public void onGameLoad(boolean newGame) {
         lastGameLoad = thisGameLoad;
-//        loadSettingsFromJSON();
 
         enablePlanetKiller();
 
@@ -350,7 +349,6 @@ public class BoggledTascPlugin extends BaseModPlugin {
         boggledTools.initialiseDefaultCommoditySupplyAndDemandFactories();
         boggledTools.initialiseDefaultTerraformingProjectEffectFactories();
 
-//        loadSettingsFromJSON();
         if (Global.getSettings().getModManager().isModEnabled("aaacrew_replacer")){
             bogglesDefaultCargo.active = new booglesCrewReplacerCargo();
         }else{

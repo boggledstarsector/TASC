@@ -749,16 +749,16 @@ public class BoggledTerraformingRequirement {
         }
     }
 
-    public static class IntegerFromTagSubstring extends TerraformingRequirement {
-        String option;
+    public static class IntegerFromMarketTagSubstring extends TerraformingRequirement {
+        String settingId;
         String tagSubstring;
         int maxValue;
 
-        public IntegerFromTagSubstring(String id, String[] enableSettings, boolean invert, String option, String tagSubstring, int maxValue) {
+        public IntegerFromMarketTagSubstring(String id, String[] enableSettings, boolean invert, String settingId, String tagSubstring, int maxValue) {
             super(id, enableSettings, invert);
             this.tagSubstring = tagSubstring;
             this.maxValue = maxValue;
-            this.option = option;
+            this.settingId = settingId;
         }
 
         @Override
@@ -769,11 +769,11 @@ public class BoggledTerraformingRequirement {
             }
 
             int testValue = 0;
-            if (!option.isEmpty()) {
-                testValue += boggledTools.getIntSetting(option);
+            if (!settingId.isEmpty()) {
+                testValue += boggledTools.getIntSetting(settingId);
             }
             for (String tag : market.getTags()) {
-                if (tag.contains(tagSubstring)) {
+                if (tag.startsWith(tagSubstring)) {
                     testValue += Integer.parseInt(tag.substring(tagSubstring.length()));
                     break;
                 }
@@ -802,27 +802,32 @@ public class BoggledTerraformingRequirement {
             this.tags = tags;
         }
 
-        private boolean starHasTag(PlanetAPI star, String tag) {
-            return star != null && star.hasTag(tag);
-        }
-
-        @Override
-        protected boolean checkRequirementImpl(RequirementContext ctx) {
-            if (ctx.getStarSystem() == null) {
-                return false;
-            }
-
-            StarSystemAPI system = ctx.getStarSystem();
-            PlanetAPI primary = system.getStar();
-            PlanetAPI secondary = system.getSecondary();
-            PlanetAPI tertiary = system.getTertiary();
+        private boolean starHasTags(PlanetAPI star, List<String> tags) {
             for (String tag : tags) {
-                boolean hasTag = starHasTag(primary, tag) || starHasTag(secondary, tag) || starHasTag(tertiary, tag);
-                if (!hasTag) {
+                if (!star.hasTag(tag)) {
                     return false;
                 }
             }
             return true;
+        }
+
+        @Override
+        protected boolean checkRequirementImpl(RequirementContext ctx) {
+            StarSystemAPI starSystem = ctx.getStarSystem();
+            if (starSystem == null) {
+                return false;
+            }
+
+            PlanetAPI primary = starSystem.getStar();
+            PlanetAPI secondary = starSystem.getSecondary();
+            PlanetAPI tertiary = starSystem.getTertiary();
+            if (primary != null && starHasTags(primary, tags)) {
+                return true;
+            }
+            if (secondary != null && starHasTags(secondary, tags)) {
+                return true;
+            }
+            return tertiary != null && starHasTags(tertiary, tags);
         }
     }
 
@@ -838,14 +843,14 @@ public class BoggledTerraformingRequirement {
         }
         @Override
         protected boolean checkRequirementImpl(RequirementContext ctx) {
-            if (ctx.getStarSystem() == null) {
+            StarSystemAPI starSystem = ctx.getStarSystem();
+            if (starSystem == null) {
                 return false;
             }
 
-            StarSystemAPI system = ctx.getStarSystem();
-            PlanetAPI primary = system.getStar();
-            PlanetAPI secondary = system.getSecondary();
-            PlanetAPI tertiary = system.getTertiary();
+            PlanetAPI primary = starSystem.getStar();
+            PlanetAPI secondary = starSystem.getSecondary();
+            PlanetAPI tertiary = starSystem.getTertiary();
 
             if (starEquals(primary)) {
                 return true;

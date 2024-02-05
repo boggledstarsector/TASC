@@ -96,13 +96,22 @@ public class boggledTools {
         throw new IllegalArgumentException(source + ": Resource ID '" + resourceId + "' doesn't exist");
     }
 
-    public static void CheckPlanetTypeExists(String source, String planetType) {
+    public static void CheckPlanetSpecExists(String source, String planet) {
         for (PlanetSpecAPI planetSpec : Global.getSettings().getAllPlanetSpecs()) {
-            if (planetSpec.getPlanetType().equals(planetType)) {
+            if (planetSpec.getPlanetType().equals(planet)) {
                 return;
             }
         }
-        throw new IllegalArgumentException(source + ": Planet type '" + planetType + "' doesn't exist");
+        throw new IllegalArgumentException(source + ": Planet type '" + planet + "' doesn't exist");
+    }
+
+    public static void CheckPlanetTypeExists(String source, String planet) {
+        for (Map.Entry<String, PlanetType> planetType : planetTypesMap.entrySet()) {
+            if (planetType.getValue().getPlanetId().equals(planet)) {
+                return;
+            }
+        }
+        throw new IllegalArgumentException(source + ": Planet type '" + planet + "' doesn't exist");
     }
 
     public static void CheckIndustryExists(String source, String industryId) {
@@ -488,7 +497,7 @@ public class boggledTools {
         addTerraformingRequirementFactory("FocusPlanetType", new BoggledTerraformingRequirementFactory.FocusPlanetType());
         addTerraformingRequirementFactory("FocusMarketHasCondition", new BoggledTerraformingRequirementFactory.FocusMarketHasCondition());
 
-        addTerraformingRequirementFactory("IntegerFromMarketTagSubstring", new BoggledTerraformingRequirementFactory.IntegerFromTagSubstring());
+        addTerraformingRequirementFactory("IntegerFromMarketTagSubstring", new BoggledTerraformingRequirementFactory.IntegerFromMarketTagSubstring());
 
         addTerraformingRequirementFactory("PlayerHasSkill", new BoggledTerraformingRequirementFactory.PlayerHasSkill());
 

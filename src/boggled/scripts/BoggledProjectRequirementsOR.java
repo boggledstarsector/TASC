@@ -43,6 +43,15 @@ public class BoggledProjectRequirementsOR {
     }
 
     public final BoggledCommonIndustry.TooltipData getTooltip(BoggledTerraformingRequirement.RequirementContext ctx, Map<String, String> tokenReplacements) {
+        int numRequirementsSkipped = 0;
+        for (BoggledTerraformingRequirement.TerraformingRequirement terraformingRequirement : terraformingRequirements) {
+            if (!terraformingRequirement.isEnabled()) {
+                numRequirementsSkipped++;
+            }
+        }
+        if (numRequirementsSkipped == terraformingRequirements.size()) {
+            return new BoggledCommonIndustry.TooltipData("");
+        }
         String replaced = boggledTools.doTokenReplacement(requirementTooltip.text, tokenReplacements);
         List<String> highlights = new ArrayList<>(requirementTooltip.highlights.size());
         for (String highlight : requirementTooltip.highlights) {

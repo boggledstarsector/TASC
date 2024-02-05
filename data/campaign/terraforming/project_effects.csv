@@ -132,7 +132,7 @@ add_astropolis_station_to_orbit,,AddStationToOrbit,"{
 	'station_type' : 'boggled_astropolis',
 	'station_name' : 'Astropolis',
 	'variants' : [ 'alpha', 'beta', 'gamma' ],
-	'num_stations_per_layer' : 8,
+	'num_stations_per_layer' : 3,
 	'orbit_radius' : 450,
 	
 	'station_construction_data' : {}
