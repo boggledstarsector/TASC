@@ -128,3 +128,7 @@ Same basic idea as requirements, specified in `project_effects.csv`. The `id` fi
 
 `RemoveStoryPointsFromPlayer` removes story points from the player. `data` is a JSON Object with either `setting_id` or `quantity`. If `setting_id` is specified, the quantity will be retrieved from the `LunaLib` setting of the same name.
 
+# Adding New Types
+Create a new class that extends `BoggledTerraformingRequirement.TerraformingRequirement`, implement all required functions. Create a new class that implements `BoggledTerraformingRequirementFactory.TerraformingRequirementFactory` and implement `constructFromJSON`. Call `boggledTools.addTerraformingRequirementFactory` with what you want the requirement type to be called, and an instance of the new requirement factory.
+
+Do the same thing for `BoggledTerraformingProjectEffect.TerraformingProjectEffect`, `BoggledTerraformingProjectEffectFactory.TerraformingProjectEffectFactory`, and `boggledTools.addTerraformingProjectEffectFactory`

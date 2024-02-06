@@ -353,8 +353,6 @@ industry_kletka_simulator,boggledDomainTechContentEnabled | boggledKletkaSimulat
 	{ 'effect_id' : 'kletka_simulator_very_hot_modifier' },
 	{ 'effect_id' : 'kletka_simulator_station_modifier' },
 	
-	{ 'effect_id' : 'kletka_simulator_deficit_to_inactive' },
-	
 	{ 'effect_id' : 'kletka_simulator_item_production_requires_no_shortage' },
 	{ 'effect_id' : 'kletka_simulator_item_production_chance_effect' }
  ]",,
@@ -398,9 +396,7 @@ industry_perihelion_project,boggledDomainTechContentEnabled | boggledPerihelionP
 	{ 'effect_id' : 'ongoing_flat_demand_7_domain_artifacts' },
 	{ 'effect_id' : 'ongoing_flat_demand_11_metals' },
 	{ 'effect_id' : 'ongoing_flat_demand_9_rare_metals' },
-	{ 'effect_id' : 'ongoing_flat_demand_7_heavy_machinery' },
-	
-	{ 'effect_id' : 'perihelion_deficit_to_inactive' }
+	{ 'effect_id' : 'ongoing_flat_demand_7_heavy_machinery' }
 ]",,
 industry_planet_cracker,boggledTerraformingContentEnabled | boggledPlanetCrackerEnabled,industry,Planet cracking,,Completed,"[
 	{ 'requirement_id' : 'industry_colony_is_station', 'and_then' : [

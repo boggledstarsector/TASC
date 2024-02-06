@@ -346,7 +346,6 @@ public class BoggledTascPlugin extends BaseModPlugin {
         boggledTools.initialiseDefaultStationConstructionFactories();
         boggledTools.initialiseDefaultTerraformingRequirementFactories();
         boggledTools.initialiseDefaultTerraformingDurationModifierFactories();
-        boggledTools.initialiseDefaultCommoditySupplyAndDemandFactories();
         boggledTools.initialiseDefaultTerraformingProjectEffectFactories();
 
         if (Global.getSettings().getModManager().isModEnabled("aaacrew_replacer")){

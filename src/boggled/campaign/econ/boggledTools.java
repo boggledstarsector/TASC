@@ -546,20 +546,6 @@ public class boggledTools {
         terraformingDurationModifierFactories.put(key, value);
     }
 
-    public static void initialiseDefaultCommoditySupplyAndDemandFactories() {
-        addCommoditySupplyFactory("FlatCommoditySupply", new BoggledCommoditySupplyDemandFactory.FlatSupplyFactory());
-        addCommoditySupplyFactory("MarketSizeSupply", new BoggledCommoditySupplyDemandFactory.MarketSizeSupplyFactory());
-
-        addCommodityDemandFactory("FlatCommodityDemand", new BoggledCommoditySupplyDemandFactory.FlatDemandFactory());
-        addCommodityDemandFactory("MarketSizeDemand", new BoggledCommoditySupplyDemandFactory.MarketSizeDemandFactory());
-        addCommodityDemandFactory("PlayerMarketSizeElseFlatDemand", new BoggledCommoditySupplyDemandFactory.PlayerMarketSizeElseFlatDemandFactory());
-    }
-
-    public static void addCommoditySupplyFactory(String key, BoggledCommoditySupplyDemandFactory.CommoditySupplyFactory value) {
-        Global.getLogger(boggledTools.class).info("Adding commodity supply factory " + key);
-        commoditySupplyFactories.put(key ,value);
-    }
-
     public static void addCommodityDemandFactory(String key, BoggledCommoditySupplyDemandFactory.CommodityDemandFactory value) {
         Global.getLogger(boggledTools.class).info("Adding commodity demand factory " + key);
         commodityDemandFactories.put(key, value);

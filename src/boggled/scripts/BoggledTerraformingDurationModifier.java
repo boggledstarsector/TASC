@@ -62,16 +62,4 @@ public class BoggledTerraformingDurationModifier {
             return ret;
         }
     }
-
-    public static class IntSettingModifier extends SettingModifier {
-        public IntSettingModifier(String id, String[] enableSettings, String settingId) {
-            super(id, enableSettings, settingId);
-        }
-
-        @Override
-        protected MutableStat getDurationModifierImpl(BoggledTerraformingRequirement.RequirementContext ctx) {
-            MutableStat ret = new MutableStat(0);
-            return ret;
-        }
-    }
 }
