@@ -71,7 +71,7 @@ public class BoggledCommonIndustry {
     private List<Pair<String, Integer>> shortages = null;
 
     private boolean building = false;
-    private boolean built = false;
+    private boolean built = true;
 
     private void setFromThat(BoggledCommonIndustry that) {
         this.projects = that.projects;
@@ -283,6 +283,11 @@ public class BoggledCommonIndustry {
     }
 
     public void finishBuildingOrUpgrading() {
+        building = false;
+        built = true;
+        for (BoggledTerraformingProjectEffect.TerraformingProjectEffect buildingFinishedEffect : buildingFinishedEffects) {
+            buildingFinishedEffect.applyProjectEffect(ctx, ctx.getSourceIndustry().getNameForModifier());
+        }
     }
 
     public boolean isBuilding() {

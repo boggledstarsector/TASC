@@ -198,7 +198,7 @@ player_fleet_not_in_hyperspace,,FleetInHyperspace,true,
 system_has_jump_points,,SystemHasJumpPoints,false,
 system_has_planets,,SystemHasPlanets,false,
 target_planet_not_owned_by_player_or_neutral,,TargetPlanetOwnedBy,true,"[ 'player', 'neutral' ]"
-target_planet_owned_by_player,,TargetPlanetOwnedBy,false,"[ 'player' ]"
+target_planet_not_owned_by_player,,TargetPlanetOwnedBy,true,"[ 'player' ]"
 target_planet_too_close_to_orbit_focus,,TargetPlanetOrbitFocusWithinDistance,true,900
 target_planet_too_close_to_star,,TargetPlanetStarWithinDistance,true,1400
 target_planet_too_many_moons,,TargetPlanetMoonCountLessThan,false,4

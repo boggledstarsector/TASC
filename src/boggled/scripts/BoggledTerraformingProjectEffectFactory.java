@@ -32,6 +32,8 @@ public class BoggledTerraformingProjectEffectFactory {
             JSONObject jsonData = new JSONObject(data);
             String industryIdToRemove = jsonData.getString("industry_to_remove");
             String industryIdToAdd = jsonData.getString("industry_to_add");
+            boggledTools.CheckIndustryExists("IndustrySwap.IndustryIdToRemove", industryIdToRemove);
+            boggledTools.CheckIndustryExists("IndustrySwap.IndustryIdToAdd", industryIdToAdd);
             return new BoggledTerraformingProjectEffect.IndustrySwap(id, enableSettings, industryIdToRemove, industryIdToAdd);
         }
     }

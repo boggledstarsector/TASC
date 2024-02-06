@@ -931,11 +931,7 @@ public class BoggledTerraformingRequirement {
                 return false;
             }
 
-            if (!market.isPlayerOwned()) {
-                return !factions.contains(market.getFactionId());
-            }
-
-            return false;
+            return factions.contains(market.getFactionId());
         }
 
         @Override
@@ -967,11 +963,7 @@ public class BoggledTerraformingRequirement {
                 return false;
             }
 
-            if (!market.isPlayerOwned()) {
-                return !factions.contains(market.getFactionId());
-            }
-
-            return false;
+            return factions.contains(market.getFactionId());
         }
 
         @Override
@@ -992,7 +984,8 @@ public class BoggledTerraformingRequirement {
         @Override
         protected boolean checkRequirementImpl(RequirementContext ctx) {
             SectorEntityToken targetPlanet = ctx.getPlanet();
-            if (targetPlanet == null) {
+            CampaignFleetAPI playerFleet = ctx.getFleet();
+            if (targetPlanet == null || playerFleet == null) {
                 return false;
             }
 
@@ -1005,11 +998,7 @@ public class BoggledTerraformingRequirement {
                 return false;
             }
 
-            if (market.getFaction() == ctx.getFleet().getFaction()) {
-                return false;
-            }
-
-            return true;
+            return market.getFaction() != playerFleet.getFaction();
         }
     }
 

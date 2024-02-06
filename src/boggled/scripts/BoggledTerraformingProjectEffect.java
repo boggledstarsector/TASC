@@ -133,8 +133,15 @@ public class BoggledTerraformingProjectEffect {
             if (market == null) {
                 return;
             }
+            Industry industryToRemove = market.getIndustry(industryIdToRemove);
+            boolean needsConstruction = !industryToRemove.isFunctional();
             market.removeIndustry(industryIdToRemove, MarketAPI.MarketInteractionMode.REMOTE, false);
-            market.addIndustry(industryIdToAdd);
+
+            if (needsConstruction) {
+                market.getConstructionQueue().addToEnd(industryIdToAdd, 0);
+            } else {
+                market.addIndustry(industryIdToAdd);
+            }
         }
 
         @Override
@@ -325,7 +332,7 @@ public class BoggledTerraformingProjectEffect {
                     && entity.getOrbitFocus() != null
                     && entity.getOrbitFocus().equals(closestGasGiantToken)
                     && entity.getMarket() != null
-                    && (entity.getCustomEntitySpec().getDefaultName().equals("Side Station")
+                    && (   entity.getCustomEntitySpec().getDefaultName().equals("Side Station")
                         || entity.getCustomEntitySpec().getDefaultName().equals("Siphon Station"))
                     && !entity.getId().equals("beholder_station"))
                 {
@@ -350,12 +357,12 @@ public class BoggledTerraformingProjectEffect {
                 Should make this more flexible in the future, but for now, eh
                  */
                 if (entity.hasTag(Tags.STATION)
-                        && entity.getOrbitFocus() != null
-                        && entity.getOrbitFocus().equals(closestGasGiantToken)
-                        && entity.getMarket() != null
-                        && (entity.getCustomEntitySpec().getDefaultName().equals("Side Station")
+                    && entity.getOrbitFocus() != null
+                    && entity.getOrbitFocus().equals(closestGasGiantToken)
+                    && entity.getMarket() != null
+                    && (   entity.getCustomEntitySpec().getDefaultName().equals("Side Station")
                         || entity.getCustomEntitySpec().getDefaultName().equals("Siphon Station"))
-                        && !entity.getId().equals("beholder_station"))
+                    && !entity.getId().equals("beholder_station"))
                 {
                     super.unapplyProjectEffectImpl(ctx);
                 }
@@ -456,11 +463,11 @@ public class BoggledTerraformingProjectEffect {
 
         @Override
         protected void applyProjectEffectImpl(BoggledTerraformingRequirement.RequirementContext ctx, String effectSource) {
-            BaseIndustry targetIndustry = ctx.getTargetIndustry();
-            if (targetIndustry == null) {
+            MarketAPI market = ctx.getClosestMarket();
+            if (market == null) {
                 return;
             }
-            targetIndustry.getMarket().removeIndustry(industryId, null, false);
+            market.removeIndustry(industryId, null, false);
         }
 
         @Override
@@ -1316,6 +1323,9 @@ public class BoggledTerraformingProjectEffect {
             String increasedOrReduced;
             String IncreasedOrReduced;
 
+            String bonusStringPrefix;
+            String byOrTo;
+
             String bonusString;
             String highlightString;
             Color highlightColor;
@@ -1352,6 +1362,7 @@ public class BoggledTerraformingProjectEffect {
                 this.positiveHighlightColor = positiveHighlightColor;
                 this.negativeHighlightColor = negativeHighlightColor;
                 suffix = "";
+                bonusStringPrefix = "";
                 float value = baseValue;
                 switch (modType) {
                     case MARKET_SIZE:
@@ -1360,12 +1371,14 @@ public class BoggledTerraformingProjectEffect {
                     case FLAT: {
                         if (value < 0) {
                             setToReduce();
+                            bonusStringPrefix = "-";
                             bonusString = formatBonusString(Math.abs(value));
                         } else {
                             setToIncrease();
                             bonusString = formatBonusString(value);
                         }
-                        highlightString = bonusString;
+                        byOrTo = "by";
+                        highlightString = bonusStringPrefix + bonusString;
                         break;
                     }
                     case MULT: {
@@ -1374,6 +1387,7 @@ public class BoggledTerraformingProjectEffect {
                         } else {
                             setToIncrease();
                         }
+                        byOrTo = "by";
                         highlightString = Strings.X + formatBonusString(value);
                         bonusString = highlightString;
                         break;
@@ -1384,6 +1398,7 @@ public class BoggledTerraformingProjectEffect {
                         } else {
                             setToIncrease();
                         }
+                        byOrTo = "to";
                         highlightString = formatBonusString(value) + "%";
                         bonusString = highlightString + "%";
                         break;
@@ -1404,12 +1419,12 @@ public class BoggledTerraformingProjectEffect {
             Modifier.ModifierStrings modStrings = mod.getModifierStrings(ctx, positiveHighlight, negativeHighlight);
             String text;
             if (source == DescriptionSource.POST_DEMAND_SECTION) {
-                text = Misc.ucFirst(effect) + ": " + modStrings.bonusString;
+                text = Misc.ucFirst(effect) + ": " + modStrings.bonusStringPrefix + modStrings.bonusString;
             } else {
                 if (mode == DescriptionMode.APPLIED) {
-                    text = Misc.ucFirst(effect) + " " + modStrings.increasedOrReduced + " by " + modStrings.bonusString;
+                    text = Misc.ucFirst(effect) + " " + modStrings.increasedOrReduced + " " + modStrings.byOrTo + " " + modStrings.bonusString;
                 } else {
-                    text = modStrings.IncreasesOrReduces + " " + Misc.lcFirst(effect) + " by " + modStrings.bonusString;
+                    text = modStrings.IncreasesOrReduces + " " + Misc.lcFirst(effect) + " " + modStrings.byOrTo + " " + modStrings.bonusString;
                 }
             }
 

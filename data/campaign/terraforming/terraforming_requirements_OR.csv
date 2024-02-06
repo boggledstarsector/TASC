@@ -221,6 +221,6 @@ ability_deploy_planet_killer_player_fleet_not_in_hyperspace,"You cannot deploy a
 ability_deploy_planet_killer_target_planet_story_critical_setting,,,false,"ability_deploy_planet_killer_target_planet_story_critical_setting"
 ability_deploy_planet_killer_target_planet_story_critical,"You cannot destroy $marketName because it is critical to the fate of the sector.",,false,"ability_deploy_planet_killer_target_planet_story_critical_setting"
 ability_deploy_planet_killer_target_planet_within_range,"The world closest to your location is $planetName. Your fleet is $distanceInSu stellar units away. You must be within $requiredDistanceInSu stellar units to deploy a planet-killer device.",,false,"ability_deploy_planet_killer_target_planet_within_range"
-ability_deploy_planet_killer_target_planet_not_owned_by_player,"You cannot destroy your own colony with a planet-killer device.",,false,"target_planet_owned_by_player"
+ability_deploy_planet_killer_target_planet_not_owned_by_player,"You cannot destroy your own colony with a planet-killer device.",,false,"target_planet_not_owned_by_player"
 
 ability_deploy_planet_killer_fleet_contains_planet_killer_device,"You do not possess a planet-killer device.",,false,"ability_deploy_planet_killer_fleet_contains_planet_killer_device"

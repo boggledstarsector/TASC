@@ -115,10 +115,9 @@ public class boggledTools {
     }
 
     public static void CheckIndustryExists(String source, String industryId) {
-        for (IndustrySpecAPI industrySpec : Global.getSettings().getAllIndustrySpecs()) {
-            if (industrySpec.getId().equals(industryId)) {
-                return;
-            }
+        IndustrySpecAPI industrySpec = Global.getSettings().getIndustrySpec(industryId);
+        if (industrySpec != null) {
+            return;
         }
         throw new IllegalArgumentException(source + ": Industry ID '" + industryId + "' doesn't exist");
     }
