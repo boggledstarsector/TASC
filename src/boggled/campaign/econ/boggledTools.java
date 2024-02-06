@@ -309,9 +309,6 @@ public class boggledTools {
     public static final HashMap<String, BoggledTerraformingProjectEffectFactory.TerraformingProjectEffectFactory> terraformingProjectEffectFactories = new HashMap<>();
     public static Map<String, BoggledStationConstructionFactory.StationConstructionFactory> stationConstructionFactories = new HashMap<>();
 
-    public static final HashMap<String, BoggledCommoditySupplyDemandFactory.CommodityDemandFactory> commodityDemandFactories = new HashMap<>();
-    public static final HashMap<String, BoggledCommoditySupplyDemandFactory.CommoditySupplyFactory> commoditySupplyFactories = new HashMap<>();
-
     @Nullable
     public static BoggledTerraformingRequirement.TerraformingRequirement getTerraformingRequirement(String terraformingRequirementType, String id, String[] enableSettings, boolean invert, String data) throws JSONException {
         Logger log = Global.getLogger(boggledTools.class);
@@ -354,40 +351,6 @@ public class boggledTools {
             return null;
         }
         return mod;
-    }
-
-    @Nullable
-    public static BoggledCommoditySupplyDemand.CommodityDemand getCommodityDemand(String commodityDemandType, String id, String[] enableSettings, String commodity, String data) throws JSONException {
-        Logger log = Global.getLogger(boggledTools.class);
-
-        BoggledCommoditySupplyDemandFactory.CommodityDemandFactory factory = commodityDemandFactories.get(commodityDemandType);
-        if (factory == null) {
-            log.error("Commodity demand " + id + " of type " + commodityDemandType + " has no assigned factory");
-            return null;
-        }
-        BoggledCommoditySupplyDemand.CommodityDemand demand = factory.constructFromJSON(id, enableSettings, commodity, data);
-        if (demand == null) {
-            log.error("Commodity demand " + id + " of type " + commodityDemandType + " was null when created with data " + data);
-            return null;
-        }
-        return demand;
-    }
-
-    @Nullable
-    public static BoggledCommoditySupplyDemand.CommoditySupply getCommoditySupply(String commoditySupplyType, String id, String[] enableSettings, String commodity, String data) throws JSONException {
-        Logger log = Global.getLogger(boggledTools.class);
-
-        BoggledCommoditySupplyDemandFactory.CommoditySupplyFactory factory = commoditySupplyFactories.get(commoditySupplyType);
-        if (factory == null) {
-            log.error("Commodity demand " + id + " of type " + commoditySupplyType + " has no assigned factory");
-            return null;
-        }
-        BoggledCommoditySupplyDemand.CommoditySupply supply = factory.constructFromJSON(id, enableSettings, commodity, data);
-        if (supply == null) {
-            log.error("Commodity supply " + id + " of type " + commoditySupplyType + " was null when created with data " + data);
-            return null;
-        }
-        return supply;
     }
 
     @Nullable
@@ -544,11 +507,6 @@ public class boggledTools {
     public static void addTerraformingDurationModifierFactory(String key, BoggledTerraformingDurationModifierFactory.TerraformingDurationModifierFactory value) {
         Global.getLogger(boggledTools.class).info("Adding terraforming duration modifier factory " + key);
         terraformingDurationModifierFactories.put(key, value);
-    }
-
-    public static void addCommodityDemandFactory(String key, BoggledCommoditySupplyDemandFactory.CommodityDemandFactory value) {
-        Global.getLogger(boggledTools.class).info("Adding commodity demand factory " + key);
-        commodityDemandFactories.put(key, value);
     }
 
     public static void initialiseDefaultTerraformingProjectEffectFactories() {

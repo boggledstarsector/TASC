@@ -127,7 +127,7 @@ public class BoggledTerraformingProject {
     private final List<RequirementsWithId> requirementsStall;
     private final List<RequirementsWithId> requirementsReset;
 
-    private int baseProjectDuration;
+    private MutableStat baseProjectDuration;
     private final List<BoggledTerraformingDurationModifier.TerraformingDurationModifier> durationModifiers;
 
     private final List<BoggledTerraformingProjectEffect.TerraformingProjectEffect> projectCompleteEffects;
@@ -149,7 +149,7 @@ public class BoggledTerraformingProject {
         this.requirementsStall = requirementsStall;
         this.requirementsReset = requirementsReset;
 
-        this.baseProjectDuration = baseProjectDuration;
+        this.baseProjectDuration = new MutableStat(baseProjectDuration);
         this.durationModifiers = durationModifiers;
 
         this.projectCompleteEffects = projectCompleteEffects;
@@ -201,13 +201,15 @@ public class BoggledTerraformingProject {
 
     public BoggledProjectRequirementsAND getRequirements() { return requirements; }
 
-    public int getBaseProjectDuration() { return baseProjectDuration; }
+    public int getBaseProjectDuration() { return (int) baseProjectDuration.getBaseValue(); }
     public int getModifiedProjectDuration(BoggledTerraformingRequirement.RequirementContext ctx) {
-        MutableStat projectDuration = new MutableStat(baseProjectDuration);
+        baseProjectDuration.unmodify();
+
         for (BoggledTerraformingDurationModifier.TerraformingDurationModifier durationModifier : durationModifiers) {
-            projectDuration.applyMods(durationModifier.getDurationModifier(ctx));
+            baseProjectDuration.applyMods(durationModifier.getDurationModifier(ctx));
         }
-        return Math.max(projectDuration.getModifiedInt(), 0);
+
+        return Math.max(baseProjectDuration.getModifiedInt(), 0);
     }
 
     public boolean requirementsHiddenMet(BoggledTerraformingRequirement.RequirementContext ctx) {
@@ -334,7 +336,7 @@ public class BoggledTerraformingProject {
 
     public void addRemoveDurationModifiersAndDuration(Integer baseProjectDurationOverride, List<BoggledTerraformingDurationModifier.TerraformingDurationModifier> durationModifiersAdded, List<String> durationModifiersRemoved) {
         if (baseProjectDurationOverride != null) {
-            baseProjectDuration = baseProjectDurationOverride;
+            baseProjectDuration = new MutableStat(baseProjectDurationOverride);
         }
 
         durationModifiers.addAll(durationModifiersAdded);

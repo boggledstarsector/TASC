@@ -19,7 +19,7 @@ arid_type_change,boggledTerraformingContentEnabled,terraforming,"Arid type chang
 	{ 'requirement_id' : 'terraforming_colony_temperate_or_hot' },
 	{ 'requirement_id' : 'terraforming_colony_has_stellar_reflectors' },
 	{ 'requirement_id' : 'terraforming_colony_has_moderate_water_present' }
-]",,400,[ { 'modifier_id' : 'terraforming_type_change_setting' } ],,,"[
+]",,400,"[ { 'modifier_id' : 'terraforming_type_change_setting' } ]",,,"[
 	{ 'effect_id' : 'arid_type_change' },
 	{ 'effect_id' : 'market_add_habitable' },
 	{ 'effect_id' : 'market_add_farmland_adequate' },
@@ -477,7 +477,7 @@ craft_cryoarithmetic_engine,boggledDomainTechCraftingEnabled,crafting,"Craft Cry
 	{ 'effect_id' : 'remove_2_story_points_from_player' },
 	{ 'effect_id' : 'remove_domain_artifacts_medium_from_storage' }
 ]",,,
-craft_planetkiller_device,boggledDomainTechCraftingEnabled,crafting,"Craft Planetkiller Device",,Crafted,"[
+craft_planetkiller_device,boggledDomainTechCraftingEnabled | boggledPlanetKillerEnabled,crafting,"Craft Planetkiller Device",,Crafted,"[
 	{ 'requirement_id' : 'crafting_colony_has_at_least_100k_inhabitants' },
 	{ 'requirement_id' : 'crafting_colony_has_orbital_works_with_pristine_nanoforge' },
 	{ 'requirement_id' : 'crafting_colony_storage_contains_at_least_hard_domain_artifacts' },

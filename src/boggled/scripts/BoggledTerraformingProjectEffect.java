@@ -133,7 +133,11 @@ public class BoggledTerraformingProjectEffect {
             if (market == null) {
                 return;
             }
+
             Industry industryToRemove = market.getIndustry(industryIdToRemove);
+            if (industryToRemove == null) {
+                return;
+            }
             boolean needsConstruction = !industryToRemove.isFunctional();
             market.removeIndustry(industryIdToRemove, MarketAPI.MarketInteractionMode.REMOTE, false);
 
@@ -2350,7 +2354,11 @@ public class BoggledTerraformingProjectEffect {
             if (deficits.isEmpty()) {
                 unapplyProjectEffectImpl(ctx);
             } else {
-                targetIndustry.getUpkeep().applyMods(mod.createModifier(ctx, effectSource));
+                String deficitString = "Commodity shortage";
+                if (deficits.size() == 1) {
+                    deficitString = Misc.ucFirst(Global.getSettings().getCommoditySpec(deficits.get(0).one).getLowerCaseName()) + " shortage";
+                }
+                targetIndustry.getUpkeep().applyMods(mod.createModifier(ctx, deficitString));
             }
         }
 
