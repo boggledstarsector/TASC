@@ -158,16 +158,19 @@ player_has_skill_automated_ships,,PlayerHasSkill,false,"automated_ships"
 market_storage_contains_at_least_easy_domain_artifacts,,MarketStorageContainsAtLeast,false,"{
 	'submarket_id' : 'storage',
 	'commodity_id' : 'domain_artifacts',
+	'setting_id' : 'domainTechCraftingArtifactCostEasy',
 	'quantity' : 1000
 }"
 market_storage_contains_at_least_medium_domain_artifacts,,MarketStorageContainsAtLeast,false,"{
 	'submarket_id' : 'storage',
 	'commodity_id' : 'domain_artifacts',
+	'setting_id' : 'domainTechCraftingArtifactCostMedium',
 	'quantity' : 2000
 }"
 market_storage_contains_at_least_hard_domain_artifacts,,MarketStorageContainsAtLeast,false,"{
 	'submarket_id' : 'storage',
 	'commodity_id' : 'domain_artifacts',
+	'setting_id' : 'domainTechCraftingArtifactCostHard',
 	'quantity' : 4000
 }"
 ,

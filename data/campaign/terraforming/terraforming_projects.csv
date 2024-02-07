@@ -271,8 +271,8 @@ industry_chameleon,boggledDomainTechContentEnabled | boggledCHAMELEONEnabled,ind
 industry_chameleon_decivilized,boggledDomainTechContentEnabled | boggledCHAMELEONEnabled,industry,Decivilized subpopulation,,Eradicated,"[ { 'requirement_id' : 'industry_colony_decivilized' } ]",,200,,,,"[
 	{ 'effect_id' : 'market_remove_decivilized' },
 	{ 'effect_id' : 'market_remove_decivilized_subpop' }
-]",,"Approximately $percentComplete% of the decivilized subpopulation on $marketName has been eradicated.","$percentComplete%"
-industry_chameleon_rogue_ai,boggledDomainTechContentEnabled | boggledCHAMELEONEnabled,industry,Rogue AI core,,Terminated,"[ { 'requirement_id' : 'industry_colony_rogue_ai_core' } ]",,200,,,,"[ { 'effect_id' : 'market_remove_rogue_ai_core' } ]",,"An investigation into the whereabouts of the rogue AI core on $marketName is approximately $percentComplete% complete.",$percentComplete%
+]",,"Approximately $percentComplete% of the decivilized subpopulation on $marketName has been eradicated.","[ '$percentComplete%' ]"
+industry_chameleon_rogue_ai,boggledDomainTechContentEnabled | boggledCHAMELEONEnabled,industry,Rogue AI core,,Terminated,"[ { 'requirement_id' : 'industry_colony_rogue_ai_core' } ]",,200,,,,"[ { 'effect_id' : 'market_remove_rogue_ai_core' } ]",,"An investigation into the whereabouts of the rogue AI core on $marketName is approximately $percentComplete% complete.",[ '$percentComplete%' ]
 industry_cloning,boggledCloningEnabled,industry,,,,,,,,,,,"[
 	{ 'effect_id' : 'ongoing_market_size_minus_2_supply_organs' },
 	{ 'effect_id' : 'ongoing_market_size_minus_2_demand_domain_artifacts' },

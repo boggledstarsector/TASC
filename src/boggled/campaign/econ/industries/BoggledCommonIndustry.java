@@ -194,7 +194,8 @@ public class BoggledCommonIndustry {
               && mode != Industry.IndustryTooltipMode.QUEUED)) {
             return;
         }
-        tooltip.addPara(format, pad, hl, highlights);
+        String toPrint = format.replace("%", "%%");
+        tooltip.addPara(toPrint, pad, hl, highlights);
     }
 
     public void tooltipComplete(TooltipMakerAPI tooltip, Industry.IndustryTooltipMode mode, String format, float pad, Color hl, String... highlights) {
@@ -358,7 +359,9 @@ public class BoggledCommonIndustry {
 
         float progress = 0f;
         for (int i = 0; i < projects.size(); ++i) {
-            progress = Math.max(getPercentComplete(i) / 100f, progress);
+            if (projects.get(i).getProject().requirementsMet(ctx) && getDaysRemaining(i) > 0) {
+                progress = Math.max(getPercentComplete(i) / 100f, progress);
+            }
         }
         return progress;
     }
@@ -372,7 +375,9 @@ public class BoggledCommonIndustry {
         } else {
             daysRemain = Integer.MAX_VALUE;
             for (int i = 0; i < projects.size(); ++i) {
-                daysRemain = Math.min(getDaysRemaining(i), daysRemain);
+                if (projects.get(i).getProject().requirementsMet(ctx) && getDaysRemaining(i) > 0) {
+                    daysRemain = Math.min(getDaysRemaining(i), daysRemain);
+                }
             }
         }
         String dayOrDays = daysRemain == 1 ? "day" : "days";

@@ -940,16 +940,10 @@ public class boggledTools {
                 idForErrors = id;
 
                 String tooltipText = row.getString("tooltip");
-                List<String> tooltipHighlightText = new ArrayList<>();
-                List<Color> tooltipHighlight = new ArrayList<>();
-
-                String tooltipHighlightString = row.optString("tooltip_highlights");
-                if (!tooltipHighlightString.isEmpty()) {
-                    JSONArray tooltipHighlightArray = new JSONArray(tooltipHighlightString);
-                    for (int j = 0; j < tooltipHighlightArray.length(); ++j) {
-                        tooltipHighlightText.add(tooltipHighlightArray.getString(j));
-                        tooltipHighlight.add(Misc.getHighlightColor());
-                    }
+                List<String> tooltipHighlightText = stringListFromJSON(row, "tooltip_highlights");
+                List<Color> tooltipHighlight = new ArrayList<>(tooltipHighlightText.size());
+                for (String tt : tooltipHighlightText) {
+                    tooltipHighlight.add(Misc.getHighlightColor());
                 }
 
                 BoggledCommonIndustry.TooltipData tooltip = new BoggledCommonIndustry.TooltipData(tooltipText, tooltipHighlight, tooltipHighlightText);
@@ -1062,6 +1056,9 @@ public class boggledTools {
                 stage = "tooltip";
                 String tooltip = row.getString("tooltip");
 
+                stage = "tooltip_highlights";
+                List<String> tooltipHighlights = stringListFromJSON(row, "tooltip_highlights");
+
                 stage = "intel_complete_message";
                 String intelCompleteMessage = row.getString("intel_complete_message");
 
@@ -1069,7 +1066,7 @@ public class boggledTools {
                 String incompleteMessage = row.getString("incomplete_message");
 
                 stage = "incomplete_message_highlights";
-                List<String> incompleteMessageHighlights = arrayListFromJSON(row, "incomplete_message_highlights", boggledTools.csvOptionSeparator);
+                List<String> incompleteMessageHighlights = stringListFromJSON(row, "incomplete_message_highlights");
 
                 stage = "requirements";
                 BoggledProjectRequirementsAND requirements = requirementsFromJSONNeverNull(row, "Terraforming Projects", id, "requirements");
@@ -1199,11 +1196,7 @@ public class boggledTools {
         if (jsonString.isEmpty()) {
             return ret;
         }
-        JSONArray jsonStringArray = new JSONArray(jsonString);
-        for (int i = 0; i < jsonStringArray.length(); ++i) {
-            ret.add(jsonStringArray.getString(i));
-        }
-        return ret;
+        return stringListFromJSON(new JSONArray(jsonString));
     }
 
     private static List<BoggledTerraformingProject.RequirementRemoveInfo> keyedRequirementRemoveFromJSON(JSONObject object, String baseKey) throws JSONException {

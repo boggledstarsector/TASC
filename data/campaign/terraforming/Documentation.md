@@ -1,5 +1,34 @@
 First up is the context object `RequirementContext` that is passed into a lot of things. Aside from the `contextName`, everything may be null. In general, grab what you need from the context and then check them all for null. Handle those cases appropriately.
 
+## Terraforming projects
+The `id` field is a file unique identifier. Other mods can override a project entirely by providing their own `terraforming_projects.csv` with an entry with the same `id` field. This is not the recommended way of modifying a project. Check `terraforming_project_mods.csv` and the `Terraforming Projects Mods` section.
+
+`enable_settings` is a `|` separated list of mod specific setting IDs (`LunaLib`'s `LunaSettings.csv` or vanilla's `settings.json`). If the setting is `false`, then this project will not be available.
+
+`project_type` is where the project should be displayed. `terraforming` projects are shown at the top of the terraforming UI, with `crafting` projects underneath them. `ability` and `industry` projects are used for abilities and industries respectively, and so aren't shown in the terraforming UI.
+
+`tooltip` is the tooltip shown for the project. It's displayed on buttons in the terraforming UI and on the intel message when the project finishes.
+
+`intel_complete_message` is the message shown when the project completes successfully.
+
+`requirements` is the requirements for the project to be started. It's a JSON Array of JSON Objects with two fields, `requirement_id` is the ID of the requirement from `terraforming_requirements_OR.csv`, `and_then` is a JSON Array of JSON Objects of requirements to be checked only if this requirement is satisfied. This means you can have requirements that are only checked if previous requirements are met. One example is only checking the nearest planet's owner if the fleet is not in hyperspace.
+
+`requirements_hidden` is the requirements for the project to be visible. Same format as `requirements`.
+
+`base_project_duration` is the project's duration in days.
+
+`dynamic_project_duration_modifiers` is a JSON Array of JSON Objects with one field, `modifier_id` is the ID of the modifier from `duration_modifiers.csv`.
+
+`requirements_stall` and `requirements_reset` are the same format as `requirements`. If the requirements are satisfied, then the project is stalled or reset respectively.
+
+`project_complete_effects` is a JSON Array of JSON Objects with one field, `effect_id` is the ID of the effect from `project_effects.csv`. All the effects happen when the project is completed successfully.
+
+`project_ongoing_effects` is the same format as `project_complete_effects`. All the effects happen while the project is ongoing. This is primarily used for industry projects.
+
+`incomplete_message` is the text displayed when the project is not yet complete.
+
+`incomplete_message_highlights` is a JSON Array of strings of the text to highlight.
+
 ## Individual requirements
 All requirements in `terraforming_requirement.csv` have 4 required fields. The `id` field is what is used to uniquely identify this requirement. Mods can overwrite a requirement by providing their own `terraforming_requirement.csv` file with an entry with the same `id` field.
 
@@ -19,6 +48,21 @@ Same basic idea as requirements, specified in `project_effects.csv`. The `id` fi
 `effect_type` contains either one of the entires in `Base Effect Types` below or a mode specified addition.
 
 `data` contains `effect_type` specific data. Check `Base Effect Types` for more info.
+
+## Requirements
+Requirements are set up in 3 phases. Phase 1 is the individual requirements as documented above. They're defined in `terraforming_requirements.csv`. Phase 2 and 3 are grouping the requirements into OR and AND groups. Phase 2 is defined in `terraforming_requirements_OR.csv`, and phase 3 is defined wherever the requirements are used.
+
+`terraforming_requirements_OR.csv` has 5 fields. The `id` field contains the unique ID that this requirement is identified by. It only needs to be unique to this file.
+
+`tooltip` is the tooltip used whenever this requirement is queried for a tooltip.
+
+`tooltip_highlights` is a JSON Array of substrings that will be highlighted.
+
+`invert_all` contains `true` or `false`. If `true`, the result of the check is inverted and a requirement check that returns true instead returns false, and vice versa.
+
+`requirements` is a `|` separated list of requirement IDs from `terraforming_requirement.csv`. If any of the requirements returns true, then this requirement is satisfied.
+
+## Duration Modifiers
 
 ## Base Requirement Types
 `AlwaysTrue` always returns true for its requirement check. To get an `AlwaysFalse` type effect, put `true` in the `invert` field.
