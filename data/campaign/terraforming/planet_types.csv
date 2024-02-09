@@ -1,14 +1,4 @@
 id,conditions,name,terraforming_type_id,terraforming_possible,base_water_level,conditional_water_requirements
-# Maps planet type to TASC planet type
-# Can also map specific conditions to TASC planet types
-# Anything not matched here maps to unknown
-# id is the planet's type ID as returned from PlanetAPI.getTypeID()
-# name is a user viewable string for the planet type
-# conditions is a | separated list of conditions that map to a planet type
-# terraforming_type_id is the type of planet this should be treated as by TASC requirements, ie all planet types that map to barren in this file will satisfy a PlanetTypeRequirement with "barren" as the data
-# terraforming_possible is whether this planet type can be terraformed
-# base_water_level is the water level that the MarketHasWaterPresent requirement type will use
-# conditional_water_requirements is a | separated list of 'requirement_id ; water_level' pairs with requirement_id being one of the IDs from 'terraforming_requirements.csv'. If the requirement is met, the paired water level will be used instead of base_water_level. Does not need to be sorted, that's done at runtime. Checks done in descending order, so will return the highest amount of water possible.
 nebula_center_old,,nebula,star,false,0,
 nebula_center_average,,nebula,star,false,0,
 nebula_center_young,,nebula,star,false,0,

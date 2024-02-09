@@ -21,13 +21,32 @@ The `id` field is a file unique identifier. Other mods can override a project en
 
 `requirements_stall` and `requirements_reset` are the same format as `requirements`. If the requirements are satisfied, then the project is stalled or reset respectively.
 
-`project_complete_effects` is a JSON Array of JSON Objects with one field, `effect_id` is the ID of the effect from `project_effects.csv`. All the effects happen when the project is completed successfully.
+`project_complete_effects` is a JSON Array of strings, with each string being the ID of an effect from `project_effects.csv`. All the effects happen when the project is completed successfully.
 
 `project_ongoing_effects` is the same format as `project_complete_effects`. All the effects happen while the project is ongoing. This is primarily used for industry projects.
 
-`incomplete_message` is the text displayed when the project is not yet complete.
+`incomplete_message` is the text displayed when the project is not yet complete. This is displayed in a `project_type` dependent manner. `industry` projects display it below the industry description.
 
 `incomplete_message_highlights` is a JSON Array of strings of the text to highlight.
+
+## Industry options
+The `id` field is a file unique identifier. Other mods can override an industry entirely by providing their own `industry_options.csv.csv` with an entry with the same `id` field. This is not the recommended way of modifying an industry. Check `industry_options_mods.csv` and the `Industry Options Mods` section.
+
+`tooltip` is the text displayed in the effect source text, and the build or upgrade text.
+
+`projects` is a `|` separated collection of projects the industry will use. Each entry should be one of the `id` fields from `terraforming_projects.csv`.
+
+`building_finished_effects` is a JSON Array of strings, with each string being the ID of an effect from `project_effects.csv`. The effect is applied when the building is finished.
+
+`improve_effects` is the same format as `building_finished_effects`. The effect is applied when the building is improved.
+
+`ai_core_effects` is a JSON Array of JSON Objects with two fields, `ai_core_id` is the AI core ID that will apply these effects, and `effects` is the same format as `building_finished_effects`.
+
+`base_pather_interest` is an integer of the Pather interest this industry generates.
+
+`image_overrides` is a JSON Array of JSON Objects with 4 fields. `id` is a unique identifier for this image override used for modifying this entry. `requirements` is a list of requirements of the same format as `requirements` from section `Terraforming Projects`. `category` and `image_id` are the category and image ID entries from `settings.json`.
+
+`pre_build_effects` is the same format as `building_finished_effects`. The effect is applied before the building is constructed.
 
 ## Individual requirements
 All requirements in `terraforming_requirement.csv` have 4 required fields. The `id` field is what is used to uniquely identify this requirement. Mods can overwrite a requirement by providing their own `terraforming_requirement.csv` file with an entry with the same `id` field.
@@ -39,6 +58,15 @@ All requirements in `terraforming_requirement.csv` have 4 required fields. The `
 `invert` contains `true` or `false`. If `true`, the result of the check is inverted and a requirement check that returns true instead returns false, and vice versa.
 
 `data` contains `requirement_type` specific data. Check `Base Requirement Types` for more info.
+
+## Dynamic project duration modifiers
+These modify the project duration based on some code. The `id` field is used to uniquely identify this modifier. Mods can overwrite a modifier by providing their own `duration_modifiers.csv` file with an entry with the same `id` field.
+
+`enable_settings` contains a `|` separated collection of setting IDs as specified in `LunaSettings.csv`. The setting must be a `Boolean` setting. If any of the settings are set to `false`, then the modifier will be skipped.
+
+`duration_modifier_type` contains either one of the entries in `Base Duration Modifier Types` below, or a mod specified addition.
+
+`data` contains `duration_modifier_type` specific data. Check `Base Duration Modifier Types` for more info.
 
 ## Project effects
 Same basic idea as requirements, specified in `project_effects.csv`. The `id` field is used to uniquely identify this effect. Mods can overwrite an effect by providing their own `project_effects.csv` file with an entry with the same `id` field.
@@ -61,8 +89,6 @@ Requirements are set up in 3 phases. Phase 1 is the individual requirements as d
 `invert_all` contains `true` or `false`. If `true`, the result of the check is inverted and a requirement check that returns true instead returns false, and vice versa.
 
 `requirements` is a `|` separated list of requirement IDs from `terraforming_requirement.csv`. If any of the requirements returns true, then this requirement is satisfied.
-
-## Duration Modifiers
 
 ## Base Requirement Types
 `AlwaysTrue` always returns true for its requirement check. To get an `AlwaysFalse` type effect, put `true` in the `invert` field.
@@ -148,6 +174,11 @@ Requirements are set up in 3 phases. Phase 1 is the individual requirements as d
 `TargetPlanetStoryCritical` and `TargetStationStoryCritical` check if the targeted planet or station respectively is story critical. Returns true if the target planet or station respectively is story critical.
 
 `BooleanSettingIsTrue` is for chaining a requirement on a setting. `data` is a JSON Object with three fields, `setting_id` is the `LunaLib` setting to check, `invert_setting` is an optional boolean to activate this on a `LunaLib` value of `false`, and `requirement_id` is the requirement to check if the value from `setting_id` is true. Returns true when the value from `setting_id` (after possible inversion) is false, otherwise returns the result of the specified requirement.
+
+## Base Duration Modifier Types
+`PlanetSize` modifies the project duration based on the size of the planet it's applied on.
+
+`DurationSettingModifier` modifies the base project duration to be the value of the setting provided in `data`. The duration may still be modified further by other modifiers. `data` is a string containing the `LunaLib` setting ID to take the duration from. The `LunaLib` setting must be an `Int` type.
 
 ## Base Effect Types
 `PlanetTypeChange` changes the planet type from whatever it is to the new type specified. The type is one of the planet types from `data/config/planets.json` (or a mod specific addition). `data` is a single string that contains the planet type id. 

@@ -690,11 +690,17 @@ public class boggledTools {
             return ret;
         }
 
-        JSONObject aiCoreEffects = new JSONObject(aiCoreEffectsString);
-        for (Iterator<String> it = aiCoreEffects.keys(); it.hasNext(); ) {
-            String aiCoreId = it.next();
-            List<BoggledTerraformingProjectEffect.TerraformingProjectEffect> aiCoreEffect = projectEffectsFromJSON(aiCoreEffects, sourceInfo, id, aiCoreId);
-            ret.put(aiCoreId, aiCoreEffect);
+        JSONArray aiCoreEffectsArray = new JSONArray(aiCoreEffectsString);
+        for (int i = 0; i < aiCoreEffectsArray.length(); ++i) {
+            JSONObject aiCoreObject = aiCoreEffectsArray.getJSONObject(i);
+            String aiCoreId = aiCoreObject.getString("ai_core_id");
+            List<BoggledTerraformingProjectEffect.TerraformingProjectEffect> aiCoreEffects = projectEffectsFromJSON(aiCoreObject, sourceInfo, id, "effects");
+            List<BoggledTerraformingProjectEffect.TerraformingProjectEffect> entry = ret.get(aiCoreId);
+            if (entry == null) {
+                ret.put(aiCoreId, aiCoreEffects);
+            } else {
+                entry.addAll(aiCoreEffects);
+            }
         }
 
         return ret;
@@ -833,7 +839,7 @@ public class boggledTools {
                 JSONObject imageOverride = imageOverridesJson.getJSONObject(j);
                 String id = imageOverride.getString("id");
 
-                JSONArray requirementsArray = imageOverride.getJSONArray("requirement_ids");
+                JSONArray requirementsArray = imageOverride.getJSONArray("requirements");
                 BoggledProjectRequirementsAND imageReqs = requirementsFromRequirementsArray(requirementsArray, "Industry Options", id, "image_overrides");
 
                 String category = imageOverride.getString("category");
@@ -1133,8 +1139,7 @@ public class boggledTools {
 
         JSONArray projectEffectsArray = new JSONArray(projectEffectsString);
         for (int i = 0; i < projectEffectsArray.length(); ++i) {
-            JSONObject projectEffect = projectEffectsArray.getJSONObject(i);
-            String effectId = projectEffect.getString("effect_id");
+            String effectId = projectEffectsArray.getString(i);
             BoggledTerraformingProjectEffect.TerraformingProjectEffect effect = boggledTools.terraformingProjectEffects.get(effectId);
             if (effect != null) {
                 ret.add(effect);
