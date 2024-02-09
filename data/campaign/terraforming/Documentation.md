@@ -17,7 +17,7 @@ The `id` field is a file unique identifier. Other mods can override a project en
 
 `base_project_duration` is the project's duration in days.
 
-`dynamic_project_duration_modifiers` is a JSON Array of JSON Objects with one field, `modifier_id` is the ID of the modifier from `duration_modifiers.csv`.
+`dynamic_project_duration_modifiers` is a JSON Array of strings, with each string being the ID for a duration modifier from `duration_modifiers.csv`.
 
 `requirements_stall` and `requirements_reset` are the same format as `requirements`. If the requirements are satisfied, then the project is stalled or reset respectively.
 
@@ -28,6 +28,8 @@ The `id` field is a file unique identifier. Other mods can override a project en
 `incomplete_message` is the text displayed when the project is not yet complete. This is displayed in a `project_type` dependent manner. `industry` projects display it below the industry description.
 
 `incomplete_message_highlights` is a JSON Array of strings of the text to highlight.
+
+`disrupted_message` and `disrupted_message_highlights` are the same as `incomplete_message` and `incomplete_message_highlights` but when the source industry is disrupted, e.g. the message when an atmosphere processor is disrupted.
 
 ## Industry options
 The `id` field is a file unique identifier. Other mods can override an industry entirely by providing their own `industry_options.csv.csv` with an entry with the same `id` field. This is not the recommended way of modifying an industry. Check `industry_options_mods.csv` and the `Industry Options Mods` section.

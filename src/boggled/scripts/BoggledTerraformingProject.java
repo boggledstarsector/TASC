@@ -30,6 +30,14 @@ public class BoggledTerraformingProject {
         }
 
         public BoggledTerraformingProject getProject() { return project; }
+
+        public int getPercentComplete(BoggledTerraformingRequirement.RequirementContext ctx) {
+            return (int) Math.min(99, ((float)getDaysCompleted() / getProject().getModifiedProjectDuration(ctx)) * 100);
+        }
+
+        public int getDaysRemaining(BoggledTerraformingRequirement.RequirementContext ctx) {
+            return project.getModifiedProjectDuration(ctx) - getDaysCompleted();
+        }
         public int getDaysCompleted() { return daysCompleted; }
         public int getLastDayChecked() { return lastDayChecked; }
 
@@ -115,6 +123,8 @@ public class BoggledTerraformingProject {
 
     private final String incompleteMessage;
     private final List<String> incompleteMessageHighlights;
+    private final String disruptedMessage;
+    private final List<String> disruptedMessageHighlights;
     // Multiple separate TerraformingRequirements form an AND'd collection
     // Each individual requirement inside the TerraformingRequirements forms an OR'd collection
     // ie If any of the conditions inside a TerraformingRequirements is fulfilled, that entire requirement is filled
@@ -133,7 +143,7 @@ public class BoggledTerraformingProject {
     private final List<BoggledTerraformingProjectEffect.TerraformingProjectEffect> projectCompleteEffects;
     private final List<BoggledTerraformingProjectEffect.TerraformingProjectEffect> projectOngoingEffects;
 
-    public BoggledTerraformingProject(String id, String[] enableSettings, String projectType, String projectTooltip, String intelCompleteMessage, String incompleteMessage, List<String> incompleteMessageHighlights, BoggledProjectRequirementsAND requirements, BoggledProjectRequirementsAND requirementsHidden, List<RequirementsWithId> requirementsStall, List<RequirementsWithId> requirementsReset, int baseProjectDuration, List<BoggledTerraformingDurationModifier.TerraformingDurationModifier> durationModifiers, List<BoggledTerraformingProjectEffect.TerraformingProjectEffect> projectCompleteEffects, List<BoggledTerraformingProjectEffect.TerraformingProjectEffect> projectOngoingEffects) {
+    public BoggledTerraformingProject(String id, String[] enableSettings, String projectType, String projectTooltip, String intelCompleteMessage, String incompleteMessage, List<String> incompleteMessageHighlights, String disruptedMessage, List<String> disruptedMessageHighlights, BoggledProjectRequirementsAND requirements, BoggledProjectRequirementsAND requirementsHidden, List<RequirementsWithId> requirementsStall, List<RequirementsWithId> requirementsReset, int baseProjectDuration, List<BoggledTerraformingDurationModifier.TerraformingDurationModifier> durationModifiers, List<BoggledTerraformingProjectEffect.TerraformingProjectEffect> projectCompleteEffects, List<BoggledTerraformingProjectEffect.TerraformingProjectEffect> projectOngoingEffects) {
         this.id = id;
         this.enableSettings = enableSettings;
         this.projectType = projectType;
@@ -142,6 +152,8 @@ public class BoggledTerraformingProject {
 
         this.incompleteMessage = incompleteMessage;
         this.incompleteMessageHighlights = incompleteMessageHighlights;
+        this.disruptedMessage = disruptedMessage;
+        this.disruptedMessageHighlights = disruptedMessageHighlights;
 
         this.requirements = requirements;
         this.requirementsHidden = requirementsHidden;
@@ -192,8 +204,18 @@ public class BoggledTerraformingProject {
     public String getIncompleteMessage() { return incompleteMessage; }
 
     public String[] getIncompleteMessageHighlights(Map<String, String> tokenReplacements) {
-        ArrayList<String> replaced = new ArrayList<>(incompleteMessageHighlights.size());
+        List<String> replaced = new ArrayList<>(incompleteMessageHighlights.size());
         for (String highlight : incompleteMessageHighlights) {
+            replaced.add(boggledTools.doTokenReplacement(highlight, tokenReplacements));
+        }
+        return replaced.toArray(new String[0]);
+    }
+
+    public String getDisruptedMessage() { return disruptedMessage; }
+
+    public String[] getDisruptedMessageHighlights(Map<String, String> tokenReplacements) {
+        List<String> replaced = new ArrayList<>(disruptedMessageHighlights.size());
+        for (String highlight : disruptedMessageHighlights) {
             replaced.add(boggledTools.doTokenReplacement(highlight, tokenReplacements));
         }
         return replaced.toArray(new String[0]);
@@ -247,8 +269,23 @@ public class BoggledTerraformingProject {
         return false;
     }
 
+    public void startProject(BoggledTerraformingRequirement.RequirementContext ctx, String effectSource) {
+        ctx = new BoggledTerraformingRequirement.RequirementContext(ctx, this);
+
+        applyOngoingEffects(ctx, effectSource);
+    }
+
+    public void cancelProject(BoggledTerraformingRequirement.RequirementContext ctx) {
+        ctx = new BoggledTerraformingRequirement.RequirementContext(ctx, this);
+
+        unapplyOngoingEffects(ctx);
+    }
+
     public void finishProject(BoggledTerraformingRequirement.RequirementContext ctx, String effectSource) {
         ctx = new BoggledTerraformingRequirement.RequirementContext(ctx, this);
+
+        unapplyOngoingEffects(ctx);
+
         for (BoggledTerraformingProjectEffect.TerraformingProjectEffect effect : projectCompleteEffects) {
             effect.applyProjectEffect(ctx, effectSource);
         }
@@ -271,6 +308,7 @@ public class BoggledTerraformingProject {
 
     public void unapplyOngoingEffects(BoggledTerraformingRequirement.RequirementContext ctx) {
         for (BoggledTerraformingProjectEffect.TerraformingProjectEffect effect : projectOngoingEffects) {
+
             effect.unapplyProjectEffect(ctx);
         }
     }

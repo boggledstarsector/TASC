@@ -249,7 +249,7 @@ class CommandUIIntelK : LunaBaseCustomPanelPlugin() {
         private const val BUTTON_OFF_SCREEN_POSITION = 100000f
 
         private fun getTerraformingControllerFromMarket(market : MarketAPI) : Terraforming_Controller {
-            return market.getCondition("terraforming_controller").plugin as Terraforming_Controller
+            return market.getCondition(boggledTools.BoggledConditions.terraformingControllerConditionId).plugin as Terraforming_Controller
         }
 
         private fun getTerraformingDaysRemaining(terraformingController: Terraforming_Controller) : Int {

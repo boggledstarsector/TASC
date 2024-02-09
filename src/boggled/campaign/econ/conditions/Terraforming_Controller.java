@@ -42,16 +42,22 @@ public class Terraforming_Controller extends BaseHazardCondition {
         ctx = new BoggledTerraformingRequirement.RequirementContext(ctx, project);
         BoggledTerraformingProject projectToCheck = (project == null) ? currentProject.getProject() : project;
 
-        currentProject = (project == null) ? null : new BoggledTerraformingProject.ProjectInstance(project);
+        String intelText;
+        if (project == null) {
+            currentProject.getProject().cancelProject(ctx);
+            currentProject = null;
+            intelText = "    - Canceled";
+        } else {
+            currentProject = new BoggledTerraformingProject.ProjectInstance(project);
+            ctx = new BoggledTerraformingRequirement.RequirementContext(ctx, currentProject);
+            project.startProject(ctx, project.getProjectTooltip());
+            intelText = "    - Started";
+        }
 
         if(market.isPlayerOwned() || market.getFaction().isPlayerFaction()) {
             String projectTooltip = projectToCheck.getProjectTooltip();
             MessageIntel intel = new MessageIntel(projectTooltip + " on " + market.getName(), Misc.getBasePlayerColor());
-            if (project == null) {
-                intel.addLine("    - Canceled");
-            } else {
-                intel.addLine("    - Started");
-            }
+            intel.addLine(intelText);
             intel.setIcon(Global.getSector().getPlayerFaction().getCrest());
             intel.setSound(BaseIntelPlugin.getSoundStandardUpdate());
             Global.getSector().getCampaignUI().addMessage(intel, CommMessageAPI.MessageClickAction.COLONY_INFO, market);

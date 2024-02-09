@@ -2486,4 +2486,44 @@ public class BoggledTerraformingProjectEffect {
             return Math.max(0, ctx.getSourceIndustry().getMarket().getSize() + quantity);
         }
     }
+
+    public static class AttachProjectToIndustry extends TerraformingProjectEffect {
+        String industryId;
+        protected AttachProjectToIndustry(String id, String[] enableSettings, String industryId) {
+            super(id, enableSettings);
+            this.industryId = industryId;
+        }
+
+        @Override
+        protected void applyProjectEffectImpl(BoggledTerraformingRequirement.RequirementContext ctx, String effectSource) {
+            BoggledTerraformingProject.ProjectInstance projectInstance = ctx.getProjectInstance();
+            MarketAPI market = ctx.getClosestMarket();
+            if (market == null || projectInstance == null) {
+                return;
+            }
+
+            BoggledIndustryInterface industry = (BoggledIndustryInterface) market.getIndustry(industryId);
+            if (industry == null) {
+                return;
+            }
+
+            industry.attachProject(projectInstance);
+        }
+
+        @Override
+        protected void unapplyProjectEffectImpl(BoggledTerraformingRequirement.RequirementContext ctx) {
+            BoggledTerraformingProject.ProjectInstance projectInstance = ctx.getProjectInstance();
+            MarketAPI market = ctx.getClosestMarket();
+            if (market == null || projectInstance == null) {
+                return;
+            }
+
+            BoggledIndustryInterface industry = (BoggledIndustryInterface) market.getIndustry(industryId);
+            if (industry == null) {
+                return;
+            }
+
+            industry.detachProject(projectInstance);
+        }
+    }
 }

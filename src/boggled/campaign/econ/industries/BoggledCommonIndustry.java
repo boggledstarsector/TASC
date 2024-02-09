@@ -4,9 +4,7 @@ import boggled.scripts.*;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CargoAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
-import com.fs.starfarer.api.campaign.econ.CommoditySpecAPI;
-import com.fs.starfarer.api.campaign.econ.Industry;
-import com.fs.starfarer.api.campaign.econ.MarketAPI;
+import com.fs.starfarer.api.campaign.econ.*;
 import com.fs.starfarer.api.combat.MutableStat;
 import com.fs.starfarer.api.impl.campaign.econ.impl.BaseIndustry;
 import com.fs.starfarer.api.impl.campaign.population.PopulationComposition;
@@ -28,6 +26,7 @@ public class BoggledCommonIndustry {
     private final String industryTooltip;
 
     public List<BoggledTerraformingProject.ProjectInstance> projects;
+    public List<BoggledTerraformingProject.ProjectInstance> attachedProjects;
 
     private List<BoggledTerraformingProjectEffect.TerraformingProjectEffect> buildingFinishedEffects;
     private List<BoggledTerraformingProjectEffect.TerraformingProjectEffect> improveEffects;
@@ -75,6 +74,7 @@ public class BoggledCommonIndustry {
 
     private void setFromThat(BoggledCommonIndustry that) {
         this.projects = that.projects;
+        this.attachedProjects = that.attachedProjects;
 
         this.buildingFinishedEffects = that.buildingFinishedEffects;
         this.improveEffects = that.improveEffects;
@@ -102,6 +102,7 @@ public class BoggledCommonIndustry {
         this.industryTooltip = "";
 
         this.projects = new ArrayList<>();
+        this.attachedProjects = new ArrayList<>();
 
         this.buildingFinishedEffects = new ArrayList<>();
         this.improveEffects = new ArrayList<>();
@@ -128,6 +129,7 @@ public class BoggledCommonIndustry {
         for (BoggledTerraformingProject project : projects) {
             this.projects.add(new BoggledTerraformingProject.ProjectInstance(project));
         }
+        this.attachedProjects = new ArrayList<>();
 
         this.buildingFinishedEffects = buildingFinishedEffects;
         this.improveEffects = improveEffects;
@@ -172,17 +174,9 @@ public class BoggledCommonIndustry {
         }
 
         for (BoggledTerraformingProject.ProjectInstance project : projects) {
-            project.advance(ctx);
+            BoggledTerraformingRequirement.RequirementContext instanceCtx = new BoggledTerraformingRequirement.RequirementContext(ctx, project);
+            project.advance(instanceCtx);
         }
-    }
-
-    public int getPercentComplete(int projectIndex) {
-        return (int) Math.min(99, ((float)projects.get(projectIndex).getDaysCompleted() / projects.get(projectIndex).getProject().getModifiedProjectDuration(ctx.getFocusContext())) * 100);
-    }
-
-    public int getDaysRemaining(int projectIndex) {
-        BoggledTerraformingProject.ProjectInstance project = projects.get(projectIndex);
-        return project.getProject().getModifiedProjectDuration(ctx.getFocusContext()) - project.getDaysCompleted();
     }
 
     public void tooltipIncomplete(TooltipMakerAPI tooltip, Industry.IndustryTooltipMode mode, String format, float pad, Color hl, String... highlights) {
@@ -298,8 +292,17 @@ public class BoggledCommonIndustry {
             // Stupid as hell but needs to be here for the industry to work same as vanilla structures
             return false;
         }
-        for (int i = 0; i < projects.size(); ++i) {
-            if (projects.get(i).getProject().requirementsMet(ctx) && getDaysRemaining(i) > 0) {
+
+        for (BoggledTerraformingProject.ProjectInstance project : projects) {
+            BoggledTerraformingRequirement.RequirementContext instanceCtx = new BoggledTerraformingRequirement.RequirementContext(ctx, project);
+            if (project.getProject().requirementsMet(instanceCtx) && project.getDaysRemaining(instanceCtx) > 0) {
+                return true;
+            }
+        }
+
+        for (BoggledTerraformingProject.ProjectInstance project : attachedProjects) {
+            BoggledTerraformingRequirement.RequirementContext instanceCtx = new BoggledTerraformingRequirement.RequirementContext(ctx, project);
+            if (project.getDaysRemaining(instanceCtx) > 0) {
                 return true;
             }
         }
@@ -335,8 +338,16 @@ public class BoggledCommonIndustry {
         if (!built) {
             return false;
         }
-        for (int i = 0; i < projects.size(); ++i) {
-            if (projects.get(i).getProject().requirementsMet(ctx) && getDaysRemaining(i) > 0) {
+        for (BoggledTerraformingProject.ProjectInstance project : projects) {
+            BoggledTerraformingRequirement.RequirementContext instanceCtx = new BoggledTerraformingRequirement.RequirementContext(ctx, project);
+            if (project.getProject().requirementsMet(instanceCtx) && project.getDaysRemaining(instanceCtx) > 0) {
+                return true;
+            }
+        }
+
+        for (BoggledTerraformingProject.ProjectInstance project : attachedProjects) {
+            BoggledTerraformingRequirement.RequirementContext instanceCtx = new BoggledTerraformingRequirement.RequirementContext(ctx, project);
+            if (project.getDaysRemaining(instanceCtx) > 0) {
                 return true;
             }
         }
@@ -357,11 +368,20 @@ public class BoggledCommonIndustry {
         }
 
         float progress = 0f;
-        for (int i = 0; i < projects.size(); ++i) {
-            if (projects.get(i).getProject().requirementsMet(ctx) && getDaysRemaining(i) > 0) {
-                progress = Math.max(getPercentComplete(i) / 100f, progress);
+        for (BoggledTerraformingProject.ProjectInstance project : projects) {
+            BoggledTerraformingRequirement.RequirementContext instanceCtx = new BoggledTerraformingRequirement.RequirementContext(ctx, project);
+            if (project.getProject().requirementsMet(instanceCtx) && project.getDaysRemaining(instanceCtx) > 0) {
+                progress = Math.max(project.getPercentComplete(ctx) / 100f, progress);
             }
         }
+
+        for (BoggledTerraformingProject.ProjectInstance project : attachedProjects) {
+            BoggledTerraformingRequirement.RequirementContext instanceCtx = new BoggledTerraformingRequirement.RequirementContext(ctx, project);
+            if (project.getDaysRemaining(instanceCtx) > 0) {
+                progress = Math.max(project.getPercentComplete(instanceCtx) / 100f, progress);
+            }
+        }
+
         return progress;
     }
 
@@ -373,9 +393,19 @@ public class BoggledCommonIndustry {
             daysRemain = (int)(ctx.getSourceIndustry().getBuildTime() - ctx.getSourceIndustry().getBuildProgress());
         } else {
             daysRemain = Integer.MAX_VALUE;
-            for (int i = 0; i < projects.size(); ++i) {
-                if (projects.get(i).getProject().requirementsMet(ctx) && getDaysRemaining(i) > 0) {
-                    daysRemain = Math.min(getDaysRemaining(i), daysRemain);
+            for (BoggledTerraformingProject.ProjectInstance project : projects) {
+                BoggledTerraformingRequirement.RequirementContext instanceCtx = new BoggledTerraformingRequirement.RequirementContext(ctx, project);
+                int daysRemaining = project.getDaysRemaining(instanceCtx);
+                if (project.getProject().requirementsMet(instanceCtx) && daysRemaining > 0) {
+                    daysRemain = Math.min(daysRemaining, daysRemain);
+                }
+            }
+
+            for (BoggledTerraformingProject.ProjectInstance project : attachedProjects) {
+                BoggledTerraformingRequirement.RequirementContext instanceCtx = new BoggledTerraformingRequirement.RequirementContext(ctx, project);
+                int daysRemaining = project.getDaysRemaining(instanceCtx);
+                if (daysRemaining > 0) {
+                    daysRemain = Math.min(daysRemaining, daysRemain);
                 }
             }
         }
@@ -389,6 +419,16 @@ public class BoggledCommonIndustry {
             prefix = "Disrupted";
         } else if (building || !built) {
             prefix = "Building";
+        } else if (!attachedProjects.isEmpty()) {
+            prefix = "Terraforming";
+            for (BoggledTerraformingProject.ProjectInstance project : attachedProjects) {
+                BoggledTerraformingRequirement.RequirementContext instanceCtx = new BoggledTerraformingRequirement.RequirementContext(ctx, project);
+                int daysRemaining = project.getDaysRemaining(instanceCtx);
+                if (daysRemaining > 0) {
+                    prefix = project.getProject().getProjectType();
+                    break;
+                }
+            }
         } else {
             prefix = this.industryTooltip;
         }
@@ -410,7 +450,8 @@ public class BoggledCommonIndustry {
 
             boolean noneMet = true;
             for (BoggledTerraformingProject.ProjectInstance project : projects) {
-                if (project.getProject().requirementsMet(ctx)) {
+                BoggledTerraformingRequirement.RequirementContext instanceCtx = new BoggledTerraformingRequirement.RequirementContext(ctx, project);
+                if (project.getProject().requirementsMet(instanceCtx)) {
                     noneMet = false;
                     break;
                 }
@@ -438,7 +479,8 @@ public class BoggledCommonIndustry {
 
             boolean allHidden = true;
             for (BoggledTerraformingProject.ProjectInstance project : projects) {
-                if (project.getProject().requirementsHiddenMet(ctx)) {
+                BoggledTerraformingRequirement.RequirementContext instanceCtx = new BoggledTerraformingRequirement.RequirementContext(ctx, project);
+                if (project.getProject().requirementsHiddenMet(instanceCtx)) {
                     allHidden = false;
                     break;
                 }
@@ -461,7 +503,8 @@ public class BoggledCommonIndustry {
         }
 
         for (BoggledTerraformingProject.ProjectInstance project : projects) {
-            project.getProject().applyOngoingEffects(ctx, ctx.getSourceIndustry().getNameForModifier());
+            BoggledTerraformingRequirement.RequirementContext instanceCtx = new BoggledTerraformingRequirement.RequirementContext(ctx, project);
+            project.getProject().applyOngoingEffects(instanceCtx, instanceCtx.getSourceIndustry().getNameForModifier());
         }
 
         List<BoggledTerraformingProjectEffect.TerraformingProjectEffect> coreEffects = aiCoreEffects.get(ctx.getSourceIndustry().getAICoreId());
@@ -475,7 +518,8 @@ public class BoggledCommonIndustry {
 
     public void unapply() {
         for (BoggledTerraformingProject.ProjectInstance project : projects) {
-            project.getProject().unapplyOngoingEffects(ctx);
+            BoggledTerraformingRequirement.RequirementContext instanceCtx = new BoggledTerraformingRequirement.RequirementContext(ctx, project);
+            project.getProject().unapplyOngoingEffects(instanceCtx);
         }
 
         for (Map.Entry<String, List<BoggledTerraformingProjectEffect.TerraformingProjectEffect>> coreEffects : aiCoreEffects.entrySet()) {
@@ -485,54 +529,45 @@ public class BoggledCommonIndustry {
         }
     }
 
-    public void addRightAfterDescriptionSection(BaseIndustry industry, TooltipMakerAPI tooltip, Industry.IndustryTooltipMode mode) {
+    public void addRightAfterDescriptionSection(TooltipMakerAPI tooltip, Industry.IndustryTooltipMode mode) {
         float pad = 10.0f;
-        for (int i = 0; i < projects.size(); ++i) {
-            BoggledTerraformingProject project = projects.get(i).getProject();
-            if (!project.requirementsMet(ctx)) {
+        for (BoggledTerraformingProject.ProjectInstance projectInstance : projects) {
+            BoggledTerraformingRequirement.RequirementContext instanceCtx = new BoggledTerraformingRequirement.RequirementContext(ctx, projectInstance);
+            BoggledTerraformingProject project = projectInstance.getProject();
+            if (!project.requirementsMet(instanceCtx)) {
                 continue;
             }
 
-            Map<String, String> tokenReplacements = getTokenReplacements(ctx, i);
+            Map<String, String> tokenReplacements = getTokenReplacements(projectInstance);
 
-            if (getDaysRemaining(i) > 0) {
+            if (projectInstance.getDaysRemaining(instanceCtx) > 0) {
                 String[] highlights = project.getIncompleteMessageHighlights(tokenReplacements);
                 String incompleteMessage = boggledTools.doTokenAndFormatReplacement(project.getIncompleteMessage(), tokenReplacements);
                 tooltipIncomplete(tooltip, mode, incompleteMessage, pad, Misc.getHighlightColor(), highlights);
             }
 
-//            if (industry.isDisrupted()) {
-//                String[] highlights = project.getDisruptedMessageHighlights(tokenReplacements);
-//                addFormatTokenReplacement(tokenReplacements);
-//                String disruptedMessage = boggledTools.doTokenReplacement(project.getDisruptedMessage(), tokenReplacements);
-//
-//            }
+            if (instanceCtx.getSourceIndustry().isDisrupted()) {
+                String[] highlights = project.getDisruptedMessageHighlights(tokenReplacements);
+                String disruptedMessage = boggledTools.doTokenReplacement(project.getDisruptedMessage(), tokenReplacements);
+                tooltipDisrupted(tooltip, mode, disruptedMessage, pad, Misc.getHighlightColor(), highlights);
+            }
         }
 
-//        for (BoggledIndustryEffect.IndustryEffect effect : industryEffects) {
-//            List<TooltipData> desc = effect.addRightAfterDescriptionSection(ctx, mode);
-//            if (desc.isEmpty()) {
-//                continue;
-//            }
-//            tooltip.addSpacer(pad);
-//            for (TooltipData d : desc) {
-//                tooltip.addPara(d.text, 0f, d.highlightColors.toArray(new Color[0]), d.highlights.toArray(new String[0]));
-//            }
-//        }
+        for (BoggledTerraformingProject.ProjectInstance projectInstance : attachedProjects) {
+            BoggledTerraformingRequirement.RequirementContext instanceCtx = new BoggledTerraformingRequirement.RequirementContext(ctx, projectInstance);
+            BoggledTerraformingProject project = projectInstance.getProject();
+            if (!project.requirementsMet(instanceCtx)) {
+                continue;
+            }
 
-//        List<BoggledTerraformingProjectEffect.TerraformingProjectEffect> coreEffects = aiCoreEffects.get(ctx.getSourceIndustry().getAICoreId());
-//        if (coreEffects != null) {
-//            for (BoggledTerraformingProjectEffect.TerraformingProjectEffect effect : coreEffects) {
-//                List<TooltipData> desc = effect.addRightAfterDescriptionSection(ctx, mode);
-//                if (desc.isEmpty()) {
-//                    continue;
-//                }
-//                tooltip.addSpacer(pad);
-//                for (TooltipData d : desc) {
-//                    tooltip.addPara(d.text, pad, d.highlightColors.toArray(new Color[0]), d.highlights.toArray(new String[0]));
-//                }
-//            }
-//        }
+            Map<String, String> tokenReplacements = getTokenReplacements(projectInstance);
+
+            if (projectInstance.getDaysRemaining(instanceCtx) > 0) {
+                String[] highlights = project.getIncompleteMessageHighlights(tokenReplacements);
+                String incompleteMessage = boggledTools.doTokenAndFormatReplacement(project.getIncompleteMessage(), tokenReplacements);
+                tooltipIncomplete(tooltip, mode, incompleteMessage, pad, Misc.getHighlightColor(), highlights);
+            }
+        }
     }
 
     public boolean hasPostDemandSection(boolean hasDemand, Industry.IndustryTooltipMode mode) {
@@ -698,9 +733,10 @@ public class BoggledCommonIndustry {
         incoming.getWeight().applyMods(immigrationBonus);
     }
 
-    private Map<String, String> getTokenReplacements(BoggledTerraformingRequirement.RequirementContext ctx, int projectIndex) {
-        Map<String, String> ret = boggledTools.getTokenReplacements(ctx);
-        ret.put("$percentComplete", Integer.toString(getPercentComplete(projectIndex)));
+    private Map<String, String> getTokenReplacements(BoggledTerraformingProject.ProjectInstance project) {
+        BoggledTerraformingRequirement.RequirementContext instanceCtx = new BoggledTerraformingRequirement.RequirementContext(ctx, project);
+        Map<String, String> ret = boggledTools.getTokenReplacements(instanceCtx);
+        ret.put("$percentComplete", Integer.toString(project.getPercentComplete(instanceCtx)));
         return ret;
     }
 
@@ -865,6 +901,22 @@ public class BoggledCommonIndustry {
             offset += value;
         }
         return null;
+    }
+
+    void attachProject(BoggledTerraformingProject.ProjectInstance projectInstance) {
+        int idx = attachedProjects.indexOf(projectInstance);
+        if (idx != -1) {
+            return;
+        }
+        attachedProjects.add(projectInstance);
+    }
+
+    void detachProject(BoggledTerraformingProject.ProjectInstance projectInstance) {
+        int idx = attachedProjects.indexOf(projectInstance);
+        if (idx == -1) {
+            return;
+        }
+        attachedProjects.remove(idx);
     }
 
     /*

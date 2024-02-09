@@ -686,4 +686,14 @@ public class BoggledTerraformingProjectEffectFactory {
             return new BoggledTerraformingProjectEffect.CommodityDeficitModifierToUpkeep(id, enableSettings, commoditiesDemanded, modifierType, value);
         }
     }
+
+    public static class AttachProjectToIndustry implements TerraformingProjectEffectFactory {
+        @Override
+        public BoggledTerraformingProjectEffect.TerraformingProjectEffect constructFromJSON(String id, String[] enableSettings, String data) throws JSONException {
+            JSONObject jsonData = new JSONObject(data);
+            String industryId = jsonData.getString("industry_id");
+            boggledTools.CheckIndustryExists(id, industryId);
+            return new BoggledTerraformingProjectEffect.AttachProjectToIndustry(id, enableSettings, industryId);
+        }
+    }
 }

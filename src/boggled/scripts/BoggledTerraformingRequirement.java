@@ -33,6 +33,24 @@ public class BoggledTerraformingRequirement {
         private StarSystemAPI starSystem;
         private final CampaignFleetAPI fleet;
         private final BoggledTerraformingProject project;
+        private final BoggledTerraformingProject.ProjectInstance projectInstance;
+
+        public RequirementContext(RequirementContext that, BoggledTerraformingProject.ProjectInstance projectInstance) {
+            this.contextName = that.contextName;
+            this.sourceIndustry = that.sourceIndustry;
+            this.sourceIndustryInterface = that.sourceIndustryInterface;
+            this.targetIndustry = that.targetIndustry;
+            this.targetIndustryInterface = that.targetIndustryInterface;
+            this.closestMarket = that.closestMarket;
+            this.planetMarket = that.planetMarket;
+            this.stationMarket = that.stationMarket;
+            this.planet = that.planet;
+            this.station = that.station;
+            this.starSystem = that.starSystem;
+            this.fleet = that.fleet;
+            this.project = projectInstance.getProject();
+            this.projectInstance = projectInstance;
+        }
 
         public RequirementContext(RequirementContext that, BoggledTerraformingProject project) {
             this.contextName = that.contextName;
@@ -48,6 +66,7 @@ public class BoggledTerraformingRequirement {
             this.starSystem = that.starSystem;
             this.fleet = that.fleet;
             this.project = project;
+            this.projectInstance = that.projectInstance;
         }
 
         public RequirementContext(BaseIndustry sourceIndustry, BoggledTerraformingProject project) {
@@ -72,6 +91,7 @@ public class BoggledTerraformingRequirement {
             this.starSystem = this.closestMarket.getStarSystem();
             this.fleet = Global.getSector().getPlayerFleet();
             this.project = project;
+            this.projectInstance = null;
         }
 
         public RequirementContext(RequirementContext that, BaseIndustry targetIndustry) {
@@ -88,6 +108,7 @@ public class BoggledTerraformingRequirement {
             this.starSystem = that.starSystem;
             this.fleet = that.fleet;
             this.project = that.project;
+            this.projectInstance = that.projectInstance;
         }
 
         public RequirementContext(MarketAPI market, BoggledTerraformingProject project) {
@@ -121,6 +142,7 @@ public class BoggledTerraformingRequirement {
             }
             this.starSystem = this.fleet.getStarSystem();
             this.project = project;
+            this.projectInstance = null;
         }
 
         public RequirementContext(CampaignFleetAPI fleet) {
@@ -147,6 +169,7 @@ public class BoggledTerraformingRequirement {
                 this.station = null;
             }
             this.project = null;
+            this.projectInstance = null;
         }
 
         public RequirementContext getFocusContext() {
@@ -198,6 +221,7 @@ public class BoggledTerraformingRequirement {
         public StarSystemAPI getStarSystem() { return starSystem; }
         public CampaignFleetAPI getFleet() { return fleet; }
         public BoggledTerraformingProject getProject() { return project; }
+        public BoggledTerraformingProject.ProjectInstance getProjectInstance() { return projectInstance; }
     }
 
     public abstract static class TerraformingRequirement {

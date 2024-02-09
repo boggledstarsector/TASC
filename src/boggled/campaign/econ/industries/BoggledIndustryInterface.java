@@ -1,5 +1,6 @@
 package boggled.campaign.econ.industries;
 
+import boggled.scripts.BoggledTerraformingProject;
 import com.fs.starfarer.api.combat.MutableStat;
 import com.fs.starfarer.api.util.Pair;
 
@@ -30,4 +31,7 @@ public interface BoggledIndustryInterface {
     void unmodifyProductionChance(String commodityId, String source);
 
     Pair<Integer, Integer> getProductionChance(String commodityId);
+
+    void attachProject(BoggledTerraformingProject.ProjectInstance projectInstance);
+    void detachProject(BoggledTerraformingProject.ProjectInstance projectInstance);
 }

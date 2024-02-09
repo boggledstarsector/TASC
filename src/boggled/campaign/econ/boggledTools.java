@@ -582,6 +582,8 @@ public class boggledTools {
         addTerraformingProjectEffectFactory("CommodityDeficitToShortage", new BoggledTerraformingProjectEffectFactory.CommodityDeficitToShortage());
         addTerraformingProjectEffectFactory("CommodityDeficitToProduction", new BoggledTerraformingProjectEffectFactory.CommodityDeficitToProduction());
         addTerraformingProjectEffectFactory("CommodityDeficitModifierToUpkeep", new BoggledTerraformingProjectEffectFactory.CommodityDeficitModifierToUpkeep());
+
+        addTerraformingProjectEffectFactory("AttachProjectToIndustry", new BoggledTerraformingProjectEffectFactory.AttachProjectToIndustry());
     }
 
     public static void addTerraformingProjectEffectFactory(String key, BoggledTerraformingProjectEffectFactory.TerraformingProjectEffectFactory value) {
@@ -1091,6 +1093,12 @@ public class boggledTools {
                 stage = "incomplete_message_highlights";
                 List<String> incompleteMessageHighlights = stringListFromJSON(row, "incomplete_message_highlights");
 
+                stage = "disrupted_message";
+                String disruptedMessage = row.getString("disrupted_message");
+
+                stage = "disrupted_message_highlights";
+                List<String> disruptedMessageHighlights = stringListFromJSON(row, "disrupted_message_highlights");
+
                 stage = "requirements";
                 BoggledProjectRequirementsAND requirements = requirementsFromJSONNeverNull(row, "Terraforming Projects", id, "requirements");
 
@@ -1115,7 +1123,7 @@ public class boggledTools {
                 stage = "project_ongoing_effects";
                 List<BoggledTerraformingProjectEffect.TerraformingProjectEffect> projectOngoingEffects = projectEffectsFromJSON(row, "Terraforming Projects", id, "project_ongoing_effects");
 
-                BoggledTerraformingProject terraformingProj = new BoggledTerraformingProject(id, enableSettings, projectType, tooltip, intelCompleteMessage, incompleteMessage, incompleteMessageHighlights, requirements, requirementsHidden, requirementsStall, requirementsReset, baseProjectDuration, terraformingDurationModifiers, projectCompleteEffects, projectOngoingEffects);
+                BoggledTerraformingProject terraformingProj = new BoggledTerraformingProject(id, enableSettings, projectType, tooltip, intelCompleteMessage, incompleteMessage, incompleteMessageHighlights, disruptedMessage, disruptedMessageHighlights, requirements, requirementsHidden, requirementsStall, requirementsReset, baseProjectDuration, terraformingDurationModifiers, projectCompleteEffects, projectOngoingEffects);
                 boggledTools.terraformingProjects.put(id, terraformingProj);
             } catch (JSONException e) {
                 log.error("Error in terraforming projects " + idForErrors + " at stage " + stage + ": " + e);
@@ -1130,12 +1138,11 @@ public class boggledTools {
         List<BoggledTerraformingDurationModifier.TerraformingDurationModifier> ret = new ArrayList<>();
         if (!projectDurationModifiersString.isEmpty()) {
             JSONArray projectDurationModifiersArray = new JSONArray(projectDurationModifiersString);
-            for (int j = 0; j < projectDurationModifiersArray.length(); ++j) {
-                JSONObject projectDurationModifiersObject = projectDurationModifiersArray.getJSONObject(j);
-                String durationModifiersKey = projectDurationModifiersObject.getString("modifier_id");
-                BoggledTerraformingDurationModifier.TerraformingDurationModifier mod = durationModifiers.get(durationModifiersKey);
+            for (int i = 0; i < projectDurationModifiersArray.length(); ++i) {
+                String durationModifiersId = projectDurationModifiersArray.getString(i);
+                BoggledTerraformingDurationModifier.TerraformingDurationModifier mod = durationModifiers.get(durationModifiersId);
                 if (mod == null) {
-                    log.info(sourceInfo + " " + id + " has invalid dynamic project duration modifier " + durationModifiersKey);
+                    log.info(sourceInfo + " " + id + " has invalid dynamic project duration modifier " + durationModifiersId);
                 } else {
                     ret.add(mod);
                 }

@@ -1,5 +1,6 @@
 package boggled.campaign.econ.industries;
 
+import boggled.scripts.BoggledTerraformingProject;
 import com.fs.starfarer.api.campaign.CargoAPI;
 import com.fs.starfarer.api.campaign.econ.Industry;
 import com.fs.starfarer.api.campaign.econ.MarketAPI;
@@ -59,13 +60,13 @@ public class BoggledBaseIndustry extends BaseIndustry implements BoggledIndustry
     }
 
     @Override
-    public final boolean isBuilding() { return thisIndustry.isBuilding(); }
+    public final boolean isBuilding() { return super.isBuilding() || thisIndustry.isBuilding(); }
 
     @Override
     public final boolean isFunctional() { return super.isFunctional() && thisIndustry.isFunctional(); }
 
     @Override
-    public final boolean isUpgrading() { return thisIndustry.isUpgrading(); }
+    public final boolean isUpgrading() { return super.isUpgrading() || thisIndustry.isUpgrading(); }
 
     @Override
     public final void notifyBeingRemoved(MarketAPI.MarketInteractionMode mode, boolean forUpgrade) {
@@ -225,7 +226,7 @@ public class BoggledBaseIndustry extends BaseIndustry implements BoggledIndustry
 
     @Override
     protected final void addRightAfterDescriptionSection(TooltipMakerAPI tooltip, Industry.IndustryTooltipMode mode) {
-        thisIndustry.addRightAfterDescriptionSection(this, tooltip, mode);
+        thisIndustry.addRightAfterDescriptionSection(tooltip, mode);
     }
 
     @Override
@@ -298,5 +299,15 @@ public class BoggledBaseIndustry extends BaseIndustry implements BoggledIndustry
     @Override
     public Pair<Integer, Integer> getProductionChance(String commodityId) {
         return thisIndustry.getProductionChance(commodityId);
+    }
+
+    @Override
+    public void attachProject(BoggledTerraformingProject.ProjectInstance projectInstance) {
+        thisIndustry.attachProject(projectInstance);
+    }
+
+    @Override
+    public void detachProject(BoggledTerraformingProject.ProjectInstance projectInstance) {
+        thisIndustry.detachProject(projectInstance);
     }
 }

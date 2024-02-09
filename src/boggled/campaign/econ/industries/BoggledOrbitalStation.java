@@ -1,5 +1,6 @@
 package boggled.campaign.econ.industries;
 
+import boggled.scripts.BoggledTerraformingProject;
 import com.fs.starfarer.api.campaign.econ.Industry;
 import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.combat.MutableStat;
@@ -9,7 +10,6 @@ import com.fs.starfarer.api.util.Pair;
 import boggled.campaign.econ.boggledTools;
 
 import java.util.List;
-import java.util.Map;
 
 public class BoggledOrbitalStation extends OrbitalStation implements BoggledIndustryInterface {
     private BoggledCommonIndustry thisIndustry;
@@ -56,13 +56,13 @@ public class BoggledOrbitalStation extends OrbitalStation implements BoggledIndu
     }
 
     @Override
-    public boolean isBuilding() { return thisIndustry.isBuilding(); }
+    public boolean isBuilding() { return super.isBuilding() || thisIndustry.isBuilding(); }
 
     @Override
     public boolean isFunctional() { return super.isFunctional() && thisIndustry.isFunctional(); }
 
     @Override
-    public boolean isUpgrading() { return thisIndustry.isUpgrading(); }
+    public boolean isUpgrading() { return super.isUpgrading() || thisIndustry.isUpgrading(); }
 
     @Override
     public float getBuildOrUpgradeProgress() { return thisIndustry.getBuildOrUpgradeProgress(); }
@@ -201,7 +201,7 @@ public class BoggledOrbitalStation extends OrbitalStation implements BoggledIndu
 
     @Override
     protected void addRightAfterDescriptionSection(TooltipMakerAPI tooltip, Industry.IndustryTooltipMode mode) {
-        thisIndustry.addRightAfterDescriptionSection(this, tooltip, mode);
+        thisIndustry.addRightAfterDescriptionSection(tooltip, mode);
     }
 
     @Override
@@ -263,5 +263,15 @@ public class BoggledOrbitalStation extends OrbitalStation implements BoggledIndu
     @Override
     public Pair<Integer, Integer> getProductionChance(String commodityId) {
         return thisIndustry.getProductionChance(commodityId);
+    }
+
+    @Override
+    public void attachProject(BoggledTerraformingProject.ProjectInstance projectInstance) {
+        thisIndustry.attachProject(projectInstance);
+    }
+
+    @Override
+    public void detachProject(BoggledTerraformingProject.ProjectInstance projectInstance) {
+        thisIndustry.detachProject(projectInstance);
     }
 }
