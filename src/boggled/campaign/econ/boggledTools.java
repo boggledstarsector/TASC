@@ -381,6 +381,11 @@ public class boggledTools {
         return true;
     }
 
+    public static String doTokenAndFormatReplacement(String replace, Map<String, String> tokenReplacements) {
+        String ret = doTokenReplacement(replace, tokenReplacements);
+        return ret.replace("%", "%%");
+    }
+
     public static String doTokenReplacement(String replace, Map<String, String> tokenReplacements) {
         for (Map.Entry<String, String> replacement : tokenReplacements.entrySet()) {
             replace = replace.replaceAll("(?!\\b)" + Pattern.quote(replacement.getKey()) + "(?=\\b)", replacement.getValue());
@@ -857,18 +862,22 @@ public class boggledTools {
 
         HashMap<String, BoggledCommonIndustry> industryProjects = new HashMap<>();
         String idForErrors = "";
+        String stage = "";
         for (int i = 0; i < industryOptionsJSON.length(); ++i) {
             try {
                 JSONObject row = industryOptionsJSON.getJSONObject(i);
 
+                stage = "id";
                 String id = row.getString("id");
                 if (id == null || id.isEmpty()) {
                     continue;
                 }
                 idForErrors = id;
 
+                stage = "tooltip";
                 String industry = row.getString("tooltip");
 
+                stage = "projects";
                 String[] projectStrings = row.getString("projects").split(boggledTools.csvOptionSeparator);
 
                 ArrayList<BoggledTerraformingProject> projects = new ArrayList<>();
@@ -879,21 +888,29 @@ public class boggledTools {
                     }
                 }
 
+                stage = "building_finished_effects";
                 List<BoggledTerraformingProjectEffect.TerraformingProjectEffect> buildingFinishedEffects = projectEffectsFromJSON(row, "Industry Options", id, "building_finished_effects");
+
+                stage = "improve_effects";
                 List<BoggledTerraformingProjectEffect.TerraformingProjectEffect> improveEffects = projectEffectsFromJSON(row, "Industry Options", id, "improve_effects");
+
+                stage = "pre_build_effects";
                 List<BoggledTerraformingProjectEffect.TerraformingProjectEffect> preBuildEffects = projectEffectsFromJSON(row, "Industry Options", id, "pre_build_effects");
 
+                stage = "ai_core_effects";
                 Map<String, List<BoggledTerraformingProjectEffect.TerraformingProjectEffect>> aiCoreEffects = aiCoreEffectsFromJSON(row, "AI Core Effects", id, "ai_core_effects");
 
                 List<BoggledProjectRequirementsAND> disruptRequirements = new ArrayList<>();
 
+                stage = "base_pather_interest";
                 float basePatherInterest = (float) row.getDouble("base_pather_interest");
 
+                stage = "image_overrides";
                 List<BoggledCommonIndustry.ImageOverrideWithRequirement> imageOverrides = imageOverridesFromJSON(row, "image_overrides");
 
                 industryProjects.put(id, new BoggledCommonIndustry(id, industry, projects, buildingFinishedEffects, improveEffects, aiCoreEffects, disruptRequirements, basePatherInterest, imageOverrides, preBuildEffects));
             } catch (JSONException e) {
-                log.error("Error in industry options " + idForErrors + ": " + e);
+                log.error("Error in industry options " + idForErrors + " at stage " + stage + ": " + e);
             }
         }
         boggledTools.industryProjects = industryProjects;

@@ -52,7 +52,7 @@ public class BoggledProjectRequirementsOR {
         if (numRequirementsSkipped == terraformingRequirements.size()) {
             return new BoggledCommonIndustry.TooltipData("");
         }
-        String replaced = boggledTools.doTokenReplacement(requirementTooltip.text, tokenReplacements);
+        String replaced = boggledTools.doTokenAndFormatReplacement(requirementTooltip.text, tokenReplacements);
         List<String> highlights = new ArrayList<>(requirementTooltip.highlights.size());
         for (String highlight : requirementTooltip.highlights) {
             highlights.add(boggledTools.doTokenReplacement(highlight, tokenReplacements));

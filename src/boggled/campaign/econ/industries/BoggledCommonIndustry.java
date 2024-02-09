@@ -194,8 +194,7 @@ public class BoggledCommonIndustry {
               && mode != Industry.IndustryTooltipMode.QUEUED)) {
             return;
         }
-        String toPrint = format.replace("%", "%%");
-        tooltip.addPara(toPrint, pad, hl, highlights);
+        tooltip.addPara(format, pad, hl, highlights);
     }
 
     public void tooltipComplete(TooltipMakerAPI tooltip, Industry.IndustryTooltipMode mode, String format, float pad, Color hl, String... highlights) {
@@ -486,18 +485,28 @@ public class BoggledCommonIndustry {
         }
     }
 
-    public void addRightAfterDescriptionSection(TooltipMakerAPI tooltip, Industry.IndustryTooltipMode mode) {
+    public void addRightAfterDescriptionSection(BaseIndustry industry, TooltipMakerAPI tooltip, Industry.IndustryTooltipMode mode) {
         float pad = 10.0f;
         for (int i = 0; i < projects.size(); ++i) {
             BoggledTerraformingProject project = projects.get(i).getProject();
-            if (project.requirementsMet(ctx)) {
-                Map<String, String> tokenReplacements = getTokenReplacements(ctx, i);
-                String[] highlights = project.getIncompleteMessageHighlights(tokenReplacements);
-                addFormatTokenReplacement(tokenReplacements);
-                String incompleteMessage = boggledTools.doTokenReplacement(project.getIncompleteMessage(), tokenReplacements);
-                tooltipIncomplete(tooltip, mode, incompleteMessage, pad, Misc.getHighlightColor(), highlights);
-                tooltipDisrupted(tooltip, mode, "Here's a message", pad, Misc.getNegativeHighlightColor());
+            if (!project.requirementsMet(ctx)) {
+                continue;
             }
+
+            Map<String, String> tokenReplacements = getTokenReplacements(ctx, i);
+
+            if (getDaysRemaining(i) > 0) {
+                String[] highlights = project.getIncompleteMessageHighlights(tokenReplacements);
+                String incompleteMessage = boggledTools.doTokenAndFormatReplacement(project.getIncompleteMessage(), tokenReplacements);
+                tooltipIncomplete(tooltip, mode, incompleteMessage, pad, Misc.getHighlightColor(), highlights);
+            }
+
+//            if (industry.isDisrupted()) {
+//                String[] highlights = project.getDisruptedMessageHighlights(tokenReplacements);
+//                addFormatTokenReplacement(tokenReplacements);
+//                String disruptedMessage = boggledTools.doTokenReplacement(project.getDisruptedMessage(), tokenReplacements);
+//
+//            }
         }
 
 //        for (BoggledIndustryEffect.IndustryEffect effect : industryEffects) {
@@ -693,10 +702,6 @@ public class BoggledCommonIndustry {
         Map<String, String> ret = boggledTools.getTokenReplacements(ctx);
         ret.put("$percentComplete", Integer.toString(getPercentComplete(projectIndex)));
         return ret;
-    }
-
-    private void addFormatTokenReplacement(Map<String, String> tokenReplacements) {
-        tokenReplacements.put("%", "%%");
     }
 
     public static class TooltipData {

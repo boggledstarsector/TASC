@@ -201,7 +201,7 @@ public class BoggledOrbitalStation extends OrbitalStation implements BoggledIndu
 
     @Override
     protected void addRightAfterDescriptionSection(TooltipMakerAPI tooltip, Industry.IndustryTooltipMode mode) {
-        thisIndustry.addRightAfterDescriptionSection(tooltip, mode);
+        thisIndustry.addRightAfterDescriptionSection(this, tooltip, mode);
     }
 
     @Override

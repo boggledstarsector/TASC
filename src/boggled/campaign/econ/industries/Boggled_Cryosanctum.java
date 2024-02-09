@@ -210,7 +210,7 @@ public class Boggled_Cryosanctum extends Cryosanctum implements BoggledIndustryI
 
     @Override
     protected final void addRightAfterDescriptionSection(TooltipMakerAPI tooltip, Industry.IndustryTooltipMode mode) {
-        thisIndustry.addRightAfterDescriptionSection(tooltip, mode);
+        thisIndustry.addRightAfterDescriptionSection(this, tooltip, mode);
     }
 
     @Override

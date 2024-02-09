@@ -1,11 +1,11 @@
-id,tooltip,projects,building_finished_effects,improve_effects,ai_core_effects,can_be_disrupted,base_pather_interest,image_overrides,pre_build_effects,tooltip_incomplete,tooltip_complete,tooltip_disrupted
+id,tooltip,projects,building_finished_effects,improve_effects,ai_core_effects,can_be_disrupted,base_pather_interest,image_overrides,pre_build_effects
 BOGGLED_AI_MINING_DRONES,"AI Mining Drones",industry_ai_mining_drones,,"[
 	'ai_mining_drones_improve_bonus_to_accessibility'
 ]","[
 	{ 'ai_core_id' : 'alpha_core', 'effects' : [ 'ai_mining_drones_alpha_core_effect_to_mining' ] },
 	{ 'ai_core_id' : 'beta_core', 'effects' : [ 'ai_mining_drones_beta_core_effect_to_mining' ] },
 	{ 'ai_core_id' : 'gamma_core', 'effects' : [ 'ai_mining_drones_gamma_core_effect_to_mining' ] }
-]",false,10,,,,,
+]",false,10,,
 BOGGLED_ATMOSPHERE_PROCESSOR,"Atmosphere Processor",industry_atmosphere_processor,,,,,2,,
 BOGGLED_CHAMELEON,"CHAMELEON",industry_chameleon | industry_chameleon_decivilized | industry_chameleon_rogue_ai,,"[
 	'chameleon_improve_bonus_to_stability'
@@ -16,52 +16,52 @@ BOGGLED_CHAMELEON,"CHAMELEON",industry_chameleon | industry_chameleon_decivilize
 		'chameleon_alpha_core_eliminate_pather_interest'
 	] }
 ]",,10,,
-BOGGLED_CLONING,"Cloning",industry_cloning,,,,,10,,,,,
-BOGGLED_CRYOSANCTUM,"Cryosanctum",industry_cryosanctum,,,,,0,,,,,
-BOGGLED_DOMAIN_ARCHAEOLOGY,"Domain Archaeology",industry_domain_archaeology,,,,,0,,,,,
+BOGGLED_CLONING,"Cloning",industry_cloning,,,,,10,,
+BOGGLED_CRYOSANCTUM,"Cryosanctum",industry_cryosanctum,,,,,0,,
+BOGGLED_DOMAIN_ARCHAEOLOGY,"Domain Archaeology",industry_domain_archaeology,,,,,0,,
 BOGGLED_DOMED_CITIES,"Domed Cities",industry_domed_cities,,"[
 	'domed_cities_improve_stability_bonus'
 ]","[
 	{ 'ai_core_id' : 'alpha_core', 'effects' : [ 'domed_cities_alpha_core_stability_bonus' ] },
 	{ 'ai_core_id' : 'beta_core', 'effects' : [ 'domed_cities_beta_core_stability_bonus' ] },
 	{ 'ai_core_id' : 'gamma_core', 'effects' : [ 'domed_cities_gamma_core_stability_bonus' ] }
-]",,2,,,,,
+]",,2,,
 BOGGLED_SEAFLOOR_CITIES,Seafloor Cities,industry_seafloor_cities,,"[
 	'domed_cities_improve_stability_bonus'
-]",,,2,,,,,
+]",,,2,,
 BOGGLED_STATION_EXPANSION,"Expand Station",industry_expand_station,"[
 	'expand_station_increment_tag',
 	'expand_station_remove_on_completion'
 ]",,,,0,,"[
 	'expand_station_build_cost_modifier'
-]",,,
-BOGGLED_GENELAB,"Genelab",industry_genelab | industry_genelab_pollution | industry_genelab_lobster,,,,,10,,,,,
-BOGGLED_GPA,,industry_gpa,,,,,0,,,,,
+]"
+BOGGLED_GENELAB,"Genelab",industry_genelab | industry_genelab_pollution | industry_genelab_lobster,,,,,10,,
+BOGGLED_GPA,,industry_gpa,,,,,0,,
 BOGGLED_HARMONIC_DAMPER,"Harmonic Damper",industry_harmonic_damper,,"[
 	'harmonic_damper_improve_ground_defenses'
 ]","[
 	{ 'ai_core_id' : 'alpha_core', 'effects' : [ 'harmonic_damper_alpha_core_ground_defenses' ] },
 	{ 'ai_core_id' : 'beta_core', 'effects' : [ 'harmonic_damper_beta_core_ground_defenses' ] },
 	{ 'ai_core_id' : 'gamma_core', 'effects' : [ 'harmonic_damper_gamma_core_ground_defenses' ] }
-]",,2,,,,,
-BOGGLED_HYDROPONICS,"Hydroponics",industry_hydroponics,,,,,0,,,,,
-BOGGLED_ISMARA_SLING,"Ismara's Sling",industry_ismara_sling,,,,,10,,,,,
-BOGGLED_ASTEROID_PROCESSING,"Asteroid Processing",industry_asteroid_processing,,,,,10,,,,,
+]",,2,,
+BOGGLED_HYDROPONICS,"Hydroponics",industry_hydroponics,,,,,0,,
+BOGGLED_ISMARA_SLING,"Ismara's Sling",industry_ismara_sling,,,,,10,,
+BOGGLED_ASTEROID_PROCESSING,"Asteroid Processing",industry_asteroid_processing,,,,,10,,
 BOGGLED_KLETKA_SIMULATOR,"Kletka Simulator",industry_kletka_simulator,,"[
 	'kletka_simulator_improve_effect'
 ]","[
 	{ 'ai_core_id' : 'alpha_core', 'effects' : [ 'kletka_simulator_alpha_core_effect' ] },
 	{ 'ai_core_id' : 'beta_core', 'effects' : [ 'kletka_simulator_beta_core_effect' ] },
 	{ 'ai_core_id' : 'gamma_core', 'effects' : [ 'kletka_simulator_gamma_core_effect' ] }
-]",,10,,,,,
+]",,10,,
 BOGGLED_LIMELIGHT_NETWORK,"Limelight Network",industry_limelight_network,,,"[
 	{ 'ai_core_id' : 'alpha_core', 'effects' : [
 		'limelight_network_alpha_core_reduce_upkeep_bonus',
 		'limelight_network_alpha_core_reduce_demand_bonus',
 		'limelight_network_alpha_core_increase_income_bonus'
 	] }
-]",,10,,,,,
-BOGGLED_MAGNETOSHIELD,"Magnetoshield",industry_magnetoshield,,,,,0,,,,,
+]",,10,,
+BOGGLED_MAGNETOSHIELD,"Magnetoshield",industry_magnetoshield,,,,,0,,
 BOGGLED_MESOZOIC_PARK,"Mesozoic Park",industry_mesozoic_park,,"[
 	'mesozoic_park_improve_increase_income_bonus'
 ]","[
@@ -71,35 +71,35 @@ BOGGLED_MESOZOIC_PARK,"Mesozoic Park",industry_mesozoic_park,,"[
 ]",,2,"[
 	{
 		'image_id' : 'mesozoic_park_terran',
-		'requirements : [ { 'requirement_id' : 'industry_option_colony_terran_world' } ],
+		'requirements' : [ { 'requirement_id' : 'industry_option_colony_terran_world' } ],
 		'category' : 'boggled',
 		'id' : 'mesozoic_park_terran'
 	},
 	{
 		'image_id' : 'mesozoic_park_water',
-		'requirements : [ { 'requirement_id' : 'industry_option_colony_water_world' } ],
+		'requirements' : [ { 'requirement_id' : 'industry_option_colony_water_world' } ],
 		'category' : 'boggled',
 		'id' : 'mesozoic_park_water'
 	},
 	{
 		'image_id' : 'mesozoic_park_jungle',
-		'requirements : [ { 'requirement_id' : 'industry_option_colony_jungle_world' } ],
+		'requirements' : [ { 'requirement_id' : 'industry_option_colony_jungle_world' } ],
 		'category' : 'boggled',
 		'id' : 'mesozoic_park_jungle'
 	},
 	{
 		'image_id' : 'mesozoic_park_desert',
-		'requirements : [ { 'requirement_id' : 'industry_option_colony_arid_world' } ],
+		'requirements' : [ { 'requirement_id' : 'industry_option_colony_arid_world' } ],
 		'category' : 'boggled',
 		'id' : 'mesozoic_park_desert'
 	}
-]",,,,
-BOGGLED_OUYANG_OPTIMIZER,"Ouyang Optimizer",industry_ouyang_optimizer,,,,,2,,,,,
-BOGGLED_PERIHELION_PROJECT,"Perihelion Project",industry_perihelion_project,,,,,10,,,,,
-BOGGLED_PLANET_CRACKER,"Planet Cracket",industry_planet_cracker,,,,,2,,,,,
-BOGGLED_PLANETARY_AGRAV_FIELD,"Planetary Agrav Field",industry_planetary_agrav_field,,,,,2,,,,,
-BOGGLED_AI_STATION,"Autonomous AI Battlestation",industry_remnant_station,,,,,10,,,,,
+]",
+BOGGLED_OUYANG_OPTIMIZER,"Ouyang Optimizer",industry_ouyang_optimizer,,,,,2,,
+BOGGLED_PERIHELION_PROJECT,"Perihelion Project",industry_perihelion_project,,,,,10,,
+BOGGLED_PLANET_CRACKER,"Planet Cracket",industry_planet_cracker,,,,,2,,
+BOGGLED_PLANETARY_AGRAV_FIELD,"Planetary Agrav Field",industry_planetary_agrav_field,,,,,2,,
+BOGGLED_AI_STATION,"Autonomous AI Battlestation",industry_remnant_station,,,,,10,,
 BOGGLED_STELLAR_REFLECTOR_ARRAY,"Stellar Reflector Array",industry_stellar_reflector_array,"[
 	'stellar_reflector_add_stellar_reflectors_to_market',
 	'stellar_reflector_array_add_solar_array_condition'
-]",,,,2,,,,,
+]",,,,2,,
