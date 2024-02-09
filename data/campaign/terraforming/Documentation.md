@@ -199,11 +199,63 @@ Requirements are set up in 3 phases. Phase 1 is the individual requirements as d
 
 `MarketRemoveIndustry` removes the specified industry from the target market. `data` is a single string of the industry ID to remove.
 
-`RemoveItemFromSubmarket` removes the specified items from the specified submarket (Storage, etc). `data` is a JSON Object with the following fields, `submarket_id` is the submarket to remove the items from (usually `storage`). `commodity_id` or `special_item_id` is the item to remove, use one or the other. `setting_id` or `quantity` specifies how much of the item are to be removed. If `setting_id` is specified, the quantity will be retrieved from the `LunaLib` setting of the same name.
+`RemoveItemFromSubmarket` removes the specified items from the specified submarket (Storage, etc.). `data` is a JSON Object with the following fields, `submarket_id` is the submarket to remove the items from (usually `storage`). `commodity_id` or `special_item_id` is the item to remove, use one or the other. `setting_id` or `quantity` specifies how much of the item are to be removed. If `setting_id` is specified, the quantity will be retrieved from the `LunaLib` setting of the same name.
 
 `RemoveItemFromFleetStorage` works the same way as `RemoveItemFromSubmarket` but `commodity_id` or `special_item_id` can be omitted to remove credits instead.
 
 `RemoveStoryPointsFromPlayer` removes story points from the player. `data` is a JSON Object with either `setting_id` or `quantity`. If `setting_id` is specified, the quantity will be retrieved from the `LunaLib` setting of the same name.
+
+`AddItemToSubmarket` works the same way as `RemoveItemFromSubmarket`, but adds the item instead of removing it.
+
+`AddStationToOrbit` adds a station to the orbit of the targeted planet. `data` is a JSON Object. `station_type` is the type of station to add from `boggled_astropolis`, `boggled_mining`, `boggled_siphon`, or a mod specific addition. `station_name` is what the station type will be called. `variants` is an optional JSON array of the variants from `custom_entities.json`. `num_stations_per_layer` is the number of stations that will be placed around a planet before they start being placed further out. `orbit_radius` is the distance from the planet that the station will orbit at. `station_construction_data` is a JSON Object of `station_type` specific data. All the base stations have `industries_to_queue` which is a JSON Array of industry IDs to queue for building. `boggled_mining` and `boggled_siphon` also have `resources_to_highlight` which is a JSON Array of resources to highlight in the tooltip.
+
+`AddStationToAsteroids` adds a station to the nearest asteroid belt or asteroid field. It otherwise functions exactly like `AddStationToOrbit`
+
+`ColonizeAbandonedStation` colonizes an abandoned station. If the station is an abandoned custom station, then it will be colonized using the `station_colonization_data` field. Otherwise, it will be colonized according to some hard coded data.
+
+`EffectWithRequirement` combines effects with requirements. If the requirements are not satisfied, the effects will not trigger. `data` is a JSON Object. `requirements` is the same as `Terraforming Projects` `requirements` field. `effects` is a JSON Array of effects to apply if the requirement is satisfied. `display_requirement_tooltip_on_requirement_failure` is a boolean that controls if the requirement tooltip is displayed when the requirement is not satisfied. `display_effect_tooltip_on_requirement_failure` does the same but for the effect tooltip. Both of them are optional and are `false` if omitted.
+
+`AdjustRelationsWith` adjusts relations between one faction, and one or more factions. `data` is a JSON Object. `faction_id_to_adjust_relations_to` is the faction ID of the target faction. `faction_ids_to_adjust_relations` is a JSON Array of factions that the target faction's relations are being adjusted. `new_relation_value` is the new value of the relations.
+
+`AdjustRelationsWillAllExcept` is the same as `AdjustRelationsWith` except `faction_ids_to_not_adjust_relations`, instead of `faction_ids_to_adjust_relations`, is a JSON Array of factions that won't have their relations adjusted.
+
+`TriggerMilitaryResponse` triggers a military response. `data` is a JSON Object. `response_fraction` is the fraction of military fleets assigned to the market that will respond. `response_duration` is the number of days they will spend responding.
+
+`DecivilizeMarket` decivilizes a market as though it's just been saturation bombed. `data` is a JSON Object. `faction_ids_to_not_make_hostile` is a JSON Array of faction IDs that won't become hostile.
+
+All effects that begin with `Modify` have `data` that is a JSON Object. `modifier_type` is a string that specifies how the modifier works, valid values are `market_size`, `flat`, `mult`, or `percent`. When `modifier_type` is `market_size`, `value` is a modifier to the market size. When `modifier_type` is `flat`, `mult`, or `percent`, value is a flat value, a multiplier, or a percentage multiplier applied to the thing being modified.
+
+`ModifyPatherInterest` modifies the industry's pather interest.
+`ModifyColonyGrowthRate` modifies the colony's growth rate.
+`ModifyColonyGroundDefense` modifies the colony's ground defense.
+`ModifyColonyAccessibility` modifies the colony's accessibility.
+`ModifyColonyStability` modifies the colony's stability.
+`ModifyIndustryUpkeep` modifies the target industry's upkeep.
+`ModifyIndustryIncome` modifies the target industry's upkeep.
+`ModifyIndustrySupplyWithDeficit` modifies the target industry's supply, adjusted by the deficit of the source industry's demanded commodities. `data` takes the additional field of `commodities_demanded` which is a JSON Array of commodity IDs to check for deficits.
+`ModifyIndustryDemand` modifies the target industry's commodity demands.
+
+`EffectToIndustry` applies an effect to another industry. The industry that this is applied to becomes the source industry, and the industry ID that the specified effect is applied to becomes the target industry. `data` is a JSON Object. `industry_id` is the industry that will become the target industry. `effect_id` is the effect that will be applied to the target industry.
+
+`SuppressConditions` suppresses conditions. The conditions are still there, but they have no effects. `data` is a JSON Array of condition IDs to suppress.
+
+`IndustryMonthlyItemProduction` allows an industry to produce items each month.
+
+`IndustryMonthlyItemProductionChance` specifies the base chance of an item being produced each month. `data` is a JSON Array of JSON Objects. `commodity_priority` is the priority of checking if an item is produced. Lower priorities are checked first. If multiple items have the same priority, check order is unspecified. `commodity_id` is the commodity to be produced. `chance` is the base chance of the item to be produced, out of 100. `requirements` is the same format as `requirements` from `Terraforming Projects` and is the requirements that must be satisfied for the item to be produced regardless of chance.
+
+`IndustryMonthlyItemProductionChanceModifier` are modifiers to the base production chance. If a commodity specified here has no base production chance, then it will never be produced. `data` is a JSON Array of JSON Objects. `commodity_id` is the commodity ID to modify. `chance_modifier` is the amount to modify the base chance by.
+
+`StepTag` modifies the numeric value at the end of a tag on a market, if the tag doesn't exist, then the first time this effect is applied, the tag is added with the step as its value. `data` is a JSON Object. `tag` is the start of the tag. `step` is how much the value at the end of the tag should be changed.
+
+`IndustryRemove` removes the specified industry from the market. Special items and AI cores will be moved to storage. `data` is a JSON Object. `industry_id` is the industry ID to remove.
+
+`TagSubstringPowerModifyBuildCost` modifies the build cost of the source industry according to the integer at the end of the tag substring, or the default if the tag doesn't exist on the market. The modified build cost is `2 ** value * buildCost`. data` is a JSON Object. `tag` is the tag to check and extract the value from. `default` is the value to use if the tag doesn't exist.
+
+`EliminatePatherInterest` makes this market not generate any pather interest.
+
+`AddStellarReflectorsToOrbit` adds 3 stellar mirrors or stellar shades to orbit depending on market conditions.
+
+
 
 # Adding New Types
 Create a new class that extends `BoggledTerraformingRequirement.TerraformingRequirement`, implement all required functions. Create a new class that implements `BoggledTerraformingRequirementFactory.TerraformingRequirementFactory` and implement `constructFromJSON`. Call `boggledTools.addTerraformingRequirementFactory` with what you want the requirement type to be called, and an instance of the new requirement factory.

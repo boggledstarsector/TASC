@@ -573,7 +573,7 @@ public class BoggledTerraformingProjectEffect {
 
         @Override
         protected void applyProjectEffectImpl(BoggledTerraformingRequirement.RequirementContext ctx, String effectSource) {
-            MarketAPI market = ctx.getPlanetMarket();
+            MarketAPI market = ctx.getClosestMarket();
             if (market == null) {
                 return;
             }
@@ -611,8 +611,8 @@ public class BoggledTerraformingProjectEffect {
     }
 
     public static class RemoveItemFromFleetStorage extends RemoveItemFromCargo {
-        public RemoveItemFromFleetStorage(String id, String[] enableSettings, BoggledTerraformingRequirement.ItemRequirement.ItemType itemType, String commodityId, String settingId, int quantity) {
-            super(id, enableSettings, itemType, commodityId, settingId, quantity);
+        public RemoveItemFromFleetStorage(String id, String[] enableSettings, BoggledTerraformingRequirement.ItemRequirement.ItemType itemType, String itemId, String settingId, int quantity) {
+            super(id, enableSettings, itemType, itemId, settingId, quantity);
         }
 
         @Override
@@ -632,31 +632,76 @@ public class BoggledTerraformingProjectEffect {
     }
 
     public static class AddItemToSubmarket extends TerraformingProjectEffect {
+        BoggledTerraformingRequirement.ItemRequirement.ItemType itemType;
         String submarketId;
         String itemId;
+        String settingId;
         int quantity;
-        public AddItemToSubmarket(String id, String[] enableSettings, String submarketId, String itemId, int quantity) {
+        public AddItemToSubmarket(String id, String[] enableSettings, BoggledTerraformingRequirement.ItemRequirement.ItemType itemType, String submarketId, String itemId, String settingId, int quantity) {
             super(id, enableSettings);
+            this.itemType = itemType;
             this.submarketId = submarketId;
             this.itemId = itemId;
+            this.settingId = settingId;
             this.quantity = quantity;
         }
 
         @Override
         public void addTokenReplacements(Map<String, String> tokenReplacements) {
-            super.addTokenReplacements(tokenReplacements);
+            switch (itemType) {
+                case CREDITS:
+                    tokenReplacements.put("$itemName", "credits");
+                    tokenReplacements.put("$ItemName", "Credits");
+                    break;
+                case RESOURCES:
+                    tokenReplacements.put("$itemName", Global.getSettings().getCommoditySpec(itemId).getLowerCaseName());
+                    tokenReplacements.put("$ItemName", Global.getSettings().getCommoditySpec(itemId).getName());
+                    break;
+                case SPECIAL:
+                    tokenReplacements.put("$itemName", Global.getSettings().getSpecialItemSpec(itemId).getName().toLowerCase());
+                    tokenReplacements.put("$ItemName", Global.getSettings().getSpecialItemSpec(itemId).getName());
+                    break;
+            }
+
+
             for (SubmarketSpecAPI submarketSpec : Global.getSettings().getAllSubmarketSpecs()) {
                 if (submarketSpec.getId().equals(submarketId)) {
                     tokenReplacements.put("$submarket", Misc.lcFirst(submarketSpec.getName()));
                 }
             }
-            tokenReplacements.put("$craftedItem", Global.getSettings().getSpecialItemSpec(itemId).getName());
-            tokenReplacements.put("$craftedItemQuantity", Integer.toString(quantity));
+
+            int quantityToCheck = quantity;
+            if (!settingId.isEmpty()) {
+                quantityToCheck = boggledTools.getIntSetting(settingId);
+            }
+            tokenReplacements.put("$itemQuantity", String.format("%,d", quantityToCheck));
+        }
+
+        protected void addItemToCargo(CargoAPI cargo) {
+            int quantityToAdd = quantity;
+            if (!settingId.isEmpty()) {
+                quantityToAdd = boggledTools.getIntSetting(settingId);
+            }
+            switch (itemType) {
+                case CREDITS:
+                    cargo.getCredits().add(quantityToAdd);
+                    break;
+                case RESOURCES:
+                    cargo.addItems(CargoAPI.CargoItemType.RESOURCES, itemId, quantityToAdd);
+                    break;
+                case SPECIAL:
+                    cargo.addItems(CargoAPI.CargoItemType.SPECIAL, new SpecialItemData(itemId, null), quantityToAdd);
+                    break;
+            }
         }
 
         @Override
         protected void applyProjectEffectImpl(BoggledTerraformingRequirement.RequirementContext ctx, String effectSource) {
-            ctx.getPlanetMarket().getSubmarket(submarketId).getCargo().addSpecial(new SpecialItemData(itemId, null), quantity);
+            MarketAPI market = ctx.getClosestMarket();
+            if (market == null) {
+                return;
+            }
+            addItemToCargo(market.getSubmarket(submarketId).getCargo());
         }
 
         @Override
@@ -1180,7 +1225,7 @@ public class BoggledTerraformingProjectEffect {
 
         @Override
         protected void applyProjectEffectImpl(BoggledTerraformingRequirement.RequirementContext ctx, String effectSource) {
-            MarketAPI market = ctx.getPlanetMarket();
+            MarketAPI market = ctx.getClosestMarket();
             if (market == null) {
                 return;
             }
@@ -2046,7 +2091,7 @@ public class BoggledTerraformingProjectEffect {
                 return;
             }
             for (String tag : market.getTags()) {
-                if (tag.contains(this.tag)) {
+                if (tag.startsWith(this.tag)) {
                     int tagValueOld = Integer.parseInt(tag.substring(this.tag.length()));
                     market.removeTag(tag);
                     market.addTag(this.tag + (tagValueOld + step));
@@ -2123,7 +2168,7 @@ public class BoggledTerraformingProjectEffect {
 
             int tagCount = tagDefault;
             for (String tag : market.getTags()) {
-                if (tag.contains(tagSubstring)) {
+                if (tag.startsWith(tagSubstring)) {
                     tagCount = Integer.parseInt(tag.substring(tagSubstring.length()));
                     break;
                 }
