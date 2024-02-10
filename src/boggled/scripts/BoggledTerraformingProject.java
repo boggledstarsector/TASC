@@ -355,6 +355,22 @@ public class BoggledTerraformingProject {
         }
     }
 
+    private void removeProjectEffects(List<BoggledTerraformingProjectEffect.TerraformingProjectEffect> projectEffects, List<String> effectsToRemove) {
+        for (String effectToRemove : effectsToRemove) {
+            int idx;
+            for (idx = 0; idx < projectEffects.size(); ++idx) {
+                BoggledTerraformingProjectEffect.TerraformingProjectEffect projectEffect = projectEffects.get(idx);
+                if (projectEffect.id.equals(effectToRemove)) {
+                    break;
+                }
+            }
+            if (idx == projectEffects.size()) {
+                continue;
+            }
+            projectEffects.remove(idx);
+        }
+    }
+
     /*
     From here on are mod helper functions
      */
@@ -393,20 +409,11 @@ public class BoggledTerraformingProject {
         }
     }
 
-    public void addRemoveProjectEffects(List<BoggledTerraformingProjectEffect.TerraformingProjectEffect> projectEffectsAdded, List<String> projectEffectsRemoved) {
-        projectCompleteEffects.addAll(projectEffectsAdded);
-        for (String projectEffectRemoved : projectEffectsRemoved) {
-            int idx;
-            for (idx = 0; idx < projectCompleteEffects.size(); ++idx) {
-                BoggledTerraformingProjectEffect.TerraformingProjectEffect projectEffect = projectCompleteEffects.get(idx);
-                if (projectEffect.id.equals(projectEffectRemoved)) {
-                    break;
-                }
-            }
-            if (idx == projectCompleteEffects.size()) {
-                continue;
-            }
-            projectCompleteEffects.remove(idx);
-        }
+    public void addRemoveProjectEffects(List<BoggledTerraformingProjectEffect.TerraformingProjectEffect> projectCompleteEffectsAdded, List<String> projectCompleteEffectsRemoved, List<BoggledTerraformingProjectEffect.TerraformingProjectEffect> projectOngoingEffectsAdded, List<String> projectOngoingEffectsRemoved) {
+        projectCompleteEffects.addAll(projectCompleteEffectsAdded);
+        removeProjectEffects(projectCompleteEffects, projectCompleteEffectsRemoved);
+
+        projectOngoingEffects.addAll(projectOngoingEffectsAdded);
+        removeProjectEffects(projectOngoingEffects, projectOngoingEffectsRemoved);
     }
 }

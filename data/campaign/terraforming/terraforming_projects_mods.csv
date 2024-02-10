@@ -1,4 +1,4 @@
-id,project_id,requirements_added,requirements_removed,requirements_hidden_added,requirements_hidden_removed,base_project_duration_override,dynamic_project_duration_modifiers_added,dynamic_project_duration_modifiers_removed,requirements_stall_removed,requirements_stall_added,requirements_reset_added,requirements_reset_removed,project_complete_effects_added,project_complete_effects_removed
+id,project_id,requirements_added,requirements_removed,requirements_hidden_added,requirements_hidden_removed,base_project_duration_override,dynamic_project_duration_modifiers_added,dynamic_project_duration_modifiers_removed,requirements_stall_removed,requirements_stall_added,requirements_reset_added,requirements_reset_removed,project_complete_effects_added,project_complete_effects_removed,project_ongoing_effects_added,project_ongoing_effects_removed
 # This file is just here to provide structure, it should be empty in the Terraforming & Station Construction mod
 # Other mods add their stuff here
 replacement_id,project_to_be_replaced,"[
@@ -15,4 +15,4 @@ replacement_id,project_to_be_replaced,"[
 			]
 		}
 	]
-]"
+]",,,,,

@@ -50,6 +50,23 @@ The `id` field is a file unique identifier. Other mods can override an industry 
 
 `pre_build_effects` is the same format as `building_finished_effects`. The effect is applied before the building is constructed.
 
+## Industry option mods and terraforming project mods
+`id` is a file unique identifier for this modifier.
+
+`industry_id` and `project_id` are the `id` fields from `industry_options.csv` and `terraforming_projects.csv` that this modification will be applied to.
+
+The rest of the fields are additions and removals from the corresponding field without `_added` and `_removed` from `industry_options.csv` and `terraforming_projects.csv`. Entries are added before being removed.
+
+`requirements_added` is the same format as `requirements` in `terraforming_projects.csv` with an additional optional `parent_id` field in each entry. If `parent_id` is specified, the requirements will be added to the `and_then` collection of the specified ID.
+
+`requirements_removed` is a JSON Array of requirement IDs to remove.
+
+`requirements_stall_added` is a JSON Array of JSON Objects. `containing_id` is the `requirements_id` field of the requirement you want to add these requirements to. `requirements_added` is the same format as `requirements_added` above.
+
+`requirements_stall_removed` is a JSON Array of JSON Objects. `containing_id` has the same meaning as with `requirements_stall_added` above. `requirements_removed` is the same format as `requirements_removed` above.
+
+`requirements_reset_added` and `requirements_reset_removed` are the same formats as `requirements_stall_added` and `reuqirements_stall_removed`.
+
 ## Individual requirements
 All requirements in `terraforming_requirement.csv` have 4 required fields. The `id` field is what is used to uniquely identify this requirement. Mods can overwrite a requirement by providing their own `terraforming_requirement.csv` file with an entry with the same `id` field.
 
@@ -255,7 +272,23 @@ All effects that begin with `Modify` have `data` that is a JSON Object. `modifie
 
 `AddStellarReflectorsToOrbit` adds 3 stellar mirrors or stellar shades to orbit depending on market conditions.
 
+All effects that begin with `CommodityDeficit` accept a JSON Object with a `commodities_demanded` field that is a JSON Array of commodity IDs. They check the collection of specified commodities then do type specific effects. They may have other fields in the JSON Object.
 
+`CommodityDeficitToProduction` applies the deficit in the demanded commodities to the specified commodities. `commodities_deficited` is a JSON Array of commodity IDs that will be affected by the shortage in demanded commodities.
+
+`CommodityDeficitModifierToUpkeep` is a combination of `CommodityDeficit` and `ModifyIndustryUpkeep`. It requires `commodities_demanded`, `modifier_type`, and `value`.
+
+All effects that begin with `CommodityDemand` or `CommoditySupply` accept a JSON Object with a `commodity_id` field, which is a string of the commodity to supply or demand, and a `quantity`, which is an integer which determines how the commodity is supplied or demanded.
+
+`CommodityDemandFlat` demands the same amount of commodity regardless of any other condition.
+
+`CommodityDemandMarketSize` demands a variable amount of commodity depending on the market size. `quantity` is a modifier to the market size, e.g. a `quantity` of 1 means the demand will be market size + 1.
+
+`CommodityDemandPlayerMarketSizeElseFlat` is `CommodityDemandMarketSize` if the market is player owned, otherwise it's `CommodityDemandFlat`. If the market is player owned, then `quantity` is treated as 0.
+
+`CommoditySupplyFlat` and `CommoditySupplyMarketSize` are the same as `CommodityDemandFlat` and `CommodityDemandMarketSize` but supply the commodity instead of demanding it.
+
+`AttachProjectToIndustry` attaches a terraforming project to an industry. This is so the industry can show the project progress, incomplete message, etc. from the colony management screen. `data` is a JSON Object. `industry_id` is the industry ID it should be attached to. The industry must implement the `BoggledIndustryInterface`. If the industry plugin is specified as `boggled.campaign.econ.industries.BoggledBaseIndustry`, `boggled.campaign.econ.industries.Boggled_Remnant_Station`, or `boggled.campaign.econ.industries.Boggled_Cryosanctum` then it does. Other mod specified industry plugins may work.
 
 # Adding New Types
 Create a new class that extends `BoggledTerraformingRequirement.TerraformingRequirement`, implement all required functions. Create a new class that implements `BoggledTerraformingRequirementFactory.TerraformingRequirementFactory` and implement `constructFromJSON`. Call `boggledTools.addTerraformingRequirementFactory` with what you want the requirement type to be called, and an instance of the new requirement factory.

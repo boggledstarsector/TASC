@@ -9,10 +9,6 @@ import java.util.List;
 public interface BoggledIndustryInterface {
     void applyDeficitToProduction(String modId, Pair<String, Integer> deficit, String... commodities);
 
-    void setShortages(List<Pair<String, Integer>> shortages);
-    List<Pair<String, Integer>> getShortages();
-    boolean hasShortage();
-
     float getBasePatherInterest();
     void modifyPatherInterest(MutableStat modifier);
     void unmodifyPatherInterest(String source);

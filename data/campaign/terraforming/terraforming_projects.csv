@@ -325,12 +325,10 @@ industry_hydroponics,boggledHydroponicsEnabled,industry,,,,,,,,,,,"[
 	'ongoing_heavy_machinery_deficit_to_food'
 ]",,,,
 industry_ismara_sling,boggledTerraformingContentEnabled,industry,,,,"[ { 'requirement_id' : 'industry_ismaras_sling_colony_water_or_frozen' } ]","[ { 'requirement_id' : 'industry_colony_is_not_station' } ]",,,,,,"[
-	'ongoing_flat_demand_6_heavy_machinery',
-	'ongoing_heavy_machinery_deficit_to_shortage'
+	'ongoing_flat_demand_6_heavy_machinery'
 ]",,,,
 industry_asteroid_processing,boggledTerraformingContentEnabled,industry,,,,,"[ { 'requirement_id' : 'industry_colony_is_station' } ]",,,,,,"[
-	'ongoing_flat_demand_6_heavy_machinery',
-	'ongoing_heavy_machinery_deficit_to_shortage'
+	'ongoing_flat_demand_6_heavy_machinery'
 ]",,,,
 industry_kletka_simulator,boggledDomainTechContentEnabled | boggledKletkaSimulatorEnabled,industry,,,,,,,,,,,"[
  	'ongoing_flat_demand_4_domain_artifacts',

@@ -86,6 +86,7 @@ public class BoggledTerraformingProjectEffect {
 
         public final void applyProjectEffect(BoggledTerraformingRequirement.RequirementContext ctx, String effectSource) {
             if (!isEnabled()) {
+                unapplyProjectEffect(ctx);
                 return;
             }
             applyProjectEffectImpl(ctx, effectSource);
@@ -2333,29 +2334,6 @@ public class BoggledTerraformingProjectEffect {
         }
     }
 
-    public static class CommodityDeficitToShortage extends CommodityDeficit {
-        public CommodityDeficitToShortage(String id, String[] enableSettings, List<String> commodityIds) {
-            super(id, enableSettings, commodityIds);
-        }
-
-        @Override
-        protected void applyProjectEffectImpl(BoggledTerraformingRequirement.RequirementContext ctx, String effectSource) {
-            BaseIndustry sourceIndustry = ctx.getSourceIndustry();
-            BaseIndustry targetIndustry = ctx.getTargetIndustry();
-            BoggledIndustryInterface targetIndustryInterface = ctx.getTargetIndustryInterface();
-            if (sourceIndustry == null || targetIndustry == null || targetIndustryInterface == null) {
-                return;
-            }
-            List<Pair<String, Integer>> deficits = sourceIndustry.getAllDeficit(commodityIds.toArray(new String[0]));
-            targetIndustryInterface.setShortages(deficits);
-        }
-
-        @Override
-        protected void unapplyProjectEffectImpl(BoggledTerraformingRequirement.RequirementContext ctx) {
-
-        }
-    }
-
     public static class CommodityDeficitToProduction extends CommodityDeficit {
         List<String> commoditiesDeficited;
         public CommodityDeficitToProduction(String id, String[] enableSettings, List<String> commodityIds, List<String> commoditiesDeficited) {
@@ -2377,7 +2355,6 @@ public class BoggledTerraformingProjectEffect {
 
         @Override
         protected void unapplyProjectEffectImpl(BoggledTerraformingRequirement.RequirementContext ctx) {
-
         }
     }
 

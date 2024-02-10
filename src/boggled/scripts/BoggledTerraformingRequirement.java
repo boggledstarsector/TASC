@@ -549,8 +549,7 @@ public class BoggledTerraformingRequirement {
 
                 for (String waterIndustryId : waterIndustryIds) {
                     Industry industry = systemMarket.getIndustry(waterIndustryId);
-                    BoggledIndustryInterface industryInterface = (BoggledIndustryInterface) industry;
-                    if (industry != null && industry.isFunctional() && !industryInterface.hasShortage()) {
+                    if (industry != null && industry.isFunctional() && industry.getAllDeficit().isEmpty()) {
                         return true;
                     }
                 }

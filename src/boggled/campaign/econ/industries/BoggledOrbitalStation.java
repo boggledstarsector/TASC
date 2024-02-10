@@ -120,21 +120,6 @@ public class BoggledOrbitalStation extends OrbitalStation implements BoggledIndu
     }
 
     @Override
-    public void setShortages(List<Pair<String, Integer>> shortages) {
-        thisIndustry.setShortages(shortages);
-    }
-
-    @Override
-    public List<Pair<String, Integer>> getShortages() {
-        return thisIndustry.getShortages();
-    }
-
-    @Override
-    public boolean hasShortage() {
-        return thisIndustry.hasShortage();
-    }
-
-    @Override
     public float getBasePatherInterest() {
         return super.getPatherInterest() + thisIndustry.getBasePatherInterest();
     }

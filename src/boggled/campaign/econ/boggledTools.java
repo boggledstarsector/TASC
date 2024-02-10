@@ -579,7 +579,6 @@ public class boggledTools {
         addTerraformingProjectEffectFactory("CommoditySupplyFlat", new BoggledTerraformingProjectEffectFactory.CommoditySupplyFlat());
         addTerraformingProjectEffectFactory("CommoditySupplyMarketSize", new BoggledTerraformingProjectEffectFactory.CommoditySupplyMarketSize());
 
-        addTerraformingProjectEffectFactory("CommodityDeficitToShortage", new BoggledTerraformingProjectEffectFactory.CommodityDeficitToShortage());
         addTerraformingProjectEffectFactory("CommodityDeficitToProduction", new BoggledTerraformingProjectEffectFactory.CommodityDeficitToProduction());
         addTerraformingProjectEffectFactory("CommodityDeficitModifierToUpkeep", new BoggledTerraformingProjectEffectFactory.CommodityDeficitModifierToUpkeep());
 
@@ -649,7 +648,7 @@ public class boggledTools {
     }
 
     public static BoggledProjectRequirementsAND requirementsFromJSON(JSONObject object, String sourceInfo, String id, String key) throws JSONException {
-        String requirementsArrayString = object.getString(key);
+        String requirementsArrayString = object.optString(key);
         if (!requirementsArrayString.isEmpty()) {
             JSONArray reqsArray = new JSONArray(requirementsArrayString);
             return requirementsFromRequirementsArray(reqsArray, sourceInfo, id, key);
@@ -1283,12 +1282,15 @@ public class boggledTools {
                 List<BoggledTerraformingDurationModifier.TerraformingDurationModifier> durationModifiersAdded = durationModifiersFromJSON(row, "Terraforming Project Mods", id, "dynamic_project_duration_modifiers_added");
                 List<String> durationModifiersRemoved = stringListFromJSON(row, "dynamic_project_duration_modifiers_removed");
 
-                List<BoggledTerraformingProjectEffect.TerraformingProjectEffect> projectEffectsAdded = projectEffectsFromJSON(row, "Terraforming Project Mods", id, "project_complete_effects_added");
-                List<String> projectEffectsRemoved = stringListFromJSON(row, "project_complete_effects_removed");
+                List<BoggledTerraformingProjectEffect.TerraformingProjectEffect> projectCompleteEffectsAdded = projectEffectsFromJSON(row, "Terraforming Project Mods", id, "project_complete_effects_added");
+                List<String> projectCompleteEffectsRemoved = stringListFromJSON(row, "project_complete_effects_removed");
+
+                List<BoggledTerraformingProjectEffect.TerraformingProjectEffect> projectOngoingEffectsAdded = projectEffectsFromJSON(row, "Terraforming Project Mods", id, "project_ongoing_effects_added");
+                List<String> projectOngoingEffectsRemoved = stringListFromJSON(row, "project_ongoing_effects_removed");
 
                 proj.addRemoveProjectRequirements(reqsAdded, reqsRemoved, reqsHiddenAdded, reqsHiddenRemoved, reqsStallAdded, reqsStallRemoved, reqsResetAdded, reqsResetRemoved);
                 proj.addRemoveDurationModifiersAndDuration(baseProjectDurationOverride, durationModifiersAdded, durationModifiersRemoved);
-                proj.addRemoveProjectEffects(projectEffectsAdded, projectEffectsRemoved);
+                proj.addRemoveProjectEffects(projectCompleteEffectsAdded, projectCompleteEffectsRemoved, projectOngoingEffectsAdded, projectOngoingEffectsRemoved);
             }
         } catch (JSONException e) {
             log.error("Error in terraforming projects overrides: " + e);
