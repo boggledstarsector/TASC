@@ -313,6 +313,9 @@ public class BoggledTerraformingProject {
         }
     }
 
+    /*
+    From here on are mod helper functions
+    */
     private void addProjectRequirements(BoggledProjectRequirementsAND reqToModify, List<BoggledProjectRequirementsAND.RequirementAdd> reqsToAdd) {
         for (BoggledProjectRequirementsAND.RequirementAdd reqToAdd : reqsToAdd) {
             reqToModify.addRequirement(reqToAdd);
@@ -371,9 +374,6 @@ public class BoggledTerraformingProject {
         }
     }
 
-    /*
-    From here on are mod helper functions
-     */
     public void addRemoveProjectRequirements(List<BoggledProjectRequirementsAND.RequirementAdd> reqsAdded, List<String> reqsRemove, List<BoggledProjectRequirementsAND.RequirementAdd> reqsHiddenAdded, List<String> reqsHiddenRemove, List<RequirementAddInfo> reqsStallAdded, List<RequirementRemoveInfo> reqsStallRemove, List<RequirementAddInfo> reqsResetAdded, List<RequirementRemoveInfo> reqsResetRemove) {
         addProjectRequirements(requirements, reqsAdded);
         removeProjectRequirements(requirements, reqsRemove);

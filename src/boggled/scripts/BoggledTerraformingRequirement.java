@@ -9,7 +9,6 @@ import com.fs.starfarer.api.impl.campaign.econ.impl.BaseIndustry;
 import com.fs.starfarer.api.impl.campaign.ids.Conditions;
 import com.fs.starfarer.api.impl.campaign.ids.Tags;
 import com.fs.starfarer.api.util.Misc;
-import com.fs.starfarer.api.util.Pair;
 import boggled.campaign.econ.boggledTools;
 import boggled.campaign.econ.industries.BoggledCommonIndustry;
 import boggled.campaign.econ.industries.BoggledIndustryInterface;
@@ -745,9 +744,7 @@ public class BoggledTerraformingRequirement {
                 return false;
             }
 
-            Pair<String, String> key = new Pair<>(boggledTools.getPlanetType(planet).getPlanetId(), resourceId);
-            String maxResource = boggledTools.getResourceLimits().get(key);
-
+            String maxResource = boggledTools.getResourceLimit(planet, resourceId);
             if (maxResource == null || maxResource.isEmpty()) {
                 return false;
             }

@@ -736,7 +736,7 @@ public class boggledTools {
 
         HashMap<String, PlanetType> planetTypesMap = new HashMap<>();
 
-        planetTypesMap.put(unknownPlanetId, new PlanetType(unknownPlanetId, "unknown", false, 0, new ArrayList<Pair<BoggledProjectRequirementsOR, Integer>>()));
+        planetTypesMap.put(unknownPlanetId, new PlanetType(unknownPlanetId, "unknown", false, 0, new ArrayList<Pair<BoggledProjectRequirementsAND, Integer>>()));
 
         for (int i = 0; i < planetTypesJSON.length(); ++i) {
             try {
@@ -754,19 +754,16 @@ public class boggledTools {
 
                 int baseWaterLevel = row.getInt("base_water_level");
 
-                List<Pair<BoggledProjectRequirementsOR, Integer>> conditionalWaterRequirements = new ArrayList<>();
+                List<Pair<BoggledProjectRequirementsAND, Integer>> conditionalWaterRequirements = new ArrayList<>();
                 String conditionalWaterLevelsString = row.getString("conditional_water_requirements");
                 if (!conditionalWaterLevelsString.isEmpty()) {
                     JSONArray conditionalWaterLevels = new JSONArray(conditionalWaterLevelsString);
                     for (int j = 0; j < conditionalWaterLevels.length(); ++j) {
                         JSONObject conditionalWaterLevel = conditionalWaterLevels.getJSONObject(j);
-                        String requirement = conditionalWaterLevel.getString("requirement_id");
+                        BoggledProjectRequirementsAND waterRequirement = requirementsFromJSONNeverNull(conditionalWaterLevel, "Conditional Water Level", id, "requirements");
                         int waterLevel = conditionalWaterLevel.getInt("water_level");
 
-                        BoggledProjectRequirementsOR waterRequirement = terraformingRequirements.get(requirement);
-                        if (waterRequirement != null) {
-                            conditionalWaterRequirements.add(new Pair<>(waterRequirement, waterLevel));
-                        }
+                        conditionalWaterRequirements.add(new Pair<>(waterRequirement, waterLevel));
                     }
                 }
 
@@ -792,7 +789,7 @@ public class boggledTools {
                 JSONObject row = resourceProgressionsJSON.getJSONObject(i);
 
                 String id = row.getString("id");
-                if (id.isEmpty()) {
+                if (id == null || id.isEmpty()) {
                     continue;
                 }
 
@@ -810,23 +807,37 @@ public class boggledTools {
     public static void initialiseResourceLimitsFromJSON(@NotNull JSONArray resourceLimitsJSON) {
         Logger log = Global.getLogger(boggledTools.class);
 
-        HashMap<Pair<String, String>, String> resourceLimits = new HashMap<>();
+        Map<String, Map<String, String>> resourceLimits = new HashMap<>();
 
         for (int i = 0; i < resourceLimitsJSON.length(); ++i) {
             try {
                 JSONObject row = resourceLimitsJSON.getJSONObject(i);
 
-                String[] id = row.getString("id").split(boggledTools.csvOptionSeparator);
-                if (id[0].isEmpty()) {
+                String id = row.getString("id");
+                if (id == null || id.isEmpty()) {
                     continue;
                 }
 
-                String resourceMax = row.getString("resource_max");
+                Map<String, String> planetResourceLimits = resourceLimits.get(id);
+                if (planetResourceLimits == null) {
+                    planetResourceLimits = new HashMap<>();
+                    resourceLimits.put(id, planetResourceLimits);
+                }
 
-                assert(id.length == 2);
-                Pair<String, String> key = new Pair<>(id[0], id[1]);
+                String resourcesMaxString = row.getString("resources_max");
+                if (!resourcesMaxString.isEmpty()) {
+                    JSONArray resourcesMax = new JSONArray(resourcesMaxString);
+                    for (int j = 0; j < resourcesMax.length(); ++j) {
+                        JSONObject resource = resourcesMax.getJSONObject(j);
 
-                resourceLimits.put(key, resourceMax);
+                        String resourceId = resource.getString("resource_id");
+                        String resourceMax = resource.getString("resource_max");
+
+                        CheckResourceExists("Planet Max Resource " + id, resourceId);
+
+                        planetResourceLimits.put(resourceId, resourceMax);
+                    }
+                }
             } catch (JSONException e) {
                 log.error("Error in resource limits: " + e);
             }
@@ -1397,7 +1408,14 @@ public class boggledTools {
         return new BoggledBaseAbility(project.getId(), project.getEnableSettings(), project);
     }
 
-    public static Map<Pair<String, String>, String> getResourceLimits() { return resourceLimits; }
+    public static String getResourceLimit(PlanetAPI planet, String resourceId) {
+        String planetTypeId = getPlanetType(planet).getPlanetId();
+        Map<String, String> planetResourceLimits = resourceLimits.get(planetTypeId);
+        if (planetResourceLimits == null) {
+            return null;
+        }
+        return planetResourceLimits.get(resourceId);
+    }
     public static Map<String, List<String>> getResourceProgressions() { return resourceProgressions; }
     public static Map<String, BoggledTerraformingRequirement.TerraformingRequirement> getTerraformingRequirements() { return terraformingRequirement; }
 
@@ -1410,7 +1428,7 @@ public class boggledTools {
     private static Map<String, BoggledTerraformingProject> terraformingProjects;
 
     private static Map<String, List<String>> resourceProgressions;
-    private static Map<Pair<String, String>, String> resourceLimits;
+    private static Map<String, Map<String, String>> resourceLimits;
 
     private static Map<String, PlanetType> planetTypesMap;
 
@@ -2498,7 +2516,7 @@ public class boggledTools {
         private final String planetTypeName;
         private final boolean terraformingPossible;
         private final int baseWaterLevel;
-        private final List<Pair<BoggledProjectRequirementsOR, Integer>> conditionalWaterRequirements;
+        private final List<Pair<BoggledProjectRequirementsAND, Integer>> conditionalWaterRequirements;
 
         public String getPlanetId() { return planetId; }
         public String getPlanetTypeName() { return planetTypeName; }
@@ -2508,23 +2526,23 @@ public class boggledTools {
                 return baseWaterLevel;
             }
 
-            for (Pair<BoggledProjectRequirementsOR, Integer> conditionalWaterRequirement : conditionalWaterRequirements) {
-                if (conditionalWaterRequirement.one.checkRequirement(ctx)) {
+            for (Pair<BoggledProjectRequirementsAND, Integer> conditionalWaterRequirement : conditionalWaterRequirements) {
+                if (conditionalWaterRequirement.one.requirementsMet(ctx)) {
                     return conditionalWaterRequirement.two;
                 }
             }
             return baseWaterLevel;
         }
 
-        public PlanetType(String planetId, String planetTypeName, boolean terraformingPossible, int baseWaterLevel, List<Pair<BoggledProjectRequirementsOR, Integer>> conditionalWaterRequirements) {
+        public PlanetType(String planetId, String planetTypeName, boolean terraformingPossible, int baseWaterLevel, List<Pair<BoggledProjectRequirementsAND, Integer>> conditionalWaterRequirements) {
             this.planetId = planetId;
             this.planetTypeName = planetTypeName;
             this.terraformingPossible = terraformingPossible;
             this.baseWaterLevel = baseWaterLevel;
             this.conditionalWaterRequirements = conditionalWaterRequirements;
-            Collections.sort(this.conditionalWaterRequirements, new Comparator<Pair<BoggledProjectRequirementsOR, Integer>>() {
+            Collections.sort(this.conditionalWaterRequirements, new Comparator<Pair<BoggledProjectRequirementsAND, Integer>>() {
                 @Override
-                public int compare(Pair<BoggledProjectRequirementsOR, Integer> p1, Pair<BoggledProjectRequirementsOR, Integer> p2) {
+                public int compare(Pair<BoggledProjectRequirementsAND, Integer> p1, Pair<BoggledProjectRequirementsAND, Integer> p2) {
                     return p1.two.compareTo(p2.two);
                 }
             });

@@ -35,10 +35,10 @@ vayra_star_yellow_white,,yellow-white star,star,false,0,
 gas_giant,,gas giant,gas_giant,false,0,
 ice_giant,,ice giant,gas_giant,false,0,
 US_gas_giant,,gas giant,gas_giant,false,0,"[
-	{ 'requirement_id' : 'planet_types_colony_habitable_with_atmosphere', 'water_level' : 1 }
+	{ 'requirements' : [ { 'requirement_id' : 'planet_types_colony_habitable_with_atmosphere' } ], 'water_level' : 1 }
 ]"
 US_gas_giantB,,gas giant,gas_giant,false,0,"[
-	{ 'requirement_id' : 'planet_types_colony_habitable_with_atmosphere', 'water_level' : 1 }
+	{ 'requirements' : [ { 'requirement_id' : 'planet_types_colony_habitable_with_atmosphere' } ], 'water_level' : 1 }
 ]"
 fds_gas_giant,,gas giant,gas_giant,false,0,
 SCY_tartarus,,tartarus world,gas_giant,false,0,
@@ -55,40 +55,40 @@ rocky_ice,,barren world,barren,true,0,
 irradiated,,barren world,barren,true,0,
 barren-bombarded,,barren world,barren,true,0,
 US_acid,,barren world,barren,true,0,"[
-	{ 'requirement_id' : 'planet_types_colony_habitable_with_atmosphere', 'water_level' : 1 }
+	{ 'requirements' : [ { 'requirement_id' : 'planet_types_colony_habitable_with_atmosphere' } ], 'water_level' : 1 }
 ]"
 US_acidRain,,barren world,barren,true,0,"[
-	{ 'requirement_id' : 'planet_types_colony_habitable_with_atmosphere', 'water_level' : 1 }
+	{ 'requirements' : [ { 'requirement_id' : 'planet_types_colony_habitable_with_atmosphere' } ], 'water_level' : 1 }
 ]"
 US_acidWind,,barren world,barren,true,0,"[
-	{ 'requirement_id' : 'planet_types_colony_habitable_with_atmosphere', 'water_level' : 1 }
+	{ 'requirements' : [ { 'requirement_id' : 'planet_types_colony_habitable_with_atmosphere' } ], 'water_level' : 1 }
 ]"
 US_barrenA,,barren world,barren,true,0,"[
-	{ 'requirement_id' : 'planet_types_colony_habitable_with_atmosphere', 'water_level' : 1 }
+	{ 'requirements' : [ { 'requirement_id' : 'planet_types_colony_habitable_with_atmosphere' } ], 'water_level' : 1 }
 ]"
 US_barrenB,,barren world,barren,true,0,"[
-	{ 'requirement_id' : 'planet_types_colony_habitable_with_atmosphere', 'water_level' : 1 }
+	{ 'requirements' : [ { 'requirement_id' : 'planet_types_colony_habitable_with_atmosphere' } ], 'water_level' : 1 }
 ]"
 US_barrenC,,barren world,barren,true,0,"[
-	{ 'requirement_id' : 'planet_types_colony_habitable_with_atmosphere', 'water_level' : 1 }
+	{ 'requirements' : [ { 'requirement_id' : 'planet_types_colony_habitable_with_atmosphere' } ], 'water_level' : 1 }
 ]"
 US_barrenD,,barren world,barren,true,0,"[
-	{ 'requirement_id' : 'planet_types_colony_habitable_with_atmosphere', 'water_level' : 1 }
+	{ 'requirements' : [ { 'requirement_id' : 'planet_types_colony_habitable_with_atmosphere' } ], 'water_level' : 1 }
 ]"
 US_barrenE,,barren world,barren,true,0,"[
-	{ 'requirement_id' : 'planet_types_colony_habitable_with_atmosphere', 'water_level' : 1 }
+	{ 'requirements' : [ { 'requirement_id' : 'planet_types_colony_habitable_with_atmosphere' } ], 'water_level' : 1 }
 ]"
 US_barrenF,,barren world,barren,true,0,"[
-	{ 'requirement_id' : 'planet_types_colony_habitable_with_atmosphere', 'water_level' : 1 }
+	{ 'requirements' : [ { 'requirement_id' : 'planet_types_colony_habitable_with_atmosphere' } ], 'water_level' : 1 }
 ]"
 US_azure,,barren world,barren,true,0,"[
-	{ 'requirement_id' : 'planet_types_colony_habitable_with_atmosphere', 'water_level' : 1 }
+	{ 'requirements' : [ { 'requirement_id' : 'planet_types_colony_habitable_with_atmosphere' } ], 'water_level' : 1 }
 ]"
 US_burnt,,barren world,barren,true,0,"[
-	{ 'requirement_id' : 'planet_types_colony_habitable_with_atmosphere', 'water_level' : 1 }
+	{ 'requirements' : [ { 'requirement_id' : 'planet_types_colony_habitable_with_atmosphere' } ], 'water_level' : 1 }
 ]"
 US_artificial,,barren world,barren,true,0,"[
-	{ 'requirement_id' : 'planet_types_colony_habitable_with_atmosphere', 'water_level' : 1 }
+	{ 'requirements' : [ { 'requirement_id' : 'planet_types_colony_habitable_with_atmosphere' } ], 'water_level' : 1 }
 ]"
 haunted,,barren world,barren,true,0,
 hmi_crystalline,,barren world,barren,true,0,
@@ -103,7 +103,7 @@ nskr_ice_desert,,barren world,barren,true,0,
 toxic,,toxic world,toxic,true,0,
 toxic_cold,,toxic world,toxic,true,0,
 US_green,,toxic world,toxic,true,0,"[
-	{ 'requirement_id' : 'planet_types_colony_habitable_with_atmosphere', 'water_level' : 1 }
+	{ 'requirements' : [ { 'requirement_id' : 'planet_types_colony_habitable_with_atmosphere' } ], 'water_level' : 1 }
 ]"
 SCY_acid,,toxic world,toxic,true,0,
 ,,,,

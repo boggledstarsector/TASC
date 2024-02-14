@@ -109,6 +109,19 @@ Requirements are set up in 3 phases. Phase 1 is the individual requirements as d
 
 `requirements` is a `|` separated list of requirement IDs from `terraforming_requirement.csv`. If any of the requirements returns true, then this requirement is satisfied.
 
+## Planet types
+Planet types are specified in `planet_types.csv`. The `id` field is the planet type as used by Starsector.
+
+`name` is a display name of the planet type.
+
+`terraforming_type_id` is the type that is checked in requirements.
+
+`terraforming_possible` is a boolean whether this planet type can be terraformed further.
+
+`base_water_level` is an integer of the water level, should be `0`, `1`, or `2`.
+
+`conditional_water_requirements` is a JSON Array of JSON Objects with 2 fields. `requirements` a JSON Object is the same format as `requirements` from `Terraforming Projects`. `water_level` is the water level of the planet if the condition is satisfied. 
+
 ## Base Requirement Types
 `AlwaysTrue` always returns true for its requirement check. To get an `AlwaysFalse` type effect, put `true` in the `invert` field.
 
