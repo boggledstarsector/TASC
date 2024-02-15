@@ -185,6 +185,7 @@ public class BoggledTerraformingRequirementFactory {
 
             String settingId = jsonData.optString("setting_id");
 
+
             int quantity = jsonData.getInt("quantity");
 
             boggledTools.CheckSubmarketExists(id, submarketId);
@@ -221,6 +222,7 @@ public class BoggledTerraformingRequirementFactory {
 
             String settingId = jsonData.optString("setting_id");
 
+
             int quantity = jsonData.getInt("quantity");
 
             return new BoggledTerraformingRequirement.FleetStorageContainsAtLeast(id, enableSettings, invert, itemType, itemId, settingId, quantity);
@@ -256,7 +258,9 @@ public class BoggledTerraformingRequirementFactory {
         public BoggledTerraformingRequirement.TerraformingRequirement constructFromJSON(String id, String[] enableSettings, boolean invert, String data) throws JSONException {
             JSONObject jsonData = new JSONObject(data);
 
-            String settingId = jsonData.getString("setting_id");
+            String settingId = jsonData.optString("setting_id");
+
+
             String tagSubstring = jsonData.getString("tag_substring");
             int maxValue = jsonData.getInt("max_value");
 
@@ -267,7 +271,7 @@ public class BoggledTerraformingRequirementFactory {
     public static class PlayerHasSkill implements TerraformingRequirementFactory {
         @Override
         public BoggledTerraformingRequirement.TerraformingRequirement constructFromJSON(String id, String[] enableSettings, boolean invert, String data) {
-            boggledTools.CheckSkillExists(data);
+            boggledTools.CheckSkillExists(id, data);
             return new BoggledTerraformingRequirement.PlayerHasSkill(id, enableSettings, invert, data);
         }
     }
@@ -415,6 +419,7 @@ public class BoggledTerraformingRequirementFactory {
             JSONArray stationTagsArray = jsonData.getJSONArray("station_tags");
             List<String> stationTags = boggledTools.stringListFromJSON(stationTagsArray);
             String settingId = jsonData.optString("setting_id");
+
             int maxNum = jsonData.getInt("max_num");
 
             return new BoggledTerraformingRequirement.TargetPlanetStationCountLessThan(id, enableSettings, invert, stationTags, settingId, maxNum);
@@ -466,6 +471,8 @@ public class BoggledTerraformingRequirementFactory {
         public BoggledTerraformingRequirement.TerraformingRequirement constructFromJSON(String id, String[] enableSettings, boolean invert, String data) throws JSONException {
             JSONObject jsonData = new JSONObject(data);
             String settingId = jsonData.getString("setting_id");
+
+
             boolean invertSetting = jsonData.optBoolean("invert_setting", false);
             String requirementId = jsonData.getString("requirement_id");
             BoggledTerraformingRequirement.TerraformingRequirement req = boggledTools.getTerraformingRequirements().get(requirementId);

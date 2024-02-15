@@ -102,9 +102,9 @@ add_dealmaker_holosuite_to_storage,,AddItemToSubmarket,"{ 'submarket_id' : 'stor
 ,,
 remove_2_story_points_from_player,,RemoveStoryPointsFromPlayer,"{ 'setting_id' : 'boggledDomainTechCraftingStoryPointCost', 'quantity' : 2 }"
 ,,
-remove_domain_artifacts_easy_from_storage,,RemoveItemFromSubmarket,"{ 'submarket_id' : 'storage', 'commodity_id' : 'domain_artifacts', 'setting_id' : 'domainTechCraftingArtifactCostEasy', 'quantity' : 1000 }"
-remove_domain_artifacts_medium_from_storage,,RemoveItemFromSubmarket,"{ 'submarket_id' : 'storage', 'commodity_id' : 'domain_artifacts', 'setting_id' : 'domainTechCraftingArtifactCostMedium', 'quantity' : 2000 }"
-remove_domain_artifacts_hard_from_storage,,RemoveItemFromSubmarket,"{ 'submarket_id' : 'storage', 'commodity_id' : 'domain_artifacts', 'setting_id' : 'domainTechCraftingArtifactCostHard', 'quantity' : 4000 }"
+remove_domain_artifacts_easy_from_storage,,RemoveItemFromSubmarket,"{ 'submarket_id' : 'storage', 'commodity_id' : 'domain_artifacts', 'setting_id' : 'boggledDomainTechCraftingArtifactCostEasy', 'quantity' : 1000 }"
+remove_domain_artifacts_medium_from_storage,,RemoveItemFromSubmarket,"{ 'submarket_id' : 'storage', 'commodity_id' : 'domain_artifacts', 'setting_id' : 'boggledDomainTechCraftingArtifactCostMedium', 'quantity' : 2000 }"
+remove_domain_artifacts_hard_from_storage,,RemoveItemFromSubmarket,"{ 'submarket_id' : 'storage', 'commodity_id' : 'domain_artifacts', 'setting_id' : 'boggledDomainTechCraftingArtifactCostHard', 'quantity' : 4000 }"
 ,,
 ability_astropolis_station_remove_crew_from_fleet,,RemoveItemFromFleetStorage,"{
 	'commodity_id' : 'crew',

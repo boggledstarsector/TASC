@@ -182,6 +182,7 @@ public class BoggledTerraformingProjectEffectFactory {
             JSONObject jsonData = new JSONObject(data);
             int quantity = jsonData.getInt("quantity");
             String settingId = jsonData.optString("setting_id");
+
             return new BoggledTerraformingProjectEffect.RemoveStoryPointsFromPlayer(id, enableSettings, quantity, settingId);
         }
     }

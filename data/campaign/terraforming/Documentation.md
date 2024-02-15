@@ -122,6 +122,13 @@ Planet types are specified in `planet_types.csv`. The `id` field is the planet t
 
 `conditional_water_requirements` is a JSON Array of JSON Objects with 2 fields. `requirements` a JSON Object is the same format as `requirements` from `Terraforming Projects`. `water_level` is the water level of the planet if the condition is satisfied. 
 
+## Planet resources
+Resource progressions are in `resource_progression.csv`. `id` is the file unique ID for this resource. `resource_progression` is a JSON Array of the conditions that provide this resource. It should be sorted from the lowest quality to the highest quality.
+
+Planet max resources are in `planet_max_resource.csv`. `id` is the `terraforming_type_id` from `planet_types.csv` that this info applies to.
+
+`resources_max` is a JSON Array of JSON Objects. `resource_id` is the ID from `resource_progression.csv` that this resource is from. `resource_max` is an entry from the corresponding resource that this resource can't be higher than.
+
 ## Base Requirement Types
 `AlwaysTrue` always returns true for its requirement check. To get an `AlwaysFalse` type effect, put `true` in the `invert` field.
 

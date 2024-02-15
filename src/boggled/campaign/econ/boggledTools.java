@@ -131,13 +131,13 @@ public class boggledTools {
         throw new IllegalArgumentException(source + ": Item ID '" + itemId + "' doesn't exist");
     }
 
-    public static void CheckSkillExists(String skillId) {
+    public static void CheckSkillExists(String source, String skillId) {
         for (String skillSpecId : Global.getSettings().getSkillIds()) {
             if (skillSpecId.equals(skillId)) {
                 return;
             }
         }
-        throw new IllegalArgumentException("Skill ID '" + skillId + "' doesn't exist");
+        throw new IllegalArgumentException(source + ": Skill ID '" + skillId + "' doesn't exist");
     }
 
     public static class BoggledMods {
@@ -793,9 +793,9 @@ public class boggledTools {
                     continue;
                 }
 
-                List<String> resource_progression = arrayListFromJSON(row, "resource_progression", boggledTools.csvOptionSeparator);
+                List<String> resourceProgression = stringListFromJSON(row, "resource_progression");
 
-                resourceProgressions.put(id, resource_progression);
+                resourceProgressions.put(id, resourceProgression);
             } catch (JSONException e) {
                 log.error("Error in resource progressions: " + e);
             }
@@ -2706,7 +2706,7 @@ public class boggledTools {
     }
 
     public static int getIntSetting(String key) {
-        if(Global.getSettings().getModManager().isModEnabled(BoggledMods.lunalibModId)) {
+        if (Global.getSettings().getModManager().isModEnabled(BoggledMods.lunalibModId)) {
             Integer val = LunaSettings.getInt(BoggledMods.tascModId, key);
             if (val != null) {
                 return val;
@@ -2718,7 +2718,7 @@ public class boggledTools {
     }
 
     public static boolean getBooleanSetting(String key) {
-        if(Global.getSettings().getModManager().isModEnabled(BoggledMods.lunalibModId)) {
+        if (Global.getSettings().getModManager().isModEnabled(BoggledMods.lunalibModId)) {
             Boolean val = LunaSettings.getBoolean(BoggledMods.tascModId, key);
             if (val != null) {
                 return val;
