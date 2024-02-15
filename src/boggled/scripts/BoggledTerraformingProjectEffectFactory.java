@@ -172,7 +172,9 @@ public class BoggledTerraformingProjectEffectFactory {
 
             boggledTools.CheckSubmarketExists(id, submarketId);
 
-            return new BoggledTerraformingProjectEffect.RemoveItemFromSubmarket(id, enableSettings, submarketId, itemType, itemId, settingId, quantity);
+            String jobId = jsonData.optString("job_id");
+
+            return new BoggledTerraformingProjectEffect.RemoveItemFromSubmarket(id, enableSettings, submarketId, itemType, itemId, settingId, quantity, jobId);
         }
     }
 
@@ -217,7 +219,9 @@ public class BoggledTerraformingProjectEffectFactory {
 
             int quantity = jsonData.getInt("quantity");
 
-            return new BoggledTerraformingProjectEffect.RemoveItemFromFleetStorage(id, enableSettings, itemType, itemId, settingId, quantity);
+            String jobId = jsonData.optString("job_id");
+
+            return new BoggledTerraformingProjectEffect.RemoveItemFromFleetStorage(id, enableSettings, itemType, itemId, settingId, quantity, jobId);
         }
     }
 

@@ -2,6 +2,7 @@ package boggled.scripts;
 
 import boggled.campaign.econ.industries.BoggledCommonIndustry;
 import boggled.campaign.econ.industries.BoggledIndustryInterface;
+import boggled.scripts.PlayerCargoCalculations.bogglesDefaultCargo;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.*;
 import com.fs.starfarer.api.campaign.ai.CampaignFleetAIAPI;
@@ -486,12 +487,14 @@ public class BoggledTerraformingProjectEffect {
         String itemId;
         String settingId;
         int quantity;
-        public RemoveItemFromCargo(String id, String[] enableSettings, BoggledTerraformingRequirement.ItemRequirement.ItemType itemType, String itemId, String settingId, int quantity) {
+        String jobId;
+        public RemoveItemFromCargo(String id, String[] enableSettings, BoggledTerraformingRequirement.ItemRequirement.ItemType itemType, String itemId, String settingId, int quantity, String jobId) {
             super(id, enableSettings);
             this.itemType = itemType;
             this.itemId = itemId;
             this.settingId = settingId;
             this.quantity = quantity;
+            this.jobId = jobId;
         }
 
         protected void removeItemFromCargo(CargoAPI cargo) {
@@ -504,7 +507,11 @@ public class BoggledTerraformingProjectEffect {
                     cargo.getCredits().subtract(quantityToRemove);
                     break;
                 case RESOURCES:
-                    cargo.removeItems(CargoAPI.CargoItemType.RESOURCES, itemId, quantityToRemove);
+                    if (!jobId.isEmpty()) {
+                        bogglesDefaultCargo.active.removeCommodity(cargo, jobId, itemId, quantityToRemove);
+                    } else {
+                        cargo.removeItems(CargoAPI.CargoItemType.RESOURCES, itemId, quantityToRemove);
+                    }
                     break;
                 case SPECIAL:
                     cargo.removeItems(CargoAPI.CargoItemType.SPECIAL, new SpecialItemData(itemId, null), quantityToRemove);
@@ -567,8 +574,8 @@ public class BoggledTerraformingProjectEffect {
 
     public static class RemoveItemFromSubmarket extends RemoveItemFromCargo {
         String submarketId;
-        public RemoveItemFromSubmarket(String id, String[] enableSettings, String submarketId, BoggledTerraformingRequirement.ItemRequirement.ItemType itemType, String itemId, String settingId, int quantity) {
-            super(id, enableSettings, itemType, itemId, settingId, quantity);
+        public RemoveItemFromSubmarket(String id, String[] enableSettings, String submarketId, BoggledTerraformingRequirement.ItemRequirement.ItemType itemType, String itemId, String settingId, int quantity, String jobId) {
+            super(id, enableSettings, itemType, itemId, settingId, quantity, jobId);
             this.submarketId = submarketId;
         }
 
@@ -612,8 +619,8 @@ public class BoggledTerraformingProjectEffect {
     }
 
     public static class RemoveItemFromFleetStorage extends RemoveItemFromCargo {
-        public RemoveItemFromFleetStorage(String id, String[] enableSettings, BoggledTerraformingRequirement.ItemRequirement.ItemType itemType, String itemId, String settingId, int quantity) {
-            super(id, enableSettings, itemType, itemId, settingId, quantity);
+        public RemoveItemFromFleetStorage(String id, String[] enableSettings, BoggledTerraformingRequirement.ItemRequirement.ItemType itemType, String itemId, String settingId, int quantity, String jobId) {
+            super(id, enableSettings, itemType, itemId, settingId, quantity, jobId);
         }
 
         @Override

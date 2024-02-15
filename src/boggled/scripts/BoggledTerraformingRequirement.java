@@ -1,5 +1,6 @@
 package boggled.scripts;
 
+import boggled.scripts.PlayerCargoCalculations.bogglesDefaultCargo;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.*;
 import com.fs.starfarer.api.campaign.econ.Industry;
@@ -265,12 +266,15 @@ public class BoggledTerraformingRequirement {
         String settingId;
         int quantity;
 
-        protected ItemRequirement(String id, String[] enableSettings, boolean invert, ItemType itemType, String itemId, String settingId, int quantity) {
+        String jobId;
+
+        protected ItemRequirement(String id, String[] enableSettings, boolean invert, ItemType itemType, String itemId, String settingId, int quantity, String jobId) {
             super(id, enableSettings, invert);
             this.itemType = itemType;
             this.itemId = itemId;
             this.settingId = settingId;
             this.quantity = quantity;
+            this.jobId = jobId;
         }
 
         protected final boolean checkCargoHasItem(CargoAPI cargo) {
@@ -280,7 +284,12 @@ public class BoggledTerraformingRequirement {
             }
             switch (itemType) {
                 case CREDITS: return cargo.getCredits().get() >= quantityToCheck;
-                case RESOURCES: return cargo.getQuantity(CargoAPI.CargoItemType.RESOURCES, itemId) >= quantityToCheck;
+                case RESOURCES: {
+                    if (!jobId.isEmpty()) {
+                        return bogglesDefaultCargo.active.getCommodityAmount(cargo, jobId, itemId) >= quantityToCheck;
+                    }
+                    return cargo.getQuantity(CargoAPI.CargoItemType.RESOURCES, itemId) >= quantityToCheck;
+                }
                 case SPECIAL: return cargo.getQuantity(CargoAPI.CargoItemType.SPECIAL, new SpecialItemData(itemId, null)) >= quantityToCheck;
             }
             return false;
@@ -629,8 +638,8 @@ public class BoggledTerraformingRequirement {
 
     public static class MarketStorageContainsAtLeast extends ItemRequirement {
         String submarketId;
-        public MarketStorageContainsAtLeast(String id, String[] enableSettings, boolean invert, String submarketId, ItemType itemType, String itemId, String settingId, int quantity) {
-            super(id, enableSettings, invert, itemType, itemId, settingId, quantity);
+        public MarketStorageContainsAtLeast(String id, String[] enableSettings, boolean invert, String submarketId, ItemType itemType, String itemId, String settingId, int quantity, String jobId) {
+            super(id, enableSettings, invert, itemType, itemId, settingId, quantity, jobId);
             this.submarketId = submarketId;
         }
 
@@ -661,8 +670,8 @@ public class BoggledTerraformingRequirement {
     }
 
     public static class FleetStorageContainsAtLeast extends ItemRequirement {
-        protected FleetStorageContainsAtLeast(String id, String[] enableSettings, boolean invert, ItemType itemType, String itemId, String settingId, int quantity) {
-            super(id, enableSettings, invert, itemType, itemId, settingId, quantity);
+        protected FleetStorageContainsAtLeast(String id, String[] enableSettings, boolean invert, ItemType itemType, String itemId, String settingId, int quantity, String jobId) {
+            super(id, enableSettings, invert, itemType, itemId, settingId, quantity, jobId);
         }
 
         @Override
@@ -680,7 +689,7 @@ public class BoggledTerraformingRequirement {
             if (playerFleet == null) {
                 return false;
             }
-            return super.checkCargoHasItem(playerFleet.getCargo());
+            return checkCargoHasItem(playerFleet.getCargo());
         }
     }
 

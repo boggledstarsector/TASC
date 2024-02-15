@@ -190,7 +190,9 @@ public class BoggledTerraformingRequirementFactory {
 
             boggledTools.CheckSubmarketExists(id, submarketId);
 
-            return new BoggledTerraformingRequirement.MarketStorageContainsAtLeast(id, enableSettings, invert, submarketId, itemType, itemId, settingId, quantity);
+            String jobId = jsonData.optString("job_id");
+
+            return new BoggledTerraformingRequirement.MarketStorageContainsAtLeast(id, enableSettings, invert, submarketId, itemType, itemId, settingId, quantity, jobId);
         }
     }
 
@@ -222,10 +224,11 @@ public class BoggledTerraformingRequirementFactory {
 
             String settingId = jsonData.optString("setting_id");
 
-
             int quantity = jsonData.getInt("quantity");
 
-            return new BoggledTerraformingRequirement.FleetStorageContainsAtLeast(id, enableSettings, invert, itemType, itemId, settingId, quantity);
+            String jobId = jsonData.optString("job_id");
+
+            return new BoggledTerraformingRequirement.FleetStorageContainsAtLeast(id, enableSettings, invert, itemType, itemId, settingId, quantity, jobId);
         }
     }
 

@@ -1,6 +1,7 @@
 package boggled.scripts.PlayerCargoCalculations;
 
 import com.fs.starfarer.api.Global;
+import com.fs.starfarer.api.campaign.CargoAPI;
 
 public class bogglesDefaultCargo {
     public static bogglesDefaultCargo active;
@@ -8,10 +9,10 @@ public class bogglesDefaultCargo {
     public static final String Astropolis_Station = "As_S";
     public static final String Mining_Station = "Mi_S";
     public static final String Siphon_Station = "Si_S";
-    public float getCommodityAmount(String stationType, String commodity){
+    public float getCommodityAmount(CargoAPI cargo, String stationType, String commodity){
         return Global.getSector().getPlayerFleet().getCargo().getCommodityQuantity(commodity);
     }
-    public void removeCommodity(String stationType, String commodity, float amount){
+    public void removeCommodity(CargoAPI cargo, String stationType, String commodity, float amount){
         Global.getSector().getPlayerFleet().getCargo().removeCommodity(commodity,amount);
     }
 }
