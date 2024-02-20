@@ -255,7 +255,7 @@ public class BoggledTerraformingRequirement {
         }
     }
 
-    public static abstract class ItemRequirement extends TerraformingRequirement {
+    public static abstract class StorageContainsAtLeast extends TerraformingRequirement {
         public enum ItemType {
             CREDITS,
             RESOURCES,
@@ -268,7 +268,7 @@ public class BoggledTerraformingRequirement {
 
         String jobId;
 
-        protected ItemRequirement(String id, String[] enableSettings, boolean invert, ItemType itemType, String itemId, String settingId, int quantity, String jobId) {
+        protected StorageContainsAtLeast(String id, String[] enableSettings, boolean invert, ItemType itemType, String itemId, String settingId, int quantity, String jobId) {
             super(id, enableSettings, invert);
             this.itemType = itemType;
             this.itemId = itemId;
@@ -636,7 +636,7 @@ public class BoggledTerraformingRequirement {
         }
     }
 
-    public static class MarketStorageContainsAtLeast extends ItemRequirement {
+    public static class MarketStorageContainsAtLeast extends StorageContainsAtLeast {
         String submarketId;
         public MarketStorageContainsAtLeast(String id, String[] enableSettings, boolean invert, String submarketId, ItemType itemType, String itemId, String settingId, int quantity, String jobId) {
             super(id, enableSettings, invert, itemType, itemId, settingId, quantity, jobId);
@@ -669,7 +669,7 @@ public class BoggledTerraformingRequirement {
         }
     }
 
-    public static class FleetStorageContainsAtLeast extends ItemRequirement {
+    public static class FleetStorageContainsAtLeast extends StorageContainsAtLeast {
         protected FleetStorageContainsAtLeast(String id, String[] enableSettings, boolean invert, ItemType itemType, String itemId, String settingId, int quantity, String jobId) {
             super(id, enableSettings, invert, itemType, itemId, settingId, quantity, jobId);
         }

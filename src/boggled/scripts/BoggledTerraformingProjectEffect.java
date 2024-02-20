@@ -32,7 +32,7 @@ public class BoggledTerraformingProjectEffect {
     public static class EffectTooltipPara {
         public String prefix;
         public String suffix;
-        public Set<String> infix = new LinkedHashSet<>();
+        public List<String> infix = new ArrayList<>();
         public List<String> highlights = new ArrayList<>();
         public List<Color> highlightColors = new ArrayList<>();
 
@@ -483,12 +483,12 @@ public class BoggledTerraformingProjectEffect {
     }
 
     public static abstract class RemoveItemFromCargo extends TerraformingProjectEffect {
-        BoggledTerraformingRequirement.ItemRequirement.ItemType itemType;
+        BoggledTerraformingRequirement.StorageContainsAtLeast.ItemType itemType;
         String itemId;
         String settingId;
         int quantity;
         String jobId;
-        public RemoveItemFromCargo(String id, String[] enableSettings, BoggledTerraformingRequirement.ItemRequirement.ItemType itemType, String itemId, String settingId, int quantity, String jobId) {
+        public RemoveItemFromCargo(String id, String[] enableSettings, BoggledTerraformingRequirement.StorageContainsAtLeast.ItemType itemType, String itemId, String settingId, int quantity, String jobId) {
             super(id, enableSettings);
             this.itemType = itemType;
             this.itemId = itemId;
@@ -574,7 +574,7 @@ public class BoggledTerraformingProjectEffect {
 
     public static class RemoveItemFromSubmarket extends RemoveItemFromCargo {
         String submarketId;
-        public RemoveItemFromSubmarket(String id, String[] enableSettings, String submarketId, BoggledTerraformingRequirement.ItemRequirement.ItemType itemType, String itemId, String settingId, int quantity, String jobId) {
+        public RemoveItemFromSubmarket(String id, String[] enableSettings, String submarketId, BoggledTerraformingRequirement.StorageContainsAtLeast.ItemType itemType, String itemId, String settingId, int quantity, String jobId) {
             super(id, enableSettings, itemType, itemId, settingId, quantity, jobId);
             this.submarketId = submarketId;
         }
@@ -619,7 +619,7 @@ public class BoggledTerraformingProjectEffect {
     }
 
     public static class RemoveItemFromFleetStorage extends RemoveItemFromCargo {
-        public RemoveItemFromFleetStorage(String id, String[] enableSettings, BoggledTerraformingRequirement.ItemRequirement.ItemType itemType, String itemId, String settingId, int quantity, String jobId) {
+        public RemoveItemFromFleetStorage(String id, String[] enableSettings, BoggledTerraformingRequirement.StorageContainsAtLeast.ItemType itemType, String itemId, String settingId, int quantity, String jobId) {
             super(id, enableSettings, itemType, itemId, settingId, quantity, jobId);
         }
 
@@ -640,12 +640,12 @@ public class BoggledTerraformingProjectEffect {
     }
 
     public static class AddItemToSubmarket extends TerraformingProjectEffect {
-        BoggledTerraformingRequirement.ItemRequirement.ItemType itemType;
+        BoggledTerraformingRequirement.StorageContainsAtLeast.ItemType itemType;
         String submarketId;
         String itemId;
         String settingId;
         int quantity;
-        public AddItemToSubmarket(String id, String[] enableSettings, BoggledTerraformingRequirement.ItemRequirement.ItemType itemType, String submarketId, String itemId, String settingId, int quantity) {
+        public AddItemToSubmarket(String id, String[] enableSettings, BoggledTerraformingRequirement.StorageContainsAtLeast.ItemType itemType, String submarketId, String itemId, String settingId, int quantity) {
             super(id, enableSettings);
             this.itemType = itemType;
             this.submarketId = submarketId;
@@ -1962,10 +1962,13 @@ public class BoggledTerraformingProjectEffect {
                 para = effectTypeToPara.get("IndustryMonthlyItemProductionChance");
             }
 
+            Pair<Integer, Integer> chance100 = new Pair<>(100, 100);
             Map<String, String> tokenReplacements = boggledTools.getTokenReplacements(ctx);
             for (BoggledCommonIndustry.ProductionData datum : data) {
                 boolean requirementsMet = datum.requirements.requirementsMet(ctx);
                 Pair<Integer, Integer> chance = targetIndustryInterface.getProductionChance(datum.commodityId);
+                chance100.one -= chance.one;
+                chance100.two -= chance.two;
                 Color highlightColor = Misc.getHighlightColor();
                 if (!requirementsMet) {
                     highlightColor = Misc.getNegativeHighlightColor();
@@ -1993,6 +1996,16 @@ public class BoggledTerraformingProjectEffect {
 
                 para.infix.add(chanceString.toString());
             }
+
+            String modifiedChance100String = chance100.two + "%";
+            String baseChance100String = chance100.one + "%";
+            para.highlights.add(0, baseChance100String);
+            para.highlights.add(0, modifiedChance100String);
+            para.highlightColors.add(0, Misc.getHighlightColor());
+            para.highlightColors.add(0, Misc.getHighlightColor());
+            modifiedChance100String += "%";
+            baseChance100String += "%";
+            para.infix.add(0, "\n    Nothing: " + modifiedChance100String + " (" + baseChance100String + ")");
         }
     }
 

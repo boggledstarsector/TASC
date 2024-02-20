@@ -50,6 +50,7 @@ public class BoggledBaseAbility extends BaseDurationAbility {
 
     public Object readResolve() {
         super.readResolve();
+        BoggledTascPlugin.loadSettingsFromJSON();
         this.project = boggledTools.getProject(this.projectId);
         return this;
     }

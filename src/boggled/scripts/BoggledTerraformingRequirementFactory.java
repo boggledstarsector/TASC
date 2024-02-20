@@ -162,25 +162,25 @@ public class BoggledTerraformingRequirementFactory {
             JSONObject jsonData = new JSONObject(data);
 
             String submarketId = jsonData.getString("submarket_id");
-            BoggledTerraformingRequirement.ItemRequirement.ItemType itemType = null;
+            BoggledTerraformingRequirement.StorageContainsAtLeast.ItemType itemType = null;
             String itemId = null;
 
             String commodityId = jsonData.optString("commodity_id");
             if (!commodityId.isEmpty()) {
-                itemType = BoggledTerraformingRequirement.ItemRequirement.ItemType.RESOURCES;
+                itemType = BoggledTerraformingRequirement.StorageContainsAtLeast.ItemType.RESOURCES;
                 itemId = commodityId;
                 boggledTools.CheckCommodityExists(id, commodityId);
             }
 
             String specialItemId = jsonData.optString("special_item_id");
             if (!specialItemId.isEmpty()) {
-                itemType = BoggledTerraformingRequirement.ItemRequirement.ItemType.SPECIAL;
+                itemType = BoggledTerraformingRequirement.StorageContainsAtLeast.ItemType.SPECIAL;
                 itemId = specialItemId;
                 boggledTools.CheckSpecialItemExists(id, specialItemId);
             }
 
             if (itemType == null) {
-                itemType = BoggledTerraformingRequirement.ItemRequirement.ItemType.CREDITS;
+                itemType = BoggledTerraformingRequirement.StorageContainsAtLeast.ItemType.CREDITS;
             }
 
             String settingId = jsonData.optString("setting_id");
@@ -201,25 +201,25 @@ public class BoggledTerraformingRequirementFactory {
         public BoggledTerraformingRequirement.TerraformingRequirement constructFromJSON(String id, String[] enableSettings, boolean invert, String data) throws JSONException {
             JSONObject jsonData = new JSONObject(data);
 
-            BoggledTerraformingRequirement.ItemRequirement.ItemType itemType = null;
+            BoggledTerraformingRequirement.StorageContainsAtLeast.ItemType itemType = null;
             String itemId = null;
 
             String commodityId = jsonData.optString("commodity_id");
             if (!commodityId.isEmpty()) {
-                itemType = BoggledTerraformingRequirement.ItemRequirement.ItemType.RESOURCES;
+                itemType = BoggledTerraformingRequirement.StorageContainsAtLeast.ItemType.RESOURCES;
                 itemId = commodityId;
                 boggledTools.CheckCommodityExists(id, commodityId);
             }
 
             String specialItemId = jsonData.optString("special_item_id");
             if (!specialItemId.isEmpty()) {
-                itemType = BoggledTerraformingRequirement.ItemRequirement.ItemType.SPECIAL;
+                itemType = BoggledTerraformingRequirement.StorageContainsAtLeast.ItemType.SPECIAL;
                 itemId = specialItemId;
                 boggledTools.CheckSpecialItemExists(id, specialItemId);
             }
 
             if (itemType == null) {
-                itemType = BoggledTerraformingRequirement.ItemRequirement.ItemType.CREDITS;
+                itemType = BoggledTerraformingRequirement.StorageContainsAtLeast.ItemType.CREDITS;
             }
 
             String settingId = jsonData.optString("setting_id");
