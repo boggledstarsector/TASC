@@ -551,6 +551,14 @@ public class BoggledCommonIndustry {
                 String disruptedMessage = boggledTools.doTokenReplacement(project.getDisruptedMessage(), tokenReplacements);
                 tooltipDisrupted(tooltip, mode, disruptedMessage, pad, Misc.getHighlightColor(), highlights);
             }
+
+            String[] stallMessages = projectInstance.getProject().getStallMessages(instanceCtx);
+            for (String stallMessage : stallMessages) {
+                if (stallMessage.isEmpty()) {
+                    continue;
+                }
+                tooltip.addPara(stallMessage, Misc.getNegativeHighlightColor(), pad);
+            }
         }
 
         for (BoggledTerraformingProject.ProjectInstance projectInstance : attachedProjects) {

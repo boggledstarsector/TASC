@@ -285,6 +285,7 @@ ability_deploy_planet_killer_change_conditions_2,,EffectWithRequirement,"{
 }"
 
 ongoing_flat_demand_1_domain_artifacts,boggledDomainTechContentEnabled | boggledDomainArchaeologyEnabled,CommodityDemandFlat,"{ 'commodity_id' : 'domain_artifacts', 'quantity' : 1 }"
+ongoing_flat_demand_3_domain_artifacts,boggledDomainTechContentEnabled | boggledDomainArchaeologyEnabled,CommodityDemandFlat,"{ 'commodity_id' : 'domain_artifacts', 'quantity' : 3 }"
 ongoing_flat_demand_4_domain_artifacts,boggledDomainTechContentEnabled | boggledDomainArchaeologyEnabled,CommodityDemandFlat,"{ 'commodity_id' : 'domain_artifacts', 'quantity' : 4 }"
 
 ongoing_market_size_minus_2_demand_domain_artifacts,boggledDomainTechContentEnabled | boggledDomainArchaeologyEnabled,CommodityDemandMarketSize,"{ 'commodity_id' : 'domain_artifacts', 'quantity' : -2 }"
@@ -363,7 +364,12 @@ ai_mining_drones_improve_bonus_to_accessibility,,ModifyColonyAccessibility,"{ 'm
 
 chameleon_alpha_core_reduce_demand,,ModifyIndustryDemand,"{ 'modifier_type' : 'flat', 'value' : -1 }"
 chameleon_alpha_core_reduce_upkeep,,ModifyIndustryUpkeep,"{ 'modifier_type' : 'mult', 'value' : 0.75 }"
-chameleon_alpha_core_eliminate_pather_interest,,EliminatePatherInterest,
+chameleon_alpha_core_eliminate_pather_interest_effect,,EliminatePatherInterest,
+chameleon_alpha_core_eliminate_pather_interest,,EffectWithRequirement,"{
+	'display_effect_tooltip_on_requirement_failure' : 'true',
+	'requirements' : [ { 'requirement_id' : 'industry_chameleon_alpha_core_does_not_have_shortage' } ],
+	'effects' : [ 'chameleon_alpha_core_eliminate_pather_interest_effect' ]
+}"
 
 chameleon_improve_bonus_to_stability,,ModifyColonyStability,"{ 'modifier_type' : 'flat', 'value' : 1 }"
 

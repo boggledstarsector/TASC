@@ -1,5 +1,6 @@
 package boggled.scripts;
 
+import boggled.campaign.econ.industries.BoggledCommonIndustry;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CampaignClockAPI;
 import boggled.campaign.econ.boggledTools;
@@ -219,6 +220,20 @@ public class BoggledTerraformingProject {
             replaced.add(boggledTools.doTokenReplacement(highlight, tokenReplacements));
         }
         return replaced.toArray(new String[0]);
+    }
+
+    public String[] getStallMessages(BoggledTerraformingRequirement.RequirementContext ctx) {
+        List<String> ret = new ArrayList<>();
+        Map<String, String> tokenReplacements = boggledTools.getTokenReplacements(ctx);
+        for (RequirementsWithId stallReq : requirementsStall) {
+            if (stallReq.requirements.requirementsMet(ctx)) {
+                List<BoggledCommonIndustry.TooltipData> tooltips = stallReq.requirements.getTooltip(ctx, tokenReplacements);
+                for (BoggledCommonIndustry.TooltipData tooltip : tooltips) {
+                    ret.add(tooltip.text);
+                }
+            }
+        }
+        return ret.toArray(new String[0]);
     }
 
     public BoggledProjectRequirementsAND getRequirements() { return requirements; }

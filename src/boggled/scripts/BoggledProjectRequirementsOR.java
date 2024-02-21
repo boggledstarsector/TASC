@@ -49,7 +49,7 @@ public class BoggledProjectRequirementsOR {
                 numRequirementsSkipped++;
             }
         }
-        if (numRequirementsSkipped == terraformingRequirements.size()) {
+        if (numRequirementsSkipped != 0 && numRequirementsSkipped == terraformingRequirements.size()) {
             return new BoggledCommonIndustry.TooltipData("");
         }
         String replaced = boggledTools.doTokenAndFormatReplacement(requirementTooltip.text, tokenReplacements);
@@ -81,7 +81,7 @@ public class BoggledProjectRequirementsOR {
             }
             requirementsMet = requirementsMet || terraformingRequirement.checkRequirement(ctx);
         }
-        if (numRequirementsSkipped == terraformingRequirements.size()) {
+        if (numRequirementsSkipped != 0 && numRequirementsSkipped == terraformingRequirements.size()) {
             // If all the requirements are disabled via settings, ignore this requirement
             return true;
         }

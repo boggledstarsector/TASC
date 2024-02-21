@@ -89,6 +89,10 @@ industry_ai_mining_drones_colony_has_mining,"$marketName must have a mining indu
 industry_atmosphere_processor_does_not_have_shortage,,,false,"atmosphere_processor_does_not_have_shortage"
 industry_atmosphere_processor_colony_has_atmo_problem,"Atmospheric conditions on $marketName are already optimal. There is no reason to build an atmosphere processor here.",,false,"market_not_has_mild_climate | market_not_habitable | market_no_atmosphere | market_thin_atmosphere | market_dense_atmosphere | market_toxic_atmosphere"
 ,,
+industry_chameleon_alpha_core_does_not_have_shortage,"The removal of Pather Cells is halted due to a lack of Domain-era Artifacts.",,false,"chameleon_does_not_have_shortage"
+industry_chameleon_rogue_ai_does_have_shortage,"The search for the rogue AI core is stalled due to a lack of Domain-era Artifacts.",,false,"chameleon_does_have_shortage"
+industry_chameleon_decivilized_does_have_shortage,"The removal of the decivilized population is stalled due to a lack of Domain-era Artifacts.",,false,"chameleon_does_have_shortage"
+,,
 industry_domed_cities_colony_not_gas_giant,"There is no solid ground on $marketName upon which to build a dome.",,false,"planet_not_gas_giant"
 ,,
 industry_ismaras_sling_colony_water_or_frozen,"Ismara's Sling can only be built on cryovolcanic, frozen, and water covered world. $marketName is on a $planetTypeName.",,false,"planet_water | planet_frozen"
@@ -112,7 +116,7 @@ industry_ouyang_optimizer_orbited_planet_is_gas_giant,"Only gas giants can under
 industry_ouyang_optimizer_orbited_planet_not_has_extreme_weather,"$focusMarketName already has extreme weather. Making it worse won't increase volatiles availability.",,true,"focus_market_has_extreme_weather"
 industry_ouyang_optimizer_orbited_planet_not_has_volatiles_plentiful,"$focusMarketName is already extremely rich in volatiles. An Ouyang optimization would not yield any improvement.",,true,"focus_market_has_volatiles_plentiful"
 
-industry_perihelion_project_does_not_have_shortage,,,false,"perihelion_project_does_not_have_shortage | perihelion_project_does_not_have_domain_artifacts_shortage"
+industry_perihelion_project_does_have_shortage,"Progress of the Perihelion Project is stalled due to a shortage of resources.",,false,"perihelion_project_does_have_shortage | perihelion_project_does_have_domain_artifacts_shortage"
 
 industry_planet_cracker_orbited_planet_is_not_gas_giant,"Gas giants cannot be cracked.",,false,"focus_planet_not_gas_giant"
 industry_planet_cracker_orbited_planet_not_has_tectonic_or_extreme_tectonic_activity,"$focusMarketName already has tectonic activity. Making it worse won't increase ore availability.",,true,"focus_market_has_tectonic_activity | focus_market_has_extreme_tectonic_activity"
@@ -154,7 +158,7 @@ industry_effects_domain_archaeology_colony_ruins_vast,,,false,"market_ruins_vast
 ability_astropolis_station_player_fleet_not_in_hyperspace,"You cannot construct an astropolis station in hyperspace.",,false,"player_fleet_not_in_hyperspace"
 ability_astropolis_station_system_has_jump_points,"You cannot construct an astropolis station in a system with no jump points.",,false,"system_has_jump_points"
 ability_astropolis_station_system_has_planets,"You cannot construct an astropolis station in a system with no planets.",,false,"system_has_planets"
-ability_astropolis_station_target_planet_not_owned_by_player_or_neutral,"You cannot construct an astropolis station in orbit around a world already controlled by $factionName.",,false,"target_planet_not_owned_by_player_or_neutral"
+ability_astropolis_station_target_planet_owned_by_player,"You cannot construct an astropolis station in orbit around a world already controlled by $factionName.",,false,"target_planet_owned_by_player"
 ability_astropolis_station_target_planet_within_range,"The world closest to your location is $planetName. Your fleet is $distanceInSu stellar units away. You must be within $requiredDistanceInSu stellar units to construct an astropolis station.",,false,"ability_astropolis_station_target_planet_within_range"
 ability_astropolis_station_target_planet_too_small,"$planetName is too small to host an astropolis.",,false,"ability_astropolis_station_target_planet_too_small"
 ability_astropolis_station_target_planet_too_close_to_orbit_focus,"An astropolis would be unable to achieve a satisfactory orbit around $planetName because it is orbiting too close to $focusPlanetName.",,false,"target_planet_too_close_to_orbit_focus"
@@ -186,7 +190,7 @@ ability_mining_station_fleet_contains_transplutonics,"Requires $itemQuantity $it
 ability_siphon_station_player_fleet_not_in_hyperspace,"You cannot construct a siphon station in hyperspace.",,false,"player_fleet_not_in_hyperspace"
 ability_siphon_station_system_has_jump_points,"You cannot construct a siphon station in a system with no jump points.",,false,"system_has_jump_points"
 
-ability_siphon_station_target_planet_not_owned_by_player_or_neutral,"You cannot construct a siphon station in orbit around a world already controlled by $factionName.",,false,"target_planet_not_owned_by_player_or_neutral"
+ability_siphon_station_target_planet_owned_by_player_or_neutral,"You cannot construct a siphon station in orbit around a world already controlled by $factionName.",,false,"target_planet_owned_by_player_or_neutral"
 ability_siphon_station_target_planet_within_range,"The world closest to your location is $planetName. Your fleet is $distanceInSu stellar units away. You must be within $requiredDistanceInSu stellar units to construct a siphon station.",,false,"ability_siphon_station_target_planet_within_range"
 ability_siphon_station_target_planet_moon_too_close,"A siphon station would be unable to achieve a satisfactory orbit around $planetName because $focusPlanetName is orbiting too close to it.",,false,"ability_siphon_station_target_planet_moon_too_close"
 ability_siphon_station_target_planet_is_gas_giant,"You cannot construct a siphon station around non-gas giant planets. $planetName is a $planetType.",,false,"planet_gas_giant"

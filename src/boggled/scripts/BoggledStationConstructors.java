@@ -157,34 +157,9 @@ public class BoggledStationConstructors {
 
             MarketAPI market = createDefaultMarket(stationEntity, system.getName(), "MiningStationMarket");
 
-            if(boggledTools.getBooleanSetting(boggledTools.BoggledSettings.miningStationLinkToResourceBelts)) {
-                int numAsteroidBeltsInSystem = boggledTools.getNumAsteroidTerrainsInSystem(stationEntity);
-                String resourceLevel = boggledTools.getMiningStationResourceString(numAsteroidBeltsInSystem);
-                market.addCondition("ore_" + resourceLevel);
-                market.addCondition("rare_ore_" + resourceLevel);
-            } else {
-                String resourceLevel = "moderate";
-                int staticAmountPerSettings = boggledTools.getIntSetting(boggledTools.BoggledSettings.miningStationStaticAmount);
-                switch (staticAmountPerSettings) {
-                    case 1:
-                        resourceLevel = "sparse";
-                        break;
-                    case 2:
-                        resourceLevel = "moderate";
-                        break;
-                    case 3:
-                        resourceLevel = "abundant";
-                        break;
-                    case 4:
-                        resourceLevel = "rich";
-                        break;
-                    case 5:
-                        resourceLevel = "ultrarich";
-                        break;
-                }
-                market.addCondition("ore_" + resourceLevel);
-                market.addCondition("rare_ore_" + resourceLevel);
-            }
+            String resourceLevel = boggledTools.getMiningStationResourceString(boggledTools.getNumAsteroidTerrainsInSystem(stationEntity));
+            boggledTools.addCondition(market, "ore_" + resourceLevel);
+            boggledTools.addCondition(market, "rare_ore_" + resourceLevel);
 
             Global.getSoundPlayer().playUISound(boggledTools.BoggledSounds.stationConstructed, 1.0F, 1.0F);
             return market;

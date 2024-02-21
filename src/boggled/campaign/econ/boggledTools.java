@@ -1928,22 +1928,39 @@ public class boggledTools {
     }
 
     public static String getMiningStationResourceString(Integer numAsteroidTerrains) {
-        if (numAsteroidTerrains >= boggledTools.getIntSetting(BoggledSettings.miningStationUltrarichOre)) {
-            return "ultrarich";
+        if(boggledTools.getBooleanSetting(boggledTools.BoggledSettings.miningStationLinkToResourceBelts)) {
+            if (numAsteroidTerrains >= boggledTools.getIntSetting(BoggledSettings.miningStationUltrarichOre)) {
+                return "ultrarich";
+            }
+            if (numAsteroidTerrains >= boggledTools.getIntSetting(BoggledSettings.miningStationRichOre)) {
+                return "rich";
+            }
+            if (numAsteroidTerrains >= boggledTools.getIntSetting(BoggledSettings.miningStationAbundantOre)) {
+                return "abundant";
+            }
+            if (numAsteroidTerrains >= boggledTools.getIntSetting(BoggledSettings.miningStationModerateOre)) {
+                return "moderate";
+            } else if (numAsteroidTerrains >= boggledTools.getIntSetting(BoggledSettings.miningStationSparseOre)) {
+                return "sparse";
+            } else {
+                return "abundant";
+            }
         }
-        if (numAsteroidTerrains >= boggledTools.getIntSetting(BoggledSettings.miningStationRichOre)) {
-            return "rich";
+        
+        int staticAmountPerSettings = boggledTools.getIntSetting(boggledTools.BoggledSettings.miningStationStaticAmount);
+        switch (staticAmountPerSettings) {
+            case 1:
+                return "sparse";
+            case 2:
+                return "moderate";
+            case 3:
+                return "abundant";
+            case 4:
+                return "rich";
+            case 5:
+                return "ultrarich";
         }
-        if (numAsteroidTerrains >= boggledTools.getIntSetting(BoggledSettings.miningStationAbundantOre)) {
-            return "abundant";
-        }
-        if (numAsteroidTerrains >= boggledTools.getIntSetting(BoggledSettings.miningStationModerateOre)) {
-            return "moderate";
-        } else if (numAsteroidTerrains >= boggledTools.getIntSetting(BoggledSettings.miningStationSparseOre)) {
-            return "sparse";
-        } else {
-            return "abundant";
-        }
+        return "moderate";
     }
 
     public static int getNumberOfStationExpansions(MarketAPI market) {

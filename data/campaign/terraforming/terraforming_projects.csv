@@ -256,11 +256,21 @@ industry_atmosphere_processor,boggledTerraformingContentEnabled,industry,,,,"[
 	'ongoing_market_size_demand_heavy_machinery'
 ]",,,,
 industry_chameleon,boggledDomainTechContentEnabled | boggledCHAMELEONEnabled,industry,,,,,,,,,,,"[ 'ongoing_market_size_demand_domain_artifacts' ]",,,,
-industry_chameleon_decivilized,boggledDomainTechContentEnabled | boggledCHAMELEONEnabled,industry,Decivilized subpopulation,,Eradicated,"[ { 'requirement_id' : 'industry_colony_decivilized' } ]",,200,,,,"[
+industry_chameleon_decivilized,boggledDomainTechContentEnabled | boggledCHAMELEONEnabled,industry,Decivilized subpopulation,,Eradicated,"[ { 'requirement_id' : 'industry_colony_decivilized' } ]",,200,,"[
+	{
+		'requirements_id' : 'industry_chameleon_decivilized_shortage_stall',
+		'requirements' : [ { 'requirement_id' : 'industry_chameleon_decivilized_does_have_shortage' } ]
+	}
+]",,"[
 	'market_remove_decivilized',
 	'market_remove_decivilized_subpop'
 ]",,"Approximately $percentComplete% of the decivilized subpopulation on $marketName has been eradicated.","[ '$percentComplete%' ]",,
-industry_chameleon_rogue_ai,boggledDomainTechContentEnabled | boggledCHAMELEONEnabled,industry,Rogue AI core,,Terminated,"[ { 'requirement_id' : 'industry_colony_rogue_ai_core' } ]",,200,,,,"[ 'market_remove_rogue_ai_core' ]",,"An investigation into the whereabouts of the rogue AI core on $marketName is approximately $percentComplete% complete.",[ '$percentComplete%' ],,
+industry_chameleon_rogue_ai,boggledDomainTechContentEnabled | boggledCHAMELEONEnabled,industry,Rogue AI core,,Terminated,"[ { 'requirement_id' : 'industry_colony_rogue_ai_core' } ]",,200,,"[
+	{
+		'requirements_id' : 'industry_chameleon_rogue_ai_shortage_stall',
+		'requirements' : [ { 'requirement_id' : 'industry_chameleon_rogue_ai_does_have_shortage' } ]
+	}
+]",,"[ 'market_remove_rogue_ai_core' ]",,"An investigation into the whereabouts of the rogue AI core on $marketName is approximately $percentComplete% complete.",[ '$percentComplete%' ],,
 industry_cloning,boggledCloningEnabled,industry,,,,,,,,,,,"[
 	'ongoing_market_size_minus_2_supply_organs',
 	'ongoing_market_size_minus_2_demand_domain_artifacts',
@@ -317,7 +327,7 @@ industry_genelab_pollution,boggledTerraformingContentEnabled | boggledGenelabEna
 	}
 ]","[ 'market_remove_pollution' ]",,,,,
 industry_genelab_lobster,boggledTerraformingContentEnabled | boggledGenelabEnabled,industry,"Lobster seeding",,"Completed","[ { 'requirement_id' : 'industry_colony_water_surface' } ]",,200,,,,,,,,,
-industry_gpa,,industry,,,,,"[ { 'requirement_id' : 'false' } ]",,,,,,,,,,
+industry_gpa,,industry,,,,,"[ { 'requirement_id' : 'false' } ]",,,,,,"[ 'ongoing_flat_demand_3_domain_artifacts' ]",,,,
 industry_harmonic_damper,boggledHarmonicDamperEnabled,industry,,,,"[ { 'requirement_id' : 'industry_colony_is_not_station' } ]",,,,,,,"[ 'harmonic_damper_suppress_conditions' ]",,,,
 industry_hydroponics,boggledHydroponicsEnabled,industry,,,,,,,,,,,"[
 	'ongoing_market_size_supply_food',
@@ -373,7 +383,7 @@ industry_perihelion_project,boggledDomainTechContentEnabled | boggledPerihelionP
 ]",,600,,"[
 	{
 		'requirements_id' : 'industry_perihelion_project_shortage_stall',
-		'requirements' : [ { 'requirement_id' : 'industry_perihelion_project_does_not_have_shortage' } ]
+		'requirements' : [ { 'requirement_id' : 'industry_perihelion_project_does_have_shortage' } ]
 	}
 ]",,"[
 	'system_add_coronal_tap',
@@ -569,7 +579,7 @@ boggled_construct_astropolis_station,boggledAstropolisEnabled,ability,"Construct
 		{ 'requirement_id' : 'ability_astropolis_station_system_has_jump_points', 'and_then' : [
 			{ 'requirement_id' : 'ability_astropolis_station_system_has_planets', 'and_then' : [
 				{ 'requirement_id' : 'ability_astropolis_station_target_planet_within_range' },
-				{ 'requirement_id' : 'ability_astropolis_station_target_planet_not_owned_by_player_or_neutral' },
+				{ 'requirement_id' : 'ability_astropolis_station_target_planet_owned_by_player' },
 				{ 'requirement_id' : 'ability_astropolis_station_target_planet_too_small' },
 				{ 'requirement_id' : 'ability_astropolis_station_target_planet_too_close_to_orbit_focus' },
 				{ 'requirement_id' : 'ability_astropolis_station_target_planet_too_close_to_star' },
@@ -621,7 +631,7 @@ boggled_construct_siphon_station,boggledSiphonStationEnabled,ability,"Construct 
 		{ 'requirement_id' : 'ability_siphon_station_system_has_jump_points', 'and_then' : [
 			{ 'requirement_id' : 'ability_siphon_station_target_planet_is_gas_giant' },
 			{ 'requirement_id' : 'ability_siphon_station_target_planet_within_range' },
-			{ 'requirement_id' : 'ability_siphon_station_target_planet_not_owned_by_player_or_neutral' },
+			{ 'requirement_id' : 'ability_siphon_station_target_planet_owned_by_player_or_neutral' },
 			{ 'requirement_id' : 'ability_siphon_station_target_planet_moon_too_close' },
 			
 			{ 'requirement_id' : 'ability_siphon_station_target_planet_too_many_stations' }
