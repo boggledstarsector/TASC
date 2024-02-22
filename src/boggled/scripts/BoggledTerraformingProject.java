@@ -69,6 +69,7 @@ public class BoggledTerraformingProject {
             }
 
             project.finishProject(ctx, project.getProjectTooltip());
+
             return true;
         }
     }
@@ -225,9 +226,9 @@ public class BoggledTerraformingProject {
     public String[] getStallMessages(BoggledTerraformingRequirement.RequirementContext ctx) {
         List<String> ret = new ArrayList<>();
         Map<String, String> tokenReplacements = boggledTools.getTokenReplacements(ctx);
-        for (RequirementsWithId stallReq : requirementsStall) {
-            if (stallReq.requirements.requirementsMet(ctx)) {
-                List<BoggledCommonIndustry.TooltipData> tooltips = stallReq.requirements.getTooltip(ctx, tokenReplacements);
+        for (RequirementsWithId requirementStall : requirementsStall) {
+            if (requirementStall.requirements.requirementsMet(ctx)) {
+                List<BoggledCommonIndustry.TooltipData> tooltips = requirementStall.requirements.getTooltip(ctx, tokenReplacements, false, true);
                 for (BoggledCommonIndustry.TooltipData tooltip : tooltips) {
                     ret.add(tooltip.text);
                 }
@@ -309,10 +310,10 @@ public class BoggledTerraformingProject {
         String intelCompletedMessage = getIntelCompleteMessage();
 
         boggledTools.surveyAll(ctx.getClosestMarket());
-        boggledTools.refreshSupplyAndDemand(ctx.getClosestMarket());
-        boggledTools.refreshAquacultureAndFarming(ctx.getClosestMarket());
 
         boggledTools.showProjectCompleteIntelMessage(intelTooltip, intelCompletedMessage, ctx.getClosestMarket());
+
+
     }
 
     public void applyOngoingEffects(BoggledTerraformingRequirement.RequirementContext ctx, String effectSource) {

@@ -1,5 +1,6 @@
 package boggled.scripts;
 
+import boggled.campaign.econ.boggledTools;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -25,7 +26,7 @@ public class BoggledStationConstructionFactory {
                 }
             }
 
-            return new BoggledStationConstructors.AstropolisConstructionData("boggled_astropolis", industriesToQueue);
+            return new BoggledStationConstructors.AstropolisConstructionData(boggledTools.BoggledTags.astropolisStation, industriesToQueue);
         }
     }
 
@@ -48,7 +49,7 @@ public class BoggledStationConstructionFactory {
                 resourcesToHighlight.add(resourcesToHighlightArray.getString(i));
             }
 
-            return new BoggledStationConstructors.MiningStationConstructionData("boggled_mining", industriesToQueue, resourcesToHighlight);
+            return new BoggledStationConstructors.MiningStationConstructionData(boggledTools.BoggledTags.miningStation, industriesToQueue, resourcesToHighlight);
         }
     }
 
@@ -71,7 +72,7 @@ public class BoggledStationConstructionFactory {
                 resourcesToHighlight.add(resourcesToHighlightArray.getString(i));
             }
 
-            return new BoggledStationConstructors.SiphonStationConstructionData("boggled_siphon", industriesToQueue, resourcesToHighlight);
+            return new BoggledStationConstructors.SiphonStationConstructionData(boggledTools.BoggledTags.siphonStation, industriesToQueue, resourcesToHighlight);
         }
     }
 }

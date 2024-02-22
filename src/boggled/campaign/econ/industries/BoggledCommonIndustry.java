@@ -31,7 +31,7 @@ public class BoggledCommonIndustry {
     private List<BoggledTerraformingProjectEffect.TerraformingProjectEffect> buildingFinishedEffects;
     private List<BoggledTerraformingProjectEffect.TerraformingProjectEffect> improveEffects;
 
-    private Map<String, List<BoggledTerraformingProjectEffect.TerraformingProjectEffect>> aiCoreEffects;
+    private Map<String, List<BoggledTerraformingProject.ProjectInstance>> aiCoreEffects;
 
     private List<BoggledProjectRequirementsAND> disruptRequirements;
 
@@ -120,7 +120,7 @@ public class BoggledCommonIndustry {
         this.productionData = new HashMap<>();
     }
 
-    public BoggledCommonIndustry(String industryId, String industryTooltip, List<BoggledTerraformingProject> projects, List<BoggledTerraformingProjectEffect.TerraformingProjectEffect> buildingFinishedEffects, List<BoggledTerraformingProjectEffect.TerraformingProjectEffect> improveEffects, Map<String, List<BoggledTerraformingProjectEffect.TerraformingProjectEffect>> aiCoreEffects, List<BoggledProjectRequirementsAND> disruptRequirements, float basePatherInterest, List<ImageOverrideWithRequirement> imageReqs, List<BoggledTerraformingProjectEffect.TerraformingProjectEffect> preBuildEffects) {
+    public BoggledCommonIndustry(String industryId, String industryTooltip, List<BoggledTerraformingProject> projects, List<BoggledTerraformingProjectEffect.TerraformingProjectEffect> buildingFinishedEffects, List<BoggledTerraformingProjectEffect.TerraformingProjectEffect> improveEffects, Map<String, List<BoggledTerraformingProject>> aiCoreEffects, List<BoggledProjectRequirementsAND> disruptRequirements, float basePatherInterest, List<ImageOverrideWithRequirement> imageReqs, List<BoggledTerraformingProjectEffect.TerraformingProjectEffect> preBuildEffects) {
         this.ctx = null;
         this.industryId = industryId;
         this.industryTooltip = industryTooltip;
@@ -133,7 +133,14 @@ public class BoggledCommonIndustry {
 
         this.buildingFinishedEffects = buildingFinishedEffects;
         this.improveEffects = improveEffects;
-        this.aiCoreEffects = aiCoreEffects;
+        this.aiCoreEffects = new HashMap<>();
+        for (Map.Entry<String, List<BoggledTerraformingProject>> aiCoreEffect : aiCoreEffects.entrySet()) {
+            List<BoggledTerraformingProject.ProjectInstance> aiCoreProjectInstances = new ArrayList<>();
+            for (BoggledTerraformingProject project : aiCoreEffect.getValue()) {
+                aiCoreProjectInstances.add(new BoggledTerraformingProject.ProjectInstance(project));
+            }
+            this.aiCoreEffects.put(aiCoreEffect.getKey(), aiCoreProjectInstances);
+        }
 
         this.disruptRequirements = disruptRequirements;
 
@@ -507,11 +514,17 @@ public class BoggledCommonIndustry {
             project.getProject().applyOngoingEffects(instanceCtx, instanceCtx.getSourceIndustry().getNameForModifier());
         }
 
-        List<BoggledTerraformingProjectEffect.TerraformingProjectEffect> coreEffects = aiCoreEffects.get(ctx.getSourceIndustry().getAICoreId());
-        if (coreEffects != null) {
+        List<BoggledTerraformingProject.ProjectInstance> coreEffect = aiCoreEffects.get(ctx.getSourceIndustry().getAICoreId());
+        if (coreEffect != null) {
             String effectSource = Global.getSettings().getCommoditySpec(ctx.getSourceIndustry().getAICoreId()).getName() + " assigned";
-            for (BoggledTerraformingProjectEffect.TerraformingProjectEffect coreEffect : coreEffects) {
-                coreEffect.applyProjectEffect(ctx, effectSource);
+            for (BoggledTerraformingProject.ProjectInstance projectInstance : coreEffect) {
+                BoggledTerraformingRequirement.RequirementContext instanceCtx = new BoggledTerraformingRequirement.RequirementContext(ctx, projectInstance);
+                BoggledTerraformingProject project = projectInstance.getProject();
+                if (project.requirementsStall(instanceCtx)) {
+                    project.unapplyOngoingEffects(instanceCtx);
+                } else {
+                    project.applyOngoingEffects(instanceCtx, effectSource);
+                }
             }
         }
     }
@@ -522,15 +535,31 @@ public class BoggledCommonIndustry {
             project.getProject().unapplyOngoingEffects(instanceCtx);
         }
 
-        for (Map.Entry<String, List<BoggledTerraformingProjectEffect.TerraformingProjectEffect>> coreEffects : aiCoreEffects.entrySet()) {
-            for (BoggledTerraformingProjectEffect.TerraformingProjectEffect coreEffect : coreEffects.getValue()) {
-                coreEffect.unapplyProjectEffect(ctx);
+        for (List<BoggledTerraformingProject.ProjectInstance> coreEffect : aiCoreEffects.values()) {
+            for (BoggledTerraformingProject.ProjectInstance projectInstance : coreEffect) {
+                projectInstance.getProject().unapplyOngoingEffects(ctx);
             }
         }
     }
 
     public void addRightAfterDescriptionSection(TooltipMakerAPI tooltip, Industry.IndustryTooltipMode mode) {
         float pad = 10.0f;
+        List<BoggledTerraformingProject.ProjectInstance> aiCoreEffect = aiCoreEffects.get(ctx.getSourceIndustry().getAICoreId());
+        if (aiCoreEffect != null) {
+            for (BoggledTerraformingProject.ProjectInstance projectInstance : aiCoreEffect) {
+                BoggledTerraformingRequirement.RequirementContext instanceCtx = new BoggledTerraformingRequirement.RequirementContext(ctx, projectInstance);
+                BoggledTerraformingProject project = projectInstance.getProject();
+
+                String[] stallMessages = project.getStallMessages(instanceCtx);
+                for (String stallMessage : stallMessages) {
+                    if (stallMessage.isEmpty()) {
+                        continue;
+                    }
+                    tooltip.addPara(stallMessage, Misc.getNegativeHighlightColor(), pad);
+                }
+            }
+        }
+
         for (BoggledTerraformingProject.ProjectInstance projectInstance : projects) {
             BoggledTerraformingRequirement.RequirementContext instanceCtx = new BoggledTerraformingRequirement.RequirementContext(ctx, projectInstance);
             BoggledTerraformingProject project = projectInstance.getProject();
@@ -552,7 +581,7 @@ public class BoggledCommonIndustry {
                 tooltipDisrupted(tooltip, mode, disruptedMessage, pad, Misc.getHighlightColor(), highlights);
             }
 
-            String[] stallMessages = projectInstance.getProject().getStallMessages(instanceCtx);
+            String[] stallMessages = project.getStallMessages(instanceCtx);
             for (String stallMessage : stallMessages) {
                 if (stallMessage.isEmpty()) {
                     continue;
@@ -574,6 +603,14 @@ public class BoggledCommonIndustry {
                 String[] highlights = project.getIncompleteMessageHighlights(tokenReplacements);
                 String incompleteMessage = boggledTools.doTokenAndFormatReplacement(project.getIncompleteMessage(), tokenReplacements);
                 tooltipIncomplete(tooltip, mode, incompleteMessage, pad, Misc.getHighlightColor(), highlights);
+            }
+
+            String[] stallMessages = projectInstance.getProject().getStallMessages(instanceCtx);
+            for (String stallMessage : stallMessages) {
+                if (stallMessage.isEmpty()) {
+                    continue;
+                }
+                tooltip.addPara(stallMessage, Misc.getNegativeHighlightColor(), pad);
             }
         }
     }
@@ -633,12 +670,12 @@ public class BoggledCommonIndustry {
         StringBuilder builder = new StringBuilder(prefix);
         List<String> highlights = new ArrayList<>();
         List<Color> highlightColors = new ArrayList<>();
-        List<BoggledTerraformingProjectEffect.TerraformingProjectEffect> coreEffects = aiCoreEffects.get(coreId);
-        if (coreEffects != null) {
-            for (BoggledTerraformingProjectEffect.TerraformingProjectEffect effect : coreEffects) {
+        List<BoggledTerraformingProject.ProjectInstance> coreEffect = aiCoreEffects.get(coreId);
+        if (coreEffect != null) {
+            for (BoggledTerraformingProject.ProjectInstance projectInstance : coreEffect) {
                 String effectSource = Global.getSettings().getCommoditySpec(coreId).getName() + " assigned";
-                Map<String, BoggledTerraformingProjectEffect.EffectTooltipPara> effectTypeToPara = new LinkedHashMap<>();
-                effect.addEffectTooltipInfo(ctx, effectTypeToPara, effectSource, descMode, BoggledTerraformingProjectEffect.TerraformingProjectEffect.DescriptionSource.AI_CORE_DESCRIPTION);
+                Map<String, BoggledTerraformingProjectEffect.EffectTooltipPara> effectTypeToPara = projectInstance.getProject().getOngoingEffectTooltipInfo(ctx, effectSource, descMode, BoggledTerraformingProjectEffect.TerraformingProjectEffect.DescriptionSource.AI_CORE_DESCRIPTION);
+
                 for (BoggledTerraformingProjectEffect.EffectTooltipPara effectTooltipPara : effectTypeToPara.values()) {
                     StringBuilder text = new StringBuilder(effectTooltipPara.prefix);
                     for (String infix : effectTooltipPara.infix) {
@@ -970,24 +1007,38 @@ public class BoggledCommonIndustry {
         }
     }
 
-    public void addRemoveBuildingFinishImproveAiCorePrebuildEffects(List<BoggledTerraformingProjectEffect.TerraformingProjectEffect> buildingFinishedEffectsAdded, List<String> buildingFinishedEffectsRemoved, List<BoggledTerraformingProjectEffect.TerraformingProjectEffect> improveEffectsAdded, List<String> improveEffectsRemoved, Map<String, List<BoggledTerraformingProjectEffect.TerraformingProjectEffect>> aiCoreEffectsAdded, Map<String, List<String>> aiCoreEffectsRemoved, List<BoggledTerraformingProjectEffect.TerraformingProjectEffect> preBuildEffectsAdded, List<String> preBuildEffectsRemoved) {
+    public void addRemoveBuildingFinishImproveAiCorePrebuildEffects(List<BoggledTerraformingProjectEffect.TerraformingProjectEffect> buildingFinishedEffectsAdded, List<String> buildingFinishedEffectsRemoved, List<BoggledTerraformingProjectEffect.TerraformingProjectEffect> improveEffectsAdded, List<String> improveEffectsRemoved, Map<String, List<BoggledTerraformingProject>> aiCoreEffectsAdded, Map<String, List<String>> aiCoreEffectsRemoved, List<BoggledTerraformingProjectEffect.TerraformingProjectEffect> preBuildEffectsAdded, List<String> preBuildEffectsRemoved) {
         addEffects(buildingFinishedEffects, buildingFinishedEffectsAdded);
         removeEffects(buildingFinishedEffects, buildingFinishedEffectsRemoved);
 
         addEffects(improveEffects, improveEffectsAdded);
         removeEffects(improveEffects, improveEffectsRemoved);
 
-        for (Map.Entry<String, List<BoggledTerraformingProjectEffect.TerraformingProjectEffect>> aiCoreEffectAdded : aiCoreEffectsAdded.entrySet()) {
-            List<BoggledTerraformingProjectEffect.TerraformingProjectEffect> aiCoreEffect = aiCoreEffects.get(aiCoreEffectAdded.getKey());
+        for (Map.Entry<String, List<BoggledTerraformingProject>> aiCoreEffectAdded : aiCoreEffectsAdded.entrySet()) {
+            List<BoggledTerraformingProject.ProjectInstance> aiCoreEffect = aiCoreEffects.get(aiCoreEffectAdded.getKey());
             if (aiCoreEffect != null) {
-                addEffects(aiCoreEffect, aiCoreEffectAdded.getValue());
+                for (BoggledTerraformingProject project : aiCoreEffectAdded.getValue()) {
+                    aiCoreEffect.add(new BoggledTerraformingProject.ProjectInstance(project));
+                }
             }
         }
 
         for (Map.Entry<String, List<String>> aiCoreEffectRemoved : aiCoreEffectsRemoved.entrySet()) {
-            List<BoggledTerraformingProjectEffect.TerraformingProjectEffect> aiCoreEffect = aiCoreEffects.get(aiCoreEffectRemoved.getKey());
+            List<BoggledTerraformingProject.ProjectInstance> aiCoreEffect = aiCoreEffects.get(aiCoreEffectRemoved.getKey());
             if (aiCoreEffect != null) {
-                removeEffects(aiCoreEffect, aiCoreEffectRemoved.getValue());
+                for (String effectToRemove : aiCoreEffectRemoved.getValue()) {
+                    int idx;
+                    for (idx = 0; idx < aiCoreEffect.size(); ++idx) {
+                        BoggledTerraformingProject.ProjectInstance effect = aiCoreEffect.get(idx);
+                        if (effect.getProject().getId().equals(effectToRemove)) {
+                            break;
+                        }
+                    }
+                    if (idx == aiCoreEffect.size()) {
+                        continue;
+                    }
+                    aiCoreEffect.remove(idx);
+                }
             }
         }
 

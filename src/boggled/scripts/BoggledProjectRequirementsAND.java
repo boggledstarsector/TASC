@@ -34,12 +34,25 @@ public class BoggledProjectRequirementsAND implements Iterable<BoggledProjectReq
             return true;
         }
 
-        public List<BoggledCommonIndustry.TooltipData> getTooltip(BoggledTerraformingRequirement.RequirementContext ctx, Map<String, String> tokenReplacements) {
+        public List<BoggledCommonIndustry.TooltipData> getTooltip(BoggledTerraformingRequirement.RequirementContext ctx, Map<String, String> tokenReplacements, boolean displayOnRequirementFailed, boolean displayOnRequirementMet) {
             requirement.addTokenReplacements(ctx, tokenReplacements);
-            if (checkRequirementDontCascade(ctx) && andThen != null) {
-                return andThen.getTooltip(ctx, tokenReplacements);
+            List<BoggledCommonIndustry.TooltipData> ret = new ArrayList<>();
+            if (!checkRequirementDontCascade(ctx)) {
+                if (displayOnRequirementFailed) {
+                    ret.add(requirement.getTooltip(ctx, tokenReplacements));
+                }
+            } else {
+                if (displayOnRequirementMet) {
+                    ret.add(requirement.getTooltip(ctx, tokenReplacements));
+                }
+
+                if (andThen != null) {
+                    ret.addAll(andThen.getTooltip(ctx, tokenReplacements, displayOnRequirementFailed, displayOnRequirementMet));
+                }
+                return ret;
             }
-            return new ArrayList<>(asList(requirement.getTooltip(ctx, tokenReplacements)));
+
+            return ret;
         }
 
         public List<BoggledCommonIndustry.TooltipData> getTooltipFailedRequirements(BoggledTerraformingRequirement.RequirementContext ctx, Map<String, String> tokenReplacements) {
@@ -78,10 +91,10 @@ public class BoggledProjectRequirementsAND implements Iterable<BoggledProjectReq
         return requirements.iterator();
     }
 
-    public List<BoggledCommonIndustry.TooltipData> getTooltip(BoggledTerraformingRequirement.RequirementContext ctx, Map<String, String> tokenReplacements) {
+    public List<BoggledCommonIndustry.TooltipData> getTooltip(BoggledTerraformingRequirement.RequirementContext ctx, Map<String, String> tokenReplacements, boolean displayOnRequirementFailed, boolean displayOnRequirementMet) {
         List<BoggledCommonIndustry.TooltipData> ret = new ArrayList<>();
         for (RequirementAndThen req : requirements) {
-            ret.addAll(req.getTooltip(ctx, tokenReplacements));
+            ret.addAll(req.getTooltip(ctx, tokenReplacements, displayOnRequirementFailed, displayOnRequirementMet));
         }
         return ret;
     }

@@ -156,6 +156,14 @@ public class BoggledTerraformingRequirementFactory {
         }
     }
 
+    public static class StationMarketIsExactlySize implements TerraformingRequirementFactory {
+        @Override
+        public BoggledTerraformingRequirement.TerraformingRequirement constructFromJSON(String id, String[] enableSettings, boolean invert, String data) throws JSONException {
+            int colonySize = Integer.parseInt(data);
+            return new BoggledTerraformingRequirement.StationMarketIsExactlySize(id, enableSettings, invert, colonySize);
+        }
+    }
+
     public static class MarketStorageContainsAtLeast implements TerraformingRequirementFactory {
         @Override
         public BoggledTerraformingRequirement.TerraformingRequirement constructFromJSON(String id, String[] enableSettings, boolean invert, String data) throws JSONException {

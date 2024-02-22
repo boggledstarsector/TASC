@@ -32,7 +32,7 @@ terraforming_colony_not_very_cold_or_very_hot,"$marketName is not very cold or v
 terraforming_colony_not_hot_or_very_hot,"$marketName is not hot or very hot",,true,"market_hot | market_very_hot"
 terraforming_colony_very_cold,"$marketName is very cold",,false,"market_very_cold"
 terraforming_colony_temperate_or_hot,"$marketName is temperate or hot",,true,"market_very_cold | market_cold | market_very_hot"
-terraforming_colony_temperate_or_cold,"$marketName is temperate or hot",,true,"market_very_cold | market_hot | market_very_hot"
+terraforming_colony_temperate_or_cold,"$marketName is temperate or cold",,true,"market_very_cold | market_hot | market_very_hot"
 ,,
 terraforming_colony_has_stellar_reflectors,"$marketName has functional stellar reflectors",,false,"market_has_stellar_reflectors"
 terraforming_colony_has_atmosphere_processor,"$marketName has a functional atmosphere processor",,false,"market_has_atmosphere_processor"
@@ -49,7 +49,7 @@ terraforming_colony_has_atmosphere,"$marketName has an atmosphere",,false,"marke
 ,,
 terraforming_colony_not_habitable,"$marketName is not habitable",,false,"market_not_habitable"
 
-industry_colony_habitable,"$marketName is habitable",,false,"market_habitable"
+industry_colony_habitable,"$marketName must be habitable.",,false,"market_habitable"
 industry_colony_not_has_meteor_impacts,"$marketName experiences frequent meteor impacts that could destroy megastructures. It would be too dangerous to construct one here.",,false,"market_not_has_meteor_impacts"
 industry_colony_irradiated,"$marketName atmosphere is irradiated",,false,"market_irradiated"
 ,,
@@ -89,7 +89,7 @@ industry_ai_mining_drones_colony_has_mining,"$marketName must have a mining indu
 industry_atmosphere_processor_does_not_have_shortage,,,false,"atmosphere_processor_does_not_have_shortage"
 industry_atmosphere_processor_colony_has_atmo_problem,"Atmospheric conditions on $marketName are already optimal. There is no reason to build an atmosphere processor here.",,false,"market_not_has_mild_climate | market_not_habitable | market_no_atmosphere | market_thin_atmosphere | market_dense_atmosphere | market_toxic_atmosphere"
 ,,
-industry_chameleon_alpha_core_does_not_have_shortage,"The removal of Pather Cells is halted due to a lack of Domain-era Artifacts.",,false,"chameleon_does_not_have_shortage"
+industry_chameleon_alpha_core_eliminate_pather_interest_does_have_shortage,"The removal of Pather Cells is halted due to a lack of Domain-era Artifacts.",,false,"chameleon_does_have_shortage"
 industry_chameleon_rogue_ai_does_have_shortage,"The search for the rogue AI core is stalled due to a lack of Domain-era Artifacts.",,false,"chameleon_does_have_shortage"
 industry_chameleon_decivilized_does_have_shortage,"The removal of the decivilized population is stalled due to a lack of Domain-era Artifacts.",,false,"chameleon_does_have_shortage"
 ,,
@@ -108,6 +108,7 @@ industry_effect_kletka_simulator_does_not_have_shortage,"Production suspended du
 
 industry_magnetoshield_colony_irradiated,"$marketName is not irradiated. There is no reason to build a magnetoshield.",,false,"market_irradiated"
 ,,
+industry_mesozoic_park_colony_arid_terran_water_or_jungle,"$marketName must be an arid, terran, water, or jungle planet.",,false,"planet_arid | planet_terran | planet_water | planet_jungle"
 industry_mesozoic_park_colony_not_no_or_thin_atmosphere,"Surface conditions on $marketName are unsuitable for Old Earth megafauna due to insufficient atmospheric pressure.",,true,"market_no_atmosphere | market_thin_atmosphere"
 industry_mesozoic_park_colony_not_dense_atmosphere,"Surface conditions on $marketName are unsuitable for Old Earth megafauna due to excessive atmospheric pressure.",,true,"market_dense_atmosphere"
 industry_mesozoic_park_colony_not_toxic_or_irradiated,"Surface conditions on $marketName are unsuitable for Old Earth megafauna due to atmospheric toxicity.",,true,"market_toxic_atmosphere | market_irradiated"
@@ -204,10 +205,11 @@ ability_siphon_station_fleet_contains_transplutonics,"Requires $itemQuantity $it
 
 ability_colonize_abandoned_station_player_fleet_not_in_hyperspace,"You cannot colonize stations located in hyperspace.",,false,"player_fleet_not_in_hyperspace"
 ability_colonize_abandoned_station_system_has_jump_points,"You cannot colonize a station in a system with no jump points.",,false,"system_has_jump_points"
-ability_colonize_abandoned_station_target_station_not_owned_by_player_or_neutral,"You cannot colonize a station that is already controlled by $factionName.",,false,"target_station_not_owned_by_player_or_neutral"
+ability_colonize_abandoned_station_target_station_owned_by_player_or_neutral,"You cannot colonize a station that is already controlled by $factionName.",,false,"target_station_owned_by_player_or_neutral"
 ability_colonize_abandoned_station_target_station_not_colonizable,"$stationName is in a state of extreme disrepair and is not a viable target for colonization.",,false,"target_station_not_colonizable"
 ability_colonize_abandoned_station_target_station_within_range,"The station closest to your location is $stationName. Your fleet is $distanceInSu stellar units away. You must be within $requiredDistanceInSu stellar units to colonize the station.",,false,"ability_colonize_abandoned_station_target_station_within_range"
 ability_colonize_abandoned_station_target_station_colonizable,"$stationName is in a state of extreme disrepair and is not a viable target for colonization.",,false,"ability_colonize_abandoned_station_target_station_colonizable"
+ability_colonize_abandoned_station_target_station_size_0,"$stationName is already colonized.",,false,"ability_colonize_abandoned_station_target_station_size_0"
 
 ability_colonize_abandoned_station_fleet_contains_credits,"Requires $itemQuantity credits. You have $currentItemQuantity.","[ '$creditsQuantity' ]",false,"ability_colonize_abandoned_station_fleet_contains_credits"
 ability_colonize_abandoned_station_fleet_contains_crew,"Requires $itemQuantity $itemName. You have $currentItemQuantity.","[ '$itemQuantity' ]",false,"ability_colonize_abandoned_station_fleet_contains_crew"

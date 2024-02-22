@@ -484,6 +484,16 @@ public class BoggledTerraformingProjectEffectFactory {
         }
     }
 
+    public static class ModifyIndustryIncomeByAccessibility implements TerraformingProjectEffectFactory {
+        @Override
+        public BoggledTerraformingProjectEffect.TerraformingProjectEffect constructFromJSON(String id, String[] enableSettings, String data) throws JSONException {
+            JSONObject jsonData = new JSONObject(data);
+            String modifierType = jsonData.getString("modifier_type");
+            float value = (float) jsonData.getDouble("value");
+            return new BoggledTerraformingProjectEffect.ModifyIndustryIncomeByAccessibility(id, enableSettings, modifierType, value);
+        }
+    }
+
     public static class ModifyIndustrySupplyWithDeficit implements TerraformingProjectEffectFactory {
         @Override
         public BoggledTerraformingProjectEffect.TerraformingProjectEffect constructFromJSON(String id, String[] enableSettings, String data) throws JSONException {

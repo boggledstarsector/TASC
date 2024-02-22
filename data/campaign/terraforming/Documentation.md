@@ -19,7 +19,7 @@ The `id` field is a file unique identifier. Other mods can override a project en
 
 `dynamic_project_duration_modifiers` is a JSON Array of strings, with each string being the ID for a duration modifier from `duration_modifiers.csv`.
 
-`requirements_stall` and `requirements_reset` are the same format as `requirements`. If the requirements are satisfied, then the project is stalled or reset respectively.
+`requirements_stall` and `requirements_reset` are JSON Arrays of JSON Objects. `requirements_id` is the identifier for this requirement for modding purposes. `requirements` is the same format as the previous `requirements`. If any of the requirements are satisfied, then the project is stalled or reset respectively.
 
 `project_complete_effects` is a JSON Array of strings, with each string being the ID of an effect from `project_effects.csv`. All the effects happen when the project is completed successfully.
 

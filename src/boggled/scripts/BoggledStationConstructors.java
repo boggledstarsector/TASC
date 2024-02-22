@@ -73,7 +73,6 @@ public class BoggledStationConstructors {
             market.addSubmarket(Submarkets.LOCAL_RESOURCES);
 
             boggledTools.surveyAll(market);
-            boggledTools.refreshSupplyAndDemand(market);
 
             return market;
         }
@@ -206,15 +205,15 @@ public class BoggledStationConstructors {
 
             if(boggledTools.getBooleanSetting(boggledTools.BoggledSettings.siphonStationLinkToGasGiant)) {
                 if(hostPlanet.getMarket().hasCondition(Conditions.VOLATILES_TRACE)) {
-                    market.addCondition(Conditions.VOLATILES_TRACE);
+                    boggledTools.addCondition(market, Conditions.VOLATILES_TRACE);
                 } else if(hostPlanet.getMarket().hasCondition(Conditions.VOLATILES_DIFFUSE)) {
-                    market.addCondition(Conditions.VOLATILES_DIFFUSE);
+                    boggledTools.addCondition(market, Conditions.VOLATILES_DIFFUSE);
                 } else if(hostPlanet.getMarket().hasCondition(Conditions.VOLATILES_ABUNDANT)) {
-                    market.addCondition(Conditions.VOLATILES_ABUNDANT);
+                    boggledTools.addCondition(market, Conditions.VOLATILES_ABUNDANT);
                 } else if(hostPlanet.getMarket().hasCondition(Conditions.VOLATILES_PLENTIFUL)) {
-                    market.addCondition(Conditions.VOLATILES_PLENTIFUL);
+                    boggledTools.addCondition(market, Conditions.VOLATILES_PLENTIFUL);
                 } else { // Can a gas giant not have any volatiles at all?
-                    market.addCondition(Conditions.VOLATILES_TRACE);
+                    boggledTools.addCondition(market, Conditions.VOLATILES_TRACE);
                 }
             } else {
                 String resourceLevel = "diffuse";
@@ -233,7 +232,7 @@ public class BoggledStationConstructors {
                         resourceLevel = "plentiful";
                         break;
                 }
-                market.addCondition("volatiles_" + resourceLevel);
+                boggledTools.addCondition(market, "volatiles_" + resourceLevel);
             }
 
             Global.getSoundPlayer().playUISound(boggledTools.BoggledSounds.stationConstructed, 1.0F, 1.0F);

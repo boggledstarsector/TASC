@@ -25,7 +25,9 @@ arid_type_change,boggledTerraformingContentEnabled,terraforming,"Arid type chang
 	'market_remove_volatiles_abundant',
 	'market_remove_volatiles_plentiful',
 	
-	'industry_swap_seafloor_cities_for_domed_cities'
+	'industry_swap_seafloor_cities_for_domed_cities',
+	'industry_swap_aquaculture_for_farming',
+	'industry_remove_mesozoic_park'
 ]",,,,,
 jungle_type_change,boggledTerraformingContentEnabled,terraforming,"Jungle type change",,Completed,"[
 	{ 'requirement_id' : 'terraforming_world_type_allows_terraforming' },
@@ -53,7 +55,8 @@ jungle_type_change,boggledTerraformingContentEnabled,terraforming,"Jungle type c
 	'market_remove_volatiles_abundant',
 	'market_remove_volatiles_plentiful',
 	
-	'industry_swap_seafloor_cities_for_domed_cities'
+	'industry_swap_seafloor_cities_for_domed_cities',
+	'industry_swap_aquaculture_for_farming'
 ]",,,,,
 terran_type_change,boggledTerraformingContentEnabled,terraforming,"Terran type change",,Completed,"[
 	{ 'requirement_id' : 'terraforming_world_type_allows_terraforming' },
@@ -81,7 +84,8 @@ terran_type_change,boggledTerraformingContentEnabled,terraforming,"Terran type c
 	'market_remove_volatiles_abundant',
 	'market_remove_volatiles_plentiful',
 	
-	'industry_swap_seafloor_cities_for_domed_cities'
+	'industry_swap_seafloor_cities_for_domed_cities',
+	'industry_swap_aquaculture_for_farming'
 ]",,,,,
 water_type_change,boggledTerraformingContentEnabled,terraforming,"Water type change",,Completed,"[
 	{ 'requirement_id' : 'terraforming_world_type_allows_terraforming' },
@@ -108,7 +112,8 @@ water_type_change,boggledTerraformingContentEnabled,terraforming,"Water type cha
 	'market_remove_volatiles_abundant',
 	'market_remove_volatiles_plentiful',
 	
-	'industry_swap_domed_cities_for_seafloor_cities'
+	'industry_swap_domed_cities_for_seafloor_cities',
+	'industry_swap_farming_for_aquaculture'
 ]",,,,,
 tundra_type_change,boggledTerraformingContentEnabled,terraforming,"Tundra type change",,Completed,"[
 	{ 'requirement_id' : 'terraforming_world_type_allows_terraforming' },
@@ -136,7 +141,9 @@ tundra_type_change,boggledTerraformingContentEnabled,terraforming,"Tundra type c
 	'market_remove_volatiles_abundant',
 	'market_remove_volatiles_plentiful',
 	
-	'industry_swap_seafloor_cities_for_domed_cities'
+	'industry_swap_seafloor_cities_for_domed_cities',
+	'industry_swap_aquaculture_for_farming',
+	'industry_remove_mesozoic_park'
 ]",,,,,
 frozen_type_change,boggledTerraformingContentEnabled,terraforming,"Frozen type change",,Completed,"[
 	{ 'requirement_id' : 'terraforming_world_type_allows_terraforming' },
@@ -162,7 +169,9 @@ frozen_type_change,boggledTerraformingContentEnabled,terraforming,"Frozen type c
 	'market_remove_volatiles_diffuse',
 	'market_remove_volatiles_plentiful',
 	
-	'industry_swap_seafloor_cities_for_domed_cities'
+	'industry_swap_seafloor_cities_for_domed_cities',
+	'industry_swap_aquaculture_for_farming',
+	'industry_remove_mesozoic_park'
 ]",,,,,
 ,,,,,,,,,,,,,,,,,
 farmland_resource_improvement,boggledTerraformingContentEnabled,terraforming,"Farmland resource improvement",,Completed,"[
@@ -226,7 +235,9 @@ remove_atmosphere_condition_improvement,boggledTerraformingContentEnabled | bogg
 	'market_remove_inimical_biosphere',
 	'market_remove_extreme_weather',
 	'market_remove_mild_climate',
-	'market_remove_habitable'
+	'market_remove_habitable',
+	
+	'industry_remove_mesozoic_park'
 ]","[ 'attach_project_to_atmosphere_processor' ]",,,,
 ,,,,,,,,,,,,,,,,,
 industry_ai_mining_drones,boggledStationConstructionContentEnabled | boggledEnableAIMiningDronesStructure,industry,,,,"[
@@ -238,6 +249,9 @@ industry_ai_mining_drones,boggledStationConstructionContentEnabled | boggledEnab
 	'ongoing_market_size_demand_supplies',
 	'ongoing_market_size_demand_ships'
 ]",,,,
+industry_ai_mining_drones_alpha_core,boggledStationConstructionContentEnabled | boggledEnableAIMiningDronesStructure,industry,,,,,,,,,,,"[ 'ai_mining_drones_alpha_core_effect_to_mining' ]",,,,
+industry_ai_mining_drones_beta_core,boggledStationConstructionContentEnabled | boggledEnableAIMiningDronesStructure,industry,,,,,,,,,,,"[ 'ai_mining_drones_beta_core_effect_to_mining' ]",,,,
+industry_ai_mining_drones_gamma_core,boggledStationConstructionContentEnabled | boggledEnableAIMiningDronesStructure,industry,,,,,,,,,,,"[ 'ai_mining_drones_gamma_core_effect_to_mining' ]",,,,
 industry_atmosphere_processor,boggledTerraformingContentEnabled,industry,,,,"[
 	{ 'requirement_id' : 'industry_colony_is_not_station', 'and_then' : [
 		{ 'requirement_id' : 'industry_colony_not_unknown_world' },
@@ -252,9 +266,7 @@ industry_atmosphere_processor,boggledTerraformingContentEnabled,industry,,,,"[
 		'requirements_id' : 'industry_atmosphere_processor_shortage_stall',
 		'requirements' : [ { 'requirement_id' : 'industry_atmosphere_processor_does_not_have_shortage' } ]
 	}
-]",,,"[
-	'ongoing_market_size_demand_heavy_machinery'
-]",,,,
+]",,,"[ 'ongoing_market_size_demand_heavy_machinery' ]",,,,
 industry_chameleon,boggledDomainTechContentEnabled | boggledCHAMELEONEnabled,industry,,,,,,,,,,,"[ 'ongoing_market_size_demand_domain_artifacts' ]",,,,
 industry_chameleon_decivilized,boggledDomainTechContentEnabled | boggledCHAMELEONEnabled,industry,Decivilized subpopulation,,Eradicated,"[ { 'requirement_id' : 'industry_colony_decivilized' } ]",,200,,"[
 	{
@@ -271,6 +283,17 @@ industry_chameleon_rogue_ai,boggledDomainTechContentEnabled | boggledCHAMELEONEn
 		'requirements' : [ { 'requirement_id' : 'industry_chameleon_rogue_ai_does_have_shortage' } ]
 	}
 ]",,"[ 'market_remove_rogue_ai_core' ]",,"An investigation into the whereabouts of the rogue AI core on $marketName is approximately $percentComplete% complete.",[ '$percentComplete%' ],,
+industry_chameleon_alpha_core,boggledDomainTechContentEnabled | boggledCHAMELEONEnabled,industry,,,,,,,,,,,"[
+	'chameleon_alpha_core_reduce_upkeep',
+	'chameleon_alpha_core_reduce_demand',
+	'chameleon_alpha_core_eliminate_pather_interest'
+]",,,,
+industry_chameleon_alpha_core_eliminate_pather_interest,boggledDomainTechContentEnabled | boggledCHAMELEONEnabled,industry,,,,,,,,"[
+	{
+		'requirements_id' : 'industry_chameleon_alpha_core_eliminate_pather_interest_shortage_stall',
+		'requirements' : [ { 'requirement_id' : 'industry_chameleon_alpha_core_eliminate_pather_interest_does_have_shortage' } ]
+	}
+]",,,"[ 'chameleon_alpha_core_eliminate_pather_interest' ]",,,,
 industry_cloning,boggledCloningEnabled,industry,,,,,,,,,,,"[
 	'ongoing_market_size_minus_2_supply_organs',
 	'ongoing_market_size_minus_2_demand_domain_artifacts',
@@ -297,6 +320,9 @@ industry_domed_cities,boggledTerraformingContentEnabled | boggledDomedCitiesEnab
 	'domed_cities_modify_colony_growth',
 	'domed_cities_modify_ground_defense'
 ]",,,,
+industry_domed_cities_alpha_core,boggledTerraformingContentEnabled | boggledDomedCitiesEnabled,industry,,,,,,,,,,,"[ 'domed_cities_alpha_core_stability_bonus' ]",,,,
+industry_domed_cities_beta_core,boggledTerraformingContentEnabled | boggledDomedCitiesEnabled,industry,,,,,,,,,,,"[ 'domed_cities_beta_core_stability_bonus' ]",,,,
+industry_domed_cities_gamma_core,boggledTerraformingContentEnabled | boggledDomedCitiesEnabled,industry,,,,,,,,,,,"[ 'domed_cities_gamma_core_stability_bonus' ]",,,,
 industry_seafloor_cities,boggledTerraformingContentEnabled | boggledDomedCitiesEnabled,industry,,,,"[
 	{ 'requirement_id' : 'industry_colony_is_not_station', 'and_then' : [
 		{ 'requirement_id' : 'industry_colony_not_has_tectonic_activity_unless_has_harmonic_damper' },
@@ -329,6 +355,9 @@ industry_genelab_pollution,boggledTerraformingContentEnabled | boggledGenelabEna
 industry_genelab_lobster,boggledTerraformingContentEnabled | boggledGenelabEnabled,industry,"Lobster seeding",,"Completed","[ { 'requirement_id' : 'industry_colony_water_surface' } ]",,200,,,,,,,,,
 industry_gpa,,industry,,,,,"[ { 'requirement_id' : 'false' } ]",,,,,,"[ 'ongoing_flat_demand_3_domain_artifacts' ]",,,,
 industry_harmonic_damper,boggledHarmonicDamperEnabled,industry,,,,"[ { 'requirement_id' : 'industry_colony_is_not_station' } ]",,,,,,,"[ 'harmonic_damper_suppress_conditions' ]",,,,
+industry_harmonic_damper_alpha_core,boggledHarmonicDamperEnabled,industry,,,,,,,,,,,"[ 'harmonic_damper_alpha_core_ground_defenses' ]",,,,
+industry_harmonic_damper_beta_core,boggledHarmonicDamperEnabled,industry,,,,,,,,,,,"[ 'harmonic_damper_beta_core_ground_defenses' ]",,,,
+industry_harmonic_damper_gamma_core,boggledHarmonicDamperEnabled,industry,,,,,,,,,,,"[ 'harmonic_damper_gamma_core_ground_defenses' ]",,,,
 industry_hydroponics,boggledHydroponicsEnabled,industry,,,,,,,,,,,"[
 	'ongoing_market_size_supply_food',
 	'ongoing_market_size_minus_2_demand_heavy_machinery',
@@ -352,9 +381,17 @@ industry_kletka_simulator,boggledDomainTechContentEnabled | boggledKletkaSimulat
 	'kletka_simulator_item_production_requires_no_shortage',
 	'kletka_simulator_item_production_chance_effect'
  ]",,,,
+industry_kletka_simulator_alpha_core,boggledDomainTechContentEnabled | boggledKletkaSimulatorEnabled,industry,,,,,,,,,,,"[ 'kletka_simulator_alpha_core_effect' ]",,,,
+industry_kletka_simulator_beta_core,boggledDomainTechContentEnabled | boggledKletkaSimulatorEnabled,industry,,,,,,,,,,,"[ 'kletka_simulator_beta_core_effect' ]",,,,
+industry_kletka_simulator_gamma_core,boggledDomainTechContentEnabled | boggledKletkaSimulatorEnabled,industry,,,,,,,,,,,"[ 'kletka_simulator_gamma_core_effect' ]",,,,
 industry_limelight_network,boggledDomainTechContentEnabled | boggledLimelightNetworkPlayerBuildEnabled,industry,,,,,,,,,,,"[
 	'ongoing_market_size_minus_2_demand_domain_artifacts',
 	'ongoing_domain_artifacts_deficit_to_5_times_upkeep'
+]",,,,
+industry_limelight_network_alpha_core,boggledDomainTechContentEnabled | boggledLimelightNetworkPlayerBuildEnabled,industry,,,,,,,,,,,"[
+	'limelight_network_alpha_core_reduce_upkeep_bonus',
+	'limelight_network_alpha_core_reduce_demand_bonus',
+	'limelight_network_alpha_core_increase_income_bonus'
 ]",,,,
 industry_magnetoshield,boggledTerraformingContentEnabled | boggledMagnetoshieldEnabled,industry,,,,"[ { 'requirement_id' : 'industry_magnetoshield_colony_irradiated' } ]",,,,,,,"[
 	'magnetoshield_suppress_conditions'
@@ -364,9 +401,13 @@ industry_mesozoic_park,boggledTerraformingContentEnabled | boggledMesozoicParkEn
 		{ 'requirement_id' : 'industry_colony_habitable' },
 		{ 'requirement_id' : 'industry_mesozoic_park_colony_not_no_or_thin_atmosphere' },
 		{ 'requirement_id' : 'industry_mesozoic_park_colony_not_dense_atmosphere' },
-		{ 'requirement_id' : 'industry_mesozoic_park_colony_not_toxic_or_irradiated' }
+		{ 'requirement_id' : 'industry_mesozoic_park_colony_not_toxic_or_irradiated' },
+		{ 'requirement_id' : 'industry_mesozoic_park_colony_arid_terran_water_or_jungle' }
 	] }
-]",,,,,,,,,,,
+]",,,,,,,"[ 'mesozoic_park_increase_income_by_accessibility' ]",,,,
+industry_mesozoic_park_alpha_core,boggledTerraformingContentEnabled | boggledMesozoicParkEnabled,industry,,,,,,,,,,,"[ 'mesozoic_park_alpha_core_increase_income_bonus' ]",,,,
+industry_mesozoic_park_beta_core,boggledTerraformingContentEnabled | boggledMesozoicParkEnabled,industry,,,,,,,,,,,"[ 'mesozoic_park_beta_core_increase_income_bonus' ]",,,,
+industry_mesozoic_park_gamma_core,boggledTerraformingContentEnabled | boggledMesozoicParkEnabled,industry,,,,,,,,,,,"[ 'mesozoic_park_gamma_core_increase_income_bonus' ]",,,,
 industry_ouyang_optimizer,boggledTerraformingContentEnabled | boggledOuyangOptimizerEnabled,industry,Ouyang optimization,,Completed,"[
 	{ 'requirement_id' : 'industry_colony_is_station', 'and_then' : [
 		{ 'requirement_id' : 'industry_ouyang_optimizer_orbited_planet_is_gas_giant' },
@@ -655,8 +696,10 @@ boggled_colonize_abandoned_station,boggledStationColonizationEnabled,ability,"Co
 	{ 'requirement_id' : 'ability_colonize_abandoned_station_player_fleet_not_in_hyperspace', 'and_then' : [
 		{ 'requirement_id' : 'ability_colonize_abandoned_station_system_has_jump_points', 'and_then' : [
 			{ 'requirement_id' : 'ability_colonize_abandoned_station_target_station_within_range' },
-			{ 'requirement_id' : 'ability_colonize_abandoned_station_target_station_not_owned_by_player_or_neutral' },
-			{ 'requirement_id' : 'ability_colonize_abandoned_station_target_station_colonizable' }
+			{ 'requirement_id' : 'ability_colonize_abandoned_station_target_station_owned_by_player_or_neutral' },
+			{ 'requirement_id' : 'ability_colonize_abandoned_station_target_station_size_0', 'and_then' : [
+				{ 'requirement_id' : 'ability_colonize_abandoned_station_target_station_colonizable' }
+			] }
 		] }
 	] },
 	

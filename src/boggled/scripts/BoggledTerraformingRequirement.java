@@ -636,6 +636,32 @@ public class BoggledTerraformingRequirement {
         }
     }
 
+    public static class StationMarketIsExactlySize extends TerraformingRequirement {
+        int colonySize;
+        protected StationMarketIsExactlySize(String id, String[] enableSettings, boolean invert, int colonySize) {
+            super(id, enableSettings, invert);
+            this.colonySize = colonySize;
+        }
+
+        @Override
+        protected boolean checkRequirementImpl(RequirementContext ctx) {
+            MarketAPI market = ctx.getStationMarket();
+            if (market == null) {
+                return false;
+            }
+            return market.getSize() == colonySize;
+        }
+
+        @Override
+        public void addTokenReplacements(RequirementContext ctx, Map<String, String> tokenReplacements) {
+            SectorEntityToken station = ctx.getStation();
+            if (station == null) {
+                return;
+            }
+            tokenReplacements.put("$stationName", station.getName());
+        }
+    }
+
     public static class MarketStorageContainsAtLeast extends StorageContainsAtLeast {
         String submarketId;
         public MarketStorageContainsAtLeast(String id, String[] enableSettings, boolean invert, String submarketId, ItemType itemType, String itemId, String settingId, int quantity, String jobId) {
@@ -1105,7 +1131,11 @@ public class BoggledTerraformingRequirement {
             if (targetStation == null) {
                 return false;
             }
-            return targetStation.getMarket() != null && targetStation.getMarket().hasCondition(Conditions.ABANDONED_STATION);
+            MarketAPI market = targetStation.getMarket();
+            if (market == null) {
+                return false;
+            }
+            return market.hasCondition(Conditions.ABANDONED_STATION);
         }
 
         @Override

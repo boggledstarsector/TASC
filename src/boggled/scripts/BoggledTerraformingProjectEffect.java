@@ -1040,7 +1040,7 @@ public class BoggledTerraformingProjectEffect {
                 market = defaultStationConstructionData.createMarket(targetStation);
             }
 
-            if (targetStation.hasTag("boggled_astropolis") || targetStation.hasTag("boggled_mining") || targetStation.hasTag("boggled_siphon")) {
+            if (targetStation.hasTag(boggledTools.BoggledTags.astropolisStation) || targetStation.hasTag(boggledTools.BoggledTags.miningStation) || targetStation.hasTag(boggledTools.BoggledTags.siphonStation)) {
                 SectorEntityToken newLightsOnColonize = starSystem.addCustomEntity("boggled_newLightsOnColonize", "New Lights Overlay From Colonizing Abandoned Station", targetStation.getCustomEntityType() + "_lights_overlay", playerFleet.getFaction().getId());
                 newLightsOnColonize.setOrbit(targetStation.getOrbit().makeCopy());
             } else if(targetStation.hasTag("boggled_gatekeeper_station")) {
@@ -1107,7 +1107,7 @@ public class BoggledTerraformingProjectEffect {
         }
 
         private String getRequirementsString(BoggledTerraformingRequirement.RequirementContext ctx) {
-            List<BoggledCommonIndustry.TooltipData> effectSuffixes = requirements.getTooltip(ctx, boggledTools.getTokenReplacements(ctx));
+            List<BoggledCommonIndustry.TooltipData> effectSuffixes = requirements.getTooltip(ctx, boggledTools.getTokenReplacements(ctx), displayRequirementTooltipOnRequirementFailure, false);
             List<String> requirementTooltipsString = new ArrayList<>();
             for (BoggledCommonIndustry.TooltipData effectSuffix : effectSuffixes) {
                 requirementTooltipsString.add(effectSuffix.text);
@@ -1137,22 +1137,20 @@ public class BoggledTerraformingProjectEffect {
         @Override
         protected void addTooltipInfoImpl(BoggledTerraformingRequirement.RequirementContext ctx, Map<String, EffectTooltipPara> effectTypeToPara, String effectSource, DescriptionMode mode, DescriptionSource source) {
             if (!requirements.requirementsMet(ctx)) {
-                if (displayRequirementTooltipOnRequirementFailure) {
-                    Map<String, String> tokenReplacements = boggledTools.getTokenReplacements(ctx);
-                    List<BoggledCommonIndustry.TooltipData> tooltips = requirements.getTooltip(ctx, tokenReplacements);
-                    EffectTooltipPara para = new EffectTooltipPara("", "");
-                    for (BoggledCommonIndustry.TooltipData tooltip : tooltips) {
-                        if (!para.infix.isEmpty()) {
-                            para.infix.add("\n");
-                        }
-                        para.infix.add(tooltip.text);
-                        for (Color highlightColor : tooltip.highlightColors) {
-                            para.highlightColors.add(Misc.getNegativeHighlightColor());
-                        }
-                        para.highlights.addAll(tooltip.highlights);
+                Map<String, String> tokenReplacements = boggledTools.getTokenReplacements(ctx);
+                List<BoggledCommonIndustry.TooltipData> tooltips = requirements.getTooltip(ctx, tokenReplacements, displayRequirementTooltipOnRequirementFailure, false);
+                EffectTooltipPara para = new EffectTooltipPara("", "");
+                for (BoggledCommonIndustry.TooltipData tooltip : tooltips) {
+                    if (!para.infix.isEmpty()) {
+                        para.infix.add("\n");
                     }
-                    effectTypeToPara.put(id, para);
+                    para.infix.add(tooltip.text);
+                    for (Color highlightColor : tooltip.highlightColors) {
+                        para.highlightColors.add(Misc.getNegativeHighlightColor());
+                    }
+                    para.highlights.addAll(tooltip.highlights);
                 }
+                effectTypeToPara.put(id, para);
 
                 if (!displayEffectTooltipOnRequirementFailure) {
                     return;
@@ -1709,6 +1707,32 @@ public class BoggledTerraformingProjectEffect {
         }
     }
 
+    public static class ModifyIndustryIncomeByAccessibility extends ModifierEffect {
+        protected ModifyIndustryIncomeByAccessibility(String id, String[] enableSettings, String modifierType, float value) {
+            super(id, enableSettings, modifierType, value);
+        }
+
+        @Override
+        protected void applyProjectEffectImpl(BoggledTerraformingRequirement.RequirementContext ctx, String effectSource) {
+            BaseIndustry targetIndustry = ctx.getTargetIndustry();
+            MarketAPI market = ctx.getClosestMarket();
+            if (targetIndustry == null || market == null) {
+                return;
+            }
+            float accessMult = market.getAccessibilityMod().computeEffective(0.0f);
+            targetIndustry.getIncome().modifyMult(id, accessMult, "Accessibility");
+        }
+
+        @Override
+        protected void unapplyProjectEffectImpl(BoggledTerraformingRequirement.RequirementContext ctx) {
+            BaseIndustry targetIndustry = ctx.getTargetIndustry();
+            if (targetIndustry == null) {
+                return;
+            }
+            targetIndustry.getIncome().unmodify(id);
+        }
+    }
+
     public static class ModifyIndustrySupplyWithDeficit extends ModifierEffect {
         List<String> commoditiesDemanded;
         public ModifyIndustrySupplyWithDeficit(String id, String[] enableSettings, List<String> commoditiesDemanded, String modifierType, float value) {
@@ -1985,7 +2009,7 @@ public class BoggledTerraformingProjectEffect {
                 StringBuilder chanceString = new StringBuilder("\n    ").append(Global.getSettings().getCommoditySpec(datum.commodityId).getName()).append(": ").append(modifiedPercentString).append(" (").append(basePercentString).append(")");
 
                 if (!requirementsMet) {
-                    List<BoggledCommonIndustry.TooltipData> requirementTooltips = datum.requirements.getTooltip(ctx, tokenReplacements);
+                    List<BoggledCommonIndustry.TooltipData> requirementTooltips = datum.requirements.getTooltip(ctx, tokenReplacements, true, false);
                     for (BoggledCommonIndustry.TooltipData tooltip : requirementTooltips) {
                         String tooltipText = Misc.lcFirst(tooltip.text);
                         chanceString.append(", ").append(tooltipText);

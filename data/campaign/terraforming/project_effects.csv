@@ -9,6 +9,11 @@ irradiated_type_change,,PlanetTypeChange,"irradiated"
 
 industry_swap_seafloor_cities_for_domed_cities,,IndustrySwap,"{ 'industry_to_remove' : 'BOGGLED_SEAFLOOR_CITIES', 'industry_to_add' : 'BOGGLED_DOMED_CITIES' }"
 industry_swap_domed_cities_for_seafloor_cities,,IndustrySwap,"{ 'industry_to_remove' : 'BOGGLED_DOMED_CITIES', 'industry_to_add' : 'BOGGLED_SEAFLOOR_CITIES' }"
+
+industry_swap_farming_for_aquaculture,,IndustrySwap,"{ 'industry_to_remove' : 'farming', 'industry_to_add' : 'aquaculture' }"
+industry_swap_aquaculture_for_farming,,IndustrySwap,"{ 'industry_to_remove' : 'aquaculture', 'industry_to_add' : 'farming' }"
+
+industry_remove_mesozoic_park,,IndustryRemove,"{ 'industry_id' : 'BOGGLED_MESOZOIC_PARK' }"
 ,,,
 market_add_habitable,,MarketAddCondition,"habitable"
 market_add_mild_climate,,MarketAddCondition,"mild_climate"
@@ -84,21 +89,21 @@ market_remove_perihelion_project,,MarketRemoveIndustry,"BOGGLED_PERIHELION_PROJE
 ,,
 attach_project_to_atmosphere_processor,,AttachProjectToIndustry,"{ 'industry_id' : 'BOGGLED_ATMOSPHERE_PROCESSOR' }"
 ,,
-add_corrupted_nanoforge_to_storage,,AddItemToSubmarket,"{ 'submarket_id' : 'storage', 'item_id' : 'corrupted_nanoforge', 'quantity' : 1 }"
-add_pristine_nanoforge_to_storage,,AddItemToSubmarket,"{ 'submarket_id' : 'storage', 'item_id' : 'pristine_nanoforge', 'quantity' : 1 }"
-add_synchrotron_core_to_storage,,AddItemToSubmarket,"{ 'submarket_id' : 'storage', 'item_id' : 'synchrotron', 'quantity' : 1 }"
-add_hypershunt_tap_to_storage,,AddItemToSubmarket,"{ 'submarket_id' : 'storage', 'item_id' : 'coronal_portal', 'quantity' : 1 }"
-add_cryoarithmetic_engine_to_storage,,AddItemToSubmarket,"{ 'submarket_id' : 'storage', 'item_id' : 'cryoarithmetic_engine', 'quantity' : 1 }"
-add_planetkiller_device_to_storage,,AddItemToSubmarket,"{ 'submarket_id' : 'storage', 'item_id' : 'boggled_planetkiller', 'quantity' : 1 }"
-add_orbital_fusion_lamp_to_storage,,AddItemToSubmarket,"{ 'submarket_id' : 'storage', 'item_id' : 'orbital_fusion_lamp', 'quantity' : 1 }"
-add_fullerene_spool_to_storage,,AddItemToSubmarket,"{ 'submarket_id' : 'storage', 'item_id' : 'fullerene_spool', 'quantity' : 1 }"
-add_plasma_dynamo_to_storage,,AddItemToSubmarket,"{ 'submarket_id' : 'storage', 'item_id' : 'plasma_dynamo', 'quantity' : 1 }"
-add_autonomous_mantle_bore_to_storage,,AddItemToSubmarket,"{ 'submarket_id' : 'storage', 'item_id' : 'mantle_bore', 'quantity' : 1 }"
-add_soil_nanites_to_storage,,AddItemToSubmarket,"{ 'submarket_id' : 'storage', 'item_id' : 'soil_nanites', 'quantity' : 1 }"
-add_catalytic_core_to_storage,,AddItemToSubmarket,"{ 'submarket_id' : 'storage', 'item_id' : 'catalytic_core', 'quantity' : 1 }"
-add_drone_replicator_to_storage,,AddItemToSubmarket,"{ 'submarket_id' : 'storage', 'item_id' : 'drone_replicator', 'quantity' : 1 }"
-add_biofactory_embryo_to_storage,,AddItemToSubmarket,"{ 'submarket_id' : 'storage', 'item_id' : 'biofactory_embryo', 'quantity' : 1 }"
-add_dealmaker_holosuite_to_storage,,AddItemToSubmarket,"{ 'submarket_id' : 'storage', 'item_id' : 'dealmaker_holosuite', 'quantity' : 1 }"
+add_corrupted_nanoforge_to_storage,,AddItemToSubmarket,"{ 'submarket_id' : 'storage', 'special_item_id' : 'corrupted_nanoforge', 'quantity' : 1 }"
+add_pristine_nanoforge_to_storage,,AddItemToSubmarket,"{ 'submarket_id' : 'storage', 'special_item_id' : 'pristine_nanoforge', 'quantity' : 1 }"
+add_synchrotron_core_to_storage,,AddItemToSubmarket,"{ 'submarket_id' : 'storage', 'special_item_id' : 'synchrotron', 'quantity' : 1 }"
+add_hypershunt_tap_to_storage,,AddItemToSubmarket,"{ 'submarket_id' : 'storage', 'special_item_id' : 'coronal_portal', 'quantity' : 1 }"
+add_cryoarithmetic_engine_to_storage,,AddItemToSubmarket,"{ 'submarket_id' : 'storage', 'special_item_id' : 'cryoarithmetic_engine', 'quantity' : 1 }"
+add_planetkiller_device_to_storage,,AddItemToSubmarket,"{ 'submarket_id' : 'storage', 'special_item_id' : 'boggled_planetkiller', 'quantity' : 1 }"
+add_orbital_fusion_lamp_to_storage,,AddItemToSubmarket,"{ 'submarket_id' : 'storage', 'special_item_id' : 'orbital_fusion_lamp', 'quantity' : 1 }"
+add_fullerene_spool_to_storage,,AddItemToSubmarket,"{ 'submarket_id' : 'storage', 'special_item_id' : 'fullerene_spool', 'quantity' : 1 }"
+add_plasma_dynamo_to_storage,,AddItemToSubmarket,"{ 'submarket_id' : 'storage', 'special_item_id' : 'plasma_dynamo', 'quantity' : 1 }"
+add_autonomous_mantle_bore_to_storage,,AddItemToSubmarket,"{ 'submarket_id' : 'storage', 'special_item_id' : 'mantle_bore', 'quantity' : 1 }"
+add_soil_nanites_to_storage,,AddItemToSubmarket,"{ 'submarket_id' : 'storage', 'special_item_id' : 'soil_nanites', 'quantity' : 1 }"
+add_catalytic_core_to_storage,,AddItemToSubmarket,"{ 'submarket_id' : 'storage', 'special_item_id' : 'catalytic_core', 'quantity' : 1 }"
+add_drone_replicator_to_storage,,AddItemToSubmarket,"{ 'submarket_id' : 'storage', 'special_item_id' : 'drone_replicator', 'quantity' : 1 }"
+add_biofactory_embryo_to_storage,,AddItemToSubmarket,"{ 'submarket_id' : 'storage', 'special_item_id' : 'biofactory_embryo', 'quantity' : 1 }"
+add_dealmaker_holosuite_to_storage,,AddItemToSubmarket,"{ 'submarket_id' : 'storage', 'special_item_id' : 'dealmaker_holosuite', 'quantity' : 1 }"
 ,,
 remove_2_story_points_from_player,,RemoveStoryPointsFromPlayer,"{ 'setting_id' : 'boggledDomainTechCraftingStoryPointCost', 'quantity' : 2 }"
 ,,
@@ -495,6 +500,9 @@ limelight_network_alpha_core_increase_income_bonus,,ModifyIndustryIncome,"{ 'mod
 limelight_network_improve_increase_income_bonus,,ModifyIndustryIncome,"{ 'modifier_type' : 'mult', 'value' : 1.2 }"
 
 magnetoshield_suppress_conditions,,SuppressConditions,"[ 'irradiated' ]"
+
+mesozoic_park_add_inimical_biosphere,,MarketAddCondition,"inimical_biosphere"
+mesozoic_park_increase_income_by_accessibility,,ModifyIndustryIncomeByAccessibility,"{ 'modifier_type' : 'mult', 'value' : 1.0 }"
 
 mesozoic_park_alpha_core_increase_income_bonus,,ModifyIndustryIncome,"{ 'modifier_type' : 'mult', 'value' : 1.2 }"
 mesozoic_park_beta_core_increase_income_bonus,,ModifyIndustryIncome,"{ 'modifier_type' : 'mult', 'value' : 1.1 }"

@@ -175,7 +175,6 @@ market_has_at_least_100k_residents,,MarketIsAtLeastSize,false,5
 ,
 atmosphere_processor_does_not_have_shortage,,IndustryHasShortage,true,"[ 'heavy_machinery' ]"
 ,
-chameleon_does_not_have_shortage,boggledDomainTechContentEnabled | boggledDomainArchaeologyEnabled,IndustryHasShortage,true,"[ 'domain_artifacts' ]"
 chameleon_does_have_shortage,boggledDomainTechContentEnabled | boggledDomainArchaeologyEnabled,IndustryHasShortage,false,"[ 'domain_artifacts' ]"
 ,
 kletka_simulator_has_alpha_core,,MarketHasIndustryWithAICore,false,"{
@@ -208,7 +207,7 @@ target_planet_too_close_to_star,,TargetPlanetStarWithinDistance,true,1400
 target_planet_too_many_moons,,TargetPlanetMoonCountLessThan,false,4
 target_planet_too_crowded,,TargetPlanetOrbitersTooClose,false,400
 ,
-target_station_not_owned_by_player_or_neutral,,TargetStationOwnedBy,true,"[ 'player', 'neutral' ]"
+target_station_owned_by_player_or_neutral,,TargetStationOwnedBy,false,"[ 'player', 'neutral' ]"
 target_station_not_colonizable,,TargetStationColonizable,true,
 ,
 ability_astropolis_station_target_planet_within_range,boggledAstropolisFollowOrbitalRequirements,TargetPlanetWithinDistance,false,500
@@ -323,6 +322,7 @@ ability_siphon_station_fleet_contains_transplutonics,,FleetStorageContainsAtLeas
 ,
 ability_colonize_abandoned_station_target_station_within_range,,TargetStationWithinDistance,false,400
 ability_colonize_abandoned_station_target_station_colonizable,,TargetStationColonizable,false,
+ability_colonize_abandoned_station_target_station_size_0,,StationMarketIsExactlySize,false,0
 ,
 ability_colonize_abandoned_station_fleet_contains_credits,,FleetStorageContainsAtLeast,false,"{
 	'setting_id' : 'boggledStationRecolonizeCreditCost',

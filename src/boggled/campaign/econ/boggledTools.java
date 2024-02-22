@@ -237,6 +237,10 @@ public class boggledTools {
 
         public static final String terraformingController = "boggledTerraformingController";
 
+        public static final String astropolisStation = "boggled_astropolis";
+        public static final String miningStation = "boggled_mining";
+        public static final String siphonStation = "boggled_siphon";
+
         public static final String lightsOverlayAstropolisAlphaSmall = "boggled_lights_overlay_astropolis_alpha_small";
         public static final String lightsOverlayAstropolisAlphaMedium = "boggled_lights_overlay_astropolis_alpha_medium";
         public static final String lightsOverlayAstropolisAlphaLarge = "boggled_lights_overlay_astropolis_alpha_large";
@@ -413,13 +417,14 @@ public class boggledTools {
         List<String> highlights = new ArrayList<>();
         for (BoggledTerraformingProject.ProjectInstance project : projects) {
             for (BoggledProjectRequirementsAND.RequirementAndThen req : project.getProject().getRequirements()) {
-                if (!req.checkRequirement(ctx)) {
-                    tooltips.addAll(req.getTooltip(ctx, tokenReplacements));
-                }
+                tooltips.addAll(req.getTooltip(ctx, tokenReplacements, true, false));
             }
         }
 
         for (BoggledCommonIndustry.TooltipData tooltip : tooltips) {
+            if (tooltip.text.isEmpty()) {
+                continue;
+            }
             if (builder.length() != 0) {
                 builder.append("\n");
             }
@@ -453,6 +458,7 @@ public class boggledTools {
         addTerraformingRequirementFactory("PlanetWaterLevel", new BoggledTerraformingRequirementFactory.PlanetWaterLevel());
         addTerraformingRequirementFactory("MarketHasWaterPresent", new BoggledTerraformingRequirementFactory.MarketHasWaterPresent());
         addTerraformingRequirementFactory("MarketIsAtLeastSize", new BoggledTerraformingRequirementFactory.MarketIsAtLeastSize());
+        addTerraformingRequirementFactory("StationMarketIsExactlySize", new BoggledTerraformingRequirementFactory.StationMarketIsExactlySize());
         addTerraformingRequirementFactory("TerraformingPossibleOnMarket", new BoggledTerraformingRequirementFactory.TerraformingPossibleOnMarket());
         addTerraformingRequirementFactory("MarketHasTags", new BoggledTerraformingRequirementFactory.MarketHasTags());
         addTerraformingRequirementFactory("MarketStorageContainsAtLeast", new BoggledTerraformingRequirementFactory.MarketStorageContainsAtLeast());
@@ -555,6 +561,7 @@ public class boggledTools {
         addTerraformingProjectEffectFactory("ModifyColonyStability", new BoggledTerraformingProjectEffectFactory.ModifyColonyStability());
         addTerraformingProjectEffectFactory("ModifyIndustryUpkeep", new BoggledTerraformingProjectEffectFactory.ModifyIndustryUpkeep());
         addTerraformingProjectEffectFactory("ModifyIndustryIncome", new BoggledTerraformingProjectEffectFactory.ModifyIndustryIncome());
+        addTerraformingProjectEffectFactory("ModifyIndustryIncomeByAccessibility", new BoggledTerraformingProjectEffectFactory.ModifyIndustryIncomeByAccessibility());
         addTerraformingProjectEffectFactory("ModifyIndustrySupplyWithDeficit", new BoggledTerraformingProjectEffectFactory.ModifyIndustrySupplyWithDeficit());
         addTerraformingProjectEffectFactory("ModifyIndustryDemand", new BoggledTerraformingProjectEffectFactory.ModifyIndustryDemand());
 
@@ -591,9 +598,9 @@ public class boggledTools {
     }
 
     public static void initialiseDefaultStationConstructionFactories() {
-        addStationConstructionFactory("boggled_astropolis", new BoggledStationConstructionFactory.AstropolisConstructionFactory());
-        addStationConstructionFactory("boggled_mining", new BoggledStationConstructionFactory.MiningStationConstructionFactory());
-        addStationConstructionFactory("boggled_siphon", new BoggledStationConstructionFactory.SiphonStationConstructionFactory());
+        addStationConstructionFactory(boggledTools.BoggledTags.astropolisStation, new BoggledStationConstructionFactory.AstropolisConstructionFactory());
+        addStationConstructionFactory(boggledTools.BoggledTags.miningStation, new BoggledStationConstructionFactory.MiningStationConstructionFactory());
+        addStationConstructionFactory(boggledTools.BoggledTags.siphonStation, new BoggledStationConstructionFactory.SiphonStationConstructionFactory());
     }
 
     public static void addStationConstructionFactory(String key, BoggledStationConstructionFactory.StationConstructionFactory value) {
@@ -689,8 +696,8 @@ public class boggledTools {
         return ret;
     }
 
-    private static Map<String, List<BoggledTerraformingProjectEffect.TerraformingProjectEffect>> aiCoreEffectsFromJSON(JSONObject object, String sourceInfo, String id, String key) throws JSONException {
-        Map<String, List<BoggledTerraformingProjectEffect.TerraformingProjectEffect>> ret = new HashMap<>();
+    private static Map<String, List<BoggledTerraformingProject>> aiCoreEffectsFromJSON(JSONObject object, String sourceInfo, String id, String key) throws JSONException {
+        Map<String, List<BoggledTerraformingProject>> ret = new HashMap<>();
         String aiCoreEffectsString = object.optString(key);
         if (aiCoreEffectsString.isEmpty()) {
             return ret;
@@ -700,12 +707,12 @@ public class boggledTools {
         for (int i = 0; i < aiCoreEffectsArray.length(); ++i) {
             JSONObject aiCoreObject = aiCoreEffectsArray.getJSONObject(i);
             String aiCoreId = aiCoreObject.getString("ai_core_id");
-            List<BoggledTerraformingProjectEffect.TerraformingProjectEffect> aiCoreEffects = projectEffectsFromJSON(aiCoreObject, sourceInfo, id, "effects");
-            List<BoggledTerraformingProjectEffect.TerraformingProjectEffect> entry = ret.get(aiCoreId);
+            List<BoggledTerraformingProject> projects = projectsFromJSON(aiCoreObject, sourceInfo, id, "projects");
+            List<BoggledTerraformingProject> entry = ret.get(aiCoreId);
             if (entry == null) {
-                ret.put(aiCoreId, aiCoreEffects);
+                ret.put(aiCoreId, projects);
             } else {
-                entry.addAll(aiCoreEffects);
+                entry.addAll(projects);
             }
         }
 
@@ -910,7 +917,7 @@ public class boggledTools {
                 List<BoggledTerraformingProjectEffect.TerraformingProjectEffect> preBuildEffects = projectEffectsFromJSON(row, "Industry Options", id, "pre_build_effects");
 
                 stage = "ai_core_effects";
-                Map<String, List<BoggledTerraformingProjectEffect.TerraformingProjectEffect>> aiCoreEffects = aiCoreEffectsFromJSON(row, "AI Core Effects", id, "ai_core_effects");
+                Map<String, List<BoggledTerraformingProject>> aiCoreEffects = aiCoreEffectsFromJSON(row, "AI Core Effects", id, "ai_core_effects");
 
                 List<BoggledProjectRequirementsAND> disruptRequirements = new ArrayList<>();
 
@@ -1162,6 +1169,29 @@ public class boggledTools {
         return ret;
     }
 
+    private static List<BoggledTerraformingProject> projectsFromJSON(JSONObject object, String sourceInfo, String id, String key) throws JSONException {
+        Logger log = Global.getLogger(boggledTools.class);
+
+        String projectsString = object.optString(key);
+        List<BoggledTerraformingProject> ret = new ArrayList<>();
+        if (projectsString.isEmpty()) {
+            return ret;
+        }
+
+        JSONArray projectsArray = new JSONArray(projectsString);
+        for (int i = 0; i < projectsArray.length(); ++i) {
+            String projectId = projectsArray.getString(i);
+            BoggledTerraformingProject project = boggledTools.terraformingProjects.get(projectId);
+            if (project != null) {
+                ret.add(project);
+            } else {
+                log.info(sourceInfo + " " + id + " has invalid project " + projectId);
+            }
+        }
+
+        return ret;
+    }
+
     private static List<BoggledTerraformingProjectEffect.TerraformingProjectEffect> projectEffectsFromJSON(JSONObject object, String sourceInfo, String id, String key) throws JSONException {
         Logger log = Global.getLogger(boggledTools.class);
 
@@ -1308,28 +1338,6 @@ public class boggledTools {
         }
     }
 
-    private static List<BoggledTerraformingProject> projectsFromJSON(JSONObject object, String sourceInfo, String id, String key) throws JSONException {
-        Logger log = Global.getLogger(boggledTools.class);
-
-        String projectsString = object.optString(key);
-        List<BoggledTerraformingProject> ret = new ArrayList<>();
-        if (projectsString.isEmpty()) {
-            return ret;
-        }
-        JSONArray projectsArray = new JSONArray(projectsString);
-        for (int i = 0; i < projectsArray.length(); ++i) {
-            String projectId = projectsArray.getString(i);
-            BoggledTerraformingProject project = boggledTools.getProject(projectId);
-            if (project != null) {
-                ret.add(project);
-            } else {
-                log.info(sourceInfo + " " + id + " has invalid project " + projectId);
-            }
-        }
-
-        return ret;
-    }
-
     public static void initialiseIndustryOptionOverrides(@NotNull JSONArray industryOptionOverridesJSON) {
         Logger log = Global.getLogger(boggledTools.class);
 
@@ -1360,7 +1368,7 @@ public class boggledTools {
                 List<BoggledTerraformingProjectEffect.TerraformingProjectEffect> improveEffectsAdded = projectEffectsFromJSON(row, "Industry Option Mods", id, "improve_effects_added");
                 List<String> improveEffectsRemoved = stringListFromJSON(row, "improve_effects_removed");
 
-                Map<String, List<BoggledTerraformingProjectEffect.TerraformingProjectEffect>> aiCoreEffectsAdded = aiCoreEffectsFromJSON(row, "Industry Option Mods", id, "ai_core_effects_added");
+                Map<String, List<BoggledTerraformingProject>> aiCoreEffectsAdded = aiCoreEffectsFromJSON(row, "Industry Option Mods", id, "ai_core_effects_added");
                 Map<String, List<String>> aiCoreEffectsRemoved = aiCoreEffectRemoveInfoFromJSON(row, "Industry Option Mods", id, "ai_core_effects_removed");
 
                 String canBeDisruptedOverrideString = row.getString("can_be_disrupted_override");
@@ -1516,15 +1524,6 @@ public class boggledTools {
     public static void surveyAll(MarketAPI market) {
         for (MarketConditionAPI condition : market.getConditions()) {
             condition.setSurveyed(true);
-        }
-    }
-
-    public static void refreshSupplyAndDemand(MarketAPI market) {
-        //Refreshes supply and demand for each industry on the market
-        List<Industry> industries = market.getIndustries();
-        for (Industry industry : industries) {
-            industry.doPreSaveCleanup();
-            industry.doPostSaveRestore();
         }
     }
 
@@ -1946,7 +1945,7 @@ public class boggledTools {
                 return "abundant";
             }
         }
-        
+
         int staticAmountPerSettings = boggledTools.getIntSetting(boggledTools.BoggledSettings.miningStationStaticAmount);
         switch (staticAmountPerSettings) {
             case 1:
@@ -1976,18 +1975,6 @@ public class boggledTools {
     public static float randomOrbitalAngleFloat() {
         Random rand = new Random();
         return rand.nextFloat() * (360f);
-    }
-
-    public static void refreshAquacultureAndFarming(MarketAPI market) {
-        if(market == null || market.getPrimaryEntity() == null || market.getPlanetEntity() == null || market.hasTag(Tags.STATION) || market.getPrimaryEntity().hasTag(Tags.STATION)) {
-            return;
-        } else {
-            if(market.hasIndustry(Industries.FARMING) && market.hasCondition(Conditions.WATER_SURFACE)) {
-                market.getIndustry(Industries.FARMING).init(Industries.AQUACULTURE, market);
-            } else if(market.hasIndustry(Industries.AQUACULTURE) && !market.hasCondition(Conditions.WATER_SURFACE)) {
-                market.getIndustry(Industries.AQUACULTURE).init(Industries.FARMING, market);
-            }
-        }
     }
 
     public static boolean playerTooClose(StarSystemAPI system)
@@ -2184,7 +2171,6 @@ public class boggledTools {
         market.setPrimaryEntity(newStation);
 
         surveyAll(market);
-        refreshSupplyAndDemand(market);
     }
 
     public static void setEntityIllustratedEntitiesCustomDescription(SectorEntityToken sectorEntityToken, TextDataEntry textDataEntry) {
@@ -2336,8 +2322,6 @@ public class boggledTools {
         if(!market.hasCondition(condition)) {
             market.addCondition(condition);
             boggledTools.surveyAll(market);
-            boggledTools.refreshSupplyAndDemand(market);
-            boggledTools.refreshAquacultureAndFarming(market);
         }
     }
 
@@ -2345,8 +2329,6 @@ public class boggledTools {
         if(market != null && market.hasCondition(condition)) {
             market.removeCondition(condition);
             boggledTools.surveyAll(market);
-            boggledTools.refreshSupplyAndDemand(market);
-            boggledTools.refreshAquacultureAndFarming(market);
         }
     }
 

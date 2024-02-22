@@ -335,7 +335,7 @@ public class Boggled_Remnant_Station extends BoggledOrbitalStation implements Ro
 
         if (this.special != null)
         {
-            InstallableItemEffect effect = (InstallableItemEffect) ItemEffectsRepo.ITEM_EFFECTS.get(this.special.getId());
+            InstallableItemEffect effect = ItemEffectsRepo.ITEM_EFFECTS.get(this.special.getId());
             if (effect != null)
             {
                 List<String> unmet = effect.getUnmetRequirements(this);
@@ -386,8 +386,8 @@ public class Boggled_Remnant_Station extends BoggledOrbitalStation implements Ro
 
     @Override
     protected float getCR() {
-        float deficit = (float)(Integer)this.getMaxDeficit("supplies").two;
-        float demand = (float)Math.max(0, this.getDemand("supplies").getQuantity().getModifiedInt());
+        float deficit = (float) this.getMaxDeficit(Commodities.SUPPLIES).two;
+        float demand = (float)Math.max(0, this.getDemand(Commodities.SUPPLIES).getQuantity().getModifiedInt());
         if (deficit < 0.0F) {
             deficit = 0.0F;
         }
@@ -426,7 +426,7 @@ public class Boggled_Remnant_Station extends BoggledOrbitalStation implements Ro
     @Override
     protected Pair<String, Integer> getStabilityAffectingDeficit()
     {
-        return this.getMaxDeficit("supplies");
+        return this.getMaxDeficit(Commodities.SUPPLIES);
     }
 
     @Override

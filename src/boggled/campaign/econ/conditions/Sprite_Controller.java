@@ -19,12 +19,12 @@ public class Sprite_Controller extends BaseHazardCondition {
         SectorEntityToken entity = market.getPrimaryEntity();
 
         // Remove condition if it somehow ends up someplace other than one of the stations created by this mod.
-        if(!entity.hasTag("boggled_astropolis") && !entity.hasTag("boggled_mining_station") && !entity.hasTag("boggled_siphon_station")) {
+        if(!entity.hasTag(boggledTools.BoggledTags.astropolisStation) && !entity.hasTag(boggledTools.BoggledTags.miningStation) && !entity.hasTag(boggledTools.BoggledTags.siphonStation)) {
             market.removeCondition("sprite_controller");
             return;
         }
 
-        if(entity.hasTag("boggled_astropolis")) {
+        if(entity.hasTag(boggledTools.BoggledTags.astropolisStation)) {
             if(entity.getCustomEntityType().contains("boggled_astropolis_station_alpha")) {
                 if(market.getFactionId().equals(Factions.NEUTRAL)) {
                     boggledTools.deleteOldLightsOverlay(entity, "astropolis", "alpha");
@@ -64,7 +64,7 @@ public class Sprite_Controller extends BaseHazardCondition {
                 }
             }
         }
-        else if(entity.hasTag("boggled_mining_station")) {
+        else if(entity.hasTag(boggledTools.BoggledTags.miningStation)) {
             if(market.getFactionId().equals(Factions.NEUTRAL)) {
                 //Remember that we can't identify the correct mining station lights overlay because there could be
                 //an unknown number of mining stations in the system in an unknown orbital configuration.
@@ -81,7 +81,7 @@ public class Sprite_Controller extends BaseHazardCondition {
                 boggledTools.reapplyMiningStationLights(system);
             }
         }
-        else if(entity.hasTag("boggled_siphon_station")) {
+        else if(entity.hasTag(boggledTools.BoggledTags.siphonStation)) {
             if(market.getFactionId().equals(Factions.NEUTRAL)) {
                 boggledTools.deleteOldLightsOverlay(entity, "siphon", null);
             }
