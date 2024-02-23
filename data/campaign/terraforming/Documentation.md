@@ -42,7 +42,7 @@ The `id` field is a file unique identifier. Other mods can override an industry 
 
 `improve_effects` is the same format as `building_finished_effects`. The effect is applied when the building is improved.
 
-`ai_core_effects` is a JSON Array of JSON Objects with two fields, `ai_core_id` is the AI core ID that will apply these effects, and `effects` is the same format as `building_finished_effects`.
+`ai_core_effects` is a JSON Array of JSON Objects with two fields, `ai_core_id` is the AI core ID that will apply these effects, and `projects` is a JSON Array of `Terraforming Project` IDs.
 
 `base_pather_interest` is an integer of the Pather interest this industry generates.
 

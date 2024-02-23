@@ -524,6 +524,7 @@ public class boggledTools {
         addTerraformingProjectEffectFactory("PlanetTypeChange", new BoggledTerraformingProjectEffectFactory.PlanetTypeChange());
         addTerraformingProjectEffectFactory("IndustrySwap", new BoggledTerraformingProjectEffectFactory.IndustrySwap());
         addTerraformingProjectEffectFactory("MarketAddCondition", new BoggledTerraformingProjectEffectFactory.MarketAddCondition());
+        addTerraformingProjectEffectFactory("MarketAddConditionNoRemove", new BoggledTerraformingProjectEffectFactory.MarketAddConditionNoRemove());
         addTerraformingProjectEffectFactory("MarketRemoveCondition", new BoggledTerraformingProjectEffectFactory.MarketRemoveCondition());
         addTerraformingProjectEffectFactory("MarketOptionalCondition", new BoggledTerraformingProjectEffectFactory.MarketOptionalCondition());
         addTerraformingProjectEffectFactory("MarketProgressResource", new BoggledTerraformingProjectEffectFactory.MarketProgressResource());

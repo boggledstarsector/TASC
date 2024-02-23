@@ -401,8 +401,9 @@ domed_cities_suppress_conditions,,SuppressConditions,"[ 'no_atmosphere', 'thin_a
 domed_cities_modify_colony_growth,,ModifyColonyGrowthRate,"{ 'modifier_type' : 'market_size', 'value' : -1 }"
 domed_cities_modify_ground_defense,boggledDomedCitiesDefensePenaltyEnabled,ModifyColonyGroundDefense,"{ 'modifier_type' : 'mult', 'value' : 0.05 }"
 
+seafloor_cities_suppress_conditions,,SuppressConditions,"[ 'water_surface' ]"
 seafloor_cities_modify_ground_defenses,,ModifyColonyGroundDefense,"{ 'modifier_type' : 'mult', 'value' : 6 }"
-seafloor_cities_modify_accessibility,,ModifyColonyAccessibility,"{ 'modifier_type' : 'flat', 'value' : -0.1 }"
+seafloor_cities_modify_accessibility,,ModifyColonyAccessibility,"{ 'modifier_type' : 'percent', 'value' : -10 }"
 
 domed_cities_alpha_core_stability_bonus,,ModifyColonyStability,"{ 'modifier_type' : 'flat', 'value' : 3 }"
 domed_cities_beta_core_stability_bonus,,ModifyColonyStability,"{ 'modifier_type' : 'flat', 'value' : 2 }"
@@ -501,7 +502,7 @@ limelight_network_improve_increase_income_bonus,,ModifyIndustryIncome,"{ 'modifi
 
 magnetoshield_suppress_conditions,,SuppressConditions,"[ 'irradiated' ]"
 
-mesozoic_park_add_inimical_biosphere,,MarketAddCondition,"inimical_biosphere"
+mesozoic_park_add_inimical_biosphere,,MarketAddConditionNoRemove,"inimical_biosphere"
 mesozoic_park_increase_income_by_accessibility,,ModifyIndustryIncomeByAccessibility,"{ 'modifier_type' : 'mult', 'value' : 1.0 }"
 
 mesozoic_park_alpha_core_increase_income_bonus,,ModifyIndustryIncome,"{ 'modifier_type' : 'mult', 'value' : 1.2 }"

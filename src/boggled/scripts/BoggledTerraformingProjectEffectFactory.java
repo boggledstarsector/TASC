@@ -46,6 +46,14 @@ public class BoggledTerraformingProjectEffectFactory {
         }
     }
 
+    public static class MarketAddConditionNoRemove implements TerraformingProjectEffectFactory {
+        @Override
+        public BoggledTerraformingProjectEffect.TerraformingProjectEffect constructFromJSON(String id, String[] enableSettings, String data) throws JSONException {
+            boggledTools.CheckMarketConditionExists(id, data);
+            return new BoggledTerraformingProjectEffect.MarketAddConditionNoRemove(id, enableSettings, data);
+        }
+    }
+
     public static class MarketRemoveCondition implements TerraformingProjectEffectFactory {
         @Override
         public BoggledTerraformingProjectEffect.TerraformingProjectEffect constructFromJSON(String id, String[] enableSettings, String data) {

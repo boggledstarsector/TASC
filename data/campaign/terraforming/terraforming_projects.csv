@@ -285,8 +285,7 @@ industry_chameleon_rogue_ai,boggledDomainTechContentEnabled | boggledCHAMELEONEn
 ]",,"[ 'market_remove_rogue_ai_core' ]",,"An investigation into the whereabouts of the rogue AI core on $marketName is approximately $percentComplete% complete.",[ '$percentComplete%' ],,
 industry_chameleon_alpha_core,boggledDomainTechContentEnabled | boggledCHAMELEONEnabled,industry,,,,,,,,,,,"[
 	'chameleon_alpha_core_reduce_upkeep',
-	'chameleon_alpha_core_reduce_demand',
-	'chameleon_alpha_core_eliminate_pather_interest'
+	'chameleon_alpha_core_reduce_demand'
 ]",,,,
 industry_chameleon_alpha_core_eliminate_pather_interest,boggledDomainTechContentEnabled | boggledCHAMELEONEnabled,industry,,,,,,,,"[
 	{
@@ -334,6 +333,7 @@ industry_seafloor_cities,boggledTerraformingContentEnabled | boggledDomedCitiesE
 ]",,,,,,"[
 	'domed_cities_suppress_conditions',
 	'domed_cities_modify_colony_growth',
+	'seafloor_cities_suppress_conditions',
 	'seafloor_cities_modify_ground_defenses',
 	'seafloor_cities_modify_accessibility'
 ]",,,,

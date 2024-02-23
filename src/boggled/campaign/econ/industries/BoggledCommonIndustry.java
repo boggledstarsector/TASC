@@ -637,6 +637,21 @@ public class BoggledCommonIndustry {
             BoggledTerraformingProject project = projectInstance.getProject();
             Map<String, BoggledTerraformingProjectEffect.EffectTooltipPara> paras = project.getOngoingEffectTooltipInfo(ctx, ctx.getSourceIndustry().getCurrentName(), descMode, BoggledTerraformingProjectEffect.TerraformingProjectEffect.DescriptionSource.POST_DEMAND_SECTION);
             for (BoggledTerraformingProjectEffect.EffectTooltipPara para : paras.values()) {
+                if (para.prefix.isEmpty() && para.suffix.isEmpty()) {
+                    if (para.infix.isEmpty()) {
+                        continue;
+                    }
+                    boolean allEmpty = true;
+                    for (String infix : para.infix) {
+                        if (!infix.isEmpty()) {
+                            allEmpty = false;
+                            break;
+                        }
+                    }
+                    if (allEmpty) {
+                        continue;
+                    }
+                }
                 StringBuilder text = new StringBuilder(para.prefix);
                 for (String infix : para.infix) {
                     text.append(infix);
