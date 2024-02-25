@@ -77,16 +77,18 @@ public class BoggledTerraformingRequirement {
             this.targetIndustryInterface = this.sourceIndustryInterface;
             this.closestMarket = sourceIndustry.getMarket();
 
-            if (this.closestMarket.getPrimaryEntity().hasTag(Tags.STATION)) {
-                this.station = this.closestMarket.getPrimaryEntity();
-                this.stationMarket = this.closestMarket;
-                this.planet = this.closestMarket.getPlanetEntity();
-                if (this.planet != null) {
-                    this.planetMarket = this.planet.getMarket();
+            if (this.closestMarket.getPrimaryEntity() != null) {
+                if (this.closestMarket.getPrimaryEntity().hasTag(Tags.STATION)) {
+                    this.station = this.closestMarket.getPrimaryEntity();
+                    this.stationMarket = this.closestMarket;
+                    this.planet = this.closestMarket.getPlanetEntity();
+                    if (this.planet != null) {
+                        this.planetMarket = this.planet.getMarket();
+                    }
+                } else {
+                    this.planet = this.closestMarket.getPlanetEntity();
+                    this.planetMarket = this.closestMarket;
                 }
-            } else {
-                this.planet = this.closestMarket.getPlanetEntity();
-                this.planetMarket = this.closestMarket;
             }
             this.starSystem = this.closestMarket.getStarSystem();
             this.fleet = Global.getSector().getPlayerFleet();
