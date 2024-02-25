@@ -1,0 +1,4 @@
+id,project_id,requirements_added,requirements_removed,requirements_hidden_added,requirements_hidden_removed,base_project_duration_override,dynamic_project_duration_modifiers_added,dynamic_project_duration_modifiers_removed,requirements_stall_removed,requirements_stall_added,requirements_reset_added,requirements_reset_removed,project_complete_effects_added,project_complete_effects_removed
+aotd_example_research_required,industry_atmosphere_processor,"[
+	{ 'requirement_id' : 'example_aotd_research_requirement' }
+]",,,,,,,,,,,,

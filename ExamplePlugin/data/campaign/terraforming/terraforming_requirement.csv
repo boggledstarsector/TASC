@@ -1,0 +1,3 @@
+id,enable_settings,requirement_type,invert,data
+# These are individual requirements, the basic building blocks of larger requirements used in terraforming_requirements.csv
+example_aotd_research_requirement,,ExampleAOTDResearchRequirement,false,"{ 'research_id' : 'aotd_tech_consumer' }"

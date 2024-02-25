@@ -349,7 +349,7 @@ industry_genelab,boggledTerraformingContentEnabled | boggledGenelabEnabled,indus
 industry_genelab_pollution,boggledTerraformingContentEnabled | boggledGenelabEnabled,industry,"Pollution",,"Remediated","[
 	{ 'requirement_id' : 'industry_colony_is_not_station' },
 	{ 'requirement_id' : 'industry_colony_polluted' }
-]",,2,,"[
+]",,200,,"[
 	{
 		'requirements_id' : 'industry_genelab_pollution_remediation_shortage_stall',
 		'requirements' : [ { 'requirement_id' : 'industry_genelab_pollution_remediation_does_have_shortage' } ]
@@ -363,7 +363,7 @@ industry_genelab_pollution,boggledTerraformingContentEnabled | boggledGenelabEna
 industry_genelab_lobster,boggledTerraformingContentEnabled | boggledGenelabEnabled,industry,"Lobster seeding",,"Completed","[
 	{ 'requirement_id' : 'industry_colony_water_surface' },
 	{ 'requirement_id' : 'industry_colony_not_volturnian_lobster_pens' }
-]",,2,,"[
+]",,200,,"[
 	{
 		'requirements_id' : 'industry_genelab_lobster_seeding_shortage_stall',
 		'requirements' : [ { 'requirement_id' : 'industry_genelab_lobster_seeding_does_have_shortage' } ]
