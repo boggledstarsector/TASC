@@ -1,0 +1,18 @@
+id,project_id,requirements_added,requirements_removed,requirements_hidden_added,requirements_hidden_removed,base_project_duration_override,dynamic_project_duration_modifiers_added,dynamic_project_duration_modifiers_removed,requirements_stall_removed,requirements_stall_added,requirements_reset_added,requirements_reset_removed,project_complete_effects_added,project_complete_effects_removed,project_ongoing_effects_added,project_ongoing_effects_removed
+# This file is just here to provide structure, it should be empty in the Terraforming & Station Construction mod
+# Other mods add their stuff here
+replacement_id,project_to_be_replaced,"[
+	{ 'parent_id' : 'test_requirement_parent_id', 'requirement_id' : 'test_requirement_added_id', 'and_then' : [
+		]
+	}
+]","[ 'rest_requirement_removed_1', 'test_requirement_removed_2' ]",,,15,"[
+	{ 'modifier_id' : 'test_duration_modifier_added_id' }
+]","[ 'test_duration_modifier_removed_id' ]","[
+	{ 'containing_id' : 'test_requirement_stall_id', 'requirements_removed' : [ 'test_requirement_id' ] }
+]","[
+	{ 'containing_id' : 'test_requirement_stall_added_id', 'requirements_added' : [
+		{ 'parent_id' : 'test_requirement_parent_id', 'requirement_id' : 'test_requirement_id', 'and_then' : [
+			]
+		}
+	]
+]",,,,,

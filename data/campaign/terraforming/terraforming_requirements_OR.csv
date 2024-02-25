@@ -1,0 +1,234 @@
+id,tooltip,tooltip_highlights,invert_all,requirements
+true,"True",,false,"true"
+false,"False",,false,"false"
+market_is_station,,,false,"market_is_station"
+market_is_not_station,,,false,"market_is_not_station"
+,,
+planet_not_star,,,false,"planet_not_star"
+planet_not_gas_giant,,,false,"planet_not_gas_giant"
+planet_not_volcanic,,,false,"planet_not_volcanic"
+planet_not_unknown,,,false,"planet_not_unknown"
+,,
+terraforming_colony_not_arid_world,"$marketName is not already an arid world",,false,"planet_not_arid"
+terraforming_colony_not_jungle_world,"$marketName is not already a jungle world",,false,"planet_not_jungle"
+terraforming_colony_not_terran_world,"$marketName is not already a Terran world",,false,"planet_not_terran"
+terraforming_colony_not_water_world,"$marketName is not already a water world",,false,"planet_not_water"
+terraforming_colony_not_tundra_world,"$marketName is not already a tundra world",,false,"planet_not_tundra"
+terraforming_colony_not_frozen_world,"$marketName is not already a frozen world",,false,"planet_not_frozen"
+,,
+industry_option_colony_arid_world,,,false,"planet_arid"
+industry_option_colony_terran_world,,,false,"planet_terran"
+industry_option_colony_water_world,,,false,"planet_water"
+industry_option_colony_jungle_world,,,false,"planet_jungle"
+,,
+terraforming_colony_barren_or_frozen,"$marketName is barren or frozen",,false,"planet_barren | planet_frozen"
+,,
+terraforming_colony_atmospheric_density_normal,"$marketName has normal atmospheric density",,true,"market_no_atmosphere | market_thin_atmosphere | market_dense_atmosphere"
+terraforming_colony_atmosphere_not_toxic_or_irradiated,"$marketName atmosphere is not toxic or irradiated",,true,"market_toxic_atmosphere | market_irradiated"
+,,
+terraforming_colony_not_cold_or_very_cold,"$marketName is not cold or very cold",,true,"market_cold | market_very_cold"
+terraforming_colony_hot_or_very_hot,"$marketName is hot or very hot",,false,"market_hot | market_very_hot"
+terraforming_colony_not_very_cold_or_very_hot,"$marketName is not very cold or very hot",,true,"market_very_cold | market_very_hot"
+terraforming_colony_not_hot_or_very_hot,"$marketName is not hot or very hot",,true,"market_hot | market_very_hot"
+terraforming_colony_very_cold,"$marketName is very cold",,false,"market_very_cold"
+terraforming_colony_temperate_or_hot,"$marketName is temperate or hot",,true,"market_very_cold | market_cold | market_very_hot"
+terraforming_colony_temperate_or_cold,"$marketName is temperate or cold",,true,"market_very_cold | market_hot | market_very_hot"
+,,
+terraforming_colony_has_stellar_reflectors,"$marketName has functional stellar reflectors",,false,"market_has_stellar_reflectors"
+terraforming_colony_has_atmosphere_processor,"$marketName has a functional atmosphere processor",,false,"market_has_atmosphere_processor"
+terraforming_colony_has_genelab,"$marketName has a functional genelab",,false,"market_has_genelab"
+,,
+terraforming_colony_has_moderate_water_present,"$marketName has a moderate amount of water present",,false,"market_has_moderate_water_present"
+terraforming_colony_has_large_water_present,"$marketName has a large amount of water present",,false,"market_has_large_water_present"
+,,
+terraforming_colony_habitable,"$marketName is habitable",,false,"market_habitable"
+terraforming_colony_has_extreme_weather,"$marketName has extreme weather",,false,"market_has_extreme_weather"
+terraforming_colony_atmosphere_toxic,"$marketName atmosphere is toxic",,false,"market_toxic_atmosphere"
+terraforming_colony_irradiated,"$marketName atmosphere is irradiated",,false,"market_irradiated"
+terraforming_colony_has_atmosphere,"$marketName has an atmosphere",,false,"market_no_atmosphere"
+,,
+terraforming_colony_not_habitable,"$marketName is not habitable",,false,"market_not_habitable"
+
+industry_colony_habitable,"$marketName must be habitable.",,false,"market_habitable"
+industry_colony_not_has_meteor_impacts,"$marketName experiences frequent meteor impacts that could destroy megastructures. It would be too dangerous to construct one here.",,false,"market_not_has_meteor_impacts"
+industry_colony_irradiated,"$marketName atmosphere is irradiated",,false,"market_irradiated"
+,,
+terraforming_colony_has_normal_climate,"$marketName has normal climate",,true,"market_has_mild_climate | market_has_extreme_weather"
+terraforming_colony_atmosphere_suboptimal_density,"$marketName atmosphere has suboptimal density",,false,"market_no_atmosphere | market_thin_atmosphere | market_dense_atmosphere"
+,,
+terraforming_world_type_supports_farmland_improvement,"World type supports further farmland improvement",,false,"world_type_supports_farmland_improvement"
+terraforming_world_type_supports_organics_improvement,"World type supports further organics improvement",,false,"world_type_supports_organics_improvement"
+terraforming_world_type_supports_volatiles_improvement,"World type supports further volatiles improvement",,false,"world_type_supports_volatiles_improvement"
+,,
+terraforming_world_type_allows_terraforming,"World type allows further terraforming",,true,"planet_star | planet_gas_giant | planet_volcanic | planet_unknown"
+terraforming_world_type_allows_mild_climate,"World type allows for mild climate",,false,"planet_jungle | planet_arid | planet_terran | planet_water | planet_tundra"
+terraforming_world_type_allows_human_habitability,"World type allows for human habitability",,false,"planet_jungle | planet_arid | planet_terran | planet_water | planet_tundra"
+,,
+planet_types_colony_habitable_with_atmosphere,"$marketName is habitable and has an atmosphere",,false,"market_habitable | market_any_atmosphere"
+,,
+industry_colony_is_station,"$marketName must be a station.",,false,"market_is_station"
+industry_colony_is_not_station,"$marketName must be a planet.",,false,"market_is_not_station"
+,,
+industry_colony_not_gas_giant,"Gas giants cannot be terraformed.",,false,"planet_not_gas_giant"
+industry_colony_not_volcanic,"Volcanic worlds cannot be terraformed.",,false,"planet_not_volcanic"
+industry_colony_not_irradiated,"Irradiated worlds cannot be terraformed.",,false,"planet_not_irradiated"
+industry_colony_not_star,"Stars cannot be terraformed.",,false,"planet_not_star"
+,,
+industry_colony_not_unknown_world,"This planet type cannot be terraformed.",,false,"planet_not_unknown"
+,,
+industry_colony_water_or_frozen,"$marketName is a water or frozen world.",,false,"planet_water | planet_frozen"
+
+industry_colony_water_surface,"$marketName is covered in water.",,false,"market_has_water_surface"
+industry_colony_not_water_surface,"$marketName is not covered in water.",,false,"market_not_has_water_surface"
+
+industry_colony_not_volturnian_lobster_pens,"$marketName does not have Volturnian lobster pens.",,false,"market_not_has_volturnian_lobster_pens"
+
+industry_colony_polluted,"$marketName does not have pollution.",,false,"market_has_pollution"
+
+industry_system_star_not_has_coronal_tap,"The $system system already has a coronal tap.",,false,"system_star_not_has_coronal_tap"
+industry_system_star_coronal_tap_viable,"Coronal hypershunts can only function if they orbit a blue giant star. There is no blue giant star in the $system.",,false,"system_star_blue_giant | system_star_blue_supergiant"
+
+industry_ai_mining_drones_colony_has_mining,"$marketName must have a mining industry.",,false,"market_has_mining"
+,,
+industry_atmosphere_processor_does_not_have_shortage,,,false,"atmosphere_processor_does_not_have_shortage"
+industry_atmosphere_processor_colony_has_atmo_problem,"Atmospheric conditions on $marketName are already optimal. There is no reason to build an atmosphere processor here.",,false,"market_not_has_mild_climate | market_not_habitable | market_no_atmosphere | market_thin_atmosphere | market_dense_atmosphere | market_toxic_atmosphere"
+,,
+industry_chameleon_alpha_core_eliminate_pather_interest_does_have_shortage,"The removal of Pather Cells is halted due to a lack of Domain-era Artifacts.",,false,"chameleon_does_have_shortage"
+industry_chameleon_rogue_ai_does_have_shortage,"The search for the rogue AI core is stalled due to a lack of Domain-era Artifacts.",,false,"chameleon_does_have_shortage"
+industry_chameleon_decivilized_does_have_shortage,"The removal of the decivilized population is stalled due to a lack of Domain-era Artifacts.",,false,"chameleon_does_have_shortage"
+,,
+industry_domed_cities_colony_not_gas_giant,"There is no solid ground on $marketName upon which to build a dome.",,false,"planet_not_gas_giant"
+,,
+industry_genelab_pollution_remediation_does_have_shortage,"Pollution remediation is stalled due to a lack of Domain-era artifacts.",,false,"genelab_does_have_shortage"
+industry_genelab_lobster_seeding_does_have_shortage,"Lobster seeding is stalled due to a lack of Domain-era artifacts.",,false,"genelab_does_have_shortage"
+industry_genelab_mesozoic_park_income_does_not_have_shortage,"Description goes here",,false,"genelab_does_not_have_shortage"
+
+industry_ismaras_sling_colony_water_or_frozen,"Ismara's Sling can only be built on cryovolcanic, frozen, and water covered world. $marketName is on a $planetTypeName.",,false,"planet_water | planet_frozen"
+
+industry_effects_kletka_simulator_has_ai_core,"Requires AI core",,false,"kletka_simulator_has_alpha_core | kletka_simulator_has_beta_core | kletka_simulator_has_gamma_core"
+
+industry_effect_kletka_simulator_colony_very_cold,"Very Cold",,false,"market_very_cold"
+industry_effect_kletka_simulator_colony_cold,"Cold",,false,"market_cold"
+industry_effect_kletka_simulator_colony_hot,"Hot",,false,"market_hot"
+industry_effect_kletka_simulator_colony_very_hot,"Very Hot",,false,"market_very_hot"
+industry_effect_kletka_simulator_colony_is_station,"Station",,false,"market_is_station"
+industry_effect_kletka_simulator_does_not_have_shortage,"Production suspended due to a shortage of $commodityDeficit","[ 'Production suspended due to a shortage of $commodityDeficit' ]",false,"kletka_simulator_does_not_have_shortage"
+
+industry_magnetoshield_colony_irradiated,"$marketName is not irradiated. There is no reason to build a magnetoshield.",,false,"market_irradiated"
+,,
+industry_mesozoic_park_colony_arid_terran_water_or_jungle,"$marketName must be an arid, terran, water, or jungle planet.",,false,"planet_arid | planet_terran | planet_water | planet_jungle"
+industry_mesozoic_park_colony_not_no_or_thin_atmosphere,"Surface conditions on $marketName are unsuitable for Old Earth megafauna due to insufficient atmospheric pressure.",,true,"market_no_atmosphere | market_thin_atmosphere"
+industry_mesozoic_park_colony_not_dense_atmosphere,"Surface conditions on $marketName are unsuitable for Old Earth megafauna due to excessive atmospheric pressure.",,true,"market_dense_atmosphere"
+industry_mesozoic_park_colony_not_toxic_or_irradiated,"Surface conditions on $marketName are unsuitable for Old Earth megafauna due to atmospheric toxicity.",,true,"market_toxic_atmosphere | market_irradiated"
+
+industry_ouyang_optimizer_orbited_planet_is_gas_giant,"Only gas giants can undergo Ouyang optimization.",,false,"focus_planet_gas_giant"
+industry_ouyang_optimizer_orbited_planet_not_has_extreme_weather,"$focusMarketName already has extreme weather. Making it worse won't increase volatiles availability.",,true,"focus_market_has_extreme_weather"
+industry_ouyang_optimizer_orbited_planet_not_has_volatiles_plentiful,"$focusMarketName is already extremely rich in volatiles. An Ouyang optimization would not yield any improvement.",,true,"focus_market_has_volatiles_plentiful"
+
+industry_perihelion_project_does_have_shortage,"Progress of the Perihelion Project is stalled due to a shortage of resources.",,false,"perihelion_project_does_have_shortage | perihelion_project_does_have_domain_artifacts_shortage"
+
+industry_planet_cracker_orbited_planet_is_not_gas_giant,"Gas giants cannot be cracked.",,false,"focus_planet_not_gas_giant"
+industry_planet_cracker_orbited_planet_not_has_tectonic_or_extreme_tectonic_activity,"$focusMarketName already has tectonic activity. Making it worse won't increase ore availability.",,true,"focus_market_has_tectonic_activity | focus_market_has_extreme_tectonic_activity"
+industry_planet_cracker_orbited_planet_not_has_ore_and_rare_ore_ultrarich,"$focusMarketName already has easily accessible ore deposits. Cracking the planet would not yield any improvement.",,true,"focus_market_has_ore_ultrarich | focus_market_has_rare_ore_ultrarich"
+,,
+industry_planetary_agrav_field_colony_has_low_or_high_gravity,"Gravity on $marketName is within the optimal range for humans. Building agrav generators here would serve little purpose.",,false,"market_has_low_gravity | market_has_high_gravity"
+industry_planetary_agrav_field_colony_has_domed_cities,"It is not economically feasible to blanket an entire world with agrav generators. The population must be housed within a few centralized domed cities for a colony-wide agrav field to be practical.",,false,"market_has_domed_cities | market_has_seafloor_cities"
+
+industry_stellar_reflectors_colony_not_dark,"Stellar reflectors won't have any effect on a world that receives no light.",,false,"market_not_dark"
+
+industry_colony_decivilized,"$marketName has a decivilized population",,false,"market_decivilized | market_decivilized_subpop"
+industry_colony_rogue_ai_core,"$marketName has a rogue AI core",,false,"market_rogue_ai_core"
+industry_colony_has_ruins,"Requires ruins",,false,"market_ruins_scattered | market_ruins_widespread | market_ruins_extensive | market_ruins_vast"
+,,
+industry_colony_not_has_tectonic_activity_unless_has_harmonic_damper,"$marketName experiences frequent seismic events that could destroy megastructures. It would be too dangerous to construct one here.",,false,"market_not_has_extreme_tectonic_activity | market_has_harmonic_damper"
+industry_colony_has_domed_cities_or_is_gas_giant,,,false,"market_has_domed_cities | market_has_seafloor_cities | planet_gas_giant"
+industry_colony_has_mining,,,false,"market_has_mining"
+,,
+industry_station_construction_num_expansions,"$marketName is too large to expand further.",,false,"station_construction_num_expansions"
+,,
+industry_colony_water_or_frozen,,,false,"planet_water | planet_frozen"
+,,
+industry_player_has_skill_automated_ships,"You lack the Automated Ships skill.",,false,"player_has_skill_automated_ships"
+,,
+industry_colony_has_heavy_industry_or_orbital_works_with_nanoforge,"Pollution cannot be removed while $Industry has $IndustryItem.",,false,"market_has_heavy_industry_with_corrupted_nanoforge | market_has_heavy_industry_with_pristine_nanoforge | market_has_orbital_works_with_corrupted_nanoforge | market_has_orbital_works_with_pristine_nanoforge"
+,,
+crafting_colony_has_at_least_100k_inhabitants,"$marketName has at least 100,000 inhabitants",,false,market_has_at_least_100k_residents
+crafting_colony_has_orbital_works_with_pristine_nanoforge,"$marketName has $Industry with $IndustryItem",,false,market_has_orbital_works_with_pristine_nanoforge
+crafting_colony_storage_contains_at_least_easy_domain_artifacts,"$marketName $submarket contains at least $itemQuantity $itemName",,false,market_storage_contains_at_least_easy_domain_artifacts
+crafting_colony_storage_contains_at_least_medium_domain_artifacts,"$marketName $submarket contains at least $itemQuantity $itemName",,false,market_storage_contains_at_least_medium_domain_artifacts
+crafting_colony_storage_contains_at_least_hard_domain_artifacts,"$marketName $submarket contains at least $itemQuantity $itemName",,false,market_storage_contains_at_least_hard_domain_artifacts
+crafting_player_has_at_least_2_story_points,"$player has at least $storyPointsQuantity story points",,false,player_has_at_least_2_story_points
+,,
+industry_effects_domain_archaeology_colony_ruins_scattered,,,false,"market_ruins_scattered"
+industry_effects_domain_archaeology_colony_ruins_widespread,,,false,"market_ruins_widespread"
+industry_effects_domain_archaeology_colony_ruins_extensive,,,false,"market_ruins_extensive"
+industry_effects_domain_archaeology_colony_ruins_vast,,,false,"market_ruins_vast"
+,,
+ability_astropolis_station_player_fleet_not_in_hyperspace,"You cannot construct an astropolis station in hyperspace.",,false,"player_fleet_not_in_hyperspace"
+ability_astropolis_station_system_has_jump_points,"You cannot construct an astropolis station in a system with no jump points.",,false,"system_has_jump_points"
+ability_astropolis_station_system_has_planets,"You cannot construct an astropolis station in a system with no planets.",,false,"system_has_planets"
+ability_astropolis_station_target_planet_owned_by_player,"You cannot construct an astropolis station in orbit around a world already controlled by $factionName.",,false,"target_planet_owned_by_player"
+ability_astropolis_station_target_planet_within_range,"The world closest to your location is $planetName. Your fleet is $distanceInSu stellar units away. You must be within $requiredDistanceInSu stellar units to construct an astropolis station.",,false,"ability_astropolis_station_target_planet_within_range"
+ability_astropolis_station_target_planet_too_small,"$planetName is too small to host an astropolis.",,false,"ability_astropolis_station_target_planet_too_small"
+ability_astropolis_station_target_planet_too_close_to_orbit_focus,"An astropolis would be unable to achieve a satisfactory orbit around $planetName because it is orbiting too close to $focusPlanetName.",,false,"target_planet_too_close_to_orbit_focus"
+ability_astropolis_station_target_planet_too_close_to_star,"$planetName is too close to $starName to host an astropolis.",,false,"target_planet_too_close_to_star"
+ability_astropolis_station_target_planet_moon_too_close,"An astropolis would be unable to achieve a satisfactory orbit around $planetName because $focusPlanetName is orbiting too close to it.",,false,"ability_astropolis_station_target_planet_moon_too_close"
+ability_astropolis_station_target_planet_too_many_moons,"An astropolis would be unable to maintain a satisfactory orbit around $planetName because there are $moonCount moons orbiting it.",,false,"target_planet_too_many_moons"
+ability_astropolis_station_target_planet_too_crowded,"An astropolis would be unable to maintain a satisfactory orbit around $planetName because $focusPlanetName periodically approaches very near to this world.",,false,"target_planet_too_crowded"
+ability_astropolis_station_target_planet_too_many_stations,"$planetName is already host to $numStations astropolis $stationOrStations. It cannot host more.",,false,"ability_astropolis_station_target_planet_too_many_stations"
+
+ability_astropolis_station_fleet_contains_credits,"Requires $itemQuantity credits. You have $currentItemQuantity.","[ '$creditsQuantity' ]",false,"ability_astropolis_station_fleet_contains_credits"
+ability_astropolis_station_fleet_contains_crew,"Requires $itemQuantity $itemName. You have $currentItemQuantity.","[ '$itemQuantity' ]",false,"ability_astropolis_station_fleet_contains_crew"
+ability_astropolis_station_fleet_contains_heavy_machinery,"Requires $itemQuantity $itemName. You have $currentItemQuantity.","[ '$itemQuantity' ]",false,"ability_astropolis_station_fleet_contains_heavy_machinery"
+ability_astropolis_station_fleet_contains_metals,"Requires $itemQuantity $itemName. You have $currentItemQuantity.","[ '$itemQuantity' ]",false,"ability_astropolis_station_fleet_contains_metals"
+ability_astropolis_station_fleet_contains_transplutonics,"Requires $itemQuantity $itemName. You have $currentItemQuantity.","[ '$itemQuantity' ]",false,"ability_astropolis_station_fleet_contains_transplutonics"
+
+ability_mining_station_player_fleet_not_in_hyperspace,"You cannot construct a mining station in hyperspace.",,false,"player_fleet_not_in_hyperspace"
+ability_mining_station_system_has_jump_points,"You cannot construct a mining station in a system with no jump points.",,false,"system_has_jump_points"
+ability_mining_station_too_close_to_jump_point,"You cannot construct a mining station so close to a jump point.",,false,"ability_mining_station_too_close_to_jump_point"
+ability_mining_station_fleet_in_asteroid_belt_or_field,"Your fleet is too far away from an asteroid belt or asteroid field to build a mining station.",,false,"ability_mining_station_fleet_in_asteroid_belt | ability_mining_station_fleet_in_asteroid_field"
+
+ability_mining_station_too_many_stations,"$systemName is already host to $numStations mining $stationOrStations. It cannot host more.",,false,"ability_mining_station_too_many_stations"
+
+ability_mining_station_fleet_contains_credits,"Requires $itemQuantity credits. You have $currentItemQuantity.","[ '$creditsQuantity' ]",false,"ability_mining_station_fleet_contains_credits"
+ability_mining_station_fleet_contains_crew,"Requires $itemQuantity $itemName. You have $currentItemQuantity.","[ '$itemQuantity' ]",false,"ability_mining_station_fleet_contains_crew"
+ability_mining_station_fleet_contains_heavy_machinery,"Requires $itemQuantity $itemName. You have $currentItemQuantity.","[ '$itemQuantity' ]",false,"ability_mining_station_fleet_contains_heavy_machinery"
+ability_mining_station_fleet_contains_metals,"Requires $itemQuantity $itemName. You have $currentItemQuantity.","[ '$itemQuantity' ]",false,"ability_mining_station_fleet_contains_metals"
+ability_mining_station_fleet_contains_transplutonics,"Requires $itemQuantity $itemName. You have $currentItemQuantity.","[ '$itemQuantity' ]",false,"ability_mining_station_fleet_contains_transplutonics"
+
+ability_siphon_station_player_fleet_not_in_hyperspace,"You cannot construct a siphon station in hyperspace.",,false,"player_fleet_not_in_hyperspace"
+ability_siphon_station_system_has_jump_points,"You cannot construct a siphon station in a system with no jump points.",,false,"system_has_jump_points"
+
+ability_siphon_station_target_planet_owned_by_player_or_neutral,"You cannot construct a siphon station in orbit around a world already controlled by $factionName.",,false,"target_planet_owned_by_player_or_neutral"
+ability_siphon_station_target_planet_within_range,"The world closest to your location is $planetName. Your fleet is $distanceInSu stellar units away. You must be within $requiredDistanceInSu stellar units to construct a siphon station.",,false,"ability_siphon_station_target_planet_within_range"
+ability_siphon_station_target_planet_moon_too_close,"A siphon station would be unable to achieve a satisfactory orbit around $planetName because $focusPlanetName is orbiting too close to it.",,false,"ability_siphon_station_target_planet_moon_too_close"
+ability_siphon_station_target_planet_is_gas_giant,"You cannot construct a siphon station around non-gas giant planets. $planetName is a $planetType.",,false,"planet_gas_giant"
+ability_siphon_station_target_planet_too_many_stations,"$planetName is already host to $numStations siphon $stationOrStations. It cannot host more.",,false,"ability_siphon_station_target_planet_too_many_stations"
+
+ability_siphon_station_fleet_contains_credits,"Requires $itemQuantity credits. You have $currentItemQuantity.","[ '$creditsQuantity' ]",false,"ability_siphon_station_fleet_contains_credits"
+ability_siphon_station_fleet_contains_crew,"Requires $itemQuantity $itemName. You have $currentItemQuantity.","[ '$itemQuantity' ]",false,"ability_siphon_station_fleet_contains_crew"
+ability_siphon_station_fleet_contains_heavy_machinery,"Requires $itemQuantity $itemName. You have $currentItemQuantity.","[ '$itemQuantity' ]",false,"ability_siphon_station_fleet_contains_heavy_machinery"
+ability_siphon_station_fleet_contains_metals,"Requires $itemQuantity $itemName. You have $currentItemQuantity.","[ '$itemQuantity' ]",false,"ability_siphon_station_fleet_contains_metals"
+ability_siphon_station_fleet_contains_transplutonics,"Requires $itemQuantity $itemName. You have $currentItemQuantity.","[ '$itemQuantity' ]",false,"ability_siphon_station_fleet_contains_transplutonics"
+
+ability_colonize_abandoned_station_player_fleet_not_in_hyperspace,"You cannot colonize stations located in hyperspace.",,false,"player_fleet_not_in_hyperspace"
+ability_colonize_abandoned_station_system_has_jump_points,"You cannot colonize a station in a system with no jump points.",,false,"system_has_jump_points"
+ability_colonize_abandoned_station_target_station_owned_by_player_or_neutral,"You cannot colonize a station that is already controlled by $factionName.",,false,"target_station_owned_by_player_or_neutral"
+ability_colonize_abandoned_station_target_station_not_colonizable,"$stationName is in a state of extreme disrepair and is not a viable target for colonization.",,false,"target_station_not_colonizable"
+ability_colonize_abandoned_station_target_station_within_range,"The station closest to your location is $stationName. Your fleet is $distanceInSu stellar units away. You must be within $requiredDistanceInSu stellar units to colonize the station.",,false,"ability_colonize_abandoned_station_target_station_within_range"
+ability_colonize_abandoned_station_target_station_colonizable,"$stationName is in a state of extreme disrepair and is not a viable target for colonization.",,false,"ability_colonize_abandoned_station_target_station_colonizable"
+ability_colonize_abandoned_station_target_station_size_0,"$stationName is already colonized.",,false,"ability_colonize_abandoned_station_target_station_size_0"
+
+ability_colonize_abandoned_station_fleet_contains_credits,"Requires $itemQuantity credits. You have $currentItemQuantity.","[ '$creditsQuantity' ]",false,"ability_colonize_abandoned_station_fleet_contains_credits"
+ability_colonize_abandoned_station_fleet_contains_crew,"Requires $itemQuantity $itemName. You have $currentItemQuantity.","[ '$itemQuantity' ]",false,"ability_colonize_abandoned_station_fleet_contains_crew"
+ability_colonize_abandoned_station_fleet_contains_heavy_machinery,"Requires $itemQuantity $itemName. You have $currentItemQuantity.","[ '$itemQuantity' ]",false,"ability_colonize_abandoned_station_fleet_contains_heavy_machinery"
+ability_colonize_abandoned_station_fleet_contains_metals,"Requires $itemQuantity $itemName. You have $currentItemQuantity.","[ '$itemQuantity' ]",false,"ability_colonize_abandoned_station_fleet_contains_metals"
+ability_colonize_abandoned_station_fleet_contains_transplutonics,"Requires $itemQuantity $itemName. You have $currentItemQuantity.","[ '$itemQuantity' ]",false,"ability_colonize_abandoned_station_fleet_contains_transplutonics"
+
+ability_deploy_planet_killer_player_fleet_not_in_hyperspace,"You cannot deploy a planet-killer in hyperspace.",,false,"player_fleet_not_in_hyperspace"
+ability_deploy_planet_killer_target_planet_story_critical_setting,,,false,"ability_deploy_planet_killer_target_planet_story_critical_setting"
+ability_deploy_planet_killer_target_planet_story_critical,"You cannot destroy $marketName because it is critical to the fate of the sector.",,false,"ability_deploy_planet_killer_target_planet_story_critical_setting"
+ability_deploy_planet_killer_target_planet_within_range,"The world closest to your location is $planetName. Your fleet is $distanceInSu stellar units away. You must be within $requiredDistanceInSu stellar units to deploy a planet-killer device.",,false,"ability_deploy_planet_killer_target_planet_within_range"
+ability_deploy_planet_killer_target_planet_not_owned_by_player,"You cannot destroy your own colony with a planet-killer device.",,false,"target_planet_not_owned_by_player"
+
+ability_deploy_planet_killer_fleet_contains_planet_killer_device,"You do not possess a planet-killer device.",,false,"ability_deploy_planet_killer_fleet_contains_planet_killer_device"

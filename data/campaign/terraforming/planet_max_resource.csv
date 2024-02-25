@@ -1,0 +1,32 @@
+id,resources_max
+star,
+gas_giant,
+barren,
+toxic,
+volcanic,
+frozen,"[
+	{ 'resource_id' : 'volatiles', 'resource_max' : 'volatiles_plentiful' }
+]"
+water,"[
+	{ 'resource_id' : 'organics', 'resource_max' : 'organics_plentiful' },
+	{ 'resource_id' : 'volatiles', 'resource_max' : 'volatiles_plentiful' }
+]"
+jungle,"[
+	{ 'resource_id' : 'farmland', 'resource_max' : 'farmland_bountiful' },
+	{ 'resource_id' : 'organics', 'resource_max' : 'organics_plentiful' }
+]"
+desert,"[
+	{ 'resource_id' : 'farmland', 'resource_max' : 'farmland_bountiful' },
+	{ 'resource_id' : 'organics', 'resource_max' : 'organics_abundant' },
+	{ 'resource_id' : 'volatiles', 'resource_max' : 'volatiles_trace' }
+]"
+terran,"[
+	{ 'resource_id' : 'farmland', 'resource_max' : 'farmland_bountiful' },
+	{ 'resource_id' : 'organics', 'resource_max' : 'organics_plentiful' },
+	{ 'resource_id' : 'volatiles', 'resource_max' : 'volatiles_trace' }
+]"
+tundra,"[
+	{ 'resource_id' : 'farmland', 'resource_max' : 'farmland_bountiful' },
+	{ 'resource_id' : 'organics', 'resource_max' : 'organics_trace' },
+	{ 'resource_id' : 'volatiles', 'resource_max' : 'volatiles_plentiful' }
+]"

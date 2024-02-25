@@ -1,0 +1,522 @@
+id,enable_settings,effect_type,data
+arid_type_change,,PlanetTypeChange,"desert"
+jungle_type_change,,PlanetTypeChange,"jungle"
+terran_type_change,,PlanetTypeChange,"terran"
+water_type_change,,PlanetTypeChange,"water"
+tundra_type_change,,PlanetTypeChange,"tundra"
+frozen_type_change,,PlanetTypeChange,"frozen"
+irradiated_type_change,,PlanetTypeChange,"irradiated"
+
+industry_swap_seafloor_cities_for_domed_cities,,IndustrySwap,"{ 'industry_to_remove' : 'BOGGLED_SEAFLOOR_CITIES', 'industry_to_add' : 'BOGGLED_DOMED_CITIES' }"
+industry_swap_domed_cities_for_seafloor_cities,,IndustrySwap,"{ 'industry_to_remove' : 'BOGGLED_DOMED_CITIES', 'industry_to_add' : 'BOGGLED_SEAFLOOR_CITIES' }"
+
+industry_swap_farming_for_aquaculture,,IndustrySwap,"{ 'industry_to_remove' : 'farming', 'industry_to_add' : 'aquaculture' }"
+industry_swap_aquaculture_for_farming,,IndustrySwap,"{ 'industry_to_remove' : 'aquaculture', 'industry_to_add' : 'farming' }"
+
+industry_remove_mesozoic_park,,IndustryRemove,"{ 'industry_id' : 'BOGGLED_MESOZOIC_PARK' }"
+,,,
+market_add_habitable,,MarketAddCondition,"habitable"
+market_add_mild_climate,,MarketAddCondition,"mild_climate"
+market_add_no_atmosphere,,MarketAddCondition,"no_atmosphere"
+market_add_extreme_weather,,MarketAddCondition,"extreme_weather"
+market_add_tectonic_activity,,MarketAddCondition,"tectonic_activity"
+market_add_water_surface,,MarketAddCondition,"water_surface"
+market_add_irradiated,,MarketAddCondition,"irradiated"
+,,,
+market_add_farmland_poor,,MarketAddCondition,"farmland_poor"
+market_add_farmland_adequate,,MarketAddCondition,"farmland_adequate"
+market_add_farmland_rich,,MarketAddCondition,"farmland_rich"
+market_add_farmland_bountiful,,MarketAddCondition,"farmland_bountiful"
+,,,
+market_add_organics_trace,,MarketAddCondition,"organics_trace"
+market_add_organics_common,,MarketAddCondition,"organics_common"
+market_add_organics_abundant,,MarketAddCondition,"organics_abundant"
+market_add_organics_plentiful,,MarketAddCondition,"organics_plentiful"
+,,,
+market_add_volatiles_trace,,MarketAddCondition,"volatiles_trace"
+market_add_volatiles_diffuse,,MarketAddCondition,"volatiles_diffuse"
+market_add_volatiles_abundant,,MarketAddCondition,"volatiles_abundant"
+market_add_volatiles_plentiful,,MarketAddCondition,"volatiles_plentiful"
+,,,
+market_remove_water_surface,,MarketRemoveCondition,"water_surface"
+market_remove_volturnian_lobster_pens,,MarketRemoveCondition,"volturnian_lobster_pens"
+market_add_volturnian_lobster_pens,,MarketAddCondition,"volturnian_lobster_pens"
+,,,
+market_remove_no_atmosphere,,MarketRemoveCondition,"no_atmosphere"
+market_remove_thin_atmosphere,,MarketRemoveCondition,"thin_atmosphere"
+market_remove_toxic_atmosphere,,MarketRemoveCondition,"toxic_atmosphere"
+market_remove_dense_atmosphere,,MarketRemoveCondition,"dense_atmosphere"
+market_remove_pollution,,MarketRemoveCondition,"pollution"
+market_remove_inimical_biosphere,,MarketRemoveCondition,"inimical_biosphere"
+market_remove_extreme_weather,,MarketRemoveCondition,"extreme_weather"
+market_remove_mild_climate,,MarketRemoveCondition,"mild_climate"
+market_remove_habitable,,MarketRemoveCondition,"habitable"
+market_remove_irradiated,,MarketRemoveCondition,"irradiated"
+,,,
+market_remove_decivilized,,MarketRemoveCondition,"decivilized"
+market_remove_decivilized_subpop,,MarketRemoveCondition,"decivilized_subpop"
+market_remove_rogue_ai_core,,MarketRemoveCondition,"rogue_ai_core"
+,,,
+market_remove_farmland_poor,,MarketRemoveCondition,"farmland_poor"
+market_remove_farmland_adequate,,MarketRemoveCondition,"farmland_adequate"
+market_remove_farmland_rich,,MarketRemoveCondition,"farmland_rich"
+market_remove_farmland_bountiful,,MarketRemoveCondition,"farmland_bountiful"
+,,,
+market_remove_organics_trace,,MarketRemoveCondition,"organics_trace"
+market_remove_organics_common,,MarketRemoveCondition,"organics_common"
+market_remove_organics_abundant,,MarketRemoveCondition,"organics_abundant"
+market_remove_organics_plentiful,,MarketRemoveCondition,"organics_plentiful"
+,,,
+market_remove_volatiles_trace,,MarketRemoveCondition,"volatiles_trace"
+market_remove_volatiles_diffuse,,MarketRemoveCondition,"volatiles_diffuse"
+market_remove_volatiles_abundant,,MarketRemoveCondition,"volatiles_abundant"
+market_remove_volatiles_plentiful,,MarketRemoveCondition,"volatiles_plentiful"
+,,,
+market_optional_volatiles_trace,,MarketOptionalCondition,"{ 'option' : 'boggledTerraformingTypeChangeAddVolatiles', 'condition_id' : 'volatiles_trace' }"
+,,,
+market_progress_farmland,,MarketProgressResource,"{ 'resource_id' : 'farmland', 'step' : 1 }"
+market_progress_organics,,MarketProgressResource,"{ 'resource_id' : 'organics', 'step' : 1 }"
+market_progress_volatiles,,MarketProgressResource,"{ 'resource_id' : 'volatiles', 'step' : 1 }"
+,,,
+focus_market_add_extreme_weather,,FocusMarketAddCondition,"extreme_weather"
+focus_market_add_tectonic_activity,,FocusMarketAddCondition,"tectonic_activity"
+,,,
+focus_market_progress_ore_planet_cracker,,FocusMarketProgressResource,"{ 'resource_id' : 'ore', 'step' : 1 }"
+focus_market_progress_rare_ore_planet_cracker,,FocusMarketProgressResource,"{ 'resource_id' : 'rare_ore', 'step' : 1 }"
+focus_market_progress_volatiles_ouyang_optimizer,,FocusMarketAndSiphonStationProgressResource,"{ 'resource_id' : 'volatiles', 'step' : 2 }"
+,,
+system_add_coronal_tap,,SystemAddCoronalTap,"coronal_tap"
+market_remove_perihelion_project,,MarketRemoveIndustry,"BOGGLED_PERIHELION_PROJECT"
+,,
+attach_project_to_atmosphere_processor,,AttachProjectToIndustry,"{ 'industry_id' : 'BOGGLED_ATMOSPHERE_PROCESSOR' }"
+,,
+add_corrupted_nanoforge_to_storage,,AddItemToSubmarket,"{ 'submarket_id' : 'storage', 'special_item_id' : 'corrupted_nanoforge', 'quantity' : 1 }"
+add_pristine_nanoforge_to_storage,,AddItemToSubmarket,"{ 'submarket_id' : 'storage', 'special_item_id' : 'pristine_nanoforge', 'quantity' : 1 }"
+add_synchrotron_core_to_storage,,AddItemToSubmarket,"{ 'submarket_id' : 'storage', 'special_item_id' : 'synchrotron', 'quantity' : 1 }"
+add_hypershunt_tap_to_storage,,AddItemToSubmarket,"{ 'submarket_id' : 'storage', 'special_item_id' : 'coronal_portal', 'quantity' : 1 }"
+add_cryoarithmetic_engine_to_storage,,AddItemToSubmarket,"{ 'submarket_id' : 'storage', 'special_item_id' : 'cryoarithmetic_engine', 'quantity' : 1 }"
+add_planetkiller_device_to_storage,,AddItemToSubmarket,"{ 'submarket_id' : 'storage', 'special_item_id' : 'boggled_planetkiller', 'quantity' : 1 }"
+add_orbital_fusion_lamp_to_storage,,AddItemToSubmarket,"{ 'submarket_id' : 'storage', 'special_item_id' : 'orbital_fusion_lamp', 'quantity' : 1 }"
+add_fullerene_spool_to_storage,,AddItemToSubmarket,"{ 'submarket_id' : 'storage', 'special_item_id' : 'fullerene_spool', 'quantity' : 1 }"
+add_plasma_dynamo_to_storage,,AddItemToSubmarket,"{ 'submarket_id' : 'storage', 'special_item_id' : 'plasma_dynamo', 'quantity' : 1 }"
+add_autonomous_mantle_bore_to_storage,,AddItemToSubmarket,"{ 'submarket_id' : 'storage', 'special_item_id' : 'mantle_bore', 'quantity' : 1 }"
+add_soil_nanites_to_storage,,AddItemToSubmarket,"{ 'submarket_id' : 'storage', 'special_item_id' : 'soil_nanites', 'quantity' : 1 }"
+add_catalytic_core_to_storage,,AddItemToSubmarket,"{ 'submarket_id' : 'storage', 'special_item_id' : 'catalytic_core', 'quantity' : 1 }"
+add_drone_replicator_to_storage,,AddItemToSubmarket,"{ 'submarket_id' : 'storage', 'special_item_id' : 'drone_replicator', 'quantity' : 1 }"
+add_biofactory_embryo_to_storage,,AddItemToSubmarket,"{ 'submarket_id' : 'storage', 'special_item_id' : 'biofactory_embryo', 'quantity' : 1 }"
+add_dealmaker_holosuite_to_storage,,AddItemToSubmarket,"{ 'submarket_id' : 'storage', 'special_item_id' : 'dealmaker_holosuite', 'quantity' : 1 }"
+,,
+remove_2_story_points_from_player,,RemoveStoryPointsFromPlayer,"{ 'setting_id' : 'boggledDomainTechCraftingStoryPointCost', 'quantity' : 2 }"
+,,
+remove_domain_artifacts_easy_from_storage,,RemoveItemFromSubmarket,"{ 'submarket_id' : 'storage', 'commodity_id' : 'domain_artifacts', 'setting_id' : 'boggledDomainTechCraftingArtifactCostEasy', 'quantity' : 1000 }"
+remove_domain_artifacts_medium_from_storage,,RemoveItemFromSubmarket,"{ 'submarket_id' : 'storage', 'commodity_id' : 'domain_artifacts', 'setting_id' : 'boggledDomainTechCraftingArtifactCostMedium', 'quantity' : 2000 }"
+remove_domain_artifacts_hard_from_storage,,RemoveItemFromSubmarket,"{ 'submarket_id' : 'storage', 'commodity_id' : 'domain_artifacts', 'setting_id' : 'boggledDomainTechCraftingArtifactCostHard', 'quantity' : 4000 }"
+,,
+ability_astropolis_station_remove_crew_from_fleet,,RemoveItemFromFleetStorage,"{
+	'commodity_id' : 'crew',
+	'setting_id' : 'boggledAstropolisStationBuildCrewCost',
+	'quantity' : 1000
+}"
+ability_astropolis_station_remove_heavy_machinery_from_fleet,,RemoveItemFromFleetStorage,"{
+	'commodity_id' : 'heavy_machinery',
+	'setting_id' : 'boggledAstropolisStationBuildHeavyMachineryCost',
+	'quantity' : 250
+}"
+ability_astropolis_station_remove_metals_from_fleet,,RemoveItemFromFleetStorage,"{
+	'commodity_id' : 'metals',
+	'setting_id' : 'boggledAstropolisStationBuildMetalCost',
+	'quantity' : 1000
+}"
+ability_astropolis_station_remove_transplutonics_from_fleet,,RemoveItemFromFleetStorage,"{
+	'commodity_id' : 'rare_metals',
+	'setting_id' : 'boggledAstropolisStationBuildTransplutonicsCost',
+	'quantity' : 250
+}"
+ability_astropolis_station_remove_credits_from_fleet,,RemoveItemFromFleetStorage,"{
+	'setting_id' : 'boggledAstropolisStationBuildCreditCost',
+	'quantity' : 500000
+}"
+add_astropolis_station_to_orbit,,AddStationToOrbit,"{
+	'station_type' : 'boggled_astropolis',
+	'station_name' : 'Astropolis',
+	'variants' : [ 'alpha', 'beta', 'gamma' ],
+	'num_stations_per_layer' : 3,
+	'orbit_radius' : 450,
+	
+	'station_construction_data' : {}
+}"
+,,
+ability_mining_station_remove_crew_from_fleet,,RemoveItemFromFleetStorage,"{
+	'commodity_id' : 'crew',
+	'setting_id' : 'boggledMiningStationBuildCrewCost',
+	'quantity' : 1000
+}"
+ability_mining_station_remove_heavy_machinery_from_fleet,,RemoveItemFromFleetStorage,"{
+	'commodity_id' : 'heavy_machinery',
+	'setting_id' : 'boggledMiningStationBuildHeavyMachineryCost',
+	'quantity' : 250
+}"
+ability_mining_station_remove_metals_from_fleet,,RemoveItemFromFleetStorage,"{
+	'commodity_id' : 'metals',
+	'setting_id' : 'boggledMiningStationBuildMetalCost',
+	'quantity' : 1000
+}"
+ability_mining_station_remove_transplutonics_from_fleet,,RemoveItemFromFleetStorage,"{
+	'commodity_id' : 'rare_metals',
+	'setting_id' : 'boggledMiningStationBuildTransplutonicsCost',
+	'quantity' : 250
+}"
+ability_mining_station_remove_credits_from_fleet,,RemoveItemFromFleetStorage,"{
+	'setting_id' : 'boggledMiningStationBuildCreditCost',
+	'quantity' : 500000
+}"
+add_mining_station_to_entity,,AddStationToAsteroids,"{
+	'station_type' : 'boggled_mining',
+	'station_name' : 'Mining Station',
+	'num_stations_per_layer' : 8,
+	'orbit_radius' : 450,
+	
+	'station_construction_data' : {
+		'resources_to_highlight' : [ 'ore', 'rare_ore' ],
+		'industries_to_queue' : [ 'mining' ]
+	},
+}"
+,,
+ability_siphon_station_remove_crew_from_fleet,,RemoveItemFromFleetStorage,"{
+	'commodity_id' : 'crew',
+	'setting_id' : 'boggledSiphonStationBuildCrewCost',
+	'quantity' : 1000
+}"
+ability_siphon_station_remove_heavy_machinery_from_fleet,,RemoveItemFromFleetStorage,"{
+	'commodity_id' : 'heavy_machinery',
+	'setting_id' : 'boggledSiphonStationBuildHeavyMachineryCost',
+	'quantity' : 250
+}"
+ability_siphon_station_remove_metals_from_fleet,,RemoveItemFromFleetStorage,"{
+	'commodity_id' : 'metals',
+	'setting_id' : 'boggledSiphonStationBuildMetalCost',
+	'quantity' : 1000
+}"
+ability_siphon_station_remove_transplutonics_from_fleet,,RemoveItemFromFleetStorage,"{
+	'commodity_id' : 'rare_metals',
+	'setting_id' : 'boggledSiphonStationBuildTransplutonicsCost',
+	'quantity' : 250
+}"
+ability_siphon_station_remove_credits_from_fleet,,RemoveItemFromFleetStorage,"{
+	'setting_id' : 'boggledSiphonStationBuildCreditCost',
+	'quantity' : 500000
+}"
+add_siphon_station_to_orbit,,AddStationToOrbit,"{
+	'station_type' : 'boggled_siphon',
+	'station_name' : 'Siphon Station',
+	'num_stations_per_layer' : 8,
+	'orbit_radius' : 50,
+	
+	'station_construction_data' : {
+		'resources_to_highlight' : [ 'volatiles' ],
+		'industries_to_queue' : [ 'mining' ]
+	},
+}"
+,,
+ability_colonize_abandoned_station_remove_crew_from_fleet,,RemoveItemFromFleetStorage,"{
+	'commodity_id' : 'crew',
+	'setting_id' : 'boggledStationRecolonizeCrewCost',
+	'quantity' : 500
+}"
+ability_colonize_abandoned_station_remove_heavy_machinery_from_fleet,,RemoveItemFromFleetStorage,"{
+	'commodity_id' : 'heavy_machinery',
+	'setting_id' : 'boggledStationRecolonizeHeavyMachineryCost',
+	'quantity' : 125
+}"
+ability_colonize_abandoned_station_remove_metals_from_fleet,,RemoveItemFromFleetStorage,"{
+	'commodity_id' : 'metals',
+	'setting_id' : 'boggledStationRecolonizeMetalCost',
+	'quantity' : 500
+}"
+ability_colonize_abandoned_station_remove_transplutonics_from_fleet,,RemoveItemFromFleetStorage,"{
+	'commodity_id' : 'rare_metals',
+	'setting_id' : 'boggledStationRecolonizeTransplutonicsCost',
+	'quantity' : 125
+}"
+ability_colonize_abandoned_station_remove_credits_from_fleet,,RemoveItemFromFleetStorage,"{
+	'setting_id' : 'boggledStationRecolonizeCreditCost',
+	'quantity' : 250000
+}"
+colonize_abandoned_station,,ColonizeAbandonedStation,"{
+	'station_colonization_data' : {
+		'boggled_astropolis' : {},
+		'boggled_mining' : {
+			'resources_to_highlight' : [ 'ore', 'rare_ore' ],
+			'industries_to_queue' : [ 'mining' ]
+		},
+		'boggled_siphon' : {
+			'resources_to_highlight' : [ 'volatiles' ],
+			'industries_to_queue' : [ 'mining' ]
+		},
+		'boggled_gatekeeper_station' : {
+			'industries_to_queue' : [ 'ASTRAL_GATE' ]
+		}
+	}
+}"
+
+ability_deploy_planet_killer_remove_planet_killer_device_from_fleet,,RemoveItemFromFleetStorage,"{ 'special_item_id' : 'boggled_planetkiller', 'quantity' : 1 }"
+ability_deploy_planet_killer_adjust_faction_relations,,AdjustRelationsWithAllExcept,"{
+	'faction_id_to_adjust_relations_to' : 'player',
+	'faction_ids_to_not_adjust_relations' : [ 'player', 'derelict', 'omega', 'remnant', 'sleeper' ],
+	'new_relation_value' : -100
+}"
+ability_deploy_planet_killer_trigger_military_response,,TriggerMilitaryResponse,"{
+	'response_fraction' : 0.75,
+	'response_duration' : 30
+}"
+ability_deploy_planet_killer_decivilize_market,,DecivilizeMarket,"{
+	'faction_ids_to_not_make_hostile' : [ 'player', 'derelict', 'omega', 'remnant', 'sleeper' ]
+}"
+ability_deploy_planet_killer_change_conditions_1,,EffectWithRequirement,"{
+	'requirements' : [
+		{ 'requirement_id' : 'market_is_not_station' },
+		{ 'requirement_id' : 'planet_not_star' },
+		{ 'requirement_id' : 'planet_not_gas_giant', },
+		{ 'requirement_id' : 'planet_not_volcanic', },
+		{ 'requirement_id' : 'planet_not_unknown' }
+	],
+	'effects' : [ 'irradiated_type_change', 'market_add_irradiated', 'market_remove_habitable', 'market_remove_mild_climate', 'market_remove_water_surface', 'market_remove_volturnian_lobster_pens', 'market_remove_inimical_biosphere', 'market_remove_farmland_poor', 'market_remove_farmland_adequate', 'market_remove_farmland_rich', 'market_remove_farmland_bountiful' ]
+}"
+ability_deploy_planet_killer_change_conditions_2,,EffectWithRequirement,"{
+	'requirements' : [
+		{ 'requirement_id' : 'planet_not_gas_giant' },
+		{ 'requirement_id' : 'planet_not_unknown' }
+	],
+	'effects' : [ 'market_remove_organics_trace', 'market_remove_organics_common', 'market_remove_organics_abundant', 'market_remove_organics_plentiful', 'market_remove_volatiles_trace', 'market_remove_volatiles_diffuse', 'market_remove_volatiles_abundant', 'market_remove_volatiles_plentiful' ]
+}"
+
+ongoing_flat_demand_1_domain_artifacts,boggledDomainTechContentEnabled | boggledDomainArchaeologyEnabled,CommodityDemandFlat,"{ 'commodity_id' : 'domain_artifacts', 'quantity' : 1 }"
+ongoing_flat_demand_3_domain_artifacts,boggledDomainTechContentEnabled | boggledDomainArchaeologyEnabled,CommodityDemandFlat,"{ 'commodity_id' : 'domain_artifacts', 'quantity' : 3 }"
+ongoing_flat_demand_4_domain_artifacts,boggledDomainTechContentEnabled | boggledDomainArchaeologyEnabled,CommodityDemandFlat,"{ 'commodity_id' : 'domain_artifacts', 'quantity' : 4 }"
+
+ongoing_market_size_minus_2_demand_domain_artifacts,boggledDomainTechContentEnabled | boggledDomainArchaeologyEnabled,CommodityDemandMarketSize,"{ 'commodity_id' : 'domain_artifacts', 'quantity' : -2 }"
+ongoing_market_size_demand_domain_artifacts,boggledDomainTechContentEnabled | boggledDomainArchaeologyEnabled,CommodityDemandMarketSize,"{ 'commodity_id' : 'domain_artifacts', 'quantity' : 0 }"
+
+ongoing_player_market_size_else_flat_demand_domain_artifacts,boggledDomainTechContentEnabled | boggledDomainArchaeologyEnabled,CommodityDemandPlayerMarketSizeElseFlat,"{ 'commodity_id' : 'domain_artifacts', 'quantity' : 4 }"
+
+ongoing_market_size_demand_fuel,,CommodityDemandMarketSize,"{ 'commodity_id' : 'fuel', 'quantity' : 0 }"
+ongoing_market_size_demand_supplies,,CommodityDemandMarketSize,"{ 'commodity_id' : 'supplies', 'quantity' : 0 }"
+ongoing_market_size_demand_ships,,CommodityDemandMarketSize,"{ 'commodity_id' : 'ships', 'quantity' : 0 }"
+ongoing_market_size_demand_heavy_machinery,,CommodityDemandMarketSize,"{ 'commodity_id' : 'heavy_machinery', 'quantity' : 0 }"
+
+ongoing_market_size_minus_2_demand_heavy_machinery,,CommodityDemandMarketSize,"{ 'commodity_id' : 'heavy_machinery', 'quantity' : -2 }"
+
+ongoing_flat_demand_6_heavy_machinery,,CommodityDemandFlat,"{ 'commodity_id' : 'heavy_machinery', 'quantity' : 6 }"
+
+ongoing_flat_demand_7_domain_artifacts,boggledDomainTechContentEnabled | boggledDomainArchaeologyEnabled,CommodityDemandFlat,"{ 'commodity_id' : 'domain_artifacts', 'quantity' : 7 }"
+ongoing_flat_demand_11_metals,,CommodityDemandFlat,"{ 'commodity_id' : 'metals', 'quantity' : 11 }"
+ongoing_flat_demand_9_rare_metals,,CommodityDemandFlat,"{ 'commodity_id' : 'rare_metals', 'quantity' : 9 }"
+ongoing_flat_demand_7_heavy_machinery,,CommodityDemandFlat,"{ 'commodity_id' : 'heavy_machinery', 'quantity' : 7 }"
+ongoing_flat_demand_7_supplies,,CommodityDemandFlat,"{ 'commodity_id' : 'supplies', 'quantity' : 7 }"
+
+ongoing_market_size_supply_food,,CommoditySupplyMarketSize,"{ 'commodity_id' : 'food', 'quantity' : 0 }"
+
+ongoing_market_size_minus_2_supply_organs,,CommoditySupplyMarketSize,"{ 'commodity_id' : 'organs', 'quantity' : -2 }"
+
+ongoing_heavy_machinery_deficit_to_food,,CommodityDeficitToProduction,"{
+	'commodities_demanded' : [ 'heavy_machinery' ],
+	'commodities_deficited' : [ 'food' ]
+}"
+ongoing_domain_artifacts_deficit_to_organs,boggledDomainTechContentEnabled | boggledDomainArchaeologyEnabled,CommodityDeficitToProduction,"{
+	'commodities_demanded' : [ 'domain_artifacts' ],
+	'commodities_deficited' : [ 'organs' ]
+}"
+ongoing_domain_artifacts_deficit_to_5_times_upkeep,boggledDomainTechContentEnabled | boggledDomainArchaeologyEnabled,CommodityDeficitModifierToUpkeep,"{
+	'commodities_demanded' : [ 'domain_artifacts' ],
+	'modifier_type' : 'mult',
+	'value' : 5.0
+}"
+
+ongoing_modify_pather_interest_plus_1,,ModifyPatherInterest,"{ 'modifier_type' : 'flat', 'value' : 1 }"
+ongoing_modify_pather_interest_plus_2,,ModifyPatherInterest,"{ 'modifier_type' : 'flat', 'value' : 2 }"
+ongoing_modify_pather_interest_plus_3,,ModifyPatherInterest,"{ 'modifier_type' : 'flat', 'value' : 3 }"
+ongoing_modify_pather_interest_plus_4,,ModifyPatherInterest,"{ 'modifier_type' : 'flat', 'value' : 4 }"
+
+ai_mining_drones_alpha_core_bonus_to_mining,,ModifyIndustrySupplyWithDeficit,"{
+	'commodities_demanded' : [ 'fuel', 'supplies', 'ships' ],
+	'modifier_type' : 'flat',
+	'value' : 3
+}"
+ai_mining_drones_beta_core_bonus_to_mining,,ModifyIndustrySupplyWithDeficit,"{
+	'commodities_demanded' : [ 'fuel', 'supplies', 'ships' ],
+	'modifier_type' : 'flat',
+	'value' : 2
+}"
+ai_mining_drones_gamma_core_bonus_to_mining,,ModifyIndustrySupplyWithDeficit,"{
+	'commodities_demanded' : [ 'fuel', 'supplies', 'ships' ],
+	'modifier_type' : 'flat',
+	'value' : 1
+}"
+
+ai_mining_drones_alpha_core_effect_to_mining,,EffectToIndustry,"{
+	'industry_id' : 'mining',
+	'effect_id' : 'ai_mining_drones_alpha_core_bonus_to_mining'
+}"
+ai_mining_drones_beta_core_effect_to_mining,,EffectToIndustry,"{
+	'industry_id' : 'mining',
+	'effect_id' : 'ai_mining_drones_beta_core_bonus_to_mining'
+}"
+ai_mining_drones_gamma_core_effect_to_mining,,EffectToIndustry,"{
+	'industry_id' : 'mining',
+	'effect_id' : 'ai_mining_drones_gamma_core_bonus_to_mining'
+}"
+
+ai_mining_drones_improve_bonus_to_accessibility,,ModifyColonyAccessibility,"{ 'modifier_type' : 'mult', 'value' : 1.20 }"
+
+chameleon_alpha_core_reduce_demand,,ModifyIndustryDemand,"{ 'modifier_type' : 'flat', 'value' : -1 }"
+chameleon_alpha_core_reduce_upkeep,,ModifyIndustryUpkeep,"{ 'modifier_type' : 'mult', 'value' : 0.75 }"
+chameleon_alpha_core_eliminate_pather_interest,,EliminatePatherInterest,
+
+chameleon_improve_bonus_to_stability,,ModifyColonyStability,"{ 'modifier_type' : 'flat', 'value' : 1 }"
+
+cloning_modify_colony_growth,,ModifyColonyGrowthRate,"{ 'modifier_type' : 'market_size', 'value' : -1 }"
+
+domain_archaeology_ruins_scattered_effect,,EffectWithRequirement,"{
+	'requirements' : [ { 'requirement_id' : 'industry_effects_domain_archaeology_colony_ruins_scattered' } ],
+	'effects' : [ 'ongoing_modify_pather_interest_plus_1' ]
+}"
+domain_archaeology_ruins_widespread_effect,,EffectWithRequirement,"{
+	'requirements' : [ { 'requirement_id' : 'industry_effects_domain_archaeology_colony_ruins_widespread' } ],
+	'effects' : [ 'ongoing_modify_pather_interest_plus_2' ]
+}"
+domain_archaeology_ruins_extensive_effect,,EffectWithRequirement,"{
+	'requirements' : [ { 'requirement_id' : 'industry_effects_domain_archaeology_colony_ruins_extensive' } ],
+	'effects' : [ 'ongoing_modify_pather_interest_plus_3' ]
+}"
+domain_archaeology_ruins_vast_effect,,EffectWithRequirement,"{
+	'requirements' : [ { 'requirement_id' : 'industry_effects_domain_archaeology_colony_ruins_vast' } ],
+	'effects' : [ 'ongoing_modify_pather_interest_plus_4' ]
+}"
+
+domed_cities_suppress_conditions,,SuppressConditions,"[ 'no_atmosphere', 'thin_atmosphere', 'dense_atmosphere', 'toxic_atmosphere', 'extreme_weather', 'inimical_biosphere' ]"
+domed_cities_modify_colony_growth,,ModifyColonyGrowthRate,"{ 'modifier_type' : 'market_size', 'value' : -1 }"
+domed_cities_modify_ground_defense,boggledDomedCitiesDefensePenaltyEnabled,ModifyColonyGroundDefense,"{ 'modifier_type' : 'mult', 'value' : 0.05 }"
+
+seafloor_cities_suppress_conditions,,SuppressConditions,"[ 'water_surface' ]"
+seafloor_cities_modify_ground_defenses,,ModifyColonyGroundDefense,"{ 'modifier_type' : 'mult', 'value' : 6 }"
+seafloor_cities_modify_accessibility,,ModifyColonyAccessibility,"{ 'modifier_type' : 'percent', 'value' : -10 }"
+
+domed_cities_alpha_core_stability_bonus,,ModifyColonyStability,"{ 'modifier_type' : 'flat', 'value' : 3 }"
+domed_cities_beta_core_stability_bonus,,ModifyColonyStability,"{ 'modifier_type' : 'flat', 'value' : 2 }"
+domed_cities_gamma_core_stability_bonus,,ModifyColonyStability,"{ 'modifier_type' : 'flat', 'value' : 1 }"
+
+domed_cities_improve_stability_bonus,,ModifyColonyStability,"{ 'modifier_type' : 'flat', 'value' : 1 }"
+
+expand_station_increment_tag,,StepTag,"{ 'tag' : 'boggled_station_construction_numExpansions_', 'step' : 1 }"
+expand_station_build_cost_modifier,boggledStationProgressiveIncreaseInCostsToExpandStation,TagSubstringPowerModifyBuildCost,"{ 'tag' : 'boggled_station_construction_numExpansions_', 'default' : 0 }"
+expand_station_remove_on_completion,,IndustryRemove,"{ 'industry_id' : 'BOGGLED_STATION_EXPANSION' }"
+
+genelab_income_bonus_to_mesozoic_park_effect,,ModifyIndustryIncome,"{ 'modifier_type' : 'mult', 'value' : 1.5 }"
+genelab_income_bonus_to_mesozoic_park,,EffectToIndustry,"{
+	'industry_id' : 'BOGGLED_MESOZOIC_PARK',
+	'effect_id' : 'genelab_income_bonus_to_mesozoic_park_effect'
+}"
+genelab_apply_effect_to_mesozoic_park,,EffectWithRequirement,"{
+	'requirements' : [ { 'requirement_id' : 'industry_genelab_mesozoic_park_income_does_not_have_shortage' } ],
+	'effects' : [ 'genelab_income_bonus_to_mesozoic_park' ]
+}"
+
+harmonic_damper_suppress_conditions,,SuppressConditions,"[ 'tectonic_activity', 'extreme_tectonic_activity' ]"
+
+harmonic_damper_alpha_core_ground_defenses,,ModifyColonyGroundDefense,"{ 'modifier_type' : 'mult', 'value' : 2 }"
+harmonic_damper_beta_core_ground_defenses,,ModifyColonyGroundDefense,"{ 'modifier_type' : 'mult', 'value' : 1.5 }"
+harmonic_damper_gamma_core_ground_defenses,,ModifyColonyGroundDefense,"{ 'modifier_type' : 'mult', 'value' : 1.25 }"
+
+harmonic_damper_improve_ground_defenses,,ModifyColonyGroundDefense,"{ 'modifier_type' : 'mult', 'value' : 1.25 }"
+
+kletka_simulator_very_cold_upkeep_modifier,,ModifyIndustryUpkeep,"{ 'modifier_type' : 'mult', 'value' : 0.25 }"
+kletka_simulator_cold_upkeep_modifier,,ModifyIndustryUpkeep,"{ 'modifier_type' : 'mult', 'value' : 0.5 }"
+kletka_simulator_hot_upkeep_modifier,,ModifyIndustryUpkeep,"{ 'modifier_type' : 'mult', 'value' : 2 }"
+kletka_simulator_very_hot_upkeep_modifier,,ModifyIndustryUpkeep,"{ 'modifier_type' : 'mult', 'value' : 4 }"
+kletka_simulator_station_upkeep_modifier,,ModifyIndustryUpkeep,"{ 'modifier_type' : 'mult', 'value' : 8 }"
+
+kletka_simulator_very_cold_modifier,boggledKletkaSimulatorTemperatureBasedUpkeep,EffectWithRequirement,"{
+	'requirements' : [ { 'requirement_id' : 'industry_effect_kletka_simulator_colony_very_cold' } ],
+	'effects' : [ 'kletka_simulator_very_cold_upkeep_modifier' ]
+}"
+kletka_simulator_cold_modifier,boggledKletkaSimulatorTemperatureBasedUpkeep,EffectWithRequirement,"{
+	'requirements' : [ { 'requirement_id' : 'industry_effect_kletka_simulator_colony_cold' } ],
+	'effects' : [ 'kletka_simulator_cold_upkeep_modifier' ]
+}"
+kletka_simulator_hot_modifier,boggledKletkaSimulatorTemperatureBasedUpkeep,EffectWithRequirement,"{
+	'requirements' : [ { 'requirement_id' : 'industry_effect_kletka_simulator_colony_hot' } ],
+	'effects' : [ 'kletka_simulator_hot_upkeep_modifier' ]
+}"
+kletka_simulator_very_hot_modifier,boggledKletkaSimulatorTemperatureBasedUpkeep,EffectWithRequirement,"{
+	'requirements' : [ { 'requirement_id' : 'industry_effect_kletka_simulator_colony_very_hot' } ],
+	'effects' : [ 'kletka_simulator_very_hot_upkeep_modifier' ]
+}"
+kletka_simulator_station_modifier,boggledKletkaSimulatorTemperatureBasedUpkeep,EffectWithRequirement,"{
+	'requirements' : [ { 'requirement_id' : 'industry_effect_kletka_simulator_colony_is_station' } ],
+	'effects' : [ 'kletka_simulator_station_upkeep_modifier' ]
+}"
+
+kletka_simulator_item_production_effect,,IndustryMonthlyItemProduction,
+kletka_simulator_item_production_requires_no_shortage,,EffectWithRequirement,"{
+	'display_requirement_tooltip_on_requirement_failure' : 'true',
+	'display_effect_tooltip_on_requirement_failure' : 'true',
+	'requirements' : [
+		{ 'requirement_id' : 'industry_effect_kletka_simulator_does_not_have_shortage' }
+	],
+	'effects' : [ 'kletka_simulator_item_production_effect' ]
+}"
+
+kletka_simulator_item_production_chance_effect,,IndustryMonthlyItemProductionChance,"[
+	{ 'commodity_priority' : 0, 'commodity_id' : 'alpha_core', 'chance' : 0, 'requirements' : [
+		{ 'requirement_id' : 'industry_effects_kletka_simulator_has_ai_core' }
+	] },
+	{ 'commodity_priority' : 1, 'commodity_id' : 'beta_core', 'chance' : 20 },
+	{ 'commodity_priority' : 2, 'commodity_id' : 'gamma_core', 'chance' : 45 },
+]"
+kletka_simulator_alpha_core_effect,,IndustryMonthlyItemProductionChanceModifier,"[
+	{ 'commodity_id' : 'alpha_core', 'chance_modifier' : 25 },
+	{ 'commodity_id' : 'beta_core', 'chance_modifier' : 30 },
+	{ 'commodity_id' : 'gamma_core', 'chance_modifier' : 30 }
+]"
+kletka_simulator_beta_core_effect,,IndustryMonthlyItemProductionChanceModifier,"[
+	{ 'commodity_id' : 'alpha_core', 'chance_modifier' : 15 },
+	{ 'commodity_id' : 'beta_core', 'chance_modifier' : 20 },
+	{ 'commodity_id' : 'gamma_core', 'chance_modifier' : 20 }
+]"
+kletka_simulator_gamma_core_effect,,IndustryMonthlyItemProductionChanceModifier,"[
+	{ 'commodity_id' : 'alpha_core', 'chance_modifier' : 5 },
+	{ 'commodity_id' : 'beta_core', 'chance_modifier' : 10 },
+	{ 'commodity_id' : 'gamma_core', 'chance_modifier' : 10 }
+]"
+kletka_simulator_improve_effect,,IndustryMonthlyItemProductionChanceModifier,"[
+	{ 'commodity_id' : 'alpha_core', 'chance_modifier' : 10 },
+	{ 'commodity_id' : 'beta_core', 'chance_modifier' : 10 },
+	{ 'commodity_id' : 'gamma_core', 'chance_modifier' : 10 }
+]"
+
+limelight_network_alpha_core_reduce_upkeep_bonus,,ModifyIndustryUpkeep,"{ 'modifier_type' : 'mult', 'value' : 0.75 }"
+limelight_network_alpha_core_reduce_demand_bonus,,ModifyIndustryDemand,"{ 'modifier_type' : 'flat', 'value' : -1 }"
+limelight_network_alpha_core_increase_income_bonus,,ModifyIndustryIncome,"{ 'modifier_type' : 'mult', 'value' : 1.5 }"
+
+limelight_network_improve_increase_income_bonus,,ModifyIndustryIncome,"{ 'modifier_type' : 'mult', 'value' : 1.2 }"
+
+magnetoshield_suppress_conditions,,SuppressConditions,"[ 'irradiated' ]"
+
+mesozoic_park_add_inimical_biosphere,,MarketAddConditionNoRemove,"inimical_biosphere"
+mesozoic_park_increase_income_by_accessibility,,ModifyIndustryIncomeByAccessibility,"{ 'modifier_type' : 'mult', 'value' : 1.0 }"
+
+mesozoic_park_alpha_core_increase_income_bonus,,ModifyIndustryIncome,"{ 'modifier_type' : 'mult', 'value' : 1.2 }"
+mesozoic_park_beta_core_increase_income_bonus,,ModifyIndustryIncome,"{ 'modifier_type' : 'mult', 'value' : 1.1 }"
+mesozoic_park_gamma_core_increase_income_bonus,,ModifyIndustryIncome,"{ 'modifier_type' : 'mult', 'value' : 1.05 }"
+
+mesozoic_park_improve_increase_income_bonus,,ModifyIndustryIncome,"{ 'modifier_type' : 'mult', 'value' : 1.2 }"
+
+planetary_agrav_field_suppress_conditions,,SuppressConditions,"[ 'high_gravity', 'low_gravity' ]"
+planetary_agrav_field_domed_cities_effect,,EffectWithRequirement,"{
+	'requirements' : [ { 'requirement_id' : 'industry_colony_has_domed_cities_or_is_gas_giant' } ],
+	'effects' : [ 'planetary_agrav_field_suppress_conditions' ]
+}"
+
+stellar_reflector_suppress_conditions,,SuppressConditions,"[ 'hot', 'cold', 'poor_light' ]"
+stellar_reflector_add_stellar_reflectors_to_market,,AddStellarReflectorsToOrbit,
+stellar_reflector_array_add_solar_array_condition,,MarketAddCondition,solar_array

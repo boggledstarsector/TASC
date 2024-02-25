@@ -1,0 +1,7 @@
+id,resource_progression
+farmland,"[ 'farmland_poor', 'farmland_adequate', 'farmland_rich', 'farmland_bountiful' ]"
+organics,"[ 'organics_trace', 'organics_common',  'organics_abundant',  'organics_plentiful' ]"
+volatiles,"[ 'volatiles_trace', 'volatiles_diffuse',  'volatiles_abundant',  'volatiles_plentiful' ]"
+ore,"[ 'ore_sparse', 'ore_moderate',  'ore_abundant',  'ore_rich',  'ore_ultrarich' ]"
+rare_ore,"[ 'rare_ore_sparse', 'rare_ore_moderate',  'rare_ore_abundant',  'rare_ore_rich',  'rare_ore_ultrarich' ]"
+ruins,"[ 'ruins_scattered', 'ruins_widespread',  'ruins_extensive',  'ruins_vast' ]"

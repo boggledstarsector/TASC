@@ -1,0 +1,170 @@
+id,conditions,name,terraforming_type_id,terraforming_possible,base_water_level,conditional_water_requirements
+nebula_center_old,,nebula,star,false,0,
+nebula_center_average,,nebula,star,false,0,
+nebula_center_young,,nebula,star,false,0,
+star_neutron,,neutron star,star,false,0,
+black_hole,,black hole,star,false,0,
+star_yellow,,yellow star,star,false,0,
+star_white,,white star,star,false,0,
+star_blue_giant,,blue giant,star,false,0,
+star_blue_supergiant,,blue supergiant,star,false,0,
+star_orange,,orange star,star,false,0,
+star_orange_giant,,orange giant,star,false,0,
+star_red_supergiant,,red supergiant,star,false,0,
+star_red_giant,,red giant,star,false,0,
+star_red_dwarf,,red dwarf,star,false,0,
+star_browndwarf,,brown dwarf,star,false,0,
+US_star_blue_giant,,blue giant,star,false,0,
+US_star_yellow,,yellow star,star,false,0,
+US_star_orange,,orange star,star,false,0,
+US_star_red_giant,,red giant,star,false,0,
+US_star_white,,white star,star,false,0,
+US_star_browndwarf,,brown dwarf,star,false,0,
+SCY_star,,star,star,false,0,
+SCY_companionStar,,companion star,star,false,0,
+SCY_wormholeUnder,,wormhole,star,false,0,
+SCY_wormholeA,,wormhole,star,false,0,
+SCY_wormholeB,,wormhole,star,false,0,
+SCY_wormholeC,,wormhole,star,false,0,
+istl_sigmaworld,,sigma world,star,false,0,
+istl_dysonshell,,dyson shell,star,false,0,
+vayra_star_blue,,blue star,star,false,0,
+vayra_star_brown,,brown star,star,false,0,
+vayra_star_yellow_white,,yellow-white star,star,false,0,
+,,,,
+gas_giant,,gas giant,gas_giant,false,0,
+ice_giant,,ice giant,gas_giant,false,0,
+US_gas_giant,,gas giant,gas_giant,false,0,"[
+	{ 'requirements' : [ { 'requirement_id' : 'planet_types_colony_habitable_with_atmosphere' } ], 'water_level' : 1 }
+]"
+US_gas_giantB,,gas giant,gas_giant,false,0,"[
+	{ 'requirements' : [ { 'requirement_id' : 'planet_types_colony_habitable_with_atmosphere' } ], 'water_level' : 1 }
+]"
+fds_gas_giant,,gas giant,gas_giant,false,0,
+SCY_tartarus,,tartarus world,gas_giant,false,0,
+galaxytigers_gas_giant,,gas giant,gas_giant,false,0,
+,,,,
+barren,,barren world,barren,true,0,
+barren_castiron,,barren world,barren,true,0,
+barren2,,barren world,barren,true,0,
+barren3,,barren world,barren,true,0,
+barren_venuslike,,barren world,barren,true,0,
+rocky_metallic,,barren world,barren,true,0,
+rocky_unstable,,barren world,barren,true,0,
+rocky_ice,,barren world,barren,true,0,
+irradiated,,barren world,barren,true,0,
+barren-bombarded,,barren world,barren,true,0,
+US_acid,,barren world,barren,true,0,"[
+	{ 'requirements' : [ { 'requirement_id' : 'planet_types_colony_habitable_with_atmosphere' } ], 'water_level' : 1 }
+]"
+US_acidRain,,barren world,barren,true,0,"[
+	{ 'requirements' : [ { 'requirement_id' : 'planet_types_colony_habitable_with_atmosphere' } ], 'water_level' : 1 }
+]"
+US_acidWind,,barren world,barren,true,0,"[
+	{ 'requirements' : [ { 'requirement_id' : 'planet_types_colony_habitable_with_atmosphere' } ], 'water_level' : 1 }
+]"
+US_barrenA,,barren world,barren,true,0,"[
+	{ 'requirements' : [ { 'requirement_id' : 'planet_types_colony_habitable_with_atmosphere' } ], 'water_level' : 1 }
+]"
+US_barrenB,,barren world,barren,true,0,"[
+	{ 'requirements' : [ { 'requirement_id' : 'planet_types_colony_habitable_with_atmosphere' } ], 'water_level' : 1 }
+]"
+US_barrenC,,barren world,barren,true,0,"[
+	{ 'requirements' : [ { 'requirement_id' : 'planet_types_colony_habitable_with_atmosphere' } ], 'water_level' : 1 }
+]"
+US_barrenD,,barren world,barren,true,0,"[
+	{ 'requirements' : [ { 'requirement_id' : 'planet_types_colony_habitable_with_atmosphere' } ], 'water_level' : 1 }
+]"
+US_barrenE,,barren world,barren,true,0,"[
+	{ 'requirements' : [ { 'requirement_id' : 'planet_types_colony_habitable_with_atmosphere' } ], 'water_level' : 1 }
+]"
+US_barrenF,,barren world,barren,true,0,"[
+	{ 'requirements' : [ { 'requirement_id' : 'planet_types_colony_habitable_with_atmosphere' } ], 'water_level' : 1 }
+]"
+US_azure,,barren world,barren,true,0,"[
+	{ 'requirements' : [ { 'requirement_id' : 'planet_types_colony_habitable_with_atmosphere' } ], 'water_level' : 1 }
+]"
+US_burnt,,barren world,barren,true,0,"[
+	{ 'requirements' : [ { 'requirement_id' : 'planet_types_colony_habitable_with_atmosphere' } ], 'water_level' : 1 }
+]"
+US_artificial,,barren world,barren,true,0,"[
+	{ 'requirements' : [ { 'requirement_id' : 'planet_types_colony_habitable_with_atmosphere' } ], 'water_level' : 1 }
+]"
+haunted,,barren world,barren,true,0,
+hmi_crystalline,,barren world,barren,true,0,
+SCY_miningColony,,barren world,barren,true,0,
+SCY_burntPlanet,,barren world,barren,true,0,
+SCY_moon,,barren world,barren,true,0,
+SCY_redRock,,barren world,barren,true,0,
+rad_planet,,barren world,barren,true,0,
+ecumenopolis,,barren world,barren,true,0,
+nskr_ice_desert,,barren world,barren,true,0,
+,,,,
+toxic,,toxic world,toxic,true,0,
+toxic_cold,,toxic world,toxic,true,0,
+US_green,,toxic world,toxic,true,0,"[
+	{ 'requirements' : [ { 'requirement_id' : 'planet_types_colony_habitable_with_atmosphere' } ], 'water_level' : 1 }
+]"
+SCY_acid,,toxic world,toxic,true,0,
+,,,,
+desert,,desert world,desert,true,1,
+desert1,,desert world,desert,true,1,
+arid,,desert world,desert,true,1,
+barren-desert,,desert world,desert,true,1,
+US_dust,,desert world,desert,true,1,
+US_desertA,,desert world,desert,true,1,
+US_desertB,,desert world,desert,true,1,
+US_desertC,,desert world,desert,true,1,
+US_red,,desert world,desert,true,1,
+US_redWind,,desert world,desert,true,1,
+US_lifelessArid,,desert world,desert,true,1,
+US_arid,,desert world,desert,true,1,
+US_crimson,,desert world,desert,true,1,
+US_storm,,desert world,desert,true,1,
+fds_desert,,desert world,desert,true,1,
+SCY_homePlanet,,desert world,desert,true,1,
+istl_aridbread,,desert world,desert,true,1,
+vayra_bread,,desert world,desert,true,1,
+US_auric,,desert world,desert,true,1,
+US_auricCloudy,,desert world,desert,true,1,
+,,,,
+terran,,terran world,terran,true,1,
+terran-eccentric,,terran world,terran,true,1,
+US_lifeless,,terran world,terran,true,1,
+US_alkali,,terran world,terran,true,1,
+US_continent,,terran world,terran,true,1,
+US_magnetic,,terran world,terran,true,1,
+US_water,,terran world,terran,true,2,
+US_waterB,,terran world,terran,true,2,
+terran_adapted,,terran world,terran,true,1,
+,,,,
+water,,water world,water,true,2,
+,water_surface,water world,water,true,2,
+,,,,
+tundra,,tundra world,tundra,true,1,
+US_purple,,tundra world,tundra,true,1,
+fds_tundra,,tundra world,tundra,true,1,
+galaxytigers_tundra,,tundra world,tundra,true,1,
+,,,,
+jungle,,jungle world,jungle,true,1,
+US_jungle,,jungle world,jungle,true,1,
+jungle_charkha,,jungle world,jungle,true,1,
+,,,,
+frozen,,frozen world,frozen,true,2,
+frozen1,,frozen world,frozen,true,2,
+frozen2,,frozen world,frozen,true,2,
+frozen3,,frozen world,frozen,true,2,
+cryovolcanic,,frozen world,frozen,true,2,
+US_iceA,,frozen world,frozen,true,2,
+US_iceB,,frozen world,frozen,true,2,
+US_blue,,frozen world,frozen,true,2,
+fds_cryovolcanic,,frozen world,frozen,true,2,
+fds_frozen,,frozen world,frozen,true,2,
+,,,,
+lava,,volcanic world,volcanic,false,0,
+lava_minor,,volcanic world,volcanic,false,0,
+US_lava,,volcanic world,volcanic,false,0,
+US_volcanic,,volcanic world,volcanic,false,0,
+fds_lava,,volcanic world,volcanic,false,0,
+,,,,
+irradiated,,irradiated world,irradiated,false,0,

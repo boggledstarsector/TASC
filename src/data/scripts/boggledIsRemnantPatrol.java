@@ -30,13 +30,6 @@ public class boggledIsRemnantPatrol extends BaseCommandPlugin
 
         this.entity = dialog.getInteractionTarget();
 
-        if(this.entity.hasTag("boggledRemnantStationPatrol"))
-        {
-            return true;
-        }
-        else
-        {
-            return false;
-        }
+        return this.entity.hasTag("boggledRemnantStationPatrol");
     }
 }

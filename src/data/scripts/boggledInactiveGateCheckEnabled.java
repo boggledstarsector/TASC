@@ -6,7 +6,7 @@ import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import com.fs.starfarer.api.impl.campaign.GateEntityPlugin;
 import com.fs.starfarer.api.impl.campaign.rulecmd.BaseCommandPlugin;
 import com.fs.starfarer.api.util.Misc;
-import data.campaign.econ.boggledTools;
+import boggled.campaign.econ.boggledTools;
 import java.util.*;
 import java.util.List;
 import java.lang.String;
@@ -33,7 +33,7 @@ public class boggledInactiveGateCheckEnabled extends BaseCommandPlugin
     {
         if(dialog == null) return false;
 
-        if(boggledTools.getBooleanSetting("boggledDomainTechContentEnabled") && boggledTools.getBooleanSetting("boggledDomainTechInactiveGateConstructionEnabled"))
+        if(boggledTools.getBooleanSetting(boggledTools.BoggledSettings.domainTechContentEnabled) && boggledTools.getBooleanSetting("boggledDomainTechInactiveGateConstructionEnabled"))
         {
             if(boggledTools.getBooleanSetting("boggledDomainTechInactiveGateConstructionMainQuestCompletionRequired"))
             {

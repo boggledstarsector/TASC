@@ -64,9 +64,9 @@ boggledAstropolisEnabled,Enable Astropolis construction,Boolean,True,,"Set this 
 Astropolis stations can be constructed using an ability when the player is close to a planet they have already colonized. The station will orbit the planet and have a separate market from the market on the colony. Astropolis stations have no resource deposits.",,,Station Construction
 boggledMaxNumAstropoliPerPlanet,Maximum number of astropolis stations per planet,Int,3,,"Controls how many astropolis stations can be constructed in orbit around a single planet.
 
-Three is the maximum value for this setting - modifying the CSV to increase the value will do nothing.",0,3,Station Construction
+Large numbers will look very silly.",0,300,Station Construction
 boggledCanBuildAstropolisOnPurchasedGovernorshipPlanets,Astropolis stations can be built on purchased planets,Boolean,False,,"Set this to true to allow astropolis stations to be constructed in orbit around planets where the player purchased governorship.",,,Station Construction
-boggledAstropolisIgnoreOrbitalRequirements,Astropolis stations ignore orbital requirements,Boolean,False,,"Set this to true to allow construction of astropolis stations in orbit around planets that otherwise do not meet the criteria for astropolis construction.
+boggledAstropolisFollowOrbitalRequirements,Astropolis stations follow orbital requirements,Boolean,True,,"Set this to false to allow construction of astropolis stations in orbit around planets that otherwise do not meet the criteria for astropolis construction.
 
 The criteria for astropolis construction are factors like the size of the planet, other planets or moons orbiting close to it, etc.",,,Station Construction
 boggledAstropolisStationBuildCreditCost,Astropolis station credit build cost,Int,500000,,"How many credits are required to construct an astropolis station.",0,2500000,Station Construction
@@ -127,9 +127,9 @@ boggled_CraftingHeader,Domain-tech Crafting Settings,Header,Domain-tech Crafting
 boggledDomainTechCraftingEnabled,Enable Domain-tech crafting,Boolean,True,,"Set this to false to disable Domain-tech crafting.
 
 Domain-tech crafting allows the player to use Domain-era artifacts and story points to craft powerful special items that can usually only be obtained via exploring.",,,Domain-tech Content
-boggledDomainTechCraftingArtifactCost,Domain-tech crafting cost,Int,2000,,"How many Domain-era artifacts are required to craft one special item.
-
-This amount is increased for more powerful items and decreased for less powerful items.",0,10000,Domain-tech Content
+boggledDomainTechCraftingArtifactCostEasy,Domain-tech crafting cost,Int,1000,,"How many Domain-era artifacts are required to craft one easy special item.",0,5000,Domain-tech Content
+boggledDomainTechCraftingArtifactCostMedium,Domain-tech crafting cost,Int,2000,,"How many Domain-era artifacts are required to craft one medium special item.",0,10000,Domain-tech Content
+boggledDomainTechCraftingArtifactCostHard,Domain-tech crafting cost,Int,4000,,"How many Domain-era artifacts are required to craft one hard special item.",0,20000,Domain-tech Content
 boggledDomainTechCraftingStoryPointCost,Domain-tech story point crafting cost,Int,2,,"How many story points are required to craft one special item.",0,10,Domain-tech Content
 boggled_PlanetKillerHeader,Planet-killer device settings,Header,Planet-killer device settings,,,,,Domain-tech Content
 boggledPlanetKillerEnabled,Enable planet-killer device,Boolean,False,,"Set this to true to enable the planet-killer device.
@@ -146,7 +146,7 @@ boggledPerihelionProjectDaysToFinish,Days to finish Perihelion Project,Int,600,,
 boggled_DomainArchaeologyHeader,Domain-tech building settings,Header,Domain-tech building settings,,,,,Domain-tech Content
 boggledDomainArchaeologyEnabled,Enable Domain Archaeology,Boolean,True,,"Set this to false to disable the Domain Archaeology building.
 
-The Domain Archaeology building is an industry that produces Domain-era artifacts based on the level of ruins on the planet. Setting this to false will disable crafting, and buildings that require Domain-era artifacts will no longer require them.",,,Domain-tech Content
+The Domain Archaeology building is an industry that produces Domain-era artifacts based on the level of ruins on the planet. DurationSettingModifier this to false will disable crafting, and buildings that require Domain-era artifacts will no longer require them.",,,Domain-tech Content
 boggledReplaceAgreusTechMiningWithDomainArchaeology,Replace techmining building on Agreus with Domain Archaeology,Boolean,True,,"Set this to false to prevent the techmining building on Agreus from being removed and replaced with a Domain Archaeology building.",,,Domain-tech Content
 boggledAddDomainTechBuildingsToVanillaColonies,Add Domain-tech buildings to several colonies,Boolean,True,,"Adds buildings that demand Domain-era artifacts to several vanilla colonies.
 
