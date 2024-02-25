@@ -73,8 +73,14 @@ public class BoggledCommonIndustry {
     private boolean built = true;
 
     private void setFromThat(BoggledCommonIndustry that) {
-        this.projects = that.projects;
-        this.attachedProjects = that.attachedProjects;
+        this.projects = new ArrayList<>(that.projects.size());
+        for (BoggledTerraformingProject.ProjectInstance project : that.projects) {
+            this.projects.add(new BoggledTerraformingProject.ProjectInstance(project));
+        }
+        this.attachedProjects = new ArrayList<>(that.attachedProjects.size());
+        for (BoggledTerraformingProject.ProjectInstance project : that.attachedProjects) {
+            this.projects.add(new BoggledTerraformingProject.ProjectInstance(project));
+        }
 
         this.buildingFinishedEffects = that.buildingFinishedEffects;
         this.improveEffects = that.improveEffects;
@@ -542,76 +548,59 @@ public class BoggledCommonIndustry {
         }
     }
 
-    public void addRightAfterDescriptionSection(TooltipMakerAPI tooltip, Industry.IndustryTooltipMode mode) {
+    private void addRightAfterDescriptionSectionProject(TooltipMakerAPI tooltip, Industry.IndustryTooltipMode mode, BoggledTerraformingProject.ProjectInstance projectInstance) {
         float pad = 10.0f;
+        BoggledTerraformingRequirement.RequirementContext instanceCtx = new BoggledTerraformingRequirement.RequirementContext(ctx, projectInstance);
+        BoggledTerraformingProject project = projectInstance.getProject();
+        if (!project.requirementsMet(instanceCtx)) {
+            return;
+        }
+
+        Map<String, String> tokenReplacements = getTokenReplacements(projectInstance);
+
+        if (projectInstance.getDaysRemaining(instanceCtx) > 0) {
+            String[] highlights = project.getIncompleteMessageHighlights(tokenReplacements);
+            String incompleteMessage = boggledTools.doTokenAndFormatReplacement(project.getIncompleteMessage(), tokenReplacements);
+            tooltipIncomplete(tooltip, mode, incompleteMessage, pad, Misc.getHighlightColor(), highlights);
+        }
+
+        if (instanceCtx.getSourceIndustry().isDisrupted()) {
+            String[] highlights = project.getDisruptedMessageHighlights(tokenReplacements);
+            String disruptedMessage = boggledTools.doTokenReplacement(project.getDisruptedMessage(), tokenReplacements);
+            tooltipDisrupted(tooltip, mode, disruptedMessage, pad, Misc.getHighlightColor(), highlights);
+        }
+
+        String[] stallMessages = project.getStallMessages(instanceCtx);
+        for (String stallMessage : stallMessages) {
+            if (stallMessage.isEmpty()) {
+                continue;
+            }
+            tooltip.addPara(stallMessage, Misc.getNegativeHighlightColor(), pad);
+        }
+
+        String[] resetMessages = project.getResetMessages(instanceCtx);
+        for (String resetMessage : resetMessages) {
+            if (resetMessage.isEmpty()) {
+                continue;
+            }
+            tooltip.addPara(resetMessage, Misc.getNegativeHighlightColor(), pad);
+        }
+    }
+
+    public void addRightAfterDescriptionSection(TooltipMakerAPI tooltip, Industry.IndustryTooltipMode mode) {
         List<BoggledTerraformingProject.ProjectInstance> aiCoreEffect = aiCoreEffects.get(ctx.getSourceIndustry().getAICoreId());
         if (aiCoreEffect != null) {
             for (BoggledTerraformingProject.ProjectInstance projectInstance : aiCoreEffect) {
-                BoggledTerraformingRequirement.RequirementContext instanceCtx = new BoggledTerraformingRequirement.RequirementContext(ctx, projectInstance);
-                BoggledTerraformingProject project = projectInstance.getProject();
-
-                String[] stallMessages = project.getStallMessages(instanceCtx);
-                for (String stallMessage : stallMessages) {
-                    if (stallMessage.isEmpty()) {
-                        continue;
-                    }
-                    tooltip.addPara(stallMessage, Misc.getNegativeHighlightColor(), pad);
-                }
+                addRightAfterDescriptionSectionProject(tooltip, mode, projectInstance);
             }
         }
 
         for (BoggledTerraformingProject.ProjectInstance projectInstance : projects) {
-            BoggledTerraformingRequirement.RequirementContext instanceCtx = new BoggledTerraformingRequirement.RequirementContext(ctx, projectInstance);
-            BoggledTerraformingProject project = projectInstance.getProject();
-            if (!project.requirementsMet(instanceCtx)) {
-                continue;
-            }
-
-            Map<String, String> tokenReplacements = getTokenReplacements(projectInstance);
-
-            if (projectInstance.getDaysRemaining(instanceCtx) > 0) {
-                String[] highlights = project.getIncompleteMessageHighlights(tokenReplacements);
-                String incompleteMessage = boggledTools.doTokenAndFormatReplacement(project.getIncompleteMessage(), tokenReplacements);
-                tooltipIncomplete(tooltip, mode, incompleteMessage, pad, Misc.getHighlightColor(), highlights);
-            }
-
-            if (instanceCtx.getSourceIndustry().isDisrupted()) {
-                String[] highlights = project.getDisruptedMessageHighlights(tokenReplacements);
-                String disruptedMessage = boggledTools.doTokenReplacement(project.getDisruptedMessage(), tokenReplacements);
-                tooltipDisrupted(tooltip, mode, disruptedMessage, pad, Misc.getHighlightColor(), highlights);
-            }
-
-            String[] stallMessages = project.getStallMessages(instanceCtx);
-            for (String stallMessage : stallMessages) {
-                if (stallMessage.isEmpty()) {
-                    continue;
-                }
-                tooltip.addPara(stallMessage, Misc.getNegativeHighlightColor(), pad);
-            }
+            addRightAfterDescriptionSectionProject(tooltip, mode, projectInstance);
         }
 
         for (BoggledTerraformingProject.ProjectInstance projectInstance : attachedProjects) {
-            BoggledTerraformingRequirement.RequirementContext instanceCtx = new BoggledTerraformingRequirement.RequirementContext(ctx, projectInstance);
-            BoggledTerraformingProject project = projectInstance.getProject();
-            if (!project.requirementsMet(instanceCtx)) {
-                continue;
-            }
-
-            Map<String, String> tokenReplacements = getTokenReplacements(projectInstance);
-
-            if (projectInstance.getDaysRemaining(instanceCtx) > 0) {
-                String[] highlights = project.getIncompleteMessageHighlights(tokenReplacements);
-                String incompleteMessage = boggledTools.doTokenAndFormatReplacement(project.getIncompleteMessage(), tokenReplacements);
-                tooltipIncomplete(tooltip, mode, incompleteMessage, pad, Misc.getHighlightColor(), highlights);
-            }
-
-            String[] stallMessages = projectInstance.getProject().getStallMessages(instanceCtx);
-            for (String stallMessage : stallMessages) {
-                if (stallMessage.isEmpty()) {
-                    continue;
-                }
-                tooltip.addPara(stallMessage, Misc.getNegativeHighlightColor(), pad);
-            }
+            addRightAfterDescriptionSectionProject(tooltip, mode, projectInstance);
         }
     }
 

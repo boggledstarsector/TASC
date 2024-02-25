@@ -1145,6 +1145,9 @@ public class BoggledTerraformingProjectEffect {
                 return;
             }
             String suffix = getRequirementsString(ctx);
+            if (suffix.isEmpty()) {
+                suffix = effectSource;
+            }
             for (TerraformingProjectEffect effect : effects) {
                 effect.applyProjectEffect(ctx, suffix);
             }

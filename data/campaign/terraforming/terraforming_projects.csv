@@ -346,13 +346,29 @@ industry_genelab,boggledTerraformingContentEnabled | boggledGenelabEnabled,indus
 	'ongoing_player_market_size_else_flat_demand_domain_artifacts',
 	'genelab_apply_effect_to_mesozoic_park'
 ]",,,,
-industry_genelab_pollution,boggledTerraformingContentEnabled | boggledGenelabEnabled,industry,"Pollution",,"Remediated","[ { 'requirement_id' : 'industry_colony_is_not_station' } ]",,2,,,"[
+industry_genelab_pollution,boggledTerraformingContentEnabled | boggledGenelabEnabled,industry,"Pollution",,"Remediated","[
+	{ 'requirement_id' : 'industry_colony_is_not_station' },
+	{ 'requirement_id' : 'industry_colony_polluted' }
+]",,2,,"[
+	{
+		'requirements_id' : 'industry_genelab_pollution_remediation_shortage_stall',
+		'requirements' : [ { 'requirement_id' : 'industry_genelab_pollution_remediation_does_have_shortage' } ]
+	}
+]","[
 	{
 		'requirements_id' : 'industry_genelab_pollution_reset_requirements',
 		'requirements' : [ { 'requirement_id' : 'industry_colony_has_heavy_industry_or_orbital_works_with_nanoforge' } ]
 	}
-]","[ 'market_remove_pollution' ]",,,,,
-industry_genelab_lobster,boggledTerraformingContentEnabled | boggledGenelabEnabled,industry,"Lobster seeding",,"Completed","[ { 'requirement_id' : 'industry_colony_water_surface' } ]",,200,,,,,,,,,
+]","[ 'market_remove_pollution' ]",,"Pollution remediation on $marketName is approximately $percentComplete% complete.",[ '$percentComplete%' ],,
+industry_genelab_lobster,boggledTerraformingContentEnabled | boggledGenelabEnabled,industry,"Lobster seeding",,"Completed","[
+	{ 'requirement_id' : 'industry_colony_water_surface' },
+	{ 'requirement_id' : 'industry_colony_not_volturnian_lobster_pens' }
+]",,2,,"[
+	{
+		'requirements_id' : 'industry_genelab_lobster_seeding_shortage_stall',
+		'requirements' : [ { 'requirement_id' : 'industry_genelab_lobster_seeding_does_have_shortage' } ]
+	}
+]",,"[ 'market_add_volturnian_lobster_pens' ]",,"Lobster seeding on $marketName is approximately $percentComplete% complete.",[ '$percentComplete%' ],,
 industry_gpa,,industry,,,,,"[ { 'requirement_id' : 'false' } ]",,,,,,"[ 'ongoing_flat_demand_3_domain_artifacts' ]",,,,
 industry_harmonic_damper,boggledHarmonicDamperEnabled,industry,,,,"[ { 'requirement_id' : 'industry_colony_is_not_station' } ]",,,,,,,"[ 'harmonic_damper_suppress_conditions' ]",,,,
 industry_harmonic_damper_alpha_core,boggledHarmonicDamperEnabled,industry,,,,,,,,,,,"[ 'harmonic_damper_alpha_core_ground_defenses' ]",,,,

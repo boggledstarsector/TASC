@@ -40,6 +40,7 @@ market_add_volatiles_plentiful,,MarketAddCondition,"volatiles_plentiful"
 ,,,
 market_remove_water_surface,,MarketRemoveCondition,"water_surface"
 market_remove_volturnian_lobster_pens,,MarketRemoveCondition,"volturnian_lobster_pens"
+market_add_volturnian_lobster_pens,,MarketAddCondition,"volturnian_lobster_pens"
 ,,,
 market_remove_no_atmosphere,,MarketRemoveCondition,"no_atmosphere"
 market_remove_thin_atmosphere,,MarketRemoveCondition,"thin_atmosphere"
@@ -369,12 +370,7 @@ ai_mining_drones_improve_bonus_to_accessibility,,ModifyColonyAccessibility,"{ 'm
 
 chameleon_alpha_core_reduce_demand,,ModifyIndustryDemand,"{ 'modifier_type' : 'flat', 'value' : -1 }"
 chameleon_alpha_core_reduce_upkeep,,ModifyIndustryUpkeep,"{ 'modifier_type' : 'mult', 'value' : 0.75 }"
-chameleon_alpha_core_eliminate_pather_interest_effect,,EliminatePatherInterest,
-chameleon_alpha_core_eliminate_pather_interest,,EffectWithRequirement,"{
-	'display_effect_tooltip_on_requirement_failure' : 'true',
-	'requirements' : [ { 'requirement_id' : 'industry_chameleon_alpha_core_does_not_have_shortage' } ],
-	'effects' : [ 'chameleon_alpha_core_eliminate_pather_interest_effect' ]
-}"
+chameleon_alpha_core_eliminate_pather_interest,,EliminatePatherInterest,
 
 chameleon_improve_bonus_to_stability,,ModifyColonyStability,"{ 'modifier_type' : 'flat', 'value' : 1 }"
 
@@ -415,10 +411,14 @@ expand_station_increment_tag,,StepTag,"{ 'tag' : 'boggled_station_construction_n
 expand_station_build_cost_modifier,boggledStationProgressiveIncreaseInCostsToExpandStation,TagSubstringPowerModifyBuildCost,"{ 'tag' : 'boggled_station_construction_numExpansions_', 'default' : 0 }"
 expand_station_remove_on_completion,,IndustryRemove,"{ 'industry_id' : 'BOGGLED_STATION_EXPANSION' }"
 
-genelab_income_bonus_to_mesozoic_park,,ModifyIndustryIncome,"{ 'modifier_type' : 'mult', 'value' : 1.5 }"
-genelab_apply_effect_to_mesozoic_park,,EffectToIndustry,"{
+genelab_income_bonus_to_mesozoic_park_effect,,ModifyIndustryIncome,"{ 'modifier_type' : 'mult', 'value' : 1.5 }"
+genelab_income_bonus_to_mesozoic_park,,EffectToIndustry,"{
 	'industry_id' : 'BOGGLED_MESOZOIC_PARK',
-	'effect_id' : 'genelab_income_bonus_to_mesozoic_park'
+	'effect_id' : 'genelab_income_bonus_to_mesozoic_park_effect'
+}"
+genelab_apply_effect_to_mesozoic_park,,EffectWithRequirement,"{
+	'requirements' : [ { 'requirement_id' : 'industry_genelab_mesozoic_park_income_does_not_have_shortage' } ],
+	'effects' : [ 'genelab_income_bonus_to_mesozoic_park' ]
 }"
 
 harmonic_damper_suppress_conditions,,SuppressConditions,"[ 'tectonic_activity', 'extreme_tectonic_activity' ]"

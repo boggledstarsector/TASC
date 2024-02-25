@@ -24,6 +24,12 @@ public class BoggledTerraformingProject {
             }
         }
 
+        public ProjectInstance(ProjectInstance that) {
+            this.project = that.project;
+            this.daysCompleted = that.daysCompleted;
+            this.lastDayChecked = that.lastDayChecked;
+        }
+
         public Object readResolve() {
             BoggledTascPlugin.loadSettingsFromJSON();
             this.project = boggledTools.getProject(project.getId());
@@ -223,18 +229,26 @@ public class BoggledTerraformingProject {
         return replaced.toArray(new String[0]);
     }
 
-    public String[] getStallMessages(BoggledTerraformingRequirement.RequirementContext ctx) {
+    private String[] getStallResetMessages(BoggledTerraformingRequirement.RequirementContext ctx, List<RequirementsWithId> requirements) {
         List<String> ret = new ArrayList<>();
         Map<String, String> tokenReplacements = boggledTools.getTokenReplacements(ctx);
-        for (RequirementsWithId requirementStall : requirementsStall) {
-            if (requirementStall.requirements.requirementsMet(ctx)) {
-                List<BoggledCommonIndustry.TooltipData> tooltips = requirementStall.requirements.getTooltip(ctx, tokenReplacements, false, true);
+        for (RequirementsWithId requirement : requirements) {
+            if (requirement.requirements.requirementsMet(ctx)) {
+                List<BoggledCommonIndustry.TooltipData> tooltips = requirement.requirements.getTooltip(ctx, tokenReplacements, false, true);
                 for (BoggledCommonIndustry.TooltipData tooltip : tooltips) {
                     ret.add(tooltip.text);
                 }
             }
         }
         return ret.toArray(new String[0]);
+    }
+
+    public String[] getStallMessages(BoggledTerraformingRequirement.RequirementContext ctx) {
+        return getStallResetMessages(ctx, requirementsStall);
+    }
+
+    public String[] getResetMessages(BoggledTerraformingRequirement.RequirementContext ctx) {
+        return getStallResetMessages(ctx, requirementsReset);
     }
 
     public BoggledProjectRequirementsAND getRequirements() { return requirements; }
@@ -312,8 +326,6 @@ public class BoggledTerraformingProject {
         boggledTools.surveyAll(ctx.getClosestMarket());
 
         boggledTools.showProjectCompleteIntelMessage(intelTooltip, intelCompletedMessage, ctx.getClosestMarket());
-
-
     }
 
     public void applyOngoingEffects(BoggledTerraformingRequirement.RequirementContext ctx, String effectSource) {

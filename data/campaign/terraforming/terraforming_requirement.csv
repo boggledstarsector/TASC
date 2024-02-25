@@ -56,6 +56,10 @@ market_not_dark,,MarketHasCondition,true,"dark"
 ,
 market_has_water_surface,,MarketHasCondition,false,"water_surface"
 market_not_has_water_surface,,MarketHasCondition,true,"water_surface"
+
+market_not_has_volturnian_lobster_pens,,MarketHasCondition,true,"volturnian_lobster_pens"
+
+market_has_pollution,,MarketHasCondition,false,"pollution"
 ,
 market_has_stellar_reflectors,,MarketHasCondition,false,"solar_array"
 ,
@@ -177,6 +181,8 @@ atmosphere_processor_does_not_have_shortage,,IndustryHasShortage,true,"[ 'heavy_
 ,
 chameleon_does_have_shortage,boggledDomainTechContentEnabled | boggledDomainArchaeologyEnabled,IndustryHasShortage,false,"[ 'domain_artifacts' ]"
 ,
+genelab_does_have_shortage,boggledDomainTechContentEnabled | boggledDomainArchaeologyEnabled,IndustryHasShortage,false,"[ 'domain_artifacts' ]"
+genelab_does_not_have_shortage,boggledDomainTechContentEnabled | boggledDomainArchaeologyEnabled,IndustryHasShortage,true,"[ 'domain_artifacts' ]"
 kletka_simulator_has_alpha_core,,MarketHasIndustryWithAICore,false,"{
 	'industry_id' : 'BOGGLED_KLETKA_SIMULATOR',
 	'ai_core_id' : 'alpha_core'

@@ -64,6 +64,23 @@ public class BoggledTascPlugin extends BaseModPlugin {
                 }
             }
         }
+
+        for (StarSystemAPI system : Global.getSector().getStarSystems()) {
+            for (MarketAPI market : Global.getSector().getEconomy().getMarkets(system)) {
+                SectorEntityToken primaryEntity = market.getPrimaryEntity();
+                if (primaryEntity == null) {
+                    continue;
+                }
+                if (primaryEntity.hasTag("boggled_mining_station")) {
+                    primaryEntity.removeTag("boggled_mining_station");
+                    primaryEntity.addTag(boggledTools.BoggledTags.miningStation);
+                }
+                if (primaryEntity.hasTag("boggled_siphon_station")) {
+                    primaryEntity.removeTag("boggled_siphon_station");
+                    primaryEntity.addTag(boggledTools.BoggledTags.siphonStation);
+                }
+            }
+        }
     }
 
     public void applyTerraformingAbilitiesPerSettingsFile() {
