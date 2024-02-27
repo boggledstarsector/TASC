@@ -142,7 +142,10 @@ public class BoggledTerraformingRequirement {
                     this.station = null;
                 }
             }
-            this.starSystem = this.fleet.getStarSystem();
+
+            if (this.fleet != null) {
+                this.starSystem = this.fleet.getStarSystem();
+            }
             this.project = project;
             this.projectInstance = null;
         }
