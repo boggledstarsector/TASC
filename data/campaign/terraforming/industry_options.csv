@@ -99,7 +99,11 @@ BOGGLED_OUYANG_OPTIMIZER,"Ouyang Optimizer",industry_ouyang_optimizer,,,,,2,,
 BOGGLED_PERIHELION_PROJECT,"Perihelion Project",industry_perihelion_project,,,,,10,,
 BOGGLED_PLANET_CRACKER,"Planet Cracket",industry_planet_cracker,,,,,2,,
 BOGGLED_PLANETARY_AGRAV_FIELD,"Planetary Agrav Field",industry_planetary_agrav_field,,,,,2,,
-BOGGLED_AI_STATION,"Autonomous AI Battlestation",industry_remnant_station,,,,,10,,
+BOGGLED_AI_STATION,"Autonomous AI Battlestation",industry_remnant_station,,,"[
+	{ 'ai_core_id' : 'alpha_core', 'projects' : [ 'industry_remnant_station_alpha_core' ] },
+	{ 'ai_core_id' : 'beta_core', 'projects' : [ 'industry_remnant_station_beta_core' ] },
+	{ 'ai_core_id' : 'gamma_core', 'projects' : [ 'industry_remnant_station_gamma_core' ] }
+]",,10,,
 BOGGLED_STELLAR_REFLECTOR_ARRAY,"Stellar Reflector Array",industry_stellar_reflector_array,"[
 	'stellar_reflector_add_stellar_reflectors_to_market',
 	'stellar_reflector_array_add_solar_array_condition'

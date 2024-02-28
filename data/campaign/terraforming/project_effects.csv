@@ -517,6 +517,13 @@ planetary_agrav_field_domed_cities_effect,,EffectWithRequirement,"{
 	'effects' : [ 'planetary_agrav_field_suppress_conditions' ]
 }"
 
+remnant_station_alpha_core_reduce_upkeep_effect,,ModifyIndustryUpkeep,"{ 'modifier_type' : 'percent', 'value' : -25 }"
+remnant_station_alpha_core_reduce_demand_effect,,ModifyIndustryDemand,"{ 'modifier_type' : 'flat', 'value' : -1 }"
+remnant_station_beta_core_reduce_upkeep_effect,,ModifyIndustryUpkeep,"{ 'modifier_type' : 'percent', 'value' : -25 }"
+remnant_station_beta_core_reduce_demand_effect,,ModifyIndustryDemand,"{ 'modifier_type' : 'flat', 'value' : -1 }"
+remnant_station_gamma_core_reduce_upkeep_effect,,ModifyIndustryUpkeep,"{ 'modifier_type' : 'percent', 'value' : -25 }"
+remnant_station_gamma_core_reduce_demand_effect,,ModifyIndustryDemand,"{ 'modifier_type' : 'flat', 'value' : -1 }"
+
 stellar_reflector_suppress_conditions,,SuppressConditions,"[ 'hot', 'cold', 'poor_light' ]"
 stellar_reflector_add_stellar_reflectors_to_market,,AddStellarReflectorsToOrbit,
 stellar_reflector_array_add_solar_array_condition,,MarketAddCondition,solar_array

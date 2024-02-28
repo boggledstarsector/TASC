@@ -191,12 +191,13 @@ public class BoggledOrbitalStation extends OrbitalStation implements BoggledIndu
 
     @Override
     public boolean canImprove() {
-        return thisIndustry.canImprove();
+        return true;
     }
 
     @Override
     protected void applyImproveModifiers() {
         thisIndustry.applyImproveModifiers();
+        super.applyImproveModifiers();
     }
 
     @Override

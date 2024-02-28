@@ -665,10 +665,10 @@ public class BoggledCommonIndustry {
     }
 
     public void addAICoreDescription(TooltipMakerAPI tooltip, Industry.AICoreDescriptionMode mode, String coreType, String coreId) {
-        String prefix = coreType + "-level AI core currently assigned. ";
+        String prefix = coreType + "-level AI core currently assigned.";
         BoggledTerraformingProjectEffect.TerraformingProjectEffect.DescriptionMode descMode = BoggledTerraformingProjectEffect.TerraformingProjectEffect.DescriptionMode.TO_APPLY;
         if (mode == Industry.AICoreDescriptionMode.MANAGE_CORE_DIALOG_LIST || mode == Industry.AICoreDescriptionMode.INDUSTRY_TOOLTIP) {
-            prefix = coreType + "-level AI core. ";
+            prefix = coreType + "-level AI core.";
         }
 
         StringBuilder builder = new StringBuilder(prefix);
@@ -681,6 +681,9 @@ public class BoggledCommonIndustry {
                 Map<String, BoggledTerraformingProjectEffect.EffectTooltipPara> effectTypeToPara = projectInstance.getProject().getOngoingEffectTooltipInfo(ctx, effectSource, descMode, BoggledTerraformingProjectEffect.TerraformingProjectEffect.DescriptionSource.AI_CORE_DESCRIPTION);
 
                 for (BoggledTerraformingProjectEffect.EffectTooltipPara effectTooltipPara : effectTypeToPara.values()) {
+                    if (builder.length() != 0) {
+                        builder.append(" ");
+                    }
                     StringBuilder text = new StringBuilder(effectTooltipPara.prefix);
                     for (String infix : effectTooltipPara.infix) {
                         text.append(infix);

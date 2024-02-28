@@ -320,6 +320,7 @@ public class Boggled_Remnant_Station extends BoggledOrbitalStation implements Ro
 
     @Override
     public void apply() {
+        super.apply();
         MemoryAPI memory = market.getMemoryWithoutUpdate();
         Misc.setFlagWithReason(memory, MemFlags.MARKET_PATROL, getModId(), true, -1);
 
