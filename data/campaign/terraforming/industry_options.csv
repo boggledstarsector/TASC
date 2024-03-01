@@ -15,7 +15,13 @@ BOGGLED_CHAMELEON,"CHAMELEON",industry_chameleon | industry_chameleon_decivilize
 		'industry_chameleon_alpha_core_eliminate_pather_interest'
 	] }
 ]",,10,,
-BOGGLED_CLONING,"Cloning",industry_cloning,,,,,10,,
+BOGGLED_CLONING,"Cloning",industry_cloning,,"[
+    'default_improve_bonus'
+]","[
+    { 'ai_core_id' : 'alpha_core', 'projects' : [ 'industry_cloning_alpha_core' ] },
+	{ 'ai_core_id' : 'beta_core', 'projects' : [ 'industry_cloning_beta_core' ] },
+	{ 'ai_core_id' : 'gamma_core', 'projects' : [ 'industry_cloning_gamma_core' ] }
+]",,10,,
 BOGGLED_CRYOSANCTUM,"Cryosanctum",industry_cryosanctum,,"[
 	'default_improve_bonus'
 ]","[
@@ -59,7 +65,13 @@ BOGGLED_HARMONIC_DAMPER,"Harmonic Damper",industry_harmonic_damper,,"[
 	{ 'ai_core_id' : 'beta_core', 'projects' : [ 'industry_harmonic_damper_beta_core' ] },
 	{ 'ai_core_id' : 'gamma_core', 'projects' : [ 'industry_harmonic_damper_gamma_core' ] }
 ]",,2,,
-BOGGLED_HYDROPONICS,"Hydroponics",industry_hydroponics,,,,,0,,
+BOGGLED_HYDROPONICS,"Hydroponics",industry_hydroponics,,"[
+    'default_improve_bonus'
+]","[
+	{ 'ai_core_id' : 'alpha_core', 'projects' : [ 'industry_hydroponics_alpha_core' ] },
+	{ 'ai_core_id' : 'beta_core', 'projects' : [ 'industry_hydroponics_beta_core' ] },
+	{ 'ai_core_id' : 'gamma_core', 'projects' : [ 'industry_hydroponics_gamma_core' ] }
+]",,0,,
 BOGGLED_ISMARA_SLING,"Ismara's Sling",industry_ismara_sling,,,,,10,,
 BOGGLED_ASTEROID_PROCESSING,"Asteroid Processing",industry_asteroid_processing,,,,,10,,
 BOGGLED_KLETKA_SIMULATOR,"Kletka Simulator",industry_kletka_simulator,,"[
@@ -69,7 +81,9 @@ BOGGLED_KLETKA_SIMULATOR,"Kletka Simulator",industry_kletka_simulator,,"[
 	{ 'ai_core_id' : 'beta_core', 'projects' : [ 'industry_kletka_simulator_beta_core' ] },
 	{ 'ai_core_id' : 'gamma_core', 'projects' : [ 'industry_kletka_simulator_gamma_core' ] }
 ]",,10,,
-BOGGLED_LIMELIGHT_NETWORK,"Limelight Network",industry_limelight_network,,,"[
+BOGGLED_LIMELIGHT_NETWORK,"Limelight Network",industry_limelight_network,,"[
+    'limelight_network_improve_increase_income_bonus'
+]","[
 	{ 'ai_core_id' : 'alpha_core', 'projects' : [ 'industry_limelight_network_alpha_core' ] }
 ]",,10,,
 BOGGLED_MAGNETOSHIELD,"Magnetoshield",industry_magnetoshield,,,,,0,,

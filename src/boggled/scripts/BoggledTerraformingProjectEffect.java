@@ -1438,7 +1438,7 @@ public class BoggledTerraformingProjectEffect {
             }
 
             private String formatBonusString(float value, int numPlacesAfterDecimal) {
-                if (value % 1 == 0.0f) {
+                if (value % 1 < 0.0001f) {
                     return String.format("%." + numPlacesAfterDecimal + "f", Math.abs(value));
                 }
                 return String.format("%.2f", Math.abs(value));

@@ -24,7 +24,7 @@ arid_type_change,boggledTerraformingContentEnabled,terraforming,"Arid type chang
 	'market_remove_volatiles_diffuse',
 	'market_remove_volatiles_abundant',
 	'market_remove_volatiles_plentiful',
-	
+
 	'industry_swap_seafloor_cities_for_domed_cities',
 	'industry_swap_aquaculture_for_farming',
 	'industry_remove_mesozoic_park'
@@ -54,7 +54,7 @@ jungle_type_change,boggledTerraformingContentEnabled,terraforming,"Jungle type c
 	'market_remove_volatiles_diffuse',
 	'market_remove_volatiles_abundant',
 	'market_remove_volatiles_plentiful',
-	
+
 	'industry_swap_seafloor_cities_for_domed_cities',
 	'industry_swap_aquaculture_for_farming'
 ]",,,,,
@@ -83,7 +83,7 @@ terran_type_change,boggledTerraformingContentEnabled,terraforming,"Terran type c
 	'market_remove_volatiles_diffuse',
 	'market_remove_volatiles_abundant',
 	'market_remove_volatiles_plentiful',
-	
+
 	'industry_swap_seafloor_cities_for_domed_cities',
 	'industry_swap_aquaculture_for_farming'
 ]",,,,,
@@ -111,7 +111,7 @@ water_type_change,boggledTerraformingContentEnabled,terraforming,"Water type cha
 	'market_remove_volatiles_diffuse',
 	'market_remove_volatiles_abundant',
 	'market_remove_volatiles_plentiful',
-	
+
 	'industry_swap_domed_cities_for_seafloor_cities',
 	'industry_swap_farming_for_aquaculture'
 ]",,,,,
@@ -140,7 +140,7 @@ tundra_type_change,boggledTerraformingContentEnabled,terraforming,"Tundra type c
 	'market_remove_volatiles_diffuse',
 	'market_remove_volatiles_abundant',
 	'market_remove_volatiles_plentiful',
-	
+
 	'industry_swap_seafloor_cities_for_domed_cities',
 	'industry_swap_aquaculture_for_farming',
 	'industry_remove_mesozoic_park'
@@ -168,7 +168,7 @@ frozen_type_change,boggledTerraformingContentEnabled,terraforming,"Frozen type c
 	'market_remove_volatiles_trace',
 	'market_remove_volatiles_diffuse',
 	'market_remove_volatiles_plentiful',
-	
+
 	'industry_swap_seafloor_cities_for_domed_cities',
 	'industry_swap_aquaculture_for_farming',
 	'industry_remove_mesozoic_park'
@@ -236,7 +236,7 @@ remove_atmosphere_condition_improvement,boggledTerraformingContentEnabled | bogg
 	'market_remove_extreme_weather',
 	'market_remove_mild_climate',
 	'market_remove_habitable',
-	
+
 	'industry_remove_mesozoic_park'
 ]","[ 'attach_project_to_atmosphere_processor' ]",,,,
 ,,,,,,,,,,,,,,,,,
@@ -299,12 +299,24 @@ industry_cloning,boggledCloningEnabled,industry,,,,,,,,,,,"[
 	'ongoing_domain_artifacts_deficit_to_organs',
 	'cloning_modify_colony_growth'
 ]",,,,
+industry_cloning_alpha_core,boggledCloningEnabled,industry,,,,,,,,,,,"[
+    'default_ai_core_upkeep_bonus',
+ 	'default_ai_core_demand_bonus',
+ 	'default_ai_core_supply_bonus'
+]",,,,
+industry_cloning_beta_core,boggledCloningEnabled,industry,,,,,,,,,,,"[
+    'default_ai_core_upkeep_bonus',
+ 	'default_ai_core_demand_bonus'
+]",,,,
+industry_cloning_gamma_core,boggledCloningEnabled,industry,,,,,,,,,,,"[
+    'default_ai_core_demand_bonus'
+]",,,,
 industry_cryosanctum,boggledDomainTechContentEnabled | boggledCryosanctumPlayerBuildEnabled,industry,,,,,,,,,,,"[
 	'ongoing_market_size_demand_domain_artifacts',
 	'ongoing_flat_demand_3_supplies',
 	'ongoing_flat_demand_3_organics',
 	'ongoing_flat_supply_6_organs',
-	
+
 	'ongoing_supplies_organics_deficit_max_1_to_organs'
 ]",,,,
 industry_cryosanctum_alpha_core,boggledDomainTechContentEnabled | boggledDomainArchaeologyEnabled,industry,,,,,,,,,,,"[
@@ -410,6 +422,18 @@ industry_hydroponics,boggledHydroponicsEnabled,industry,,,,,,,,,,,"[
 	'ongoing_market_size_minus_2_demand_heavy_machinery',
 	'ongoing_heavy_machinery_deficit_to_food'
 ]",,,,
+industry_hydroponics_alpha_core,boggledHydroponicsEnabled,industry,,,,,,,,,,,"[
+    'default_ai_core_upkeep_bonus',
+ 	'default_ai_core_demand_bonus',
+ 	'default_ai_core_supply_bonus'
+]",,,,
+industry_hydroponics_beta_core,boggledHydroponicsEnabled,industry,,,,,,,,,,,"[
+    'default_ai_core_upkeep_bonus',
+ 	'default_ai_core_demand_bonus'
+]",,,,
+industry_hydroponics_gamma_core,boggledHydroponicsEnabled,industry,,,,,,,,,,,"[
+    'default_ai_core_demand_bonus'
+]",,,,
 industry_ismara_sling,boggledTerraformingContentEnabled,industry,,,,"[ { 'requirement_id' : 'industry_ismaras_sling_colony_water_or_frozen' } ]","[ { 'requirement_id' : 'industry_colony_is_not_station' } ]",,,,,,"[
 	'ongoing_flat_demand_6_heavy_machinery'
 ]",,,,
@@ -418,13 +442,13 @@ industry_asteroid_processing,boggledTerraformingContentEnabled,industry,,,,,"[ {
 ]",,,,
 industry_kletka_simulator,boggledDomainTechContentEnabled | boggledKletkaSimulatorEnabled,industry,,,,,,,,,,,"[
  	'ongoing_flat_demand_4_domain_artifacts',
- 	
+
  	'kletka_simulator_very_cold_modifier',
 	'kletka_simulator_cold_modifier',
 	'kletka_simulator_hot_modifier',
 	'kletka_simulator_very_hot_modifier',
 	'kletka_simulator_station_modifier',
-	
+
 	'kletka_simulator_item_production_requires_no_shortage',
 	'kletka_simulator_item_production_chance_effect'
  ]",,,,
@@ -519,7 +543,7 @@ industry_stellar_reflector_array,boggledTerraformingContentEnabled | boggledStel
 ]",,,,,,,"[
 	'ongoing_flat_demand_1_domain_artifacts',
 	'ongoing_domain_artifacts_deficit_to_5_times_upkeep',
-	
+
 	'stellar_reflector_suppress_conditions'
 ]",,,,
 ,,,,,,,,,,,,,,,,,
@@ -690,7 +714,7 @@ boggled_construct_astropolis_station,boggledAstropolisEnabled,ability,"Construct
 			] }
 		] }
 	] },
-	
+
 	{ 'requirement_id' : 'ability_astropolis_station_fleet_contains_credits' },
 	{ 'requirement_id' : 'ability_astropolis_station_fleet_contains_crew' },
 	{ 'requirement_id' : 'ability_astropolis_station_fleet_contains_heavy_machinery' },
@@ -733,11 +757,11 @@ boggled_construct_siphon_station,boggledSiphonStationEnabled,ability,"Construct 
 			{ 'requirement_id' : 'ability_siphon_station_target_planet_within_range' },
 			{ 'requirement_id' : 'ability_siphon_station_target_planet_owned_by_player_or_neutral' },
 			{ 'requirement_id' : 'ability_siphon_station_target_planet_moon_too_close' },
-			
+
 			{ 'requirement_id' : 'ability_siphon_station_target_planet_too_many_stations' }
 		] }
 	] },
-	
+
 	{ 'requirement_id' : 'ability_siphon_station_fleet_contains_credits' },
 	{ 'requirement_id' : 'ability_siphon_station_fleet_contains_crew' },
 	{ 'requirement_id' : 'ability_siphon_station_fleet_contains_heavy_machinery' },
@@ -761,7 +785,7 @@ boggled_colonize_abandoned_station,boggledStationColonizationEnabled,ability,"Co
 			] }
 		] }
 	] },
-	
+
 	{ 'requirement_id' : 'ability_colonize_abandoned_station_fleet_contains_credits' },
 	{ 'requirement_id' : 'ability_colonize_abandoned_station_fleet_contains_crew' },
 	{ 'requirement_id' : 'ability_colonize_abandoned_station_fleet_contains_heavy_machinery' },
@@ -781,7 +805,7 @@ boggled_deploy_planet_killer,boggledDomainTechContentEnabled | boggledPlanetKill
 		{ 'requirement_id' : 'ability_deploy_planet_killer_target_planet_story_critical' },
 		{ 'requirement_id' : 'ability_deploy_planet_killer_target_planet_not_owned_by_player' }
 	] },
-	
+
 	{ 'requirement_id' : 'ability_deploy_planet_killer_fleet_contains_planet_killer_device' }
 ]",,,,,,"[
 	'ability_deploy_planet_killer_decivilize_market',

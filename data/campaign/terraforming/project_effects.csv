@@ -142,7 +142,7 @@ add_astropolis_station_to_orbit,,AddStationToOrbit,"{
 	'variants' : [ 'alpha', 'beta', 'gamma' ],
 	'num_stations_per_layer' : 3,
 	'orbit_radius' : 450,
-	
+
 	'station_construction_data' : {}
 }"
 ,,
@@ -175,7 +175,7 @@ add_mining_station_to_entity,,AddStationToAsteroids,"{
 	'station_name' : 'Mining Station',
 	'num_stations_per_layer' : 8,
 	'orbit_radius' : 450,
-	
+
 	'station_construction_data' : {
 		'resources_to_highlight' : [ 'ore', 'rare_ore' ],
 		'industries_to_queue' : [ 'mining' ]
@@ -211,7 +211,7 @@ add_siphon_station_to_orbit,,AddStationToOrbit,"{
 	'station_name' : 'Siphon Station',
 	'num_stations_per_layer' : 8,
 	'orbit_radius' : 50,
-	
+
 	'station_construction_data' : {
 		'resources_to_highlight' : [ 'volatiles' ],
 		'industries_to_queue' : [ 'mining' ]
@@ -514,7 +514,7 @@ kletka_simulator_improve_effect,,IndustryMonthlyItemProductionChanceModifier,"[
 
 limelight_network_alpha_core_increase_income_bonus,,ModifyIndustryIncome,"{ 'modifier_type' : 'mult', 'value' : 1.5, 'display_type' : 'percent' }"
 
-limelight_network_improve_increase_income_bonus,,ModifyIndustryIncome,"{ 'modifier_type' : 'mult', 'value' : 1.2 }"
+limelight_network_improve_increase_income_bonus,,ModifyIndustryIncome,"{ 'modifier_type' : 'mult', 'value' : 1.2, 'display_type' : 'percent' }"
 
 magnetoshield_suppress_conditions,,SuppressConditions,"[ 'irradiated' ]"
 
