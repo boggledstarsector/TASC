@@ -301,6 +301,8 @@ ongoing_player_market_size_else_flat_demand_domain_artifacts,boggledDomainTechCo
 
 ongoing_market_size_demand_fuel,,CommodityDemandMarketSize,"{ 'commodity_id' : 'fuel', 'quantity' : 0 }"
 ongoing_market_size_demand_supplies,,CommodityDemandMarketSize,"{ 'commodity_id' : 'supplies', 'quantity' : 0 }"
+ongoing_flat_demand_3_supplies,,CommodityDemandMarketSize,"{ 'commodity_id' : 'supplies', 'quantity' : 3 }"
+ongoing_flat_demand_3_organics,,CommodityDemandMarketSize,"{ 'commodity_id' : 'organics', 'quantity' : 3 }"
 ongoing_market_size_demand_ships,,CommodityDemandMarketSize,"{ 'commodity_id' : 'ships', 'quantity' : 0 }"
 ongoing_market_size_demand_heavy_machinery,,CommodityDemandMarketSize,"{ 'commodity_id' : 'heavy_machinery', 'quantity' : 0 }"
 
@@ -316,6 +318,7 @@ ongoing_flat_demand_7_supplies,,CommodityDemandFlat,"{ 'commodity_id' : 'supplie
 
 ongoing_market_size_supply_food,,CommoditySupplyMarketSize,"{ 'commodity_id' : 'food', 'quantity' : 0 }"
 
+ongoing_flat_supply_6_organs,,CommoditySupplyFlat,"{ 'commodity_id' : 'organs', 'quantity' : 6 }"
 ongoing_market_size_minus_2_supply_organs,,CommoditySupplyMarketSize,"{ 'commodity_id' : 'organs', 'quantity' : -2 }"
 
 ongoing_heavy_machinery_deficit_to_food,,CommodityDeficitToProduction,"{
@@ -332,10 +335,27 @@ ongoing_domain_artifacts_deficit_to_5_times_upkeep,boggledDomainTechContentEnabl
 	'value' : 5.0
 }"
 
+ongoing_supplies_organics_deficit_max_1_to_organs,,CommodityDeficitToProduction,"{
+	'commodities_demanded' : [ 'supplies', 'organics' ],
+	'commodities_deficited' : [ 'organs' ],
+	'max_deficit' : 1
+}"
+ongoing_domain_artifacts_deficit_max_1_to_organs,boggledDomainTechContentEnabled | boggledDomainArchaeologyEnabled,CommodityDeficitToProduction,"{
+	'commodities_demanded' : [ 'domain_artifacts' ],
+	'commodities_deficited' : [ 'organs' ],
+	'max_deficit' : 1
+}"
+
 ongoing_modify_pather_interest_plus_1,,ModifyPatherInterest,"{ 'modifier_type' : 'flat', 'value' : 1 }"
 ongoing_modify_pather_interest_plus_2,,ModifyPatherInterest,"{ 'modifier_type' : 'flat', 'value' : 2 }"
 ongoing_modify_pather_interest_plus_3,,ModifyPatherInterest,"{ 'modifier_type' : 'flat', 'value' : 3 }"
 ongoing_modify_pather_interest_plus_4,,ModifyPatherInterest,"{ 'modifier_type' : 'flat', 'value' : 4 }"
+
+default_improve_bonus,,ModifyIndustrySupplyWithDeficit,"{ 'modifier_type' : 'flat', 'value' : 1 }"
+
+default_ai_core_upkeep_bonus,,ModifyIndustryUpkeep,"{ 'modifier_type' : 'mult', 'value' : 0.75, 'display_type' : 'percent' }"
+default_ai_core_demand_bonus,,ModifyIndustryDemand,"{ 'modifier_type' : 'flat', 'value' : -1 }"
+default_ai_core_supply_bonus,,ModifyIndustrySupplyWithDeficit,"{ 'modifier_type' : 'flat', 'value' : 1 }"
 
 ai_mining_drones_alpha_core_bonus_to_mining,,ModifyIndustrySupplyWithDeficit,"{
 	'commodities_demanded' : [ 'fuel', 'supplies', 'ships' ],
@@ -368,8 +388,6 @@ ai_mining_drones_gamma_core_effect_to_mining,,EffectToIndustry,"{
 
 ai_mining_drones_improve_bonus_to_accessibility,,ModifyColonyAccessibility,"{ 'modifier_type' : 'mult', 'value' : 1.20 }"
 
-chameleon_alpha_core_reduce_demand,,ModifyIndustryDemand,"{ 'modifier_type' : 'flat', 'value' : -1 }"
-chameleon_alpha_core_reduce_upkeep,,ModifyIndustryUpkeep,"{ 'modifier_type' : 'mult', 'value' : 0.75 }"
 chameleon_alpha_core_eliminate_pather_interest,,EliminatePatherInterest,
 
 chameleon_improve_bonus_to_stability,,ModifyColonyStability,"{ 'modifier_type' : 'flat', 'value' : 1 }"
@@ -494,9 +512,7 @@ kletka_simulator_improve_effect,,IndustryMonthlyItemProductionChanceModifier,"[
 	{ 'commodity_id' : 'gamma_core', 'chance_modifier' : 10 }
 ]"
 
-limelight_network_alpha_core_reduce_upkeep_bonus,,ModifyIndustryUpkeep,"{ 'modifier_type' : 'mult', 'value' : 0.75 }"
-limelight_network_alpha_core_reduce_demand_bonus,,ModifyIndustryDemand,"{ 'modifier_type' : 'flat', 'value' : -1 }"
-limelight_network_alpha_core_increase_income_bonus,,ModifyIndustryIncome,"{ 'modifier_type' : 'mult', 'value' : 1.5 }"
+limelight_network_alpha_core_increase_income_bonus,,ModifyIndustryIncome,"{ 'modifier_type' : 'mult', 'value' : 1.5, 'display_type' : 'percent' }"
 
 limelight_network_improve_increase_income_bonus,,ModifyIndustryIncome,"{ 'modifier_type' : 'mult', 'value' : 1.2 }"
 
@@ -517,12 +533,7 @@ planetary_agrav_field_domed_cities_effect,,EffectWithRequirement,"{
 	'effects' : [ 'planetary_agrav_field_suppress_conditions' ]
 }"
 
-remnant_station_alpha_core_reduce_upkeep_effect,,ModifyIndustryUpkeep,"{ 'modifier_type' : 'percent', 'value' : -25 }"
-remnant_station_alpha_core_reduce_demand_effect,,ModifyIndustryDemand,"{ 'modifier_type' : 'flat', 'value' : -1 }"
-remnant_station_beta_core_reduce_upkeep_effect,,ModifyIndustryUpkeep,"{ 'modifier_type' : 'percent', 'value' : -25 }"
-remnant_station_beta_core_reduce_demand_effect,,ModifyIndustryDemand,"{ 'modifier_type' : 'flat', 'value' : -1 }"
-remnant_station_gamma_core_reduce_upkeep_effect,,ModifyIndustryUpkeep,"{ 'modifier_type' : 'percent', 'value' : -25 }"
-remnant_station_gamma_core_reduce_demand_effect,,ModifyIndustryDemand,"{ 'modifier_type' : 'flat', 'value' : -1 }"
+remnant_station_improve_stability_bonus,,ModifyColonyStability,"{ 'modifier_type' : 'flat', 'value' : 1 }"
 
 stellar_reflector_suppress_conditions,,SuppressConditions,"[ 'hot', 'cold', 'poor_light' ]"
 stellar_reflector_add_stellar_reflectors_to_market,,AddStellarReflectorsToOrbit,

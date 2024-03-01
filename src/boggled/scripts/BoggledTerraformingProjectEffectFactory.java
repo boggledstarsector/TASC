@@ -428,7 +428,8 @@ public class BoggledTerraformingProjectEffectFactory {
             JSONObject jsonData = new JSONObject(data);
             String modifierType = jsonData.getString("modifier_type");
             float value = (float) jsonData.getDouble("value");
-            return new BoggledTerraformingProjectEffect.ModifyPatherInterest(id, enableSettings, modifierType, value);
+            String displayType = jsonData.optString("display_type", modifierType);
+            return new BoggledTerraformingProjectEffect.ModifyPatherInterest(id, enableSettings, modifierType, value, displayType);
         }
     }
 
@@ -438,7 +439,8 @@ public class BoggledTerraformingProjectEffectFactory {
             JSONObject jsonData = new JSONObject(data);
             String modifierType = jsonData.getString("modifier_type");
             float value = (float) jsonData.getDouble("value");
-            return new BoggledTerraformingProjectEffect.ModifyColonyGrowthRate(id, enableSettings, modifierType, value);
+            String displayType = jsonData.optString("display_type", modifierType);
+            return new BoggledTerraformingProjectEffect.ModifyColonyGrowthRate(id, enableSettings, modifierType, value, displayType);
         }
     }
 
@@ -448,7 +450,8 @@ public class BoggledTerraformingProjectEffectFactory {
             JSONObject jsonData = new JSONObject(data);
             String modifierType = jsonData.getString("modifier_type");
             float value = (float) jsonData.getDouble("value");
-            return new BoggledTerraformingProjectEffect.ModifyColonyGroundDefense(id, enableSettings, modifierType, value);
+            String displayType = jsonData.optString("display_type", modifierType);
+            return new BoggledTerraformingProjectEffect.ModifyColonyGroundDefense(id, enableSettings, modifierType, value, displayType);
         }
     }
 
@@ -458,7 +461,8 @@ public class BoggledTerraformingProjectEffectFactory {
             JSONObject jsonData = new JSONObject(data);
             String modifierType = jsonData.getString("modifier_type");
             float value = (float) jsonData.getDouble("value");
-            return new BoggledTerraformingProjectEffect.ModifyColonyAccessibility(id, enableSettings, modifierType, value);
+            String displayType = jsonData.optString("display_type", modifierType);
+            return new BoggledTerraformingProjectEffect.ModifyColonyAccessibility(id, enableSettings, modifierType, value, displayType);
         }
     }
 
@@ -468,7 +472,8 @@ public class BoggledTerraformingProjectEffectFactory {
             JSONObject jsonData = new JSONObject(data);
             String modifierType = jsonData.getString("modifier_type");
             float value = (float) jsonData.getDouble("value");
-            return new BoggledTerraformingProjectEffect.ModifyColonyStability(id, enableSettings, modifierType, value);
+            String displayType = jsonData.optString("display_type", modifierType);
+            return new BoggledTerraformingProjectEffect.ModifyColonyStability(id, enableSettings, modifierType, value, displayType);
         }
     }
 
@@ -478,7 +483,8 @@ public class BoggledTerraformingProjectEffectFactory {
             JSONObject jsonData = new JSONObject(data);
             String modifierType = jsonData.getString("modifier_type");
             float value = (float) jsonData.getDouble("value");
-            return new BoggledTerraformingProjectEffect.ModifyIndustryUpkeep(id, enableSettings, modifierType, value);
+            String displayType = jsonData.optString("display_type", modifierType);
+            return new BoggledTerraformingProjectEffect.ModifyIndustryUpkeep(id, enableSettings, modifierType, value, displayType);
         }
     }
 
@@ -488,7 +494,8 @@ public class BoggledTerraformingProjectEffectFactory {
             JSONObject jsonData = new JSONObject(data);
             String modifierType = jsonData.getString("modifier_type");
             float value = (float) jsonData.getDouble("value");
-            return new BoggledTerraformingProjectEffect.ModifyIndustryIncome(id, enableSettings, modifierType, value);
+            String displayType = jsonData.optString("display_type", modifierType);
+            return new BoggledTerraformingProjectEffect.ModifyIndustryIncome(id, enableSettings, modifierType, value, displayType);
         }
     }
 
@@ -498,7 +505,8 @@ public class BoggledTerraformingProjectEffectFactory {
             JSONObject jsonData = new JSONObject(data);
             String modifierType = jsonData.getString("modifier_type");
             float value = (float) jsonData.getDouble("value");
-            return new BoggledTerraformingProjectEffect.ModifyIndustryIncomeByAccessibility(id, enableSettings, modifierType, value);
+            String displayType = jsonData.optString("display_type", modifierType);
+            return new BoggledTerraformingProjectEffect.ModifyIndustryIncomeByAccessibility(id, enableSettings, modifierType, value, displayType);
         }
     }
 
@@ -506,14 +514,18 @@ public class BoggledTerraformingProjectEffectFactory {
         @Override
         public BoggledTerraformingProjectEffect.TerraformingProjectEffect constructFromJSON(String id, String[] enableSettings, String data) throws JSONException {
             JSONObject jsonData = new JSONObject(data);
-            JSONArray jsonCommoditiesDemanded = jsonData.getJSONArray("commodities_demanded");
+            JSONArray jsonCommoditiesDemanded = jsonData.optJSONArray("commodities_demanded");
             List<String> commoditiesDemanded = new ArrayList<>();
-            for (int i = 0; i < jsonCommoditiesDemanded.length(); ++i) {
-                commoditiesDemanded.add(jsonCommoditiesDemanded.getString(i));
+            if (jsonCommoditiesDemanded != null) {
+                for (int i = 0; i < jsonCommoditiesDemanded.length(); ++i) {
+                    commoditiesDemanded.add(jsonCommoditiesDemanded.getString(i));
+                }
             }
+            int maxDeficit = jsonData.optInt("max_deficit", Integer.MAX_VALUE);
             int supplyBonus = jsonData.getInt("value");
             String modifierType = jsonData.getString("modifier_type");
-            return new BoggledTerraformingProjectEffect.ModifyIndustrySupplyWithDeficit(id, enableSettings, commoditiesDemanded, modifierType, supplyBonus);
+            String displayType = jsonData.optString("display_type", modifierType);
+            return new BoggledTerraformingProjectEffect.ModifyIndustrySupplyWithDeficit(id, enableSettings, commoditiesDemanded, modifierType, supplyBonus, maxDeficit, displayType);
         }
     }
 
@@ -523,7 +535,8 @@ public class BoggledTerraformingProjectEffectFactory {
             JSONObject jsonData = new JSONObject(data);
             String modifierType = jsonData.getString("modifier_type");
             float value = (float) jsonData.getDouble("value");
-            return new BoggledTerraformingProjectEffect.ModifyIndustryDemand(id, enableSettings, modifierType, value);
+            String displayType = jsonData.optString("display_type", modifierType);
+            return new BoggledTerraformingProjectEffect.ModifyIndustryDemand(id, enableSettings, modifierType, value, displayType);
         }
     }
 
@@ -698,7 +711,8 @@ public class BoggledTerraformingProjectEffectFactory {
             for (int i = 0; i < commoditiesDeficitedArray.length(); ++i) {
                 commoditiesDeficited.add(commoditiesDeficitedArray.getString(i));
             }
-            return new BoggledTerraformingProjectEffect.CommodityDeficitToProduction(id, enableSettings, commoditiesDemanded, commoditiesDeficited);
+            int maxDeficit = jsonData.optInt("max_deficit", Integer.MAX_VALUE);
+            return new BoggledTerraformingProjectEffect.CommodityDeficitToProduction(id, enableSettings, commoditiesDemanded, commoditiesDeficited, maxDeficit);
         }
     }
 
@@ -713,7 +727,8 @@ public class BoggledTerraformingProjectEffectFactory {
             }
             String modifierType = jsonData.getString("modifier_type");
             float value = (float) jsonData.getDouble("value");
-            return new BoggledTerraformingProjectEffect.CommodityDeficitModifierToUpkeep(id, enableSettings, commoditiesDemanded, modifierType, value);
+            String displayType = jsonData.optString("display_type", modifierType);
+            return new BoggledTerraformingProjectEffect.CommodityDeficitModifierToUpkeep(id, enableSettings, commoditiesDemanded, modifierType, value, displayType);
         }
     }
 

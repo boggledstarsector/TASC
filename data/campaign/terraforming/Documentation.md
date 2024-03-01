@@ -260,7 +260,7 @@ Planet max resources are in `planet_max_resource.csv`. `id` is the `terraforming
 
 `DecivilizeMarket` decivilizes a market as though it's just been saturation bombed. `data` is a JSON Object. `faction_ids_to_not_make_hostile` is a JSON Array of faction IDs that won't become hostile.
 
-All effects that begin with `Modify` have `data` that is a JSON Object. `modifier_type` is a string that specifies how the modifier works, valid values are `market_size`, `flat`, `mult`, or `percent`. When `modifier_type` is `market_size`, `value` is a modifier to the market size. When `modifier_type` is `flat`, `mult`, or `percent`, value is a flat value, a multiplier, or a percentage multiplier applied to the thing being modified.
+All effects that begin with `Modify` have `data` that is a JSON Object. `modifier_type` is a string that specifies how the modifier works, valid values are `market_size`, `flat`, `mult`, or `percent`. When `modifier_type` is `market_size`, `value` is a modifier to the market size. When `modifier_type` is `flat`, `mult`, or `percent`, value is a flat value, a multiplier, or a percentage multiplier applied to the thing being modified. `display_type` allows the tooltip to show in a different manner than what the modifier actually is. Current allowed combinations are `mult` for `modifier_type` and `percent` for `display_type`. 
 
 `ModifyPatherInterest` modifies the industry's pather interest.
 `ModifyColonyGrowthRate` modifies the colony's growth rate.
@@ -269,7 +269,7 @@ All effects that begin with `Modify` have `data` that is a JSON Object. `modifie
 `ModifyColonyStability` modifies the colony's stability.
 `ModifyIndustryUpkeep` modifies the target industry's upkeep.
 `ModifyIndustryIncome` modifies the target industry's upkeep.
-`ModifyIndustrySupplyWithDeficit` modifies the target industry's supply, adjusted by the deficit of the source industry's demanded commodities. `data` takes the additional field of `commodities_demanded` which is a JSON Array of commodity IDs to check for deficits.
+`ModifyIndustrySupplyWithDeficit` modifies the target industry's supply, adjusted by the deficit of the source industry's demanded commodities. `data` takes the additional fields of `commodities_demanded` which is an optional JSON Array of commodity IDs to check for deficits, and `max_deficit` which is the maximum amount the commodities can be deficited from these demands. If you just want to modify the supply with no deficits, these can be omitted. 
 `ModifyIndustryDemand` modifies the target industry's commodity demands.
 
 `EffectToIndustry` applies an effect to another industry. The industry that this is applied to becomes the source industry, and the industry ID that the specified effect is applied to becomes the target industry. `data` is a JSON Object. `industry_id` is the industry that will become the target industry. `effect_id` is the effect that will be applied to the target industry.
@@ -294,7 +294,7 @@ All effects that begin with `Modify` have `data` that is a JSON Object. `modifie
 
 All effects that begin with `CommodityDeficit` accept a JSON Object with a `commodities_demanded` field that is a JSON Array of commodity IDs. They check the collection of specified commodities then do type specific effects. They may have other fields in the JSON Object.
 
-`CommodityDeficitToProduction` applies the deficit in the demanded commodities to the specified commodities. `commodities_deficited` is a JSON Array of commodity IDs that will be affected by the shortage in demanded commodities.
+`CommodityDeficitToProduction` applies the deficit in the demanded commodities to the specified commodities. `commodities_deficited` is a JSON Array of commodity IDs that will be affected by the shortage in demanded commodities, and `max_deficit` is the optional maximum amount the commodity can be deficited. If `max_deficit` is omitted, the maximum production reduction is unlimited.
 
 `CommodityDeficitModifierToUpkeep` is a combination of `CommodityDeficit` and `ModifyIndustryUpkeep`. It requires `commodities_demanded`, `modifier_type`, and `value`.
 

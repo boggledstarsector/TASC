@@ -284,8 +284,8 @@ industry_chameleon_rogue_ai,boggledDomainTechContentEnabled | boggledCHAMELEONEn
 	}
 ]",,"[ 'market_remove_rogue_ai_core' ]",,"An investigation into the whereabouts of the rogue AI core on $marketName is approximately $percentComplete% complete.",[ '$percentComplete%' ],,
 industry_chameleon_alpha_core,boggledDomainTechContentEnabled | boggledCHAMELEONEnabled,industry,,,,,,,,,,,"[
-	'chameleon_alpha_core_reduce_upkeep',
-	'chameleon_alpha_core_reduce_demand'
+	'default_ai_core_upkeep_bonus',
+	'default_ai_core_demand_bonus'
 ]",,,,
 industry_chameleon_alpha_core_eliminate_pather_interest,boggledDomainTechContentEnabled | boggledCHAMELEONEnabled,industry,,,,,,,,"[
 	{
@@ -299,12 +299,43 @@ industry_cloning,boggledCloningEnabled,industry,,,,,,,,,,,"[
 	'ongoing_domain_artifacts_deficit_to_organs',
 	'cloning_modify_colony_growth'
 ]",,,,
-industry_cryosanctum,boggledDomainTechContentEnabled | boggledCryosanctumPlayerBuildEnabled,industry,,,,,,,,,,,"[ 'ongoing_market_size_demand_domain_artifacts' ]",,,,
+industry_cryosanctum,boggledDomainTechContentEnabled | boggledCryosanctumPlayerBuildEnabled,industry,,,,,,,,,,,"[
+	'ongoing_market_size_demand_domain_artifacts',
+	'ongoing_flat_demand_3_supplies',
+	'ongoing_flat_demand_3_organics',
+	'ongoing_flat_supply_6_organs',
+	
+	'ongoing_supplies_organics_deficit_max_1_to_organs'
+]",,,,
+industry_cryosanctum_alpha_core,boggledDomainTechContentEnabled | boggledDomainArchaeologyEnabled,industry,,,,,,,,,,,"[
+	'default_ai_core_upkeep_bonus',
+ 	'default_ai_core_demand_bonus',
+ 	'default_ai_core_supply_bonus'
+]",,,,
+industry_cryosanctum_beta_core,boggledDomainTechContentEnabled | boggledDomainArchaeologyEnabled,industry,,,,,,,,,,,"[
+	'default_ai_core_upkeep_bonus',
+ 	'default_ai_core_demand_bonus'
+]",,,,
+industry_cryosanctum_gamma_core,boggledDomainTechContentEnabled | boggledDomainArchaeologyEnabled,industry,,,,,,,,,,,"[
+ 	'default_ai_core_demand_bonus'
+]",,,,
 industry_domain_archaeology,boggledDomainTechContentEnabled | boggledDomainArchaeologyEnabled,industry,,,,"[ { 'requirement_id' : 'industry_colony_has_ruins' } ]",,,,,,,"[
 	'domain_archaeology_ruins_scattered_effect',
 	'domain_archaeology_ruins_widespread_effect',
 	'domain_archaeology_ruins_extensive_effect',
 	'domain_archaeology_ruins_vast_effect'
+]",,,,
+industry_domain_archaeology_alpha_core,boggledDomainTechContentEnabled | boggledDomainArchaeologyEnabled,industry,,,,,,,,,,,"[
+	'default_ai_core_upkeep_bonus',
+ 	'default_ai_core_demand_bonus',
+ 	'default_ai_core_supply_bonus'
+]",,,,
+industry_domain_archaeology_beta_core,boggledDomainTechContentEnabled | boggledDomainArchaeologyEnabled,industry,,,,,,,,,,,"[
+	'default_ai_core_upkeep_bonus',
+ 	'default_ai_core_demand_bonus'
+]",,,,
+industry_domain_archaeology_gamma_core,boggledDomainTechContentEnabled | boggledDomainArchaeologyEnabled,industry,,,,,,,,,,,"[
+ 	'default_ai_core_demand_bonus'
 ]",,,,
 industry_domed_cities,boggledTerraformingContentEnabled | boggledDomedCitiesEnabled,industry,,,,"[
 	{ 'requirement_id' : 'industry_colony_is_not_station', 'and_then' : [
@@ -405,8 +436,8 @@ industry_limelight_network,boggledDomainTechContentEnabled | boggledLimelightNet
 	'ongoing_domain_artifacts_deficit_to_5_times_upkeep'
 ]",,,,
 industry_limelight_network_alpha_core,boggledDomainTechContentEnabled | boggledLimelightNetworkPlayerBuildEnabled,industry,,,,,,,,,,,"[
-	'limelight_network_alpha_core_reduce_upkeep_bonus',
-	'limelight_network_alpha_core_reduce_demand_bonus',
+	'default_ai_core_upkeep_bonus',
+	'default_ai_core_demand_bonus',
 	'limelight_network_alpha_core_increase_income_bonus'
 ]",,,,
 industry_magnetoshield,boggledTerraformingContentEnabled | boggledMagnetoshieldEnabled,industry,,,,"[ { 'requirement_id' : 'industry_magnetoshield_colony_irradiated' } ]",,,,,,,"[
@@ -470,16 +501,16 @@ industry_planetary_agrav_field,boggledTerraformingContentEnabled | boggledPlanet
 ]",,,,,,,"[ 'planetary_agrav_field_domed_cities_effect' ]",,,,
 industry_remnant_station,boggledRemnantStationEnabled,industry,,,,"[ { 'requirement_id' : 'industry_player_has_skill_automated_ships' } ]",,,,,,,"[ 'ongoing_flat_demand_7_supplies' ]",,,,
 industry_remnant_station_alpha_core,boggledRemnantStationEnabled,industry,,,,,,,,,,,"[
- 	'remnant_station_alpha_core_reduce_upkeep_effect',
- 	'remnant_station_alpha_core_reduce_demand_effect'
+ 	'default_ai_core_upkeep_bonus',
+ 	'default_ai_core_demand_bonus'
 ]",,,,
 industry_remnant_station_beta_core,boggledRemnantStationEnabled,industry,,,,,,,,,,,"[
- 	'remnant_station_beta_core_reduce_upkeep_effect',
- 	'remnant_station_beta_core_reduce_demand_effect'
+ 	'default_ai_core_upkeep_bonus',
+ 	'default_ai_core_demand_bonus'
 ]",,,,
 industry_remnant_station_gamma_core,boggledRemnantStationEnabled,industry,,,,,,,,,,,"[
- 	'remnant_station_gamma_core_reduce_upkeep_effect',
- 	'remnant_station_gamma_core_reduce_demand_effect'
+ 	'default_ai_core_upkeep_bonus',
+ 	'default_ai_core_demand_bonus'
 ]",,,,
 industry_stellar_reflector_array,boggledTerraformingContentEnabled | boggledStellarReflectorArrayEnabled,industry,,,,"[
 	{ 'requirement_id' : 'industry_colony_is_not_station', 'and_then' : [

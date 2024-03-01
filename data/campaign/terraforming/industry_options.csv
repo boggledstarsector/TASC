@@ -16,8 +16,20 @@ BOGGLED_CHAMELEON,"CHAMELEON",industry_chameleon | industry_chameleon_decivilize
 	] }
 ]",,10,,
 BOGGLED_CLONING,"Cloning",industry_cloning,,,,,10,,
-BOGGLED_CRYOSANCTUM,"Cryosanctum",industry_cryosanctum,,,,,0,,
-BOGGLED_DOMAIN_ARCHAEOLOGY,"Domain Archaeology",industry_domain_archaeology,,,,,0,,
+BOGGLED_CRYOSANCTUM,"Cryosanctum",industry_cryosanctum,,"[
+	'default_improve_bonus'
+]","[
+	{ 'ai_core_id' : 'alpha_core', 'projects' : [ 'industry_cryosanctum_alpha_core' ] },
+	{ 'ai_core_id' : 'beta_core', 'projects' : [ 'industry_cryosanctum_beta_core' ] },
+	{ 'ai_core_id' : 'gamma_core', 'projects' : [ 'industry_cryosanctum_gamma_core' ] }
+]",,0,,
+BOGGLED_DOMAIN_ARCHAEOLOGY,"Domain Archaeology",industry_domain_archaeology,,"[
+	'default_improve_bonus'
+]","[
+	{ 'ai_core_id' : 'alpha_core', 'projects' : [ 'industry_domain_archaeology_alpha_core' ] },
+	{ 'ai_core_id' : 'beta_core', 'projects' : [ 'industry_domain_archaeology_beta_core' ] },
+	{ 'ai_core_id' : 'gamma_core', 'projects' : [ 'industry_domain_archaeology_gamma_core' ] }
+]",,0,,
 BOGGLED_DOMED_CITIES,"Domed Cities",industry_domed_cities,,"[
 	'domed_cities_improve_stability_bonus'
 ]","[

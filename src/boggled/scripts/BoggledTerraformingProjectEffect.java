@@ -1368,17 +1368,22 @@ public class BoggledTerraformingProjectEffect {
         }
         private final String id;
         private StatModType modifierType;
+        private StatModType displayType;
         private final float value;
-        public Modifier(String id, String modifierType, float value) {
-            switch (modifierType) {
-                case "flat": this.modifierType = StatModType.FLAT; break;
-                case "mult": this.modifierType = StatModType.MULT; break;
-                case "percent": this.modifierType = StatModType.PERCENT; break;
-                case "market_size": this.modifierType = StatModType.MARKET_SIZE; break;
+
+        private StatModType getModType(String modType) {
+            switch (modType) {
+                case "flat": return StatModType.FLAT;
+                case "mult": return StatModType.MULT;
+                case "percent": return StatModType.PERCENT;
+                case "market_size": return StatModType.MARKET_SIZE;
             }
-            if (this.modifierType == null) {
-                Global.getLogger(this.getClass()).error("Industry effect " + id + " has invalid mod type string " + modifierType);
-            }
+            throw new RuntimeException("Industry effect " + id + " has invalid mod type string " + modifierType);
+        }
+
+        public Modifier(String id, String modifierType, float value, String displayType) {
+            this.modifierType = getModType(modifierType);
+            this.displayType = getModType(displayType);
             this.id = id;
             this.value = value;
         }
@@ -1395,7 +1400,7 @@ public class BoggledTerraformingProjectEffect {
         }
 
         public ModifierStrings getModifierStrings(BoggledTerraformingRequirement.RequirementContext ctx, Color positiveHighlightColor, Color negativeHighlightColor, TerraformingProjectEffect.DescriptionSource source) {
-            return new ModifierStrings(ctx, modifierType, value, positiveHighlightColor, negativeHighlightColor, source);
+            return new ModifierStrings(ctx, modifierType, displayType, value, positiveHighlightColor, negativeHighlightColor, source);
         }
 
         public static class ModifierStrings {
@@ -1439,13 +1444,24 @@ public class BoggledTerraformingProjectEffect {
                 return String.format("%.2f", Math.abs(value));
             }
 
-            ModifierStrings(BoggledTerraformingRequirement.RequirementContext ctx, StatModType modType, float baseValue, Color positiveHighlightColor, Color negativeHighlightColor, TerraformingProjectEffect.DescriptionSource source) {
+            float modifyValueForDisplay(StatModType modType, StatModType displayType, float value) {
+                if (modType == displayType) {
+                    return value;
+                }
+
+                if (modType == StatModType.MULT && displayType == StatModType.PERCENT) {
+                    value = -(1 - value) * 100;
+                }
+                return value;
+            }
+
+            ModifierStrings(BoggledTerraformingRequirement.RequirementContext ctx, StatModType modType, StatModType displayType, float baseValue, Color positiveHighlightColor, Color negativeHighlightColor, TerraformingProjectEffect.DescriptionSource source) {
                 this.positiveHighlightColor = positiveHighlightColor;
                 this.negativeHighlightColor = negativeHighlightColor;
                 suffix = "";
                 bonusStringPrefix = "";
-                float value = baseValue;
-                switch (modType) {
+                float value = modifyValueForDisplay(modType, displayType, baseValue);
+                switch (displayType) {
                     case MARKET_SIZE:
                         suffix = "(based on colony size)";
                         value += ctx.getClosestMarket().getSize();
@@ -1498,9 +1514,9 @@ public class BoggledTerraformingProjectEffect {
 
     private static abstract class ModifierEffect extends TerraformingProjectEffect {
         Modifier mod;
-        protected ModifierEffect(String id, String[] enableSettings, String modifierType, float value) {
+        protected ModifierEffect(String id, String[] enableSettings, String modifierType, float value, String displayType) {
             super(id, enableSettings);
-            mod = new Modifier(id, modifierType, value);
+            mod = new Modifier(id, modifierType, value, displayType);
         }
 
         private String ucFirst(String str, boolean modify) {
@@ -1547,8 +1563,8 @@ public class BoggledTerraformingProjectEffect {
     }
 
     public static class ModifyPatherInterest extends ModifierEffect {
-        public ModifyPatherInterest(String id, String[] enableSettings, String modifierType, float value) {
-            super(id, enableSettings, modifierType, value);
+        public ModifyPatherInterest(String id, String[] enableSettings, String modifierType, float value, String displayType) {
+            super(id, enableSettings, modifierType, value, displayType);
         }
 
         @Override
@@ -1571,8 +1587,8 @@ public class BoggledTerraformingProjectEffect {
     }
 
     public static class ModifyColonyGrowthRate extends ModifierEffect {
-        public ModifyColonyGrowthRate(String id, String[] enableSettings, String modifierType, float value) {
-            super(id, enableSettings, modifierType, value);
+        public ModifyColonyGrowthRate(String id, String[] enableSettings, String modifierType, float value, String displayType) {
+            super(id, enableSettings, modifierType, value, displayType);
         }
 
         @Override
@@ -1600,8 +1616,8 @@ public class BoggledTerraformingProjectEffect {
     }
 
     public static class ModifyColonyGroundDefense extends ModifierEffect {
-        public ModifyColonyGroundDefense(String id, String[] enableSettings, String modifierType, float value) {
-            super(id, enableSettings, modifierType, value);
+        public ModifyColonyGroundDefense(String id, String[] enableSettings, String modifierType, float value, String displayType) {
+            super(id, enableSettings, modifierType, value, displayType);
         }
 
         @Override
@@ -1635,8 +1651,8 @@ public class BoggledTerraformingProjectEffect {
     }
 
     public static class ModifyColonyAccessibility extends ModifierEffect {
-        public ModifyColonyAccessibility(String id, String[] enableSettings, String modifierType, float value) {
-            super(id, enableSettings, modifierType, value);
+        public ModifyColonyAccessibility(String id, String[] enableSettings, String modifierType, float value, String displayType) {
+            super(id, enableSettings, modifierType, value, displayType);
         }
 
         @Override
@@ -1664,8 +1680,8 @@ public class BoggledTerraformingProjectEffect {
     }
 
     public static class ModifyColonyStability extends ModifierEffect {
-        public ModifyColonyStability(String id, String[] enableSettings, String modifierType, float value) {
-            super(id, enableSettings, modifierType, value);
+        public ModifyColonyStability(String id, String[] enableSettings, String modifierType, float value, String displayType) {
+            super(id, enableSettings, modifierType, value, displayType);
         }
 
         @Override
@@ -1693,8 +1709,8 @@ public class BoggledTerraformingProjectEffect {
     }
 
     public static class ModifyIndustryUpkeep extends ModifierEffect {
-        public ModifyIndustryUpkeep(String id, String[] enableSettings, String modifierType, float value) {
-            super(id, enableSettings, modifierType, value);
+        public ModifyIndustryUpkeep(String id, String[] enableSettings, String modifierType, float value, String displayType) {
+            super(id, enableSettings, modifierType, value, displayType);
         }
 
         @Override
@@ -1717,13 +1733,13 @@ public class BoggledTerraformingProjectEffect {
 
         @Override
         protected void addTooltipInfoImpl(BoggledTerraformingRequirement.RequirementContext ctx, Map<String, EffectTooltipPara> effectTypeToPara, String effectSource, DescriptionMode mode, DescriptionSource source) {
-            effectTypeToPara.put("ModifyIndustryUpkeep", createTooltipData(ctx, "upkeep", true, effectSource, "", mode, source, Misc.getNegativeHighlightColor(), Misc.getHighlightColor()));
+            effectTypeToPara.put("ModifyIndustryUpkeep", createTooltipData(ctx, "upkeep cost", true, effectSource, "", mode, source, Misc.getNegativeHighlightColor(), Misc.getHighlightColor()));
         }
     }
 
     public static class ModifyIndustryIncome extends ModifierEffect {
-        public ModifyIndustryIncome(String id, String[] enableSettings, String modifierType, float value) {
-            super(id, enableSettings, modifierType, value);
+        public ModifyIndustryIncome(String id, String[] enableSettings, String modifierType, float value, String displayType) {
+            super(id, enableSettings, modifierType, value, displayType);
         }
 
         @Override
@@ -1751,8 +1767,8 @@ public class BoggledTerraformingProjectEffect {
     }
 
     public static class ModifyIndustryIncomeByAccessibility extends ModifierEffect {
-        protected ModifyIndustryIncomeByAccessibility(String id, String[] enableSettings, String modifierType, float value) {
-            super(id, enableSettings, modifierType, value);
+        protected ModifyIndustryIncomeByAccessibility(String id, String[] enableSettings, String modifierType, float value, String displayType) {
+            super(id, enableSettings, modifierType, value, displayType);
         }
 
         @Override
@@ -1778,13 +1794,16 @@ public class BoggledTerraformingProjectEffect {
 
     public static class ModifyIndustrySupplyWithDeficit extends ModifierEffect {
         List<String> commoditiesDemanded;
-        public ModifyIndustrySupplyWithDeficit(String id, String[] enableSettings, List<String> commoditiesDemanded, String modifierType, float value) {
-            super(id, enableSettings, modifierType, value);
+        int maxDeficit;
+        public ModifyIndustrySupplyWithDeficit(String id, String[] enableSettings, List<String> commoditiesDemanded, String modifierType, float value, int maxDeficit, String displayType) {
+            super(id, enableSettings, modifierType, value, displayType);
             this.commoditiesDemanded = commoditiesDemanded;
+            this.maxDeficit = maxDeficit;
         }
 
         private int getBonus(BoggledTerraformingRequirement.RequirementContext ctx, String effectSource, BaseIndustry sourceIndustry) {
             Pair<String, Integer> deficit = sourceIndustry.getMaxDeficit(commoditiesDemanded.toArray(new String[0]));
+            deficit.two = Math.min(deficit.two, maxDeficit);
             return Math.max(0, mod.createModifier(ctx, effectSource).getModifiedInt() - deficit.two);
         }
 
@@ -1823,13 +1842,13 @@ public class BoggledTerraformingProjectEffect {
             if (targetIndustry == null) {
                 return;
             }
-            effectTypeToPara.put("ModifyIndustrySupplyWithDeficit", createTooltipData(ctx, targetIndustry.getCurrentName() + " supply", false, effectSource, "", mode, source, Misc.getHighlightColor(), Misc.getNegativeHighlightColor()));
+            effectTypeToPara.put("ModifyIndustrySupplyWithDeficit", createTooltipData(ctx, "production", true, effectSource, "unit", mode, source, Misc.getHighlightColor(), Misc.getNegativeHighlightColor()));
         }
     }
 
     public static class ModifyIndustryDemand extends ModifierEffect {
-        public ModifyIndustryDemand(String id, String[] enableSettings, String modifierType, float value) {
-            super(id, enableSettings, modifierType, value);
+        public ModifyIndustryDemand(String id, String[] enableSettings, String modifierType, float value, String displayType) {
+            super(id, enableSettings, modifierType, value, displayType);
         }
 
         @Override
@@ -1861,7 +1880,7 @@ public class BoggledTerraformingProjectEffect {
             if (targetIndustry == null) {
                 return;
             }
-            effectTypeToPara.put("ModifyIndustryDemand", createTooltipData(ctx, targetIndustry.getCurrentName() + " demand", false, effectSource, "", mode, source, Misc.getNegativeHighlightColor(), Misc.getHighlightColor()));
+            effectTypeToPara.put("ModifyIndustryDemand", createTooltipData(ctx, "demand", true, effectSource, "unit", mode, source, Misc.getNegativeHighlightColor(), Misc.getHighlightColor()));
         }
     }
 
@@ -2423,9 +2442,11 @@ public class BoggledTerraformingProjectEffect {
 
     public static class CommodityDeficitToProduction extends CommodityDeficit {
         List<String> commoditiesDeficited;
-        public CommodityDeficitToProduction(String id, String[] enableSettings, List<String> commodityIds, List<String> commoditiesDeficited) {
+        int maxDeficit;
+        public CommodityDeficitToProduction(String id, String[] enableSettings, List<String> commodityIds, List<String> commoditiesDeficited, int maxDeficit) {
             super(id, enableSettings, commodityIds);
             this.commoditiesDeficited = commoditiesDeficited;
+            this.maxDeficit = maxDeficit;
         }
 
         @Override
@@ -2437,6 +2458,7 @@ public class BoggledTerraformingProjectEffect {
                 return;
             }
             Pair<String, Integer> deficit = sourceIndustry.getMaxDeficit(commodityIds.toArray(new String[0]));
+            deficit.two = Math.min(deficit.two, maxDeficit);
             targetIndustryInterface.applyDeficitToProduction(id + "_DeficitToCommodity", deficit, commoditiesDeficited.toArray(new String[0]));
         }
 
@@ -2447,9 +2469,9 @@ public class BoggledTerraformingProjectEffect {
 
     public static class CommodityDeficitModifierToUpkeep extends CommodityDeficit {
         Modifier mod;
-        public CommodityDeficitModifierToUpkeep(String id, String[] enableSettings, List<String> commodityIds, String modifierType, float value) {
+        public CommodityDeficitModifierToUpkeep(String id, String[] enableSettings, List<String> commodityIds, String modifierType, float value, String displayType) {
             super(id, enableSettings, commodityIds);
-            this.mod = new Modifier(id, modifierType, value);
+            this.mod = new Modifier(id, modifierType, value, displayType);
         }
 
         @Override

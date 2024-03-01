@@ -7,4 +7,11 @@
 	"gameVersion":"0.97a-RC11",
 	"jars":["jar/BoggledTerraformingAndStationConstruction.jar"],
 	"modPlugin":"boggled.scripts.BoggledTascPlugin",
+	"dependencies": [
+		{
+			"id": "lunalib",
+			"name": "LunaLib",
+			"version": "1.8.4"
+		}
+	]
 }
