@@ -312,6 +312,10 @@ public class BoggledTerraformingProject {
     }
 
     public void finishProject(BoggledTerraformingRequirement.RequirementContext ctx, String effectSource) {
+        if (projectCompleteEffects.isEmpty()) {
+            return;
+        }
+
         ctx = new BoggledTerraformingRequirement.RequirementContext(ctx, this);
 
         unapplyOngoingEffects(ctx);

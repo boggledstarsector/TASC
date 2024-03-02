@@ -72,6 +72,8 @@ public class BoggledStationConstructors {
             storage.setPlayerPaidToUnlock(true);
             market.addSubmarket(Submarkets.LOCAL_RESOURCES);
 
+            market.getMemoryWithoutUpdate().set("$startingFactionId", market.getFactionId());
+
             boggledTools.surveyAll(market);
 
             return market;

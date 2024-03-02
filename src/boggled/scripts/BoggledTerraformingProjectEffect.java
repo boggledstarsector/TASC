@@ -2053,8 +2053,8 @@ public class BoggledTerraformingProjectEffect {
             for (BoggledCommonIndustry.ProductionData datum : data) {
                 boolean requirementsMet = datum.requirements.requirementsMet(ctx);
                 Pair<Integer, Integer> chance = targetIndustryInterface.getProductionChance(datum.commodityId);
-                chance100.one -= chance.one;
-                chance100.two -= chance.two;
+                chance100.one = Math.min(100 - chance.one, chance100.one);
+                chance100.two = Math.min(100 - chance.two, chance100.two);
                 Color highlightColor = Misc.getHighlightColor();
                 if (!requirementsMet) {
                     highlightColor = Misc.getNegativeHighlightColor();
@@ -2083,6 +2083,8 @@ public class BoggledTerraformingProjectEffect {
                 para.infix.add(chanceString.toString());
             }
 
+            chance100.one = Math.max(chance100.one, 0);
+            chance100.two = Math.max(chance100.two, 0);
             String modifiedChance100String = chance100.two + "%";
             String baseChance100String = chance100.one + "%";
             para.highlights.add(0, baseChance100String);

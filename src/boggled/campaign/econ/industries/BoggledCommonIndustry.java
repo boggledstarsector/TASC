@@ -919,14 +919,12 @@ public class BoggledCommonIndustry {
         if (!ctx.getSourceIndustry().isFunctional()) {
             return null;
         }
-        // As each item is checked, offset is incremented by the chance of the item
-        // If the roll is less than chance + offset, give the item and return
+        // If the roll is less than chance, give the item and return
         // Goes from smaller priority value items to bigger priority value items
         // The smaller the priority, the higher the priority, with zero being the highest priority
         // If multiple items share the same priority, order is unspecified
         // Number in range (0, 100], ie possible values are from 1 to 100 inclusive both ends
         int roll = random.nextInt(100) + 1;
-        int offset = 0;
         CargoAPI ret = Global.getFactory().createCargo(true);
 
         List<ProductionData> workingData = new ArrayList<>(productionData.values());
@@ -939,18 +937,16 @@ public class BoggledCommonIndustry {
 
         for (ProductionData pd : workingData) {
             if (!pd.requirements.requirementsMet(ctx)) {
-                offset += pd.chance.getModifiedInt();
                 continue;
             }
-            int value = pd.chance.getModifiedInt();
-            if (value == 0) {
+            int chance = pd.chance.getModifiedInt();
+            if (chance == 0) {
                 continue;
             }
-            if (roll < (offset + value)) {
+            if (roll < chance) {
                 ret.addCommodity(pd.commodityId, 1);
                 return ret;
             }
-            offset += value;
         }
         return null;
     }

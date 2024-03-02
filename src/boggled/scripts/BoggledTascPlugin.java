@@ -79,6 +79,14 @@ public class BoggledTascPlugin extends BaseModPlugin {
                     primaryEntity.removeTag("boggled_siphon_station");
                     primaryEntity.addTag(boggledTools.BoggledTags.siphonStation);
                 }
+
+                if (primaryEntity.hasTag(boggledTools.BoggledTags.astropolisStation)
+                    || primaryEntity.hasTag(boggledTools.BoggledTags.miningStation)
+                    || primaryEntity.hasTag(boggledTools.BoggledTags.siphonStation)) {
+                    if (!market.getMemoryWithoutUpdate().contains("$startingFactionId")) {
+                        market.getMemoryWithoutUpdate().set("$startingFactionId", "player");
+                    }
+                }
             }
         }
     }
