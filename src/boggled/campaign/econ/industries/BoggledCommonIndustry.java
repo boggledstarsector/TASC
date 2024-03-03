@@ -522,7 +522,7 @@ public class BoggledCommonIndustry {
 
         List<BoggledTerraformingProject.ProjectInstance> coreEffect = aiCoreEffects.get(ctx.getSourceIndustry().getAICoreId());
         if (coreEffect != null) {
-            String effectSource = Global.getSettings().getCommoditySpec(ctx.getSourceIndustry().getAICoreId()).getName() + " assigned";
+            String effectSource = Global.getSettings().getCommoditySpec(ctx.getSourceIndustry().getAICoreId()).getName();
             for (BoggledTerraformingProject.ProjectInstance projectInstance : coreEffect) {
                 BoggledTerraformingRequirement.RequirementContext instanceCtx = new BoggledTerraformingRequirement.RequirementContext(ctx, projectInstance);
                 BoggledTerraformingProject project = projectInstance.getProject();
@@ -530,6 +530,14 @@ public class BoggledCommonIndustry {
                     project.unapplyOngoingEffects(instanceCtx);
                 } else {
                     project.applyOngoingEffects(instanceCtx, effectSource);
+                }
+            }
+        } else {
+            for (List<BoggledTerraformingProject.ProjectInstance> removedCoreEffect : aiCoreEffects.values()) {
+                for (BoggledTerraformingProject.ProjectInstance projectInstance : removedCoreEffect) {
+                    BoggledTerraformingRequirement.RequirementContext instanceCtx = new BoggledTerraformingRequirement.RequirementContext(ctx, projectInstance);
+                    BoggledTerraformingProject project = projectInstance.getProject();
+                    project.unapplyOngoingEffects(instanceCtx);
                 }
             }
         }
@@ -722,7 +730,7 @@ public class BoggledCommonIndustry {
         }
 
         for (BoggledTerraformingProjectEffect.TerraformingProjectEffect improveEffect : improveEffects) {
-            improveEffect.applyProjectEffect(ctx, "Improvements (" + ctx.getSourceIndustry().getCurrentName() + ")");
+            improveEffect.applyProjectEffect(ctx, "Improvements");
         }
     }
 

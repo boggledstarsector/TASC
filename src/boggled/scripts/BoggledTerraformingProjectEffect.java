@@ -1399,8 +1399,8 @@ public class BoggledTerraformingProjectEffect {
             return mod;
         }
 
-        public ModifierStrings getModifierStrings(BoggledTerraformingRequirement.RequirementContext ctx, Color positiveHighlightColor, Color negativeHighlightColor, TerraformingProjectEffect.DescriptionSource source) {
-            return new ModifierStrings(ctx, modifierType, displayType, value, positiveHighlightColor, negativeHighlightColor, source);
+        public ModifierStrings getModifierStrings(BoggledTerraformingRequirement.RequirementContext ctx, Color positiveHighlightColor, Color negativeHighlightColor, TerraformingProjectEffect.DescriptionSource source, boolean invertIncreaseReduce) {
+            return new ModifierStrings(ctx, modifierType, displayType, value, positiveHighlightColor, negativeHighlightColor, source, invertIncreaseReduce);
         }
 
         public static class ModifierStrings {
@@ -1455,7 +1455,23 @@ public class BoggledTerraformingProjectEffect {
                 return value;
             }
 
-            ModifierStrings(BoggledTerraformingRequirement.RequirementContext ctx, StatModType modType, StatModType displayType, float baseValue, Color positiveHighlightColor, Color negativeHighlightColor, TerraformingProjectEffect.DescriptionSource source) {
+            private void setToIncrease(boolean invertIncreaseReduce) {
+                if (invertIncreaseReduce) {
+                    setToReduce();
+                } else {
+                    setToIncrease();
+                }
+            }
+
+            private void setToReduce(boolean invertIncreaseReduce) {
+                if (invertIncreaseReduce) {
+                    setToIncrease();
+                } else {
+                    setToReduce();
+                }
+            }
+
+            ModifierStrings(BoggledTerraformingRequirement.RequirementContext ctx, StatModType modType, StatModType displayType, float baseValue, Color positiveHighlightColor, Color negativeHighlightColor, TerraformingProjectEffect.DescriptionSource source, boolean invertIncreaseReduce) {
                 this.positiveHighlightColor = positiveHighlightColor;
                 this.negativeHighlightColor = negativeHighlightColor;
                 suffix = "";
@@ -1467,14 +1483,14 @@ public class BoggledTerraformingProjectEffect {
                         value += ctx.getClosestMarket().getSize();
                     case FLAT: {
                         if (value < 0) {
-                            setToReduce();
+                            setToReduce(invertIncreaseReduce);
                             if (   source != TerraformingProjectEffect.DescriptionSource.AI_CORE_DESCRIPTION
                                 && source != TerraformingProjectEffect.DescriptionSource.IMPROVE_DESCRIPTION) {
                                 bonusStringPrefix = "-";
                             }
                             bonusString = formatBonusString(Math.abs(value), 0);
                         } else {
-                            setToIncrease();
+                            setToIncrease(invertIncreaseReduce);
                             if (   source != TerraformingProjectEffect.DescriptionSource.AI_CORE_DESCRIPTION
                                 && source != TerraformingProjectEffect.DescriptionSource.IMPROVE_DESCRIPTION) {
                                 bonusStringPrefix = "+";
@@ -1487,9 +1503,9 @@ public class BoggledTerraformingProjectEffect {
                     }
                     case MULT: {
                         if (value < 1) {
-                            setToReduce();
+                            setToReduce(invertIncreaseReduce);
                         } else {
-                            setToIncrease();
+                            setToIncrease(invertIncreaseReduce);
                         }
                         byOrTo = "by";
                         highlightString = Strings.X + formatBonusString(value, 1);
@@ -1498,9 +1514,9 @@ public class BoggledTerraformingProjectEffect {
                     }
                     case PERCENT: {
                         if (value < 0) {
-                            setToReduce();
+                            setToReduce(invertIncreaseReduce);
                         } else {
-                            setToIncrease();
+                            setToIncrease(invertIncreaseReduce);
                         }
                         byOrTo = "by";
                         highlightString = formatBonusString(value, 0) + "%";
@@ -1534,7 +1550,11 @@ public class BoggledTerraformingProjectEffect {
         }
 
         protected EffectTooltipPara createTooltipData(BoggledTerraformingRequirement.RequirementContext ctx, String effect, boolean modifyEffectCase, String effectSource, String suffix, DescriptionMode mode, DescriptionSource source, Color positiveHighlight, Color negativeHighlight) {
-            Modifier.ModifierStrings modStrings = mod.getModifierStrings(ctx, positiveHighlight, negativeHighlight, source);
+            return createTooltipData(ctx, effect ,modifyEffectCase, effectSource, suffix, mode, source, positiveHighlight, negativeHighlight, false);
+        }
+
+        protected EffectTooltipPara createTooltipData(BoggledTerraformingRequirement.RequirementContext ctx, String effect, boolean modifyEffectCase, String effectSource, String suffix, DescriptionMode mode, DescriptionSource source, Color positiveHighlight, Color negativeHighlight, boolean invertIncreaseReduce) {
+            Modifier.ModifierStrings modStrings = mod.getModifierStrings(ctx, positiveHighlight, negativeHighlight, source, invertIncreaseReduce);
             String text;
             if (source == DescriptionSource.POST_DEMAND_SECTION) {
                 text = ucFirst(effect, modifyEffectCase) + ": " + modStrings.bonusStringPrefix + modStrings.bonusString;
@@ -1820,9 +1840,7 @@ public class BoggledTerraformingProjectEffect {
             }
 
             int bonus = getBonus(ctx, effectSource, sourceIndustry);
-            for (MutableCommodityQuantity c : targetIndustry.getAllSupply()) {
-                c.getQuantity().modifyFlat(id, bonus, sourceIndustry.getNameForModifier());
-            }
+            targetIndustry.getSupplyBonusFromOther().modifyFlat(id, bonus, effectSource);
         }
 
         @Override
@@ -1831,9 +1849,7 @@ public class BoggledTerraformingProjectEffect {
             if (targetIndustry == null) {
                 return;
             }
-            for (MutableCommodityQuantity c : targetIndustry.getAllSupply()) {
-                c.getQuantity().unmodify(id);
-            }
+            targetIndustry.getSupplyBonusFromOther().unmodify(id);
         }
 
         @Override
@@ -1848,7 +1864,7 @@ public class BoggledTerraformingProjectEffect {
 
     public static class ModifyIndustryDemand extends ModifierEffect {
         public ModifyIndustryDemand(String id, String[] enableSettings, String modifierType, float value, String displayType) {
-            super(id, enableSettings, modifierType, value, displayType);
+            super(id, enableSettings, modifierType, -value, displayType);
         }
 
         @Override
@@ -1858,9 +1874,7 @@ public class BoggledTerraformingProjectEffect {
                 return;
             }
             MutableStat modifier = mod.createModifier(ctx, effectSource);
-            for (MutableCommodityQuantity c : targetIndustry.getAllDemand()) {
-                c.getQuantity().applyMods(modifier);
-            }
+            targetIndustry.getDemandReductionFromOther().applyMods(modifier);
         }
 
         @Override
@@ -1869,9 +1883,7 @@ public class BoggledTerraformingProjectEffect {
             if (targetIndustry == null) {
                 return;
             }
-            for (MutableCommodityQuantity c : targetIndustry.getAllDemand()) {
-                c.getQuantity().unmodify(id);
-            }
+            targetIndustry.getDemandReductionFromOther().unmodify(id);
         }
 
         @Override
@@ -1880,7 +1892,7 @@ public class BoggledTerraformingProjectEffect {
             if (targetIndustry == null) {
                 return;
             }
-            effectTypeToPara.put("ModifyIndustryDemand", createTooltipData(ctx, "demand", true, effectSource, "unit", mode, source, Misc.getNegativeHighlightColor(), Misc.getHighlightColor()));
+            effectTypeToPara.put("ModifyIndustryDemand", createTooltipData(ctx, "demand", true, effectSource, "unit", mode, source, Misc.getNegativeHighlightColor(), Misc.getHighlightColor(), true));
         }
     }
 
@@ -2581,6 +2593,8 @@ public class BoggledTerraformingProjectEffect {
             super(id, enableSettings, commodityId, quantity);
         }
 
+        protected abstract String getNameForModifier(BaseIndustry sourceIndustry);
+
         @Override
         protected void applyProjectEffectImpl(BoggledTerraformingRequirement.RequirementContext ctx, String effectSource) {
             BaseIndustry sourceIndustry = ctx.getSourceIndustry();
@@ -2589,18 +2603,22 @@ public class BoggledTerraformingProjectEffect {
                 return;
             }
             int quantityToDemand = getQuantity(ctx);
-            targetIndustry.supply(id, commodityId, quantityToDemand, sourceIndustry.getNameForModifier());
+            targetIndustry.supply(id, commodityId, quantityToDemand, getNameForModifier(sourceIndustry));
         }
 
         @Override
         protected void unapplyProjectEffectImpl(BoggledTerraformingRequirement.RequirementContext ctx) {
-
         }
     }
 
     public static class CommoditySupplyFlat extends CommoditySupply {
         public CommoditySupplyFlat(String id, String[] enableSettings, String commodityId, int quantity) {
             super(id, enableSettings, commodityId, quantity);
+        }
+
+        @Override
+        protected String getNameForModifier(BaseIndustry sourceIndustry) {
+            return sourceIndustry.getNameForModifier();
         }
 
         @Override
@@ -2612,6 +2630,11 @@ public class BoggledTerraformingProjectEffect {
     public static class CommoditySupplyMarketSize extends CommoditySupply {
         public CommoditySupplyMarketSize(String id, String[] enableSettings, String commodityId, int quantity) {
             super(id, enableSettings, commodityId, quantity);
+        }
+
+        @Override
+        protected String getNameForModifier(BaseIndustry sourceIndustry) {
+            return "Base value for colony size";
         }
 
         @Override
