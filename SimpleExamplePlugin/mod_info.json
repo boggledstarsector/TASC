@@ -1,13 +1,11 @@
 {
-    "id":"tasc_example_plugin",
-	"name":"TASC Example Plugin",
+    "id":"tasc_simple_example_plugin",
+	"name":"TASC Simple Example Plugin",
 	"author":"Evangel",
     "utility":"false",
 	"version":"1.0.0",
-	"description":"Example showing how to add a requirement to TASC.",
+	"description":"Example showing how to add a new project to TASC.",
     "gameVersion": "0.97a-RC6",
-  	"jars":["jars/tasc_example_plugin.jar"],
-  	"modPlugin":"evangel.tasc.ExamplePlugin",
 	"dependencies": [
         {
             "id": "Terraforming & Station Construction",
@@ -18,11 +16,6 @@
             "id": "lunalib",
             "name": "LunaLib",
             "version": "1.8.4"
-        },
-        {
-            "id": "aotd_vok",
-            "name": "AoTD- Vaults of Knowledge ",
-            "version": "2.0.12"
         }
     ]
 }

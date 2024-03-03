@@ -1,0 +1,44 @@
+id,enable_settings,project_type,tooltip,tooltip_highlights,intel_complete_message,requirements,requirements_hidden,base_project_duration,dynamic_project_duration_modifiers,requirements_stall,requirements_reset,project_complete_effects,project_ongoing_effects,incomplete_message,incomplete_message_highlights,disrupted_message,disrupted_message_highlights
+volcanic_type_change,boggledTerraformingContentEnabled,terraforming,"Volcanic type change",,Completed,"[
+	{ 'requirement_id' : 'terraforming_colony_not_volcanic_world' },
+	{ 'requirement_id' : 'terraforming_colony_atmospheric_density_normal' },
+	{ 'requirement_id' : 'terraforming_colony_atmosphere_not_toxic_or_irradiated' },
+	{ 'requirement_id' : 'terraforming_colony_very_hot' }
+]",,400,"[ 'terraforming_type_change_setting' ]",,,"[
+	'volcanic_type_change',
+	'market_add_ore_rich',
+	'market_add_rare_ore_rich',
+	
+	'market_remove_ore_sparse',
+	'market_remove_ore_moderate',
+	'market_remove_ore_abundant',
+	'market_remove_ore_ultrarich',
+	
+	'market_remove_rare_ore_sparse',
+	'market_remove_rare_ore_moderate',
+	'market_remove_rare_ore_abundant',
+	'market_remove_rare_ore_ultrarich',
+	
+	'market_remove_habitable',
+	'market_remove_water_surface',
+	'market_remove_volturnian_lobster_pens',
+	
+	'market_remove_farmland_poor',
+	'market_remove_farmland_adequate',
+	'market_remove_farmland_rich',
+	'market_remove_farmland_bountiful',
+	
+	'market_remove_organics_trace',
+	'market_remove_organics_common',
+	'market_remove_organics_abundant',
+	'market_remove_organics_plentiful',
+	
+	'market_remove_volatiles_trace',
+	'market_remove_volatiles_diffuse',
+	'market_remove_volatiles_abundant',
+	'market_remove_volatiles_plentiful',
+
+	'industry_swap_seafloor_cities_for_domed_cities',
+	'industry_swap_aquaculture_for_farming',
+	'industry_remove_mesozoic_park'
+]",,,,,

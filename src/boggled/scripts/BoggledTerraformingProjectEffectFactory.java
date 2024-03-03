@@ -21,7 +21,7 @@ public class BoggledTerraformingProjectEffectFactory {
     public static class PlanetTypeChange implements TerraformingProjectEffectFactory {
         @Override
         public BoggledTerraformingProjectEffect.TerraformingProjectEffect constructFromJSON(String id, String[] enableSettings, String data) {
-            boggledTools.CheckPlanetTypeExists(id, data);
+            boggledTools.CheckPlanetSpecExists(id, data);
             return new BoggledTerraformingProjectEffect.PlanetTypeChange(id, enableSettings, data);
         }
     }

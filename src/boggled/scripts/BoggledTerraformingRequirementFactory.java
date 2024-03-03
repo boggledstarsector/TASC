@@ -22,6 +22,7 @@ public class BoggledTerraformingRequirementFactory {
     public static class PlanetType implements TerraformingRequirementFactory {
         @Override
         public BoggledTerraformingRequirement.TerraformingRequirement constructFromJSON(String id, String[] enableSettings, boolean invert, String data) {
+            // Load order issues prevent checking the planet type here
 //            boggledTools.CheckPlanetTypeExists(id, data);
             return new BoggledTerraformingRequirement.PlanetType(id, enableSettings, invert, data);
         }
@@ -30,6 +31,7 @@ public class BoggledTerraformingRequirementFactory {
     public static class FocusPlanetType implements TerraformingRequirementFactory {
         @Override
         public BoggledTerraformingRequirement.TerraformingRequirement constructFromJSON(String id, String[] enableSettings, boolean invert, String data) {
+            // Load order issues prevent checking the planet type here
 //            boggledTools.CheckPlanetTypeExists(id, data);
             return new BoggledTerraformingRequirement.FocusPlanetType(id, enableSettings, invert, data);
         }

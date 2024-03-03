@@ -1,0 +1,5 @@
+id,enable_settings,requirement_type,invert,data
+# These are individual requirements, the basic building blocks of larger requirements used in terraforming_requirements.csv
+# Make sure the planet type is one of the `terraforming_type_id`s from `planet_types.csv`
+terraforming_colony_not_volcanic_world,,PlanetType,false,"volcanic"
+terraforming_colony_very_hot,,MarketHasCondition,false,"very_hot"

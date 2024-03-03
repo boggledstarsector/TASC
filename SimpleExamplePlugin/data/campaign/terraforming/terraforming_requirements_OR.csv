@@ -1,0 +1,3 @@
+id,tooltip,invert_all,requirements
+terraforming_colony_not_volcanic_world,"$planetName must not already be volcanic",true,"terraforming_colony_not_volcanic_world"
+terraforming_colony_very_hot,"$planetName must be very hot",false,"terraforming_colony_very_hot"

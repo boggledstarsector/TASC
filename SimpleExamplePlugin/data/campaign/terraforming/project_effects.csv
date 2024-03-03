@@ -1,0 +1,14 @@
+id,enable_settings,effect_type,data
+volcanic_type_change,,PlanetTypeChange,"lava"
+market_add_ore_rich,,MarketAddCondition,"ore_rich"
+market_add_rare_ore_rich,,MarketAddCondition,"rare_ore_rich"
+
+market_remove_ore_sparse,,MarketRemoveCondition,"ore_sparse"
+market_remove_ore_moderate,,MarketRemoveCondition,"ore_moderate"
+market_remove_ore_abundant,,MarketRemoveCondition,"ore_abundant"
+market_remove_ore_ultrarich,,MarketRemoveCondition,"ore_ultrarich"
+
+market_remove_rare_ore_sparse,,MarketRemoveCondition,"rare_ore_sparse"
+market_remove_rare_ore_moderate,,MarketRemoveCondition,"rare_ore_moderate"
+market_remove_rare_ore_abundant,,MarketRemoveCondition,"rare_ore_abundant"
+market_remove_rare_ore_ultrarich,,MarketRemoveCondition,"rare_ore_ultrarich"
