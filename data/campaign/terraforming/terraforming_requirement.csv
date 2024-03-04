@@ -259,6 +259,7 @@ ability_mining_station_fleet_in_asteroid_belt,,FleetInAsteroidBelt,false,
 ability_mining_station_fleet_in_asteroid_field,,FleetInAsteroidField,false,
 ability_mining_station_too_many_stations,,TargetSystemStationCountLessThan,false,"{
 	'station_tags' : [ 'boggled_mining' ],
+	'setting_id' : 'boggledMaxNumMiningStationsPerSystem'
 	'max_num' : 1
 }"
 ability_mining_station_fleet_contains_credits,,FleetStorageContainsAtLeast,false,"{

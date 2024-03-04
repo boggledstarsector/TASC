@@ -445,9 +445,11 @@ public class BoggledTerraformingRequirementFactory {
             JSONObject jsonData = new JSONObject(data);
             JSONArray stationTagsArray = jsonData.getJSONArray("station_tags");
             List<String> stationTags = boggledTools.stringListFromJSON(stationTagsArray);
+            String settingId = jsonData.optString("setting_id");
+
             int maxNum = jsonData.getInt("max_num");
 
-            return new BoggledTerraformingRequirement.TargetSystemStationCountLessThan(id, enableSettings, invert, stationTags, maxNum);
+            return new BoggledTerraformingRequirement.TargetSystemStationCountLessThan(id, enableSettings, invert, stationTags, maxNum, settingId);
         }
     }
 

@@ -1465,10 +1465,19 @@ public class BoggledTerraformingRequirement {
     public static class TargetSystemStationCountLessThan extends TerraformingRequirement {
         List<String> stationTags;
         int maxNumStations;
-        protected TargetSystemStationCountLessThan(String id, String[] enableSettings, boolean invert, List<String> stationTags, int maxNumStations) {
+        String settingId;
+        protected TargetSystemStationCountLessThan(String id, String[] enableSettings, boolean invert, List<String> stationTags, int maxNumStations, String settingId) {
             super(id, enableSettings, invert);
             this.stationTags = stationTags;
             this.maxNumStations = maxNumStations;
+            this.settingId = settingId;
+        }
+
+        private int getMaxNumStations() {
+            if (!settingId.isEmpty()) {
+                return boggledTools.getIntSetting(settingId);
+            }
+            return maxNumStations;
         }
 
         @Override
@@ -1477,7 +1486,7 @@ public class BoggledTerraformingRequirement {
             if (starSystem == null) {
                 return false;
             }
-            return boggledTools.numStationsInSystem(starSystem, stationTags.toArray(new String[0])) < maxNumStations;
+            return boggledTools.numStationsInSystem(starSystem, stationTags.toArray(new String[0])) < getMaxNumStations();
         }
 
         @Override
