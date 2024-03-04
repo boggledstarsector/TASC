@@ -45,14 +45,6 @@ public class BoggledStationConstructors {
             market.addCondition(boggledTools.BoggledConditions.spriteControllerConditionId);
             market.addCondition(boggledTools.BoggledConditions.crampedQuartersConditionId);
 
-            // Adds the no atmosphere condition, then suppresses it so it won't increase hazard
-            // market_conditions.csv overwrites the vanilla no_atmosphere condition
-            // The only change made is to hide the icon on markets where primary entity has station tag
-            // This is done so refining and fuel production can slot the special items
-            // Hopefully Alex will fix the no_atmosphere detection in the future so this hack can be removed
-            market.addCondition(Conditions.NO_ATMOSPHERE);
-            market.suppressCondition(Conditions.NO_ATMOSPHERE);
-
             market.addIndustry(Industries.POPULATION);
             market.getConstructionQueue().addToEnd(Industries.SPACEPORT, 0);
             for (String industryToQueue : industriesToQueue) {

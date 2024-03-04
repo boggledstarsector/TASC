@@ -3,6 +3,7 @@ package boggled.campaign.econ.conditions;
 
 import com.fs.starfarer.api.campaign.econ.*;
 import com.fs.starfarer.api.impl.campaign.econ.BaseHazardCondition;
+import com.fs.starfarer.api.impl.campaign.ids.Conditions;
 import com.fs.starfarer.api.impl.campaign.population.PopulationComposition;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
@@ -50,6 +51,14 @@ public class Cramped_Quarters extends BaseHazardCondition implements MarketImmig
             // Don't try to remove this condition here because it will throw an exception under some unusual circumstances.
             return;
         }
+
+        // Adds the no atmosphere condition, then suppresses it so it won't increase hazard
+        // market_conditions.csv overwrites the vanilla no_atmosphere condition
+        // The only change made is to hide the icon on markets where primary entity has station tag
+        // This is done so refining and fuel production can slot the special items
+        // Hopefully Alex will fix the no_atmosphere detection in the future so this hack can be removed
+        market.addCondition(Conditions.NO_ATMOSPHERE);
+        market.suppressCondition(Conditions.NO_ATMOSPHERE);
 
         if(this.market.getTariff().getBaseValue() == 0.0f && this.market.getTariff().getModifiedValue() == 0.0f) {
             this.market.getTariff().modifyFlat("base_tariff_for_station", 0.30f);

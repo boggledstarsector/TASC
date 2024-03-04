@@ -51,15 +51,6 @@ public class BoggledTascPlugin extends BaseModPlugin {
                         if (!market.hasCondition(boggledTools.BoggledConditions.crampedQuartersConditionId)) {
                             market.addCondition(boggledTools.BoggledConditions.crampedQuartersConditionId);
                         }
-
-                        //Some special items require "no_atmosphere" condition on market to be installed
-                        //Stations by default don't meet this condition because they don't have the "no_atmosphere" condition
-                        //Combined with market_conditions.csv overwrite, this will give stations no_atmosphere while
-                        //hiding all effects from the player and having no impact on the economy or hazard rating
-                        if (!market.hasCondition(Conditions.NO_ATMOSPHERE)) {
-                            market.addCondition(Conditions.NO_ATMOSPHERE);
-                            market.suppressCondition(Conditions.NO_ATMOSPHERE);
-                        }
                     }
                 }
             }
