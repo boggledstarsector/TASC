@@ -1187,7 +1187,7 @@ public class BoggledTerraformingRequirement {
         }
 
         protected boolean check(SectorEntityToken planet, SectorEntityToken block) {
-            return planet.getCircularOrbitRadius() < (block.getRadius() + distance);
+            return block.getCircularOrbitRadius() > (planet.getRadius() + distance);
         }
 
         @Override
