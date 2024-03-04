@@ -1964,7 +1964,7 @@ public class BoggledTerraformingProjectEffect {
             }
             MarketAPI market = targetIndustry.getMarket();
             for (String conditionId : conditionIds) {
-                if (conditionId.equals(Conditions.WATER_SURFACE) && ctx.getPlanetMarket().hasCondition(conditionId)) {
+                if (conditionId.equals(Conditions.WATER_SURFACE) && market.hasCondition(conditionId)) {
                     // Suppress water surface without actually suppressing it
                     // Actually suppressing it causes aquaculture to produce no food
                     market.getHazard().modifyFlat(id, -0.25f, effectSource);
