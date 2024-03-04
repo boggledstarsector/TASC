@@ -39,8 +39,8 @@ public class BoggledOrbitalStation extends OrbitalStation implements BoggledIndu
 
     @Override
     protected void buildingFinished() {
-        super.buildingFinished();
         thisIndustry.buildingFinished();
+        super.buildingFinished();
     }
 
     @Override
@@ -94,14 +94,14 @@ public class BoggledOrbitalStation extends OrbitalStation implements BoggledIndu
 
     @Override
     public void apply() {
-        super.apply(true);
         thisIndustry.apply();
+        super.apply(true);
     }
 
     @Override
     public void unapply() {
-        super.unapply();
         thisIndustry.unapply();
+        super.unapply();
     }
 
     @Override

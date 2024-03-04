@@ -30,35 +30,6 @@ public class Boggled_Remnant_Station extends BoggledOrbitalStation implements Ro
 
     protected float returningPatrolValue = 0f;
 
-    // Added per SirHartley on page 148, comment #2211 of the TASC thread.
-    // Adds compatibility for the Artillery Station feature from IndEvo.
-    @Override
-    protected void ensureStationEntityIsSetOrCreated()
-    {
-        if (stationEntity == null)
-        {
-            for (SectorEntityToken entity : market.getConnectedEntities())
-            {
-                if (entity.hasTag(Tags.STATION) && !entity.hasTag("no_orbital_station"))
-                {
-                    stationEntity = entity;
-                    usingExistingStation = true;
-                    break;
-                }
-            }
-        }
-
-        if (stationEntity == null)
-        {
-            stationEntity = market.getContainingLocation().addCustomEntity(null, market.getName() + " Station", Entities.STATION_BUILT_FROM_INDUSTRY, market.getFactionId());
-            SectorEntityToken primary = market.getPrimaryEntity();
-            float orbitRadius = primary.getRadius() + 150f;
-            stationEntity.setCircularOrbitWithSpin(primary, (float) Math.random() * 360f, orbitRadius, orbitRadius / 10f, 5f, 5f);
-            market.getConnectedEntities().add(stationEntity);
-            stationEntity.setMarket(market);
-        }
-    }
-
     @Override
     public void advance(float amount) {
         super.advance(amount);
@@ -355,7 +326,7 @@ public class Boggled_Remnant_Station extends BoggledOrbitalStation implements Ro
         this.market.getStability().modifyFlat(this.getModId(), 3.0f, "Autonomous AI battlestation");
         this.applyIncomeAndUpkeep((float)size);
 
-        this.market.getStats().getDynamic().getMod("ground_defenses_mod").modifyMult(this.getModId(), 3.0f, "Autonomous AI battlestation");
+        this.market.getStats().getDynamic().getMod(Stats.GROUND_DEFENSES_MOD).modifyMult(this.getModId(), 3.0f, "Autonomous AI battlestation");
         this.matchCommanderToAICore(this.aiCoreId);
         if (!this.isFunctional())
         {
