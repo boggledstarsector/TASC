@@ -86,7 +86,7 @@ industry_colony_not_volturnian_lobster_pens,"$marketName does not have Volturnia
 industry_colony_polluted,"$marketName does not have pollution.",,false,"market_has_pollution"
 
 industry_system_star_not_has_coronal_tap,"The $system system already has a coronal tap.",,false,"system_star_not_has_coronal_tap"
-industry_system_star_coronal_tap_viable,"Coronal hypershunts can only function if they orbit a blue giant star. There is no blue giant star in the $system.",,false,"system_star_blue_giant | system_star_blue_supergiant"
+industry_system_star_coronal_tap_viable,"Coronal hypershunts can only function if they orbit a blue giant star. There is no blue giant star in the $system.",,false,"system_star_blue_giant | system_star_blue_supergiant | system_star_US_blue_giant"
 
 industry_ai_mining_drones_colony_has_mining,"$marketName must have a mining industry.",,false,"market_has_mining"
 ,,

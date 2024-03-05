@@ -151,6 +151,7 @@ station_construction_num_expansions,,IntegerFromMarketTagSubstring,false,"{
 system_star_not_has_coronal_tap,,SystemStarHasTags,true,"[ 'has_coronal_tap' ]"
 system_star_blue_giant,,SystemStarType,false,"star_blue_giant"
 system_star_blue_supergiant,,SystemStarType,false,"star_blue_supergiant"
+system_star_US_blue_giant,,SystemStarType,false,"US_star_blue_giant"
 ,
 player_has_skill_automated_ships,,PlayerHasSkill,false,"automated_ships"
 ,
