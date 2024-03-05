@@ -133,6 +133,7 @@ terraforming_possible_on_market,,TerraformingPossibleOnMarket,false,"[ 'irradiat
 ,
 focus_planet_not_gas_giant,,FocusPlanetType,true,"gas_giant"
 focus_planet_gas_giant,,FocusPlanetType,false,"gas_giant"
+focus_object_is_planet,,FocusObjectIsPlanet,false,
 ,
 focus_market_has_extreme_weather,,FocusMarketHasCondition,false,"extreme_weather"
 focus_market_has_tectonic_activity,,FocusMarketHasCondition,false,"tectonic_activity"
@@ -328,6 +329,7 @@ ability_siphon_station_fleet_contains_transplutonics,,FleetStorageContainsAtLeas
 	'job_id' : 'Si_S'
 }"
 ,
+ability_colonize_abandoned_station_system_has_station,,SystemHasStations,false,
 ability_colonize_abandoned_station_target_station_within_range,,TargetStationWithinDistance,false,400
 ability_colonize_abandoned_station_target_station_colonizable,,TargetStationColonizable,false,
 ability_colonize_abandoned_station_target_station_size_0,,StationMarketIsExactlySize,false,0

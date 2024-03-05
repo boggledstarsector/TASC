@@ -127,6 +127,7 @@ industry_ouyang_optimizer_orbited_planet_not_has_volatiles_plentiful,"$focusMark
 
 industry_perihelion_project_does_have_shortage,"Progress of the Perihelion Project is stalled due to a shortage of resources.",,false,"perihelion_project_does_have_shortage | perihelion_project_does_have_domain_artifacts_shortage"
 
+industry_planet_cracker_orbited_object_is_planet,"$marketName must be orbiting a planet.",,false,"focus_object_is_planet"
 industry_planet_cracker_orbited_planet_is_not_gas_giant,"Gas giants cannot be cracked.",,false,"focus_planet_not_gas_giant"
 industry_planet_cracker_orbited_planet_not_has_tectonic_or_extreme_tectonic_activity,"$focusMarketName already has tectonic activity. Making it worse won't increase ore availability.",,true,"focus_market_has_tectonic_activity | focus_market_has_extreme_tectonic_activity"
 industry_planet_cracker_orbited_planet_not_has_ore_and_rare_ore_ultrarich,"$focusMarketName already has easily accessible ore deposits. Cracking the planet would not yield any improvement.",,true,"focus_market_has_ore_ultrarich | focus_market_has_rare_ore_ultrarich"
@@ -213,6 +214,7 @@ ability_siphon_station_fleet_contains_transplutonics,"Requires $itemQuantity $it
 
 ability_colonize_abandoned_station_player_fleet_not_in_hyperspace,"You cannot colonize stations located in hyperspace.",,false,"player_fleet_not_in_hyperspace"
 ability_colonize_abandoned_station_system_has_jump_points,"You cannot colonize a station in a system with no jump points.",,false,"system_has_jump_points"
+ability_colonize_abandoned_station_system_has_station,"There are no stations in $system.",,false,"ability_colonize_abandoned_station_system_has_station"
 ability_colonize_abandoned_station_target_station_owned_by_player_or_neutral,"You cannot colonize a station that is already controlled by $factionName.",,false,"target_station_owned_by_player_or_neutral"
 ability_colonize_abandoned_station_target_station_not_colonizable,"$stationName is in a state of extreme disrepair and is not a viable target for colonization.",,false,"target_station_not_colonizable"
 ability_colonize_abandoned_station_target_station_within_range,"The station closest to your location is $stationName. Your fleet is $distanceInSu stellar units away. You must be within $requiredDistanceInSu stellar units to colonize the station.",,false,"ability_colonize_abandoned_station_target_station_within_range"

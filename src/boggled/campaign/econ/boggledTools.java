@@ -468,6 +468,7 @@ public class boggledTools {
         addTerraformingRequirementFactory("WorldTypeSupportsResourceImprovement", new BoggledTerraformingRequirementFactory.WorldTypeSupportsResourceImprovement());
 
         addTerraformingRequirementFactory("FocusPlanetType", new BoggledTerraformingRequirementFactory.FocusPlanetType());
+        addTerraformingRequirementFactory("FocusObjectIsPlanet", new BoggledTerraformingRequirementFactory.FocusObjectIsPlanet());
         addTerraformingRequirementFactory("FocusMarketHasCondition", new BoggledTerraformingRequirementFactory.FocusMarketHasCondition());
 
         addTerraformingRequirementFactory("IntegerFromMarketTagSubstring", new BoggledTerraformingRequirementFactory.IntegerFromMarketTagSubstring());
@@ -480,6 +481,7 @@ public class boggledTools {
         addTerraformingRequirementFactory("FleetInHyperspace", new BoggledTerraformingRequirementFactory.FleetInHyperspace());
         addTerraformingRequirementFactory("SystemHasJumpPoints", new BoggledTerraformingRequirementFactory.SystemHasJumpPoints());
         addTerraformingRequirementFactory("SystemHasPlanets", new BoggledTerraformingRequirementFactory.SystemHasPlanets());
+        addTerraformingRequirementFactory("SystemHasStations", new BoggledTerraformingRequirementFactory.SystemHasStations());
         addTerraformingRequirementFactory("TargetPlanetOwnedBy", new BoggledTerraformingRequirementFactory.TargetPlanetOwnedBy());
         addTerraformingRequirementFactory("TargetStationOwnedBy", new BoggledTerraformingRequirementFactory.TargetStationOwnedBy());
         addTerraformingRequirementFactory("TargetPlanetGovernedByPlayer", new BoggledTerraformingRequirementFactory.TargetPlanetGovernedByPlayer());

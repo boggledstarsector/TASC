@@ -9,6 +9,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import static boggled.scripts.BoggledTerraformingRequirement.pass;
+
 public class BoggledProjectRequirementsOR {
     private final String requirementId;
     private final BoggledCommonIndustry.TooltipData requirementTooltip;
@@ -79,7 +81,7 @@ public class BoggledProjectRequirementsOR {
                 numRequirementsSkipped++;
                 continue;
             }
-            requirementsMet = requirementsMet || terraformingRequirement.checkRequirement(ctx);
+            requirementsMet = requirementsMet || pass(terraformingRequirement.checkRequirement(ctx));
         }
         if (numRequirementsSkipped != 0 && numRequirementsSkipped == terraformingRequirements.size()) {
             // If all the requirements are disabled via settings, ignore this requirement

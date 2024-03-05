@@ -37,6 +37,13 @@ public class BoggledTerraformingRequirementFactory {
         }
     }
 
+    public static class FocusObjectIsPlanet implements TerraformingRequirementFactory {
+        @Override
+        public BoggledTerraformingRequirement.TerraformingRequirement constructFromJSON(String id, String[] enableSettings, boolean invert, String data) throws JSONException {
+            return new BoggledTerraformingRequirement.FocusObjectIsPlanet(id, enableSettings, invert);
+        }
+    }
+
     public static class MarketHasCondition implements TerraformingRequirementFactory {
         @Override
         public BoggledTerraformingRequirement.TerraformingRequirement constructFromJSON(String id, String[] enableSettings, boolean invert, String data) {
@@ -332,6 +339,17 @@ public class BoggledTerraformingRequirementFactory {
                 numPlanets = Integer.parseInt(data);
             }
             return new BoggledTerraformingRequirement.SystemHasPlanets(id, enableSettings, invert, numPlanets);
+        }
+    }
+
+    public static class SystemHasStations implements TerraformingRequirementFactory {
+        @Override
+        public BoggledTerraformingRequirement.TerraformingRequirement constructFromJSON(String id, String[] enableSettings, boolean invert, String data) throws JSONException {
+            int numPlanets = 0;
+            if (!data.isEmpty()) {
+                numPlanets = Integer.parseInt(data);
+            }
+            return new BoggledTerraformingRequirement.SystemHasStations(id, enableSettings, invert, numPlanets);
         }
     }
 

@@ -1399,8 +1399,18 @@ public class BoggledTerraformingProjectEffect {
             return mod;
         }
 
-        public ModifierStrings getModifierStrings(BoggledTerraformingRequirement.RequirementContext ctx, Color positiveHighlightColor, Color negativeHighlightColor, TerraformingProjectEffect.DescriptionSource source, boolean invertIncreaseReduce) {
-            return new ModifierStrings(ctx, modifierType, displayType, value, positiveHighlightColor, negativeHighlightColor, source, invertIncreaseReduce);
+        public ModifierStrings getModifierStrings(BoggledTerraformingRequirement.RequirementContext ctx, Color positiveHighlightColor, Color negativeHighlightColor, TerraformingProjectEffect.DescriptionSource source, boolean invertIncreaseReduce, EffectStringVariants effect) {
+            return new ModifierStrings(ctx, modifierType, displayType, value, positiveHighlightColor, negativeHighlightColor, source, invertIncreaseReduce, effect);
+        }
+
+        public static class EffectStringVariants {
+            public String positive;
+            public String negative;
+
+            public EffectStringVariants(String positive, String negative) {
+                this.positive = positive;
+                this.negative = negative;
+            }
         }
 
         public static class ModifierStrings {
@@ -1421,20 +1431,24 @@ public class BoggledTerraformingProjectEffect {
             Color positiveHighlightColor;
             Color negativeHighlightColor;
 
-            private void setToIncrease() {
+            String effect;
+
+            private void setToIncrease(EffectStringVariants effect) {
                 highlightColor = positiveHighlightColor;
                 this.increasesOrReduces = "increases";
                 this.IncreasesOrReduces = "Increases";
                 this.increasedOrReduced = "increased";
                 this.IncreasedOrReduced = "Increased";
+                this.effect = effect.positive;
             }
 
-            private void setToReduce() {
+            private void setToReduce(EffectStringVariants effect) {
                 highlightColor = negativeHighlightColor;
                 this.increasesOrReduces = "reduces";
                 this.IncreasesOrReduces = "Reduces";
                 this.increasedOrReduced = "reduced";
                 this.IncreasedOrReduced = "Reduced";
+                this.effect = effect.negative;
             }
 
             private String formatBonusString(float value, int numPlacesAfterDecimal) {
@@ -1455,23 +1469,23 @@ public class BoggledTerraformingProjectEffect {
                 return value;
             }
 
-            private void setToIncrease(boolean invertIncreaseReduce) {
+            private void setToIncrease(EffectStringVariants effect, boolean invertIncreaseReduce) {
                 if (invertIncreaseReduce) {
-                    setToReduce();
+                    setToReduce(effect);
                 } else {
-                    setToIncrease();
+                    setToIncrease(effect);
                 }
             }
 
-            private void setToReduce(boolean invertIncreaseReduce) {
+            private void setToReduce(EffectStringVariants effect, boolean invertIncreaseReduce) {
                 if (invertIncreaseReduce) {
-                    setToIncrease();
+                    setToIncrease(effect);
                 } else {
-                    setToReduce();
+                    setToReduce(effect);
                 }
             }
 
-            ModifierStrings(BoggledTerraformingRequirement.RequirementContext ctx, StatModType modType, StatModType displayType, float baseValue, Color positiveHighlightColor, Color negativeHighlightColor, TerraformingProjectEffect.DescriptionSource source, boolean invertIncreaseReduce) {
+            ModifierStrings(BoggledTerraformingRequirement.RequirementContext ctx, StatModType modType, StatModType displayType, float baseValue, Color positiveHighlightColor, Color negativeHighlightColor, TerraformingProjectEffect.DescriptionSource source, boolean invertIncreaseReduce, EffectStringVariants effect) {
                 this.positiveHighlightColor = positiveHighlightColor;
                 this.negativeHighlightColor = negativeHighlightColor;
                 suffix = "";
@@ -1483,14 +1497,14 @@ public class BoggledTerraformingProjectEffect {
                         value += ctx.getClosestMarket().getSize();
                     case FLAT: {
                         if (value < 0) {
-                            setToReduce(invertIncreaseReduce);
+                            setToReduce(effect, invertIncreaseReduce);
                             if (   source != TerraformingProjectEffect.DescriptionSource.AI_CORE_DESCRIPTION
                                 && source != TerraformingProjectEffect.DescriptionSource.IMPROVE_DESCRIPTION) {
                                 bonusStringPrefix = "-";
                             }
                             bonusString = formatBonusString(Math.abs(value), 0);
                         } else {
-                            setToIncrease(invertIncreaseReduce);
+                            setToIncrease(effect, invertIncreaseReduce);
                             if (   source != TerraformingProjectEffect.DescriptionSource.AI_CORE_DESCRIPTION
                                 && source != TerraformingProjectEffect.DescriptionSource.IMPROVE_DESCRIPTION) {
                                 bonusStringPrefix = "+";
@@ -1503,9 +1517,9 @@ public class BoggledTerraformingProjectEffect {
                     }
                     case MULT: {
                         if (value < 1) {
-                            setToReduce(invertIncreaseReduce);
+                            setToReduce(effect, invertIncreaseReduce);
                         } else {
-                            setToIncrease(invertIncreaseReduce);
+                            setToIncrease(effect, invertIncreaseReduce);
                         }
                         byOrTo = "by";
                         highlightString = Strings.X + formatBonusString(value, 1);
@@ -1514,9 +1528,9 @@ public class BoggledTerraformingProjectEffect {
                     }
                     case PERCENT: {
                         if (value < 0) {
-                            setToReduce(invertIncreaseReduce);
+                            setToReduce(effect, invertIncreaseReduce);
                         } else {
-                            setToIncrease(invertIncreaseReduce);
+                            setToIncrease(effect, invertIncreaseReduce);
                         }
                         byOrTo = "by";
                         highlightString = formatBonusString(value, 0) + "%";
@@ -1550,19 +1564,29 @@ public class BoggledTerraformingProjectEffect {
         }
 
         protected EffectTooltipPara createTooltipData(BoggledTerraformingRequirement.RequirementContext ctx, String effect, boolean modifyEffectCase, String effectSource, String suffix, DescriptionMode mode, DescriptionSource source, Color positiveHighlight, Color negativeHighlight) {
-            return createTooltipData(ctx, effect ,modifyEffectCase, effectSource, suffix, mode, source, positiveHighlight, negativeHighlight, false);
+            Modifier.EffectStringVariants effectVariants = new Modifier.EffectStringVariants(effect, effect);
+            return createTooltipData(ctx, effectVariants, modifyEffectCase, effectSource, suffix, mode, source, positiveHighlight, negativeHighlight, false);
         }
 
         protected EffectTooltipPara createTooltipData(BoggledTerraformingRequirement.RequirementContext ctx, String effect, boolean modifyEffectCase, String effectSource, String suffix, DescriptionMode mode, DescriptionSource source, Color positiveHighlight, Color negativeHighlight, boolean invertIncreaseReduce) {
-            Modifier.ModifierStrings modStrings = mod.getModifierStrings(ctx, positiveHighlight, negativeHighlight, source, invertIncreaseReduce);
+            Modifier.EffectStringVariants effectVariants = new Modifier.EffectStringVariants(effect, effect);
+            return createTooltipData(ctx, effectVariants, modifyEffectCase, effectSource, suffix, mode, source, positiveHighlight, negativeHighlight, invertIncreaseReduce);
+        }
+
+        protected EffectTooltipPara createTooltipData(BoggledTerraformingRequirement.RequirementContext ctx, Modifier.EffectStringVariants effect, boolean modifyEffectCase, String effectSource, String suffix, DescriptionMode mode, DescriptionSource source, Color positiveHighlight, Color negativeHighlight) {
+            return createTooltipData(ctx, effect, modifyEffectCase, effectSource, suffix, mode, source, positiveHighlight, negativeHighlight, false);
+        }
+
+        protected EffectTooltipPara createTooltipData(BoggledTerraformingRequirement.RequirementContext ctx, Modifier.EffectStringVariants effect, boolean modifyEffectCase, String effectSource, String suffix, DescriptionMode mode, DescriptionSource source, Color positiveHighlight, Color negativeHighlight, boolean invertIncreaseReduce) {
+            Modifier.ModifierStrings modStrings = mod.getModifierStrings(ctx, positiveHighlight, negativeHighlight, source, invertIncreaseReduce, effect);
             String text;
             if (source == DescriptionSource.POST_DEMAND_SECTION) {
-                text = ucFirst(effect, modifyEffectCase) + ": " + modStrings.bonusStringPrefix + modStrings.bonusString;
+                text = ucFirst(modStrings.effect, modifyEffectCase) + ": " + modStrings.bonusStringPrefix + modStrings.bonusString;
             } else {
                 if (mode == DescriptionMode.APPLIED) {
-                    text = ucFirst(effect, modifyEffectCase) + " " + modStrings.increasedOrReduced + " " + modStrings.byOrTo + " " + modStrings.bonusString;
+                    text = ucFirst(modStrings.effect, modifyEffectCase) + " " + modStrings.increasedOrReduced + " " + modStrings.byOrTo + " " + modStrings.bonusString;
                 } else {
-                    text = modStrings.IncreasesOrReduces + " " + lcFirst(effect, modifyEffectCase) + " " + modStrings.byOrTo + " " + modStrings.bonusString;
+                    text = modStrings.IncreasesOrReduces + " " + lcFirst(modStrings.effect, modifyEffectCase) + " " + modStrings.byOrTo + " " + modStrings.bonusString;
                 }
             }
 
@@ -1695,7 +1719,8 @@ public class BoggledTerraformingProjectEffect {
 
         @Override
         protected void addTooltipInfoImpl(BoggledTerraformingRequirement.RequirementContext ctx, Map<String, EffectTooltipPara> effectTypeToPara, String effectSource, DescriptionMode mode, DescriptionSource source) {
-            effectTypeToPara.put("ModifyColonyAccessibility", createTooltipData(ctx, "accessibility bonus", true, effectSource, "", mode, source, Misc.getHighlightColor(), Misc.getNegativeHighlightColor()));
+            Modifier.EffectStringVariants effectVariants = new Modifier.EffectStringVariants("accessibility bonus", "accessibility penalty");
+            effectTypeToPara.put("ModifyColonyAccessibility", createTooltipData(ctx, effectVariants, true, effectSource, "", mode, source, Misc.getHighlightColor(), Misc.getNegativeHighlightColor()));
         }
     }
 

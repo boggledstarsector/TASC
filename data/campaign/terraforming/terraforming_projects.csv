@@ -481,9 +481,11 @@ industry_mesozoic_park_beta_core,boggledTerraformingContentEnabled | boggledMeso
 industry_mesozoic_park_gamma_core,boggledTerraformingContentEnabled | boggledMesozoicParkEnabled,industry,,,,,,,,,,,"[ 'mesozoic_park_gamma_core_increase_income_bonus' ]",,,,
 industry_ouyang_optimizer,boggledTerraformingContentEnabled | boggledOuyangOptimizerEnabled,industry,Ouyang optimization,,Completed,"[
 	{ 'requirement_id' : 'industry_colony_is_station', 'and_then' : [
-		{ 'requirement_id' : 'industry_ouyang_optimizer_orbited_planet_is_gas_giant' },
-		{ 'requirement_id' : 'industry_ouyang_optimizer_orbited_planet_not_has_extreme_weather' },
-		{ 'requirement_id' : 'industry_ouyang_optimizer_orbited_planet_not_has_volatiles_plentiful' }
+		{ 'requirement_id' : 'industry_planet_cracker_orbited_object_is_planet', 'and_then' : [
+			{ 'requirement_id' : 'industry_ouyang_optimizer_orbited_planet_is_gas_giant' },
+			{ 'requirement_id' : 'industry_ouyang_optimizer_orbited_planet_not_has_extreme_weather' },
+			{ 'requirement_id' : 'industry_ouyang_optimizer_orbited_planet_not_has_volatiles_plentiful' }
+		] }
 	] }
 ]",,200,,,,"[
 	'focus_market_progress_volatiles_ouyang_optimizer',
@@ -508,9 +510,11 @@ industry_perihelion_project,boggledDomainTechContentEnabled | boggledPerihelionP
 ]",,,,
 industry_planet_cracker,boggledTerraformingContentEnabled | boggledPlanetCrackerEnabled,industry,Planet cracking,,Completed,"[
 	{ 'requirement_id' : 'industry_colony_is_station', 'and_then' : [
-		{ 'requirement_id' : 'industry_planet_cracker_orbited_planet_is_not_gas_giant' },
-		{ 'requirement_id' : 'industry_planet_cracker_orbited_planet_not_has_tectonic_or_extreme_tectonic_activity' },
-		{ 'requirement_id' : 'industry_planet_cracker_orbited_planet_not_has_ore_and_rare_ore_ultrarich' }
+		{ 'requirement_id' : 'industry_planet_cracker_orbited_object_is_planet', 'and_then' : [
+			{ 'requirement_id' : 'industry_planet_cracker_orbited_planet_is_not_gas_giant' },
+			{ 'requirement_id' : 'industry_planet_cracker_orbited_planet_not_has_tectonic_or_extreme_tectonic_activity' },
+			{ 'requirement_id' : 'industry_planet_cracker_orbited_planet_not_has_ore_and_rare_ore_ultrarich' }
+		] }
 	] }
 ]",,200,,,,"[
 	'focus_market_progress_ore_planet_cracker',
@@ -778,10 +782,12 @@ boggled_construct_siphon_station,boggledSiphonStationEnabled,ability,"Construct 
 boggled_colonize_abandoned_station,boggledStationColonizationEnabled,ability,"Colonize an abandoned station.",,,"[
 	{ 'requirement_id' : 'ability_colonize_abandoned_station_player_fleet_not_in_hyperspace', 'and_then' : [
 		{ 'requirement_id' : 'ability_colonize_abandoned_station_system_has_jump_points', 'and_then' : [
-			{ 'requirement_id' : 'ability_colonize_abandoned_station_target_station_within_range' },
-			{ 'requirement_id' : 'ability_colonize_abandoned_station_target_station_owned_by_player_or_neutral' },
-			{ 'requirement_id' : 'ability_colonize_abandoned_station_target_station_size_0', 'and_then' : [
-				{ 'requirement_id' : 'ability_colonize_abandoned_station_target_station_colonizable' }
+			{ 'requirement_id' : 'ability_colonize_abandoned_station_system_has_station', 'and_then' : [
+				{ 'requirement_id' : 'ability_colonize_abandoned_station_target_station_within_range' },
+				{ 'requirement_id' : 'ability_colonize_abandoned_station_target_station_owned_by_player_or_neutral' },
+				{ 'requirement_id' : 'ability_colonize_abandoned_station_target_station_size_0', 'and_then' : [
+					{ 'requirement_id' : 'ability_colonize_abandoned_station_target_station_colonizable' }
+				] }
 			] }
 		] }
 	] },
