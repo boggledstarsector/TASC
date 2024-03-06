@@ -2028,7 +2028,11 @@ public class BoggledTerraformingProjectEffect {
             }
             MarketAPI market = targetIndustry.getMarket();
             for (String conditionId : conditionIds) {
-                market.unsuppressCondition(conditionId);
+                if (conditionId.equals(Conditions.WATER_SURFACE) && market.hasCondition(conditionId)) {
+                    market.getHazard().unmodify(id);
+                } else {
+                    market.unsuppressCondition(conditionId);
+                }
             }
         }
 
@@ -2039,31 +2043,36 @@ public class BoggledTerraformingProjectEffect {
                 return;
             }
 
-            EffectTooltipPara ret = new EffectTooltipPara();
-
-            StringBuilder prefix;
-            if (mode == DescriptionMode.TO_APPLY) {
-                prefix = new StringBuilder("If operational, would counter the effects of:");
-            } else {
-                prefix = new StringBuilder("Countering the effects of:");
+            EffectTooltipPara ret = effectTypeToPara.get("SuppressConditions");
+            if (ret == null) {
+                ret = new EffectTooltipPara();
+                effectTypeToPara.put("SuppressConditions", ret);
+                if (mode == DescriptionMode.TO_APPLY) {
+                    ret.prefix = "If operational, would counter the effects of:";
+                } else {
+                    ret.prefix = "Countering the effects of:";
+                }
             }
+
+            List<String> infix = new ArrayList<>();
 
             MarketAPI targetMarket = targetIndustry.getMarket();
             for (String conditionId : conditionIds) {
                 if (targetMarket.hasCondition(conditionId)) {
                     String conditionName = Global.getSettings().getMarketConditionSpec(conditionId).getName();
-                    prefix.append("\n           ").append(conditionName);
+                    infix.add("\n           " + conditionName);
                     ret.highlights.add(conditionName);
                     ret.highlightColors.add(Misc.getHighlightColor());
                 }
             }
             if (ret.highlights.isEmpty()) {
-                prefix.append("\n           (None)");
+                ret.suffix = "\n           (None)";
                 ret.highlights.add("(None)");
                 ret.highlightColors.add(Misc.getGrayColor());
+            } else {
+                ret.infix.addAll(infix);
+                ret.suffix = "";
             }
-            ret.prefix = prefix.toString();
-            effectTypeToPara.put("SuppressConditions", ret);
         }
     }
 

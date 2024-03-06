@@ -89,6 +89,7 @@ system_add_coronal_tap,,SystemAddCoronalTap,"coronal_tap"
 market_remove_perihelion_project,,MarketRemoveIndustry,"BOGGLED_PERIHELION_PROJECT"
 ,,
 attach_project_to_atmosphere_processor,,AttachProjectToIndustry,"{ 'industry_id' : 'BOGGLED_ATMOSPHERE_PROCESSOR' }"
+attach_project_to_genelab,,AttachProjectToIndustry,"{ 'industry_id' : 'BOGGLED_GENELAB' }"
 ,,
 add_corrupted_nanoforge_to_storage,,AddItemToSubmarket,"{ 'submarket_id' : 'storage', 'special_item_id' : 'corrupted_nanoforge', 'quantity' : 1 }"
 add_pristine_nanoforge_to_storage,,AddItemToSubmarket,"{ 'submarket_id' : 'storage', 'special_item_id' : 'pristine_nanoforge', 'quantity' : 1 }"

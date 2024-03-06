@@ -221,7 +221,7 @@ toxic_atmosphere_condition_improvement,boggledTerraformingContentEnabled,terrafo
 irradiated_condition_improvement,boggledTerraformingContentEnabled | boggledTerraformingRemoveRadiationProjectEnabled,terraforming,"Remove atmospheric radiation",,Completed,"[
 	{ 'requirement_id' : 'terraforming_colony_irradiated' },
 	{ 'requirement_id' : 'terraforming_colony_has_genelab' }
-]",,200,[ 'condition_improvement_setting' ],,,"[ 'market_remove_irradiated' ]",,,,,
+]",,200,[ 'condition_improvement_setting' ],,,"[ 'market_remove_irradiated' ]","[ 'attach_project_to_genelab' ]",,,,
 remove_atmosphere_condition_improvement,boggledTerraformingContentEnabled | boggledTerraformingRemoveAtmosphereProjectEnabled,terraforming,"Remove the atmosphere",,Completed,"[
 	{ 'requirement_id' : 'terraforming_colony_has_atmosphere' },
 	{ 'requirement_id' : 'terraforming_colony_barren_or_frozen' },
