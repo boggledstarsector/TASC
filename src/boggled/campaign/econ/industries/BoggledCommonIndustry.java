@@ -240,11 +240,11 @@ public class BoggledCommonIndustry {
     }
 
     private boolean marketSuitableHidden(BoggledTerraformingRequirement.RequirementContext ctx) {
-        boolean anyProjectValid = false;
+        boolean allProjectValid = true;
         for (BoggledTerraformingProject.ProjectInstance project : projects) {
-            anyProjectValid = anyProjectValid || project.getProject().requirementsHiddenMet(ctx);
+            allProjectValid = allProjectValid && project.getProject().requirementsHiddenMet(ctx);
         }
-        return anyProjectValid;
+        return allProjectValid;
     }
 
     public boolean marketSuitableBoth(BoggledTerraformingRequirement.RequirementContext ctx) {
