@@ -237,6 +237,8 @@ public class boggledTools {
 
         public static final String terraformingController = "boggledTerraformingController";
 
+        public static final String stationGreekLetterPrefix = "boggled_greek_";
+
         public static final String astropolisStation = "boggled_astropolis";
         public static final String miningStation = "boggled_mining";
         public static final String siphonStation = "boggled_siphon";

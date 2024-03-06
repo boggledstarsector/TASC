@@ -821,6 +821,16 @@ public class BoggledTerraformingProjectEffect {
             return -1;
         }
 
+        protected String getStationGreekLetterTag(SectorEntityToken station) {
+            Collection<String> tags = station.getTags();
+            for (String tag : tags) {
+                if (tag.startsWith(boggledTools.BoggledTags.stationGreekLetterPrefix)) {
+                    return tag;
+                }
+            }
+            return null;
+        }
+
         protected SectorEntityToken compareAndGetLatest(List<String> greekAlphabet, SectorEntityToken o1, SectorEntityToken o2) {
             if (o1 == null) {
                 return o2;
@@ -828,12 +838,21 @@ public class BoggledTerraformingProjectEffect {
             if (o2 == null) {
                 return o1;
             }
-            int o1NumIndexStart = o1.getName().indexOf('-');
-            int o2NumIndexStart = o2.getName().indexOf('-');
+            String o1Tag = getStationGreekLetterTag(o1);
+            String o2Tag = getStationGreekLetterTag(o2);
+            if (o1Tag == null) {
+                return o2;
+            }
+            if (o2Tag == null) {
+                return o1;
+            }
+
+            int o1NumIndexStart = o1Tag.indexOf('-');
+            int o2NumIndexStart = o2Tag.indexOf('-');
             if (o1NumIndexStart == -1 && o2NumIndexStart == -1) {
                 // Neither has a number at the end, so we compare according to the index in the alphabet
-                int o1GreekIndex = greekAlphabetIndexOf(greekAlphabet, o1.getName());
-                int o2GreekIndex = greekAlphabetIndexOf(greekAlphabet, o2.getName());
+                int o1GreekIndex = greekAlphabetIndexOf(greekAlphabet, o1Tag);
+                int o2GreekIndex = greekAlphabetIndexOf(greekAlphabet, o2Tag);
                 int comp = Integer.compare(o1GreekIndex, o2GreekIndex);
                 if (comp < 0) {
                     return o2;
@@ -853,8 +872,8 @@ public class BoggledTerraformingProjectEffect {
                 return o1;
             }
             // They both have a number at the end, so compare that
-            int o1Num = Integer.parseInt(o1.getName().substring(o1NumIndexStart + 1));
-            int o2Num = Integer.parseInt(o2.getName().substring(o2NumIndexStart + 1));
+            int o1Num = Integer.parseInt(o1Tag.substring(o1NumIndexStart + 1));
+            int o2Num = Integer.parseInt(o2Tag.substring(o2NumIndexStart + 1));
             int comp = Integer.compare(o1Num, o2Num);
             if (comp < 0) {
                 return o2;
@@ -862,8 +881,8 @@ public class BoggledTerraformingProjectEffect {
                 return o1;
             }
             // The numbers are the same, so compare based on the index in the alphabet
-            int o1GreekIndex = greekAlphabetIndexOf(greekAlphabet, o1.getName().substring(0, o1NumIndexStart));
-            int o2GreekIndex = greekAlphabetIndexOf(greekAlphabet, o2.getName().substring(0, o2NumIndexStart));
+            int o1GreekIndex = greekAlphabetIndexOf(greekAlphabet, o1Tag.substring(0, o1NumIndexStart));
+            int o2GreekIndex = greekAlphabetIndexOf(greekAlphabet, o2Tag.substring(0, o2NumIndexStart));
             comp = Integer.compare(o1GreekIndex, o2GreekIndex);
             if (comp < 0) {
                 return o2;
@@ -916,10 +935,12 @@ public class BoggledTerraformingProjectEffect {
 
             String id = stationType + numStations + "_" + UUID.randomUUID();
 
-            SectorEntityToken newStation = starSystem.addCustomEntity(id, targetPlanet.getName() + " " + stationName + " " + getColonyNameString(numStations), customEntityStationTag + variantLetter + "_small", playerFactionId);
-            SectorEntityToken newStationLights = starSystem.addCustomEntity(id + "Lights", targetPlanet.getName() + " " + stationName + " " + getColonyNameString(numStations) + " Lights Overlay", customEntityStationTag + variantLetter + "_small_lights_overlay", playerFactionId);
+            String colonyNameString = getColonyNameString(numStations);
+            SectorEntityToken newStation = starSystem.addCustomEntity(id, targetPlanet.getName() + " " + stationName + " " + colonyNameString, customEntityStationTag + variantLetter + "_small", playerFactionId);
+            SectorEntityToken newStationLights = starSystem.addCustomEntity(id + "Lights", targetPlanet.getName() + " " + stationName + " " + colonyNameString + " Lights Overlay", customEntityStationTag + variantLetter + "_small_lights_overlay", playerFactionId);
 
             newStation.addTag(boggledTools.BoggledTags.stationNamePrefix + stationName);
+            newStation.addTag(boggledTools.BoggledTags.stationGreekLetterPrefix + colonyNameString);
 
             float baseOrbitRadius = targetPlanet.getRadius() + this.orbitRadius;
             int orbitRadiusMultiplier = numStations / numStationsPerLayer;
