@@ -1,0 +1,43 @@
+id,enable_settings,requirement_type,invert,data
+aotd_domain_archaeology,,AOTDResearchRequirement,false,"{ 'research_id' : 'tasc_domain_excavation' }"
+
+aotd_terraforming_templates,,AOTDResearchRequirement,false,"{ 'research_id' : 'tasc_terraforming_templates' }"
+aotd_ai_algorithms,,AOTDResearchRequirement,false,"{ 'research_id' : 'tasc_ai_algorithms' }"
+aotd_station_restoration,,AOTDResearchRequirement,false,"{ 'research_id' : 'tasc_station_restoration' }"
+aotd_atmosphere_manipulation,,AOTDResearchRequirement,false,"{ 'research_id' : 'tasc_atmosphere_manipulation' }"
+aotd_genetic_manipulation,,AOTDResearchRequirement,false,"{ 'research_id' : 'tasc_genetic_manipulation' }"
+
+aotd_advanced_terraforming,,AOTDResearchRequirement,false,"{ 'research_id' : 'tasc_advanced_terraforming' }"
+aotd_remnant_algorithms,,AOTDResearchRequirement,false,"{ 'research_id' : 'tasc_remnant_algorithms' }"
+aotd_astropolis_construction,,AOTDResearchRequirement,false,"{ 'research_id' : 'tasc_astropolis_construction' }"
+aotd_chameleon,,AOTDResearchRequirement,false,"{ 'research_id' : 'tasc_chameleon' }"
+aotd_magnetoshield,,AOTDResearchRequirement,false,"{ 'research_id' : 'tasc_magnetoshield' }"
+aotd_cloning_technology,,AOTDResearchRequirement,false,"{ 'research_id' : 'tasc_cloning_technology' }"
+aotd_limelight_network,,AOTDResearchRequirement,false,"{ 'research_id' : 'tasc_limelight_network' }"
+aotd_tectonic_manipulation,,AOTDResearchRequirement,false,"{ 'research_id' : 'tasc_tectonic_manipulation' }"
+aotd_gravity_manipulation,,AOTDResearchRequirement,false,"{ 'research_id' : 'tasc_gravity_manipulation' }"
+
+aotd_light_manipulation,,AOTDResearchRequirement,false,"{ 'research_id' : 'tasc_light_manipulation' }"
+aotd_industrial_stations,,AOTDResearchRequirement,false,"{ 'research_id' : 'tasc_industrial_stations' }"
+aotd_remnant_station,,AOTDResearchRequirement,false,"{ 'research_id' : 'tasc_remnant_station' }"
+aotd_planet_cracking,,AOTDResearchRequirement,false,"{ 'research_id' : 'tasc_planet_cracking' }"
+aotd_ouyang_optimizer,,AOTDResearchRequirement,false,"{ 'research_id' : 'tasc_ouyang_optimizer' }"
+
+aotd_perihelion_project,,AOTDResearchRequirement,false,"{ 'research_id' : 'tasc_perihelion_project' }"
+
+aotd_market_has_supplyheavy_with_corrupted_nanoforge,,MarketHasIndustryWithItem,false,"{
+	'industry_id' : 'supplyheavy',
+	'item_id' : 'corrupted_nanoforge'
+}"
+aotd_market_has_supplyheavy_with_pristine_nanoforge,,MarketHasIndustryWithItem,false,"{
+	'industry_id' : 'supplyheavy',
+	'item_id' : 'pristine_nanoforge'
+}"
+aotd_market_has_weaponheavy_with_corrupted_nanoforge,,MarketHasIndustryWithItem,false,"{
+	'industry_id' : 'weaponheavy',
+	'item_id' : 'corrupted_nanoforge'
+}"
+aotd_market_has_weaponheavy_with_pristine_nanoforge,,MarketHasIndustryWithItem,false,"{
+	'industry_id' : 'weaponheavy',
+	'item_id' : 'pristine_nanoforge'
+}"

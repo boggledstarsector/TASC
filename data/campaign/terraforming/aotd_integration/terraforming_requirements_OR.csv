@@ -1,0 +1,38 @@
+id,tooltip,tooltip_highlights,invert_all,requirements
+aotd_domain_archaeology,"You must research $researchName first","[ '$researchName' ]",false,"aotd_domain_archaeology"
+
+aotd_terraforming_templates,"You must research $researchName first","[ '$researchName' ]",false,"aotd_terraforming_templates"
+aotd_ai_algorithms,"You must research $researchName first","[ '$researchName' ]",false,"aotd_ai_algorithms"
+aotd_station_restoration,"You must research $researchName first","[ '$researchName' ]",false,"aotd_station_restoration"
+aotd_atmosphere_manipulation,"You must research $researchName first","[ '$researchName' ]",false,"aotd_atmosphere_manipulation"
+aotd_genetic_manipulation,"You must research $researchName first","[ '$researchName' ]",false,"aotd_genetic_manipulation"
+
+aotd_advanced_terraforming,"You must research $researchName first","[ '$researchName' ]",false,"aotd_advanced_terraforming"
+aotd_remnant_algorithms,"You must research $researchName first","[ '$researchName' ]",false,"aotd_remnant_algorithms"
+aotd_astropolis_construction,"You must research $researchName first","[ '$researchName' ]",false,"aotd_astropolis_construction"
+aotd_chameleon,"You must research $researchName first","[ '$researchName' ]",false,"aotd_chameleon"
+aotd_magnetoshield,"You must research $researchName first","[ '$researchName' ]",false,"aotd_magnetoshield"
+aotd_cloning_technology,"You must research $researchName first","[ '$researchName' ]",false,"aotd_cloning_technology"
+aotd_limelight_network,"You must research $researchName first","[ '$researchName' ]",false,"aotd_limelight_network"
+aotd_tectonic_manipulation,"You must research $researchName first","[ '$researchName' ]",false,"aotd_tectonic_manipulation"
+aotd_gravity_manipulation,"You must research $researchName first","[ '$researchName' ]",false,"aotd_gravity_manipulation"
+
+aotd_light_manipulation,"You must research $researchName first","[ '$researchName' ]",false,"aotd_light_manipulation"
+aotd_industrial_stations,"You must research $researchName first","[ '$researchName' ]",false,"aotd_industrial_stations"
+aotd_remnant_station,"You must research $researchName first","[ '$researchName' ]",false,"aotd_remnant_station"
+aotd_planet_cracking,"You must research $researchName first","[ '$researchName' ]",false,"aotd_planet_cracking"
+aotd_ouyang_optimizer,"You must research $researchName first","[ '$researchName' ]",false,"aotd_ouyang_optimizer"
+
+aotd_perihelion_project,"You must research $researchName first","[ '$researchName' ]",false,"aotd_perihelion_project"
+
+aotd_planet_type_change,"You must research $researchName first","[ '$researchName' ]",false,"aotd_terraforming_templates"
+aotd_resource_improvements,"You must research $researchName first","[ '$researchName' ]",false,"aotd_advanced_terraforming"
+
+aotd_station_restoration,"You must research $researchName first","[ '$researchName' ]",false,"aotd_station_restoration"
+aotd_astropolis_construction,"You must research $researchName first","[ '$researchName' ]",false,"aotd_astropolis_construction"
+aotd_industrial_construction,"You must research $researchName first","[ '$researchName' ]",false,"aotd_industrial_stations"
+
+aotd_industry_colony_has_civilian_heavy_production_with_corrupted_nanoforge,"Pollution cannot be removed while $Industry has $IndustryItem.",,false,"aotd_market_has_supplyheavy_with_corrupted_nanoforge"
+aotd_industry_colony_has_civilian_heavy_production_with_pristine_nanoforge,"Pollution cannot be removed while $Industry has $IndustryItem.",,false,"aotd_market_has_supplyheavy_with_pristine_nanoforge"
+aotd_industry_colony_has_militarized_heavy_industry_with_corrupted_nanoforge,"Pollution cannot be removed while $Industry has $IndustryItem.",,false,"aotd_market_has_weaponheavy_with_corrupted_nanoforge"
+aotd_industry_colony_has_militarized_heavy_industry_with_pristine_nanoforge,"Pollution cannot be removed while $Industry has $IndustryItem.",,false,"aotd_market_has_weaponheavy_with_pristine_nanoforge"

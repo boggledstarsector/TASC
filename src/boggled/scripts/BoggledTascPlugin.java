@@ -248,6 +248,16 @@ public class BoggledTascPlugin extends BaseModPlugin {
         }
     }
 
+    private static JSONArray concatJSONArray(JSONArray... arrs) throws JSONException {
+        JSONArray ret = new JSONArray();
+        for (JSONArray arr : arrs) {
+            for (int i = 0; i < arr.length(); ++i) {
+                ret.put(arr.get(i));
+            }
+        }
+        return ret;
+    }
+
     public static void loadSettingsFromJSON() {
         if (lastGameLoad != thisGameLoad) {
             return;
@@ -274,6 +284,14 @@ public class BoggledTascPlugin extends BaseModPlugin {
             // And finally mods
             JSONArray industryOptionOverrides = settings.getMergedSpreadsheetDataForMod("id", "data/campaign/terraforming/industry_options_mods.csv", boggledTools.BoggledMods.tascModId);
             JSONArray terraformingProjectOverrides = settings.getMergedSpreadsheetDataForMod("id", "data/campaign/terraforming/terraforming_projects_mods.csv", boggledTools.BoggledMods.tascModId);
+
+            if (aotdEnabled) {
+                JSONArray aotdRequirement = settings.getMergedSpreadsheetDataForMod("id", "data/campaign/terraforming/aotd_integration/terraforming_requirement.csv", boggledTools.BoggledMods.tascModId);
+                JSONArray aotdRequirements = settings.getMergedSpreadsheetDataForMod("id", "data/campaign/terraforming/aotd_integration/terraforming_requirements_OR.csv", boggledTools.BoggledMods.tascModId);
+
+                terraformingRequirement = concatJSONArray(terraformingRequirement, aotdRequirement);
+                terraformingRequirements = concatJSONArray(terraformingRequirements, aotdRequirements);
+            }
 
             boggledTools.initialiseResourceProgressionsFromJSON(resourceProgressions);
             boggledTools.initialiseResourceLimitsFromJSON(resourceLimits);
