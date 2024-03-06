@@ -181,6 +181,17 @@ add_mining_station_to_entity,,AddStationToAsteroids,"{
 		'industries_to_queue' : [ 'mining' ]
 	},
 }"
+aotd_add_mining_station_to_entity,,AddStationToAsteroids,"{
+	'station_type' : 'boggled_mining',
+	'station_name' : 'Mining Station',
+	'num_stations_per_layer' : 8,
+	'orbit_radius' : 450,
+
+	'station_construction_data' : {
+		'resources_to_highlight' : [ 'ore', 'rare_ore' ],
+		'industries_to_queue' : [ 'extractive' ]
+	},
+}"
 ,,
 ability_siphon_station_remove_crew_from_fleet,,RemoveItemFromFleetStorage,"{
 	'commodity_id' : 'crew',
@@ -215,6 +226,17 @@ add_siphon_station_to_orbit,,AddStationToOrbit,"{
 	'station_construction_data' : {
 		'resources_to_highlight' : [ 'volatiles' ],
 		'industries_to_queue' : [ 'mining' ]
+	},
+}"
+aotd_add_siphon_station_to_orbit,,AddStationToOrbit,"{
+	'station_type' : 'boggled_siphon',
+	'station_name' : 'Siphon Station',
+	'num_stations_per_layer' : 8,
+	'orbit_radius' : 50,
+
+	'station_construction_data' : {
+		'resources_to_highlight' : [ 'volatiles' ],
+		'industries_to_queue' : [ 'extractive' ]
 	},
 }"
 ,,
@@ -252,6 +274,22 @@ colonize_abandoned_station,,ColonizeAbandonedStation,"{
 		'boggled_siphon' : {
 			'resources_to_highlight' : [ 'volatiles' ],
 			'industries_to_queue' : [ 'mining' ]
+		},
+		'boggled_gatekeeper_station' : {
+			'industries_to_queue' : [ 'ASTRAL_GATE' ]
+		}
+	}
+}"
+aotd_colonize_abandoned_station,,ColonizeAbandonedStation,"{
+	'station_colonization_data' : {
+		'boggled_astropolis' : {},
+		'boggled_mining' : {
+			'resources_to_highlight' : [ 'ore', 'rare_ore' ],
+			'industries_to_queue' : [ 'extractive' ]
+		},
+		'boggled_siphon' : {
+			'resources_to_highlight' : [ 'volatiles' ],
+			'industries_to_queue' : [ 'extractive' ]
 		},
 		'boggled_gatekeeper_station' : {
 			'industries_to_queue' : [ 'ASTRAL_GATE' ]
@@ -538,3 +576,68 @@ remnant_station_improve_stability_bonus,,ModifyColonyStability,"{ 'modifier_type
 stellar_reflector_suppress_conditions,,SuppressConditions,"[ 'hot', 'cold', 'poor_light' ]"
 stellar_reflector_add_stellar_reflectors_to_market,,AddStellarReflectorsToOrbit,
 stellar_reflector_array_add_solar_array_condition,,MarketAddCondition,solar_array
+
+ai_mining_drones_alpha_core_effect_to_extractive,,EffectToIndustry,"{
+	'industry_id' : 'extractive',
+	'effect_id' : 'ai_mining_drones_alpha_core_bonus_to_mining'
+}"
+ai_mining_drones_beta_core_effect_to_extractive,,EffectToIndustry,"{
+	'industry_id' : 'extractive',
+	'effect_id' : 'ai_mining_drones_beta_core_bonus_to_mining'
+}"
+ai_mining_drones_gamma_core_effect_to_extractive,,EffectToIndustry,"{
+	'industry_id' : 'extractive',
+	'effect_id' : 'ai_mining_drones_gamma_core_bonus_to_mining'
+}"
+
+ai_mining_drones_alpha_core_effect_to_extractive,,EffectToIndustry,"{
+	'industry_id' : 'extractive',
+	'effect_id' : 'ai_mining_drones_alpha_core_bonus_to_mining'
+}"
+ai_mining_drones_beta_core_effect_to_extractive,,EffectToIndustry,"{
+	'industry_id' : 'extractive',
+	'effect_id' : 'ai_mining_drones_beta_core_bonus_to_mining'
+}"
+ai_mining_drones_gamma_core_effect_to_extractive,,EffectToIndustry,"{
+	'industry_id' : 'extractive',
+	'effect_id' : 'ai_mining_drones_gamma_core_bonus_to_mining'
+}"
+
+ai_mining_drones_alpha_core_effect_to_fracking,,EffectToIndustry,"{
+	'industry_id' : 'fracking',
+	'effect_id' : 'ai_mining_drones_alpha_core_bonus_to_mining'
+}"
+ai_mining_drones_beta_core_effect_to_fracking,,EffectToIndustry,"{
+	'industry_id' : 'fracking',
+	'effect_id' : 'ai_mining_drones_beta_core_bonus_to_mining'
+}"
+ai_mining_drones_gamma_core_effect_to_fracking,,EffectToIndustry,"{
+	'industry_id' : 'fracking',
+	'effect_id' : 'ai_mining_drones_gamma_core_bonus_to_mining'
+}"
+
+ai_mining_drones_alpha_core_effect_to_sublimation,,EffectToIndustry,"{
+	'industry_id' : 'sublimation',
+	'effect_id' : 'ai_mining_drones_alpha_core_bonus_to_mining'
+}"
+ai_mining_drones_beta_core_effect_to_sublimation,,EffectToIndustry,"{
+	'industry_id' : 'sublimation',
+	'effect_id' : 'ai_mining_drones_beta_core_bonus_to_mining'
+}"
+ai_mining_drones_gamma_core_effect_to_sublimation,,EffectToIndustry,"{
+	'industry_id' : 'sublimation',
+	'effect_id' : 'ai_mining_drones_gamma_core_bonus_to_mining'
+}"
+
+ai_mining_drones_alpha_core_effect_to_benefication,,EffectToIndustry,"{
+	'industry_id' : 'benefication',
+	'effect_id' : 'ai_mining_drones_alpha_core_bonus_to_mining'
+}"
+ai_mining_drones_beta_core_effect_to_benefication,,EffectToIndustry,"{
+	'industry_id' : 'benefication',
+	'effect_id' : 'ai_mining_drones_beta_core_bonus_to_mining'
+}"
+ai_mining_drones_gamma_core_effect_to_benefication,,EffectToIndustry,"{
+	'industry_id' : 'benefication',
+	'effect_id' : 'ai_mining_drones_gamma_core_bonus_to_mining'
+}"

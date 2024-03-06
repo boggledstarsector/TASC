@@ -13,6 +13,7 @@ import com.fs.starfarer.api.util.Misc;
 import boggled.campaign.econ.boggledTools;
 import boggled.campaign.econ.industries.BoggledCommonIndustry;
 import boggled.campaign.econ.industries.BoggledIndustryInterface;
+import data.kaysaar.aotd.vok.scripts.research.AoTDMainResearchManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -1681,6 +1682,24 @@ public class BoggledTerraformingRequirement {
                 return req.checkRequirement(ctx);
             }
             return result(true);
+        }
+    }
+
+    public static class AOTDResearchRequirement extends BoggledTerraformingRequirement.TerraformingRequirement {
+        String researchId;
+        protected AOTDResearchRequirement(String id, String[] enableSettings, boolean invert, String researchId) {
+            super(id, enableSettings, invert);
+            this.researchId = researchId;
+        }
+
+        @Override
+        protected BoggledTerraformingRequirement.RequirementResult checkRequirementImpl(BoggledTerraformingRequirement.RequirementContext requirementContext) {
+            return result(AoTDMainResearchManager.getInstance().getManagerForPlayer().haveResearched(researchId));
+        }
+
+        @Override
+        public void addTokenReplacements(BoggledTerraformingRequirement.RequirementContext ctx, Map<String, String> tokenReplacements) {
+            tokenReplacements.put("$researchName", AoTDMainResearchManager.getInstance().getManagerForPlayer().findNameOfTech(researchId).Name);
         }
     }
 }

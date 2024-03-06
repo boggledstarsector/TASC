@@ -360,10 +360,12 @@ public class BoggledTerraformingProject {
             for (RequirementsWithId reqWithId : requirements) {
                 if (reqWithId.id.equals(reqAddInfo.containingId)) {
                     req = reqWithId.requirements;
+                    break;
                 }
             }
             if (req == null) {
-                continue;
+                req = new BoggledProjectRequirementsAND();
+                requirements.add(new RequirementsWithId(reqAddInfo.containingId, req));
             }
             addProjectRequirements(req, reqAddInfo.requirements);
         }

@@ -19,6 +19,12 @@ import org.json.JSONArray;
 import org.json.JSONException;
 
 import java.io.IOException;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
+import static java.util.Arrays.asList;
 
 public class BoggledTascPlugin extends BaseModPlugin {
     static {
@@ -39,6 +45,8 @@ public class BoggledTascPlugin extends BaseModPlugin {
 
     static int lastGameLoad = 0;
     static int thisGameLoad = 0;
+
+    static boolean aotdEnabled = Global.getSettings().getModManager().isModEnabled("aotd_vok");
 
     public void applyStationSettingsToAllStationsInSector() {
         if(boggledTools.getBooleanSetting("boggledApplyStationSettingsToAllStationsInSector")) {
@@ -83,7 +91,7 @@ public class BoggledTascPlugin extends BaseModPlugin {
     }
 
     public void applyTerraformingAbilitiesPerSettingsFile() {
-        if(boggledTools.getBooleanSetting(boggledTools.BoggledSettings.terraformingContentEnabled)) {
+        if(boggledTools.getBooleanSetting(boggledTools.BoggledSettings.terraformingContentEnabled) && !aotdEnabled) {
             if (!Global.getSector().getPlayerFleet().hasAbility("boggled_open_terraforming_control_panel")) {
                 Global.getSector().getCharacterData().addAbility("boggled_open_terraforming_control_panel");
             }
@@ -93,7 +101,7 @@ public class BoggledTascPlugin extends BaseModPlugin {
     }
 
     public void applyStationConstructionAbilitiesPerSettingsFile() {
-        if(boggledTools.getBooleanSetting(boggledTools.BoggledSettings.stationConstructionContentEnabled)) {
+        if(boggledTools.getBooleanSetting(boggledTools.BoggledSettings.stationConstructionContentEnabled) && !aotdEnabled) {
             if (!Global.getSector().getPlayerFleet().hasAbility("boggled_construct_astropolis_station")) {
                 if(boggledTools.getBooleanSetting(boggledTools.BoggledSettings.astropolisEnabled)) {
                     Global.getSector().getCharacterData().addAbility("boggled_construct_astropolis_station");
@@ -285,12 +293,30 @@ public class BoggledTascPlugin extends BaseModPlugin {
             boggledTools.initialiseTerraformingProjectOverrides(terraformingProjectOverrides);
             boggledTools.initialiseIndustryOptionOverrides(industryOptionOverrides);
 
+            if (aotdEnabled) {
+                JSONArray aotdProjectOverrides = settings.getMergedSpreadsheetDataForMod("id", "data/campaign/terraforming/aotd_integration/terraforming_projects_mods.csv", boggledTools.BoggledMods.tascModId);
+                boggledTools.initialiseTerraformingProjectOverrides(aotdProjectOverrides);
+            }
+
         } catch (IOException | JSONException ex) {
             log.error(ex);
         }
 
         if (lastGameLoad == thisGameLoad) {
             thisGameLoad++;
+        }
+    }
+
+    private void addAotDEveryFrameScript() {
+        if (aotdEnabled) {
+            Map<List<String>, List<String>> researchAndAbilityIds = new LinkedHashMap<>();
+            researchAndAbilityIds.put(Collections.singletonList("tasc_station_restoration"), Collections.singletonList("boggled_colonize_abandoned_station"));
+            researchAndAbilityIds.put(Collections.singletonList("tasc_astropolis_construction"), Collections.singletonList("boggled_construct_astropolis_station"));
+            researchAndAbilityIds.put(Collections.singletonList("tasc_industrial_stations"), asList("boggled_construct_mining_station", "boggled_construct_siphon_station"));
+
+            researchAndAbilityIds.put(asList("tasc_terraforming_templates", "tasc_atmosphere_manipulation", "tasc_genetic_manipulation"), Collections.singletonList("boggled_open_terraforming_control_panel"));
+
+            Global.getSector().getPlayerFleet().addScript(new BoggledAotDEveryFrameScript(researchAndAbilityIds));
         }
     }
 
@@ -316,6 +342,8 @@ public class BoggledTascPlugin extends BaseModPlugin {
         replaceCryosanctums();
 
         addDomainTechBuildingsToVanillaColonies();
+
+        addAotDEveryFrameScript();
     }
 
     @Override
@@ -336,6 +364,8 @@ public class BoggledTascPlugin extends BaseModPlugin {
         Global.getSettings().getCommoditySpec(boggledTools.BoggledCommodities.domainArtifacts).getTags().clear();
 
         Global.getSector().getListenerManager().removeListenerOfClass(boggledPlanetKillerGroundRaidObjectiveListener.class);
+
+        Global.getSector().getPlayerFleet().removeScriptsOfClass(BoggledAotDEveryFrameScript.class);
     }
 
     @Override
@@ -355,6 +385,8 @@ public class BoggledTascPlugin extends BaseModPlugin {
         addDomainTechBuildingsToVanillaColonies();
 
         //debugActionsPleaseIgnore();
+
+        addAotDEveryFrameScript();
     }
 
     @Override

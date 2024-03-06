@@ -506,6 +506,8 @@ public class boggledTools {
         addTerraformingRequirementFactory("TargetStationStoryCritical", new BoggledTerraformingRequirementFactory.TargetStationStoryCritical());
 
         addTerraformingRequirementFactory("BooleanSettingIsTrue", new BoggledTerraformingRequirementFactory.BooleanSettingIsTrue());
+
+        addTerraformingRequirementFactory("AOTDResearchRequirement", new BoggledTerraformingRequirementFactory.AOTDResearchRequirementFactory());
     }
 
     public static void addTerraformingRequirementFactory(String key, BoggledTerraformingRequirementFactory.TerraformingRequirementFactory value) {
@@ -1249,7 +1251,7 @@ public class boggledTools {
         for (int i = 0; i < requirementAddArray.length(); ++i) {
             JSONObject requirementAddObject = requirementAddArray.getJSONObject(i);
             String containingId = requirementAddObject.getString("containing_id");
-            List<BoggledProjectRequirementsAND.RequirementAdd> requirementsAdded = requirementAddFromJSON(object, sourceInfo, id, key);
+            List<BoggledProjectRequirementsAND.RequirementAdd> requirementsAdded = requirementAddFromJSON(requirementAddObject, sourceInfo, id, key);
             ret.add(new BoggledTerraformingProject.RequirementAddInfo(containingId, requirementsAdded));
         }
 
@@ -1314,10 +1316,10 @@ public class boggledTools {
                 List<BoggledProjectRequirementsAND.RequirementAdd> reqsHiddenAdded = requirementAddFromJSON(row, "Terraforming Project Mods", id, "requirements_hidden_added");
                 List<String> reqsHiddenRemoved = stringListFromJSON(row, "requirements_hidden_added");
 
-                List<BoggledTerraformingProject.RequirementAddInfo> reqsStallAdded = keyedRequirementAddFromJSON(row, "Terraforming Project Mods", id, "requirements_reset_added", "requirements_added");
+                List<BoggledTerraformingProject.RequirementAddInfo> reqsStallAdded = keyedRequirementAddFromJSON(row, "Terraforming Project Mods", id, "requirements_stall_added", "requirements_added");
                 List<BoggledTerraformingProject.RequirementRemoveInfo> reqsStallRemoved = keyedRequirementRemoveFromJSON(row, "requirements_stall_removed");
 
-                List<BoggledTerraformingProject.RequirementAddInfo> reqsResetAdded = keyedRequirementAddFromJSON(row, "Terraforming Project Mods", id, "requirements_stall_added", "requirements_added");
+                List<BoggledTerraformingProject.RequirementAddInfo> reqsResetAdded = keyedRequirementAddFromJSON(row, "Terraforming Project Mods", id, "requirements_reset_added", "requirements_added");
                 List<BoggledTerraformingProject.RequirementRemoveInfo> reqsResetRemoved = keyedRequirementRemoveFromJSON(row, "requirements_reset_removed");
 
                 Integer baseProjectDurationOverride = null;

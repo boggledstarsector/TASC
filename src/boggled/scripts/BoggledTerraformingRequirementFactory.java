@@ -512,4 +512,13 @@ public class BoggledTerraformingRequirementFactory {
             return new BoggledTerraformingRequirement.BooleanSettingIsTrue(id, enableSettings, invert, settingId, invertSetting, req);
         }
     }
+
+    public static class AOTDResearchRequirementFactory implements BoggledTerraformingRequirementFactory.TerraformingRequirementFactory {
+        @Override
+        public BoggledTerraformingRequirement.TerraformingRequirement constructFromJSON(String id, String[] enableSettings, boolean invert, String data) throws JSONException {
+            JSONObject jsonData = new JSONObject(data);
+            String researchId = jsonData.getString("research_id");
+            return new BoggledTerraformingRequirement.AOTDResearchRequirement(id, enableSettings, invert, researchId);
+        }
+    }
 }
