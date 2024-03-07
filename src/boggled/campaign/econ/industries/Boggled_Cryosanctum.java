@@ -261,6 +261,11 @@ public class Boggled_Cryosanctum extends Cryosanctum implements BoggledIndustryI
     }
 
     @Override
+    public int getLastProductionRoll() {
+        return thisIndustry.getLastProductionRoll();
+    }
+
+    @Override
     public void attachProject(BoggledTerraformingProject.ProjectInstance projectInstance) {
         thisIndustry.attachProject(projectInstance);
     }

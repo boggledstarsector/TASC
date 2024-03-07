@@ -2161,6 +2161,12 @@ public class BoggledTerraformingProjectEffect {
             modifiedChance100String += "%";
             baseChance100String += "%";
             para.infix.add(0, "\n    Nothing: " + modifiedChance100String + " (" + baseChance100String + ")");
+            if (boggledTools.getBooleanSetting("boggledKletkaSimulatorShowProductionRoll")) {
+                int lastProductionRoll = targetIndustryInterface.getLastProductionRoll();
+                para.highlights.add(Integer.toString(lastProductionRoll));
+                para.highlightColors.add(Misc.getHighlightColor());
+                para.infix.add("\nLast roll: " + lastProductionRoll + " (Roll must be less than the stated %% in order to receive that item)");
+            }
         }
     }
 

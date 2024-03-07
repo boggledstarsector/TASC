@@ -287,6 +287,11 @@ public class BoggledBaseIndustry extends BaseIndustry implements BoggledIndustry
     }
 
     @Override
+    public int getLastProductionRoll() {
+        return thisIndustry.getLastProductionRoll();
+    }
+
+    @Override
     public void attachProject(BoggledTerraformingProject.ProjectInstance projectInstance) {
         thisIndustry.attachProject(projectInstance);
     }

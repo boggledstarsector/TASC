@@ -252,6 +252,11 @@ public class BoggledOrbitalStation extends OrbitalStation implements BoggledIndu
     }
 
     @Override
+    public int getLastProductionRoll() {
+        return thisIndustry.getLastProductionRoll();
+    }
+
+    @Override
     public void attachProject(BoggledTerraformingProject.ProjectInstance projectInstance) {
         thisIndustry.attachProject(projectInstance);
     }

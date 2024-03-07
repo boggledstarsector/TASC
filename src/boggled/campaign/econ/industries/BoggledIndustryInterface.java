@@ -27,6 +27,7 @@ public interface BoggledIndustryInterface {
     void unmodifyProductionChance(String commodityId, String source);
 
     Pair<Integer, Integer> getProductionChance(String commodityId);
+    int getLastProductionRoll();
 
     void attachProject(BoggledTerraformingProject.ProjectInstance projectInstance);
     void detachProject(BoggledTerraformingProject.ProjectInstance projectInstance);

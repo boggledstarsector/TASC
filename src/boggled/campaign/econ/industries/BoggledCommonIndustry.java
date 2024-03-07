@@ -920,6 +920,12 @@ public class BoggledCommonIndustry {
         return ret;
     }
 
+    public int getLastProductionRoll() {
+        return lastProductionRoll;
+    }
+
+    int lastProductionRoll = 0;
+
     public CargoAPI generateCargoForGatheringPoint(Random random) {
         if (!monthlyProductionEnabled) {
             return null;
@@ -933,6 +939,7 @@ public class BoggledCommonIndustry {
         // If multiple items share the same priority, order is unspecified
         // Number in range (0, 100], ie possible values are from 1 to 100 inclusive both ends
         int roll = random.nextInt(100) + 1;
+        lastProductionRoll = roll;
         CargoAPI ret = Global.getFactory().createCargo(true);
 
         List<ProductionData> workingData = new ArrayList<>(productionData.values());
