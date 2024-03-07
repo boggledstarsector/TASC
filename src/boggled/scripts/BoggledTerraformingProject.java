@@ -24,10 +24,10 @@ public class BoggledTerraformingProject {
             }
         }
 
-        public ProjectInstance(ProjectInstance that) {
-            this.project = that.project;
-            this.daysCompleted = that.daysCompleted;
-            this.lastDayChecked = that.lastDayChecked;
+        public ProjectInstance(BoggledTerraformingProject project, int daysCompleted, int lastDayChecked) {
+            this.project = project;
+            this.daysCompleted = daysCompleted;
+            this.lastDayChecked = lastDayChecked;
         }
 
         public Object readResolve() {

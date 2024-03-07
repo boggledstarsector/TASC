@@ -388,8 +388,6 @@ public class BoggledTascPlugin extends BaseModPlugin {
 
     @Override
     public void onGameLoad(boolean newGame) {
-        lastGameLoad = thisGameLoad;
-
         enablePlanetKiller();
 
         applyStationSettingsToAllStationsInSector();
@@ -405,6 +403,8 @@ public class BoggledTascPlugin extends BaseModPlugin {
         //debugActionsPleaseIgnore();
 
         addAotDEveryFrameScript();
+
+        lastGameLoad = thisGameLoad;
     }
 
     @Override

@@ -72,15 +72,32 @@ public class BoggledCommonIndustry {
     private boolean building = false;
     private boolean built = true;
 
+    private BoggledTerraformingProject.ProjectInstance findCorrespondingProjectInstance(BoggledTerraformingProject.ProjectInstance that) {
+        for (BoggledTerraformingProject.ProjectInstance project : this.projects) {
+            if (!project.getProject().getId().equals(that.getProject().getId())) {
+                continue;
+            }
+            return project;
+        }
+        return null;
+    }
+
+    private List<BoggledTerraformingProject.ProjectInstance> getUpdatedProjectInstanceList(List<BoggledTerraformingProject.ProjectInstance> that) {
+        List<BoggledTerraformingProject.ProjectInstance> projects = new ArrayList<>(that.size());
+        for (BoggledTerraformingProject.ProjectInstance project : that) {
+            BoggledTerraformingProject.ProjectInstance thisProject = findCorrespondingProjectInstance(project);
+            BoggledTerraformingProject.ProjectInstance replacedProject = project;
+            if (thisProject != null) {
+                replacedProject = thisProject;
+            }
+            projects.add(new BoggledTerraformingProject.ProjectInstance(replacedProject.getProject(), replacedProject.getDaysCompleted(), replacedProject.getLastDayChecked()));
+        }
+        return projects;
+    }
+
     private void setFromThat(BoggledCommonIndustry that) {
-        this.projects = new ArrayList<>(that.projects.size());
-        for (BoggledTerraformingProject.ProjectInstance project : that.projects) {
-            this.projects.add(new BoggledTerraformingProject.ProjectInstance(project));
-        }
-        this.attachedProjects = new ArrayList<>(that.attachedProjects.size());
-        for (BoggledTerraformingProject.ProjectInstance project : that.attachedProjects) {
-            this.projects.add(new BoggledTerraformingProject.ProjectInstance(project));
-        }
+        this.projects = getUpdatedProjectInstanceList(that.projects);
+        this.attachedProjects = getUpdatedProjectInstanceList(that.attachedProjects);
 
         this.buildingFinishedEffects = that.buildingFinishedEffects;
         this.improveEffects = that.improveEffects;
