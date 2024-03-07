@@ -2712,27 +2712,27 @@ public class boggledTools {
     }
 
     public static int getIntSetting(String key) {
-        if (Global.getSettings().getModManager().isModEnabled(BoggledMods.lunalibModId)) {
-            Integer val = LunaSettings.getInt(BoggledMods.tascModId, key);
-            if (val != null) {
-                return val;
-            }
-            return 0;
-        } else {
-            return Global.getSettings().getInt(key);
+        Integer val = LunaSettings.getInt(BoggledMods.tascModId, key);
+        if (val != null) {
+            return val;
         }
+        return 0;
     }
 
     public static boolean getBooleanSetting(String key) {
-        if (Global.getSettings().getModManager().isModEnabled(BoggledMods.lunalibModId)) {
-            Boolean val = LunaSettings.getBoolean(BoggledMods.tascModId, key);
-            if (val != null) {
-                return val;
-            }
-            return false;
-        } else {
-            return Global.getSettings().getBoolean(key);
+        Boolean val = LunaSettings.getBoolean(BoggledMods.tascModId, key);
+        if (val != null) {
+            return val;
         }
+        return false;
+    }
+
+    public static float getFloatSetting(String key) {
+        Float val = LunaSettings.getFloat(BoggledMods.tascModId, key);
+        if (val != null) {
+            return val;
+        }
+        return 0f;
     }
 
     public static boolean isResearched(String key)

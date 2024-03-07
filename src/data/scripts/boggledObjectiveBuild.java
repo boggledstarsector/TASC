@@ -84,7 +84,7 @@ public class boggledObjectiveBuild extends BaseCommandPlugin
             if(!blacklistList.contains(factionId))
             {
                 CoreReputationPlugin.CustomRepImpact impact = new CoreReputationPlugin.CustomRepImpact();
-                impact.delta = Global.getSettings().getFloat("boggledDomainTechObjectivesUpgradeRelationshipImpact") / 100;
+                impact.delta = boggledTools.getFloatSetting("boggledDomainTechObjectivesUpgradeRelationshipImpact") / 100;
                 Global.getSector().adjustPlayerReputation(new CoreReputationPlugin.RepActionEnvelope(CoreReputationPlugin.RepActions.CUSTOM, impact, (CommMessageAPI)null, (TextPanelAPI)null, false, true, "Change caused by upgrading " + this.entity.getCustomEntitySpec().getDefaultName().toLowerCase()), factionId);
             }
         }
