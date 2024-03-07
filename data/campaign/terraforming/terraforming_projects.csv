@@ -506,7 +506,7 @@ industry_ouyang_optimizer,boggledTerraformingContentEnabled | boggledOuyangOptim
 industry_perihelion_project,boggledDomainTechContentEnabled | boggledPerihelionProjectEnabled,industry,Perihelion project,,Completed,"[
 	{ 'requirement_id' : 'industry_system_star_not_has_coronal_tap' },
 	{ 'requirement_id' : 'industry_system_star_coronal_tap_viable' }
-]",,600,,"[
+]",,600,[ 'perihelion_construction_setting' ],"[
 	{
 		'requirements_id' : 'industry_perihelion_project_shortage_stall',
 		'requirements' : [ { 'requirement_id' : 'industry_perihelion_project_does_have_shortage' } ]

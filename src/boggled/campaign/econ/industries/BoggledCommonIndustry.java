@@ -72,20 +72,22 @@ public class BoggledCommonIndustry {
     private boolean building = false;
     private boolean built = true;
 
-    private BoggledTerraformingProject.ProjectInstance findCorrespondingProjectInstance(BoggledTerraformingProject.ProjectInstance that) {
-        for (BoggledTerraformingProject.ProjectInstance project : this.projects) {
-            if (!project.getProject().getId().equals(that.getProject().getId())) {
-                continue;
+    private BoggledTerraformingProject.ProjectInstance findCorrespondingProjectInstance(List<BoggledTerraformingProject.ProjectInstance> thisProjects, BoggledTerraformingProject.ProjectInstance that) {
+        if (thisProjects != null) {
+            for (BoggledTerraformingProject.ProjectInstance project : thisProjects) {
+                if (!project.getProject().getId().equals(that.getProject().getId())) {
+                    continue;
+                }
+                return project;
             }
-            return project;
         }
         return null;
     }
 
-    private List<BoggledTerraformingProject.ProjectInstance> getUpdatedProjectInstanceList(List<BoggledTerraformingProject.ProjectInstance> that) {
-        List<BoggledTerraformingProject.ProjectInstance> projects = new ArrayList<>(that.size());
-        for (BoggledTerraformingProject.ProjectInstance project : that) {
-            BoggledTerraformingProject.ProjectInstance thisProject = findCorrespondingProjectInstance(project);
+    private List<BoggledTerraformingProject.ProjectInstance> getUpdatedProjectInstanceList(List<BoggledTerraformingProject.ProjectInstance> thisProjects, List<BoggledTerraformingProject.ProjectInstance> thatProjects) {
+        List<BoggledTerraformingProject.ProjectInstance> projects = new ArrayList<>(thatProjects.size());
+        for (BoggledTerraformingProject.ProjectInstance project : thatProjects) {
+            BoggledTerraformingProject.ProjectInstance thisProject = findCorrespondingProjectInstance(thisProjects, project);
             BoggledTerraformingProject.ProjectInstance replacedProject = project;
             if (thisProject != null) {
                 replacedProject = thisProject;
@@ -96,8 +98,8 @@ public class BoggledCommonIndustry {
     }
 
     private void setFromThat(BoggledCommonIndustry that) {
-        this.projects = getUpdatedProjectInstanceList(that.projects);
-        this.attachedProjects = getUpdatedProjectInstanceList(that.attachedProjects);
+        this.projects = getUpdatedProjectInstanceList(this.projects, that.projects);
+        this.attachedProjects = getUpdatedProjectInstanceList(this.attachedProjects, that.attachedProjects);
 
         this.buildingFinishedEffects = that.buildingFinishedEffects;
         this.improveEffects = that.improveEffects;
