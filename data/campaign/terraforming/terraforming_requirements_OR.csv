@@ -111,6 +111,10 @@ industry_effect_kletka_simulator_colony_very_cold,"Very Cold",,false,"market_ver
 industry_effect_kletka_simulator_colony_cold,"Cold",,false,"market_cold"
 industry_effect_kletka_simulator_colony_hot,"Hot",,false,"market_hot"
 industry_effect_kletka_simulator_colony_very_hot,"Very Hot",,false,"market_very_hot"
+industry_effect_kletka_simulator_colony_very_cold_unsuppressed,"Very Cold",,false,"market_very_cold_unsuppressed"
+industry_effect_kletka_simulator_colony_cold_unsuppressed,"Cold",,false,"market_cold_unsuppressed"
+industry_effect_kletka_simulator_colony_hot_unsuppressed,"Hot",,false,"market_hot_unsuppressed"
+industry_effect_kletka_simulator_colony_very_hot_unsuppressed,"Very Hot",,false,"market_very_hot_unsuppressed"
 industry_effect_kletka_simulator_colony_is_station,"Station",,false,"market_is_station"
 industry_effect_kletka_simulator_does_not_have_shortage,"Production suspended due to a shortage of $commodityDeficit","[ 'Production suspended due to a shortage of $commodityDeficit' ]",false,"kletka_simulator_does_not_have_shortage"
 

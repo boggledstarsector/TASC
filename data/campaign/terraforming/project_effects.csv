@@ -493,19 +493,31 @@ kletka_simulator_very_hot_upkeep_modifier,,ModifyIndustryUpkeep,"{ 'modifier_typ
 kletka_simulator_station_upkeep_modifier,,ModifyIndustryUpkeep,"{ 'modifier_type' : 'mult', 'value' : 8 }"
 
 kletka_simulator_very_cold_modifier,boggledKletkaSimulatorTemperatureBasedUpkeep,EffectWithRequirement,"{
-	'requirements' : [ { 'requirement_id' : 'industry_effect_kletka_simulator_colony_very_cold' } ],
+	'requirements' : [
+		{ 'requirement_id' : 'industry_effect_kletka_simulator_colony_very_cold' },
+		{ 'requirement_id' : 'industry_effect_kletka_simulator_colony_very_cold_unsuppressed' }
+	],
 	'effects' : [ 'kletka_simulator_very_cold_upkeep_modifier' ]
 }"
 kletka_simulator_cold_modifier,boggledKletkaSimulatorTemperatureBasedUpkeep,EffectWithRequirement,"{
-	'requirements' : [ { 'requirement_id' : 'industry_effect_kletka_simulator_colony_cold' } ],
+	'requirements' : [
+		{ 'requirement_id' : 'industry_effect_kletka_simulator_colony_cold' },
+		{ 'requirement_id' : 'industry_effect_kletka_simulator_colony_cold_unsuppressed' }
+	],
 	'effects' : [ 'kletka_simulator_cold_upkeep_modifier' ]
 }"
 kletka_simulator_hot_modifier,boggledKletkaSimulatorTemperatureBasedUpkeep,EffectWithRequirement,"{
-	'requirements' : [ { 'requirement_id' : 'industry_effect_kletka_simulator_colony_hot' } ],
+	'requirements' : [
+		{ 'requirement_id' : 'industry_effect_kletka_simulator_colony_hot' },
+		{ 'requirement_id' : 'industry_effect_kletka_simulator_colony_hot_unsuppressed' }
+	],
 	'effects' : [ 'kletka_simulator_hot_upkeep_modifier' ]
 }"
 kletka_simulator_very_hot_modifier,boggledKletkaSimulatorTemperatureBasedUpkeep,EffectWithRequirement,"{
-	'requirements' : [ { 'requirement_id' : 'industry_effect_kletka_simulator_colony_very_hot' } ],
+	'requirements' : [
+		{ 'requirement_id' : 'industry_effect_kletka_simulator_colony_very_hot' },
+		{ 'requirement_id' : 'industry_effect_kletka_simulator_colony_very_hot_unsuppressed' }
+	],
 	'effects' : [ 'kletka_simulator_very_hot_upkeep_modifier' ]
 }"
 kletka_simulator_station_modifier,boggledKletkaSimulatorTemperatureBasedUpkeep,EffectWithRequirement,"{

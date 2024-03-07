@@ -453,6 +453,7 @@ public class boggledTools {
 
         addTerraformingRequirementFactory("PlanetType", new BoggledTerraformingRequirementFactory.PlanetType());
         addTerraformingRequirementFactory("MarketHasCondition", new BoggledTerraformingRequirementFactory.MarketHasCondition());
+        addTerraformingRequirementFactory("MarketConditionSuppressed", new BoggledTerraformingRequirementFactory.MarketConditionSuppressed());
         addTerraformingRequirementFactory("MarketHasIndustry", new BoggledTerraformingRequirementFactory.MarketHasIndustry());
         addTerraformingRequirementFactory("MarketHasIndustryWithItem", new BoggledTerraformingRequirementFactory.MarketHasIndustryWithItem());
         addTerraformingRequirementFactory("MarketHasIndustryWithAICore", new BoggledTerraformingRequirementFactory.MarketHasIndustryWithAICore());
@@ -472,6 +473,7 @@ public class boggledTools {
         addTerraformingRequirementFactory("FocusPlanetType", new BoggledTerraformingRequirementFactory.FocusPlanetType());
         addTerraformingRequirementFactory("FocusObjectIsPlanet", new BoggledTerraformingRequirementFactory.FocusObjectIsPlanet());
         addTerraformingRequirementFactory("FocusMarketHasCondition", new BoggledTerraformingRequirementFactory.FocusMarketHasCondition());
+        addTerraformingRequirementFactory("FocusMarketConditionSuppressed", new BoggledTerraformingRequirementFactory.FocusMarketConditionSuppressed());
 
         addTerraformingRequirementFactory("IntegerFromMarketTagSubstring", new BoggledTerraformingRequirementFactory.IntegerFromMarketTagSubstring());
 

@@ -52,11 +52,27 @@ public class BoggledTerraformingRequirementFactory {
         }
     }
 
+    public static class MarketConditionSuppressed implements TerraformingRequirementFactory {
+        @Override
+        public BoggledTerraformingRequirement.TerraformingRequirement constructFromJSON(String id, String[] enableSettings, boolean invert, String data) throws JSONException {
+            boggledTools.CheckMarketConditionExists(id, data);
+            return new BoggledTerraformingRequirement.MarketConditionSuppressed(id, enableSettings, invert, data);
+        }
+    }
+
     public static class FocusMarketHasCondition implements TerraformingRequirementFactory {
         @Override
         public BoggledTerraformingRequirement.TerraformingRequirement constructFromJSON(String id, String[] enableSettings, boolean invert, String data) {
             boggledTools.CheckMarketConditionExists(id, data);
             return new BoggledTerraformingRequirement.FocusMarketHasCondition(id, enableSettings, invert, data);
+        }
+    }
+
+    public static class FocusMarketConditionSuppressed implements TerraformingRequirementFactory {
+        @Override
+        public BoggledTerraformingRequirement.TerraformingRequirement constructFromJSON(String id, String[] enableSettings, boolean invert, String data) throws JSONException {
+            boggledTools.CheckMarketConditionExists(id, data);
+            return new BoggledTerraformingRequirement.FocusMarketConditionSuppressed(id, enableSettings, invert, data);
         }
     }
 

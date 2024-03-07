@@ -441,8 +441,44 @@ public class BoggledTerraformingRequirement {
         }
     }
 
+    public static class MarketConditionSuppressed extends TerraformingRequirement {
+        String conditionId;
+        public MarketConditionSuppressed(String id, String[] enableSettings, boolean invert, String conditionId) {
+            super(id, enableSettings, invert);
+            this.conditionId = conditionId;
+        }
+
+        @Override
+        protected RequirementResult checkRequirementImpl(RequirementContext ctx) {
+            MarketAPI market = ctx.getClosestMarket();
+            if (market == null) {
+                return RequirementResult.NULL;
+            }
+            return result(market.isConditionSuppressed(conditionId));
+        }
+    }
+
     public static class FocusMarketHasCondition extends MarketHasCondition {
         public FocusMarketHasCondition(String id, String[] enableSettings, boolean invert, String conditionId) {
+            super(id, enableSettings, invert, conditionId);
+        }
+
+        @Override
+        protected RequirementResult checkRequirementImpl(RequirementContext ctx) {
+            MarketAPI market = ctx.getClosestMarket();
+            if (market == null) {
+                return RequirementResult.NULL;
+            }
+            MarketAPI focusMarket = market.getPrimaryEntity().getOrbitFocus().getMarket();
+            if (focusMarket == null) {
+                return RequirementResult.NULL;
+            }
+            return super.checkRequirementImpl(new RequirementContext(focusMarket, ctx.getProject()));
+        }
+    }
+
+    public static class FocusMarketConditionSuppressed extends MarketHasCondition {
+        public FocusMarketConditionSuppressed(String id, String[] enableSettings, boolean invert, String conditionId) {
             super(id, enableSettings, invert, conditionId);
         }
 
