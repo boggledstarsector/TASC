@@ -155,6 +155,7 @@ boggledKletkaSimulatorEnabled,Enable Kletka Simulator,Boolean,True,,"Set this to
 
 The Kletka Simulator is an industry that produces AI cores. The AI cores are sent to storage along with other items and ships the player receives each month.",,,Domain-tech Content
 boggledKletkaSimulatorTemperatureBasedUpkeep,Kletka Simulator upkeep is based on temperature,Boolean,True,,"Set this to false to make the Kletka Simulator have a static upkeep instead of the upkeep cost being dependant on the temperature of the market it is located on.",,,Domain-tech Content
+boggledKletkaSimulatorSuppressTemperatureBasedUpkeep,Kletka Simulator upkeep modifier can be suppressed along with the temperature,Boolean,False,,"Set this to true to make the Kletka Simulator's temperature based upkeep be suppressed if the temperature condition is also suppressed.",,,Domain-tech Content
 boggledKletkaSimulatorShowProductionRoll,Show production roll for industries that produce items,Boolean,False,,"Set this to true to show the production roll for industries that produce items, like Kletka Simulator, after the production chances in the tooltip.",,,Domain-tech Content
 boggledCHAMELEONEnabled,Enable CHAMELEON,Boolean,True,,"Set this to false to disable the CHAMELEON building.
 
