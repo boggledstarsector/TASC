@@ -1495,19 +1495,27 @@ public class boggledTools {
         MarketAPI market = ctx.getClosestMarket();
         if (market != null) {
             ret.put("$marketName", market.getName());
+        } else {
+            ret.put("$marketName", "market");
         }
         MarketAPI focusMarket = ctx.getFocusContext().getClosestMarket();
         if (focusMarket != null) {
             ret.put("$focusMarketName", focusMarket.getName());
+        } else {
+            ret.put("$focusMarketName", "orbited market");
         }
         PlanetAPI targetPlanet = ctx.getPlanet();
         if (targetPlanet != null) {
             ret.put("$planetTypeName", getPlanetType(targetPlanet).getPlanetTypeName());
             ret.put("$planetName", targetPlanet.getName());
+        } else {
+            ret.put("$planetName", "planet");
         }
         StarSystemAPI starSystem = ctx.getStarSystem();
         if (starSystem != null) {
             ret.put("$system", starSystem.getName());
+        } else {
+            ret.put("$system", "star system");
         }
         return ret;
     }

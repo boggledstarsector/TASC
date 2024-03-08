@@ -274,11 +274,15 @@ public class BoggledCommonIndustry {
         if (market == null) {
             return null;
         }
-        SectorEntityToken focus = market.getPrimaryEntity().getOrbitFocus();
+        SectorEntityToken primaryEntity = market.getPrimaryEntity();
+        if (primaryEntity == null) {
+            return null;
+        }
+        SectorEntityToken focus = primaryEntity.getOrbitFocus();
         if (focus == null) {
             return null;
         }
-        MarketAPI ret = market.getPrimaryEntity().getOrbitFocus().getMarket();
+        MarketAPI ret = focus.getMarket();
         if (ret == null) {
             return market;
         }

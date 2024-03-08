@@ -700,7 +700,11 @@ public class BoggledTerraformingRequirement {
                 return RequirementResult.NULL;
             }
             for (String tag : tags) {
-                if (!market.hasTag(tag) && !market.getPrimaryEntity().hasTag(tag)) {
+                boolean result = !market.hasTag(tag);
+                if (market.getPrimaryEntity() != null) {
+                    result = result && !market.getPrimaryEntity().hasTag(tag);
+                }
+                if (result) {
                     return result(false);
                 }
             }
