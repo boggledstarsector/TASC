@@ -1,9 +1,0 @@
-<component name="libraryTable">
-  <library name="GrandColonies">
-    <CLASSES>
-      <root url="jar://$PROJECT_DIR$/../Grand.Colonies2.0.e/jars/GrandColonies.jar!/" />
-    </CLASSES>
-    <JAVADOC />
-    <SOURCES />
-  </library>
-</component>
