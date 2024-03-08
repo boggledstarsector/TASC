@@ -37,6 +37,11 @@ public class BoggledUnderConstructionEveryFrameScript implements EveryFrameScrip
     public void advance(float var1) {
         CampaignClockAPI clock = Global.getSector().getClock();
 
+        if (!boggledTools.getBooleanSetting("boggledStationConstructionDelayEnabled")) {
+            isDone = true;
+            stationConstructionData.createMarket(stationEntity);
+        }
+
         // Reload day check
         int lastDayChecked = boggledTools.getLastDayCheckedForConstruction(stationEntity);
 

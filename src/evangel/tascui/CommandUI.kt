@@ -524,6 +524,12 @@ class CommandUIIntelK : LunaBaseCustomPanelPlugin() {
         selectedPlanet?.projectTimeRemaining?.setHighlight("${getTerraformingDaysRemaining(terraformingController)}")
 
         moveButtonsOffscreen(activeCancelProjectButton!!.position::inTR, inactiveCancelProjectButton!!)
+
+        val currentSelection = selectedProject
+        updateTerraformingSelection()
+        selectedProject = currentSelection
+        selectedProject?.highlight()
+        handleTerraformingOptionButtonPress()
     }
 
     private fun handleTerraformingCancelProjectButtonPress() {

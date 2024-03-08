@@ -49,6 +49,11 @@ public class BoggledTerraformingProject {
         public int getLastDayChecked() { return lastDayChecked; }
 
         public boolean advance(BoggledTerraformingRequirement.RequirementContext ctx) {
+            if (project.getModifiedProjectDuration(ctx) == 0) {
+                project.finishProject(ctx, project.getProjectTooltip());
+                return true;
+            }
+
             CampaignClockAPI clock = Global.getSector().getClock();
             if (clock.getDay() == lastDayChecked) {
                 return false;

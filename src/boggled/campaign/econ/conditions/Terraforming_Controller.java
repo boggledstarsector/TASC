@@ -42,19 +42,24 @@ public class Terraforming_Controller extends BaseHazardCondition {
         ctx = new BoggledTerraformingRequirement.RequirementContext(ctx, project);
         BoggledTerraformingProject projectToCheck = (project == null) ? currentProject.getProject() : project;
 
-        String intelText;
+        String intelText = "";
         if (project == null) {
             currentProject.getProject().cancelProject(ctx);
             currentProject = null;
             intelText = "    - Canceled";
-        } else {
+        } else if (project.requirementsMet(ctx)) {
             currentProject = new BoggledTerraformingProject.ProjectInstance(project);
             ctx = new BoggledTerraformingRequirement.RequirementContext(ctx, currentProject);
             project.startProject(ctx, project.getProjectTooltip());
-            intelText = "    - Started";
+
+            if (currentProject.advance(ctx)) {
+                currentProject = null;
+            } else {
+                intelText = "    - Started";
+            }
         }
 
-        if(market.isPlayerOwned() || market.getFaction().isPlayerFaction()) {
+        if (!intelText.isEmpty() && (market.isPlayerOwned() || market.getFaction().isPlayerFaction())) {
             String projectTooltip = projectToCheck.getProjectTooltip();
             MessageIntel intel = new MessageIntel(projectTooltip + " on " + market.getName(), Misc.getBasePlayerColor());
             intel.addLine(intelText);
