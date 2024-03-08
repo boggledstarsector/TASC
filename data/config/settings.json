@@ -23,5 +23,29 @@
 			"stellar_mirror_condition":"graphics/icons/conditions/stellar_mirror.png",
 			"stellar_shade_condition":"graphics/icons/conditions/stellar_shade.png",
 		},
+	},
+
+	"ui_icons_tech_tree":{
+		"BOGGLED_GENELAB_sub":"graphics/icons/tech/subicon_BOGGLED_GENELAB.png",
+		"BOGGLED_STELLAR_REFLECTOR_ARRAY_sub":"graphics/icons/tech/subicon_BOGGLED_STELLAR_REFLECTOR_ARRAY.png",
+		"BOGGLED_ISMARA_SLING_sub":"graphics/icons/tech/subicon_BOGGLED_ISMARA_SLING.png",
+		"BOGGLED_ASTEROID_PROCESSING_sub":"graphics/icons/tech/subicon_BOGGLED_ASTEROID_PROCESSING.png",
+		"BOGGLED_MESOZOIC_PARK_sub":"graphics/icons/tech/subicon_BOGGLED_MESOZOIC_PARK.png",
+		"BOGGLED_LIMELIGHT_NETWORK_sub":"graphics/icons/tech/subicon_BOGGLED_LIMELIGHT_NETWORK.png",
+		"BOGGLED_CHAMELEON_sub":"graphics/icons/tech/subicon_BOGGLED_CHAMELEON.png",
+		"BOGGLED_MAGNETOSHIELD_sub":"graphics/icons/tech/subicon_BOGGLED_MAGNETOSHIELD.png",
+		"BOGGLED_DOMED_CITIES_sub":"graphics/icons/tech/subicon_BOGGLED_DOMED_CITIES.png",
+		"BOGGLED_SEAFLOOR_CITIES_sub":"graphics/icons/tech/subicon_BOGGLED_SEAFLOOR_CITIES.png",
+		"BOGGLED_DOMAIN_ARCHAEOLOGY_sub":"graphics/icons/tech/subicon_BOGGLED_DOMAIN_ARCHAEOLOGY.png",
+		"BOGGLED_KLETKA_SIMULATOR_sub":"graphics/icons/tech/subicon_BOGGLED_KLETKA_SIMULATOR.png",
+		"BOGGLED_PERIHELION_PROJECT_sub":"graphics/icons/tech/subicon_BOGGLED_PERIHELION_PROJECT.png",
+		"BOGGLED_AI_MINING_DRONES_sub":"graphics/icons/tech/subicon_BOGGLED_AI_MINING_DRONES.png",
+		"BOGGLED_HARMONIC_DAMPER_sub":"graphics/icons/tech/subicon_BOGGLED_HARMONIC_DAMPER.png",
+		"BOGGLED_PLANETARY_AGRAV_FIELD_sub":"graphics/icons/tech/subicon_BOGGLED_PLANETARY_AGRAV_FIELD.png",
+		"BOGGLED_ATMOSPHERE_PROCESSOR_sub":"graphics/icons/tech/subicon_BOGGLED_ATMOSPHERE_PROCESSOR.png",
+		"BOGGLED_PLANET_CRACKER_sub":"graphics/icons/tech/subicon_BOGGLED_PLANET_CRACKER.png",
+		"BOGGLED_OUYANG_OPTIMIZER_sub":"graphics/icons/tech/subicon_BOGGLED_OUYANG_OPTIMIZER.png",
+		"BOGGLED_CLONING_sub":"graphics/icons/tech/subicon_BOGGLED_CLONING.png",
+		"BOGGLED_AI_STATION_sub":"graphics/icons/tech/subicon_BOGGLED_AI_STATION.png"
 	}
 }
