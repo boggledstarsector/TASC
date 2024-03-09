@@ -405,7 +405,8 @@ public class BoggledTerraformingProjectEffect {
         }
         @Override
         protected void applyProjectEffectImpl(BoggledTerraformingRequirement.RequirementContext ctx, String effectSource) {
-            StarSystemAPI starSystem = ctx.getPlanetMarket().getStarSystem();
+            MarketAPI market = ctx.getClosestMarket();
+            StarSystemAPI starSystem = market.getStarSystem();
             SectorEntityToken tapToken = null;
 
             if (starSystem.getType() == StarSystemGenerator.StarSystemType.TRINARY_2CLOSE) {
@@ -457,7 +458,7 @@ public class BoggledTerraformingProjectEffect {
 
                     tapToken = starSystem.addCustomEntity("coronal_tap_" + starSystem.getName(), null, "coronal_tap", Global.getSector().getPlayerFaction().getId());
 
-                    tapToken.setCircularOrbitPointingDown(star, boggledTools.getAngleFromEntity(ctx.getPlanetMarket().getPrimaryEntity(), star), orbitRadius, orbitDays);
+                    tapToken.setCircularOrbitPointingDown(star, boggledTools.getAngleFromEntity(ctx.getClosestMarket().getPrimaryEntity(), star), orbitRadius, orbitDays);
                 }
             }
 
