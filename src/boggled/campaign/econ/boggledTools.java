@@ -315,6 +315,40 @@ public class boggledTools {
     public static final HashMap<String, BoggledTerraformingProjectEffectFactory.TerraformingProjectEffectFactory> terraformingProjectEffectFactories = new HashMap<>();
     public static Map<String, BoggledStationConstructionFactory.StationConstructionFactory> stationConstructionFactories = new HashMap<>();
 
+    public static Set<String> aotdIgnoreSettings = new HashSet<>();
+
+    public static void initialiseModIgnoreSettings() {
+        aotdIgnoreSettings.add("boggledTerraformingContentEnabled");
+        aotdIgnoreSettings.add("boggledTerraformingRemoveRadiationProjectEnabled");
+        aotdIgnoreSettings.add("boggledTerraformingRemoveAtmosphereProjectEnabled");
+
+        aotdIgnoreSettings.add("boggledStellarReflectorArrayEnabled");
+        aotdIgnoreSettings.add("boggledGenelabEnabled");
+        aotdIgnoreSettings.add("boggledMesozoicParkEnabled");
+        aotdIgnoreSettings.add("boggledDomedCitiesEnabled");
+        aotdIgnoreSettings.add("boggledHarmonicDamperEnabled");
+        aotdIgnoreSettings.add("boggledPlanetaryAgravFieldEnabled");
+        aotdIgnoreSettings.add("boggledMagnetoshieldEnabled");
+        aotdIgnoreSettings.add("boggledPlanetCrackerEnabled");
+        aotdIgnoreSettings.add("boggledOuyangOptimizerEnabled");
+        aotdIgnoreSettings.add("boggledStationConstructionContentEnabled");
+        aotdIgnoreSettings.add("boggledEnableAIMiningDronesStructure");
+
+        aotdIgnoreSettings.add("boggledAstropolisEnabled");
+        aotdIgnoreSettings.add("boggledMiningStationEnabled");
+        aotdIgnoreSettings.add("boggledSiphonStationEnabled");
+        aotdIgnoreSettings.add("boggledStationColonizationEnabled");
+
+        aotdIgnoreSettings.add("boggledPerihelionProjectEnabled");
+        aotdIgnoreSettings.add("boggledDomainArchaeologyEnabled");
+        aotdIgnoreSettings.add("boggledKletkaSimulatorEnabled");
+        aotdIgnoreSettings.add("boggledCHAMELEONEnabled");
+        aotdIgnoreSettings.add("boggledLimelightNetworkPlayerBuildEnabled");
+        aotdIgnoreSettings.add("boggledRemnantStationEnabled");
+        aotdIgnoreSettings.add("boggledHydroponicsEnabled");
+        aotdIgnoreSettings.add("boggledCloningEnabled");
+    }
+
     @Nullable
     public static BoggledTerraformingRequirement.TerraformingRequirement getTerraformingRequirement(String terraformingRequirementType, String id, String[] enableSettings, boolean invert, String data) throws JSONException {
         Logger log = Global.getLogger(boggledTools.class);
@@ -2730,6 +2764,10 @@ public class boggledTools {
     }
 
     public static boolean getBooleanSetting(String key) {
+        if (aotdIgnoreSettings.contains(key)) {
+            return true;
+        }
+
         Boolean val = LunaSettings.getBoolean(BoggledMods.tascModId, key);
         if (val != null) {
             return val;

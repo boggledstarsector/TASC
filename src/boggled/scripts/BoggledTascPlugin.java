@@ -416,8 +416,12 @@ public class BoggledTascPlugin extends BaseModPlugin {
 
         if (Global.getSettings().getModManager().isModEnabled("aaacrew_replacer")){
             bogglesDefaultCargo.active = new booglesCrewReplacerCargo();
-        }else{
+        } else {
             bogglesDefaultCargo.active = new bogglesDefaultCargo();
+        }
+
+        if (aotdEnabled) {
+            boggledTools.initialiseModIgnoreSettings();
         }
     }
 }
