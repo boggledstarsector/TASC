@@ -1831,16 +1831,12 @@ public class boggledTools {
         return planetTypesMap.get(unknownPlanetId); // Guaranteed to be there
     }
 
-    public static ArrayList<MarketAPI> getNonStationMarketsPlayerControls()
-    {
-        ArrayList<MarketAPI> allPlayerMarkets = (ArrayList<MarketAPI>) Misc.getPlayerMarkets(true);
-        ArrayList<MarketAPI> allNonStationPlayerMarkets = new ArrayList<>();
-        for(MarketAPI market : allPlayerMarkets)
-        {
-            if(!boggledTools.marketIsStation(market))
-            {
-                if(!market.hasCondition(BoggledConditions.terraformingControllerConditionId))
-                {
+    public static List<MarketAPI> getNonStationMarketsPlayerControls() {
+        List<MarketAPI> allPlayerMarkets = Misc.getPlayerMarkets(true);
+        List<MarketAPI> allNonStationPlayerMarkets = new ArrayList<>();
+        for (MarketAPI market : allPlayerMarkets) {
+            if (!boggledTools.marketIsStation(market)) {
+                if (!market.hasCondition(BoggledConditions.terraformingControllerConditionId)) {
                     boggledTools.addCondition(market, BoggledConditions.terraformingControllerConditionId);
                 }
                 allNonStationPlayerMarkets.add(market);
@@ -1848,6 +1844,21 @@ public class boggledTools {
         }
 
         return allNonStationPlayerMarkets;
+    }
+
+    public static List<MarketAPI> getStationMarketsPlayerControls() {
+        List<MarketAPI> allPlayerMarkets = Misc.getPlayerMarkets(true);
+        List<MarketAPI> allStationPlayerMarkets = new ArrayList<>();
+        for (MarketAPI market : allPlayerMarkets) {
+            if (boggledTools.marketIsStation(market)) {
+                if (!market.hasCondition(BoggledConditions.terraformingControllerConditionId)) {
+                    boggledTools.addCondition(market, BoggledConditions.terraformingControllerConditionId);
+                }
+                allStationPlayerMarkets.add(market);
+            }
+        }
+
+        return allStationPlayerMarkets;
     }
 
     public static boolean marketIsStation(MarketAPI market) {

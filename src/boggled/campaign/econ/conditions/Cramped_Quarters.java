@@ -52,13 +52,15 @@ public class Cramped_Quarters extends BaseHazardCondition implements MarketImmig
             return;
         }
 
-        // Adds the no atmosphere condition, then suppresses it so it won't increase hazard
-        // market_conditions.csv overwrites the vanilla no_atmosphere condition
-        // The only change made is to hide the icon on markets where primary entity has station tag
-        // This is done so refining and fuel production can slot the special items
-        // Hopefully Alex will fix the no_atmosphere detection in the future so this hack can be removed
-        market.addCondition(Conditions.NO_ATMOSPHERE);
-        market.suppressCondition(Conditions.NO_ATMOSPHERE);
+        if (!market.hasCondition(Conditions.NO_ATMOSPHERE)) {
+            // Adds the no atmosphere condition, then suppresses it so it won't increase hazard
+            // market_conditions.csv overwrites the vanilla no_atmosphere condition
+            // The only change made is to hide the icon on markets where primary entity has station tag
+            // This is done so refining and fuel production can slot the special items
+            // Hopefully Alex will fix the no_atmosphere detection in the future so this hack can be removed
+            market.addCondition(Conditions.NO_ATMOSPHERE);
+            market.suppressCondition(Conditions.NO_ATMOSPHERE);
+        }
 
         if(this.market.getTariff().getBaseValue() == 0.0f && this.market.getTariff().getModifiedValue() == 0.0f) {
             this.market.getTariff().modifyFlat("base_tariff_for_station", 0.30f);

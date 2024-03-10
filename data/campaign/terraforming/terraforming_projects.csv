@@ -7,7 +7,7 @@ arid_type_change,boggledTerraformingContentEnabled,terraforming,"Arid type chang
 	{ 'requirement_id' : 'terraforming_colony_temperate_or_hot' },
 	{ 'requirement_id' : 'terraforming_colony_has_stellar_reflectors' },
 	{ 'requirement_id' : 'terraforming_colony_has_moderate_water_present' }
-]",,400,"[ 'terraforming_type_change_setting' ]",,,"[
+]","[ { 'requirement_id' : 'market_is_not_station' } ]",400,"[ 'terraforming_type_change_setting' ]",,,"[
 	'arid_type_change',
 	'market_add_habitable',
 	'market_add_farmland_adequate',
@@ -37,7 +37,7 @@ jungle_type_change,boggledTerraformingContentEnabled,terraforming,"Jungle type c
 	{ 'requirement_id' : 'terraforming_colony_temperate_or_hot' },
 	{ 'requirement_id' : 'terraforming_colony_has_stellar_reflectors' },
 	{ 'requirement_id' : 'terraforming_colony_has_moderate_water_present' }
-]",,400,[ 'terraforming_type_change_setting' ],,,"[
+]","[ { 'requirement_id' : 'market_is_not_station' } ]",400,[ 'terraforming_type_change_setting' ],,,"[
 	'jungle_type_change',
 	'market_add_habitable',
 	'market_add_farmland_adequate',
@@ -66,7 +66,7 @@ terran_type_change,boggledTerraformingContentEnabled,terraforming,"Terran type c
 	{ 'requirement_id' : 'terraforming_colony_not_very_cold_or_very_hot' },
 	{ 'requirement_id' : 'terraforming_colony_has_stellar_reflectors' },
 	{ 'requirement_id' : 'terraforming_colony_has_moderate_water_present' }
-]",,400,[ 'terraforming_type_change_setting' ],,,"[
+]","[ { 'requirement_id' : 'market_is_not_station' } ]",400,[ 'terraforming_type_change_setting' ],,,"[
 	'terran_type_change',
 	'market_add_habitable',
 	'market_add_farmland_adequate',
@@ -95,7 +95,7 @@ water_type_change,boggledTerraformingContentEnabled,terraforming,"Water type cha
 	{ 'requirement_id' : 'terraforming_colony_not_very_cold_or_very_hot' },
 	{ 'requirement_id' : 'terraforming_colony_has_stellar_reflectors' },
 	{ 'requirement_id' : 'terraforming_colony_has_large_water_present' }
-]",,400,[ 'terraforming_type_change_setting' ],,,"[
+]","[ { 'requirement_id' : 'market_is_not_station' } ]",400,[ 'terraforming_type_change_setting' ],,,"[
 	'water_type_change',
 	'market_add_habitable',
 	'market_add_water_surface',
@@ -123,7 +123,7 @@ tundra_type_change,boggledTerraformingContentEnabled,terraforming,"Tundra type c
 	{ 'requirement_id' : 'terraforming_colony_temperate_or_cold' },
 	{ 'requirement_id' : 'terraforming_colony_has_stellar_reflectors' },
 	{ 'requirement_id' : 'terraforming_colony_has_moderate_water_present' }
-]",,400,[ 'terraforming_type_change_setting' ],,,"[
+]","[ { 'requirement_id' : 'market_is_not_station' } ]",400,[ 'terraforming_type_change_setting' ],,,"[
 	'tundra_type_change',
 	'market_add_habitable',
 	'market_add_farmland_adequate',
@@ -151,7 +151,7 @@ frozen_type_change,boggledTerraformingContentEnabled,terraforming,"Frozen type c
 	{ 'requirement_id' : 'terraforming_colony_atmospheric_density_normal' },
 	{ 'requirement_id' : 'terraforming_colony_very_cold' },
 	{ 'requirement_id' : 'terraforming_colony_has_large_water_present' }
-]",,400,[ 'terraforming_type_change_setting' ],,,"[
+]","[ { 'requirement_id' : 'market_is_not_station' } ]",400,[ 'terraforming_type_change_setting' ],,,"[
 	'frozen_type_change',
 	'market_add_volatiles_abundant',
 	'market_remove_habitable',
@@ -179,23 +179,23 @@ farmland_resource_improvement,boggledTerraformingContentEnabled,terraforming,"Fa
 	{ 'requirement_id' : 'terraforming_colony_atmospheric_density_normal' },
 	{ 'requirement_id' : 'terraforming_colony_atmosphere_not_toxic_or_irradiated' },
 	{ 'requirement_id' : 'terraforming_colony_has_large_water_present' }
-]",,200,[ 'resource_improvement_setting' ],,,"[ 'market_progress_farmland' ]",,,,,
-organics_resource_improvement,boggledTerraformingContentEnabled,terraforming,"Organics resource improvement",,Completed,"[ { 'requirement_id' : 'terraforming_world_type_supports_organics_improvement' } ]",,200,[ 'resource_improvement_setting' ],,,"[ 'market_progress_organics' ]",,,,,
-volatiles_resource_improvement,boggledTerraformingContentEnabled,terraforming,"Volatiles resource improvement",,Completed,"[ { 'requirement_id' : 'terraforming_world_type_supports_volatiles_improvement' } ]",,200,[ 'resource_improvement_setting' ],,,"[ 'market_progress_volatiles' ]",,,,,
+]","[ { 'requirement_id' : 'market_is_not_station' } ]",200,[ 'resource_improvement_setting' ],,,"[ 'market_progress_farmland' ]",,,,,
+organics_resource_improvement,boggledTerraformingContentEnabled,terraforming,"Organics resource improvement",,Completed,"[ { 'requirement_id' : 'terraforming_world_type_supports_organics_improvement' } ]","[ { 'requirement_id' : 'market_is_not_station' } ]",200,[ 'resource_improvement_setting' ],,,"[ 'market_progress_organics' ]",,,,,
+volatiles_resource_improvement,boggledTerraformingContentEnabled,terraforming,"Volatiles resource improvement",,Completed,"[ { 'requirement_id' : 'terraforming_world_type_supports_volatiles_improvement' } ]","[ { 'requirement_id' : 'market_is_not_station' } ]",200,[ 'resource_improvement_setting' ],,,"[ 'market_progress_volatiles' ]",,,,,
 ,,,,,,,,,,,,,,,,,
 extreme_weather_condition_improvement,boggledTerraformingContentEnabled,terraforming,"Stabilize weather patterns",,Completed,"[
 	{ 'requirement_id' : 'terraforming_world_type_allows_terraforming' },
 	{ 'requirement_id' : 'terraforming_colony_has_extreme_weather' },
 	{ 'requirement_id' : 'terraforming_colony_atmospheric_density_normal' },
 	{ 'requirement_id' : 'terraforming_colony_has_atmosphere_processor' }
-]",,200,[ 'condition_improvement_setting' ],,,"[ 'market_remove_extreme_weather' ]","[ 'attach_project_to_atmosphere_processor' ]",,,,
+]","[ { 'requirement_id' : 'market_is_not_station' } ]",200,[ 'condition_improvement_setting' ],,,"[ 'market_remove_extreme_weather' ]","[ 'attach_project_to_atmosphere_processor' ]",,,,
 mild_climate_condition_improvement,boggledTerraformingContentEnabled,terraforming,"Make climate mild",,Completed,"[
 	{ 'requirement_id' : 'terraforming_colony_has_normal_climate' },
 	{ 'requirement_id' : 'terraforming_colony_habitable' },
 	{ 'requirement_id' : 'terraforming_world_type_allows_mild_climate' },
 	{ 'requirement_id' : 'terraforming_colony_atmospheric_density_normal' },
 	{ 'requirement_id' : 'terraforming_colony_has_atmosphere_processor' }
-]",,200,[ 'condition_improvement_setting' ],,,"[ 'market_add_mild_climate' ]","[ 'attach_project_to_atmosphere_processor' ]",,,,
+]","[ { 'requirement_id' : 'market_is_not_station' } ]",200,[ 'condition_improvement_setting' ],,,"[ 'market_add_mild_climate' ]","[ 'attach_project_to_atmosphere_processor' ]",,,,
 habitable_condition_improvement,boggledTerraformingContentEnabled,terraforming,"Make atmosphere habitable",,Completed,"[
 	{ 'requirement_id' : 'terraforming_colony_not_habitable' },
 	{ 'requirement_id' : 'terraforming_world_type_allows_human_habitability' },
@@ -203,12 +203,12 @@ habitable_condition_improvement,boggledTerraformingContentEnabled,terraforming,"
 	{ 'requirement_id' : 'terraforming_colony_not_very_cold_or_very_hot' },
 	{ 'requirement_id' : 'terraforming_colony_atmosphere_not_toxic_or_irradiated' },
 	{ 'requirement_id' : 'terraforming_colony_has_atmosphere_processor' }
-]",,200,[ 'condition_improvement_setting' ],,,"[ 'market_add_habitable' ]","[ 'attach_project_to_atmosphere_processor' ]",,,,
+]","[ { 'requirement_id' : 'market_is_not_station' } ]",200,[ 'condition_improvement_setting' ],,,"[ 'market_add_habitable' ]","[ 'attach_project_to_atmosphere_processor' ]",,,,
 atmosphere_density_condition_improvement,boggledTerraformingContentEnabled,terraforming,"Normalize atmospheric density",,Completed,"[
 	{ 'requirement_id' : 'terraforming_colony_atmosphere_suboptimal_density' },
 	{ 'requirement_id' : 'terraforming_world_type_allows_terraforming' },
 	{ 'requirement_id' : 'terraforming_colony_has_atmosphere_processor' }
-]",,200,[ 'condition_improvement_setting' ],,,"[
+]","[ { 'requirement_id' : 'market_is_not_station' } ]",200,[ 'condition_improvement_setting' ],,,"[
 	'market_remove_no_atmosphere',
 	'market_remove_thin_atmosphere',
 	'market_remove_dense_atmosphere'
@@ -217,16 +217,16 @@ toxic_atmosphere_condition_improvement,boggledTerraformingContentEnabled,terrafo
 	{ 'requirement_id' : 'terraforming_colony_atmosphere_toxic' },
 	{ 'requirement_id' : 'terraforming_world_type_allows_terraforming' },
 	{ 'requirement_id' : 'terraforming_colony_has_atmosphere_processor' }
-]",,200,[ 'condition_improvement_setting' ],,,"[ 'market_remove_toxic_atmosphere' ]","[ 'attach_project_to_atmosphere_processor' ]",,,,
+]","[ { 'requirement_id' : 'market_is_not_station' } ]",200,[ 'condition_improvement_setting' ],,,"[ 'market_remove_toxic_atmosphere' ]","[ 'attach_project_to_atmosphere_processor' ]",,,,
 irradiated_condition_improvement,boggledTerraformingContentEnabled | boggledTerraformingRemoveRadiationProjectEnabled,terraforming,"Remove atmospheric radiation",,Completed,"[
 	{ 'requirement_id' : 'terraforming_colony_irradiated' },
 	{ 'requirement_id' : 'terraforming_colony_has_genelab' }
-]",,200,[ 'condition_improvement_setting' ],,,"[ 'market_remove_irradiated' ]","[ 'attach_project_to_genelab' ]",,,,
+]","[ { 'requirement_id' : 'market_is_not_station' } ]",200,[ 'condition_improvement_setting' ],,,"[ 'market_remove_irradiated' ]","[ 'attach_project_to_genelab' ]",,,,
 remove_atmosphere_condition_improvement,boggledTerraformingContentEnabled | boggledTerraformingRemoveAtmosphereProjectEnabled,terraforming,"Remove the atmosphere",,Completed,"[
 	{ 'requirement_id' : 'terraforming_colony_has_atmosphere' },
 	{ 'requirement_id' : 'terraforming_colony_barren_or_frozen' },
 	{ 'requirement_id' : 'terraforming_colony_has_atmosphere_processor' }
-]",,200,[ 'condition_improvement_setting' ],,,"[
+]","[ { 'requirement_id' : 'market_is_not_station' } ]",200,[ 'condition_improvement_setting' ],,,"[
 	'market_add_no_atmosphere',
 	'market_remove_thin_atmosphere',
 	'market_remove_toxic_atmosphere',

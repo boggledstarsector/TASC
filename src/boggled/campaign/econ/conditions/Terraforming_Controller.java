@@ -90,7 +90,7 @@ public class Terraforming_Controller extends BaseHazardCondition {
     public void advance(float amount) {
         super.advance(amount);
 
-        if(!(market.isPlayerOwned() || market.getFaction().isPlayerFaction()) || boggledTools.marketIsStation(market)) {
+        if(!(market.isPlayerOwned() || market.getFaction().isPlayerFaction())) {
             boggledTools.removeCondition(market, boggledTools.BoggledConditions.terraformingControllerConditionId);
             return;
         }

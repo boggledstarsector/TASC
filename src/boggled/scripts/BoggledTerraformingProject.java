@@ -49,6 +49,10 @@ public class BoggledTerraformingProject {
         public int getLastDayChecked() { return lastDayChecked; }
 
         public boolean advance(BoggledTerraformingRequirement.RequirementContext ctx) {
+            if (project == null) {
+                return true;
+            }
+
             if (project.getModifiedProjectDuration(ctx) == 0) {
                 project.finishProject(ctx, project.getProjectTooltip());
                 return true;

@@ -248,16 +248,22 @@ class CommandUIIntelK : LunaBaseCustomPanelPlugin() {
 
         private const val BUTTON_OFF_SCREEN_POSITION = 100000f
 
-        private fun getTerraformingControllerFromMarket(market : MarketAPI) : Terraforming_Controller {
-            return market.getCondition(boggledTools.BoggledConditions.terraformingControllerConditionId).plugin as Terraforming_Controller
+        private fun getTerraformingControllerFromMarket(market : MarketAPI) : Terraforming_Controller? {
+            val condition = market.getCondition(boggledTools.BoggledConditions.terraformingControllerConditionId)
+            if (condition != null) {
+                return condition.plugin as Terraforming_Controller
+            }
+            return null
         }
 
-        private fun getTerraformingDaysRemaining(terraformingController: Terraforming_Controller) : Int {
+        private fun getTerraformingDaysRemaining(terraformingController: Terraforming_Controller?) : Int {
+            if (terraformingController == null) return 0
             if (terraformingController.project == null) return 0
             return terraformingController.daysRemaining
         }
 
-        private fun getTerraformingDaysRemainingComplete(terraformingController : Terraforming_Controller) : String {
+        private fun getTerraformingDaysRemainingComplete(terraformingController : Terraforming_Controller?) : String {
+            if (terraformingController == null) return ""
             if (terraformingController.project == null) return ""
             val daysRemaining = terraformingController.daysRemaining
             val days = if (daysRemaining == 1) " day " else " days "
@@ -493,7 +499,7 @@ class CommandUIIntelK : LunaBaseCustomPanelPlugin() {
 
             moveButtonsOffscreen(inactiveStartProjectButton!!.position::inTL, startProjectButton!!, requirementsNotMetButton!!)
             val terraformingController = getTerraformingControllerFromMarket(selectedPlanet!!.market)
-            if (terraformingController.project == null) {
+            if (terraformingController?.project == null) {
                 moveButtonsOffscreen(inactiveCancelProjectButton!!.position::inTR, activeCancelProjectButton!!)
             } else {
                 moveButtonsOffscreen(activeCancelProjectButton!!.position::inTR, inactiveCancelProjectButton!!)
@@ -517,7 +523,7 @@ class CommandUIIntelK : LunaBaseCustomPanelPlugin() {
 
         val terraformingProject = (selectedProject?.customData as ProjectRequirementsTooltip).terraformingProject!!
 
-        terraformingController.setProject(terraformingProject)
+        terraformingController?.setProject(terraformingProject)
 
         selectedPlanet?.projectLabel?.text = terraformingProject.projectTooltip
         selectedPlanet?.projectTimeRemaining?.text = getTerraformingDaysRemainingComplete(terraformingController)
@@ -534,7 +540,7 @@ class CommandUIIntelK : LunaBaseCustomPanelPlugin() {
 
     private fun handleTerraformingCancelProjectButtonPress() {
         val terraformingController = getTerraformingControllerFromMarket(selectedPlanet!!.market)
-        terraformingController.setProject(null)
+        terraformingController?.setProject(null)
 
         selectedPlanet?.projectLabel?.text = "None"
         selectedPlanet?.projectTimeRemaining?.text = ""
@@ -586,12 +592,18 @@ class CommandUIIntelK : LunaBaseCustomPanelPlugin() {
 
 //        nameHolder.innerElement.addAreaCheckbox(null, null, Global.getSector().playerFaction.baseUIColor, Color(122,122,122,255), Global.getSector().playerFaction.brightUIColor, NAME_WIDTH, PLANET_CARD_HEIGHT, 0f).position.inTL(0f, 0f)
 
-        nameHolder.innerElement.showPlanetInfo(ctx.planet, NAME_WIDTH, PLANET_CARD_HEIGHT, false, 0f)
+        if (ctx.planet != null) {
+            nameHolder.innerElement.showPlanetInfo(ctx.planet, NAME_WIDTH, PLANET_CARD_HEIGHT, false, 0f)
+        } else {
+            nameHolder.innerElement.addImage(ctx.station.customEntitySpec.spriteName, NAME_WIDTH * 0.9f, PLANET_CARD_HEIGHT * 0.9f, 0f)
+        }
 
-        val nameLabel = nameHolder.innerElement.addPara(ctx.planetMarket.name, ctx.planetMarket.textColorForFactionOrPlanet, 0f)
-        val nameLength = nameLabel.computeTextWidth(ctx.planetMarket.name)
+        val nameLabel = nameHolder.innerElement.addPara(ctx.closestMarket.name, ctx.closestMarket.textColorForFactionOrPlanet, 0f)
+        val nameHeight = nameLabel.computeTextHeight(ctx.closestMarket.name)
+        nameLabel.autoSizeToWidth(NAME_WIDTH)
+        nameLabel.setAlignment(Alignment.MID)
 
-        nameLabel.position.inTL(NAME_WIDTH / 2 - (nameLength * 0.9f) / 2, PLANET_CARD_HEIGHT - HEADER_HEIGHT)
+        nameLabel.position.inTL(0f, PLANET_CARD_HEIGHT - nameHeight)
     }
 
     private fun createPlanetsConditionPanel(baseElement : TooltipMakerAPI, ctx : RequirementContext) {
@@ -605,9 +617,9 @@ class CommandUIIntelK : LunaBaseCustomPanelPlugin() {
 
 //        conditionHolder.innerElement.addAreaCheckbox(null, null, Global.getSector().playerFaction.baseUIColor, Color(122,122,122,255), Global.getSector().playerFaction.brightUIColor, CONDITIONS_WIDTH, PLANET_CARD_HEIGHT, 0f).position.inTL(0f, 0f)
 
+        val planetaryConditionsCount = ctx.closestMarket.conditions.filter { it.isPlanetary && it.plugin.showIcon() }.size
         var conditionHorizontalSpacing = 2f
         var conditionVerticalSpacing = PLANET_CARD_HEIGHT / 2
-        val planetaryConditionsCount = ctx.planetMarket.conditions.filter { it.isPlanetary }.size
 
         var conditionSpriteSize = CONDITION_SPRITE_SIZE
         val conditionSpriteCapacity = PLANET_CARD_HEIGHT / 2
@@ -622,15 +634,29 @@ class CommandUIIntelK : LunaBaseCustomPanelPlugin() {
         }
 
         val planetTypeLabelElement = conditionHolder.elementPanel.createUIElement(CONDITIONS_WIDTH, HEADER_HEIGHT, false)
-        val planetTypeLabel = planetTypeLabelElement.addPara(ctx.planet.spec.name, ctx.planet.spec.iconColor, 0f)
+        if (ctx.planet != null) {
+            val planetTypeLabel = planetTypeLabelElement.addPara(ctx.planet.spec.name, ctx.planet.spec.iconColor, 0f)
 
-        val planetTypeHeight = planetTypeLabel.computeTextHeight(ctx.planet.typeNameWithWorld)
-        planetTypeLabelElement.position.inTL(PLANET_TYPE_LABEL_MAGIC_X_PAD, conditionVerticalSpacing - planetTypeHeight - 5f)
-        planetTypeLabel.position.inTL(0f, 0f)
-        conditionHolder.elementPanel.addUIElement(planetTypeLabelElement)
+            val planetTypeHeight = planetTypeLabel.computeTextHeight(ctx.planet.typeNameWithWorld)
+            planetTypeLabelElement.position.inTL(PLANET_TYPE_LABEL_MAGIC_X_PAD, conditionVerticalSpacing - planetTypeHeight - 5f)
+            planetTypeLabel.position.inTL(0f, 0f)
+            conditionHolder.elementPanel.addUIElement(planetTypeLabelElement)
+        } else if (ctx.station != null){
+            val stationTypeLabel = planetTypeLabelElement.addPara("Station", ctx.station.indicatorColor, 0f)
 
-        for (condition in ctx.planetMarket.conditions) {
+            val stationTypeHeight = stationTypeLabel.computeTextHeight("Station")
+            planetTypeLabelElement.position.inTL(PLANET_TYPE_LABEL_MAGIC_X_PAD, conditionVerticalSpacing - stationTypeHeight - 5f)
+            stationTypeLabel.position.inTL(0f, 0f)
+            conditionHolder.elementPanel.addUIElement(planetTypeLabelElement)
+        }
+
+        if (planetaryConditionsCount == 0) {
+            return
+        }
+
+        for (condition in ctx.closestMarket.conditions) {
             if (!condition.isPlanetary) continue
+            if (!condition.plugin.showIcon()) continue
 
             val conditionSprite = LunaSpriteElement(condition.spec.icon, LunaSpriteElement.ScalingTypes.STRETCH_SPRITE, conditionHolder.innerElement, conditionSpriteSize, conditionSpriteSize)
             conditionSprite.position.inTL(conditionHorizontalSpacing, conditionVerticalSpacing)
@@ -660,12 +686,12 @@ class CommandUIIntelK : LunaBaseCustomPanelPlugin() {
         hazardHolder.renderBorder = false
         hazardHolder.position.inTL(HAZARD_PANEL_OFFSET, 0f)
 
-        val hazardLabelRating = (ctx.planetMarket.hazard.modified * 100).toInt()
+        val hazardLabelRating = (ctx.closestMarket.hazard.modified * 100).toInt()
         val hazardLabel = hazardHolder.innerElement.addPara("Hazard rating: $hazardLabelRating%%", 0f, faction.baseUIColor, Misc.getHighlightColor(), "$hazardLabelRating%")
         hazardLabel.position.inTL(0f, PLANET_CARD_HEIGHT - HEADER_HEIGHT)
 
-        val terraformingController = getTerraformingControllerFromMarket(ctx.planetMarket)
-        val projectNameNicer = boggledTools.getTooltipProjectName(ctx, terraformingController.project)
+        val terraformingController = getTerraformingControllerFromMarket(ctx.closestMarket)
+        val projectNameNicer = boggledTools.getTooltipProjectName(ctx, terraformingController?.project)
         buttonData.projectLabel = hazardHolder.innerElement.addPara(projectNameNicer, faction.baseUIColor, 0f)
         buttonData.projectLabel!!.position.inTL(0f, SORT_SPACING)
 
@@ -673,26 +699,8 @@ class CommandUIIntelK : LunaBaseCustomPanelPlugin() {
         buttonData.projectTimeRemaining!!.position.inTL(0f, PLANET_CARD_HEIGHT - 2 * HEADER_HEIGHT)
     }
 
-    private fun createPlanetsPanel(basePanel : CustomPanelAPI, height : Float, yPad : Float) {
-        val faction = Global.getSector().playerFaction
-        val markets : ArrayList<MarketAPI> = boggledTools.getNonStationMarketsPlayerControls()
-
-        val planetsPanelHeight = height
-//        val planetsPanelHeight = markets.size * PLANET_CARD_HEIGHT + 3f
-
-        val planetsPanel = basePanel.createCustomPanel(PLANETS_PANEL_WIDTH, planetsPanelHeight, null)
-        planetsPanel.position.inTL(0f, yPad)
-
-        val planetsElement = planetsPanel.createUIElement(PLANETS_PANEL_WIDTH, planetsPanelHeight, true)
-        planetsElement.position.inTL(0f, 0f)
-
-//        planetsElement.addAreaCheckbox(null, null, faction.baseUIColor, Color(128,128,128,255), faction.brightUIColor, PLANETS_PANEL_WIDTH, planetsPanelHeight, 0f).position.inTL(0f, 0f)
-
-        if (markets.isEmpty()) {
-            planetsElement.addAreaCheckbox("No planets", null, Color(0, 0, 0, 0), Color(0, 0, 0, 0), faction.brightUIColor, PLANETS_PANEL_WIDTH, planetsPanelHeight, 0f)
-        }
-
-        var verticalSpacing = 3f
+    private fun populatePlanetsPanel(planetsElement : TooltipMakerAPI, markets : List<MarketAPI>, faction : FactionAPI, initialVerticalSpacing : Float) : Float {
+        var verticalSpacing = initialVerticalSpacing
         for (marketVar in markets) {
             val cardHolder = LunaElement(planetsElement, PLANET_CARD_WIDTH, PLANET_CARD_HEIGHT)
             cardHolder.position.inTL(PLANET_CARD_HOLDER_MAGIC_X_PAD, verticalSpacing)
@@ -704,6 +712,7 @@ class CommandUIIntelK : LunaBaseCustomPanelPlugin() {
             button.position.inTL(0f, 0f)
 
             val buttonData = CommandUIButtonData(button, marketVar, this)
+
             val ctx = RequirementContext(marketVar, null)
 
             createPlanetsNamePanel(cardHolder.innerElement, ctx)
@@ -728,6 +737,47 @@ class CommandUIIntelK : LunaBaseCustomPanelPlugin() {
 
             verticalSpacing += PLANET_CARD_HEIGHT
         }
+        return verticalSpacing
+    }
+
+    private fun getMarketsWithVisibleProjects(markets : List<MarketAPI>) : List<MarketAPI> {
+        val ret = ArrayList<MarketAPI>()
+        for (marketVar in markets) {
+            val ctx = RequirementContext(marketVar, null)
+
+            val visibleProjects = boggledTools.getVisibleProjects(ctx)
+            val terraformingProjects = visibleProjects["terraforming"]
+            val craftingProjects = visibleProjects["crafting"]
+            if (terraformingProjects.isNullOrEmpty() && craftingProjects.isNullOrEmpty()) {
+                continue
+            }
+            ret.add(marketVar)
+        }
+        return ret;
+    }
+
+    private fun createPlanetsPanel(basePanel : CustomPanelAPI, height : Float, yPad : Float) {
+        val faction = Global.getSector().playerFaction
+        val planetMarkets = getMarketsWithVisibleProjects(boggledTools.getNonStationMarketsPlayerControls())
+        val stationMarkets = getMarketsWithVisibleProjects(boggledTools.getStationMarketsPlayerControls())
+
+        val planetsPanelHeight = height
+
+        val planetsPanel = basePanel.createCustomPanel(PLANETS_PANEL_WIDTH, planetsPanelHeight, null)
+        planetsPanel.position.inTL(0f, yPad)
+
+        val planetsElement = planetsPanel.createUIElement(PLANETS_PANEL_WIDTH, planetsPanelHeight, true)
+        planetsElement.position.inTL(0f, 0f)
+
+//        planetsElement.addAreaCheckbox(null, null, faction.baseUIColor, Color(128,128,128,255), faction.brightUIColor, PLANETS_PANEL_WIDTH, planetsPanelHeight, 0f).position.inTL(0f, 0f)
+
+        if (planetMarkets.isEmpty() && stationMarkets.isEmpty()) {
+            planetsElement.addAreaCheckbox("No planets or stations with available projects", null, Color(0, 0, 0, 0), Color(0, 0, 0, 0), faction.brightUIColor, PLANETS_PANEL_WIDTH, planetsPanelHeight, 0f)
+        }
+
+        val verticalSpacing = populatePlanetsPanel(planetsElement, planetMarkets, faction, 3f)
+
+        populatePlanetsPanel(planetsElement, stationMarkets, faction, verticalSpacing)
 
         planetsPanel.addUIElement(planetsElement)
         basePanel.addComponent(planetsPanel)
