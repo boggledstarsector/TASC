@@ -1,5 +1,6 @@
 package boggled.campaign.econ.industries;
 
+import boggled.scripts.BoggledTascPlugin;
 import boggled.scripts.BoggledTerraformingProject;
 import com.fs.starfarer.api.campaign.CargoAPI;
 import com.fs.starfarer.api.campaign.econ.Industry;
@@ -26,6 +27,7 @@ public class BoggledBaseIndustry extends BaseIndustry implements BoggledIndustry
     @Override
     public void init(String id, MarketAPI market) {
         super.init(id, market);
+        BoggledTascPlugin.loadSettingsFromJSON();
         thisIndustry = new BoggledCommonIndustry(boggledTools.getIndustryProject(id), this);
     }
 
