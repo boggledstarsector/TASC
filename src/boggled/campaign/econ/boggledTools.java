@@ -1442,6 +1442,10 @@ public class boggledTools {
         }
     }
 
+    public static BoggledCommonIndustry getIndustryProject(String industry) {
+        return industryProjects.get(industry);
+    }
+
     public static BoggledTerraformingProject getProject(String projectId) {
         return terraformingProjects.get(projectId);
     }
@@ -1483,9 +1487,6 @@ public class boggledTools {
 
     private static Map<String, PlanetType> planetTypesMap;
 
-    public static BoggledCommonIndustry getIndustryProject(String industry) {
-        return industryProjects.get(industry);
-    }
     public static BoggledTerraformingDurationModifier.TerraformingDurationModifier getDurationModifier(String modifier) { return durationModifiers.get(modifier); }
 
     public static HashMap<String, Integer> getNumProjects() {
