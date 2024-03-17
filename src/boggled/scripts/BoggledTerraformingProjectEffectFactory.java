@@ -283,13 +283,14 @@ public class BoggledTerraformingProjectEffectFactory {
                     variants.add(variantsArray.getString(i));
                 }
             }
+            String variantOptionId = jsonData.optString("variant_option_id");
             int numStationsPerLayer = jsonData.getInt("num_stations_per_layer");
             float orbitRadius = (float) jsonData.getDouble("orbit_radius");
 
             BoggledStationConstructionFactory.StationConstructionFactory factory = boggledTools.stationConstructionFactories.get(stationType);
             BoggledStationConstructors.StationConstructionData stationConstructionData = factory.constructFromJSON(id, jsonData.getJSONObject("station_construction_data").toString());
 
-            return new BoggledTerraformingProjectEffect.AddStationToOrbit(id, enableSettings, stationType, stationName, variants, numStationsPerLayer, orbitRadius, stationConstructionData);
+            return new BoggledTerraformingProjectEffect.AddStationToOrbit(id, enableSettings, stationType, stationName, variants, variantOptionId, numStationsPerLayer, orbitRadius, stationConstructionData);
         }
     }
 
@@ -306,13 +307,14 @@ public class BoggledTerraformingProjectEffectFactory {
                     variants.add(variantsArray.getString(i));
                 }
             }
+            String variantOptionId = jsonData.optString("variant_option_id");
             int numStationsPerLayer = jsonData.getInt("num_stations_per_layer");
             float orbitRadius = (float) jsonData.getDouble("orbit_radius");
 
             BoggledStationConstructionFactory.StationConstructionFactory factory = boggledTools.stationConstructionFactories.get(stationType);
             BoggledStationConstructors.StationConstructionData stationConstructionData = factory.constructFromJSON(id, jsonData.getJSONObject("station_construction_data").toString());
 
-            return new BoggledTerraformingProjectEffect.AddStationToEntity(id, enableSettings, stationType, stationName, variants, numStationsPerLayer, orbitRadius, stationConstructionData);
+            return new BoggledTerraformingProjectEffect.AddStationToEntity(id, enableSettings, stationType, stationName, variants, variantOptionId, numStationsPerLayer, orbitRadius, stationConstructionData);
         }
     }
 

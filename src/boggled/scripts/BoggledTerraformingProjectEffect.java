@@ -746,17 +746,19 @@ public class BoggledTerraformingProjectEffect {
         String stationType;
         String stationName;
         List<String> variants;
+        String variantOptionId;
 
         int numStationsPerLayer;
         float orbitRadius;
 
         BoggledStationConstructors.StationConstructionData stationConstructionData;
 
-        public AddStation(String id, String[] enableSettings, String stationType, String stationName, List<String> variants, int numStationsPerLayer, float orbitRadius, BoggledStationConstructors.StationConstructionData stationConstructionData) {
+        public AddStation(String id, String[] enableSettings, String stationType, String stationName, List<String> variants, String variantOptionId, int numStationsPerLayer, float orbitRadius, BoggledStationConstructors.StationConstructionData stationConstructionData) {
             super(id, enableSettings);
             this.stationType = stationType;
             this.stationName = stationName;
             this.variants = variants;
+            this.variantOptionId = variantOptionId;
             this.numStationsPerLayer = numStationsPerLayer;
             this.orbitRadius = orbitRadius;
             this.stationConstructionData = stationConstructionData;
@@ -796,6 +798,12 @@ public class BoggledTerraformingProjectEffect {
             numStationsAlreadyPresent = Math.abs(numStationsAlreadyPresent);
             if (variants.isEmpty()) {
                 return "";
+            }
+            if (!variantOptionId.isEmpty()) {
+                int variantId = boggledTools.getIntSetting(variantOptionId);
+                if (variantId != 0) {
+                    return "_" + variants.get(variantId % variants.size());
+                }
             }
             return "_" + variants.get(numStationsAlreadyPresent % variants.size());
         }
@@ -897,8 +905,8 @@ public class BoggledTerraformingProjectEffect {
     }
 
     public static class AddStationToOrbit extends AddStation {
-        public AddStationToOrbit(String id, String[] enableSettings, String stationType, String stationName, List<String> variants, int numStationsPerLayer, float orbitRadius, BoggledStationConstructors.StationConstructionData stationConstructionData) {
-            super(id, enableSettings, stationType, stationName, variants, numStationsPerLayer, orbitRadius, stationConstructionData);
+        public AddStationToOrbit(String id, String[] enableSettings, String stationType, String stationName, List<String> variants, String variantOptionId, int numStationsPerLayer, float orbitRadius, BoggledStationConstructors.StationConstructionData stationConstructionData) {
+            super(id, enableSettings, stationType, stationName, variants, variantOptionId, numStationsPerLayer, orbitRadius, stationConstructionData);
         }
 
         @Override
@@ -987,8 +995,8 @@ public class BoggledTerraformingProjectEffect {
     }
 
     public static class AddStationToEntity extends AddStation {
-        public AddStationToEntity(String id, String[] enableSettings, String stationType, String stationName, List<String> variants, int numStationsPerLayer, float orbitRadius, BoggledStationConstructors.StationConstructionData stationConstructionData) {
-            super(id, enableSettings, stationType, stationName, variants, numStationsPerLayer, orbitRadius, stationConstructionData);
+        public AddStationToEntity(String id, String[] enableSettings, String stationType, String stationName, List<String> variants, String variantOptionId, int numStationsPerLayer, float orbitRadius, BoggledStationConstructors.StationConstructionData stationConstructionData) {
+            super(id, enableSettings, stationType, stationName, variants, variantOptionId, numStationsPerLayer, orbitRadius, stationConstructionData);
         }
 
         @Override
