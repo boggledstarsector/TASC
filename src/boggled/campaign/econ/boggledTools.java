@@ -169,6 +169,7 @@ public class boggledTools {
         // May move them to a CSV later
         public static final String enableAIMiningDronesStructure = "boggledEnableAIMiningDronesStructure";
         public static final String domainTechContentEnabled = "boggledDomainTechContentEnabled";
+        public static final String domainTechCraftingEnabled = "boggledDomainTechCraftingEnabled";
         public static final String domainArchaeologyEnabled = "boggledDomainArchaeologyEnabled";
         public static final String CHAMELEONEnabled = "boggledCHAMELEONEnabled";
         public static final String cloningEnabled = "boggledCloningEnabled";

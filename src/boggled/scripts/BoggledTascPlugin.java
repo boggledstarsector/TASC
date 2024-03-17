@@ -91,7 +91,9 @@ public class BoggledTascPlugin extends BaseModPlugin {
     }
 
     public void applyTerraformingAbilitiesPerSettingsFile() {
-        if(boggledTools.getBooleanSetting(boggledTools.BoggledSettings.terraformingContentEnabled) && !aotdEnabled) {
+        if((   boggledTools.getBooleanSetting(boggledTools.BoggledSettings.terraformingContentEnabled)
+            || boggledTools.getBooleanSetting(boggledTools.BoggledSettings.domainTechCraftingEnabled))
+           && !aotdEnabled) {
             if (!Global.getSector().getPlayerFleet().hasAbility("boggled_open_terraforming_control_panel")) {
                 Global.getSector().getCharacterData().addAbility("boggled_open_terraforming_control_panel");
             }

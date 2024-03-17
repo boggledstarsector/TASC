@@ -2318,7 +2318,9 @@ public class BoggledTerraformingProjectEffect {
                 }
 
                 for (InstallableIndustryItemPlugin installableItem : targetIndustry.getInstallableItems()) {
-                    cargo.addSpecial(installableItem.getCurrentlyInstalledItemData(), 1);
+                    if (installableItem.getCurrentlyInstalledItemData() != null) {
+                        cargo.addSpecial(installableItem.getCurrentlyInstalledItemData(), 1);
+                    }
                 }
             }
             market.removeIndustry(industryIdToRemove, null, false);
