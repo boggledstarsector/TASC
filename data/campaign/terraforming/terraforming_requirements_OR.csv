@@ -175,7 +175,7 @@ industry_effects_domain_archaeology_colony_ruins_vast,,,false,"market_ruins_vast
 ability_astropolis_station_player_fleet_not_in_hyperspace,"You cannot construct an astropolis station in hyperspace.",,false,"player_fleet_not_in_hyperspace"
 ability_astropolis_station_system_has_jump_points,"You cannot construct an astropolis station in a system with no jump points.",,false,"system_has_jump_points"
 ability_astropolis_station_system_has_planets,"You cannot construct an astropolis station in a system with no planets.",,false,"system_has_planets"
-ability_astropolis_station_target_planet_owned_by_player,"You cannot construct an astropolis station in orbit around a world already controlled by $factionName.",,false,"target_planet_owned_by_player"
+ability_astropolis_station_target_planet_owned_by_player,"You cannot construct an astropolis station in orbit around a world already controlled by $factionName.",,false,"target_planet_owned_by_player | target_planet_governed_by_player"
 ability_astropolis_station_target_planet_within_range,"The world closest to your location is $planetName. Your fleet is $distanceInSu stellar units away. You must be within $requiredDistanceInSu stellar units to construct an astropolis station.",,false,"ability_astropolis_station_target_planet_within_range"
 ability_astropolis_station_target_planet_too_small,"$planetName is too small to host an astropolis.",,false,"ability_astropolis_station_target_planet_too_small"
 ability_astropolis_station_target_planet_too_close_to_orbit_focus,"An astropolis would be unable to achieve a satisfactory orbit around $planetName because it is orbiting too close to $focusPlanetName.",,false,"target_planet_too_close_to_orbit_focus"
