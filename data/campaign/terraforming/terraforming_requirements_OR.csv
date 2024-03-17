@@ -97,7 +97,7 @@ industry_chameleon_alpha_core_eliminate_pather_interest_does_have_shortage,"The 
 industry_chameleon_rogue_ai_does_have_shortage,"The search for the rogue AI core is stalled due to a lack of Domain-era Artifacts.",,false,"chameleon_does_have_shortage"
 industry_chameleon_decivilized_does_have_shortage,"The removal of the decivilized population is stalled due to a lack of Domain-era Artifacts.",,false,"chameleon_does_have_shortage"
 ,,
-industry_domed_cities_colony_not_gas_giant,"There is no solid ground on $marketName upon which to build a dome.",,false,"planet_not_gas_giant"
+industry_domed_cities_colony_not_gas_giant,"There is no solid ground on $marketName upon which to build a dome.",,false,"planet_not_gas_giant | market_floating_continent"
 ,,
 industry_genelab_pollution_remediation_does_have_shortage,"Pollution remediation is stalled due to a lack of Domain-era artifacts.",,false,"genelab_does_have_shortage"
 industry_genelab_lobster_seeding_does_have_shortage,"Lobster seeding is stalled due to a lack of Domain-era artifacts.",,false,"genelab_does_have_shortage"

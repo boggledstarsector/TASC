@@ -57,7 +57,7 @@ public class boggledTools {
                 return;
             }
         }
-        throw new IllegalArgumentException(source + ": Market condition ID '" + submarketId + "' doesn't exist");
+        Global.getLogger(boggledTools.class).warn(source + ": Market condition ID '" + submarketId + "' doesn't exist");
     }
 
     public static void CheckMarketConditionExists(String source, String conditionId) {
@@ -66,7 +66,7 @@ public class boggledTools {
                 return;
             }
         }
-        throw new IllegalArgumentException(source + ": Condition ID '" + conditionId + "' doesn't exist");
+        Global.getLogger(boggledTools.class).warn(source + ": Condition ID '" + conditionId + "' doesn't exist");
     }
 
     public static void CheckCommodityExists(String source, String commodityId) {
@@ -75,7 +75,7 @@ public class boggledTools {
                 return;
             }
         }
-        throw new IllegalArgumentException(source + ": Commodity ID '" + commodityId + "' doesn't exist");
+        Global.getLogger(boggledTools.class).warn(source + ": Commodity ID '" + commodityId + "' doesn't exist");
     }
 
     public static void CheckSpecialItemExists(String source, String specialItemId) {
@@ -84,7 +84,7 @@ public class boggledTools {
                 return;
             }
         }
-        throw new IllegalArgumentException(source + ": Special Item ID '" + specialItemId + "' doesn't exist");
+        Global.getLogger(boggledTools.class).warn(source + ": Special Item ID '" + specialItemId + "' doesn't exist");
     }
 
     public static void CheckResourceExists(String source, String resourceId) {
@@ -93,7 +93,7 @@ public class boggledTools {
                 return;
             }
         }
-        throw new IllegalArgumentException(source + ": Resource ID '" + resourceId + "' doesn't exist");
+        Global.getLogger(boggledTools.class).warn(source + ": Resource ID '" + resourceId + "' doesn't exist");
     }
 
     public static void CheckPlanetSpecExists(String source, String planet) {
@@ -102,7 +102,7 @@ public class boggledTools {
                 return;
             }
         }
-        throw new IllegalArgumentException(source + ": Planet type '" + planet + "' doesn't exist");
+        Global.getLogger(boggledTools.class).warn(source + ": Planet type '" + planet + "' doesn't exist");
     }
 
     public static void CheckPlanetTypeExists(String source, String planet) {
@@ -111,7 +111,7 @@ public class boggledTools {
                 return;
             }
         }
-        throw new IllegalArgumentException(source + ": Planet type '" + planet + "' doesn't exist");
+        Global.getLogger(boggledTools.class).warn(source + ": Planet type '" + planet + "' doesn't exist");
     }
 
     public static void CheckIndustryExists(String source, String industryId) {
@@ -119,7 +119,7 @@ public class boggledTools {
         if (industrySpec != null) {
             return;
         }
-        throw new IllegalArgumentException(source + ": Industry ID '" + industryId + "' doesn't exist");
+        Global.getLogger(boggledTools.class).warn(source + ": Industry ID '" + industryId + "' doesn't exist");
     }
 
     public static void CheckItemExists(String source, String itemId) {
@@ -128,7 +128,7 @@ public class boggledTools {
                 return;
             }
         }
-        throw new IllegalArgumentException(source + ": Item ID '" + itemId + "' doesn't exist");
+        Global.getLogger(boggledTools.class).warn(source + ": Item ID '" + itemId + "' doesn't exist");
     }
 
     public static void CheckSkillExists(String source, String skillId) {
@@ -137,7 +137,7 @@ public class boggledTools {
                 return;
             }
         }
-        throw new IllegalArgumentException(source + ": Skill ID '" + skillId + "' doesn't exist");
+        Global.getLogger(boggledTools.class).warn(source + ": Skill ID '" + skillId + "' doesn't exist");
     }
 
     public static class BoggledMods {

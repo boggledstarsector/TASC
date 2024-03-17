@@ -40,6 +40,8 @@ market_dense_atmosphere,,MarketHasCondition,false,"dense_atmosphere"
 market_toxic_atmosphere,,MarketHasCondition,false,"toxic_atmosphere"
 market_irradiated,,MarketHasCondition,false,"irradiated"
 ,
+market_floating_continent,,MarketHasCondition,false,"US_floating"
+,
 market_not_irradiated,,MarketHasCondition,true,"irradiated"
 market_any_atmosphere,,MarketHasCondition,true,"no_atmosphere"
 ,
