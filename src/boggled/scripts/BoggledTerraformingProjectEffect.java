@@ -346,7 +346,11 @@ public class BoggledTerraformingProjectEffect {
         protected void applyProjectEffectImpl(BoggledTerraformingRequirement.RequirementContext ctx, String effectSource) {
             super.applyProjectEffectImpl(ctx.getFocusContext(), effectSource);
 
-            SectorEntityToken closestGasGiantToken = ctx.getPlanetMarket().getPrimaryEntity();
+            MarketAPI market = ctx.getClosestMarket();
+            if (market == null) {
+                return;
+            }
+            SectorEntityToken closestGasGiantToken = market.getPrimaryEntity().getOrbitFocus();
             if (closestGasGiantToken == null) {
                 return;
             }
