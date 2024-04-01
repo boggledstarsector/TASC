@@ -2041,7 +2041,7 @@ public class BoggledTerraformingProjectEffect {
             }
             MarketAPI market = targetIndustry.getMarket();
             for (String conditionId : conditionIds) {
-                if (conditionId.equals(Conditions.WATER_SURFACE) && market.hasCondition(conditionId)) {
+                if (conditionId.equals(Conditions.WATER_SURFACE)) {
                     market.getHazard().unmodify(id);
                 } else {
                     market.unsuppressCondition(conditionId);

@@ -451,7 +451,7 @@ domain_archaeology_ruins_vast_effect,,EffectWithRequirement,"{
 	'effects' : [ 'ongoing_modify_pather_interest_plus_4' ]
 }"
 
-domed_cities_suppress_conditions,,SuppressConditions,"[ 'no_atmosphere', 'thin_atmosphere', 'dense_atmosphere', 'toxic_atmosphere', 'extreme_weather', 'inimical_biosphere' ]"
+domed_cities_suppress_conditions,,SuppressConditions,"[ 'no_atmosphere', 'thin_atmosphere', 'dense_atmosphere', 'toxic_atmosphere', 'extreme_weather', 'inimical_biosphere', 'US_storm' ]"
 domed_cities_modify_colony_growth,,ModifyColonyGrowthRate,"{ 'modifier_type' : 'market_size', 'value' : -1 }"
 domed_cities_modify_ground_defense,boggledDomedCitiesDefensePenaltyEnabled,ModifyColonyGroundDefense,"{ 'modifier_type' : 'mult', 'value' : 0.05 }"
 
