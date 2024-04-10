@@ -798,17 +798,24 @@ public class BoggledTerraformingProjectEffect {
             return greekAlphabetList;
         }
 
-        protected String getVariant(int numStationsAlreadyPresent) {
+        protected String getVariant(int numStationsAlreadyPresent)
+        {
             numStationsAlreadyPresent = Math.abs(numStationsAlreadyPresent);
-            if (variants.isEmpty()) {
+            if (variants.isEmpty())
+            {
                 return "";
             }
-            if (!variantOptionId.isEmpty()) {
+
+            if (!variantOptionId.isEmpty())
+            {
                 int variantId = boggledTools.getIntSetting(variantOptionId);
-                if (variantId != 0) {
-                    return "_" + variants.get(variantId % variants.size());
+                if (variantId != 0)
+                {
+                    // Variants is zero indexed but variantId is 1-3, not 0-2. Subtract 1 to account for this.
+                    return "_" + variants.get((variantId - 1) % variants.size());
                 }
             }
+
             return "_" + variants.get(numStationsAlreadyPresent % variants.size());
         }
 
