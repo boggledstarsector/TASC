@@ -8,7 +8,10 @@ aotd_ai_algorithms,industry_ai_mining_drones,,,"[
 aotd_atmosphere_manipulation,industry_atmosphere_processor,,,"[
 	{ 'requirement_id' : 'aotd_atmosphere_manipulation' }
 ]",,,,,,,,,,,,
-aotd_genetic_manipulation,industry_mesozoic_park,,,"[
+aotd_genetic_manipulation_mesozoic_park,industry_mesozoic_park,,,"[
+	{ 'requirement_id' : 'aotd_genetic_manipulation' }
+]",,,,,,,,,,,,
+aotd_genetic_manipulation_genelab,industry_genelab,,,"[
 	{ 'requirement_id' : 'aotd_genetic_manipulation' }
 ]",,,,,,,,,,,,
 

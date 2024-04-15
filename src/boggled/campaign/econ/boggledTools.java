@@ -318,7 +318,8 @@ public class boggledTools {
 
     public static Set<String> aotdIgnoreSettings = new HashSet<>();
 
-    public static void initialiseModIgnoreSettings() {
+    public static void initialiseModIgnoreSettings()
+    {
         aotdIgnoreSettings.add("boggledTerraformingContentEnabled");
         aotdIgnoreSettings.add("boggledTerraformingRemoveRadiationProjectEnabled");
         aotdIgnoreSettings.add("boggledTerraformingRemoveAtmosphereProjectEnabled");
@@ -346,7 +347,7 @@ public class boggledTools {
         aotdIgnoreSettings.add("boggledCHAMELEONEnabled");
         aotdIgnoreSettings.add("boggledLimelightNetworkPlayerBuildEnabled");
         aotdIgnoreSettings.add("boggledRemnantStationEnabled");
-        aotdIgnoreSettings.add("boggledHydroponicsEnabled");
+        //aotdIgnoreSettings.add("boggledHydroponicsEnabled");
         aotdIgnoreSettings.add("boggledCloningEnabled");
     }
 
