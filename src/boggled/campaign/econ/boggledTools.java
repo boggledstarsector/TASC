@@ -1574,9 +1574,18 @@ public class boggledTools {
         return getAngle(target.getLocation().x, target.getLocation().y, entity.getLocation().x, entity.getLocation().y);
     }
 
-    public static void surveyAll(MarketAPI market) {
-        for (MarketConditionAPI condition : market.getConditions()) {
+    public static void surveyAll(MarketAPI market)
+    {
+        for (MarketConditionAPI condition : market.getConditions())
+        {
             condition.setSurveyed(true);
+        }
+
+        //Refreshes supply and demand for each industry on the market
+        for (Industry industry : market.getIndustries())
+        {
+            industry.doPreSaveCleanup();
+            industry.doPostSaveRestore();
         }
     }
 
