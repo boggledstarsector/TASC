@@ -23,14 +23,14 @@ boggledHarmonicDamperEnabled,Enable Harmonic Damper,Boolean,False,,"Set this to 
 The Harmonic Damper building suppresses tectonic activity market conditions.",,,Terraforming
 boggledPlanetaryAgravFieldEnabled,Enable Planetary Agrav Field,Boolean,False,,"Set this to true to enable the Planetary Agrav Field building.
 
-The Planetary Agrav Field building supresses high and low gravity market conditions if the Domed Cities building is present on the colony.",,,Terraforming
+The Planetary Agrav Field building suppresses high and low gravity market conditions if the Domed Cities building is present on the colony.",,,Terraforming
 boggledMagnetoshieldEnabled,Enable Magnetoshield,Boolean,False,,"Set this to true to enable the Magnetoshield building.
 
 The Magnetoshield building will suppress the irradiated market condition.",,,Terraforming
 boggledPlanetCrackerEnabled,Enable Planet Cracker,Boolean,False,,"Set this to true to enable the Planet Cracker building.
 
 The Planet Cracker building can be constructed on a station orbiting a planet. It will permanently improve ore and rare ore resources on that planet by one level but will add the tectonic activity market condition. Does nothing if the planet already has tectonic activity.",,,Terraforming
-boggledOuyangOptimizerEnabled,Enable Ouyang Optimzer,Boolean,False,,"Set this to true to enable the Ouyang Optimizer building.
+boggledOuyangOptimizerEnabled,Enable Ouyang Optimizer,Boolean,False,,"Set this to true to enable the Ouyang Optimizer building.
 
 The Ouyang Optimizer building can be constructed on a station orbiting a gas giant. It will permanently improve volatiles resources on that planet by one level but will add the extreme weather market condition. Does nothing if the planet already has extreme weather.",,,Terraforming
 boggledStationConstructionContentEnabled,Enable station construction content,Boolean,True,,"Set this to false to completely disable all station construction content regardless of other settings.",,,Station Construction
@@ -183,7 +183,7 @@ boggledStableLocationGateCostTransplutonics,Inactive gate transplutonics cost,In
 boggledStableLocationGateCostDomainEraArtifacts,Inactive gate Domain-era artifact cost,Int,200,,"How many Domain-era artifacts are required to construct an inactive gate.",0,1000,Domain-tech Content
 boggledRemnantStationEnabled,Enable Remnant Station,Boolean,True,,"Set this to false to disable construction of the Remnant Station building.
 
-The Remnant Station is a type of orbital station. It has only one level instead of three and it spawns remnant patrols allied with the player to protect the colony.",,,Miscellaneous
+The Remnant Station is a type of orbital station. It has only one level instead of three and it spawns Remnant patrols allied with the player to protect the colony.",,,Miscellaneous
 boggledHydroponicsEnabled,Enable Hydroponics,Boolean,False,,"Set this to true to enable construction of the Hydroponics building.
 
 The Hydroponics building is an industry that can produce food without any farmland.",,,Miscellaneous
