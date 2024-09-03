@@ -2822,6 +2822,31 @@ public class boggledTools {
         }
     }
 
+    public static String getIndustryUnavailableReasonResearchRequiredString()
+    {
+        return "This building must be researched before it can be constructed.";
+    }
+
+    public boolean domainEraArtifactDemandEnabled()
+    {
+        if(getBooleanSetting("boggledDomainTechContentEnabled") && getBooleanSetting("boggledDomainArchaeologyEnabled"))
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    public void setDomainEraArtifactDemandIfEnabled(BaseIndustry baseIndustry, String commodityId, int amount)
+    {
+        if(domainEraArtifactDemandEnabled())
+        {
+            baseIndustry.demand(commodityId, amount);
+        }
+    }
+
     public static void writeMessageToLog(String message)
     {
         Global.getLogger(boggledTools.class).info(message);
