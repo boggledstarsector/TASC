@@ -6,11 +6,14 @@ import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.campaign.econ.MarketImmigrationModifier;
 import com.fs.starfarer.api.campaign.listeners.FleetEventListener;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
+import com.fs.starfarer.api.characters.PersonAPI;
 import com.fs.starfarer.api.combat.MutableStat;
 import com.fs.starfarer.api.impl.campaign.DebugFlags;
 import com.fs.starfarer.api.impl.campaign.econ.impl.*;
+import com.fs.starfarer.api.impl.campaign.events.OfficerManagerEvent;
 import com.fs.starfarer.api.impl.campaign.fleets.*;
 import com.fs.starfarer.api.impl.campaign.ids.*;
+import com.fs.starfarer.api.impl.campaign.procgen.themes.RemnantOfficerGeneratorPlugin;
 import com.fs.starfarer.api.impl.campaign.rulecmd.salvage.MarketCMD;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.IntervalUtil;
@@ -18,9 +21,10 @@ import com.fs.starfarer.api.util.Misc;
 import com.fs.starfarer.api.util.Pair;
 import com.fs.starfarer.api.util.WeightedRandomPicker;
 import boggled.campaign.econ.boggledTools;
-import java.util.List;
-import java.util.Random;
+
+import java.util.*;
 import java.awt.Color;
+
 import com.fs.starfarer.api.campaign.BattleAPI;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.impl.campaign.fleets.FleetFactoryV3;
@@ -30,14 +34,46 @@ import com.fs.starfarer.api.impl.campaign.ids.Factions;
 import com.fs.starfarer.api.impl.campaign.ids.MemFlags;
 import com.fs.starfarer.api.impl.campaign.ids.Stats;
 import org.lwjgl.util.vector.Vector2f;
-import boggled.campaign.econ.BoggledCommodities;
 
 public class Boggled_Remnant_Station extends OrbitalStation implements RouteManager.RouteFleetSpawner, FleetEventListener
 {
+    // TODO
+    // Test station itself in combat, need to see if the captain matches the AI core and weapons work
+    // Test fleets spawned by station in combat, test how military base plus remnant station patrols interact.
     protected IntervalUtil tracker = new IntervalUtil(Global.getSettings().getFloat("averagePatrolSpawnInterval") * 0.7f,
             Global.getSettings().getFloat("averagePatrolSpawnInterval") * 1.3f);
 
     protected float returningPatrolValue = 0f;
+
+    public static float BASE_DEFENSE_BONUS_BOGGLED_REMNANT_BATTLESTATION = 2.0F;
+    public static int BASE_STABILITY_MOD_BOGGLED_REMNANT_BATTLESTATION = 3;
+
+    // Use this to dynamically handle demand whether DEA is enabled or not.
+    // Need to use some ordered data structure because we don't want the UI to display the commodities in a random order
+    private ArrayList<Pair<String, Integer>> getCommodityDemand()
+    {
+        ArrayList<Pair<String, Integer>> demandArray = new ArrayList<>();
+        demandArray.add(new Pair<>(Commodities.SUPPLIES, 7));
+
+        if(boggledTools.domainEraArtifactDemandEnabled())
+        {
+            demandArray.add(new Pair<>(boggledTools.BoggledCommodities.domainArtifacts, 4));
+        }
+
+        return demandArray;
+    }
+
+    private String[] getCommodityStringArray()
+    {
+        ArrayList<Pair<String, Integer>> demandArray = getCommodityDemand();
+        String[] commodityArray = new String[demandArray.size()];
+        for(int i = 0; i < demandArray.size(); i++)
+        {
+            commodityArray[i] = demandArray.get(i).one;
+        }
+
+        return commodityArray;
+    }
 
     @Override
     public void apply()
@@ -76,14 +112,17 @@ public class Boggled_Remnant_Station extends OrbitalStation implements RouteMana
             }
         }
 
-        int size = 7;
-        this.market.getStability().modifyFlat(this.getModId(), 3.0f, "Autonomous AI battlestation");
-        this.applyIncomeAndUpkeep(size);
+        this.modifyStabilityWithBaseMod();
+        this.applyIncomeAndUpkeep(7);
 
-        this.demand(Commodities.SUPPLIES, size);
-        this.demand(BoggledCommodities.DOMAIN_ERA_ARTIFACTS, 4);
+        // Set demand based on values configured in getCommodityDemand(). Handles DEA being enabled or disabled.
+        ArrayList<Pair<String, Integer>> demandArrayList = getCommodityDemand();
+        for(Pair<String, Integer> demand : demandArrayList)
+        {
+            this.demand(demand.one, demand.two);
+        }
 
-        this.market.getStats().getDynamic().getMod("ground_defenses_mod").modifyMult(this.getModId(), 3.0f, "Autonomous AI battlestation");
+        this.market.getStats().getDynamic().getMod("ground_defenses_mod").modifyMult(this.getModId(), getGroundDefenseMultiplierAfterCommodityShortage(), this.getNameForModifier());
 
         this.matchCommanderToAICore(this.aiCoreId);
 
@@ -145,21 +184,16 @@ public class Boggled_Remnant_Station extends OrbitalStation implements RouteMana
         }
 
         if (tracker.intervalElapsed()) {
-//			if (market.isPlayerOwned()) {
-//				System.out.println("ewfwefew");
-//			}
-//			if (market.getName().equals("Jangala")) {
-//				System.out.println("wefwefe");
-//			}
             String sid = getRouteSourceId();
 
             int light = getCount(FleetFactory.PatrolType.FAST);
             int medium = getCount(FleetFactory.PatrolType.COMBAT);
             int heavy = getCount(FleetFactory.PatrolType.HEAVY);
 
-            int maxLight = getMaxPatrols(FleetFactory.PatrolType.FAST);
-            int maxMedium = getMaxPatrols(FleetFactory.PatrolType.COMBAT);
-            int maxHeavy = getMaxPatrols(FleetFactory.PatrolType.HEAVY);
+            // Need to hardcode this as the max patrols function does not work for this building
+            int maxLight = 3;
+            int maxMedium = 2;
+            int maxHeavy = 1;
 
             WeightedRandomPicker<FleetFactory.PatrolType> picker = new WeightedRandomPicker<FleetFactory.PatrolType>();
             picker.add(FleetFactory.PatrolType.HEAVY, maxHeavy - heavy);
@@ -222,19 +256,6 @@ public class Boggled_Remnant_Station extends OrbitalStation implements RouteMana
         return (int) Math.round(combat);
     }
 
-    public int getMaxPatrols(FleetFactory.PatrolType type) {
-        if (type == FleetFactory.PatrolType.FAST) {
-            return (int) market.getStats().getDynamic().getMod(Stats.PATROL_NUM_LIGHT_MOD).computeEffective(0);
-        }
-        if (type == FleetFactory.PatrolType.COMBAT) {
-            return (int) market.getStats().getDynamic().getMod(Stats.PATROL_NUM_MEDIUM_MOD).computeEffective(0);
-        }
-        if (type == FleetFactory.PatrolType.HEAVY) {
-            return (int) market.getStats().getDynamic().getMod(Stats.PATROL_NUM_HEAVY_MOD).computeEffective(0);
-        }
-        return 0;
-    }
-
     public boolean shouldCancelRouteAfterDelayCheck(RouteManager.RouteData route) {
         return false;
     }
@@ -282,10 +303,10 @@ public class Boggled_Remnant_Station extends OrbitalStation implements RouteMana
 
         fleet.addEventListener(this);
 
-        market.getContainingLocation().addEntity(fleet);
+        this.stationEntity.getContainingLocation().addEntity(fleet);
         fleet.setFacing((float) Math.random() * 360f);
         // this will get overridden by the patrol assignment AI, depending on route-time elapsed etc
-        fleet.setLocation(market.getPrimaryEntity().getLocation().x, market.getPrimaryEntity().getLocation().y);
+        fleet.setLocation(this.stationEntity.getLocation().x, this.stationEntity.getLocation().y);
 
         fleet.addScript(new PatrolAssignmentAIV4(fleet, route));
 
@@ -295,7 +316,9 @@ public class Boggled_Remnant_Station extends OrbitalStation implements RouteMana
             custom.spawnFP = fleet.getFleetPoints();
         }
 
+        // Necessary so rules.csv can differentiate the remnant patrols and display the correct dialogue.
         fleet.addTag("boggledRemnantStationPatrol");
+
         return fleet;
     }
 
@@ -340,6 +363,10 @@ public class Boggled_Remnant_Station extends OrbitalStation implements RouteMana
         CampaignFleetAPI fleet = FleetFactoryV3.createFleet(params);
 
         if (fleet == null || fleet.isEmpty()) return null;
+        fleet.setFaction(market.getFactionId(), true);
+        fleet.setNoFactionInName(true);
+
+        if (fleet == null || fleet.isEmpty()) return null;
 
         if (!fleet.getFaction().getCustomBoolean(Factions.CUSTOM_PATROLS_HAVE_NO_PATROL_MEMORY_KEY)) {
             fleet.getMemoryWithoutUpdate().set(MemFlags.MEMORY_KEY_PATROL_FLEET, true);
@@ -373,6 +400,7 @@ public class Boggled_Remnant_Station extends OrbitalStation implements RouteMana
         fleet.getCommander().setPostId(postId);
         fleet.getCommander().setRankId(rankId);
 
+        fleet.addTag("boggledRemnantStationPatrol");
         return fleet;
     }
 
@@ -394,64 +422,84 @@ public class Boggled_Remnant_Station extends OrbitalStation implements RouteMana
     }
 
     @Override
-    protected int getBaseStabilityMod()
-    {
-        return 3;
-    }
-
-    @Override
     protected float getCR()
     {
-        // TODO rewrite to properly calculate DAE deficit impact e.g. zero CR
-        float deficit = (float) this.getMaxDeficit(Commodities.SUPPLIES, BoggledCommodities.DOMAIN_ERA_ARTIFACTS).two;
-        float demand = (float)Math.max(this.getDemand(Commodities.SUPPLIES).getQuantity().getModifiedInt(),
-                this.getDemand(BoggledCommodities.DOMAIN_ERA_ARTIFACTS).getQuantity().getModifiedInt());
-        demand = Math.max(0.0F, demand);
-
-        if (deficit < 0.0F) {
-            deficit = 0.0F;
+        // Deviates from vanilla logic since the Remnant station demands an unequal amount of supplies and DEA
+        float q = Misc.getShipQuality(this.market);
+        if (q < 0.0F)
+        {
+            q = 0.0F;
         }
 
-        if (demand < 1.0F) {
+        if (q > 1.0F)
+        {
+            q = 1.0F;
+        }
+
+        float d = getCommodityCrModifier();
+
+        // 50% base CR + 50% * the lower of the ship quality modifier and shortage modifier
+        return 0.5F + (0.5F * Math.min(d, q));
+    }
+
+    private float getCommodityCrModifier()
+    {
+        // Don't modify CR if there is no commodity demand
+        if(this.demand.size() == 0)
+        {
+            return 1.0F;
+        }
+
+        // Get all the CR modifiers. Formula is (demand - deficit) / demand.
+        float lowestModifier = 1.0F;
+        for(String commodity : this.demand.keySet())
+        {
+            lowestModifier = Math.min(lowestModifier, computeCommodityDeficitCrModifierForSingleCommodity(commodity));
+        }
+        return lowestModifier;
+    }
+
+    private float computeCommodityDeficitCrModifierForSingleCommodity(String commodity)
+    {
+        float deficit = Math.max(0.0F, (float) this.getMaxDeficit(commodity).two);
+        float demand = Math.max(0.0F, (float) this.getDemand(commodity).getQuantity().getModifiedInt());
+
+        // If there's no demand, don't throw a divide by zero exception and instead return 1.0F
+        if (demand < 1.0F)
+        {
             demand = 1.0F;
             deficit = 0.0F;
         }
 
-        float q = Misc.getShipQuality(this.market);
-        if (q < 0.0F) {
-            q = 0.0F;
+        // This should never happen unless there's bugged code in vanilla or another mod
+        if(deficit > demand)
+        {
+            return 0.0F;
         }
 
-        if (q > 1.0F) {
-            q = 1.0F;
-        }
-
-        float d = (demand - deficit) / demand;
-        if (d < 0.0F) {
-            d = 0.0F;
-        }
-
-        if (d > 1.0F) {
-            d = 1.0F;
-        }
-
-        float cr = 0.5F + 0.5F * Math.min(d, q);
-        if (cr > 1.0F) {
-            cr = 1.0F;
-        }
-
-        return cr;
+        return (demand - deficit) / demand;
     }
 
     @Override
     protected Pair<String, Integer> getStabilityAffectingDeficit()
     {
-        return this.getMaxDeficit(Commodities.SUPPLIES);
+        return this.getMaxDeficit(getCommodityStringArray());
     }
 
     @Override
-    protected void addPostDemandSection(TooltipMakerAPI tooltip, boolean hasDemand, IndustryTooltipMode mode) {
-        super.addPostDemandSection(tooltip, hasDemand, mode);
+    protected int getBaseStabilityMod() {
+        return BASE_STABILITY_MOD_BOGGLED_REMNANT_BATTLESTATION;
+    }
+
+    @Override
+    public String getNameForModifier()
+    {
+        return "Autonomous AI battlestation";
+    }
+
+    @Override
+    protected void addPostDemandSection(TooltipMakerAPI tooltip, boolean hasDemand, IndustryTooltipMode mode)
+    {
         if (mode != IndustryTooltipMode.NORMAL || this.isFunctional())
         {
             Color h = Misc.getHighlightColor();
@@ -459,9 +507,8 @@ public class Boggled_Remnant_Station extends OrbitalStation implements RouteMana
             float cr = this.getCR();
             tooltip.addPara("Station combat readiness: %s", opad, h, Math.round(cr * 100.0F) + "%");
             this.addStabilityPostDemandSectionBoggledRemnantStation(tooltip, hasDemand, mode);
-            float bonus = 2.0f;
 
-            this.addGroundDefensesImpactSectionBoggledRemnantStation(tooltip, bonus,Commodities.SUPPLIES);
+            this.addGroundDefensesImpactSectionBoggledRemnantStation(tooltip, BASE_DEFENSE_BONUS_BOGGLED_REMNANT_BATTLESTATION, getCommodityStringArray());
         }
     }
 
@@ -470,15 +517,15 @@ public class Boggled_Remnant_Station extends OrbitalStation implements RouteMana
         Color h = Misc.getHighlightColor();
         float opad = 10.0F;
         MutableStat fake = new MutableStat(0.0F);
-        int stabilityMod = this.getBaseStabilityMod();
+        int stabilityMod = BASE_STABILITY_MOD_BOGGLED_REMNANT_BATTLESTATION;
         int stabilityPenalty = this.getStabilityPenalty();
-        if (stabilityPenalty > stabilityMod) {
+        if (stabilityPenalty > stabilityMod)
+        {
             stabilityPenalty = stabilityMod;
         }
 
         String str = getDeficitText((String)this.getStabilityAffectingDeficit().one);
-        //fake.modifyFlat("1", (float)stabilityMod, this.getNameForModifier());
-        fake.modifyFlat("1", (float)stabilityMod, "Autonomous AI battlestation");
+        fake.modifyFlat("1", (float)stabilityMod, this.getNameForModifier());
         if (stabilityPenalty != 0)
         {
             fake.modifyFlat("2", (float)(-stabilityPenalty), str);
@@ -522,36 +569,30 @@ public class Boggled_Remnant_Station extends OrbitalStation implements RouteMana
         });
     }
 
-    protected void addGroundDefensesImpactSectionBoggledRemnantStation(TooltipMakerAPI tooltip, float bonus, String... commodities)
-    {
+    protected void addGroundDefensesImpactSectionBoggledRemnantStation(TooltipMakerAPI tooltip, float bonus, String... commodities) {
         Color h = Misc.getHighlightColor();
         float opad = 10.0F;
         MutableStat fake = new MutableStat(1.0F);
-        //fake.modifyFlat("1", bonus, this.getNameForModifier());
-        fake.modifyFlat("1", bonus, "Autonomous AI battlestation");
+        fake.modifyFlat("1", bonus, this.getNameForModifier());
         float mult;
         String totalStr;
-        if (commodities != null)
-        {
-            mult = this.getDeficitMult(commodities);
-            if (mult != 1.0F)
-            {
+        if (commodities != null) {
+            mult = getGroundDefenseMultiplierAfterCommodityShortage();
+            if (mult < 1.0F + BASE_DEFENSE_BONUS_BOGGLED_REMNANT_BATTLESTATION) {
                 totalStr = (String)this.getMaxDeficit(commodities).one;
-                fake.modifyFlat("2", -(1.0F - mult) * bonus, getDeficitText(totalStr));
+                fake.modifyFlat("2", getGroundDefenseTooltipCommodityShortageSubtractionAmount(), getDeficitText(totalStr));
             }
         }
 
         mult = Misc.getRoundedValueFloat(fake.getModifiedValue());
         totalStr = "×" + mult;
-        if (mult < 1.0F)
-        {
+        if (mult < 1.0F) {
             h = Misc.getNegativeHighlightColor();
         }
 
         float pad = 3.0F;
-        tooltip.addPara("Ground defense strength: %s", opad, h, totalStr);
-        tooltip.addStatModGrid(400.0F, 35.0F, opad, pad, fake, new TooltipMakerAPI.StatModValueGetter()
-        {
+        tooltip.addPara("Ground defense strength: %s", opad, h, new String[]{totalStr});
+        tooltip.addStatModGrid(400.0F, 35.0F, opad, pad, fake, new TooltipMakerAPI.StatModValueGetter() {
             public String getPercentValue(MutableStat.StatMod mod) {
                 return null;
             }
@@ -560,17 +601,34 @@ public class Boggled_Remnant_Station extends OrbitalStation implements RouteMana
                 return null;
             }
 
-            public Color getModColor(MutableStat.StatMod mod)
-            {
+            public Color getModColor(MutableStat.StatMod mod) {
                 return mod.value < 0.0F ? Misc.getNegativeHighlightColor() : null;
             }
 
-            public String getFlatValue(MutableStat.StatMod mod)
-            {
+            public String getFlatValue(MutableStat.StatMod mod) {
                 String r = Misc.getRoundedValue(mod.value);
                 return mod.value >= 0.0F ? "+" + r : r;
             }
         });
+    }
+
+    // I don't understand how addGroundDefensesImpactSection really works,
+    // but we need to get the smaller of the max deficit and the base ground defense bonus (2 for this building).
+    private float getGroundDefenseTooltipCommodityShortageSubtractionAmount()
+    {
+        return -1 * Math.min(BASE_DEFENSE_BONUS_BOGGLED_REMNANT_BATTLESTATION, this.getMaxDeficit(getCommodityStringArray()).two);
+    }
+
+    // Vanilla as of 0.97a has a bug where the tooltip window says the ground defense multiplier is reduced due
+    // to a shortage, but the actual defense calculation is not impacted and is still the base modifier.
+    // This building actually supports reducing the ground defense multiplier due to a shortage.
+    private float getGroundDefenseMultiplierAfterCommodityShortage()
+    {
+        // 1 + base bonus (2 here) - the max deficit.
+        // Since this building requires 7 supplies and 4 DEA this could easily be negative.
+        // The worst case should be a flat 1x multiplier, so use Math.max below to never return less than 1.0F.
+        float groundDefenseMult = 1.0F + BASE_DEFENSE_BONUS_BOGGLED_REMNANT_BATTLESTATION - this.getMaxDeficit(getCommodityStringArray()).two;
+        return Math.max(1.0F, groundDefenseMult);
     }
 
     @Override
@@ -587,6 +645,8 @@ public class Boggled_Remnant_Station extends OrbitalStation implements RouteMana
     @Override
     protected boolean isMiltiarized()
     {
+        // OrbitalStation is militarized if it's a battlestation or starfortress.
+        // Remnant stations are the equivalent of starfortresses, so always return true
         return true;
     }
 
@@ -663,7 +723,7 @@ public class Boggled_Remnant_Station extends OrbitalStation implements RouteMana
         return "Error in getUnavailableReason() in Boggled_Remnant_Station. Please report this to boggled on the forums.";
     }
 
-    public boolean playerHasAutomatedShipsSkill()
+    private boolean playerHasAutomatedShipsSkill()
     {
         // Handles skill rework in Second in Command (https://fractalsoftworks.com/forum/index.php?topic=30407.0)
         // Both SC and vanilla add this tag when the player unlocks the automated ships skill
@@ -679,20 +739,48 @@ public class Boggled_Remnant_Station extends OrbitalStation implements RouteMana
     }
 
     @Override
-    public boolean canImprove() {
-        return true;
-    }
-
-    protected void applyImproveModifiers()
+    protected void matchCommanderToAICore(String aiCore)
     {
-        if (isImproved())
-        {
-            market.getStability().modifyFlat("orbital_station_improve", IMPROVE_STABILITY_BONUS,
-                    getImprovementsDescForModifiers() + " (Autonomous AI battlestation)");
-        }
-        else
-        {
-            market.getStability().unmodifyFlat("orbital_station_improve");
+        // OrbitStation method only sets an AI core commander if you install an alpha core.
+        // We need to customize it to always set an AI core commander, even if there's no core installed.
+        if (this.stationFleet != null) {
+            PersonAPI commander = null;
+            if ("alpha_core".equals(aiCore))
+            {
+                AICoreOfficerPlugin plugin = Misc.getAICoreOfficerPlugin("alpha_core");
+                commander = plugin.createPerson("alpha_core", "remnant", (Random)null);
+                if (this.stationFleet.getFlagship() != null)
+                {
+                    RemnantOfficerGeneratorPlugin.integrateAndAdaptCoreForAIFleet(this.stationFleet.getFlagship());
+                }
+            }
+            else if ("beta_core".equals(aiCore))
+            {
+                AICoreOfficerPlugin plugin = Misc.getAICoreOfficerPlugin("beta_core");
+                commander = plugin.createPerson("beta_core", "remnant", (Random)null);
+                if (this.stationFleet.getFlagship() != null)
+                {
+                    RemnantOfficerGeneratorPlugin.integrateAndAdaptCoreForAIFleet(this.stationFleet.getFlagship());
+                }
+            }
+            //else if ("gamma_core".equals(aiCore))
+            // Always set at least a gamma core, even if no core is installed.
+            // I think vanilla stations always have a commander, so not setting one might cause null exceptions, bugs, etc.
+            else
+            {
+                AICoreOfficerPlugin plugin = Misc.getAICoreOfficerPlugin("gamma_core");
+                commander = plugin.createPerson("gamma_core", "remnant", (Random)null);
+                if (this.stationFleet.getFlagship() != null)
+                {
+                    RemnantOfficerGeneratorPlugin.integrateAndAdaptCoreForAIFleet(this.stationFleet.getFlagship());
+                }
+            }
+
+            if (commander != null && this.stationFleet.getFlagship() != null) {
+                this.stationFleet.getFlagship().setCaptain(commander);
+                this.stationFleet.getFlagship().setFlagship(false);
+            }
+
         }
     }
 

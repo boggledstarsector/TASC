@@ -2827,7 +2827,7 @@ public class boggledTools {
         return "This building must be researched before it can be constructed.";
     }
 
-    public boolean domainEraArtifactDemandEnabled()
+    public static boolean domainEraArtifactDemandEnabled()
     {
         if(getBooleanSetting("boggledDomainTechContentEnabled") && getBooleanSetting("boggledDomainArchaeologyEnabled"))
         {
