@@ -539,19 +539,6 @@ industry_planetary_agrav_field,boggledTerraformingContentEnabled | boggledPlanet
 		{ 'requirement_id' : 'industry_planetary_agrav_field_colony_has_domed_cities' }
 	] }
 ]",,,,,,,"[ 'planetary_agrav_field_domed_cities_effect' ]",,,,
-industry_remnant_station,boggledRemnantStationEnabled,industry,,,,"[ { 'requirement_id' : 'industry_player_has_skill_automated_ships' } ]",,,,,,,"[ 'ongoing_flat_demand_7_supplies' ]",,,,
-industry_remnant_station_alpha_core,boggledRemnantStationEnabled,industry,,,,,,,,,,,"[
- 	'default_ai_core_upkeep_bonus',
- 	'default_ai_core_demand_bonus'
-]",,,,
-industry_remnant_station_beta_core,boggledRemnantStationEnabled,industry,,,,,,,,,,,"[
- 	'default_ai_core_upkeep_bonus',
- 	'default_ai_core_demand_bonus'
-]",,,,
-industry_remnant_station_gamma_core,boggledRemnantStationEnabled,industry,,,,,,,,,,,"[
- 	'default_ai_core_upkeep_bonus',
- 	'default_ai_core_demand_bonus'
-]",,,,
 industry_stellar_reflector_array,boggledTerraformingContentEnabled | boggledStellarReflectorArrayEnabled,industry,,,,"[
 	{ 'requirement_id' : 'industry_colony_is_not_station', 'and_then' : [
 		{ 'requirement_id' : 'industry_stellar_reflectors_colony_not_dark' }

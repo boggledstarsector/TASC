@@ -37,9 +37,6 @@ import org.lwjgl.util.vector.Vector2f;
 
 public class Boggled_Remnant_Station extends OrbitalStation implements RouteManager.RouteFleetSpawner, FleetEventListener
 {
-    // TODO
-    // Test station itself in combat, need to see if the captain matches the AI core and weapons work
-    // Test fleets spawned by station in combat, test how military base plus remnant station patrols interact.
     protected IntervalUtil tracker = new IntervalUtil(Global.getSettings().getFloat("averagePatrolSpawnInterval") * 0.7f,
             Global.getSettings().getFloat("averagePatrolSpawnInterval") * 1.3f);
 
@@ -316,9 +313,6 @@ public class Boggled_Remnant_Station extends OrbitalStation implements RouteMana
             custom.spawnFP = fleet.getFleetPoints();
         }
 
-        // Necessary so rules.csv can differentiate the remnant patrols and display the correct dialogue.
-        fleet.addTag("boggledRemnantStationPatrol");
-
         return fleet;
     }
 
@@ -400,6 +394,7 @@ public class Boggled_Remnant_Station extends OrbitalStation implements RouteMana
         fleet.getCommander().setPostId(postId);
         fleet.getCommander().setRankId(rankId);
 
+        // Necessary so rules.csv can differentiate the remnant patrols and display the correct dialogue
         fleet.addTag("boggledRemnantStationPatrol");
         return fleet;
     }
@@ -783,34 +778,4 @@ public class Boggled_Remnant_Station extends OrbitalStation implements RouteMana
 
         }
     }
-
-    // TODO might not work, need to investigate this later.
-    // Added per SirHartley on page 148, comment #2211 of the TASC thread.
-    // Adds compatibility for the Artillery Station feature from IndEvo.
-    //    @Override
-    //    protected void ensureStationEntityIsSetOrCreated()
-    //    {
-    //        if (stationEntity == null)
-    //        {
-    //            for (SectorEntityToken entity : market.getConnectedEntities())
-    //            {
-    //                if (entity.hasTag(Tags.STATION) && !entity.hasTag("no_orbital_station"))
-    //                {
-    //                    stationEntity = entity;
-    //                    usingExistingStation = true;
-    //                    break;
-    //                }
-    //            }
-    //        }
-    //
-    //        if (stationEntity == null)
-    //        {
-    //            stationEntity = market.getContainingLocation().addCustomEntity(null, market.getName() + " Station", Entities.STATION_BUILT_FROM_INDUSTRY, market.getFactionId());
-    //            SectorEntityToken primary = market.getPrimaryEntity();
-    //            float orbitRadius = primary.getRadius() + 150f;
-    //            stationEntity.setCircularOrbitWithSpin(primary, (float) Math.random() * 360f, orbitRadius, orbitRadius / 10f, 5f, 5f);
-    //            market.getConnectedEntities().add(stationEntity);
-    //            stationEntity.setMarket(market);
-    //        }
-    //    }
 }
