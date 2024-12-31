@@ -300,10 +300,10 @@ public class Boggled_Remnant_Station extends OrbitalStation implements RouteMana
 
         fleet.addEventListener(this);
 
-        this.stationEntity.getContainingLocation().addEntity(fleet);
+        market.getContainingLocation().addEntity(fleet);
         fleet.setFacing((float) Math.random() * 360f);
         // this will get overridden by the patrol assignment AI, depending on route-time elapsed etc
-        fleet.setLocation(this.stationEntity.getLocation().x, this.stationEntity.getLocation().y);
+        fleet.setLocation(market.getLocation().x, market.getLocation().y);
 
         fleet.addScript(new PatrolAssignmentAIV4(fleet, route));
 
