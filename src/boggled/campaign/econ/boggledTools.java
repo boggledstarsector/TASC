@@ -1576,6 +1576,11 @@ public class boggledTools {
 
     public static void surveyAll(MarketAPI market)
     {
+        if(market == null)
+        {
+            return;
+        }
+
         for (MarketConditionAPI condition : market.getConditions())
         {
             condition.setSurveyed(true);
