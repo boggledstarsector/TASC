@@ -640,14 +640,18 @@ public class BoggledTerraformingRequirement {
         private boolean hasWaterIndustry(MarketAPI market) {
             StarSystemAPI system = market.getStarSystem();
             for (MarketAPI systemMarket : Global.getSector().getEconomy().getMarkets(system)) {
-                if (systemMarket.getFaction() != market.getFaction()) {
-                    continue;
-                }
-
-                for (String waterIndustryId : waterIndustryIds) {
-                    Industry industry = systemMarket.getIndustry(waterIndustryId);
-                    if (industry != null && industry.isFunctional() && industry.getAllDeficit().isEmpty()) {
-                        return true;
+                // Checks whether the market with the water industry is controlled by the same faction as the market being terraformed.
+                // This (should) handle the case where the market being terraformed is under NPC faction control, as well as
+                // the case where one or both markets are governed by the player via Nexerelin
+                if (systemMarket.getFaction() == market.getFaction() || (systemMarket.isPlayerOwned() && market.isPlayerOwned()))
+                {
+                    for (String waterIndustryId : waterIndustryIds)
+                    {
+                        Industry industry = systemMarket.getIndustry(waterIndustryId);
+                        if (industry != null && industry.isFunctional() && industry.getAllDeficit().isEmpty())
+                        {
+                            return true;
+                        }
                     }
                 }
             }
