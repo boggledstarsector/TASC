@@ -45,7 +45,7 @@ terraforming_colony_habitable,"$marketName is habitable",,false,"market_habitabl
 terraforming_colony_has_extreme_weather,"$marketName has extreme weather",,false,"market_has_extreme_weather"
 terraforming_colony_atmosphere_toxic,"$marketName atmosphere is toxic",,false,"market_toxic_atmosphere"
 terraforming_colony_irradiated,"$marketName atmosphere is irradiated",,false,"market_irradiated"
-terraforming_colony_has_atmosphere,"$marketName has an atmosphere",,false,"market_no_atmosphere"
+terraforming_colony_has_atmosphere,"$marketName has an atmosphere",,true,"market_no_atmosphere"
 ,,
 terraforming_colony_not_habitable,"$marketName is not habitable",,false,"market_not_habitable"
 
