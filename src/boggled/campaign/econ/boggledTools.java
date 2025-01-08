@@ -283,6 +283,7 @@ public class boggledTools {
         public static final String genelabIndustryId = "BOGGLED_GENELAB";
         public static final String remnantStationIndustryId = "BOGGLED_REMNANT_STATION";
         public static final String stellarReflectorArrayIndustryId = "BOGGLED_STELLAR_REFLECTOR_ARRAY";
+        public static final String domedCitiesIndustryId = "BOGGLED_DOMED_CITIES";
     }
 
     private static final String starPlanetId = "star";
@@ -829,6 +830,40 @@ public class boggledTools {
         }
 
         boggledTools.planetTypesMap = planetTypesMap;
+    }
+
+    public static void initializeDomedCitiesSuppressedConditionsFromJSON(@NotNull JSONArray domedCitiesSuppressedConditionsJSON) throws Exception
+    {
+        Logger log = Global.getLogger(boggledTools.class);
+
+        List<String> domedCitiesSuppressedConditionsTemp = new ArrayList<>();
+
+        for (int i = 0; i < domedCitiesSuppressedConditionsJSON.length(); ++i)
+        {
+            try
+            {
+                JSONObject row = domedCitiesSuppressedConditionsJSON.getJSONObject(i);
+
+                String condition_id = row.getString("condition_id");
+                if (condition_id != null && !condition_id.isEmpty())
+                {
+                    domedCitiesSuppressedConditionsTemp.add(condition_id);
+                }
+            }
+            catch (JSONException e)
+            {
+                // We can't swallow this exception because the game won't work correctly if the data isn't loaded
+                log.error("Error in Domed Cities suppressed conditions import: " + e);
+                throw new Exception("Failed to import Domed Cities suppressed conditions data. See the log for more details.");
+            }
+        }
+
+        boggledTools.domedCitiesSuppressedConditions = domedCitiesSuppressedConditionsTemp;
+    }
+
+    public static List<String> getDomedCitiesSuppressedConditions()
+    {
+        return boggledTools.domedCitiesSuppressedConditions;
     }
 
     public static void initialiseResourceProgressionsFromJSON(@NotNull JSONArray resourceProgressionsJSON) {
@@ -1484,6 +1519,8 @@ public class boggledTools {
     private static Map<String, Map<String, String>> resourceLimits;
 
     private static Map<String, PlanetType> planetTypesMap;
+
+    private static List<String> domedCitiesSuppressedConditions;
 
     public static BoggledCommonIndustry getIndustryProject(String industry) {
         return industryProjects.get(industry);
