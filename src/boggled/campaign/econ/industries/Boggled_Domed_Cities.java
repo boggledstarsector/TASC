@@ -3,6 +3,7 @@ package boggled.campaign.econ.industries;
 import java.awt.*;
 import java.lang.String;
 
+import boggled.campaign.econ.industries.interfaces.ShowBoggledTerraformingMenuOption;
 import com.fs.starfarer.api.campaign.econ.MarketImmigrationModifier;
 import com.fs.starfarer.api.impl.campaign.population.PopulationComposition;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
@@ -14,7 +15,7 @@ import com.fs.starfarer.api.impl.campaign.ids.*;
 import com.fs.starfarer.api.impl.campaign.econ.impl.BaseIndustry;
 import boggled.campaign.econ.boggledTools;
 
-public class Boggled_Domed_Cities extends BaseIndustry implements MarketImmigrationModifier
+public class Boggled_Domed_Cities extends BaseIndustry implements MarketImmigrationModifier, ShowBoggledTerraformingMenuOption
 {
     public static float IMPROVE_STABILITY_BONUS = 1f;
 
@@ -24,8 +25,8 @@ public class Boggled_Domed_Cities extends BaseIndustry implements MarketImmigrat
     public static float ACCESSIBILITY_BONUS = .10f;
     public static float ACCESSIBILITY_MALUS = -.10f;
 
-    public static float SKY_CITIES_UPKEEP_MULTIPLIER = 5f;
-    public static float SKY_CITIES_BUILD_COST_MULTIPLIER = 5f;
+    public static float SKY_CITIES_UPKEEP_MULTIPLIER = 6f;
+    public static float SKY_CITIES_BUILD_COST_MULTIPLIER = 3f;
 
     // Use this function to determine which mode the building is in
     // e.g. this.getCurrentName().equals("Domed Cities")
@@ -56,6 +57,12 @@ public class Boggled_Domed_Cities extends BaseIndustry implements MarketImmigrat
     public void apply()
     {
         super.apply(true);
+
+        // Sky Cities upkeep malus
+        if(this.getCurrentName().equals("Sky Cities"))
+        {
+            this.getUpkeep().modifyMultAlways("boggled_sky_cities", SKY_CITIES_UPKEEP_MULTIPLIER, "Sky cities upkeep multiplier");
+        }
 
         // Reduces ground defense in Domed Cities and Sky Cities modes, increases it in Seafloor Cities mode.
         // Always applies the bonus/malus, even if the building is disrupted
@@ -128,6 +135,8 @@ public class Boggled_Domed_Cities extends BaseIndustry implements MarketImmigrat
         {
             market.unsuppressCondition(cid);
         }
+
+        this.getUpkeep().unmodifyMult("boggled_sky_cities");
 
         this.market.getStability().unmodifyFlat(this.getModId());
         this.market.getStats().getDynamic().getMod(Stats.GROUND_DEFENSES_MOD).unmodifyMult(getModId());

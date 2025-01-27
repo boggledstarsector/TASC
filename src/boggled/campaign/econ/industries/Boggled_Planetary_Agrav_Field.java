@@ -4,6 +4,8 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.lang.String;
+
+import boggled.campaign.econ.industries.interfaces.ShowBoggledTerraformingMenuOption;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
 import com.fs.starfarer.api.Global;
@@ -12,7 +14,7 @@ import com.fs.starfarer.api.impl.campaign.econ.impl.BaseIndustry;
 import com.fs.starfarer.api.impl.campaign.ids.Conditions;
 import boggled.campaign.econ.boggledTools;
 
-public class Boggled_Planetary_Agrav_Field extends BaseIndustry
+public class Boggled_Planetary_Agrav_Field extends BaseIndustry implements ShowBoggledTerraformingMenuOption
 {
     @Override
     public boolean canBeDisrupted() {

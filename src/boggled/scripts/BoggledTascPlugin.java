@@ -1,5 +1,6 @@
 package boggled.scripts;
 
+import boggled.campaign.econ.industries.plugins.TerraformingMenuOptionProvider;
 import com.fs.starfarer.api.BaseModPlugin;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.SettingsAPI;
@@ -283,6 +284,9 @@ public class BoggledTascPlugin extends BaseModPlugin {
             JSONArray terraformingProjects = settings.getMergedSpreadsheetDataForMod("id", "data/campaign/terraforming/terraforming_projects.csv", boggledTools.BoggledMods.tascModId);
             JSONArray industryOptions = settings.getMergedSpreadsheetDataForMod("id", "data/campaign/terraforming/industry_options.csv", boggledTools.BoggledMods.tascModId);
 
+            // Domed Cities suppressed conditions
+            JSONArray domedCitiesSuppressedConditions = settings.getMergedSpreadsheetDataForMod("condition_id", "data/campaign/terraforming/domed_cities_suppressed_conditions.csv", boggledTools.BoggledMods.tascModId);
+
             // And finally mods
             JSONArray industryOptionOverrides = settings.getMergedSpreadsheetDataForMod("id", "data/campaign/terraforming/industry_options_mods.csv", boggledTools.BoggledMods.tascModId);
             JSONArray terraformingProjectOverrides = settings.getMergedSpreadsheetDataForMod("id", "data/campaign/terraforming/terraforming_projects_mods.csv", boggledTools.BoggledMods.tascModId);
@@ -313,6 +317,8 @@ public class BoggledTascPlugin extends BaseModPlugin {
             boggledTools.initialiseTerraformingProjectOverrides(terraformingProjectOverrides);
             boggledTools.initialiseIndustryOptionOverrides(industryOptionOverrides);
 
+            boggledTools.initializeDomedCitiesSuppressedConditionsFromJSON(domedCitiesSuppressedConditions);
+
             if (aotdEnabled) {
                 JSONArray aotdProjectOverrides = settings.getMergedSpreadsheetDataForMod("id", "data/campaign/terraforming/aotd_integration/terraforming_projects_mods.csv", boggledTools.BoggledMods.tascModId);
                 boggledTools.initialiseTerraformingProjectOverrides(aotdProjectOverrides);
@@ -338,6 +344,11 @@ public class BoggledTascPlugin extends BaseModPlugin {
 
             Global.getSector().getPlayerFleet().addScript(new BoggledAotDEveryFrameScript(researchAndAbilityIds));
         }
+    }
+
+    private void registerListeners()
+    {
+        TerraformingMenuOptionProvider.register();
     }
 
     @Override
@@ -403,6 +414,8 @@ public class BoggledTascPlugin extends BaseModPlugin {
         addDomainTechBuildingsToVanillaColonies();
 
         //debugActionsPleaseIgnore();
+
+        registerListeners();
 
         addAotDEveryFrameScript();
 

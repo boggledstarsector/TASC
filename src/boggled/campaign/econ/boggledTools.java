@@ -832,7 +832,7 @@ public class boggledTools {
         boggledTools.planetTypesMap = planetTypesMap;
     }
 
-    public static void initializeDomedCitiesSuppressedConditionsFromJSON(@NotNull JSONArray domedCitiesSuppressedConditionsJSON) throws Exception
+    public static void initializeDomedCitiesSuppressedConditionsFromJSON(@NotNull JSONArray domedCitiesSuppressedConditionsJSON)
     {
         Logger log = Global.getLogger(boggledTools.class);
 
@@ -854,7 +854,6 @@ public class boggledTools {
             {
                 // We can't swallow this exception because the game won't work correctly if the data isn't loaded
                 log.error("Error in Domed Cities suppressed conditions import: " + e);
-                throw new Exception("Failed to import Domed Cities suppressed conditions data. See the log for more details.");
             }
         }
 

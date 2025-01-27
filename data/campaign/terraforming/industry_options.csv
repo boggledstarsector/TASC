@@ -36,20 +36,6 @@ BOGGLED_DOMAIN_ARCHAEOLOGY,"Domain Archaeology",industry_domain_archaeology,,"[
 	{ 'ai_core_id' : 'beta_core', 'projects' : [ 'industry_domain_archaeology_beta_core' ] },
 	{ 'ai_core_id' : 'gamma_core', 'projects' : [ 'industry_domain_archaeology_gamma_core' ] }
 ]",,0,,
-BOGGLED_DOMED_CITIES,"Domed Cities",industry_domed_cities,,"[
-	'domed_cities_improve_stability_bonus'
-]","[
-	{ 'ai_core_id' : 'alpha_core', 'projects' : [ 'industry_domed_cities_alpha_core' ] },
-	{ 'ai_core_id' : 'beta_core', 'projects' : [ 'industry_domed_cities_beta_core' ] },
-	{ 'ai_core_id' : 'gamma_core', 'projects' : [ 'industry_domed_cities_gamma_core' ] }
-]",,2,,
-BOGGLED_SEAFLOOR_CITIES,Seafloor Cities,industry_seafloor_cities,,"[
-	'domed_cities_improve_stability_bonus'
-]","[
-	{ 'ai_core_id' : 'alpha_core', 'projects' : [ 'industry_domed_cities_alpha_core' ] },
-	{ 'ai_core_id' : 'beta_core', 'projects' : [ 'industry_domed_cities_beta_core' ] },
-	{ 'ai_core_id' : 'gamma_core', 'projects' : [ 'industry_domed_cities_gamma_core' ] }
-]",,2,,
 BOGGLED_STATION_EXPANSION,"Expand Station",industry_expand_station,"[
 	'expand_station_increment_tag',
 	'expand_station_remove_on_completion'
