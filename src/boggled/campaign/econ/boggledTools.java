@@ -51,6 +51,19 @@ import java.util.regex.Pattern;
 import static java.util.Arrays.asList;
 
 public class boggledTools {
+
+    private static MarketAPI terraformingMenuTarget = null;
+
+    public static void setTerraformingMenuTarget(MarketAPI market)
+    {
+        terraformingMenuTarget = market;
+    }
+
+    public static MarketAPI getTerraformingMenuTarget()
+    {
+        return terraformingMenuTarget;
+    }
+
     public static void CheckSubmarketExists(String source, String submarketId) {
         for (SubmarketSpecAPI submarketSpec : Global.getSettings().getAllSubmarketSpecs()) {
             if (submarketSpec.getId().equals(submarketId)) {

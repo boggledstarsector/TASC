@@ -4,6 +4,7 @@ import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.impl.campaign.abilities.BaseDurationAbility;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import boggled.campaign.econ.boggledTools;
+import com.fs.starfarer.api.campaign.econ.MarketAPI
 import lunalib.lunaExtensions.openLunaCustomPanel;
 
 class CommandUIAbilityK : BaseDurationAbility() {
@@ -29,6 +30,14 @@ class CommandUIAbilityK : BaseDurationAbility() {
     @Override
     override fun activateImpl() {
         Global.getSector().openLunaCustomPanel(CommandUIIntelK())
+    }
+
+    companion object
+    {
+        fun openTerraformingMenuForSpecificPlanet(market: MarketAPI)
+        {
+            Global.getSector().openLunaCustomPanel(CommandUIIntelK())
+        }
     }
 
     @Override

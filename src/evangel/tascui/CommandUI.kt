@@ -712,6 +712,11 @@ class CommandUIIntelK : LunaBaseCustomPanelPlugin() {
             button.position.inTL(0f, 0f)
 
             val buttonData = CommandUIButtonData(button, marketVar, this)
+            val interactedMarket = boggledTools.getTerraformingMenuTarget();
+            if(interactedMarket != null && interactedMarket == marketVar)
+            {
+                selectedPlanet = buttonData;
+            }
 
             val ctx = RequirementContext(marketVar, null)
 

@@ -3,12 +3,16 @@ package boggled.campaign.econ.industries.plugins;
 import boggled.campaign.econ.boggledTools;
 import boggled.campaign.econ.industries.interfaces.ShowBoggledTerraformingMenuOption;
 import com.fs.starfarer.api.Global;
+import com.fs.starfarer.api.campaign.PlanetAPI;
+import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.campaign.econ.Industry;
+import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.campaign.listeners.BaseIndustryOptionProvider;
 import com.fs.starfarer.api.campaign.listeners.DialogCreatorUI;
 import com.fs.starfarer.api.campaign.listeners.IndustryOptionProvider;
 import com.fs.starfarer.api.campaign.listeners.ListenerManagerAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
+import evangel.tascui.CommandUIAbilityK;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -69,7 +73,8 @@ public class TerraformingMenuOptionProvider extends BaseIndustryOptionProvider
     {
         if (opt.id == OPTION_OPEN_TERRAFORMING_MENU)
         {
-            boggledTools.sendDebugIntelMessage("Hello world!");
+            // boggledTools.sendDebugIntelMessage("Hello world!");
+            CommandUIAbilityK.Companion.openTerraformingMenuForSpecificPlanet(opt.ind.getMarket());
         }
     }
 }
