@@ -209,6 +209,8 @@ class CommandUIIntelK : LunaBaseCustomPanelPlugin() {
     private var selectedProject : ButtonAPI? = null
     private var selectedPlanet : CommandUIButtonData? = null
 
+    private var buttonToTriggerOnInit : CommandUIButtonData? = null
+
     private var terraformingPanelData : CommandUITerraformingButtonPanelData? = null
 
     companion object {
@@ -294,6 +296,8 @@ class CommandUIIntelK : LunaBaseCustomPanelPlugin() {
         createPlanetList(panel, planetCardPanelWidth, planetCardPanelHeight, planetCardPanelXPad, planetCardPanelYPad)
 
         createTerraformingSelection(panel, terraformingPanelWidth, terraformingPanelHeight, terraformingPanelXPad, terraformingPanelYPad)
+
+        buttonToTriggerOnInit?.let { handlePlanetCardPress(it) }
     }
 
     override fun processInput(events : MutableList<InputEventAPI>) {
@@ -712,11 +716,6 @@ class CommandUIIntelK : LunaBaseCustomPanelPlugin() {
             button.position.inTL(0f, 0f)
 
             val buttonData = CommandUIButtonData(button, marketVar, this)
-            val interactedMarket = boggledTools.getTerraformingMenuTarget();
-            if(interactedMarket != null && interactedMarket == marketVar)
-            {
-                selectedPlanet = buttonData;
-            }
 
             val ctx = RequirementContext(marketVar, null)
 
@@ -738,6 +737,12 @@ class CommandUIIntelK : LunaBaseCustomPanelPlugin() {
              */
             actualButton.onClick {
                 handlePlanetCardPress(buttonData)
+            }
+
+            val interactedMarket = boggledTools.getTerraformingMenuTarget();
+            if(interactedMarket != null && interactedMarket == marketVar)
+            {
+                buttonToTriggerOnInit = buttonData;
             }
 
             verticalSpacing += PLANET_CARD_HEIGHT
