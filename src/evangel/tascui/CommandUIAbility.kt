@@ -36,6 +36,7 @@ class CommandUIAbilityK : BaseDurationAbility() {
     {
         fun openTerraformingMenuForSpecificPlanet(market: MarketAPI)
         {
+            boggledTools.setTerraformingMenuTarget(market)
             Global.getSector().openLunaCustomPanel(CommandUIIntelK())
         }
     }

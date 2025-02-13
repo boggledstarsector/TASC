@@ -344,12 +344,12 @@ public class Boggled_Domed_Cities extends BaseIndustry implements MarketImmigrat
     {
         if(this.getCurrentName().equals("Seafloor Cities"))
         {
-            return "It's not impossible to build a city at the bottom of the sea - in fact, it's advantageous when defending against raids and bombardment. Traders are hampered by the underwater conditions, making the colony less accessible.";
+            return "Enclosed megastructures resting on the abyssal plains, these undersea cities withstand crushing pressure and eternal darkness with reinforced hulls and advanced life-support systems. The isolation of these colonies makes them difficult to reach, providing security from external threats but hampering trade.";
 
         }
         else if(this.getCurrentName().equals("Sky Cities"))
         {
-            return "Placeholder sky cities description.";
+            return "Colossal arcologies suspended within the upper atmosphere of a gas giant, held aloft by specialized atmospheric buoyancy systems. These floating cities can provide a habitable environment for millions, shielding them from the crushing pressures and violent storms below.";
         }
         else
         {

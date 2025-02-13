@@ -46,20 +46,29 @@ public class Cramped_Quarters extends BaseHazardCondition implements MarketImmig
     public void apply(String id) {
         super.apply(id);
 
-        if(this.market == null || this.market.getTariff() == null || this.market.getFactionId() == null || this.market.getHazard() == null || this.market.getAccessibilityMod() == null) {
-            // boggledTools.removeCondition(this.market, "cramped_quarters");
-            // Don't try to remove this condition here because it will throw an exception under some unusual circumstances.
+        if(this.market == null)
+        {
             return;
         }
 
-        if (!market.hasCondition(Conditions.NO_ATMOSPHERE)) {
+        if(!this.market.hasCondition(Conditions.NO_ATMOSPHERE)) {
             // Adds the no atmosphere condition, then suppresses it so it won't increase hazard
             // market_conditions.csv overwrites the vanilla no_atmosphere condition
             // The only change made is to hide the icon on markets where primary entity has station tag
             // This is done so refining and fuel production can slot the special items
             // Hopefully Alex will fix the no_atmosphere detection in the future so this hack can be removed
             market.addCondition(Conditions.NO_ATMOSPHERE);
-            market.suppressCondition(Conditions.NO_ATMOSPHERE);
+        }
+
+        if(this.market.hasCondition(Conditions.NO_ATMOSPHERE))
+        {
+            this.market.suppressCondition(Conditions.NO_ATMOSPHERE);
+        }
+
+        if(this.market == null || this.market.getTariff() == null || this.market.getFactionId() == null || this.market.getHazard() == null || this.market.getAccessibilityMod() == null) {
+            // boggledTools.removeCondition(this.market, "cramped_quarters");
+            // Don't try to remove this condition here because it will throw an exception under some unusual circumstances.
+            return;
         }
 
         if(this.market.getTariff().getBaseValue() == 0.0f && this.market.getTariff().getModifiedValue() == 0.0f) {

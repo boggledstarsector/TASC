@@ -54,7 +54,7 @@ public class BoggledTascPlugin extends BaseModPlugin {
             for (StarSystemAPI system : Global.getSector().getStarSystems()) {
                 for (MarketAPI market : Global.getSector().getEconomy().getMarkets(system)) {
                     SectorEntityToken primaryEntity = market.getPrimaryEntity();
-                    if (primaryEntity != null && primaryEntity.hasTag(Tags.STATION)) {
+                    if (primaryEntity != null && boggledTools.marketIsStation(market)) {
                         //Cramped Quarters also controls global hazard and accessibility modifications
                         //even if Cramped Quarters itself is disabled
                         if (!market.hasCondition(boggledTools.BoggledConditions.crampedQuartersConditionId)) {

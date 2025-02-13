@@ -7,14 +7,6 @@ BOGGLED_AI_MINING_DRONES,"AI Mining Drones",industry_ai_mining_drones,,"[
 	{ 'ai_core_id' : 'gamma_core', 'projects' : [ 'industry_ai_mining_drones_gamma_core' ] }
 ]",false,10,,
 BOGGLED_ATMOSPHERE_PROCESSOR,"Atmosphere Processor",industry_atmosphere_processor,,,,,2,,
-BOGGLED_CHAMELEON,"CHAMELEON",industry_chameleon | industry_chameleon_decivilized | industry_chameleon_rogue_ai,,"[
-	'chameleon_improve_bonus_to_stability'
-]","[
-	{ 'ai_core_id' : 'alpha_core', 'projects' : [
-		'industry_chameleon_alpha_core',
-		'industry_chameleon_alpha_core_eliminate_pather_interest'
-	] }
-]",,10,,
 BOGGLED_CLONING,"Cloning",industry_cloning,,"[
     'default_improve_bonus'
 ]","[
@@ -28,13 +20,6 @@ BOGGLED_CRYOSANCTUM,"Cryosanctum",industry_cryosanctum,,"[
 	{ 'ai_core_id' : 'alpha_core', 'projects' : [ 'industry_cryosanctum_alpha_core' ] },
 	{ 'ai_core_id' : 'beta_core', 'projects' : [ 'industry_cryosanctum_beta_core' ] },
 	{ 'ai_core_id' : 'gamma_core', 'projects' : [ 'industry_cryosanctum_gamma_core' ] }
-]",,0,,
-BOGGLED_DOMAIN_ARCHAEOLOGY,"Domain Archaeology",industry_domain_archaeology,,"[
-	'default_improve_bonus'
-]","[
-	{ 'ai_core_id' : 'alpha_core', 'projects' : [ 'industry_domain_archaeology_alpha_core' ] },
-	{ 'ai_core_id' : 'beta_core', 'projects' : [ 'industry_domain_archaeology_beta_core' ] },
-	{ 'ai_core_id' : 'gamma_core', 'projects' : [ 'industry_domain_archaeology_gamma_core' ] }
 ]",,0,,
 BOGGLED_STATION_EXPANSION,"Expand Station",industry_expand_station,"[
 	'expand_station_increment_tag',

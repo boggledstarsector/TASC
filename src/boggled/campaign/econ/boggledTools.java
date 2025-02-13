@@ -1641,6 +1641,27 @@ public class boggledTools {
             industry.doPreSaveCleanup();
             industry.doPostSaveRestore();
         }
+
+        refreshAquacultureAndFarming(market);
+    }
+
+    public static void refreshAquacultureAndFarming(MarketAPI market)
+    {
+        if(market == null || market.getPrimaryEntity() == null || market.getPlanetEntity() == null || market.hasTag("station") || market.getPrimaryEntity().hasTag("station"))
+        {
+            return;
+        }
+        else
+        {
+            if(market.hasIndustry("farming") && market.hasCondition("water_surface"))
+            {
+                market.getIndustry("farming").init("aquaculture", market);
+            }
+            else if(market.hasIndustry("aquaculture") && !market.hasCondition("water_surface"))
+            {
+                market.getIndustry("aquaculture").init("farming", market);
+            }
+        }
     }
 
     public static float getRandomOrbitalAngleFloat(float min, float max) {
