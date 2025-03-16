@@ -1,12 +1,13 @@
 package boggled.campaign.econ.industries.plugins;
 
-import boggled.campaign.econ.boggledTools;
-import boggled.campaign.econ.industries.interfaces.ShowBoggledTerraformingMenuOption;
+//import boggled.campaign.econ.boggledTools;
+//import boggled.campaign.econ.industries.interfaces.ShowBoggledTerraformingMenuOption;
+//import com.fs.starfarer.api.campaign.econ.MarketAPI;
+//import com.fs.starfarer.api.campaign.PlanetAPI;
+//import com.fs.starfarer.api.campaign.SectorEntityToken;
+
 import com.fs.starfarer.api.Global;
-import com.fs.starfarer.api.campaign.PlanetAPI;
-import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.campaign.econ.Industry;
-import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.campaign.listeners.BaseIndustryOptionProvider;
 import com.fs.starfarer.api.campaign.listeners.DialogCreatorUI;
 import com.fs.starfarer.api.campaign.listeners.IndustryOptionProvider;
@@ -47,16 +48,19 @@ public class TerraformingMenuOptionProvider extends BaseIndustryOptionProvider
     @Override
     public boolean isUnsuitable(Industry ind, boolean allowUnderConstruction)
     {
-        if(ind == null || ind.getMarket() == null)
-        {
-            return true;
-        }
+        // Opening the menu doesn't work with this code. Need to fix it in a future patch.
+        return true;
 
-        boolean isBoggledTerraformingIndustry = ind instanceof ShowBoggledTerraformingMenuOption;
-        boolean isStation = boggledTools.marketIsStation(ind.getMarket());
-        boolean playerOwned = ind.getMarket().isPlayerOwned();
-
-        return super.isUnsuitable(ind, allowUnderConstruction) || !isBoggledTerraformingIndustry || isStation || !playerOwned;
+//        if(ind == null || ind.getMarket() == null)
+//        {
+//            return true;
+//        }
+//
+//        boolean isBoggledTerraformingIndustry = ind instanceof ShowBoggledTerraformingMenuOption;
+//        boolean isStation = boggledTools.marketIsStation(ind.getMarket());
+//        boolean playerOwned = ind.getMarket().isPlayerOwned();
+//
+//        return super.isUnsuitable(ind, allowUnderConstruction) || !isBoggledTerraformingIndustry || isStation || !playerOwned;
     }
 
     @Override

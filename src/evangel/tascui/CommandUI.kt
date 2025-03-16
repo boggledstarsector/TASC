@@ -598,9 +598,9 @@ class CommandUIIntelK : LunaBaseCustomPanelPlugin() {
 
         if (ctx.planet != null) {
             nameHolder.innerElement.showPlanetInfo(ctx.planet, NAME_WIDTH, PLANET_CARD_HEIGHT, false, 0f)
-        } else {
+        } else if (ctx.station != null && ctx.station.customEntitySpec != null) {
             nameHolder.innerElement.addImage(ctx.station.customEntitySpec.spriteName, NAME_WIDTH * 0.9f, PLANET_CARD_HEIGHT * 0.9f, 0f)
-        }
+        } else {}
 
         val nameLabel = nameHolder.innerElement.addPara(ctx.closestMarket.name, ctx.closestMarket.textColorForFactionOrPlanet, 0f)
         val nameHeight = nameLabel.computeTextHeight(ctx.closestMarket.name)

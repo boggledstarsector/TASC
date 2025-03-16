@@ -21,30 +21,6 @@ public class Boggled_Domain_Archaeology extends BaseIndustry implements ShowBogg
     {
         super.apply(true);
 
-        MarketAPI market = this.market;
-        int size = market.getSize();
-
-        supply("domain_artifacts", (size - 2));
-
-        // Modify production based on ruins.
-        // This is usually done by the condition itself, but it's done here for this industry because vanilla ruins don't impact production.
-        if(market.hasCondition(Conditions.RUINS_SCATTERED))
-        {
-            this.supply("boggledRuinsMod", "domain_artifacts", -1, Misc.ucFirst("Scattered ruins"));
-        }
-        else if(market.hasCondition(Conditions.RUINS_WIDESPREAD))
-        {
-            //Do nothing - no impact on production
-        }
-        else if(market.hasCondition(Conditions.RUINS_EXTENSIVE))
-        {
-            this.supply("boggledRuinsMod", "domain_artifacts", 1, Misc.ucFirst("Extensive ruins"));
-        }
-        else if(market.hasCondition(Conditions.RUINS_VAST))
-        {
-            this.supply("boggledRuinsMod", "domain_artifacts", 2, Misc.ucFirst("Vast ruins"));
-        }
-
         if (!this.isFunctional())
         {
             this.supply.clear();
