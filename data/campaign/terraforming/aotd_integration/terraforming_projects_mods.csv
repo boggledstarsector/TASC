@@ -18,9 +18,6 @@ aotd_genetic_manipulation_genelab,industry_genelab,,,"[
 aotd_advanced_terraforming_domed_cities,industry_domed_cities,,,"[
 	{ 'requirement_id' : 'aotd_advanced_terraforming' }
 ]",,,,,,,,,,,,
-aotd_advanced_terraforming_seafloor_cities,industry_seafloor_cities,,,"[
-	{ 'requirement_id' : 'aotd_advanced_terraforming' }
-]",,,,,,,,,,,,
 aotd_advanced_terraforming_ismara_sling,industry_ismara_sling,,,"[
 	{ 'requirement_id' : 'aotd_advanced_terraforming' }
 ]",,,,,,,,,,,,

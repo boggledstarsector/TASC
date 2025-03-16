@@ -14,7 +14,6 @@ BOGGLED_MESOZOIC_PARK:industry",2,1,false,,,Terraforming & Station Construction
 ,,,,,,,,,,,,,
 tasc_advanced_terraforming,Advanced Terraforming Templates,3,70,tasc_terraforming_templates,research_databank:17,none,"Allows increasing amount of resources on planets:modifier
 BOGGLED_DOMED_CITIES:industry
-BOGGLED_SEAFLOOR_CITIES:industry
 BOGGLED_ISMARA_SLING:industry",3,3,false,,,Terraforming & Station Construction
 tasc_remnant_algorithms,Artificial Simulation,3,45,tasc_ai_algorithms,"research_databank:6,alpha_core:1,beta_core:2,gamma_core:5",none,BOGGLED_KLETKA_SIMULATOR:industry,3,4,false,,,Terraforming & Station Construction
 tasc_astropolis_construction,Orbital Colonies,3,25,tasc_station_restoration,research_databank:3,none,Allow building Astropolis type stations:modifier,3,6,false,,,Terraforming & Station Construction
