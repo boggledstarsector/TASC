@@ -652,7 +652,7 @@ public class Boggled_Remnant_Station extends OrbitalStation implements RouteMana
             return false;
         }
 
-        if(!boggledTools.isResearched(this.getId()))
+        if(!boggledTools.isResearched("tasc_remnant_station"))
         {
             return false;
         }
@@ -678,9 +678,9 @@ public class Boggled_Remnant_Station extends OrbitalStation implements RouteMana
             return false;
         }
 
-        if(!boggledTools.isResearched(this.getId()))
+        if(!boggledTools.isResearched("tasc_remnant_station"))
         {
-            return true;
+            return false;
         }
 
         if(!this.playerHasAutomatedShipsSkill())
@@ -699,9 +699,9 @@ public class Boggled_Remnant_Station extends OrbitalStation implements RouteMana
     @Override
     public String getUnavailableReason()
     {
-        if(!boggledTools.isResearched(this.getId()))
+        if(!boggledTools.isResearched("tasc_remnant_station"))
         {
-            return boggledTools.getIndustryUnavailableReasonResearchRequiredString();
+            return "Error in getUnavailableReason() in Boggled_Remnant_Station. Please report this to boggled on the forums.";
         }
 
         if(!this.playerHasAutomatedShipsSkill())

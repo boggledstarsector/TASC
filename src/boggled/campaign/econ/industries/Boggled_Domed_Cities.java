@@ -185,6 +185,11 @@ public class Boggled_Domed_Cities extends BaseIndustry implements MarketImmigrat
             return false;
         }
 
+        if(!boggledTools.isResearched("tasc_advanced_terraforming"))
+        {
+            return false;
+        }
+
         //Can't build on stations
         if(boggledTools.marketIsStation(market))
         {
@@ -217,6 +222,11 @@ public class Boggled_Domed_Cities extends BaseIndustry implements MarketImmigrat
             return false;
         }
 
+        if(!boggledTools.isResearched("tasc_advanced_terraforming"))
+        {
+            return false;
+        }
+
         if(boggledTools.marketIsStation(market))
         {
             return false;
@@ -232,6 +242,11 @@ public class Boggled_Domed_Cities extends BaseIndustry implements MarketImmigrat
 
         // Should never be seen because showWhenAvailable() will be false if either condition is true.
         if(!boggledTools.getBooleanSetting("boggledDomedCitiesEnabled") || !boggledTools.getBooleanSetting("boggledTerraformingContentEnabled"))
+        {
+            return "Error in getUnavailableReason() in Domed Cities. Please report this to boggled on the forums.";
+        }
+
+        if(!boggledTools.isResearched("tasc_advanced_terraforming"))
         {
             return "Error in getUnavailableReason() in Domed Cities. Please report this to boggled on the forums.";
         }
@@ -485,7 +500,7 @@ public class Boggled_Domed_Cities extends BaseIndustry implements MarketImmigrat
         {
             tooltip.addPara("Accessibility penalty: %s", opad, Misc.getNegativeHighlightColor(), "-10%");
         }
-        else
+        else if(this.getCurrentName().equals("Sky Cities"))
         {
             tooltip.addPara("Accessibility bonus: %s", opad, Misc.getHighlightColor(), "10%");
         }

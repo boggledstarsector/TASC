@@ -25,8 +25,6 @@ arid_type_change,boggledTerraformingContentEnabled,terraforming,"Arid type chang
 	'market_remove_volatiles_abundant',
 	'market_remove_volatiles_plentiful',
 
-	'industry_swap_seafloor_cities_for_domed_cities',
-	'industry_swap_aquaculture_for_farming',
 	'industry_remove_mesozoic_park'
 ]",,,,,
 jungle_type_change,boggledTerraformingContentEnabled,terraforming,"Jungle type change",,Completed,"[
@@ -54,9 +52,6 @@ jungle_type_change,boggledTerraformingContentEnabled,terraforming,"Jungle type c
 	'market_remove_volatiles_diffuse',
 	'market_remove_volatiles_abundant',
 	'market_remove_volatiles_plentiful',
-
-	'industry_swap_seafloor_cities_for_domed_cities',
-	'industry_swap_aquaculture_for_farming'
 ]",,,,,
 terran_type_change,boggledTerraformingContentEnabled,terraforming,"Terran type change",,Completed,"[
 	{ 'requirement_id' : 'terraforming_world_type_allows_terraforming' },
@@ -83,9 +78,6 @@ terran_type_change,boggledTerraformingContentEnabled,terraforming,"Terran type c
 	'market_remove_volatiles_diffuse',
 	'market_remove_volatiles_abundant',
 	'market_remove_volatiles_plentiful',
-
-	'industry_swap_seafloor_cities_for_domed_cities',
-	'industry_swap_aquaculture_for_farming'
 ]",,,,,
 water_type_change,boggledTerraformingContentEnabled,terraforming,"Water type change",,Completed,"[
 	{ 'requirement_id' : 'terraforming_world_type_allows_terraforming' },
@@ -111,9 +103,6 @@ water_type_change,boggledTerraformingContentEnabled,terraforming,"Water type cha
 	'market_remove_volatiles_diffuse',
 	'market_remove_volatiles_abundant',
 	'market_remove_volatiles_plentiful',
-
-	'industry_swap_domed_cities_for_seafloor_cities',
-	'industry_swap_farming_for_aquaculture'
 ]",,,,,
 tundra_type_change,boggledTerraformingContentEnabled,terraforming,"Tundra type change",,Completed,"[
 	{ 'requirement_id' : 'terraforming_world_type_allows_terraforming' },
@@ -141,8 +130,6 @@ tundra_type_change,boggledTerraformingContentEnabled,terraforming,"Tundra type c
 	'market_remove_volatiles_abundant',
 	'market_remove_volatiles_plentiful',
 
-	'industry_swap_seafloor_cities_for_domed_cities',
-	'industry_swap_aquaculture_for_farming',
 	'industry_remove_mesozoic_park'
 ]",,,,,
 frozen_type_change,boggledTerraformingContentEnabled,terraforming,"Frozen type change",,Completed,"[
@@ -169,8 +156,6 @@ frozen_type_change,boggledTerraformingContentEnabled,terraforming,"Frozen type c
 	'market_remove_volatiles_diffuse',
 	'market_remove_volatiles_plentiful',
 
-	'industry_swap_seafloor_cities_for_domed_cities',
-	'industry_swap_aquaculture_for_farming',
 	'industry_remove_mesozoic_park'
 ]",,,,,
 ,,,,,,,,,,,,,,,,,

@@ -4,14 +4,13 @@
 	"version":"9.0.12",
 	"author": "boggled",
 	"description":"Terraform planets and build stations.",
-	"gameVersion":"0.97a-RC11",
+	"gameVersion":"0.98a-RC7",
 	"jars":["jar/BoggledTerraformingAndStationConstruction.jar"],
 	"modPlugin":"boggled.scripts.BoggledTascPlugin",
 	"dependencies": [
 		{
 			"id": "lunalib",
-			"name": "LunaLib",
-			"version": "1.8.4"
+			"name": "LunaLib"
 		}
 	]
 }

@@ -28,6 +28,7 @@ import com.fs.starfarer.campaign.CircularOrbit;
 import com.fs.starfarer.campaign.CircularOrbitPointDown;
 import com.fs.starfarer.campaign.CircularOrbitWithSpin;
 import com.fs.starfarer.loading.specs.PlanetSpec;
+import data.kaysaar.aotd.vok.scripts.research.AoTDMainResearchManager;
 import illustratedEntities.helper.ImageHandler;
 import illustratedEntities.helper.Settings;
 import illustratedEntities.helper.TextHandler;
@@ -2883,11 +2884,9 @@ public class boggledTools {
     public static boolean isResearched(String key)
     {
         // Pass this.getId() as key if this function is called from an industry
-
-        if(Global.getSettings().getModManager().isModEnabled("aod_core"))
+        if(Global.getSettings().getModManager().isModEnabled("aotd_vok"))
         {
-            Map<String,Boolean> researchSaved = (HashMap<String, Boolean>) Global.getSector().getPersistentData().get("researchsaved");
-            return researchSaved != null ?  researchSaved.get(key) : false;
+            return AoTDMainResearchManager.getInstance().isResearchedForPlayer(key);
         }
         else
         {

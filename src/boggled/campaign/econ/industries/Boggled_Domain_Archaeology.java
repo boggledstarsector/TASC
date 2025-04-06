@@ -4,7 +4,6 @@ import java.lang.String;
 
 import boggled.campaign.econ.industries.interfaces.ShowBoggledTerraformingMenuOption;
 import com.fs.starfarer.api.campaign.econ.*;
-import com.fs.starfarer.api.util.Misc;
 import com.fs.starfarer.api.impl.campaign.econ.impl.BaseIndustry;
 import com.fs.starfarer.api.impl.campaign.ids.Conditions;
 import boggled.campaign.econ.boggledTools;
@@ -36,7 +35,7 @@ public class Boggled_Domain_Archaeology extends BaseIndustry implements ShowBogg
     @Override
     public boolean isAvailableToBuild()
     {
-        if(!boggledTools.isResearched(this.getId()))
+        if(!boggledTools.isResearched("tasc_domain_excavation"))
         {
             return false;
         }
@@ -55,7 +54,7 @@ public class Boggled_Domain_Archaeology extends BaseIndustry implements ShowBogg
     @Override
     public boolean showWhenUnavailable()
     {
-        if(!boggledTools.isResearched(this.getId()))
+        if(!boggledTools.isResearched("tasc_domain_excavation"))
         {
             return false;
         }

@@ -61,6 +61,11 @@ public class Boggled_Planetary_Agrav_Field extends BaseIndustry implements ShowB
             return false;
         }
 
+        if(!boggledTools.isResearched("tasc_gravity_manipulation"))
+        {
+            return false;
+        }
+
         //Can't build on stations
         if(boggledTools.marketIsStation(this.market))
         {
@@ -88,6 +93,11 @@ public class Boggled_Planetary_Agrav_Field extends BaseIndustry implements ShowB
             return false;
         }
 
+        if(!boggledTools.isResearched("tasc_gravity_manipulation"))
+        {
+            return false;
+        }
+
         if(boggledTools.marketIsStation(this.market))
         {
             return false;
@@ -103,6 +113,11 @@ public class Boggled_Planetary_Agrav_Field extends BaseIndustry implements ShowB
 
         //Can't build on stations
         if(boggledTools.marketIsStation(this.market))
+        {
+            return "Error in getUnavailableReason() in Planetary Agrav Field. Please report this to boggled on the forums.";
+        }
+
+        if(!boggledTools.isResearched("tasc_gravity_manipulation"))
         {
             return "Error in getUnavailableReason() in Planetary Agrav Field. Please report this to boggled on the forums.";
         }
