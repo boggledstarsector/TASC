@@ -2332,7 +2332,7 @@ public class boggledTools {
 
         for (int textNum = 1; textNum <= 2; textNum++)
         {
-            for (int lineNum = 1; lineNum <= Settings.LINE_AMT; lineNum++)
+            for (int lineNum = 1; lineNum <= Settings.getInt(Settings.TEXT_LINE_NUM); lineNum++)
             {
                 String s = textDataEntry.getString(textNum, lineNum);
                 newTextDataEntry.setString(textNum, lineNum, s);
