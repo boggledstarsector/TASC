@@ -637,7 +637,6 @@ public class boggledTools {
         addTerraformingProjectEffectFactory("IndustryRemove", new BoggledTerraformingProjectEffectFactory.IndustryRemove());
         addTerraformingProjectEffectFactory("TagSubstringPowerModifyBuildCost", new BoggledTerraformingProjectEffectFactory.TagSubstringPowerModifyBuildCost());
         addTerraformingProjectEffectFactory("EliminatePatherInterest", new BoggledTerraformingProjectEffectFactory.EliminatePatherInterest());
-        addTerraformingProjectEffectFactory("AddStellarReflectorsToOrbit", new BoggledTerraformingProjectEffectFactory.AddStellarReflectorsToOrbit());
 
         addTerraformingProjectEffectFactory("CommodityDemandFlat", new BoggledTerraformingProjectEffectFactory.CommodityDemandFlat());
         addTerraformingProjectEffectFactory("CommodityDemandMarketSize", new BoggledTerraformingProjectEffectFactory.CommodityDemandMarketSize());
@@ -1953,6 +1952,12 @@ public class boggledTools {
     }
 
     public static boolean getCreateMirrorsOrShades(MarketAPI market) {
+        // If this gets called from a context where the player is not at a market (e.g. from VoK research tree) we need to null check
+        if(market == null)
+        {
+            return true;
+        }
+
         // Return true for mirrors, false for shades
         // Go by temperature first. If not triggered, will check planet type. Otherwise, just return true.
         if (market.hasCondition(Conditions.POOR_LIGHT) || market.hasCondition(Conditions.VERY_COLD) || market.hasCondition(Conditions.COLD)) {
@@ -2200,14 +2205,21 @@ public class boggledTools {
         return numShades;
     }
 
-    public static void clearReflectorsInOrbit(MarketAPI market) {
-        Iterator<SectorEntityToken> allEntitiesInSystem = market.getStarSystem().getAllEntities().iterator();
-        while(allEntitiesInSystem.hasNext()) {
-            SectorEntityToken entity = allEntitiesInSystem.next();
-            if (entity.getOrbitFocus() != null && entity.getOrbitFocus().equals(market.getPrimaryEntity()) && (entity.getId().contains(Entities.STELLAR_MIRROR) || entity.getId().contains(Entities.STELLAR_SHADE) || entity.hasTag(Entities.STELLAR_MIRROR) || entity.hasTag(Entities.STELLAR_SHADE)))
+    public static void clearReflectorsInOrbit(MarketAPI market)
+    {
+        // Null check market because this can get called when the player is not docked and market is null (e.g. in VoK research tree)
+        // I think VoK is creating a dummy market to put the industry on to generate the image and tooltip, but the dummy has no star system.
+        if(market != null && market.getStarSystem() != null)
+        {
+            Iterator<SectorEntityToken> allEntitiesInSystem = market.getStarSystem().getAllEntities().iterator();
+            while (allEntitiesInSystem.hasNext())
             {
-                allEntitiesInSystem.remove();
-                market.getStarSystem().removeEntity(entity);
+                SectorEntityToken entity = allEntitiesInSystem.next();
+                if (entity.getOrbitFocus() != null && entity.getOrbitFocus().equals(market.getPrimaryEntity()) && (entity.getId().contains(Entities.STELLAR_MIRROR) || entity.getId().contains(Entities.STELLAR_SHADE) || entity.hasTag(Entities.STELLAR_MIRROR) || entity.hasTag(Entities.STELLAR_SHADE)))
+                {
+                    allEntitiesInSystem.remove();
+                    market.getStarSystem().removeEntity(entity);
+                }
             }
         }
     }
@@ -2296,8 +2308,7 @@ public class boggledTools {
             }
         }
 
-        // Handle Illustrated Entities custom images and/or description.
-        // TASC uses classes from the Illustrated Entities to do this - the Illustrated Entities JAR is imported as a library into TASC.
+        // Handle Illustrated Entities custom images and/or description
         if(Global.getSettings().getModManager().isModEnabled(BoggledMods.illustratedEntitiesModId)) {
             boolean customImageHasBeenSet = ImageHandler.hasImage(station);
             if(customImageHasBeenSet) {
@@ -2322,25 +2333,30 @@ public class boggledTools {
         surveyAll(market);
     }
 
-    public static void setEntityIllustratedEntitiesCustomDescription(SectorEntityToken sectorEntityToken, TextDataEntry textDataEntry) {
-        // The passed SectorEntityToken will have the description lines from the passed TextDataEntry copied onto its own TextDataEntry.
-
-        TextDataMemory dataMemory = TextDataMemory.getInstance();
-
-        int i = dataMemory.getNexFreetNum();
-        TextDataEntry newTextDataEntry = new TextDataEntry(i, sectorEntityToken.getId());
-
-        for (int textNum = 1; textNum <= 2; textNum++)
+    public static void setEntityIllustratedEntitiesCustomDescription(SectorEntityToken sectorEntityToken, TextDataEntry textDataEntry)
+    {
+        // Have to avoid doing anything if Illustrated Entities is not enabled because it will cause a crash since the library isn't loaded
+        if(Global.getSettings().getModManager().isModEnabled(BoggledMods.illustratedEntitiesModId))
         {
-            for (int lineNum = 1; lineNum <= Settings.getInt(Settings.TEXT_LINE_NUM); lineNum++)
-            {
-                String s = textDataEntry.getString(textNum, lineNum);
-                newTextDataEntry.setString(textNum, lineNum, s);
-            }
-        }
+            // The passed SectorEntityToken will have the description lines from the passed TextDataEntry copied onto its own TextDataEntry.
 
-        newTextDataEntry.apply();
-        dataMemory.set(newTextDataEntry.descriptionNum, newTextDataEntry);
+            TextDataMemory dataMemory = TextDataMemory.getInstance();
+
+            int i = dataMemory.getNexFreetNum();
+            TextDataEntry newTextDataEntry = new TextDataEntry(i, sectorEntityToken.getId());
+
+            for (int textNum = 1; textNum <= 2; textNum++)
+            {
+                for (int lineNum = 1; lineNum <= Settings.getInt(Settings.TEXT_LINE_NUM); lineNum++)
+                {
+                    String s = textDataEntry.getString(textNum, lineNum);
+                    newTextDataEntry.setString(textNum, lineNum, s);
+                }
+            }
+
+            newTextDataEntry.apply();
+            dataMemory.set(newTextDataEntry.descriptionNum, newTextDataEntry);
+        }
     }
 
     public static void deleteOldLightsOverlay(SectorEntityToken station, String stationType, String stationGreekLetter) {

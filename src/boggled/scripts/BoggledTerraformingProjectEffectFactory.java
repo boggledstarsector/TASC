@@ -642,13 +642,6 @@ public class BoggledTerraformingProjectEffectFactory {
         }
     }
 
-    public static class AddStellarReflectorsToOrbit implements TerraformingProjectEffectFactory {
-        @Override
-        public BoggledTerraformingProjectEffect.TerraformingProjectEffect constructFromJSON(String id, String[] enableSettings, String data) throws JSONException {
-            return new BoggledTerraformingProjectEffect.AddStellarReflectorsToOrbit(id, enableSettings);
-        }
-    }
-
     public static class CommodityDemandFlat implements TerraformingProjectEffectFactory {
         @Override
         public BoggledTerraformingProjectEffect.TerraformingProjectEffect constructFromJSON(String id, String[] enableSettings, String data) throws JSONException {

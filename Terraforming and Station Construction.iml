@@ -11,5 +11,6 @@
     <orderEntry type="library" name="crew_replacer" level="project" />
     <orderEntry type="library" name="Vok" level="project" />
     <orderEntry type="library" name="org.jetbrains.kotlin:kotlin-stdlib:1.5.32" level="project" />
+    <orderEntry type="library" name="src1" level="project" />
   </component>
 </module>
