@@ -2937,11 +2937,13 @@ public class boggledTools {
         }
     }
 
+
     public static void writeMessageToLog(String message)
     {
         Global.getLogger(boggledTools.class).info(message);
     }
 
+    //import boggled.campaign.econ.boggledTools; SectorEntityToken ent = null; for(SectorEntityToken entity : Global.getSector().getPlayerFleet().getStarSystem().getAllEntities()) {if(entity.getFullName().contains("Stellar ")) {ent = entity;}}; boggledTools.sendDebugIntelMessage(Float.toString(ent.getCircularOrbitPeriod()));
     public static void sendDebugIntelMessage(String message) {
         MessageIntel intel = new MessageIntel(message, Misc.getBasePlayerColor());
         intel.addLine(message);
@@ -2949,6 +2951,7 @@ public class boggledTools {
         intel.setSound(BaseIntelPlugin.getSoundStandardUpdate());
         Global.getSector().getCampaignUI().addMessage(intel, CommMessageAPI.MessageClickAction.COLONY_INFO, null);
     }
+
 
     public static void terraformDebug(MarketAPI market) {
         market.getPlanetEntity().changeType(boggledTools.waterPlanetId, null);
