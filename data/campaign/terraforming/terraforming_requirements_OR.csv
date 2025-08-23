@@ -137,7 +137,7 @@ industry_planet_cracker_orbited_planet_not_has_tectonic_or_extreme_tectonic_acti
 industry_planet_cracker_orbited_planet_not_has_ore_and_rare_ore_ultrarich,"$focusMarketName already has easily accessible ore deposits. Cracking the planet would not yield any improvement.",,true,"focus_market_has_ore_ultrarich | focus_market_has_rare_ore_ultrarich"
 ,,
 industry_planetary_agrav_field_colony_has_low_or_high_gravity,"Gravity on $marketName is within the optimal range for humans. Building agrav generators here would serve little purpose.",,false,"market_has_low_gravity | market_has_high_gravity"
-industry_planetary_agrav_field_colony_has_domed_cities,"It is not economically feasible to blanket an entire world with agrav generators. The population must be housed within a few centralized domed cities for a colony-wide agrav field to be practical.",,false,"market_has_domed_cities | market_has_seafloor_cities"
+industry_planetary_agrav_field_colony_has_domed_cities,"It is not economically feasible to blanket an entire world with agrav generators. The population must be housed within a few centralized domed cities for a colony-wide agrav field to be practical.",,false,"market_has_domed_cities"
 
 industry_stellar_reflectors_colony_not_dark,"Stellar reflectors won't have any effect on a world that receives no light.",,false,"market_not_dark"
 
@@ -146,7 +146,7 @@ industry_colony_rogue_ai_core,"$marketName has a rogue AI core",,false,"market_r
 industry_colony_has_ruins,"Requires ruins",,false,"market_ruins_scattered | market_ruins_widespread | market_ruins_extensive | market_ruins_vast"
 ,,
 industry_colony_not_has_tectonic_activity_unless_has_harmonic_damper,"$marketName experiences frequent seismic events that could destroy megastructures. It would be too dangerous to construct one here.",,false,"market_not_has_extreme_tectonic_activity | market_has_harmonic_damper"
-industry_colony_has_domed_cities_or_is_gas_giant,,,false,"market_has_domed_cities | market_has_seafloor_cities | planet_gas_giant"
+industry_colony_has_domed_cities_or_is_gas_giant,,,false,"market_has_domed_cities | planet_gas_giant"
 industry_colony_has_mining,,,false,"market_has_mining"
 ,,
 industry_station_construction_num_expansions,"$marketName is too large to expand further.",,false,"station_construction_num_expansions"

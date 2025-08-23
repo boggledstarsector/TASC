@@ -113,7 +113,6 @@ market_has_large_water_present,,MarketHasWaterPresent,false,"{
 market_has_atmosphere_processor,,MarketHasIndustry,false,"BOGGLED_ATMOSPHERE_PROCESSOR"
 market_has_genelab,,MarketHasIndustry,false,"BOGGLED_GENELAB"
 market_has_domed_cities,,MarketHasIndustry,false,"BOGGLED_DOMED_CITIES"
-market_has_seafloor_cities,,MarketHasIndustry,false,"BOGGLED_SEAFLOOR_CITIES"
 ,
 market_has_heavy_industry_with_corrupted_nanoforge,,MarketHasIndustryWithItem,false,"{
 	'industry_id' : 'heavyindustry',

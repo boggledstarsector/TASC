@@ -1107,11 +1107,6 @@ public class BoggledTerraformingProjectEffect {
             if (targetStation.hasTag(boggledTools.BoggledTags.astropolisStation) || targetStation.hasTag(boggledTools.BoggledTags.miningStation) || targetStation.hasTag(boggledTools.BoggledTags.siphonStation)) {
                 SectorEntityToken newLightsOnColonize = starSystem.addCustomEntity("boggled_newLightsOnColonize", "New Lights Overlay From Colonizing Abandoned Station", targetStation.getCustomEntityType() + "_lights_overlay", playerFleet.getFaction().getId());
                 newLightsOnColonize.setOrbit(targetStation.getOrbit().makeCopy());
-            } else if(targetStation.hasTag("boggled_gatekeeper_station")) {
-                targetStation.setCustomDescriptionId("gatekeeper_station");
-
-                SectorEntityToken newLightsOnColonize = starSystem.addCustomEntity("boggled_newLightsOnColonize", "New Lights Overlay From Colonizing Abandoned Station", targetStation.getCustomEntityType() + "_lights_overlay", playerFleet.getFaction().getId());
-                newLightsOnColonize.setOrbit(targetStation.getOrbit().makeCopy());
             } else if(targetStation.getId().contains("new_maxios")) {
                 market.addCondition(Conditions.ORE_MODERATE);
                 market.getConstructionQueue().addToEnd(Industries.MINING, 0);
