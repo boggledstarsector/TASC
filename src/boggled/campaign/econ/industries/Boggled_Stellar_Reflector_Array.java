@@ -123,21 +123,33 @@ public class Boggled_Stellar_Reflector_Array extends BaseIndustry
                 240f
         ));
 
+        // Orbit Radius
         float orbitRadius = market.getPrimaryEntity().getRadius() + 80f;
-        float orbitDays = market.getPrimaryEntity().getCircularOrbitPeriod();
-        float orbitDaysNotStar = market.getPrimaryEntity().getCircularOrbitPeriod() / 10;
 
+        // Orbital period
         SectorEntityToken orbitFocus = market.getPrimaryEntity().getOrbitFocus();
+        // Default period (cases where market is a moon orbiting a planet or market is in a nebula where it orbits nothing)
+        // Based on the orbital period of the stellar mirrors around Eochu Bres in vanilla
+        float orbitPeriod = 40f;
+        // Match the period of the market to ensure the reflectors maintain their orientation relative to the star
+        if(orbitFocus != null && orbitFocus.isStar())
+        {
+            orbitPeriod = market.getPrimaryEntity().getCircularOrbitPeriod();
+        }
 
+        // Reflector spawn angles
+        // Default to star-relative angles
+        ArrayList<Float> orbitAngles = mirrorsOrShades ? mirrorAnglesOrbitingStar : shadeAnglesOrbitingStar;
+        // Switch to 120 degree intervals if the market is not orbiting a star
+        if(orbitFocus == null || !orbitFocus.isStar())
+        {
+            orbitAngles = mirrorAndShadeAnglesOrbitingNotStar;
+        }
+
+        // Determine name and description for the reflectors
         ArrayList<Pair<String, String>> idNamePairs = mirrorsOrShades ? mirrorIdNamePairs : shadeIdNamePairs;
         String entityType = mirrorsOrShades ? "stellar_mirror" : "stellar_shade";
         String customDescriptionId = mirrorsOrShades ? "stellar_mirror" : "stellar_shade";
-        ArrayList<Float> orbitAngles = mirrorsOrShades ? mirrorAnglesOrbitingStar : shadeAnglesOrbitingStar;
-        float orbitPeriod = orbitDays;
-        if (!(orbitFocus != null && orbitFocus.isStar())) {
-            orbitAngles = mirrorAndShadeAnglesOrbitingNotStar;
-            orbitPeriod = orbitDaysNotStar;
-        }
 
         for (int i = 0; i < 3; ++i) {
             SectorEntityToken reflector = system.addCustomEntity(idNamePairs.get(i).one, idNamePairs.get(i).two, entityType, market.getFactionId());
@@ -154,6 +166,8 @@ public class Boggled_Stellar_Reflector_Array extends BaseIndustry
         boggledTools.addCondition(this.market, "solar_array");
 
         createMirrorsOrShades(this.market);
+
+        System.out.println(Global.getSector().getPlayerFleet().getStarSystem().getName());
     }
 
     @Override

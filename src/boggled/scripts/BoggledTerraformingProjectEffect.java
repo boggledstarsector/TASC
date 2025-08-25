@@ -10,17 +10,13 @@ import com.fs.starfarer.api.campaign.econ.*;
 import com.fs.starfarer.api.campaign.listeners.ListenerUtil;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import com.fs.starfarer.api.combat.MutableStat;
-import com.fs.starfarer.api.impl.campaign.CoronalTapParticleScript;
 import com.fs.starfarer.api.impl.campaign.MilitaryResponseScript;
 import com.fs.starfarer.api.impl.campaign.econ.impl.BaseIndustry;
 import com.fs.starfarer.api.impl.campaign.ids.*;
 import com.fs.starfarer.api.impl.campaign.intel.deciv.DecivTracker;
-import com.fs.starfarer.api.impl.campaign.procgen.StarSystemGenerator;
-import com.fs.starfarer.api.impl.campaign.rulecmd.salvage.FleetAdvanceScript;
 import com.fs.starfarer.api.impl.campaign.rulecmd.salvage.MarketCMD;
 import com.fs.starfarer.api.util.Misc;
 import com.fs.starfarer.api.util.Pair;
-import com.fs.starfarer.api.util.WeightedRandomPicker;
 import boggled.campaign.econ.boggledTools;
 import org.jetbrains.annotations.NotNull;
 
@@ -400,91 +396,6 @@ public class BoggledTerraformingProjectEffect {
                     super.unapplyProjectEffectImpl(ctx);
                 }
             }
-        }
-    }
-
-    public static class SystemAddCoronalTap extends TerraformingProjectEffect {
-        public SystemAddCoronalTap(String id, String[] enableSettings) {
-            super(id, enableSettings);
-        }
-        @Override
-        protected void applyProjectEffectImpl(BoggledTerraformingRequirement.RequirementContext ctx, String effectSource) {
-            MarketAPI market = ctx.getClosestMarket();
-            StarSystemAPI starSystem = market.getStarSystem();
-            SectorEntityToken tapToken = null;
-
-            if (starSystem.getType() == StarSystemGenerator.StarSystemType.TRINARY_2CLOSE) {
-                tapToken = starSystem.addCustomEntity("coronal_tap_" + starSystem.getName(), null, "coronal_tap", Global.getSector().getPlayerFaction().getId());
-
-                float minDist = Float.MAX_VALUE;
-                PlanetAPI closest = null;
-                for (PlanetAPI star : tapToken.getContainingLocation().getPlanets()) {
-                    if (!star.isNormalStar()) {
-                        continue;
-                    }
-
-                    float dist = Misc.getDistance(tapToken.getLocation(), star.getLocation());
-                    if (dist < minDist) {
-                        minDist = dist;
-                        closest = star;
-                    }
-                }
-
-                if (closest != null) {
-                    tapToken.setFacing(Misc.getAngleInDegrees(tapToken.getLocation(), closest.getLocation()) + 180.0f);
-                }
-
-            } else {
-                WeightedRandomPicker<PlanetAPI> picker = new WeightedRandomPicker<>();
-                WeightedRandomPicker<PlanetAPI> fallback = new WeightedRandomPicker<>();
-
-                for (PlanetAPI planet : starSystem.getPlanets()) {
-                    if (!planet.isNormalStar()) {
-                        continue;
-                    }
-
-                    if (planet.getTypeId().equals(StarTypes.BLUE_GIANT) || planet.getTypeId().equals(StarTypes.BLUE_SUPERGIANT)) {
-                        picker.add(planet);
-                    } else {
-                        fallback.add(planet);
-                    }
-                }
-                if (picker.isEmpty()) {
-                    picker.addAll(fallback);
-                }
-
-                PlanetAPI star = picker.pick();
-                if (star != null) {
-                    CustomEntitySpecAPI spec = Global.getSettings().getCustomEntitySpec(Entities.CORONAL_TAP);
-
-                    float orbitRadius = star.getRadius() + spec.getDefaultRadius() + 100f;
-                    float orbitDays = orbitRadius / 20f;
-
-                    tapToken = starSystem.addCustomEntity("coronal_tap_" + starSystem.getName(), null, "coronal_tap", Global.getSector().getPlayerFaction().getId());
-
-                    tapToken.setCircularOrbitPointingDown(star, boggledTools.getAngleFromEntity(ctx.getClosestMarket().getPrimaryEntity(), star), orbitRadius, orbitDays);
-                }
-            }
-
-            if (tapToken != null) {
-                tapToken.addTag("BOGGLED_BUILT_BY_PERIHELION_PROJECT");
-                tapToken.removeScriptsOfClass(FleetAdvanceScript.class);
-
-                starSystem.addScript(new CoronalTapParticleScript(tapToken));
-                starSystem.addTag(Tags.HAS_CORONAL_TAP);
-
-                MemoryAPI memory = tapToken.getMemory();
-                memory.set("$usable", true);
-                memory.set("$defenderFleetDefeated", true);
-
-                memory.unset("$hasDefenders");
-                memory.unset("$defenderFleet");
-            }
-        }
-
-        @Override
-        protected void unapplyProjectEffectImpl(BoggledTerraformingRequirement.RequirementContext ctx) {
-
         }
     }
 
@@ -1105,11 +1016,6 @@ public class BoggledTerraformingProjectEffect {
             }
 
             if (targetStation.hasTag(boggledTools.BoggledTags.astropolisStation) || targetStation.hasTag(boggledTools.BoggledTags.miningStation) || targetStation.hasTag(boggledTools.BoggledTags.siphonStation)) {
-                SectorEntityToken newLightsOnColonize = starSystem.addCustomEntity("boggled_newLightsOnColonize", "New Lights Overlay From Colonizing Abandoned Station", targetStation.getCustomEntityType() + "_lights_overlay", playerFleet.getFaction().getId());
-                newLightsOnColonize.setOrbit(targetStation.getOrbit().makeCopy());
-            } else if(targetStation.hasTag("boggled_gatekeeper_station")) {
-                targetStation.setCustomDescriptionId("gatekeeper_station");
-
                 SectorEntityToken newLightsOnColonize = starSystem.addCustomEntity("boggled_newLightsOnColonize", "New Lights Overlay From Colonizing Abandoned Station", targetStation.getCustomEntityType() + "_lights_overlay", playerFleet.getFaction().getId());
                 newLightsOnColonize.setOrbit(targetStation.getOrbit().makeCopy());
             } else if(targetStation.getId().contains("new_maxios")) {

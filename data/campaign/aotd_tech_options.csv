@@ -34,7 +34,7 @@ tasc_remnant_station,AI Nexus Re-Engineering,3,70,"tasc_industrial_stations,tasc
 tasc_planet_cracking,Planet Cracking ,3,70,tasc_industrial_stations,research_databank:6,none,BOGGLED_PLANET_CRACKER:industry,4,7,false,,,Terraforming & Station Construction
 tasc_ouyang_optimizer,Gas Giant Weather Manipulation,3,80,tasc_industrial_stations,research_databank:8,none,BOGGLED_OUYANG_OPTIMIZER:industry,4,8,false,,,Terraforming & Station Construction
 ,,,,,,,,,,,,,
-tasc_perihelion_project,Perihelion Project,4,120,"tasc_remnant_station,tasc_light_manipulation","research_databank:7,coronal_portal:1",none,BOGGLED_PERIHELION_PROJECT:industry,0,5,false,$aotd_experimetnal_tier:Requires obtaining Hyperdimensional Processor and installing it in Research Facility,,Terraforming & Station Construction
+BOGGLED_PERIHELION_PROJECT,Perihelion Project,4,120,"tasc_remnant_station,tasc_light_manipulation","research_databank:7,coronal_portal:1",none,BOGGLED_PERIHELION_PROJECT:industry,0,5,false,$aotd_experimetnal_tier:Requires obtaining Hyperdimensional Processor and installing it in Research Facility,,Terraforming & Station Construction
 ,,,,,,,,,,,,,
 ,,,,,,,,,,,,,
 ,,,,,,,,,,,,,

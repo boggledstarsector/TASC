@@ -252,32 +252,6 @@ industry_atmosphere_processor,boggledTerraformingContentEnabled,industry,,,,"[
 		'requirements' : [ { 'requirement_id' : 'industry_atmosphere_processor_does_not_have_shortage' } ]
 	}
 ]",,,"[ 'ongoing_market_size_demand_heavy_machinery' ]",,,,
-industry_chameleon,boggledDomainTechContentEnabled | boggledCHAMELEONEnabled,industry,,,,,,,,,,,"[ 'ongoing_market_size_demand_domain_artifacts' ]",,,,
-industry_chameleon_decivilized,boggledDomainTechContentEnabled | boggledCHAMELEONEnabled,industry,Decivilized subpopulation,,Eradicated,"[ { 'requirement_id' : 'industry_colony_decivilized' } ]",,200,,"[
-	{
-		'requirements_id' : 'industry_chameleon_decivilized_shortage_stall',
-		'requirements' : [ { 'requirement_id' : 'industry_chameleon_decivilized_does_have_shortage' } ]
-	}
-]",,"[
-	'market_remove_decivilized',
-	'market_remove_decivilized_subpop'
-]",,"Approximately $percentComplete% of the decivilized subpopulation on $marketName has been eradicated.","[ '$percentComplete%' ]",,
-industry_chameleon_rogue_ai,boggledDomainTechContentEnabled | boggledCHAMELEONEnabled,industry,Rogue AI core,,Terminated,"[ { 'requirement_id' : 'industry_colony_rogue_ai_core' } ]",,200,,"[
-	{
-		'requirements_id' : 'industry_chameleon_rogue_ai_shortage_stall',
-		'requirements' : [ { 'requirement_id' : 'industry_chameleon_rogue_ai_does_have_shortage' } ]
-	}
-]",,"[ 'market_remove_rogue_ai_core' ]",,"An investigation into the whereabouts of the rogue AI core on $marketName is approximately $percentComplete% complete.",[ '$percentComplete%' ],,
-industry_chameleon_alpha_core,boggledDomainTechContentEnabled | boggledCHAMELEONEnabled,industry,,,,,,,,,,,"[
-	'default_ai_core_upkeep_bonus',
-	'default_ai_core_demand_bonus'
-]",,,,
-industry_chameleon_alpha_core_eliminate_pather_interest,boggledDomainTechContentEnabled | boggledCHAMELEONEnabled,industry,,,,,,,,"[
-	{
-		'requirements_id' : 'industry_chameleon_alpha_core_eliminate_pather_interest_shortage_stall',
-		'requirements' : [ { 'requirement_id' : 'industry_chameleon_alpha_core_eliminate_pather_interest_does_have_shortage' } ]
-	}
-]",,,"[ 'chameleon_alpha_core_eliminate_pather_interest' ]",,,,
 industry_cloning,boggledCloningEnabled,industry,,,,,,,,,,,"[
 	'ongoing_market_size_minus_2_supply_organs',
 	'ongoing_market_size_minus_2_demand_domain_artifacts',
@@ -295,75 +269,6 @@ industry_cloning_beta_core,boggledCloningEnabled,industry,,,,,,,,,,,"[
 ]",,,,
 industry_cloning_gamma_core,boggledCloningEnabled,industry,,,,,,,,,,,"[
     'default_ai_core_demand_bonus'
-]",,,,
-industry_cryosanctum,boggledDomainTechContentEnabled | boggledCryosanctumPlayerBuildEnabled,industry,,,,,,,,,,,"[
-	'ongoing_market_size_demand_domain_artifacts',
-	'ongoing_flat_demand_3_supplies',
-	'ongoing_flat_demand_3_organics',
-	'ongoing_flat_supply_6_organs',
-
-	'ongoing_supplies_organics_deficit_max_1_to_organs'
-]",,,,
-industry_cryosanctum_alpha_core,boggledDomainTechContentEnabled | boggledDomainArchaeologyEnabled,industry,,,,,,,,,,,"[
-	'default_ai_core_upkeep_bonus',
- 	'default_ai_core_demand_bonus',
- 	'default_ai_core_supply_bonus'
-]",,,,
-industry_cryosanctum_beta_core,boggledDomainTechContentEnabled | boggledDomainArchaeologyEnabled,industry,,,,,,,,,,,"[
-	'default_ai_core_upkeep_bonus',
- 	'default_ai_core_demand_bonus'
-]",,,,
-industry_cryosanctum_gamma_core,boggledDomainTechContentEnabled | boggledDomainArchaeologyEnabled,industry,,,,,,,,,,,"[
- 	'default_ai_core_demand_bonus'
-]",,,,
-industry_domain_archaeology,boggledDomainTechContentEnabled | boggledDomainArchaeologyEnabled,industry,,,,"[ { 'requirement_id' : 'industry_colony_has_ruins' } ]",,,,,,,"[
-	'domain_archaeology_ruins_scattered_effect',
-	'domain_archaeology_ruins_widespread_effect',
-	'domain_archaeology_ruins_extensive_effect',
-	'domain_archaeology_ruins_vast_effect'
-]",,,,
-industry_domain_archaeology_alpha_core,boggledDomainTechContentEnabled | boggledDomainArchaeologyEnabled,industry,,,,,,,,,,,"[
-	'default_ai_core_upkeep_bonus',
- 	'default_ai_core_demand_bonus',
- 	'default_ai_core_supply_bonus'
-]",,,,
-industry_domain_archaeology_beta_core,boggledDomainTechContentEnabled | boggledDomainArchaeologyEnabled,industry,,,,,,,,,,,"[
-	'default_ai_core_upkeep_bonus',
- 	'default_ai_core_demand_bonus'
-]",,,,
-industry_domain_archaeology_gamma_core,boggledDomainTechContentEnabled | boggledDomainArchaeologyEnabled,industry,,,,,,,,,,,"[
- 	'default_ai_core_demand_bonus'
-]",,,,
-industry_domed_cities,boggledTerraformingContentEnabled | boggledDomedCitiesEnabled,industry,,,,"[
-	{ 'requirement_id' : 'industry_colony_is_not_station', 'and_then' : [
-		{ 'requirement_id' : 'industry_colony_not_has_tectonic_activity_unless_has_harmonic_damper' },
-		{ 'requirement_id' : 'industry_colony_not_has_meteor_impacts' },
-		{ 'requirement_id' : 'industry_domed_cities_colony_not_gas_giant' }
-	] }
-]","[
-	{ 'requirement_id' : 'industry_colony_not_water_surface' }
-]",,,,,,"[
-	'domed_cities_suppress_conditions',
-	'domed_cities_modify_colony_growth',
-	'domed_cities_modify_ground_defense'
-]",,,,
-industry_domed_cities_alpha_core,boggledTerraformingContentEnabled | boggledDomedCitiesEnabled,industry,,,,,,,,,,,"[ 'domed_cities_alpha_core_stability_bonus' ]",,,,
-industry_domed_cities_beta_core,boggledTerraformingContentEnabled | boggledDomedCitiesEnabled,industry,,,,,,,,,,,"[ 'domed_cities_beta_core_stability_bonus' ]",,,,
-industry_domed_cities_gamma_core,boggledTerraformingContentEnabled | boggledDomedCitiesEnabled,industry,,,,,,,,,,,"[ 'domed_cities_gamma_core_stability_bonus' ]",,,,
-industry_seafloor_cities,boggledTerraformingContentEnabled | boggledDomedCitiesEnabled,industry,,,,"[
-	{ 'requirement_id' : 'industry_colony_is_not_station', 'and_then' : [
-		{ 'requirement_id' : 'industry_colony_not_has_tectonic_activity_unless_has_harmonic_damper' },
-		{ 'requirement_id' : 'industry_colony_not_has_meteor_impacts' },
-		{ 'requirement_id' : 'industry_colony_not_gas_giant' }
-	] }
-]","[
-	{ 'requirement_id' : 'industry_colony_water_surface' }
-]",,,,,,"[
-	'domed_cities_suppress_conditions',
-	'domed_cities_modify_colony_growth',
-	'seafloor_cities_suppress_conditions',
-	'seafloor_cities_modify_ground_defenses',
-	'seafloor_cities_modify_accessibility'
 ]",,,,
 industry_expand_station,boggledStationCrampedQuartersEnabled | boggledStationCrampedQuartersPlayerCanPayToIncreaseStationSize,industry,,,,"[
 	{ 'requirement_id' : 'industry_station_construction_num_expansions' }
@@ -409,7 +314,6 @@ industry_genelab_lobster,boggledTerraformingContentEnabled | boggledGenelabEnabl
 		'requirements' : [ { 'requirement_id' : 'industry_genelab_lobster_seeding_does_have_shortage' } ]
 	}
 ]",,"[ 'market_add_volturnian_lobster_pens' ]",,"Lobster seeding on $marketName is approximately $percentComplete% complete.",[ '$percentComplete%' ],,
-industry_gpa,,industry,,,,,"[ { 'requirement_id' : 'false' } ]",,,,,,"[ 'ongoing_flat_demand_3_domain_artifacts' ]",,,,
 industry_harmonic_damper,boggledHarmonicDamperEnabled,industry,,,,"[ { 'requirement_id' : 'industry_colony_is_not_station' } ]",,,,,,,"[ 'harmonic_damper_suppress_conditions' ]",,,,
 industry_harmonic_damper_alpha_core,boggledHarmonicDamperEnabled,industry,,,,,,,,,,,"[ 'harmonic_damper_alpha_core_ground_defenses' ]",,,,
 industry_harmonic_damper_beta_core,boggledHarmonicDamperEnabled,industry,,,,,,,,,,,"[ 'harmonic_damper_beta_core_ground_defenses' ]",,,,
@@ -488,23 +392,6 @@ industry_ouyang_optimizer,boggledTerraformingContentEnabled | boggledOuyangOptim
 	'focus_market_progress_volatiles_ouyang_optimizer',
 	'focus_market_add_extreme_weather'
 ]",,,,,
-industry_perihelion_project,boggledDomainTechContentEnabled | boggledPerihelionProjectEnabled,industry,Perihelion project,,Completed,"[
-	{ 'requirement_id' : 'industry_system_star_not_has_coronal_tap' },
-	{ 'requirement_id' : 'industry_system_star_coronal_tap_viable' }
-]",,600,[ 'perihelion_construction_setting' ],"[
-	{
-		'requirements_id' : 'industry_perihelion_project_shortage_stall',
-		'requirements' : [ { 'requirement_id' : 'industry_perihelion_project_does_have_shortage' } ]
-	}
-]",,"[
-	'system_add_coronal_tap',
-	'market_remove_perihelion_project'
-]","[
-	'ongoing_flat_demand_7_domain_artifacts',
-	'ongoing_flat_demand_11_metals',
-	'ongoing_flat_demand_9_rare_metals',
-	'ongoing_flat_demand_7_heavy_machinery'
-]",,,,
 industry_planet_cracker,boggledTerraformingContentEnabled | boggledPlanetCrackerEnabled,industry,Planet cracking,,Completed,"[
 	{ 'requirement_id' : 'industry_colony_is_station', 'and_then' : [
 		{ 'requirement_id' : 'industry_planet_cracker_orbited_object_is_planet', 'and_then' : [

@@ -79,9 +79,6 @@ focus_market_progress_ore_planet_cracker,,FocusMarketProgressResource,"{ 'resour
 focus_market_progress_rare_ore_planet_cracker,,FocusMarketProgressResource,"{ 'resource_id' : 'rare_ore', 'step' : 1 }"
 focus_market_progress_volatiles_ouyang_optimizer,,FocusMarketAndSiphonStationProgressResource,"{ 'resource_id' : 'volatiles', 'step' : 2 }"
 ,,
-system_add_coronal_tap,,SystemAddCoronalTap,"coronal_tap"
-market_remove_perihelion_project,,MarketRemoveIndustry,"BOGGLED_PERIHELION_PROJECT"
-,,
 attach_project_to_atmosphere_processor,,AttachProjectToIndustry,"{ 'industry_id' : 'BOGGLED_ATMOSPHERE_PROCESSOR' }"
 attach_project_to_genelab,,AttachProjectToIndustry,"{ 'industry_id' : 'BOGGLED_GENELAB' }"
 ,,
@@ -270,9 +267,6 @@ colonize_abandoned_station,,ColonizeAbandonedStation,"{
 		'boggled_siphon' : {
 			'resources_to_highlight' : [ 'volatiles' ],
 			'industries_to_queue' : [ 'mining' ]
-		},
-		'boggled_gatekeeper_station' : {
-			'industries_to_queue' : [ 'ASTRAL_GATE' ]
 		}
 	}
 }"
@@ -286,9 +280,6 @@ aotd_colonize_abandoned_station,,ColonizeAbandonedStation,"{
 		'boggled_siphon' : {
 			'resources_to_highlight' : [ 'volatiles' ],
 			'industries_to_queue' : [ 'extractive' ]
-		},
-		'boggled_gatekeeper_station' : {
-			'industries_to_queue' : [ 'ASTRAL_GATE' ]
 		}
 	}
 }"
@@ -427,37 +418,6 @@ chameleon_alpha_core_eliminate_pather_interest,,EliminatePatherInterest,
 chameleon_improve_bonus_to_stability,,ModifyColonyStability,"{ 'modifier_type' : 'flat', 'value' : 1 }"
 
 cloning_modify_colony_growth,,ModifyColonyGrowthRate,"{ 'modifier_type' : 'market_size', 'value' : -1 }"
-
-domain_archaeology_ruins_scattered_effect,,EffectWithRequirement,"{
-	'requirements' : [ { 'requirement_id' : 'industry_effects_domain_archaeology_colony_ruins_scattered' } ],
-	'effects' : [ 'ongoing_modify_pather_interest_plus_1' ]
-}"
-domain_archaeology_ruins_widespread_effect,,EffectWithRequirement,"{
-	'requirements' : [ { 'requirement_id' : 'industry_effects_domain_archaeology_colony_ruins_widespread' } ],
-	'effects' : [ 'ongoing_modify_pather_interest_plus_2' ]
-}"
-domain_archaeology_ruins_extensive_effect,,EffectWithRequirement,"{
-	'requirements' : [ { 'requirement_id' : 'industry_effects_domain_archaeology_colony_ruins_extensive' } ],
-	'effects' : [ 'ongoing_modify_pather_interest_plus_3' ]
-}"
-domain_archaeology_ruins_vast_effect,,EffectWithRequirement,"{
-	'requirements' : [ { 'requirement_id' : 'industry_effects_domain_archaeology_colony_ruins_vast' } ],
-	'effects' : [ 'ongoing_modify_pather_interest_plus_4' ]
-}"
-
-domed_cities_suppress_conditions,,SuppressConditions,"[ 'no_atmosphere', 'thin_atmosphere', 'dense_atmosphere', 'toxic_atmosphere', 'extreme_weather', 'inimical_biosphere', 'US_storm' ]"
-domed_cities_modify_colony_growth,,ModifyColonyGrowthRate,"{ 'modifier_type' : 'market_size', 'value' : -1 }"
-domed_cities_modify_ground_defense,boggledDomedCitiesDefensePenaltyEnabled,ModifyColonyGroundDefense,"{ 'modifier_type' : 'mult', 'value' : 0.05 }"
-
-seafloor_cities_suppress_conditions,,SuppressConditions,"[ 'water_surface' ]"
-seafloor_cities_modify_ground_defenses,,ModifyColonyGroundDefense,"{ 'modifier_type' : 'mult', 'value' : 6 }"
-seafloor_cities_modify_accessibility,,ModifyColonyAccessibility,"{ 'modifier_type' : 'percent', 'value' : -10 }"
-
-domed_cities_alpha_core_stability_bonus,,ModifyColonyStability,"{ 'modifier_type' : 'flat', 'value' : 3 }"
-domed_cities_beta_core_stability_bonus,,ModifyColonyStability,"{ 'modifier_type' : 'flat', 'value' : 2 }"
-domed_cities_gamma_core_stability_bonus,,ModifyColonyStability,"{ 'modifier_type' : 'flat', 'value' : 1 }"
-
-domed_cities_improve_stability_bonus,,ModifyColonyStability,"{ 'modifier_type' : 'flat', 'value' : 1 }"
 
 expand_station_increment_tag,,StepTag,"{ 'tag' : 'boggled_station_construction_numExpansions_', 'step' : 1 }"
 expand_station_build_cost_modifier,boggledStationProgressiveIncreaseInCostsToExpandStation,TagSubstringPowerModifyBuildCost,"{ 'tag' : 'boggled_station_construction_numExpansions_', 'default' : 0 }"
