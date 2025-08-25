@@ -593,8 +593,6 @@ public class boggledTools {
         addTerraformingProjectEffectFactory("FocusMarketProgressResource", new BoggledTerraformingProjectEffectFactory.FocusMarketProgressResource());
         addTerraformingProjectEffectFactory("FocusMarketAndSiphonStationProgressResource", new BoggledTerraformingProjectEffectFactory.FocusMarketAndSiphonStationProgressResource());
 
-        addTerraformingProjectEffectFactory("SystemAddCoronalTap", new BoggledTerraformingProjectEffectFactory.SystemAddCoronalTap());
-
         addTerraformingProjectEffectFactory("MarketRemoveIndustry", new BoggledTerraformingProjectEffectFactory.MarketRemoveIndustry());
 
         addTerraformingProjectEffectFactory("RemoveItemFromSubmarket", new BoggledTerraformingProjectEffectFactory.RemoveItemFromSubmarket());

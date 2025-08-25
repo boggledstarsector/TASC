@@ -10,7 +10,6 @@ import com.fs.starfarer.api.impl.campaign.econ.ResourceDepositsCondition;
 import com.fs.starfarer.api.impl.campaign.ids.Factions;
 import com.fs.starfarer.api.impl.campaign.ids.Industries;
 import com.fs.starfarer.api.impl.campaign.ids.Conditions;
-import com.fs.starfarer.api.impl.campaign.ids.Tags;
 import boggled.campaign.econ.boggledTools;
 import boggled.scripts.PlayerCargoCalculations.bogglesDefaultCargo;
 import boggled.scripts.PlayerCargoCalculations.booglesCrewReplacerCargo;

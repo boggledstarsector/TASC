@@ -392,23 +392,6 @@ industry_ouyang_optimizer,boggledTerraformingContentEnabled | boggledOuyangOptim
 	'focus_market_progress_volatiles_ouyang_optimizer',
 	'focus_market_add_extreme_weather'
 ]",,,,,
-industry_perihelion_project,boggledDomainTechContentEnabled | boggledPerihelionProjectEnabled,industry,Perihelion project,,Completed,"[
-	{ 'requirement_id' : 'industry_system_star_not_has_coronal_tap' },
-	{ 'requirement_id' : 'industry_system_star_coronal_tap_viable' }
-]",,600,[ 'perihelion_construction_setting' ],"[
-	{
-		'requirements_id' : 'industry_perihelion_project_shortage_stall',
-		'requirements' : [ { 'requirement_id' : 'industry_perihelion_project_does_have_shortage' } ]
-	}
-]",,"[
-	'system_add_coronal_tap',
-	'market_remove_perihelion_project'
-]","[
-	'ongoing_flat_demand_7_domain_artifacts',
-	'ongoing_flat_demand_11_metals',
-	'ongoing_flat_demand_9_rare_metals',
-	'ongoing_flat_demand_7_heavy_machinery'
-]",,,,
 industry_planet_cracker,boggledTerraformingContentEnabled | boggledPlanetCrackerEnabled,industry,Planet cracking,,Completed,"[
 	{ 'requirement_id' : 'industry_colony_is_station', 'and_then' : [
 		{ 'requirement_id' : 'industry_planet_cracker_orbited_object_is_planet', 'and_then' : [

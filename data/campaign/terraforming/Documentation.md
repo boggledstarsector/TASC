@@ -232,8 +232,6 @@ Planet max resources are in `planet_max_resource.csv`. `id` is the `terraforming
 
 `FocusMarketAndSiphonStationProgressResource` is the same as `FocusMarketProgressResource` but also applies to Siphon Stations orbiting the same entity as this entity.
 
-`SystemAddCoronalTap` adds a Coronal Tap to the targeted star.
-
 `MarketRemoveIndustry` removes the specified industry from the target market. `data` is a single string of the industry ID to remove.
 
 `RemoveItemFromSubmarket` removes the specified items from the specified submarket (Storage, etc.). `data` is a JSON Object with the following fields, `submarket_id` is the submarket to remove the items from (usually `storage`). `commodity_id` or `special_item_id` is the item to remove, use one or the other. `setting_id` or `quantity` specifies how much of the item are to be removed. If `setting_id` is specified, the quantity will be retrieved from the `LunaLib` setting of the same name.

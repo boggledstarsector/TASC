@@ -133,13 +133,6 @@ public class BoggledTerraformingProjectEffectFactory {
         }
     }
 
-    public static class SystemAddCoronalTap implements TerraformingProjectEffectFactory {
-        @Override
-        public BoggledTerraformingProjectEffect.TerraformingProjectEffect constructFromJSON(String id, String[] enableSettings, String data) {
-            return new BoggledTerraformingProjectEffect.SystemAddCoronalTap(id, enableSettings);
-        }
-    }
-
     public static class MarketRemoveIndustry implements TerraformingProjectEffectFactory {
         @Override
         public BoggledTerraformingProjectEffect.TerraformingProjectEffect constructFromJSON(String id, String[] enableSettings, String data) {

@@ -129,8 +129,6 @@ industry_ouyang_optimizer_orbited_planet_is_gas_giant,"Only gas giants can under
 industry_ouyang_optimizer_orbited_planet_not_has_extreme_weather,"$focusMarketName already has extreme weather. Making it worse won't increase volatiles availability.",,true,"focus_market_has_extreme_weather"
 industry_ouyang_optimizer_orbited_planet_not_has_volatiles_plentiful,"$focusMarketName is already extremely rich in volatiles. An Ouyang optimization would not yield any improvement.",,true,"focus_market_has_volatiles_plentiful"
 
-industry_perihelion_project_does_have_shortage,"Progress of the Perihelion Project is stalled due to a shortage of resources.",,false,"perihelion_project_does_have_shortage | perihelion_project_does_have_domain_artifacts_shortage"
-
 industry_planet_cracker_orbited_object_is_planet,"$marketName must be orbiting a planet.",,false,"focus_object_is_planet"
 industry_planet_cracker_orbited_planet_is_not_gas_giant,"Gas giants cannot be cracked.",,false,"focus_planet_not_gas_giant"
 industry_planet_cracker_orbited_planet_not_has_tectonic_or_extreme_tectonic_activity,"$focusMarketName already has tectonic activity. Making it worse won't increase ore availability.",,true,"focus_market_has_tectonic_activity | focus_market_has_extreme_tectonic_activity"

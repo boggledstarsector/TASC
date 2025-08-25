@@ -138,11 +138,13 @@ Please note that this feature is problematic from a balance and lore standpoint 
 boggledPlanetKillerAllowDestructionOfColoniesMarkedAsEssentialForQuests,Planet-killer device can destroy essential planets,Boolean,True,,"Set this to false to prevent the planet-killer device from being used on planets marked as essential to story quests.
 
 Using the planet-killer device on a story essential planet is guaranteed to cause bugs and/or crashes. This should only be used if the player has already completed all the story quests they intend to complete in the current save.",,,Domain-tech Content
-boggled_PerihelionProjectHeader,Coronal Hypershunt construction settings,Header,Coronal Hypershunt construction settings,,,,,Domain-tech Content
+boggled_PerihelionProjectHeader,Coronal Tap construction settings,Header,Coronal Tap construction settings,,,,,Domain-tech Content
 boggledPerihelionProjectEnabled,Enable Perihelion Project,Boolean,False,,"Set this to true to enable the Perihelion Project.
 
-The Perihelion Project allows the player to construct a coronal hypershunt in a star system that meets certain requirements.",,,Domain-tech Content
-boggledPerihelionProjectDaysToFinish,Days to finish Perihelion Project,Int,600,,"How many days are required to finish the Perihelion Project.",1,3000,Domain-tech Content
+The Perihelion Project allows the player to construct a coronal tap in a star system that meets certain requirements.",,,Domain-tech Content
+boggledPerihelionProjectDaysToFinish,Days to finish Perihelion Project,Int,400,,"How many days are required to finish the Perihelion Project.
+
+Only applicable if Ashes of the Domain - Vaults of Knowledge is not enabled.",1,3000,Domain-tech Content
 boggled_DomainArchaeologyHeader,Domain-tech building settings,Header,Domain-tech building settings,,,,,Domain-tech Content
 boggledDomainArchaeologyEnabled,Enable Domain Archaeology,Boolean,True,,"Set this to false to disable the Domain Archaeology building.
 

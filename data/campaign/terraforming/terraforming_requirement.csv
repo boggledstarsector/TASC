@@ -206,9 +206,6 @@ kletka_simulator_has_gamma_core,,MarketHasIndustryWithAICore,false,"{
 ,
 kletka_simulator_does_not_have_shortage,boggledDomainTechContentEnabled | boggledDomainArchaeologyEnabled,IndustryHasShortage,true,"[ 'domain_artifacts' ]"
 ,
-perihelion_project_does_have_domain_artifacts_shortage,boggledDomainTechContentEnabled | boggledDomainArchaeologyEnabled,IndustryHasShortage,false,"[ 'domain_artifacts' ]"
-perihelion_project_does_have_shortage,,IndustryHasShortage,false,"[ 'metals', 'rare_metals', 'heavy_machinery' ]"
-,
 player_fleet_not_in_hyperspace,,FleetInHyperspace,true,
 system_has_jump_points,,SystemHasJumpPoints,false,
 system_has_planets,,SystemHasPlanets,false,
