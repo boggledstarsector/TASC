@@ -1,4 +1,6 @@
 condition_id
+# Be careful when adding certain conditions - suppression removes all effects of the condition, which
+# can result in bugs if you suppress one that's necessary for markets to function properly.
 no_atmosphere
 thin_atmosphere
 dense_atmosphere

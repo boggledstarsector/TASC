@@ -2,10 +2,8 @@ package boggled.campaign.econ.industries;
 
 import java.util.*;
 import java.lang.String;
-import java.util.List;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.econ.*;
-import com.fs.starfarer.api.impl.campaign.ids.Conditions;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
 import com.fs.starfarer.api.impl.campaign.econ.impl.BaseIndustry;
@@ -17,16 +15,6 @@ import boggled.campaign.econ.boggledTools;
 public class Boggled_Stellar_Reflector_Array extends BaseIndustry
 {
     public static String aotdVokKey = "tasc_light_manipulation";
-
-    // The "solar_array" condition handles suppressing hot, cold and poor light conditions.
-    // This is here merely to allow the tooltip to say which conditions are/would be suppressed.
-    public static List<String> SUPPRESSED_CONDITIONS = new ArrayList<String>();
-    static
-    {
-        SUPPRESSED_CONDITIONS.add(Conditions.HOT);
-        SUPPRESSED_CONDITIONS.add(Conditions.COLD);
-        SUPPRESSED_CONDITIONS.add(Conditions.POOR_LIGHT);
-    }
 
     @Override
     public boolean canBeDisrupted() {
@@ -199,7 +187,7 @@ public class Boggled_Stellar_Reflector_Array extends BaseIndustry
         {
             tooltip.addPara("If operational, would counter the effects of:", opad, Misc.getHighlightColor(), "");
             int numCondsCountered = 0;
-            for (String id : SUPPRESSED_CONDITIONS)
+            for (String id : boggledTools.getStellarReflectorArraySuppressedConditions())
             {
                 if(this.market.hasCondition(id))
                 {
@@ -219,7 +207,7 @@ public class Boggled_Stellar_Reflector_Array extends BaseIndustry
         {
             tooltip.addPara("Countering the effects of:", opad, Misc.getHighlightColor(), "");
             int numCondsCountered = 0;
-            for (String id : SUPPRESSED_CONDITIONS)
+            for (String id : boggledTools.getStellarReflectorArraySuppressedConditions())
             {
                 if(this.market.hasCondition(id))
                 {

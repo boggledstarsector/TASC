@@ -286,6 +286,9 @@ public class BoggledTascPlugin extends BaseModPlugin {
             // Domed Cities suppressed conditions
             JSONArray domedCitiesSuppressedConditions = settings.getMergedSpreadsheetDataForMod("condition_id", "data/campaign/terraforming/domed_cities_suppressed_conditions.csv", boggledTools.BoggledMods.tascModId);
 
+            // Stellar Reflector Array suppressed conditions
+            JSONArray stellarReflectorArraySuppressedConditions = settings.getMergedSpreadsheetDataForMod("condition_id", "data/campaign/terraforming/stellar_reflector_array_suppressed_conditions.csv", boggledTools.BoggledMods.tascModId);
+
             // And finally mods
             JSONArray industryOptionOverrides = settings.getMergedSpreadsheetDataForMod("id", "data/campaign/terraforming/industry_options_mods.csv", boggledTools.BoggledMods.tascModId);
             JSONArray terraformingProjectOverrides = settings.getMergedSpreadsheetDataForMod("id", "data/campaign/terraforming/terraforming_projects_mods.csv", boggledTools.BoggledMods.tascModId);
@@ -317,6 +320,8 @@ public class BoggledTascPlugin extends BaseModPlugin {
             boggledTools.initialiseIndustryOptionOverrides(industryOptionOverrides);
 
             boggledTools.initializeDomedCitiesSuppressedConditionsFromJSON(domedCitiesSuppressedConditions);
+
+            boggledTools.initializeStellarReflectorArraySuppressedConditionsFromJSON(stellarReflectorArraySuppressedConditions);
 
             if (aotdEnabled) {
                 JSONArray aotdProjectOverrides = settings.getMergedSpreadsheetDataForMod("id", "data/campaign/terraforming/aotd_integration/terraforming_projects_mods.csv", boggledTools.BoggledMods.tascModId);

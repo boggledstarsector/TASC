@@ -843,37 +843,54 @@ public class boggledTools {
         boggledTools.planetTypesMap = planetTypesMap;
     }
 
+    public static void initializeStellarReflectorArraySuppressedConditionsFromJSON(@NotNull JSONArray stellarReflectorArraySuppressedConditionsJSON)
+    {
+        HashSet<String> conditions = getConditionsListFromJson(stellarReflectorArraySuppressedConditionsJSON);
+
+        boggledTools.stellarReflectorArraySuppressedConditions = new ArrayList<String>(conditions);
+    }
+
     public static void initializeDomedCitiesSuppressedConditionsFromJSON(@NotNull JSONArray domedCitiesSuppressedConditionsJSON)
     {
-        Logger log = Global.getLogger(boggledTools.class);
+        HashSet<String> conditions = getConditionsListFromJson(domedCitiesSuppressedConditionsJSON);
 
-        List<String> domedCitiesSuppressedConditionsTemp = new ArrayList<>();
+        boggledTools.domedCitiesSuppressedConditions = new ArrayList<String>(conditions);
+    }
 
-        for (int i = 0; i < domedCitiesSuppressedConditionsJSON.length(); ++i)
+    public static HashSet<String> getConditionsListFromJson(JSONArray json)
+    {
+        HashSet<String> conditionsSet = new HashSet<>();
+
+        for (int i = 0; i < json.length(); ++i)
         {
             try
             {
-                JSONObject row = domedCitiesSuppressedConditionsJSON.getJSONObject(i);
+                JSONObject row = json.getJSONObject(i);
 
                 String condition_id = row.getString("condition_id");
                 if (condition_id != null && !condition_id.isEmpty())
                 {
-                    domedCitiesSuppressedConditionsTemp.add(condition_id);
+                    conditionsSet.add(condition_id);
                 }
             }
             catch (JSONException e)
             {
                 // We can't swallow this exception because the game won't work correctly if the data isn't loaded
-                log.error("Error in Domed Cities suppressed conditions import: " + e);
+                throw new RuntimeException("Error in condition list JSON parsing: " + e);
             }
         }
 
-        boggledTools.domedCitiesSuppressedConditions = domedCitiesSuppressedConditionsTemp;
+        return conditionsSet;
     }
 
     public static List<String> getDomedCitiesSuppressedConditions()
     {
         return boggledTools.domedCitiesSuppressedConditions;
+    }
+
+    public static List<String> getStellarReflectorArraySuppressedConditions()
+    {
+        return boggledTools.stellarReflectorArraySuppressedConditions;
     }
 
     public static void initialiseResourceProgressionsFromJSON(@NotNull JSONArray resourceProgressionsJSON) {
@@ -1531,6 +1548,7 @@ public class boggledTools {
     private static Map<String, PlanetType> planetTypesMap;
 
     private static List<String> domedCitiesSuppressedConditions;
+    private static List<String> stellarReflectorArraySuppressedConditions;
 
     public static BoggledCommonIndustry getIndustryProject(String industry) {
         return industryProjects.get(industry);
