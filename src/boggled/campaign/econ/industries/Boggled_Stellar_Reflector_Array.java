@@ -166,8 +166,6 @@ public class Boggled_Stellar_Reflector_Array extends BaseIndustry
         boggledTools.addCondition(this.market, "solar_array");
 
         createMirrorsOrShades(this.market);
-
-        System.out.println(Global.getSector().getPlayerFleet().getStarSystem().getName());
     }
 
     @Override

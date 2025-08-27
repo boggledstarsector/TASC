@@ -1382,7 +1382,7 @@ public class boggledTools {
                 JSONObject row = terraformingProjectsOverrideJSON.getJSONObject(i);
 
                 String id = row.getString("id");
-                if (id == null || id.isEmpty()) {
+                if (id == null || id.isEmpty() || id.equals("your_mod_id_goes_here")) {
                     continue;
                 }
 
