@@ -247,6 +247,12 @@ public class Boggled_Perihelion_Project extends BaseIndustry {
     @Override
     protected void addRightAfterDescriptionSection(TooltipMakerAPI tooltip, IndustryTooltipMode mode)
     {
+        // Avoid showing this tooltip in the AotD research menu.
+        if(this.market == null || this.market.getStarSystem() == null)
+        {
+            return;
+        }
+
         float opad = 10.0F;
         Color highlight = Misc.getHighlightColor();
         Color bad = Misc.getNegativeHighlightColor();
