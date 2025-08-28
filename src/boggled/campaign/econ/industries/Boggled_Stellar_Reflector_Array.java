@@ -163,6 +163,12 @@ public class Boggled_Stellar_Reflector_Array extends BaseIndustry
 
         boggledTools.clearReflectorsInOrbit(this.market);
         boggledTools.removeCondition(market, "solar_array");
+
+        // Removing the solar array condition fails to unsuppress conditions, I'm not sure why
+        for (String cid : boggledTools.getStellarReflectorArraySuppressedConditions())
+        {
+            this.market.unsuppressCondition(cid);
+        }
     }
 
     @Override
