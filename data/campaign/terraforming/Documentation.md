@@ -288,8 +288,6 @@ All effects that begin with `Modify` have `data` that is a JSON Object. `modifie
 
 `EliminatePatherInterest` makes this market not generate any pather interest.
 
-`AddStellarReflectorsToOrbit` adds 3 stellar mirrors or stellar shades to orbit depending on market conditions.
-
 All effects that begin with `CommodityDeficit` accept a JSON Object with a `commodities_demanded` field that is a JSON Array of commodity IDs. They check the collection of specified commodities then do type specific effects. They may have other fields in the JSON Object.
 
 `CommodityDeficitToProduction` applies the deficit in the demanded commodities to the specified commodities. `commodities_deficited` is a JSON Array of commodity IDs that will be affected by the shortage in demanded commodities, and `max_deficit` is the optional maximum amount the commodity can be deficited. If `max_deficit` is omitted, the maximum production reduction is unlimited.

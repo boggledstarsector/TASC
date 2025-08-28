@@ -19,13 +19,6 @@ public class Boggled_Solar_Array_Overwrite extends BaseMarketConditionPlugin
 {
     public static int FARMING_BONUS = 2;
 
-    public static List<String> SUPPRESSED_CONDITIONS = new ArrayList<String>();
-    static {
-        SUPPRESSED_CONDITIONS.add(Conditions.HOT);
-        SUPPRESSED_CONDITIONS.add(Conditions.COLD);
-        SUPPRESSED_CONDITIONS.add(Conditions.POOR_LIGHT);
-    }
-
     public void advance(float amount)
     {
         super.advance(amount);
@@ -38,7 +31,7 @@ public class Boggled_Solar_Array_Overwrite extends BaseMarketConditionPlugin
 
     public void apply(String id)
     {
-        for (String cid : SUPPRESSED_CONDITIONS)
+        for (String cid : boggledTools.getStellarReflectorArraySuppressedConditions())
         {
             this.market.suppressCondition(cid);
         }
@@ -52,7 +45,7 @@ public class Boggled_Solar_Array_Overwrite extends BaseMarketConditionPlugin
 
     public void unapply(String id)
     {
-        for (String cid : SUPPRESSED_CONDITIONS)
+        for (String cid : boggledTools.getStellarReflectorArraySuppressedConditions())
         {
             this.market.unsuppressCondition(cid);
         }
@@ -80,7 +73,7 @@ public class Boggled_Solar_Array_Overwrite extends BaseMarketConditionPlugin
         float opad = 10f;
 
         List<String> conds = new ArrayList<String>();
-        for (String id : SUPPRESSED_CONDITIONS)
+        for (String id : boggledTools.getStellarReflectorArraySuppressedConditions())
         {
             MarketConditionSpecAPI mc = Global.getSettings().getMarketConditionSpec(id);
             conds.add(mc.getName());

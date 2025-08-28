@@ -430,7 +430,15 @@ public class Boggled_Domed_Cities extends BaseIndustry implements MarketImmigrat
 
     protected float getImmigrationBonus()
     {
-        return Math.max(0, market.getSize() - 1);
+        if(this.isFunctional())
+        {
+            return Math.max(0, market.getSize() - 1);
+        }
+        else
+        {
+            return 0.0f;
+        }
+
     }
 
     @Override

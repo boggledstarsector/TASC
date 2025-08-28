@@ -539,10 +539,6 @@ planetary_agrav_field_domed_cities_effect,,EffectWithRequirement,"{
 	'effects' : [ 'planetary_agrav_field_suppress_conditions' ]
 }"
 
-stellar_reflector_suppress_conditions,,SuppressConditions,"[ 'hot', 'cold', 'poor_light' ]"
-stellar_reflector_add_stellar_reflectors_to_market,,AddStellarReflectorsToOrbit,
-stellar_reflector_array_add_solar_array_condition,,MarketAddCondition,solar_array
-
 ai_mining_drones_alpha_core_effect_to_extractive,,EffectToIndustry,"{
 	'industry_id' : 'extractive',
 	'effect_id' : 'ai_mining_drones_alpha_core_bonus_to_mining'

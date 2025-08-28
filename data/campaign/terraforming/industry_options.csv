@@ -96,7 +96,3 @@ BOGGLED_OUYANG_OPTIMIZER,"Ouyang Optimizer",industry_ouyang_optimizer,,,,,2,,
 BOGGLED_PERIHELION_PROJECT,"Perihelion Project",industry_perihelion_project,,,,,10,,
 BOGGLED_PLANET_CRACKER,"Planet Cracket",industry_planet_cracker,,,,,2,,
 BOGGLED_PLANETARY_AGRAV_FIELD,"Planetary Agrav Field",industry_planetary_agrav_field,,,,,2,,
-BOGGLED_STELLAR_REFLECTOR_ARRAY,"Stellar Reflector Array",industry_stellar_reflector_array,"[
-	'stellar_reflector_add_stellar_reflectors_to_market',
-	'stellar_reflector_array_add_solar_array_condition'
-]",,,,2,,

@@ -1,0 +1,11 @@
+condition_id
+# I anticipate this will mainly be used to suppress very_hot and very_cold. Simply remove the hash symbol from those lines to suppress them.
+# Be careful when adding certain conditions like water_surface - suppression removes all effects of the condition,
+# which can result in bugs if you suppress one that's necessary for markets to function properly.
+# Note that if you remove conditions from this list in the middle of save, those conditions will not be unsuppressed.
+# If you want to remove conditions from this list in the middle of a save, deconstruct the building(s) first, then remove the conditions.
+hot
+cold
+poor_light
+# very_hot
+# very_cold
