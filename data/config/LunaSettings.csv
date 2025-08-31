@@ -11,7 +11,7 @@ boggled_terraformingBuildingHeader,Building Settings,Header,Building Settings,,,
 boggledStellarReflectorArrayEnabled,Enable Stellar Reflector Array,Boolean,True,,"Set this to false to disable the Stellar Reflector Array building.",,,Terraforming
 boggledStellarReflectorArrayMarketAutoPlacementEnabled,Enable Stellar Reflector Array Autoplacement,Boolean,True,,"Set this to false to prevent certain markets from starting the game with the Stellar Reflector Array building already constructed.
 
-If set to false, Eventide, Eochu Bres and certain other markets will get to keep their Solar Array market condition for free without needing to maintain the Stellar Reflector Building.",,,Terraforming
+If set to false, Eventide, Eochu Bres and certain other markets will get to keep their Solar Array market condition for free without needing to maintain the Stellar Reflector Array building.",,,Terraforming
 boggledGenelabEnabled,Enable Genelab,Boolean,True,,"Set this to false to disable the Genelab building.",,,Terraforming
 boggledMesozoicParkEnabled,Enable Mesozoic Park,Boolean,True,,"Set this to false to disable the Mesozoic Park building.",,,Terraforming
 boggledDomedCitiesEnabled,Enable Domed Cities,Boolean,True,,"Set this to false to disable the Domed Cities building.
@@ -152,7 +152,7 @@ The Domain Archaeology building is an industry that produces Domain-era artifact
 boggledReplaceAgreusTechMiningWithDomainArchaeology,Replace techmining building on Agreus with Domain Archaeology,Boolean,True,,"Set this to false to prevent the techmining building on Agreus from being removed and replaced with a Domain Archaeology building.",,,Domain-tech Content
 boggledAddDomainTechBuildingsToVanillaColonies,Add Domain-tech buildings to several colonies,Boolean,True,,"Adds buildings that demand Domain-era artifacts to several vanilla colonies.
 
-This includes: Genelab on Volturn, Limelight Network on Fikenhild, GPA on Ancyra, DAE demand on Cryosanctum on Nomios.",,,Domain-tech Content
+This includes: Genelab on Volturn, Limelight Network on Fikenhild, GPA on Ancyra, Domain-era artifact demand on Cryosanctum on Nomios.",,,Domain-tech Content
 boggledKletkaSimulatorEnabled,Enable Kletka Simulator,Boolean,True,,"Set this to false to disable the Kletka Simulator building.
 
 The Kletka Simulator is an industry that produces AI cores. The AI cores are sent to storage along with other items and ships the player receives each month.",,,Domain-tech Content
@@ -164,7 +164,6 @@ boggledCHAMELEONEnabled,Enable CHAMELEON,Boolean,True,,"Set this to false to dis
 The CHAMELEON is a building that can slowly remove certain hazardous conditions from a market, such as a decivilized subpopulation.",,,Domain-tech Content
 boggledLimelightNetworkPlayerBuildEnabled,Limelight Network building can be constructed by the player,Boolean,False,,"Set this to true to allow the player to construct the Limelight Network building.",,,Domain-tech Content
 boggledCryosanctumPlayerBuildEnabled,Cryosanctum building can be constructed by the player,Boolean,False,,"Set this to true to allow the player to construct the Cryosanctum building.",,,Domain-tech Content
-boggledCryosanctumReplaceEverywhere,Cryosanctum buildings demand Domain-era artifacts,Boolean,True,,"Set this to false to prevent Cryosanctum buildings from demanding Domain-era artifacts.",,,Domain-tech Content
 boggled_ObjectivesHeader,Stable location structure settings,Header,Stable location structure settings,,,,,Domain-tech Content
 boggledDomainTechObjectivesEnabled,Enable Domain-tech stable location structures,Boolean,True,,"Set this to false to disable construction of Domain-tech stable location structures.
 

@@ -185,16 +185,18 @@ public class BoggledTascPlugin extends BaseModPlugin {
     }
 
     public void addDomainTechBuildingsToVanillaColonies() {
-        // Check to avoid null pointer exception if player has modified/randomized sector
-        if(Global.getSector() == null || Global.getSector().getStarSystem("Askonia") == null) {
-            return;
-        }
+        if(boggledTools.getBooleanSetting(boggledTools.BoggledSettings.domainTechContentEnabled) && boggledTools.getBooleanSetting(boggledTools.BoggledSettings.addDomainTechBuildingsToVanillaColonies))
+        {
+            // Do this before modified/randomized sector check since we can replace cryosanctums on any planet
+            replaceCryosanctums();
 
-        if(!Global.getSector().getPlayerPerson().hasTag("boggledDomainTechBuildingPlacementFinished")) {
-            // Add Genelab on Volturn
-            // Add LLN on Fikenhild
-            // Add GPA on Ancyra
-            if(boggledTools.getBooleanSetting(boggledTools.BoggledSettings.domainTechContentEnabled) && boggledTools.getBooleanSetting(boggledTools.BoggledSettings.domainArchaeologyEnabled) && boggledTools.getBooleanSetting(boggledTools.BoggledSettings.addDomainTechBuildingsToVanillaColonies)) {
+            // Check to avoid null pointer exception if player has modified/randomized sector
+            if(Global.getSector() == null || Global.getSector().getStarSystem("Askonia") == null) {
+                return;
+            }
+
+            if(!Global.getSector().getPlayerPerson().hasTag("boggledDomainTechBuildingPlacementFinished")) {
+                // Add Genelab on Volturn
                 SectorEntityToken volturnPlanet = boggledTools.getPlanetTokenForQuest("Askonia", "volturn");
                 if(volturnPlanet != null) {
                     MarketAPI volturnMarket = volturnPlanet.getMarket();
@@ -203,6 +205,7 @@ public class BoggledTascPlugin extends BaseModPlugin {
                     }
                 }
 
+                // Add LLN on Fikenhild
                 SectorEntityToken fikenhildPlanet = boggledTools.getPlanetTokenForQuest("Westernesse", "fikenhild");
                 if(fikenhildPlanet != null) {
                     MarketAPI fikenhildMarket = fikenhildPlanet.getMarket();
@@ -211,6 +214,7 @@ public class BoggledTascPlugin extends BaseModPlugin {
                     }
                 }
 
+                // Add GPA on Ancyra
                 SectorEntityToken ancyraPlanet = boggledTools.getPlanetTokenForQuest("Galatia", "ancyra");
                 if(ancyraPlanet != null) {
                     MarketAPI ancyraMarket = ancyraPlanet.getMarket();
@@ -218,15 +222,15 @@ public class BoggledTascPlugin extends BaseModPlugin {
                         ancyraMarket.addIndustry("BOGGLED_GPA");
                     }
                 }
-            }
 
-            Global.getSector().getPlayerPerson().addTag("boggledDomainTechBuildingPlacementFinished");
+                Global.getSector().getPlayerPerson().addTag("boggledDomainTechBuildingPlacementFinished");
+            }
         }
     }
 
     public void replaceCryosanctums() {
-        // Replace all Cryosanctums
-        if(!Global.getSector().getPlayerPerson().hasTag("boggledCryosanctumReplacementFinished") && boggledTools.getBooleanSetting(boggledTools.BoggledSettings.domainTechContentEnabled) && boggledTools.getBooleanSetting(boggledTools.BoggledSettings.domainArchaeologyEnabled) && boggledTools.getBooleanSetting(boggledTools.BoggledSettings.cryosanctumReplaceEverywhere)) {
+        // Replace all Cryosanctums with the Boggled_Cryosanctum industry that can demand Domain-era artifacts
+        if(!Global.getSector().getPlayerPerson().hasTag("boggledCryosanctumReplacementFinished")) {
             for(StarSystemAPI system : Global.getSector().getStarSystems()) {
                 for(MarketAPI market : Global.getSector().getEconomy().getMarkets(system)) {
                     if(market != null && market.hasIndustry(Industries.CRYOSANCTUM) && !market.hasIndustry(boggledTools.BoggledIndustries.cryosanctumIndustryId)) {
@@ -373,8 +377,6 @@ public class BoggledTascPlugin extends BaseModPlugin {
         applyTerraformingAbilitiesPerSettingsFile();
 
         applyDomainArchaeologySettings();
-
-        replaceCryosanctums();
 
         addDomainTechBuildingsToVanillaColonies();
 
