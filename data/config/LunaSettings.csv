@@ -13,6 +13,8 @@ boggledStellarReflectorArrayMarketAutoPlacementEnabled,Enable Stellar Reflector 
 
 If set to false, Eventide, Eochu Bres and certain other markets will get to keep their Solar Array market condition for free without needing to maintain the Stellar Reflector Array building.",,,Terraforming
 boggledGenelabEnabled,Enable Genelab,Boolean,True,,"Set this to false to disable the Genelab building.",,,Terraforming
+boggledGenelabPollutionRemediationDaysToFinish,Days to finish pollution remediation with Genelab,Int,200,,"How many days are required to remove the pollution condition with the Genelab.",1,2000,Terraforming
+boggledGenelabLobsterSeedingDaysToFinish,Days to finish lobster seeding with Genelab,Int,200,,"How many days are required to add the Volturnian Lobsters resource to a colony on a water planet with the Genelab.",1,2000,Terraforming
 boggledMesozoicParkEnabled,Enable Mesozoic Park,Boolean,True,,"Set this to false to disable the Mesozoic Park building.",,,Terraforming
 boggledDomedCitiesEnabled,Enable Domed Cities,Boolean,True,,"Set this to false to disable the Domed Cities building.
 

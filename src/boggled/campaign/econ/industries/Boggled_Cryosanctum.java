@@ -36,8 +36,14 @@ public class Boggled_Cryosanctum extends Cryosanctum
         }
 
         Pair<String, Integer> deficit = this.getMaxDeficit(deficitCommodities.toArray(new String[0]));
-        if ((Integer)deficit.two > 0) {
-            deficit.two = -1;
+        // Apparently the cryosanctum on Nomios doesn't reduce organ output if there's a deficit.
+        // Presumably this is to prevent cascading problems at numerous markets since so many are
+        // dependent on organs from Nomios.
+        if(!this.market.isPlayerOwned())
+        {
+            if ((Integer)deficit.two > 0) {
+                deficit.two = -1;
+            }
         }
 
         this.applyDeficitToProduction(1, deficit, new String[]{"organs"});
