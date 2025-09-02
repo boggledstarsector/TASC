@@ -299,15 +299,18 @@ public class Boggled_Genelab extends BaseIndustry
         Color highlight = Misc.getHighlightColor();
         Color bad = Misc.getNegativeHighlightColor();
 
-        if(mode != IndustryTooltipMode.QUEUED && !isBuilding())
+        if(boggledTools.getBooleanSetting("boggledTerraformingContentEnabled") && boggledTools.getBooleanSetting("boggledMesozoicParkEnabled"))
         {
-            int currentIncomeBonus = getGenelabMesozoicParkIncomeBonus();
-            if(this.isFunctional())
+            if(mode != IndustryTooltipMode.QUEUED && !isBuilding())
             {
-                tooltip.addPara("Mesozoic Park income bonus: %s", opad, currentIncomeBonus > 0 ? highlight : bad, currentIncomeBonus + "%");
-                if(deficit.two > 0)
+                int currentIncomeBonus = getGenelabMesozoicParkIncomeBonus();
+                if(this.isFunctional())
                 {
-                    tooltip.addPara("Mesozoic Park income bonus reduced by %s due to a shortage of %s.", opad, bad, (deficit.two * 50) + "%", deficit.one);
+                    tooltip.addPara("Mesozoic Park income bonus: %s", opad, currentIncomeBonus > 0 ? highlight : bad, currentIncomeBonus + "%");
+                    if(deficit.two > 0)
+                    {
+                        tooltip.addPara("Mesozoic Park income bonus reduced by %s due to a shortage of %s.", opad, bad, (deficit.two * 50) + "%", deficit.one);
+                    }
                 }
             }
         }
@@ -369,7 +372,7 @@ public class Boggled_Genelab extends BaseIndustry
 
     @Override
     public boolean canInstallAICores() {
-        return true;
+        return boggledTools.getBooleanSetting("boggledTerraformingContentEnabled") && boggledTools.getBooleanSetting("boggledMesozoicParkEnabled");
     }
 
     @Override
@@ -459,7 +462,7 @@ public class Boggled_Genelab extends BaseIndustry
     @Override
     public boolean canImprove()
     {
-        return true;
+        return boggledTools.getBooleanSetting("boggledTerraformingContentEnabled") && boggledTools.getBooleanSetting("boggledMesozoicParkEnabled");
     }
 
     @Override
