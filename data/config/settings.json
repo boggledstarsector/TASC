@@ -17,10 +17,10 @@
             "sky_cities":"graphics/icons/industry/boggled_sky_cities.png",
             "genelab_trex":"graphics/icons/industry/boggled_genelab_trex.png",
 
-            "mesozoic_park_terran":"graphics/icons/industry/mesozoic_park_terran.jpg",
-            "mesozoic_park_water":"graphics/icons/industry/mesozoic_park_water.jpg",
-            "mesozoic_park_jungle":"graphics/icons/industry/mesozoic_park_jungle.jpg",
-            "mesozoic_park_desert":"graphics/icons/industry/mesozoic_park_desert.jpg",
+            "mesozoic_park_terran":"graphics/icons/industry/mesozoic_park_terran.png",
+            "mesozoic_park_water":"graphics/icons/industry/mesozoic_park_water.png",
+            "mesozoic_park_jungle":"graphics/icons/industry/mesozoic_park_jungle.png",
+            "mesozoic_park_desert":"graphics/icons/industry/mesozoic_park_desert.png",
 
             "stellar_mirror_condition":"graphics/icons/conditions/stellar_mirror.png",
             "stellar_shade_condition":"graphics/icons/conditions/stellar_shade.png",
