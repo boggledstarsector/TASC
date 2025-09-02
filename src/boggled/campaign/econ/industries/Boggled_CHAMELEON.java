@@ -284,7 +284,8 @@ public class Boggled_CHAMELEON extends BaseIndustry implements ShowBoggledTerraf
     @Override
     protected void applyImproveModifiers()
     {
-        if(this.isImproved() && this.isFunctional())
+        Pair<String, Integer> deficit = getChameleonDeficit();
+        if(this.isImproved() && this.isFunctional() && deficit.two <= 0)
         {
             market.getStability().modifyFlat("chameleon_improve", IMPROVE_STABILITY_BONUS, getImprovementsDescForModifiers() + " (CHAMELEON)");
         }

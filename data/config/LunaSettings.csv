@@ -158,12 +158,11 @@ This includes: Genelab on Volturn, Limelight Network on Fikenhild, GPA on Ancyra
 boggledKletkaSimulatorEnabled,Enable Kletka Simulator,Boolean,True,,"Set this to false to disable the Kletka Simulator building.
 
 The Kletka Simulator is an industry that produces AI cores. The AI cores are sent to storage along with other items and ships the player receives each month.",,,Domain-tech Content
-boggledKletkaSimulatorTemperatureBasedUpkeep,Kletka Simulator upkeep is based on temperature,Boolean,True,,"Set this to false to make the Kletka Simulator have a static upkeep instead of the upkeep cost being dependant on the temperature of the market it is located on.",,,Domain-tech Content
-boggledKletkaSimulatorSuppressTemperatureBasedUpkeep,Kletka Simulator upkeep modifier can be suppressed along with the temperature,Boolean,False,,"Set this to true to make the Kletka Simulator's temperature based upkeep be suppressed if the temperature condition is also suppressed.",,,Domain-tech Content
-boggledKletkaSimulatorShowProductionRoll,Show production roll for industries that produce items,Boolean,False,,"Set this to true to show the production roll for industries that produce items, like Kletka Simulator, after the production chances in the tooltip.",,,Domain-tech Content
+boggledKletkaSimulatorTemperatureBasedUpkeep,Kletka Simulator upkeep is based on colony temperature,Boolean,True,,"Set this to false to make the Kletka Simulator have a static upkeep cost instead of the upkeep cost being dependant on the temperature of the colony it is located on.",,,Domain-tech Content
+boggledKletkaSimulatorSuppressTemperatureBasedUpkeep,Kletka Simulator upkeep modifier can be suppressed along with the temperature,Boolean,False,,"Set this to true to make suppressing the temperature condition on a colony remove the Kletka Simulator's temperature-based upkeep modifier. For example, the Stellar Reflector Array can suppress hot and cold temperatures.",,,Domain-tech Content
 boggledCHAMELEONEnabled,Enable CHAMELEON,Boolean,True,,"Set this to false to disable the CHAMELEON building.
 
-The CHAMELEON is a building that can slowly remove certain hazardous conditions from a market, such as a decivilized subpopulation.",,,Domain-tech Content
+The CHAMELEON is a building that can slowly remove certain hazardous conditions from a market, such as a decivilized subpopulation or rogue AI core.",,,Domain-tech Content
 boggledChameleonDecivilizedSubpopEradicationDaysToFinish,Days to finish eradicating a decivilized subpopulation with CHAMELEON,Int,200,,"How many days are required to eradicate a decivilized subpopulation with the CHAMELEON.",1,2000,Domain-tech Content
 boggledChameleonRogueCoreTerminationDaysToFinish,Days to finish terminating a rogue AI core with CHAMELEON,Int,200,,"How many days are required to terminate a rogue AI core with the CHAMELEON.",1,2000,Domain-tech Content
 boggledLimelightNetworkPlayerBuildEnabled,Limelight Network building can be constructed by the player,Boolean,False,,"Set this to true to allow the player to construct the Limelight Network building.",,,Domain-tech Content
