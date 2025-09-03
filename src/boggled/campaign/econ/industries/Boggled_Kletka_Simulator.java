@@ -73,8 +73,8 @@ public class Boggled_Kletka_Simulator extends BaseIndustry
             // Add 10 to the roll for improvements. Add AI core bonuses to the roll (10, 20 or 30). Max adjustment is 40.
             // After adjusting the roll based on improvements and AI cores, check if it crosses the threshold for any of the AI core types.
             // Award the highest quality AI core where the threshold was crossed.
-            // e.g. alpha core threshold is 105, it would be impossible to acquire an alpha core without
-            // boosting your roll with improvements or AI cores since the maximum roll is 100.
+            // e.g. alpha core threshold is 100, it would be impossible to acquire an alpha core without
+            // boosting your roll with improvements or AI cores since the maximum roll is 100, and it must exceed the threshold.
             int originalRoll = random.nextInt(100) + 1;
             int adjustedRoll = originalRoll + getRollAdjustment();
 
@@ -289,18 +289,21 @@ public class Boggled_Kletka_Simulator extends BaseIndustry
             tooltip.addPara("Supercomputers will melt themselves without adequate cooling. Operating costs are lowest on very cold worlds and highest on very hot worlds and stations.", opad, highlight, new String[]{""});
         }
 
-        Pair<String, Integer> deficit = getKletkaSimulatorDeficit();
+        // Don't show the core production changes until the Kletka Simulator is finished building
         if(mode == IndustryTooltipMode.ADD_INDUSTRY || mode == IndustryTooltipMode.QUEUED || isBuilding())
         {
-            // Don't show the core production changes until the Kletka Simulator is finished building
+            return;
         }
-        else if(isDisrupted())
+
+        Pair<String, Integer> deficit = getKletkaSimulatorDeficit();
+        tooltip.addPara("The Kletka Simulator attempts to produce a single AI core each month. The odds it will be of a given type are as follows:", opad, highlight, new String[]{});
+        if(isDisrupted())
         {
-            tooltip.addPara("Current chances to produce an AI core at the end of the month: %s", opad, bad, new String[]{"           None (disrupted)"});
+            tooltip.addPara("%s", 2f, bad, "           None (disrupted)");
         }
         else if(deficit.two > 0)
         {
-            tooltip.addPara("Current chances to produce an AI core at the end of the month: %s", opad, bad, new String[]{"           None (shortage)"});
+            tooltip.addPara("%s", 2f, bad, "           None (shortage)");
         }
         else
         {
@@ -309,12 +312,10 @@ public class Boggled_Kletka_Simulator extends BaseIndustry
             int betaCorePercentage = Math.max(0, 100 + rollAdjustment - this.ROLL_THRESHOLD_BETA - alphaCorePercentage);
             int gammaCorePercentage = Math.max(0, 100 + rollAdjustment - this.ROLL_THRESHOLD_GAMMA - alphaCorePercentage - betaCorePercentage);
             int nothingPercentage = Math.max(0, 100 - alphaCorePercentage - betaCorePercentage - gammaCorePercentage);
-            tooltip.addPara("""
-                The Kletka Simulator attempts to produce a single AI core each month. The odds it will be of a given type are as follows:
-                Alpha Core: %s
-                Beta Core: %s
-                Gamma Core: %s
-                Nothing (training failed): %s""", opad, highlight, new String[]{alphaCorePercentage + "%", betaCorePercentage + "%", gammaCorePercentage + "%", nothingPercentage + "%"});
+            tooltip.addPara("           Alpha Core: %s", 2f, highlight, alphaCorePercentage + "%");
+            tooltip.addPara("           Beta Core: %s", 2f, highlight, betaCorePercentage + "%");
+            tooltip.addPara("           Gamma Core: %s", 2f, highlight, gammaCorePercentage + "%");
+            tooltip.addPara("           Nothing (training failed): %s", 2f, highlight, nothingPercentage + "%");
         }
     }
 
@@ -332,7 +333,7 @@ public class Boggled_Kletka_Simulator extends BaseIndustry
             float opad = 10.0F;
             Color highlight = Misc.getHighlightColor();
 
-            tooltip.addPara("Kletka Simulators always demand %s Domain-era artifacts regardless of market size.", opad, highlight, new String[]{"" + CONSTANT_DOMAIN_ERA_ARTIFACT_DEMAND_QUANTITY});
+            tooltip.addPara("Kletka Simulators always demand %s Domain-era artifacts regardless of colony size.", opad, highlight, new String[]{"" + CONSTANT_DOMAIN_ERA_ARTIFACT_DEMAND_QUANTITY});
         }
     }
 

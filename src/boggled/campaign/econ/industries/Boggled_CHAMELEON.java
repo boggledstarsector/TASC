@@ -214,7 +214,7 @@ public class Boggled_CHAMELEON extends BaseIndustry implements ShowBoggledTerraf
         {
             float opad = 10.0F;
             Color bad = Misc.getNegativeHighlightColor();
-            tooltip.addPara("CHAMELEON is inactive due to a shortage of %s.", opad, bad, deficit.one);
+            tooltip.addPara("CHAMELEON is inactive due to a shortage of %s.", opad, bad, boggledTools.getCommidityNameFromId(deficit.one));
         }
     }
 

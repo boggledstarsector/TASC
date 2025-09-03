@@ -1621,6 +1621,11 @@ public class boggledTools {
         return ret;
     }
 
+    public static String getCommidityNameFromId(String commodityId)
+    {
+        return Global.getSettings().getCommoditySpec(commodityId).getName();
+    }
+
     public static float getAngle(float focusX, float focusY, float playerX, float playerY) {
         float angle = (float) Math.toDegrees(Math.atan2(focusY - playerY, focusX - playerX));
 

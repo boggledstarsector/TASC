@@ -309,7 +309,7 @@ public class Boggled_Genelab extends BaseIndustry
                     tooltip.addPara("Mesozoic Park income bonus: %s", opad, currentIncomeBonus > 0 ? highlight : bad, currentIncomeBonus + "%");
                     if(deficit.two > 0)
                     {
-                        tooltip.addPara("Mesozoic Park income bonus reduced by %s due to a shortage of %s.", opad, bad, (deficit.two * 50) + "%", deficit.one);
+                        tooltip.addPara("Mesozoic Park income bonus reduced by %s due to a shortage of %s.", opad, bad, (deficit.two * 50) + "%", boggledTools.getCommidityNameFromId(deficit.one));
                     }
                 }
             }
@@ -317,12 +317,12 @@ public class Boggled_Genelab extends BaseIndustry
 
         if(deficit.two > 0 && this.market.hasCondition("pollution") && mode != IndustryTooltipMode.ADD_INDUSTRY && mode != IndustryTooltipMode.QUEUED && !isBuilding())
         {
-            tooltip.addPara("Pollution remediation progress is stalled due to a shortage of %s.", opad, bad, deficit.one);
+            tooltip.addPara("Pollution remediation progress is stalled due to a shortage of %s.", opad, bad, boggledTools.getCommidityNameFromId(deficit.one));
         }
 
         if(deficit.two > 0 && this.market.hasCondition("water_surface") && !this.market.hasCondition("volturnian_lobster_pens") && mode != IndustryTooltipMode.ADD_INDUSTRY && mode != IndustryTooltipMode.QUEUED && !isBuilding())
         {
-            tooltip.addPara("Lobster seeding progress is stalled due to a shortage of %s.", opad, bad, deficit.one);
+            tooltip.addPara("Lobster seeding progress is stalled due to a shortage of %s.", opad, bad, boggledTools.getCommidityNameFromId(deficit.one));
         }
     }
 
