@@ -19,6 +19,10 @@ public class Boggled_Mesozoic_Park extends BaseIndustry
     //Need to update string in addImproveDesc if value changed
     private final float IMPROVE_BONUS = 1.40f;
 
+    private final float ALPHA_CORE_BONUS = 1.40f;
+    private final float BETA_CORE_BONUS = 1.20f;
+    private final float GAMMA_CORE_BONUS = 1.10f;
+
     @Override
     public boolean canBeDisrupted() {
         return true;

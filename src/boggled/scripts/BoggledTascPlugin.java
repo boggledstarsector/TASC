@@ -285,7 +285,6 @@ public class BoggledTascPlugin extends BaseModPlugin {
 
             // Projects and industries both require requirements and duration modifiers
             JSONArray terraformingProjects = settings.getMergedSpreadsheetDataForMod("id", "data/campaign/terraforming/terraforming_projects.csv", boggledTools.BoggledMods.tascModId);
-            JSONArray industryOptions = settings.getMergedSpreadsheetDataForMod("id", "data/campaign/terraforming/industry_options.csv", boggledTools.BoggledMods.tascModId);
 
             // Domed Cities suppressed conditions
             JSONArray domedCitiesSuppressedConditions = settings.getMergedSpreadsheetDataForMod("condition_id", "data/campaign/terraforming/domed_cities_suppressed_conditions.csv", boggledTools.BoggledMods.tascModId);
@@ -294,7 +293,6 @@ public class BoggledTascPlugin extends BaseModPlugin {
             JSONArray stellarReflectorArraySuppressedConditions = settings.getMergedSpreadsheetDataForMod("condition_id", "data/campaign/terraforming/stellar_reflector_array_suppressed_conditions.csv", boggledTools.BoggledMods.tascModId);
 
             // And finally mods
-            JSONArray industryOptionOverrides = settings.getMergedSpreadsheetDataForMod("id", "data/campaign/terraforming/industry_options_mods.csv", boggledTools.BoggledMods.tascModId);
             JSONArray terraformingProjectOverrides = settings.getMergedSpreadsheetDataForMod("id", "data/campaign/terraforming/terraforming_projects_mods.csv", boggledTools.BoggledMods.tascModId);
 
             if (aotdEnabled) {
@@ -318,10 +316,8 @@ public class BoggledTascPlugin extends BaseModPlugin {
             boggledTools.initialiseTerraformingProjectEffectsFromJSON(terraformingProjectEffects);
 
             boggledTools.initialiseTerraformingProjectsFromJSON(terraformingProjects);
-            boggledTools.initialiseIndustryOptionsFromJSON(industryOptions);
 
             boggledTools.initialiseTerraformingProjectOverrides(terraformingProjectOverrides);
-            boggledTools.initialiseIndustryOptionOverrides(industryOptionOverrides);
 
             boggledTools.initializeDomedCitiesSuppressedConditionsFromJSON(domedCitiesSuppressedConditions);
 

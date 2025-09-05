@@ -11,7 +11,7 @@ public class Boggled_No_Atmosphere_Overwrite extends BaseHazardCondition
     @Override
     public boolean showIcon()
     {
-        if (boggledTools.marketIsStation(this.market))
+        if(boggledTools.marketIsStation(this.market))
         {
             return false;
         }
