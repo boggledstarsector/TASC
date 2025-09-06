@@ -172,13 +172,14 @@ public class boggledTools {
 
         public static final String planetKillerEnabled = "boggledPlanetKillerEnabled";
 
-        public static final String replaceAgreusTechMiningWithDomainArchaeology = "boggledReplaceAgreusTechMiningWithDomainArchaeology";
-
         public static final String addDomainTechBuildingsToVanillaColonies = "boggledAddDomainTechBuildingsToVanillaColonies";
         public static final String cryosanctumReplaceEverywhere = "boggledCryosanctumReplaceEverywhere";
 
         // Building enables, checked in campaign.econ.industries.*
         // May move them to a CSV later
+
+        public static final String boggledDomainArchaeologyEnabled = "boggledDomainArchaeologyEnabled";
+        public static final String boggledDomainTechContentEnabled = "boggledDomainTechContentEnabled";
         public static final String enableAIMiningDronesStructure = "boggledEnableAIMiningDronesStructure";
         public static final String domainTechContentEnabled = "boggledDomainTechContentEnabled";
         public static final String domainTechCraftingEnabled = "boggledDomainTechCraftingEnabled";
@@ -340,27 +341,19 @@ public class boggledTools {
         aotdIgnoreSettings.add("boggledGenelabEnabled");
         aotdIgnoreSettings.add("boggledMesozoicParkEnabled");
         aotdIgnoreSettings.add("boggledDomedCitiesEnabled");
-        aotdIgnoreSettings.add("boggledHarmonicDamperEnabled");
-        aotdIgnoreSettings.add("boggledPlanetaryAgravFieldEnabled");
-        aotdIgnoreSettings.add("boggledMagnetoshieldEnabled");
-        aotdIgnoreSettings.add("boggledPlanetCrackerEnabled");
-        aotdIgnoreSettings.add("boggledOuyangOptimizerEnabled");
         aotdIgnoreSettings.add("boggledStationConstructionContentEnabled");
-        aotdIgnoreSettings.add("boggledEnableAIMiningDronesStructure");
 
         aotdIgnoreSettings.add("boggledAstropolisEnabled");
         aotdIgnoreSettings.add("boggledMiningStationEnabled");
         aotdIgnoreSettings.add("boggledSiphonStationEnabled");
         aotdIgnoreSettings.add("boggledStationColonizationEnabled");
 
-        aotdIgnoreSettings.add("boggledPerihelionProjectEnabled");
+        aotdIgnoreSettings.add("boggledDomainTechContentEnabled");
         aotdIgnoreSettings.add("boggledDomainArchaeologyEnabled");
         aotdIgnoreSettings.add("boggledKletkaSimulatorEnabled");
         aotdIgnoreSettings.add("boggledCHAMELEONEnabled");
         aotdIgnoreSettings.add("boggledLimelightNetworkPlayerBuildEnabled");
         aotdIgnoreSettings.add("boggledRemnantStationEnabled");
-        //aotdIgnoreSettings.add("boggledHydroponicsEnabled");
-        aotdIgnoreSettings.add("boggledCloningEnabled");
     }
 
     @Nullable
@@ -1616,6 +1609,126 @@ public class boggledTools {
             ret.put("$system", "star system");
         }
         return ret;
+    }
+
+    public static void incrementOreForPlanetCracking(MarketAPI market)
+    {
+        if(market.hasCondition("ore_sparse"))
+        {
+            boggledTools.removeCondition(market, "ore_sparse");
+            boggledTools.addCondition(market, "ore_moderate");
+        }
+        else if(market.hasCondition("ore_moderate"))
+        {
+            boggledTools.removeCondition(market, "ore_moderate");
+            boggledTools.addCondition(market, "ore_abundant");
+        }
+        else if(market.hasCondition("ore_abundant"))
+        {
+            boggledTools.removeCondition(market, "ore_abundant");
+            boggledTools.addCondition(market, "ore_rich");
+        }
+        else if(market.hasCondition("ore_rich"))
+        {
+            boggledTools.removeCondition(market, "ore_rich");
+            boggledTools.addCondition(market, "ore_ultrarich");
+        }
+        else if(market.hasCondition("ore_ultrarich"))
+        {
+            //Do Nothing
+        }
+        else
+        {
+            boggledTools.addCondition(market, "ore_sparse");
+        }
+
+        if(market.hasCondition("rare_ore_sparse"))
+        {
+            boggledTools.removeCondition(market, "rare_ore_sparse");
+            boggledTools.addCondition(market, "rare_ore_moderate");
+        }
+        else if(market.hasCondition("rare_ore_moderate"))
+        {
+            boggledTools.removeCondition(market, "rare_ore_moderate");
+            boggledTools.addCondition(market, "rare_ore_abundant");
+        }
+        else if(market.hasCondition("rare_ore_abundant"))
+        {
+            boggledTools.removeCondition(market, "rare_ore_abundant");
+            boggledTools.addCondition(market, "rare_ore_rich");
+        }
+        else if(market.hasCondition("rare_ore_rich"))
+        {
+            boggledTools.removeCondition(market, "rare_ore_rich");
+            boggledTools.addCondition(market, "rare_ore_ultrarich");
+        }
+        else if(market.hasCondition("rare_ore_ultrarich"))
+        {
+            //Do Nothing
+        }
+        else
+        {
+            boggledTools.addCondition(market, "rare_ore_sparse");
+        }
+    }
+
+    public static void incrementVolatilesForOuyangOptimization(MarketAPI market)
+    {
+        if(market.hasCondition("volatiles_trace"))
+        {
+            boggledTools.removeCondition(market, "volatiles_trace");
+            boggledTools.addCondition(market, "volatiles_abundant");
+        }
+        else if(market.hasCondition("volatiles_diffuse"))
+        {
+            boggledTools.removeCondition(market, "volatiles_diffuse");
+            boggledTools.addCondition(market, "volatiles_plentiful");
+        }
+        else if(market.hasCondition("volatiles_abundant"))
+        {
+            boggledTools.removeCondition(market, "volatiles_abundant");
+            boggledTools.addCondition(market, "volatiles_plentiful");
+        }
+        else if(market.hasCondition("volatiles_plentiful"))
+        {
+            //Do nothing
+        }
+        else
+        {
+            boggledTools.addCondition(market, "volatiles_diffuse");
+        }
+
+        SectorEntityToken closestGasGiantToken = market.getPrimaryEntity();
+        if(closestGasGiantToken != null)
+        {
+            Iterator allEntitiesInSystem = closestGasGiantToken.getStarSystem().getAllEntities().iterator();
+            while(allEntitiesInSystem.hasNext())
+            {
+                SectorEntityToken entity = (SectorEntityToken)allEntitiesInSystem.next();
+                if(entity.hasTag("station") && entity.getOrbitFocus() != null && entity.getOrbitFocus().equals(closestGasGiantToken) && (entity.getCustomEntitySpec().getDefaultName().equals("Side Station") || entity.getCustomEntitySpec().getDefaultName().equals("Siphon Station")) && !entity.getId().equals("beholder_station"))
+                {
+                    if(entity.getMarket() != null)
+                    {
+                        market = entity.getMarket();
+                        if(market.hasCondition("volatiles_trace"))
+                        {
+                            boggledTools.removeCondition(market, "volatiles_trace");
+                            boggledTools.addCondition(market, "volatiles_abundant");
+                        }
+                        else if(market.hasCondition("volatiles_diffuse"))
+                        {
+                            boggledTools.removeCondition(market, "volatiles_diffuse");
+                            boggledTools.addCondition(market, "volatiles_plentiful");
+                        }
+                        else if(market.hasCondition("volatiles_abundant"))
+                        {
+                            boggledTools.removeCondition(market, "volatiles_abundant");
+                            boggledTools.addCondition(market, "volatiles_plentiful");
+                        }
+                    }
+                }
+            }
+        }
     }
 
     public static String getCommidityNameFromId(String commodityId) {
@@ -2966,7 +3079,7 @@ public class boggledTools {
 
     public static boolean domainEraArtifactDemandEnabled()
     {
-        if(getBooleanSetting("boggledDomainTechContentEnabled") && getBooleanSetting("boggledDomainArchaeologyEnabled"))
+        if(getBooleanSetting(BoggledSettings.domainTechContentEnabled) && getBooleanSetting(BoggledSettings.domainArchaeologyEnabled))
         {
             return true;
         }

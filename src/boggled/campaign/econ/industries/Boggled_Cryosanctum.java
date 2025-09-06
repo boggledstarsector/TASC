@@ -52,12 +52,41 @@ public class Boggled_Cryosanctum extends Cryosanctum
         }
     }
 
+    @Override
     public boolean isAvailableToBuild() {
-        return boggledTools.getBooleanSetting("boggledCryosanctumPlayerBuildEnabled");
+        if(!boggledTools.getBooleanSetting("boggledCryosanctumPlayerBuildEnabled"))
+        {
+            return false;
+        }
+
+        // Can't call super.isAvailableToBuild() because vanilla Cryosanctum always returns false
+        return isAvailableToBuildBaseIndustryHack();
     }
 
+
+    private boolean isAvailableToBuildBaseIndustryHack() {
+        // Copypasted from BaseIndustry
+        if (this.market.hasTag("market_no_industries_allowed")) {
+            return false;
+        } else {
+            return this.market.hasIndustry("population") && !this.getId().equals("population");
+        }
+    }
+
+    @Override
     public boolean showWhenUnavailable() {
-        return false;
+        if(!boggledTools.getBooleanSetting("boggledCryosanctumPlayerBuildEnabled"))
+        {
+            return false;
+        }
+
+        // Can't call super.showWhenUnavailable() because vanilla Cryosanctum always returns false
+        return showWhenUnavailableBaseIndustryHack();
+    }
+
+    private boolean showWhenUnavailableBaseIndustryHack() {
+        // Copypasted from BaseIndustry
+        return !this.market.hasTag("market_no_industries_allowed");
     }
 
     public MarketCMD.RaidDangerLevel adjustCommodityDangerLevel(String commodityId, MarketCMD.RaidDangerLevel level) {

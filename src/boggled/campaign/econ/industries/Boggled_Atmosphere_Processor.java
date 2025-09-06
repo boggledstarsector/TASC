@@ -3,6 +3,7 @@ package boggled.campaign.econ.industries;
 import java.awt.*;
 import java.lang.String;
 
+import com.fs.starfarer.api.campaign.PlanetAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
 import com.fs.starfarer.api.impl.campaign.econ.impl.BaseIndustry;
@@ -35,52 +36,77 @@ public class Boggled_Atmosphere_Processor extends BaseIndustry
     @Override
     public boolean isAvailableToBuild()
     {
-        if(!boggledTools.isResearched(this.getId()))
+        if(!boggledTools.isResearched("tasc_atmosphere_manipulation"))
         {
             return false;
         }
 
-        if(boggledTools.getBooleanSetting("boggledTerraformingContentEnabled"))
-        {
-            if(!boggledTools.marketIsStation(this.market) && boggledTools.marketHasAtmoProblem(this.market) && boggledTools.terraformingPossibleOnMarket(this.market))
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        }
-        else
+        if(!boggledTools.getBooleanSetting("boggledTerraformingContentEnabled"))
         {
             return false;
         }
+
+        if(boggledTools.marketIsStation(this.market))
+        {
+            return false;
+        }
+
+        if(!boggledTools.marketHasAtmoProblem(this.market))
+        {
+            return false;
+        }
+
+        if(!boggledTools.terraformingPossibleOnMarket(this.market))
+        {
+            return false;
+        }
+
+        return super.isAvailableToBuild();
     }
 
     @Override
     public boolean showWhenUnavailable()
     {
-        if(!boggledTools.isResearched(this.getId()))
+        if(!boggledTools.isResearched("tasc_atmosphere_manipulation"))
         {
             return false;
         }
 
-        if(boggledTools.getBooleanSetting("boggledTerraformingContentEnabled") && !boggledTools.marketIsStation(this.market))
-        {
-            return true;
-        }
-        else
+        if(!boggledTools.getBooleanSetting("boggledTerraformingContentEnabled"))
         {
             return false;
         }
+
+        if(boggledTools.marketIsStation(this.market))
+        {
+            return false;
+        }
+
+        if(!boggledTools.marketHasAtmoProblem(this.market))
+        {
+            return super.showWhenUnavailable();
+        }
+
+        if(!boggledTools.terraformingPossibleOnMarket(this.market))
+        {
+            return super.showWhenUnavailable();
+        }
+
+        return super.showWhenUnavailable();
     }
 
     @Override
     public String getUnavailableReason()
     {
+        if(!boggledTools.marketHasAtmoProblem(this.market))
+        {
+            return "Atmospheric conditions on " + this.market.getName() + " are already optimal. There is no reason to build an atmosphere processor here.";
+        }
+
         if(!boggledTools.terraformingPossibleOnMarket(this.market))
         {
-            if(boggledTools.getPlanetType(this.market.getPlanetEntity()).equals("unknown"))
+            PlanetAPI planet = this.market.getPlanetEntity();
+            if(boggledTools.getPlanetType(planet).getPlanetId().equals("unknown"))
             {
                 return "This planet type is unsupported by TASC. Please report this to boggled on the forums so he can add support. The planet type is: " + market.getPlanetEntity().getTypeId();
             }
@@ -89,14 +115,8 @@ public class Boggled_Atmosphere_Processor extends BaseIndustry
                 return "Stars, gas giants, volcanic worlds and irradiated worlds cannot be terraformed.";
             }
         }
-        if(!boggledTools.marketHasAtmoProblem(this.market))
-        {
-            return "Atmospheric conditions on " + this.market.getName() + " are already optimal. There is no reason to build an atmosphere processor here.";
-        }
-        else
-        {
-            return "Error in getUnavailableReason() in Atmosphere Processor. Please tell Boggled about this on the forums.";
-        }
+
+       return super.getUnavailableReason();
     }
 
     @Override

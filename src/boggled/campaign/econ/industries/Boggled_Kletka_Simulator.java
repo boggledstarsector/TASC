@@ -239,7 +239,7 @@ public class Boggled_Kletka_Simulator extends BaseIndustry
     @Override
     public boolean isAvailableToBuild()
     {
-        if(!boggledTools.isResearched(this.getId()))
+        if(!boggledTools.isResearched("tasc_remnant_algorithms"))
         {
             return false;
         }
@@ -249,13 +249,13 @@ public class Boggled_Kletka_Simulator extends BaseIndustry
             return false;
         }
 
-        return true;
+        return super.isAvailableToBuild();
     }
 
     @Override
     public boolean showWhenUnavailable()
     {
-        if(!boggledTools.isResearched(this.getId()))
+        if(!boggledTools.isResearched("tasc_remnant_algorithms"))
         {
             return false;
         }
@@ -265,13 +265,7 @@ public class Boggled_Kletka_Simulator extends BaseIndustry
             return false;
         }
 
-        return true;
-    }
-
-    @Override
-    public String getUnavailableReason()
-    {
-        return "Error in getUnavailableReason() in the Kletka Simulator structure. Please tell boggled about this on the forums.";
+        return super.showWhenUnavailable();
     }
 
     @Override

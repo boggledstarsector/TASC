@@ -98,7 +98,7 @@ public class Boggled_Ouyang_Optimizer extends BaseIndustry
                         Global.getSector().getCampaignUI().addMessage(intel, CommMessageAPI.MessageClickAction.COLONY_INFO, market);
                     }
 
-                    //boggledTools.incrementVolatilesForOuyangOptimization(getFocusMarket());
+                    boggledTools.incrementVolatilesForOuyangOptimization(getFocusMarket());
 
                     boggledTools.addCondition(getFocusMarket(), "extreme_weather");
                 }
@@ -121,72 +121,62 @@ public class Boggled_Ouyang_Optimizer extends BaseIndustry
     @Override
     public boolean isAvailableToBuild()
     {
-        if(boggledTools.getBooleanSetting("boggledTerraformingContentEnabled") && boggledTools.getBooleanSetting("boggledOuyangOptimizerEnabled"))
-        {
-            if(this.marketSuitableForOptimizer())
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
+        if(!boggledTools.getBooleanSetting("boggledTerraformingContentEnabled") || !boggledTools.getBooleanSetting("boggledOuyangOptimizerEnabled")) {
+            return false;
         }
-        else
+
+        if(!this.marketSuitableForOptimizer())
         {
             return false;
         }
+
+        return super.isAvailableToBuild();
     }
 
     @Override
     public boolean showWhenUnavailable()
     {
-        if(boggledTools.getBooleanSetting("boggledTerraformingContentEnabled") && boggledTools.getBooleanSetting("boggledOuyangOptimizerEnabled") && boggledTools.marketIsStation(this.market))
-        {
-            return true;
+        if(!boggledTools.getBooleanSetting("boggledTerraformingContentEnabled") || !boggledTools.getBooleanSetting("boggledOuyangOptimizerEnabled")) {
+            return false;
         }
-        else
+
+        if(!this.marketSuitableForOptimizer())
         {
             return false;
         }
+
+        return super.showWhenUnavailable();
     }
 
     @Override
     public String getUnavailableReason()
     {
-        if(boggledTools.getBooleanSetting("boggledTerraformingContentEnabled") && boggledTools.getBooleanSetting("boggledOuyangOptimizerEnabled"))
+        // Station needs to obit a gas giant planet
+        SectorEntityToken orbitFocus = getOrbitFocus();
+        if(orbitFocus == null)
         {
-            // Station needs to obit a gas giant planet
-            SectorEntityToken orbitFocus = getOrbitFocus();
-            if (orbitFocus == null)
-            {
-                return this.market.getName() + " is not in orbit around a planet.";
-            }
-
-            if (orbitFocus.getMarket() == null || orbitFocus.getMarket().getPlanetEntity() == null || !boggledTools.getPlanetType(orbitFocus.getMarket().getPlanetEntity()).equals("gas_giant"))
-            {
-                return "Only gas giants can undergo Ouyang optimization.";
-            }
-
-            // Can't already have extreme weather
-            MarketAPI focusMarket = getFocusMarket();
-            if (focusMarket.hasCondition("extreme_weather"))
-            {
-                return getFocusMarket().getName() + " already has extreme weather - making it worse won't increase volatiles availability.";
-            }
-
-            // Can't already have maxed out resources
-            if (focusMarket.hasCondition("organics_plentiful"))
-            {
-                return getFocusMarket().getName() + " is already extremely rich in volatiles. An Ouyang optimization would not yield any improvement.";
-            }
-
-            return "Error in getUnavailableReason() in Ouyang Optimizer. Please tell Boggled about this on the forums.";
+            return this.market.getName() + " is not in orbit around a planet.";
         }
-        else
+
+        if(orbitFocus.getMarket() == null || orbitFocus.getMarket().getPlanetEntity() == null || !boggledTools.getPlanetType(orbitFocus.getMarket().getPlanetEntity()).equals("gas_giant"))
         {
-            return "Error in getUnavailableReason() in Ouyang Optimizer. Please tell Boggled about this on the forums.";
+            return "Only gas giants can undergo Ouyang optimization.";
         }
+
+        // Can't already have extreme weather
+        MarketAPI focusMarket = getFocusMarket();
+        if(focusMarket.hasCondition("extreme_weather"))
+        {
+            return getFocusMarket().getName() + " already has extreme weather - making it worse won't increase volatiles availability.";
+        }
+
+        // Can't already have maxed out resources
+        if(focusMarket.hasCondition("organics_plentiful"))
+        {
+            return getFocusMarket().getName() + " is already extremely rich in volatiles. An Ouyang optimization would not yield any improvement.";
+        }
+
+        return super.getUnavailableReason();
     }
 
     @Override

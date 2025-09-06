@@ -4,6 +4,7 @@ import java.util.*;
 import java.lang.String;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.econ.*;
+import com.fs.starfarer.api.impl.campaign.ids.Conditions;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
 import com.fs.starfarer.api.impl.campaign.econ.impl.BaseIndustry;
@@ -14,8 +15,6 @@ import boggled.campaign.econ.boggledTools;
 
 public class Boggled_Stellar_Reflector_Array extends BaseIndustry
 {
-    public static String aotdVokKey = "tasc_light_manipulation";
-
     @Override
     public boolean canBeDisrupted() {
         return true;
@@ -233,7 +232,7 @@ public class Boggled_Stellar_Reflector_Array extends BaseIndustry
     @Override
     public boolean isAvailableToBuild()
     {
-        if(!boggledTools.isResearched(aotdVokKey))
+        if(!boggledTools.isResearched("tasc_light_manipulation"))
         {
             return false;
         }
@@ -243,19 +242,25 @@ public class Boggled_Stellar_Reflector_Array extends BaseIndustry
             return false;
         }
 
-        //Can't be built by station markets
-        if(boggledTools.marketIsStation(this.market)) { return false; }
+        // Can't be built by station markets
+        if(boggledTools.marketIsStation(this.market))
+        {
+            return false;
+        }
 
-        //Can't be built on dark planets. All planets in nebulas and orbiting black holes have dark condition.
-        if(this.market.hasCondition("dark")) { return false; }
+        // Can't be built by markets with no light to begin with
+        if(this.market.hasCondition(Conditions.DARK))
+        {
+            return false;
+        }
 
-        return true;
+        return super.isAvailableToBuild();
     }
 
     @Override
     public boolean showWhenUnavailable()
     {
-        if(!boggledTools.isResearched(aotdVokKey))
+        if(!boggledTools.isResearched("tasc_light_manipulation"))
         {
             return false;
         }
@@ -266,19 +271,32 @@ public class Boggled_Stellar_Reflector_Array extends BaseIndustry
         }
 
         //Can't be built by station markets
-        if(boggledTools.marketIsStation(this.market)) { return false; }
+        if(boggledTools.marketIsStation(this.market))
+        {
+            return false;
+        }
 
-        return true;
+        // Can't be built on dark planets. All planets in nebulas and orbiting black holes have dark condition.
+        if(this.market.hasCondition(Conditions.DARK))
+        {
+            return super.showWhenUnavailable();
+        }
+
+        return super.showWhenUnavailable();
     }
 
     @Override
     public String getUnavailableReason()
     {
-        //Can't be built on dark planets. All planets in nebulas and orbiting black holes have dark condition.
-        if(this.market.hasCondition("dark")) { return "Stellar reflectors won't have any effect on a world that receives no light."; }
+        // Can't be built on dark planets. All planets in nebulas and orbiting black holes have dark condition.
+        if(this.market.hasCondition(Conditions.DARK))
+        {
+            return "Stellar reflectors can serve no purpose orbiting a world that receives no light.";
+        }
 
-        return "Error in getUnavailableReason() in the Stellar Reflector Array. Please tell Boggled about this on the forums.";
+        return super.getUnavailableReason();
     }
+
 
     @Override
     public float getPatherInterest()

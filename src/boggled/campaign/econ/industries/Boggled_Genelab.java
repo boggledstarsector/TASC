@@ -241,7 +241,7 @@ public class Boggled_Genelab extends BaseIndustry
     @Override
     public boolean isAvailableToBuild()
     {
-        if(!boggledTools.isResearched(this.getId()))
+        if(!boggledTools.isResearched("tasc_genetic_manipulation"))
         {
             return false;
         }
@@ -257,13 +257,29 @@ public class Boggled_Genelab extends BaseIndustry
             return false;
         }
 
-        return true;
+        return super.isAvailableToBuild();
     }
 
     @Override
     public boolean showWhenUnavailable()
     {
-        return false;
+        if(!boggledTools.isResearched("tasc_genetic_manipulation"))
+        {
+            return false;
+        }
+
+        if(!boggledTools.getBooleanSetting("boggledTerraformingContentEnabled") || !boggledTools.getBooleanSetting("boggledGenelabEnabled"))
+        {
+            return false;
+        }
+
+        // Station markets can't build
+        if(boggledTools.marketIsStation(this.market))
+        {
+            return false;
+        }
+
+        return super.showWhenUnavailable();
     }
 
     @Override
@@ -387,7 +403,7 @@ public class Boggled_Genelab extends BaseIndustry
         if (mode == AICoreDescriptionMode.INDUSTRY_TOOLTIP) {
             CommoditySpecAPI coreSpec = Global.getSettings().getCommoditySpec(this.aiCoreId);
             TooltipMakerAPI text = tooltip.beginImageWithText(coreSpec.getIconName(), 48.0F);
-            text.addPara(pre + "Mesozoic Park income increased by %s.", 0.0F, highlight, MESOZOIC_PARK_INCOME_BONUS_ALPHA_CORE + "%");
+            text.addPara(pre + "Increases Mesozoic Park income by %s.", 0.0F, highlight, MESOZOIC_PARK_INCOME_BONUS_ALPHA_CORE + "%");
             tooltip.addImageWithText(opad);
         } else {
             tooltip.addPara(pre + "Increases Mesozoic Park income by %s.", opad, highlight, MESOZOIC_PARK_INCOME_BONUS_ALPHA_CORE + "%");
@@ -406,7 +422,7 @@ public class Boggled_Genelab extends BaseIndustry
         if (mode == AICoreDescriptionMode.INDUSTRY_TOOLTIP) {
             CommoditySpecAPI coreSpec = Global.getSettings().getCommoditySpec(this.aiCoreId);
             TooltipMakerAPI text = tooltip.beginImageWithText(coreSpec.getIconName(), 48.0F);
-            text.addPara(pre + "Mesozoic Park income increased by %s.", opad, highlight, MESOZOIC_PARK_INCOME_BONUS_BETA_CORE + "%");
+            text.addPara(pre + "Increases Mesozoic Park income by %s.", opad, highlight, MESOZOIC_PARK_INCOME_BONUS_BETA_CORE + "%");
             tooltip.addImageWithText(opad);
         } else {
             tooltip.addPara(pre + "Increases Mesozoic Park income by %s.", opad, highlight, MESOZOIC_PARK_INCOME_BONUS_BETA_CORE  + "%");
@@ -425,7 +441,7 @@ public class Boggled_Genelab extends BaseIndustry
         if (mode == AICoreDescriptionMode.INDUSTRY_TOOLTIP) {
             CommoditySpecAPI coreSpec = Global.getSettings().getCommoditySpec(this.aiCoreId);
             TooltipMakerAPI text = tooltip.beginImageWithText(coreSpec.getIconName(), 48.0F);
-            text.addPara(pre + "Mesozoic Park income increased by %s.", opad, highlight, MESOZOIC_PARK_INCOME_BONUS_GAMMA_CORE + "%");
+            text.addPara(pre + "Increases Mesozoic Park income by %s.", opad, highlight, MESOZOIC_PARK_INCOME_BONUS_GAMMA_CORE + "%");
             tooltip.addImageWithText(opad);
         } else {
             tooltip.addPara(pre + "Increases Mesozoic Park income by %s.", opad, highlight, MESOZOIC_PARK_INCOME_BONUS_GAMMA_CORE + "%");

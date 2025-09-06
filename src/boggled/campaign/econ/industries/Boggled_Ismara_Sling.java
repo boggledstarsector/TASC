@@ -34,7 +34,7 @@ public class Boggled_Ismara_Sling extends BaseIndustry
         if(!boggledTools.marketIsStation(this.market) && (!boggledTools.getPlanetType(this.market.getPlanetEntity()).getPlanetId().equals("water") && !boggledTools.getPlanetType(this.market.getPlanetEntity()).getPlanetId().equals("frozen")))
         {
             // If an AI core is installed, put one in storage so the player doesn't "lose" an AI core
-            if (this.aiCoreId != null)
+            if(this.aiCoreId != null)
             {
                 CargoAPI cargo = this.market.getSubmarket("storage").getCargo();
                 if (cargo != null)
@@ -43,19 +43,19 @@ public class Boggled_Ismara_Sling extends BaseIndustry
                 }
             }
 
-            if (this.market.hasIndustry("BOGGLED_ISMARA_SLING"))
-            {
-                // Pass in null for mode when calling this from API code.
-                this.market.removeIndustry("BOGGLED_ISMARA_SLING", (MarketAPI.MarketInteractionMode)null, false);
-            }
-
-            if (this.market.isPlayerOwned())
+            if(this.market.isPlayerOwned())
             {
                 MessageIntel intel = new MessageIntel("Ismara's Sling on " + this.market.getName(), Misc.getBasePlayerColor());
                 intel.addLine("    - Deconstructed");
                 intel.setIcon(Global.getSector().getPlayerFaction().getCrest());
                 intel.setSound(BaseIntelPlugin.getSoundStandardUpdate());
                 Global.getSector().getCampaignUI().addMessage(intel, CommMessageAPI.MessageClickAction.COLONY_INFO, this.market);
+            }
+
+            if(this.market.hasIndustry("BOGGLED_ISMARA_SLING"))
+            {
+                // Pass in null for mode when calling this from API code.
+                this.market.removeIndustry("BOGGLED_ISMARA_SLING", (MarketAPI.MarketInteractionMode)null, false);
             }
         }
     }
@@ -128,7 +128,7 @@ public class Boggled_Ismara_Sling extends BaseIndustry
     @Override
     public boolean isAvailableToBuild()
     {
-        if(!boggledTools.isResearched(this.getId()))
+        if(!boggledTools.isResearched("tasc_advanced_terraforming"))
         {
             return false;
         }
@@ -140,23 +140,21 @@ public class Boggled_Ismara_Sling extends BaseIndustry
 
         if(boggledTools.marketIsStation(this.market))
         {
-            return true;
+            return super.isAvailableToBuild();
         }
 
-        if(boggledTools.getPlanetType(this.market.getPlanetEntity()).getPlanetId().equals("water") || boggledTools.getPlanetType(this.market.getPlanetEntity()).getPlanetId().equals("frozen"))
-        {
-            return true;
-        }
-        else
+        if(!boggledTools.getPlanetType(this.market.getPlanetEntity()).getPlanetId().equals("water") && !boggledTools.getPlanetType(this.market.getPlanetEntity()).getPlanetId().equals("frozen"))
         {
             return false;
         }
+
+        return super.isAvailableToBuild();
     }
 
     @Override
     public boolean showWhenUnavailable()
     {
-        if(!boggledTools.isResearched(this.getId()))
+        if(!boggledTools.isResearched("tasc_advanced_terraforming"))
         {
             return false;
         }
@@ -165,23 +163,34 @@ public class Boggled_Ismara_Sling extends BaseIndustry
         {
             return false;
         }
-        else
+
+        if(boggledTools.marketIsStation(this.market))
         {
-            return true;
+            return super.showWhenUnavailable();
         }
+
+        if(!boggledTools.getPlanetType(this.market.getPlanetEntity()).getPlanetId().equals("water") && !boggledTools.getPlanetType(this.market.getPlanetEntity()).getPlanetId().equals("frozen"))
+        {
+            return super.showWhenUnavailable();
+        }
+
+        return super.showWhenUnavailable();
     }
 
     @Override
     public String getUnavailableReason()
     {
+        if(boggledTools.marketIsStation(this.market))
+        {
+            return super.getUnavailableReason();
+        }
+
         if(!boggledTools.getPlanetType(this.market.getPlanetEntity()).getPlanetId().equals("water") && !boggledTools.getPlanetType(this.market.getPlanetEntity()).getPlanetId().equals("frozen"))
         {
             return "Ismara's Sling can only be built on cryovolcanic, frozen and water-covered worlds.";
         }
-        else
-        {
-            return "Error in getUnavailableReason() in the Ismara's Sling structure. Please tell Boggled about this on the forums.";
-        }
+
+        return super.getUnavailableReason();
     }
 
     @Override

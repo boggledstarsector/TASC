@@ -83,11 +83,6 @@ public class Boggled_Harmonic_Damper extends BaseIndustry
     @Override
     public boolean isAvailableToBuild()
     {
-        if(!boggledTools.isResearched(this.getId()))
-        {
-            return false;
-        }
-
         if(!boggledTools.getBooleanSetting("boggledHarmonicDamperEnabled") || !boggledTools.getBooleanSetting("boggledTerraformingContentEnabled"))
         {
             return false;
@@ -99,34 +94,24 @@ public class Boggled_Harmonic_Damper extends BaseIndustry
             return false;
         }
 
-        return true;
+        return super.isAvailableToBuild();
     }
 
     @Override
     public boolean showWhenUnavailable()
     {
-        if(!boggledTools.isResearched(this.getId()))
-        {
-            return false;
-        }
-
         if(!boggledTools.getBooleanSetting("boggledHarmonicDamperEnabled") || !boggledTools.getBooleanSetting("boggledTerraformingContentEnabled"))
         {
             return false;
         }
 
+        //Can't build on stations
         if(boggledTools.marketIsStation(this.market))
         {
             return false;
         }
 
-        return true;
-    }
-
-    @Override
-    public String getUnavailableReason()
-    {
-        return "Error in getUnavailableReason() in Harmonic Damper. Please report this to boggled on the forums.";
+        return super.showWhenUnavailable();
     }
 
     @Override

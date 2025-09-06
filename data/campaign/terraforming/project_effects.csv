@@ -79,9 +79,6 @@ focus_market_progress_ore_planet_cracker,,FocusMarketProgressResource,"{ 'resour
 focus_market_progress_rare_ore_planet_cracker,,FocusMarketProgressResource,"{ 'resource_id' : 'rare_ore', 'step' : 1 }"
 focus_market_progress_volatiles_ouyang_optimizer,,FocusMarketAndSiphonStationProgressResource,"{ 'resource_id' : 'volatiles', 'step' : 2 }"
 ,,
-attach_project_to_atmosphere_processor,,AttachProjectToIndustry,"{ 'industry_id' : 'BOGGLED_ATMOSPHERE_PROCESSOR' }"
-attach_project_to_genelab,,AttachProjectToIndustry,"{ 'industry_id' : 'BOGGLED_GENELAB' }"
-,,
 add_corrupted_nanoforge_to_storage,,AddItemToSubmarket,"{ 'submarket_id' : 'storage', 'special_item_id' : 'corrupted_nanoforge', 'quantity' : 1 }"
 add_pristine_nanoforge_to_storage,,AddItemToSubmarket,"{ 'submarket_id' : 'storage', 'special_item_id' : 'pristine_nanoforge', 'quantity' : 1 }"
 add_synchrotron_core_to_storage,,AddItemToSubmarket,"{ 'submarket_id' : 'storage', 'special_item_id' : 'synchrotron', 'quantity' : 1 }"

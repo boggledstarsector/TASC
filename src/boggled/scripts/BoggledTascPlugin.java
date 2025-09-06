@@ -151,7 +151,7 @@ public class BoggledTascPlugin extends BaseModPlugin {
         }
     }
 
-    public void applyDomainArchaeologySettings() {
+    public void applyDomainEraArtifactSettings() {
         //Enable/disable Domain-tech content
         if(boggledTools.getBooleanSetting(boggledTools.BoggledSettings.domainTechContentEnabled) && boggledTools.getBooleanSetting(boggledTools.BoggledSettings.domainArchaeologyEnabled)) {
             if(Global.getSector().getFaction(Factions.LUDDIC_CHURCH) != null && !Global.getSector().getFaction(Factions.LUDDIC_CHURCH).isIllegal(boggledTools.BoggledCommodities.domainArtifacts)) {
@@ -163,22 +163,6 @@ public class BoggledTascPlugin extends BaseModPlugin {
             }
 
             Global.getSettings().getCommoditySpec(boggledTools.BoggledCommodities.domainArtifacts).getTags().clear();
-
-            if(boggledTools.getBooleanSetting(boggledTools.BoggledSettings.replaceAgreusTechMiningWithDomainArchaeology)) {
-                SectorEntityToken agreusPlanet = boggledTools.getPlanetTokenForQuest("Arcadia", "agreus");
-                if(agreusPlanet != null) {
-                    MarketAPI agreusMarket = agreusPlanet.getMarket();
-                    if(agreusMarket != null && agreusMarket.hasIndustry(Industries.TECHMINING) && !agreusMarket.hasIndustry(boggledTools.BoggledIndustries.domainArchaeologyIndustryId) && !agreusMarket.isPlayerOwned()) {
-                        // See boggledAgreusTechMiningEveryFrameScript for solution to Agreus Everybody loves KoC Techmining/Domain Archaeology issue
-                        if(!Global.getSettings().getModManager().isModEnabled("Everybody loves KoC")) {
-                            agreusMarket.addIndustry(boggledTools.BoggledIndustries.domainArchaeologyIndustryId);
-                            agreusMarket.removeIndustry(Industries.TECHMINING, null, false);
-                        } else {
-                            Global.getSector().addTransientScript(new boggledAgreusTechMiningEveryFrameScript());
-                        }
-                    }
-                }
-            }
         } else {
             Global.getSettings().getCommoditySpec(boggledTools.BoggledCommodities.domainArtifacts).getTags().add("nonecon");
         }
@@ -196,6 +180,21 @@ public class BoggledTascPlugin extends BaseModPlugin {
             }
 
             if(!Global.getSector().getPlayerPerson().hasTag("boggledDomainTechBuildingPlacementFinished")) {
+                // Replace Tech-Mining with Domain Archaeology on Agreus
+                SectorEntityToken agreusPlanet = boggledTools.getPlanetTokenForQuest("Arcadia", "agreus");
+                if(agreusPlanet != null) {
+                    MarketAPI agreusMarket = agreusPlanet.getMarket();
+                    if(agreusMarket != null && agreusMarket.hasIndustry(Industries.TECHMINING) && !agreusMarket.hasIndustry(boggledTools.BoggledIndustries.domainArchaeologyIndustryId) && !agreusMarket.isPlayerOwned()) {
+                        // See boggledAgreusTechMiningEveryFrameScript for solution to Agreus Everybody loves KoC Techmining/Domain Archaeology issue
+                        if(!Global.getSettings().getModManager().isModEnabled("Everybody loves KoC")) {
+                            agreusMarket.addIndustry(boggledTools.BoggledIndustries.domainArchaeologyIndustryId);
+                            agreusMarket.removeIndustry(Industries.TECHMINING, null, false);
+                        } else {
+                            Global.getSector().addTransientScript(new boggledAgreusTechMiningEveryFrameScript());
+                        }
+                    }
+                }
+
                 // Add Genelab on Volturn
                 SectorEntityToken volturnPlanet = boggledTools.getPlanetTokenForQuest("Askonia", "volturn");
                 if(volturnPlanet != null) {
@@ -356,11 +355,7 @@ public class BoggledTascPlugin extends BaseModPlugin {
     }
 
     @Override
-    public void onNewGame() {
-        loadSettingsFromJSON();
-
-        applyStationSettingsToAllStationsInSector();
-    }
+    public void onNewGame() { }
 
     @Override
     public void afterGameSave() {
@@ -372,7 +367,7 @@ public class BoggledTascPlugin extends BaseModPlugin {
 
         applyTerraformingAbilitiesPerSettingsFile();
 
-        applyDomainArchaeologySettings();
+        applyDomainEraArtifactSettings();
 
         addDomainTechBuildingsToVanillaColonies();
 
@@ -411,7 +406,7 @@ public class BoggledTascPlugin extends BaseModPlugin {
 
         applyTerraformingAbilitiesPerSettingsFile();
 
-        applyDomainArchaeologySettings();
+        applyDomainEraArtifactSettings();
 
         addDomainTechBuildingsToVanillaColonies();
 
@@ -426,6 +421,8 @@ public class BoggledTascPlugin extends BaseModPlugin {
 
     @Override
     public void onApplicationLoad()  {
+        loadSettingsFromJSON();
+
         boggledTools.initialiseDefaultStationConstructionFactories();
         boggledTools.initialiseDefaultTerraformingRequirementFactories();
         boggledTools.initialiseDefaultTerraformingDurationModifierFactories();

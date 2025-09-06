@@ -50,26 +50,54 @@ public class Boggled_Expand_Station extends BaseIndustry {
     @Override
     public boolean isAvailableToBuild()
     {
-        if(boggledTools.getBooleanSetting("boggledStationCrampedQuartersEnabled") && boggledTools.getBooleanSetting("boggledStationCrampedQuartersPlayerCanPayToIncreaseStationSize") && this.market.getPrimaryEntity().hasTag("station") && (11 > (boggledTools.getIntSetting("boggledStationCrampedQuartersSizeGrowthReductionStarts") + boggledTools.getNumberOfStationExpansions(this.market))))
-        {
-            return true;
-        }
-        else
+        if(!boggledTools.getBooleanSetting("boggledStationCrampedQuartersEnabled") || !boggledTools.getBooleanSetting("boggledStationCrampedQuartersPlayerCanPayToIncreaseStationSize"))
         {
             return false;
         }
+
+        if(!boggledTools.marketIsStation(this.market))
+        {
+            return false;
+        }
+
+        if(11 <= (boggledTools.getIntSetting("boggledStationCrampedQuartersSizeGrowthReductionStarts") + boggledTools.getNumberOfStationExpansions(this.market)))
+        {
+            return false;
+        }
+
+        return super.isAvailableToBuild();
     }
 
     @Override
     public boolean showWhenUnavailable()
     {
-        return false;
+        if(!boggledTools.getBooleanSetting("boggledStationCrampedQuartersEnabled") || !boggledTools.getBooleanSetting("boggledStationCrampedQuartersPlayerCanPayToIncreaseStationSize"))
+        {
+            return false;
+        }
+
+        if(!boggledTools.marketIsStation(this.market))
+        {
+            return false;
+        }
+
+        if(11 <= (boggledTools.getIntSetting("boggledStationCrampedQuartersSizeGrowthReductionStarts") + boggledTools.getNumberOfStationExpansions(this.market)))
+        {
+            return super.showWhenUnavailable();
+        }
+
+        return super.showWhenUnavailable();
     }
 
     @Override
     public String getUnavailableReason()
     {
-        return "This text should never be seen. Tell Boggled about this on the forums and mention 'getUnavailableReason() in Expand_station'";
+        if(11 <= (boggledTools.getIntSetting("boggledStationCrampedQuartersSizeGrowthReductionStarts") + boggledTools.getNumberOfStationExpansions(this.market)))
+        {
+            return this.market.getName() + " has already been expanded to the maximum size.";
+        }
+
+        return super.getUnavailableReason();
     }
 
     public boolean canInstallAICores() {

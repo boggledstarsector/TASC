@@ -113,31 +113,33 @@ public class Boggled_AI_Mining_Drones extends BaseIndustry
     @Override
     public boolean isAvailableToBuild()
     {
-        if(!boggledTools.isResearched(this.getId()))
+        if(!boggledTools.marketIsStation(this.market))
         {
             return false;
         }
 
-        if(boggledTools.getBooleanSetting("boggledStationConstructionContentEnabled") && boggledTools.getBooleanSetting("boggledEnableAIMiningDronesStructure") && boggledTools.marketIsStation(this.market))
-        {
-            return true;
-        }
-        else
+        if(!boggledTools.getBooleanSetting("boggledStationConstructionContentEnabled") || !boggledTools.getBooleanSetting("boggledEnableAIMiningDronesStructure"))
         {
             return false;
         }
+
+        return super.isAvailableToBuild();
     }
 
     @Override
     public boolean showWhenUnavailable()
     {
-        return false;
-    }
+        if(!boggledTools.marketIsStation(this.market))
+        {
+            return false;
+        }
 
-    @Override
-    public String getUnavailableReason()
-    {
-        return "Error in getUnavailableReason() in the AI Mining Drones structure. Please tell Boggled about this on the forums.";
+        if(!boggledTools.getBooleanSetting("boggledStationConstructionContentEnabled") || !boggledTools.getBooleanSetting("boggledEnableAIMiningDronesStructure"))
+        {
+            return false;
+        }
+
+        return super.showWhenUnavailable();
     }
 
     @Override

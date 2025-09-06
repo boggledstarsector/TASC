@@ -71,25 +71,23 @@ public class Boggled_Cloning extends BaseIndustry implements MarketImmigrationMo
     @Override
     public boolean isAvailableToBuild()
     {
-        if(!boggledTools.isResearched(this.getId()))
+        if(!boggledTools.getBooleanSetting("boggledCloningEnabled"))
         {
             return false;
         }
 
-        if(boggledTools.getBooleanSetting("boggledCloningEnabled"))
-        {
-            return true;
-        }
-        else
-        {
-            return false;
-        }
+        return super.isAvailableToBuild();
     }
 
     @Override
     public boolean showWhenUnavailable()
     {
-        return false;
+        if(!boggledTools.getBooleanSetting("boggledCloningEnabled"))
+        {
+            return false;
+        }
+
+        return super.showWhenUnavailable();
     }
 
     @Override

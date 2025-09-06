@@ -123,7 +123,7 @@ public class Boggled_CHAMELEON extends BaseIndustry implements ShowBoggledTerraf
     @Override
     public boolean isAvailableToBuild()
     {
-        if(!boggledTools.isResearched(this.getId()))
+        if(!boggledTools.isResearched("tasc_chameleon"))
         {
             return false;
         }
@@ -133,19 +133,23 @@ public class Boggled_CHAMELEON extends BaseIndustry implements ShowBoggledTerraf
             return false;
         }
 
-        return true;
+        return super.isAvailableToBuild();
     }
 
     @Override
     public boolean showWhenUnavailable()
     {
-        return false;
-    }
+        if(!boggledTools.isResearched("tasc_chameleon"))
+        {
+            return false;
+        }
 
-    @Override
-    public String getUnavailableReason()
-    {
-        return "Error in getUnavailableReason() in the CHAMELEON structure. Please tell Boggled about this on the forums.";
+        if(!boggledTools.getBooleanSetting("boggledDomainTechContentEnabled") || !boggledTools.getBooleanSetting("boggledCHAMELEONEnabled"))
+        {
+            return false;
+        }
+
+        return super.showWhenUnavailable();
     }
 
     @Override

@@ -14,10 +14,10 @@ import java.util.ArrayList;
 
 public class Boggled_Limelight_Network extends BaseIndustry
 {
-    private final float IMPROVE_BONUS = 1.20f;
+    private final float IMPROVE_BONUS = 1.30f;
 
-    private final float ALPHA_BONUS = 1.40f;
-    private final int PRODUCTION_MALUS = 1;
+    private final float ALPHA_BONUS = 1.30f;
+    private final int PRODUCTION_MALUS = -1;
 
     @Override
     public boolean canBeDisrupted() {
@@ -45,27 +45,27 @@ public class Boggled_Limelight_Network extends BaseIndustry
                 }
             }
 
-            // Reduce income by the percentage of the demand shortage
-            // e.g. Total demand of 4, shortage of 2, 4 / 2 = 50%, 50% income reduction
-            Pair<String, Integer> deficit = getLimelightNetworkDeficit();
-            float deficitIncomeModifier = deficit.two * (1.0f / (size - 2));
-            if(deficitIncomeModifier > 0.0f)
+            if(boggledTools.domainEraArtifactDemandEnabled())
             {
-                getUpkeep().modifyMult("deficit_income_malus", deficitIncomeModifier, boggledTools.getCommidityNameFromId(deficit.one));
-            }
-            else
-            {
-                getUpkeep().unmodifyMult("deficit_income_malus");
-            }
+                Pair<String, Integer> deficit = getLimelightNetworkDeficit();
+                if(deficit.two > 0)
+                {
+                    getIncome().modifyMult("deficit_income_malus", 0.0F, "Domain-era artifacts shortage");
+                }
+                else
+                {
+                    getIncome().unmodifyMult("deficit_income_malus");
+                }
 
-            // Reduce stability by amount of the shortage.
-            if(deficit.two <= 0)
-            {
-                market.getStability().modifyFlat("deficit_stability_malus", -deficit.two, getImprovementsDescForModifiers() + " (Limelight Network)");
-            }
-            else
-            {
-                market.getStability().unmodifyFlat("deficit_stability_malus");
+                // Reduce stability by amount of the shortage.
+                if(deficit.two > 0)
+                {
+                    market.getStability().modifyFlat("deficit_stability_malus", -deficit.two, "Domain-era artifacts shortage");
+                }
+                else
+                {
+                    market.getStability().unmodifyFlat("deficit_stability_malus");
+                }
             }
         }
     }
@@ -78,18 +78,14 @@ public class Boggled_Limelight_Network extends BaseIndustry
         {
             float opad = 10.0F;
             Color bad = Misc.getNegativeHighlightColor();
-            int size = this.market.getSize();
 
-            // Reduce income by the percentage of the demand shortage
-            // e.g. Total demand of 4, shortage of 2, 4 / 2 = 50%, 50% income reduction
             Pair<String, Integer> deficit = getLimelightNetworkDeficit();
-            float deficitIncomeModifier = deficit.two * (1.0f / (size - 2));
             if(deficit.two > 0 && mode != IndustryTooltipMode.ADD_INDUSTRY && mode != IndustryTooltipMode.QUEUED && !isBuilding()) {
-                tooltip.addPara("Income reduced by %s due to a shortage of %s.", opad, bad, deficitIncomeModifier + "%", boggledTools.getCommidityNameFromId(deficit.one));
+                tooltip.addPara("Generating no income due to a shortage of %s.", opad, bad, boggledTools.getCommidityNameFromId(deficit.one));
             }
 
             // Reduce stability by amount of the shortage.
-            if(deficit.two <= 0 && mode != IndustryTooltipMode.ADD_INDUSTRY && mode != IndustryTooltipMode.QUEUED && !isBuilding()) {
+            if(deficit.two > 0 && mode != IndustryTooltipMode.ADD_INDUSTRY && mode != IndustryTooltipMode.QUEUED && !isBuilding()) {
                 tooltip.addPara("Colony stability reduced by %s due to a shortage of %s.", opad, bad, deficit.two + "", boggledTools.getCommidityNameFromId(deficit.one));
             }
         }
@@ -98,43 +94,40 @@ public class Boggled_Limelight_Network extends BaseIndustry
     @Override
     public boolean isAvailableToBuild()
     {
-        if(!boggledTools.isResearched(this.getId()))
+        if(!boggledTools.isResearched("tasc_limelight_network"))
         {
             return false;
         }
 
-        if(boggledTools.getBooleanSetting("boggledDomainTechContentEnabled") && boggledTools.getBooleanSetting("boggledLimelightNetworkPlayerBuildEnabled"))
-        {
-            return true;
-        }
-        else
+        if(!boggledTools.getBooleanSetting("boggledDomainTechContentEnabled") || !boggledTools.getBooleanSetting("boggledLimelightNetworkPlayerBuildEnabled"))
         {
             return false;
         }
+
+        return super.isAvailableToBuild();
     }
 
     @Override
     public boolean showWhenUnavailable()
     {
-        if(!boggledTools.isResearched(this.getId()))
+        if(!boggledTools.isResearched("tasc_limelight_network"))
         {
             return false;
         }
 
-        if(boggledTools.getBooleanSetting("boggledDomainTechContentEnabled") && boggledTools.getBooleanSetting("boggledLimelightNetworkPlayerBuildEnabled"))
-        {
-            return true;
-        }
-        else
+        if(!boggledTools.getBooleanSetting("boggledDomainTechContentEnabled") || !boggledTools.getBooleanSetting("boggledLimelightNetworkPlayerBuildEnabled"))
         {
             return false;
         }
+
+        return super.showWhenUnavailable();
     }
 
     @Override
     public void addAlphaCoreDescription(TooltipMakerAPI tooltip, AICoreDescriptionMode mode) {
         float opad = 10.0F;
         Color highlight = Misc.getHighlightColor();
+        String bonus = (int) Math.round((ALPHA_BONUS - 1.0f) * 100) + "%";
         String pre = "Alpha-level AI core currently assigned. ";
         if (mode == AICoreDescriptionMode.MANAGE_CORE_DIALOG_LIST || mode == AICoreDescriptionMode.INDUSTRY_TOOLTIP) {
             pre = "Alpha-level AI core. ";
@@ -143,10 +136,10 @@ public class Boggled_Limelight_Network extends BaseIndustry
         if (mode == AICoreDescriptionMode.INDUSTRY_TOOLTIP) {
             CommoditySpecAPI coreSpec = Global.getSettings().getCommoditySpec(this.aiCoreId);
             TooltipMakerAPI text = tooltip.beginImageWithText(coreSpec.getIconName(), 48.0F);
-            text.addPara(pre + "Reduces upkeep cost by %s. Reduces demand by %s unit. " + "Increases income by %s.", 0.0F, highlight, new String[]{(int)((1.0F - UPKEEP_MULT) * 100.0F) + "%", "" + DEMAND_REDUCTION, ALPHA_BONUS + "%"});
+            text.addPara(pre + "Reduces upkeep cost by %s. Reduces demand by %s unit. " + "Increases income by %s.", 0.0F, highlight, new String[]{(int)((1.0F - UPKEEP_MULT) * 100.0F) + "%", "" + DEMAND_REDUCTION, bonus});
             tooltip.addImageWithText(opad);
         } else {
-            tooltip.addPara(pre + "Reduces upkeep cost by %s. Reduces demand by %s unit. " + "Increases income by %s.", opad, highlight, new String[]{(int)((1.0F - UPKEEP_MULT) * 100.0F) + "%", "" + DEMAND_REDUCTION, ALPHA_BONUS + "%"});
+            tooltip.addPara(pre + "Reduces upkeep cost by %s. Reduces demand by %s unit. " + "Increases income by %s.", opad, highlight, new String[]{(int)((1.0F - UPKEEP_MULT) * 100.0F) + "%", "" + DEMAND_REDUCTION, bonus});
         }
     }
 
@@ -189,7 +182,7 @@ public class Boggled_Limelight_Network extends BaseIndustry
     {
         float opad = 10.0F;
         Color highlight = Misc.getHighlightColor();
-        String bonus = (int) ((IMPROVE_BONUS - 1.0f) * 100) + "%";
+        String bonus = (int) Math.round((IMPROVE_BONUS - 1.0f) * 100) + "%";
         if (mode == ImprovementDescriptionMode.INDUSTRY_TOOLTIP)
         {
             info.addPara("Income increased by %s.", 0.0F, highlight, new String[]{bonus});

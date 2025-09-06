@@ -1,7 +1,5 @@
 package boggled.campaign.econ.industries;
 
-import java.lang.String;
-
 import boggled.campaign.econ.boggledTools;
 import com.fs.starfarer.api.impl.campaign.econ.impl.BaseIndustry;
 
@@ -34,12 +32,6 @@ public class Boggled_GPA extends BaseIndustry
     public boolean showWhenUnavailable()
     {
         return false;
-    }
-
-    @Override
-    public String getUnavailableReason()
-    {
-        return "Error in getUnavailableReason() in Boggled GPA. Please tell Boggled about this on the forums.";
     }
 
     @Override
