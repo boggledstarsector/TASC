@@ -124,7 +124,40 @@ public class Boggled_Planet_Cracker extends BaseIndustry
             return false;
         }
 
-        if(!this.marketSuitableForCracker())
+        // Only buildable on stations
+        if(!boggledTools.marketIsStation(this.market))
+        {
+            return false;
+        }
+
+        // Station needs to obit a non-gas giant planet
+        SectorEntityToken orbitFocus = getOrbitFocus();
+        if(orbitFocus == null)
+        {
+            return false;
+        }
+
+        if(orbitFocus.getMarket() == null || orbitFocus.getMarket().getPlanetEntity() == null)
+        {
+            return false;
+        }
+
+        PlanetAPI planet = this.market.getPlanetEntity();
+        String planetType = boggledTools.getPlanetType(planet).getPlanetId();
+        if(planetType.equals("gas_giant") || planetType.contains("star"))
+        {
+            return false;
+        }
+
+        // Can't already have tectonic activity
+        MarketAPI focusMarket = getFocusMarket();
+        if(focusMarket.hasCondition("tectonic_activity") || focusMarket.hasCondition("extreme_tectonic_activity"))
+        {
+            return false;
+        }
+
+        // Can't already have maxed out resources
+        if(focusMarket.hasCondition("ore_ultrarich") && focusMarket.hasCondition("rare_ore_ultrarich"))
         {
             return false;
         }
@@ -140,7 +173,40 @@ public class Boggled_Planet_Cracker extends BaseIndustry
             return false;
         }
 
-        if(!this.marketSuitableForCracker())
+        // Only buildable on stations
+        if(!boggledTools.marketIsStation(this.market))
+        {
+            return false;
+        }
+
+        // Station needs to obit a non-gas giant planet
+        SectorEntityToken orbitFocus = getOrbitFocus();
+        if(orbitFocus == null)
+        {
+            return super.showWhenUnavailable();
+        }
+
+        if(orbitFocus.getMarket() == null || orbitFocus.getMarket().getPlanetEntity() == null)
+        {
+            return super.showWhenUnavailable();
+        }
+
+        PlanetAPI planet = this.market.getPlanetEntity();
+        String planetType = boggledTools.getPlanetType(planet).getPlanetId();
+        if(planetType.equals("gas_giant") || planetType.contains("star"))
+        {
+            return super.showWhenUnavailable();
+        }
+
+        // Can't already have tectonic activity
+        MarketAPI focusMarket = getFocusMarket();
+        if(focusMarket.hasCondition("tectonic_activity") || focusMarket.hasCondition("extreme_tectonic_activity"))
+        {
+            return super.showWhenUnavailable();
+        }
+
+        // Can't already have maxed out resources
+        if(focusMarket.hasCondition("ore_ultrarich") && focusMarket.hasCondition("rare_ore_ultrarich"))
         {
             return super.showWhenUnavailable();
         }
@@ -153,25 +219,32 @@ public class Boggled_Planet_Cracker extends BaseIndustry
     {
         // Station needs to obit a non-gas giant planet
         SectorEntityToken orbitFocus = getOrbitFocus();
-        if (orbitFocus == null)
+        if(orbitFocus == null)
         {
             return this.market.getName() + " is not in orbit around a planet.";
         }
 
-        if (orbitFocus.getMarket() == null || orbitFocus.getMarket().getPlanetEntity() == null || boggledTools.getPlanetType(orbitFocus.getMarket().getPlanetEntity()).equals("gas_giant"))
+        if(orbitFocus.getMarket() == null || orbitFocus.getMarket().getPlanetEntity() == null)
         {
-            return "Gas giants cannot be cracked.";
+            return this.market.getName() + " is not in orbit around a planet.";
+        }
+
+        PlanetAPI planet = this.market.getPlanetEntity();
+        String planetType = boggledTools.getPlanetType(planet).getPlanetId();
+        if(planetType.equals("gas_giant") || planetType.contains("star"))
+        {
+            return "Gas giants and stars cannot be cracked.";
         }
 
         // Can't already have tectonic activity
         MarketAPI focusMarket = getFocusMarket();
-        if (focusMarket.hasCondition("tectonic_activity") || focusMarket.hasCondition("extreme_tectonic_activity"))
+        if(focusMarket.hasCondition("tectonic_activity") || focusMarket.hasCondition("extreme_tectonic_activity"))
         {
             return getFocusMarket().getName() + " already has tectonic activity - making it worse won't increase ore availability.";
         }
 
         // Can't already have maxed out resources
-        if (focusMarket.hasCondition("ore_ultrarich") && focusMarket.hasCondition("rare_ore_ultrarich"))
+        if(focusMarket.hasCondition("ore_ultrarich") && focusMarket.hasCondition("rare_ore_ultrarich"))
         {
             return getFocusMarket().getName() + " already has easily accessible ore deposits. Cracking the planet would serve no purpose.";
         }
