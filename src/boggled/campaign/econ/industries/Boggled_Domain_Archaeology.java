@@ -3,7 +3,7 @@ package boggled.campaign.econ.industries;
 import java.lang.String;
 
 import boggled.campaign.econ.industries.interfaces.ShowBoggledTerraformingMenuOption;
-import com.fs.starfarer.api.campaign.econ.*;
+import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.impl.campaign.econ.impl.BaseIndustry;
 import com.fs.starfarer.api.impl.campaign.ids.Conditions;
 import boggled.campaign.econ.boggledTools;
@@ -32,6 +32,11 @@ public class Boggled_Domain_Archaeology extends BaseIndustry implements ShowBogg
         super.unapply();
     }
 
+    public boolean marketHasRuins(MarketAPI market)
+    {
+        return market.hasCondition(Conditions.RUINS_SCATTERED) || market.hasCondition(Conditions.RUINS_WIDESPREAD) || market.hasCondition(Conditions.RUINS_EXTENSIVE) || market.hasCondition(Conditions.RUINS_VAST);
+    }
+
     @Override
     public boolean isAvailableToBuild()
     {
@@ -40,15 +45,17 @@ public class Boggled_Domain_Archaeology extends BaseIndustry implements ShowBogg
             return false;
         }
 
-        MarketAPI market = this.market;
-        if(boggledTools.getBooleanSetting("boggledDomainTechContentEnabled") && boggledTools.getBooleanSetting("boggledDomainArchaeologyEnabled") && (market.hasCondition(Conditions.RUINS_SCATTERED) || market.hasCondition(Conditions.RUINS_WIDESPREAD) || market.hasCondition(Conditions.RUINS_EXTENSIVE) || market.hasCondition(Conditions.RUINS_VAST)))
-        {
-            return true;
-        }
-        else
+        if(!boggledTools.getBooleanSetting("boggledDomainTechContentEnabled") || !boggledTools.getBooleanSetting("boggledDomainArchaeologyEnabled"))
         {
             return false;
         }
+
+        if(!marketHasRuins(this.market))
+        {
+            return false;
+        }
+
+        return super.isAvailableToBuild();
     }
 
     @Override
@@ -63,47 +70,44 @@ public class Boggled_Domain_Archaeology extends BaseIndustry implements ShowBogg
         {
             return false;
         }
-        else
+
+        if(!marketHasRuins(this.market))
         {
-            return true;
+            return super.showWhenUnavailable();
         }
+
+        return super.showWhenUnavailable();
     }
 
     @Override
     public String getUnavailableReason()
     {
-        if(!(market.hasCondition(Conditions.RUINS_SCATTERED) || market.hasCondition(Conditions.RUINS_WIDESPREAD) || market.hasCondition(Conditions.RUINS_EXTENSIVE) || market.hasCondition(Conditions.RUINS_VAST)))
+        if(!marketHasRuins(this.market))
         {
-            return ("Requires ruins");
+            return "Requires ruins";
         }
-        else
-        {
-            return "Error in getUnavailableReason() in the domain archaeology structure. Please tell Boggled about this on the forums.";
-        }
+
+        return super.getUnavailableReason();
     }
 
     @Override
     public float getPatherInterest()
     {
-        float base = 1f;
-        if (market.hasCondition(Conditions.RUINS_VAST))
-        {
-            base = 4;
-        }
-        else if (market.hasCondition(Conditions.RUINS_EXTENSIVE))
-        {
-            base = 3;
-        }
-        else if (market.hasCondition(Conditions.RUINS_WIDESPREAD))
-        {
-            base = 2;
-        }
-        else if (market.hasCondition(Conditions.RUINS_SCATTERED))
-        {
-            base = 1;
+        // Only increase pather interest on player-owned planets (i.e. not Agreus)
+        float pather_interest_modifer = 0.0F;
+        if(this.market.isPlayerOwned()) {
+            if (market.hasCondition(Conditions.RUINS_VAST)) {
+                pather_interest_modifer = 4.0F;
+            } else if (market.hasCondition(Conditions.RUINS_EXTENSIVE)) {
+                pather_interest_modifer = 3.0F;
+            } else if (market.hasCondition(Conditions.RUINS_WIDESPREAD)) {
+                pather_interest_modifer = 2.0F;
+            } else if (market.hasCondition(Conditions.RUINS_SCATTERED)) {
+                pather_interest_modifer = 1.0F;
+            }
         }
 
-        return base + super.getPatherInterest();
+        return super.getPatherInterest() + pather_interest_modifer;
     }
 
     @Override

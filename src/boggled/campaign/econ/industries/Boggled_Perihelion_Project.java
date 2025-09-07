@@ -146,11 +146,6 @@ public class Boggled_Perihelion_Project extends BaseIndustry {
     @Override
     public boolean isAvailableToBuild()
     {
-        if(!boggledTools.isResearched(this.getId()))
-        {
-            return false;
-        }
-
         if(!boggledTools.getBooleanSetting("boggledDomainTechContentEnabled") || !boggledTools.getBooleanSetting("boggledPerihelionProjectEnabled"))
         {
             return false;
@@ -177,17 +172,12 @@ public class Boggled_Perihelion_Project extends BaseIndustry {
             return false;
         }
 
-        return true;
+        return super.isAvailableToBuild();
     }
 
     @Override
     public boolean showWhenUnavailable()
     {
-        if(!boggledTools.isResearched(this.getId()))
-        {
-            return false;
-        }
-
         if(!boggledTools.getBooleanSetting("boggledDomainTechContentEnabled") || !boggledTools.getBooleanSetting("boggledPerihelionProjectEnabled"))
         {
             return false;
@@ -201,31 +191,26 @@ public class Boggled_Perihelion_Project extends BaseIndustry {
 
         if(system.hasTag(Tags.HAS_CORONAL_TAP))
         {
-            return true;
+            return super.showWhenUnavailable();
         }
 
         if(systemHasMarketWithPerihelionProject(system, this.market))
         {
-            return true;
+            return super.showWhenUnavailable();
         }
 
         if(!systemValidForCoronalHypershuntPlacement(system))
         {
-            return true;
+            return super.showWhenUnavailable();
         }
 
-        return true;
+        return super.showWhenUnavailable();
     }
 
     @Override
     public String getUnavailableReason()
     {
         StarSystemAPI system = this.market.getStarSystem();
-        if(system == null)
-        {
-            return "Error in getUnavailableReason() in Boggled_Perihelion_Project. Please report this to boggled on the forums.";
-        }
-
         if(system.hasTag(Tags.HAS_CORONAL_TAP))
         {
             return "The " + this.market.getStarSystem().getName() + " already has a coronal tap.";
@@ -241,7 +226,7 @@ public class Boggled_Perihelion_Project extends BaseIndustry {
             return "Coronal taps can only be constructed in systems with at least one blue star and/or trinary systems where all three stars are not the same color.";
         }
 
-        return "Error in getUnavailableReason() in Boggled_Perihelion_Project. Please report this to boggled on the forums.";
+        return super.getUnavailableReason();
     }
 
     @Override

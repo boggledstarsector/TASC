@@ -1,40 +1,25 @@
 id,name,tier,timeToResearch,reqToResearchFirst,itemReqToResearch,iconId,rewards,columnNumber,rowNumber,isResearchedFromStart,otherReq,tags,modId
 ,,,,,,,,,,,,,
 ,,,,,,,,,,,,,
-tasc_domain_excavation,Domain Artifact Excavation,3,25,aotd_tech_streamlined_production,research_databank:1,none,BOGGLED_DOMAIN_ARCHAEOLOGY:industry,0,4,false,,,Terraforming & Station Construction
+tasc_domain_excavation,Domain Artifact Excavation,3,25,aotd_tech_streamlined_production,research_databank:1,none,BOGGLED_DOMAIN_ARCHAEOLOGY:industry,0,3,false,,,Terraforming & Station Construction
 ,,,,,,,,,,,,,
-tasc_terraforming_templates,Terraforming Templates,3,30,tasc_domain_excavation,research_databank:12,none,Allows changing type of planets:modifier,1,3,false,,,Terraforming & Station Construction
-tasc_ai_algorithms,AI Basic Algorithms,3,25,tasc_domain_excavation,"research_databank:2,gamma_core:3",none,BOGGLED_AI_MINING_DRONES:industry,1,4,false,,,Terraforming & Station Construction
-tasc_station_restoration,Station Restoration Equipment,3,10,tasc_domain_excavation,"research_databank:1,heavy_machinery:1000",none,Allows restoring destroyed stations and colonizing them:modifier,1,6,false,,,Terraforming & Station Construction
-tasc_atmosphere_manipulation,Atmosphere Manipulation,3,30,tasc_terraforming_templates,research_databank:3,none,BOGGLED_ATMOSPHERE_PROCESSOR:industry,2,2,false,,,Terraforming & Station Construction
-tasc_genetic_manipulation,Genetics,3,45,tasc_domain_excavation,research_databank:4,none,"BOGGLED_GENELAB:industry
-BOGGLED_MESOZOIC_PARK:industry",2,1,false,,,Terraforming & Station Construction
-,,,,,,,,,,,,,
-,,,,,,,,,,,,,
-,,,,,,,,,,,,,
-tasc_advanced_terraforming,Advanced Terraforming Templates,3,70,tasc_terraforming_templates,research_databank:17,none,"Allows increasing amount of resources on planets:modifier
+tasc_light_manipulation,Stellar Light Manipulation,3,40,tasc_domain_excavation,research_databank:3,none,BOGGLED_STELLAR_REFLECTOR_ARRAY:industry,1,0,false,,,Terraforming & Station Construction
+tasc_atmosphere_manipulation,Atmosphere Manipulation,3,60,tasc_light_manipulation,research_databank:5,none,BOGGLED_ATMOSPHERE_PROCESSOR:industry,2,0,false,,,Terraforming & Station Construction
+tasc_advanced_terraforming,Resource Manipulation,3,90,tasc_atmosphere_manipulation,research_databank:7,none,"Allows increasing amount of resources on planets. Add the terraforming ability to your ability bar to start terraforming projects.:modifier
 BOGGLED_DOMED_CITIES:industry
-BOGGLED_ISMARA_SLING:industry",3,3,false,,,Terraforming & Station Construction
-tasc_remnant_algorithms,Artificial Simulation,3,45,tasc_ai_algorithms,"research_databank:6,alpha_core:1,beta_core:2,gamma_core:5",none,BOGGLED_KLETKA_SIMULATOR:industry,3,4,false,,,Terraforming & Station Construction
-tasc_astropolis_construction,Orbital Colonies,3,25,tasc_station_restoration,research_databank:3,none,Allow building Astropolis type stations:modifier,3,6,false,,,Terraforming & Station Construction
-tasc_chameleon,Advanced Cryptography,3,30,tasc_remnant_algorithms,"research_databank:5,cryoarithmetic_engine:1",none,BOGGLED_CHAMELEON:industry,4,5,false,,,Terraforming & Station Construction
-tasc_magnetoshield,Artificial Magnetic Shielding ,3,40,tasc_advanced_terraforming,research_databank:3,none,BOGGLED_MAGNETOSHIELD:industry,4,2,false,,,Terraforming & Station Construction
-tasc_cloning_technology,Cloning,3,45,tasc_genetic_manipulation,research_databank:5,none,BOGGLED_CLONING:industry,3,1,false,,,Terraforming & Station Construction
-tasc_limelight_network,Limelight Network,3,25,tasc_remnant_algorithms,"research_databank:7,gamma_core:5",none,BOGGLED_LIMELIGHT_NETWORK:industry,4,4,false,,,Terraforming & Station Construction
-tasc_tectonic_manipulation,Tectonic Plates Manipulation,3,20,tasc_advanced_terraforming,research_databank:3,none,BOGGLED_HARMONIC_DAMPER:industry,4,1,false,,,Terraforming & Station Construction
-tasc_gravity_manipulation,Gravitation Manipulation,3,65,tasc_advanced_terraforming,research_databank:5,none,BOGGLED_PLANETARY_AGRAV_FIELD:industry,4,0,false,,,Terraforming & Station Construction
+BOGGLED_ISMARA_SLING:industry",3,0,false,,,Terraforming & Station Construction
+tasc_terraforming_templates,Planetary Manipulation,3,120,tasc_advanced_terraforming,research_databank:10,none,Allows changing type of planets:modifier,4,0,false,,,Terraforming & Station Construction
 ,,,,,,,,,,,,,
+tasc_genetic_manipulation,Genetics,3,40,tasc_domain_excavation,research_databank:3,none,"BOGGLED_GENELAB:industry
+BOGGLED_MESOZOIC_PARK:industry",1,6,false,,,Terraforming & Station Construction
 ,,,,,,,,,,,,,
+tasc_limelight_network,Virtual Reality,3,40,tasc_domain_excavation,"research_databank:3,gamma_core:3",none,BOGGLED_LIMELIGHT_NETWORK:industry,1,4,false,,,Terraforming & Station Construction
+tasc_chameleon,Advanced Cryptography,3,60,tasc_limelight_network,"research_databank:5,beta_core:2,gamma_core:4",none,BOGGLED_CHAMELEON:industry,2,4,false,,,Terraforming & Station Construction
+tasc_remnant_algorithms,Artificial Simulation,3,90,tasc_chameleon,"research_databank:7,alpha_core:1,beta_core:2,gamma_core:5",none,BOGGLED_KLETKA_SIMULATOR:industry,3,4,false,,,Terraforming & Station Construction
 ,,,,,,,,,,,,,
+tasc_station_restoration,Station Restoration Equipment,3,40,tasc_domain_excavation,"research_databank:3,heavy_machinery:1000",none,Allows restoring destroyed stations and colonizing them. You can add this ability to your ability bar once this technology is researched.:modifier,1,2,false,,,Terraforming & Station Construction
+tasc_astropolis_construction,Orbital Colonies,3,60,tasc_station_restoration,research_databank:5,none,Allow building Astropolis type stations. You can add this ability to your ability bar once this technology is researched.:modifier,2,2,false,,,Terraforming & Station Construction
+tasc_industrial_stations,Orbital Industrial Complex,3,90,tasc_astropolis_construction,research_databank:7,none,Allow building Mining and Siphon type stations. You can add this ability to your ability bar once this technology is researched.:modifier,3,2,false,,,Terraforming & Station Construction
 ,,,,,,,,,,,,,
-,,,,,,,,,,,,,
-tasc_light_manipulation,Stellar Light Manipulation,3,80,tasc_advanced_terraforming,research_databank:8,none,BOGGLED_STELLAR_REFLECTOR_ARRAY:industry,5,3,false,,,Terraforming & Station Construction
-tasc_industrial_stations,Orbital Industrial Complex,3,60,tasc_station_restoration,research_databank:5,none,Allow building Mining and Siphon type stations:modifier,3,7,false,,,Terraforming & Station Construction
-tasc_remnant_station,AI Nexus Re-Engineering,3,70,"tasc_industrial_stations,tasc_astropolis_construction,tasc_chameleon",research_databank:9,none,BOGGLED_AI_STATION:industry,5,6,false,,,Terraforming & Station Construction
-tasc_planet_cracking,Planet Cracking ,3,70,tasc_industrial_stations,research_databank:6,none,BOGGLED_PLANET_CRACKER:industry,4,7,false,,,Terraforming & Station Construction
-tasc_ouyang_optimizer,Gas Giant Weather Manipulation,3,80,tasc_industrial_stations,research_databank:8,none,BOGGLED_OUYANG_OPTIMIZER:industry,4,8,false,,,Terraforming & Station Construction
-,,,,,,,,,,,,,
-BOGGLED_PERIHELION_PROJECT,Perihelion Project,4,120,"tasc_remnant_station,tasc_light_manipulation","research_databank:7,coronal_portal:1",none,BOGGLED_PERIHELION_PROJECT:industry,0,5,false,$aotd_experimetnal_tier:Requires obtaining Hyperdimensional Processor and installing it in Research Facility,,Terraforming & Station Construction
-,,,,,,,,,,,,,
-,,,,,,,,,,,,,
+tasc_remnant_station,AI Nexus Re-Engineering,3,120,"tasc_remnant_algorithms,tasc_industrial_stations","research_databank:10,alpha_core:2,beta_core:5,gamma_core:10",none,BOGGLED_AI_STATION:industry,4,3,false,,,Terraforming & Station Construction
 ,,,,,,,,,,,,,

@@ -179,7 +179,6 @@ public class Boggled_Domed_Cities extends BaseIndustry implements MarketImmigrat
     public boolean isAvailableToBuild()
     {
         MarketAPI market = this.market;
-
         if(!boggledTools.getBooleanSetting("boggledDomedCitiesEnabled") || !boggledTools.getBooleanSetting("boggledTerraformingContentEnabled"))
         {
             return false;
@@ -209,14 +208,13 @@ public class Boggled_Domed_Cities extends BaseIndustry implements MarketImmigrat
             return false;
         }
 
-        return true;
+        return super.isAvailableToBuild();
     }
 
     @Override
     public boolean showWhenUnavailable()
     {
         MarketAPI market = this.market;
-
         if(!boggledTools.getBooleanSetting("boggledDomedCitiesEnabled") || !boggledTools.getBooleanSetting("boggledTerraformingContentEnabled"))
         {
             return false;
@@ -227,35 +225,32 @@ public class Boggled_Domed_Cities extends BaseIndustry implements MarketImmigrat
             return false;
         }
 
+        //Can't build on stations
         if(boggledTools.marketIsStation(market))
         {
             return false;
         }
 
-        return true;
+        // Meteor impacts preclude building except for Seafloor Cities
+        if(!this.getCurrentName().equals("Seafloor Cities") && market.hasCondition("meteor_impacts"))
+        {
+            return super.showWhenUnavailable();
+        }
+
+        // Tectonic activity precludes building unless Harmonic Damper is built and functional or it's Sky Cities mode
+        // There's no check to automatically remove Domed Cities if Harmonic Damper is deconstructed or disrupted.
+        if(!this.getCurrentName().equals("Sky Cities") && market.hasCondition("extreme_tectonic_activity") && (market.getIndustry("BOGGLED_HARMONIC_DAMPER") == null || !market.getIndustry("BOGGLED_HARMONIC_DAMPER").isFunctional()))
+        {
+            return super.showWhenUnavailable();
+        }
+
+        return super.showWhenUnavailable();
     }
 
     @Override
     public String getUnavailableReason()
     {
         MarketAPI market = this.market;
-
-        // Should never be seen because showWhenAvailable() will be false if either condition is true.
-        if(!boggledTools.getBooleanSetting("boggledDomedCitiesEnabled") || !boggledTools.getBooleanSetting("boggledTerraformingContentEnabled"))
-        {
-            return "Error in getUnavailableReason() in Domed Cities. Please report this to boggled on the forums.";
-        }
-
-        if(!boggledTools.isResearched("tasc_advanced_terraforming"))
-        {
-            return "Error in getUnavailableReason() in Domed Cities. Please report this to boggled on the forums.";
-        }
-
-        // Should never be seen because showWhenAvailable() will be false if the market is a station.
-        if(boggledTools.marketIsStation(market))
-        {
-            return "Error in getUnavailableReason() in Domed Cities. Please report this to boggled on the forums.";
-        }
 
         // Meteor impacts preclude building except for Seafloor Cities
         if(!this.getCurrentName().equals("Seafloor Cities") && market.hasCondition("meteor_impacts"))
@@ -270,7 +265,7 @@ public class Boggled_Domed_Cities extends BaseIndustry implements MarketImmigrat
             return market.getName() + " experiences frequent seismic events that could destroy megastructures. It would be too dangerous to construct one here.";
         }
 
-        return "Error in getUnavailableReason() in Domed Cities. Please report this to boggled on the forums.";
+        return super.getUnavailableReason();
     }
 
 

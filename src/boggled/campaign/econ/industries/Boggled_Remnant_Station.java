@@ -662,12 +662,7 @@ public class Boggled_Remnant_Station extends OrbitalStation implements RouteMana
             return false;
         }
 
-        if(!super.isAvailableToBuild())
-        {
-            return false;
-        }
-
-        return true;
+        return super.isAvailableToBuild();
     }
 
     @Override
@@ -685,36 +680,21 @@ public class Boggled_Remnant_Station extends OrbitalStation implements RouteMana
 
         if(!this.playerHasAutomatedShipsSkill())
         {
-            return true;
+            return super.showWhenUnavailable();
         }
 
-        if(!super.isAvailableToBuild())
-        {
-            return true;
-        }
-
-        return true;
+        return super.showWhenUnavailable();
     }
 
     @Override
     public String getUnavailableReason()
     {
-        if(!boggledTools.isResearched("tasc_remnant_station"))
-        {
-            return "Error in getUnavailableReason() in Boggled_Remnant_Station. Please report this to boggled on the forums.";
-        }
-
         if(!this.playerHasAutomatedShipsSkill())
         {
             return "You lack the skill to command automated ships.";
         }
 
-        if(!super.isAvailableToBuild())
-        {
-            return super.getUnavailableReason();
-        }
-
-        return "Error in getUnavailableReason() in Boggled_Remnant_Station. Please report this to boggled on the forums.";
+        return super.getUnavailableReason();
     }
 
     private boolean playerHasAutomatedShipsSkill()

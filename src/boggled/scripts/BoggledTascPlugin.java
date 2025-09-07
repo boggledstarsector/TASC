@@ -151,7 +151,7 @@ public class BoggledTascPlugin extends BaseModPlugin {
         }
     }
 
-    public void applyDomainArchaeologySettings() {
+    public void applyDomainEraArtifactSettings() {
         //Enable/disable Domain-tech content
         if(boggledTools.getBooleanSetting(boggledTools.BoggledSettings.domainTechContentEnabled) && boggledTools.getBooleanSetting(boggledTools.BoggledSettings.domainArchaeologyEnabled)) {
             if(Global.getSector().getFaction(Factions.LUDDIC_CHURCH) != null && !Global.getSector().getFaction(Factions.LUDDIC_CHURCH).isIllegal(boggledTools.BoggledCommodities.domainArtifacts)) {
@@ -163,8 +163,24 @@ public class BoggledTascPlugin extends BaseModPlugin {
             }
 
             Global.getSettings().getCommoditySpec(boggledTools.BoggledCommodities.domainArtifacts).getTags().clear();
+        } else {
+            Global.getSettings().getCommoditySpec(boggledTools.BoggledCommodities.domainArtifacts).getTags().add("nonecon");
+        }
+    }
 
-            if(boggledTools.getBooleanSetting(boggledTools.BoggledSettings.replaceAgreusTechMiningWithDomainArchaeology)) {
+    public void addDomainTechBuildingsToVanillaColonies() {
+        if(boggledTools.getBooleanSetting(boggledTools.BoggledSettings.domainTechContentEnabled) && boggledTools.getBooleanSetting(boggledTools.BoggledSettings.addDomainTechBuildingsToVanillaColonies))
+        {
+            // Do this before modified/randomized sector check since we can replace cryosanctums on any planet
+            replaceCryosanctums();
+
+            // Check to avoid null pointer exception if player has modified/randomized sector
+            if(Global.getSector() == null || Global.getSector().getStarSystem("Askonia") == null) {
+                return;
+            }
+
+            if(!Global.getSector().getPlayerPerson().hasTag("boggledDomainTechBuildingPlacementFinished")) {
+                // Replace Tech-Mining with Domain Archaeology on Agreus
                 SectorEntityToken agreusPlanet = boggledTools.getPlanetTokenForQuest("Arcadia", "agreus");
                 if(agreusPlanet != null) {
                     MarketAPI agreusMarket = agreusPlanet.getMarket();
@@ -178,23 +194,8 @@ public class BoggledTascPlugin extends BaseModPlugin {
                         }
                     }
                 }
-            }
-        } else {
-            Global.getSettings().getCommoditySpec(boggledTools.BoggledCommodities.domainArtifacts).getTags().add("nonecon");
-        }
-    }
 
-    public void addDomainTechBuildingsToVanillaColonies() {
-        // Check to avoid null pointer exception if player has modified/randomized sector
-        if(Global.getSector() == null || Global.getSector().getStarSystem("Askonia") == null) {
-            return;
-        }
-
-        if(!Global.getSector().getPlayerPerson().hasTag("boggledDomainTechBuildingPlacementFinished")) {
-            // Add Genelab on Volturn
-            // Add LLN on Fikenhild
-            // Add GPA on Ancyra
-            if(boggledTools.getBooleanSetting(boggledTools.BoggledSettings.domainTechContentEnabled) && boggledTools.getBooleanSetting(boggledTools.BoggledSettings.domainArchaeologyEnabled) && boggledTools.getBooleanSetting(boggledTools.BoggledSettings.addDomainTechBuildingsToVanillaColonies)) {
+                // Add Genelab on Volturn
                 SectorEntityToken volturnPlanet = boggledTools.getPlanetTokenForQuest("Askonia", "volturn");
                 if(volturnPlanet != null) {
                     MarketAPI volturnMarket = volturnPlanet.getMarket();
@@ -203,6 +204,7 @@ public class BoggledTascPlugin extends BaseModPlugin {
                     }
                 }
 
+                // Add LLN on Fikenhild
                 SectorEntityToken fikenhildPlanet = boggledTools.getPlanetTokenForQuest("Westernesse", "fikenhild");
                 if(fikenhildPlanet != null) {
                     MarketAPI fikenhildMarket = fikenhildPlanet.getMarket();
@@ -211,6 +213,7 @@ public class BoggledTascPlugin extends BaseModPlugin {
                     }
                 }
 
+                // Add GPA on Ancyra
                 SectorEntityToken ancyraPlanet = boggledTools.getPlanetTokenForQuest("Galatia", "ancyra");
                 if(ancyraPlanet != null) {
                     MarketAPI ancyraMarket = ancyraPlanet.getMarket();
@@ -218,15 +221,15 @@ public class BoggledTascPlugin extends BaseModPlugin {
                         ancyraMarket.addIndustry("BOGGLED_GPA");
                     }
                 }
-            }
 
-            Global.getSector().getPlayerPerson().addTag("boggledDomainTechBuildingPlacementFinished");
+                Global.getSector().getPlayerPerson().addTag("boggledDomainTechBuildingPlacementFinished");
+            }
         }
     }
 
     public void replaceCryosanctums() {
-        // Replace all Cryosanctums
-        if(!Global.getSector().getPlayerPerson().hasTag("boggledCryosanctumReplacementFinished") && boggledTools.getBooleanSetting(boggledTools.BoggledSettings.domainTechContentEnabled) && boggledTools.getBooleanSetting(boggledTools.BoggledSettings.domainArchaeologyEnabled) && boggledTools.getBooleanSetting(boggledTools.BoggledSettings.cryosanctumReplaceEverywhere)) {
+        // Replace all Cryosanctums with the Boggled_Cryosanctum industry that can demand Domain-era artifacts
+        if(!Global.getSector().getPlayerPerson().hasTag("boggledCryosanctumReplacementFinished")) {
             for(StarSystemAPI system : Global.getSector().getStarSystems()) {
                 for(MarketAPI market : Global.getSector().getEconomy().getMarkets(system)) {
                     if(market != null && market.hasIndustry(Industries.CRYOSANCTUM) && !market.hasIndustry(boggledTools.BoggledIndustries.cryosanctumIndustryId)) {
@@ -281,7 +284,6 @@ public class BoggledTascPlugin extends BaseModPlugin {
 
             // Projects and industries both require requirements and duration modifiers
             JSONArray terraformingProjects = settings.getMergedSpreadsheetDataForMod("id", "data/campaign/terraforming/terraforming_projects.csv", boggledTools.BoggledMods.tascModId);
-            JSONArray industryOptions = settings.getMergedSpreadsheetDataForMod("id", "data/campaign/terraforming/industry_options.csv", boggledTools.BoggledMods.tascModId);
 
             // Domed Cities suppressed conditions
             JSONArray domedCitiesSuppressedConditions = settings.getMergedSpreadsheetDataForMod("condition_id", "data/campaign/terraforming/domed_cities_suppressed_conditions.csv", boggledTools.BoggledMods.tascModId);
@@ -290,7 +292,6 @@ public class BoggledTascPlugin extends BaseModPlugin {
             JSONArray stellarReflectorArraySuppressedConditions = settings.getMergedSpreadsheetDataForMod("condition_id", "data/campaign/terraforming/stellar_reflector_array_suppressed_conditions.csv", boggledTools.BoggledMods.tascModId);
 
             // And finally mods
-            JSONArray industryOptionOverrides = settings.getMergedSpreadsheetDataForMod("id", "data/campaign/terraforming/industry_options_mods.csv", boggledTools.BoggledMods.tascModId);
             JSONArray terraformingProjectOverrides = settings.getMergedSpreadsheetDataForMod("id", "data/campaign/terraforming/terraforming_projects_mods.csv", boggledTools.BoggledMods.tascModId);
 
             if (aotdEnabled) {
@@ -314,10 +315,8 @@ public class BoggledTascPlugin extends BaseModPlugin {
             boggledTools.initialiseTerraformingProjectEffectsFromJSON(terraformingProjectEffects);
 
             boggledTools.initialiseTerraformingProjectsFromJSON(terraformingProjects);
-            boggledTools.initialiseIndustryOptionsFromJSON(industryOptions);
 
             boggledTools.initialiseTerraformingProjectOverrides(terraformingProjectOverrides);
-            boggledTools.initialiseIndustryOptionOverrides(industryOptionOverrides);
 
             boggledTools.initializeDomedCitiesSuppressedConditionsFromJSON(domedCitiesSuppressedConditions);
 
@@ -356,11 +355,7 @@ public class BoggledTascPlugin extends BaseModPlugin {
     }
 
     @Override
-    public void onNewGame() {
-        loadSettingsFromJSON();
-
-        applyStationSettingsToAllStationsInSector();
-    }
+    public void onNewGame() { }
 
     @Override
     public void afterGameSave() {
@@ -372,9 +367,7 @@ public class BoggledTascPlugin extends BaseModPlugin {
 
         applyTerraformingAbilitiesPerSettingsFile();
 
-        applyDomainArchaeologySettings();
-
-        replaceCryosanctums();
+        applyDomainEraArtifactSettings();
 
         addDomainTechBuildingsToVanillaColonies();
 
@@ -413,7 +406,7 @@ public class BoggledTascPlugin extends BaseModPlugin {
 
         applyTerraformingAbilitiesPerSettingsFile();
 
-        applyDomainArchaeologySettings();
+        applyDomainEraArtifactSettings();
 
         addDomainTechBuildingsToVanillaColonies();
 
@@ -428,6 +421,8 @@ public class BoggledTascPlugin extends BaseModPlugin {
 
     @Override
     public void onApplicationLoad()  {
+        loadSettingsFromJSON();
+
         boggledTools.initialiseDefaultStationConstructionFactories();
         boggledTools.initialiseDefaultTerraformingRequirementFactories();
         boggledTools.initialiseDefaultTerraformingDurationModifierFactories();

@@ -55,13 +55,11 @@ public class boggledTools {
 
     private static MarketAPI terraformingMenuTarget = null;
 
-    public static void setTerraformingMenuTarget(MarketAPI market)
-    {
+    public static void setTerraformingMenuTarget(MarketAPI market) {
         terraformingMenuTarget = market;
     }
 
-    public static MarketAPI getTerraformingMenuTarget()
-    {
+    public static MarketAPI getTerraformingMenuTarget() {
         return terraformingMenuTarget;
     }
 
@@ -174,13 +172,14 @@ public class boggledTools {
 
         public static final String planetKillerEnabled = "boggledPlanetKillerEnabled";
 
-        public static final String replaceAgreusTechMiningWithDomainArchaeology = "boggledReplaceAgreusTechMiningWithDomainArchaeology";
-
         public static final String addDomainTechBuildingsToVanillaColonies = "boggledAddDomainTechBuildingsToVanillaColonies";
         public static final String cryosanctumReplaceEverywhere = "boggledCryosanctumReplaceEverywhere";
 
         // Building enables, checked in campaign.econ.industries.*
         // May move them to a CSV later
+
+        public static final String boggledDomainArchaeologyEnabled = "boggledDomainArchaeologyEnabled";
+        public static final String boggledDomainTechContentEnabled = "boggledDomainTechContentEnabled";
         public static final String enableAIMiningDronesStructure = "boggledEnableAIMiningDronesStructure";
         public static final String domainTechContentEnabled = "boggledDomainTechContentEnabled";
         public static final String domainTechCraftingEnabled = "boggledDomainTechCraftingEnabled";
@@ -333,8 +332,7 @@ public class boggledTools {
 
     public static Set<String> aotdIgnoreSettings = new HashSet<>();
 
-    public static void initialiseModIgnoreSettings()
-    {
+    public static void initialiseModIgnoreSettings() {
         aotdIgnoreSettings.add("boggledTerraformingContentEnabled");
         aotdIgnoreSettings.add("boggledTerraformingRemoveRadiationProjectEnabled");
         aotdIgnoreSettings.add("boggledTerraformingRemoveAtmosphereProjectEnabled");
@@ -343,27 +341,19 @@ public class boggledTools {
         aotdIgnoreSettings.add("boggledGenelabEnabled");
         aotdIgnoreSettings.add("boggledMesozoicParkEnabled");
         aotdIgnoreSettings.add("boggledDomedCitiesEnabled");
-        aotdIgnoreSettings.add("boggledHarmonicDamperEnabled");
-        aotdIgnoreSettings.add("boggledPlanetaryAgravFieldEnabled");
-        aotdIgnoreSettings.add("boggledMagnetoshieldEnabled");
-        aotdIgnoreSettings.add("boggledPlanetCrackerEnabled");
-        aotdIgnoreSettings.add("boggledOuyangOptimizerEnabled");
         aotdIgnoreSettings.add("boggledStationConstructionContentEnabled");
-        aotdIgnoreSettings.add("boggledEnableAIMiningDronesStructure");
 
         aotdIgnoreSettings.add("boggledAstropolisEnabled");
         aotdIgnoreSettings.add("boggledMiningStationEnabled");
         aotdIgnoreSettings.add("boggledSiphonStationEnabled");
         aotdIgnoreSettings.add("boggledStationColonizationEnabled");
 
-        aotdIgnoreSettings.add("boggledPerihelionProjectEnabled");
+        aotdIgnoreSettings.add("boggledDomainTechContentEnabled");
         aotdIgnoreSettings.add("boggledDomainArchaeologyEnabled");
         aotdIgnoreSettings.add("boggledKletkaSimulatorEnabled");
         aotdIgnoreSettings.add("boggledCHAMELEONEnabled");
         aotdIgnoreSettings.add("boggledLimelightNetworkPlayerBuildEnabled");
         aotdIgnoreSettings.add("boggledRemnantStationEnabled");
-        //aotdIgnoreSettings.add("boggledHydroponicsEnabled");
-        aotdIgnoreSettings.add("boggledCloningEnabled");
     }
 
     @Nullable
@@ -488,6 +478,7 @@ public class boggledTools {
 
         return new BoggledCommonIndustry.TooltipData(builder.toString(), highlightColors, highlights);
     }
+
     @NotNull
     public static BoggledCommonIndustry.TooltipData getUnavailableReason(List<BoggledTerraformingProject.ProjectInstance> projects, String industry, BoggledTerraformingRequirement.RequirementContext ctx, Map<String, String> tokenReplacements) {
         for (BoggledTerraformingProject.ProjectInstance project : projects) {
@@ -843,38 +834,30 @@ public class boggledTools {
         boggledTools.planetTypesMap = planetTypesMap;
     }
 
-    public static void initializeStellarReflectorArraySuppressedConditionsFromJSON(@NotNull JSONArray stellarReflectorArraySuppressedConditionsJSON)
-    {
+    public static void initializeStellarReflectorArraySuppressedConditionsFromJSON(@NotNull JSONArray stellarReflectorArraySuppressedConditionsJSON) {
         HashSet<String> conditions = getConditionsListFromJson(stellarReflectorArraySuppressedConditionsJSON);
 
         boggledTools.stellarReflectorArraySuppressedConditions = new ArrayList<String>(conditions);
     }
 
-    public static void initializeDomedCitiesSuppressedConditionsFromJSON(@NotNull JSONArray domedCitiesSuppressedConditionsJSON)
-    {
+    public static void initializeDomedCitiesSuppressedConditionsFromJSON(@NotNull JSONArray domedCitiesSuppressedConditionsJSON) {
         HashSet<String> conditions = getConditionsListFromJson(domedCitiesSuppressedConditionsJSON);
 
         boggledTools.domedCitiesSuppressedConditions = new ArrayList<String>(conditions);
     }
 
-    public static HashSet<String> getConditionsListFromJson(JSONArray json)
-    {
+    public static HashSet<String> getConditionsListFromJson(JSONArray json) {
         HashSet<String> conditionsSet = new HashSet<>();
 
-        for (int i = 0; i < json.length(); ++i)
-        {
-            try
-            {
+        for (int i = 0; i < json.length(); ++i) {
+            try {
                 JSONObject row = json.getJSONObject(i);
 
                 String condition_id = row.getString("condition_id");
-                if (condition_id != null && !condition_id.isEmpty())
-                {
+                if (condition_id != null && !condition_id.isEmpty()) {
                     conditionsSet.add(condition_id);
                 }
-            }
-            catch (JSONException e)
-            {
+            } catch (JSONException e) {
                 // We can't swallow this exception because the game won't work correctly if the data isn't loaded
                 throw new RuntimeException("Error in condition list JSON parsing: " + e);
             }
@@ -883,13 +866,11 @@ public class boggledTools {
         return conditionsSet;
     }
 
-    public static List<String> getDomedCitiesSuppressedConditions()
-    {
+    public static List<String> getDomedCitiesSuppressedConditions() {
         return boggledTools.domedCitiesSuppressedConditions;
     }
 
-    public static List<String> getStellarReflectorArraySuppressedConditions()
-    {
+    public static List<String> getStellarReflectorArraySuppressedConditions() {
         return boggledTools.stellarReflectorArraySuppressedConditions;
     }
 
@@ -1531,8 +1512,14 @@ public class boggledTools {
         }
         return planetResourceLimits.get(resourceId);
     }
-    public static Map<String, List<String>> getResourceProgressions() { return resourceProgressions; }
-    public static Map<String, BoggledTerraformingRequirement.TerraformingRequirement> getTerraformingRequirements() { return terraformingRequirement; }
+
+    public static Map<String, List<String>> getResourceProgressions() {
+        return resourceProgressions;
+    }
+
+    public static Map<String, BoggledTerraformingRequirement.TerraformingRequirement> getTerraformingRequirements() {
+        return terraformingRequirement;
+    }
 
     private static Map<String, BoggledTerraformingRequirement.TerraformingRequirement> terraformingRequirement;
     private static Map<String, BoggledProjectRequirementsOR> terraformingRequirements;
@@ -1553,7 +1540,10 @@ public class boggledTools {
     public static BoggledCommonIndustry getIndustryProject(String industry) {
         return industryProjects.get(industry);
     }
-    public static BoggledTerraformingDurationModifier.TerraformingDurationModifier getDurationModifier(String modifier) { return durationModifiers.get(modifier); }
+
+    public static BoggledTerraformingDurationModifier.TerraformingDurationModifier getDurationModifier(String modifier) {
+        return durationModifiers.get(modifier);
+    }
 
     public static HashMap<String, Integer> getNumProjects() {
         HashMap<String, Integer> ret = new HashMap<>();
@@ -1621,6 +1611,144 @@ public class boggledTools {
         return ret;
     }
 
+    public static void incrementOreForPlanetCracking(MarketAPI market)
+    {
+        if(market.hasCondition("ore_sparse"))
+        {
+            boggledTools.removeCondition(market, "ore_sparse");
+            boggledTools.addCondition(market, "ore_moderate");
+        }
+        else if(market.hasCondition("ore_moderate"))
+        {
+            boggledTools.removeCondition(market, "ore_moderate");
+            boggledTools.addCondition(market, "ore_abundant");
+        }
+        else if(market.hasCondition("ore_abundant"))
+        {
+            boggledTools.removeCondition(market, "ore_abundant");
+            boggledTools.addCondition(market, "ore_rich");
+        }
+        else if(market.hasCondition("ore_rich"))
+        {
+            boggledTools.removeCondition(market, "ore_rich");
+            boggledTools.addCondition(market, "ore_ultrarich");
+        }
+        else if(market.hasCondition("ore_ultrarich"))
+        {
+            //Do Nothing
+        }
+        else
+        {
+            boggledTools.addCondition(market, "ore_sparse");
+        }
+
+        if(market.hasCondition("rare_ore_sparse"))
+        {
+            boggledTools.removeCondition(market, "rare_ore_sparse");
+            boggledTools.addCondition(market, "rare_ore_moderate");
+        }
+        else if(market.hasCondition("rare_ore_moderate"))
+        {
+            boggledTools.removeCondition(market, "rare_ore_moderate");
+            boggledTools.addCondition(market, "rare_ore_abundant");
+        }
+        else if(market.hasCondition("rare_ore_abundant"))
+        {
+            boggledTools.removeCondition(market, "rare_ore_abundant");
+            boggledTools.addCondition(market, "rare_ore_rich");
+        }
+        else if(market.hasCondition("rare_ore_rich"))
+        {
+            boggledTools.removeCondition(market, "rare_ore_rich");
+            boggledTools.addCondition(market, "rare_ore_ultrarich");
+        }
+        else if(market.hasCondition("rare_ore_ultrarich"))
+        {
+            //Do Nothing
+        }
+        else
+        {
+            boggledTools.addCondition(market, "rare_ore_sparse");
+        }
+    }
+
+    public static void incrementVolatilesForOuyangOptimization(MarketAPI market)
+    {
+        if(market.hasCondition("volatiles_trace"))
+        {
+            boggledTools.removeCondition(market, "volatiles_trace");
+            boggledTools.addCondition(market, "volatiles_abundant");
+        }
+        else if(market.hasCondition("volatiles_diffuse"))
+        {
+            boggledTools.removeCondition(market, "volatiles_diffuse");
+            boggledTools.addCondition(market, "volatiles_plentiful");
+        }
+        else if(market.hasCondition("volatiles_abundant"))
+        {
+            boggledTools.removeCondition(market, "volatiles_abundant");
+            boggledTools.addCondition(market, "volatiles_plentiful");
+        }
+        else if(market.hasCondition("volatiles_plentiful"))
+        {
+            //Do nothing
+        }
+        else
+        {
+            boggledTools.addCondition(market, "volatiles_diffuse");
+        }
+
+        SectorEntityToken closestGasGiantToken = market.getPrimaryEntity();
+        if(closestGasGiantToken != null)
+        {
+            Iterator allEntitiesInSystem = closestGasGiantToken.getStarSystem().getAllEntities().iterator();
+            while(allEntitiesInSystem.hasNext())
+            {
+                SectorEntityToken entity = (SectorEntityToken)allEntitiesInSystem.next();
+                if(entity.hasTag("station") && entity.getOrbitFocus() != null && entity.getOrbitFocus().equals(closestGasGiantToken) && (entity.getCustomEntitySpec().getDefaultName().equals("Side Station") || entity.getCustomEntitySpec().getDefaultName().equals("Siphon Station")) && !entity.getId().equals("beholder_station"))
+                {
+                    if(entity.getMarket() != null)
+                    {
+                        market = entity.getMarket();
+                        if(market.hasCondition("volatiles_trace"))
+                        {
+                            boggledTools.removeCondition(market, "volatiles_trace");
+                            boggledTools.addCondition(market, "volatiles_abundant");
+                        }
+                        else if(market.hasCondition("volatiles_diffuse"))
+                        {
+                            boggledTools.removeCondition(market, "volatiles_diffuse");
+                            boggledTools.addCondition(market, "volatiles_plentiful");
+                        }
+                        else if(market.hasCondition("volatiles_abundant"))
+                        {
+                            boggledTools.removeCondition(market, "volatiles_abundant");
+                            boggledTools.addCondition(market, "volatiles_plentiful");
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    public static String getCommidityNameFromId(String commodityId) {
+        return Global.getSettings().getCommoditySpec(commodityId).getName();
+    }
+
+    public static boolean marketHasAtmoProblem(MarketAPI market) {
+        return !market.hasCondition(Conditions.MILD_CLIMATE) ||
+                !market.hasCondition(Conditions.HABITABLE) ||
+                market.hasCondition(Conditions.NO_ATMOSPHERE) ||
+                market.hasCondition(Conditions.THIN_ATMOSPHERE) ||
+                market.hasCondition(Conditions.DENSE_ATMOSPHERE) ||
+                market.hasCondition(Conditions.TOXIC_ATMOSPHERE);
+    }
+
+    public static boolean terraformingPossibleOnMarket(MarketAPI market)
+    {
+        return !market.hasCondition(Conditions.IRRADIATED);
+    }
+
     public static float getAngle(float focusX, float focusY, float playerX, float playerY) {
         float angle = (float) Math.toDegrees(Math.atan2(focusY - playerY, focusX - playerX));
 
@@ -1678,6 +1806,22 @@ public class boggledTools {
                 market.getIndustry("aquaculture").init("farming", market);
             }
         }
+    }
+
+    public static void stepTag(MarketAPI market, String tagToIncrement, int step) {
+        if (market == null) {
+            return;
+        }
+
+        for (String tag : market.getTags()) {
+            if (tag.startsWith(tagToIncrement)) {
+                int tagValueOld = Integer.parseInt(tag.substring(tagToIncrement.length()));
+                market.removeTag(tag);
+                market.addTag(tagToIncrement + (tagValueOld + step));
+                return;
+            }
+        }
+        market.addTag(tagToIncrement + step);
     }
 
     public static float getRandomOrbitalAngleFloat(float min, float max) {
@@ -2935,7 +3079,7 @@ public class boggledTools {
 
     public static boolean domainEraArtifactDemandEnabled()
     {
-        if(getBooleanSetting("boggledDomainTechContentEnabled") && getBooleanSetting("boggledDomainArchaeologyEnabled"))
+        if(getBooleanSetting(BoggledSettings.domainTechContentEnabled) && getBooleanSetting(BoggledSettings.domainArchaeologyEnabled))
         {
             return true;
         }

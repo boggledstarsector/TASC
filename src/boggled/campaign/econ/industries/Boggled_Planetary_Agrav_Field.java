@@ -9,7 +9,6 @@ import boggled.campaign.econ.industries.interfaces.ShowBoggledTerraformingMenuOp
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
 import com.fs.starfarer.api.Global;
-import com.fs.starfarer.api.campaign.econ.*;
 import com.fs.starfarer.api.impl.campaign.econ.impl.BaseIndustry;
 import com.fs.starfarer.api.impl.campaign.ids.Conditions;
 import boggled.campaign.econ.boggledTools;
@@ -61,11 +60,6 @@ public class Boggled_Planetary_Agrav_Field extends BaseIndustry implements ShowB
             return false;
         }
 
-        if(!boggledTools.isResearched("tasc_gravity_manipulation"))
-        {
-            return false;
-        }
-
         //Can't build on stations
         if(boggledTools.marketIsStation(this.market))
         {
@@ -82,7 +76,7 @@ public class Boggled_Planetary_Agrav_Field extends BaseIndustry implements ShowB
             return false;
         }
 
-        return true;
+        return super.isAvailableToBuild();
     }
 
     @Override
@@ -93,33 +87,30 @@ public class Boggled_Planetary_Agrav_Field extends BaseIndustry implements ShowB
             return false;
         }
 
-        if(!boggledTools.isResearched("tasc_gravity_manipulation"))
-        {
-            return false;
-        }
-
         if(boggledTools.marketIsStation(this.market))
         {
             return false;
         }
 
-        return true;
+        if(!this.market.hasIndustry("BOGGLED_DOMED_CITIES"))
+        {
+            return super.showWhenUnavailable();
+        }
+
+        if(!this.market.hasCondition("high_gravity") && !this.market.hasCondition("low_gravity"))
+        {
+            return super.showWhenUnavailable();
+        }
+
+        return super.showWhenUnavailable();
     }
 
     @Override
     public String getUnavailableReason()
     {
-        MarketAPI market = this.market;
-
-        //Can't build on stations
-        if(boggledTools.marketIsStation(this.market))
+        if(!this.market.hasIndustry("BOGGLED_DOMED_CITIES"))
         {
-            return "Error in getUnavailableReason() in Planetary Agrav Field. Please report this to boggled on the forums.";
-        }
-
-        if(!boggledTools.isResearched("tasc_gravity_manipulation"))
-        {
-            return "Error in getUnavailableReason() in Planetary Agrav Field. Please report this to boggled on the forums.";
+            return "It is not economically feasible to blanket an entire world with agrav generators. The population must be housed within a few centralized domed cities for a colony-wide agrav field to be practical.";
         }
 
         if(!this.market.hasCondition("high_gravity") && !this.market.hasCondition("low_gravity"))
@@ -127,12 +118,7 @@ public class Boggled_Planetary_Agrav_Field extends BaseIndustry implements ShowB
             return "Gravity on " + this.market.getName() + " is within the optimal range for humans. Building agrav generators here would serve little purpose.";
         }
 
-        if(!this.market.hasIndustry("BOGGLED_DOMED_CITIES"))
-        {
-            return "It is not economically feasible to blanket an entire world with agrav generators. The population must be housed within a few centralized domed cities for a colony-wide agrav field to be practical.";
-        }
-
-        return "Error in getUnavailableReason() in Planetary Agrav Field. Please report this to boggled on the forums.";
+        return super.getUnavailableReason();
     }
 
     @Override
