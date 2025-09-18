@@ -43,15 +43,7 @@ public class Construct_Siphon_Station extends BaseDurationAbility
         newSiphonStationLights.setOrbit(newSiphonStation.getOrbit().makeCopy());
 
         MarketAPI market = null;
-        if(!boggledTools.getBooleanSetting("boggledStationConstructionDelayEnabled"))
-        {
-            market = boggledTools.createSiphonStationMarket(newSiphonStation, hostGasGiant);
-        }
-        else
-        {
-            newSiphonStation.addScript(new BoggledUnderConstructionEveryFrameScript(newSiphonStation));
-            Global.getSoundPlayer().playUISound("ui_boggled_station_start_building", 1.0F, 1.0F);
-        }
+        market = boggledTools.createSiphonStationMarket(newSiphonStation, hostGasGiant);
     }
 
     @Override
