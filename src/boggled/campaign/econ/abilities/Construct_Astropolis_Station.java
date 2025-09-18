@@ -1,5 +1,6 @@
-package data.campaign.econ.abilities;
+package boggled.campaign.econ.abilities;
 
+import boggled.campaign.econ.boggledTools;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.*;
 import com.fs.starfarer.api.campaign.econ.MarketAPI;
@@ -10,16 +11,14 @@ import com.fs.starfarer.api.util.Misc;
 import java.awt.Color;
 import java.util.Iterator;
 import java.util.List;
-import data.campaign.econ.boggledTools;
-import data.scripts.BoggledUnderConstructionEveryFrameScript;
 
 public class Construct_Astropolis_Station extends BaseDurationAbility
 {
-    private float creditCost = boggledTools.getIntSetting("boggledAstropolisStationBuildCreditCost");
-    private float crewCost = boggledTools.getIntSetting("boggledAstropolisStationBuildCrewCost");
-    private float heavyMachineryCost = boggledTools.getIntSetting("boggledAstropolisStationBuildHeavyMachineryCost");
-    private float metalCost = boggledTools.getIntSetting("boggledAstropolisStationBuildMetalCost");
-    private float transplutonicsCost = boggledTools.getIntSetting("boggledAstropolisStationBuildTransplutonicsCost");
+    private final float creditCost = boggledTools.getIntSetting("boggledAstropolisStationBuildCreditCost");
+    private final float crewCost = boggledTools.getIntSetting("boggledAstropolisStationBuildCrewCost");
+    private final float heavyMachineryCost = boggledTools.getIntSetting("boggledAstropolisStationBuildHeavyMachineryCost");
+    private final float metalCost = boggledTools.getIntSetting("boggledAstropolisStationBuildMetalCost");
+    private final float transplutonicsCost = boggledTools.getIntSetting("boggledAstropolisStationBuildTransplutonicsCost");
 
     public Construct_Astropolis_Station() { }
 

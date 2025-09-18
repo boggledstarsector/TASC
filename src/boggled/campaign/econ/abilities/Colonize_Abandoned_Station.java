@@ -1,25 +1,27 @@
-package data.campaign.econ.abilities;
+package boggled.campaign.econ.abilities;
 
+import boggled.campaign.econ.boggledTools;
+import boggled.scripts.PlayerCargoCalculations.boggledDefaultCargo;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.*;
 import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.impl.campaign.abilities.BaseDurationAbility;
 import com.fs.starfarer.api.impl.campaign.ids.Conditions;
+import com.fs.starfarer.api.impl.campaign.ids.Factions;
 import com.fs.starfarer.api.impl.campaign.ids.Industries;
 import com.fs.starfarer.api.impl.campaign.submarkets.StoragePlugin;
 import com.fs.starfarer.api.ui.LabelAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
 import java.awt.Color;
-import data.campaign.econ.boggledTools;
 
 public class Colonize_Abandoned_Station extends BaseDurationAbility
 {
-    private float creditCost = boggledTools.getIntSetting("boggledStationRecolonizeCreditCost");
-    private float crewCost = boggledTools.getIntSetting("boggledStationRecolonizeCrewCost");
-    private float heavyMachineryCost = boggledTools.getIntSetting("boggledStationRecolonizeHeavyMachineryCost");
-    private float metalCost = boggledTools.getIntSetting("boggledStationRecolonizeMetalCost");
-    private float transplutonicsCost = boggledTools.getIntSetting("boggledStationRecolonizeTransplutonicsCost");
+    private final float creditCost = boggledTools.getIntSetting("boggledStationRecolonizeCreditCost");
+    private final float crewCost = boggledTools.getIntSetting("boggledStationRecolonizeCrewCost");
+    private final float heavyMachineryCost = boggledTools.getIntSetting("boggledStationRecolonizeHeavyMachineryCost");
+    private final float metalCost = boggledTools.getIntSetting("boggledStationRecolonizeMetalCost");
+    private final float transplutonicsCost = boggledTools.getIntSetting("boggledStationRecolonizeTransplutonicsCost");
 
     public Colonize_Abandoned_Station() { }
 
@@ -32,12 +34,12 @@ public class Colonize_Abandoned_Station extends BaseDurationAbility
 
         CargoAPI playerCargo = playerFleet.getCargo();
         playerCargo.getCredits().subtract(creditCost);
-        playerCargo.removeCommodity("metals", metalCost);
-        playerCargo.removeCommodity("rare_metals", transplutonicsCost);
-        playerCargo.removeCommodity("crew", crewCost);
-        playerCargo.removeCommodity("heavy_machinery", heavyMachineryCost);
+        boggledDefaultCargo.active.removeCommodity(playerCargo, boggledDefaultCargo.Abandoned_Station, "metals", metalCost);
+        boggledDefaultCargo.active.removeCommodity(playerCargo, boggledDefaultCargo.Abandoned_Station, "rare_metals", metalCost);
+        boggledDefaultCargo.active.removeCommodity(playerCargo, boggledDefaultCargo.Abandoned_Station, "crew", metalCost);
+        boggledDefaultCargo.active.removeCommodity(playerCargo, boggledDefaultCargo.Abandoned_Station, "heavy_machinery", metalCost);
 
-        targetEntityForMarket.setFaction("player");
+        targetEntityForMarket.setFaction(Factions.PLAYER);
         CargoAPI cargo = targetEntityForMarket.getMarket().getSubmarket("storage").getCargo();
 
         //Create the new station market
@@ -48,7 +50,7 @@ public class Colonize_Abandoned_Station extends BaseDurationAbility
         market.setSurveyLevel(MarketAPI.SurveyLevel.FULL);
         market.setPrimaryEntity(targetEntityForMarket);
 
-        market.setFactionId("player");
+        market.setFactionId(Factions.PLAYER);
         market.setPlayerOwned(true);
 
         market.addCondition(Conditions.POPULATION_3);
@@ -56,60 +58,87 @@ public class Colonize_Abandoned_Station extends BaseDurationAbility
         market.addIndustry(Industries.POPULATION);
         market.getConstructionQueue().addToEnd(Industries.SPACEPORT, 0);
 
-        if(targetEntityForMarket.hasTag("boggled_astropolis"))
+        if(targetEntityForMarket.hasTag(boggledTools.BoggledTags.astropolisStation))
         {
             SectorEntityToken newLightsOnColonize = system.addCustomEntity("boggled_newLightsOnColonize", "New Lights Overlay From Colonizing Abandoned Station", targetEntityForMarket.getCustomEntityType() + "_lights_overlay", playerFleet.getFaction().getId());
             newLightsOnColonize.setOrbit(targetEntityForMarket.getOrbit().makeCopy());
         }
-        else if(targetEntityForMarket.hasTag("boggled_gatekeeper_station"))
+        else if(targetEntityForMarket.hasTag(boggledTools.BoggledTags.miningStation))
         {
-            market.addIndustry("ASTRAL_GATE");
-
-            targetEntityForMarket.setCustomDescriptionId("gatekeeper_station");
-
-            SectorEntityToken newLightsOnColonize = system.addCustomEntity("boggled_newLightsOnColonize", "New Lights Overlay From Colonizing Abandoned Station", targetEntityForMarket.getCustomEntityType() + "_lights_overlay", playerFleet.getFaction().getId());
-            newLightsOnColonize.setOrbit(targetEntityForMarket.getOrbit().makeCopy());
-        }
-        if(targetEntityForMarket.hasTag("boggled_mining_station"))
-        {
-            market.addCondition(Conditions.ORE_MODERATE);
-            market.addCondition(Conditions.RARE_ORE_MODERATE);
+            if(boggledTools.getBooleanSetting("boggledMiningStationLinkToResourceBelts"))
+            {
+                int numAsteroidBeltsInSystem = boggledTools.getNumAsteroidTerrainsInSystem(targetEntityForMarket);
+                String resourceLevel = boggledTools.getMiningStationResourceString(numAsteroidBeltsInSystem);
+                market.addCondition("ore_" + resourceLevel);
+                market.addCondition("rare_ore_" + resourceLevel);
+            }
+            else
+            {
+                String resourceLevel = "moderate";
+                int staticAmountPerSettings = boggledTools.getIntSetting("boggledMiningStationStaticAmount");
+                resourceLevel = switch (staticAmountPerSettings) {
+                    case 1 -> "sparse";
+                    case 2 -> "moderate";
+                    case 3 -> "abundant";
+                    case 4 -> "rich";
+                    case 5 -> "ultrarich";
+                    default -> resourceLevel;
+                };
+                market.addCondition("ore_" + resourceLevel);
+                market.addCondition("rare_ore_" + resourceLevel);
+            }
             market.getConstructionQueue().addToEnd(Industries.MINING, 0);
 
-            targetEntityForMarket.setCustomDescriptionId("boggled_mining_station");
+            // targetEntityForMarket.setCustomDescriptionId("boggled_mining_station");
 
             SectorEntityToken newLightsOnColonize = system.addCustomEntity("boggled_newLightsOnColonize", "New Lights Overlay From Colonizing Abandoned Station", targetEntityForMarket.getCustomEntityType() + "_lights_overlay", playerFleet.getFaction().getId());
             newLightsOnColonize.setOrbit(targetEntityForMarket.getOrbit().makeCopy());
         }
-        else if(targetEntityForMarket.hasTag("boggled_siphon_station") || targetEntityForMarket.getFullName().contains("Abandoned Siphon Station"))
+        else if(targetEntityForMarket.hasTag(boggledTools.BoggledTags.siphonStation) || targetEntityForMarket.getFullName().contains("Abandoned Siphon Station"))
         {
             SectorEntityToken hostGasGiant = null;
-            if(targetEntityForMarket.getOrbitFocus() != null && targetEntityForMarket.getOrbitFocus() instanceof PlanetAPI && targetEntityForMarket.getOrbitFocus().getMarket() != null && boggledTools.getPlanetType((PlanetAPI)targetEntityForMarket.getOrbitFocus()).equals("gas_giant"))
+            if(targetEntityForMarket.getOrbitFocus() != null && targetEntityForMarket.getOrbitFocus() instanceof PlanetAPI && targetEntityForMarket.getOrbitFocus().getMarket() != null && ((PlanetAPI) targetEntityForMarket.getOrbitFocus()).isGasGiant())
             {
                 hostGasGiant = targetEntityForMarket.getOrbitFocus();
             }
 
-            if(hostGasGiant != null && !market.hasTag("boggled_astropolis") && !market.hasTag("boggled_mining_station"))
+            if(hostGasGiant != null && !market.hasTag(boggledTools.BoggledTags.astropolisStation) && !market.hasTag(boggledTools.BoggledTags.miningStation))
             {
-                if(hostGasGiant.getMarket().hasCondition(Conditions.VOLATILES_TRACE))
+                if(boggledTools.getBooleanSetting("boggledSiphonStationLinkToGasGiant"))
                 {
-                    market.addCondition(Conditions.VOLATILES_TRACE);
+                    if(hostGasGiant.getMarket().hasCondition(Conditions.VOLATILES_TRACE))
+                    {
+                        market.addCondition(Conditions.VOLATILES_TRACE);
+                    }
+                    else if(hostGasGiant.getMarket().hasCondition(Conditions.VOLATILES_DIFFUSE))
+                    {
+                        market.addCondition(Conditions.VOLATILES_DIFFUSE);
+                    }
+                    else if(hostGasGiant.getMarket().hasCondition(Conditions.VOLATILES_ABUNDANT))
+                    {
+                        market.addCondition(Conditions.VOLATILES_ABUNDANT);
+                    }
+                    else if(hostGasGiant.getMarket().hasCondition(Conditions.VOLATILES_PLENTIFUL))
+                    {
+                        market.addCondition(Conditions.VOLATILES_PLENTIFUL);
+                    }
+                    else //Can a gas giant not have any volatiles at all?
+                    {
+                        market.addCondition(Conditions.VOLATILES_TRACE);
+                    }
                 }
-                else if(hostGasGiant.getMarket().hasCondition(Conditions.VOLATILES_DIFFUSE))
+                else
                 {
-                    market.addCondition(Conditions.VOLATILES_DIFFUSE);
-                }
-                else if(hostGasGiant.getMarket().hasCondition(Conditions.VOLATILES_ABUNDANT))
-                {
-                    market.addCondition(Conditions.VOLATILES_ABUNDANT);
-                }
-                else if(hostGasGiant.getMarket().hasCondition(Conditions.VOLATILES_PLENTIFUL))
-                {
-                    market.addCondition(Conditions.VOLATILES_PLENTIFUL);
-                }
-                else //Can a gas giant not have any volatiles at all?
-                {
-                    market.addCondition(Conditions.VOLATILES_TRACE);
+                    String resourceLevel = "diffuse";
+                    int staticAmountPerSettings = boggledTools.getIntSetting("boggledSiphonStationStaticAmount");
+                    resourceLevel = switch (staticAmountPerSettings) {
+                        case 1 -> "trace";
+                        case 2 -> "diffuse";
+                        case 3 -> "abundant";
+                        case 4 -> "plentiful";
+                        default -> resourceLevel;
+                    };
+                    market.addCondition("volatiles_" + resourceLevel);
                 }
 
                 market.getConstructionQueue().addToEnd(Industries.MINING, 0);
@@ -121,9 +150,9 @@ public class Colonize_Abandoned_Station extends BaseDurationAbility
                 }
             }
 
-            targetEntityForMarket.setCustomDescriptionId("boggled_siphon_station");
+            // targetEntityForMarket.setCustomDescriptionId("boggled_siphon_station");
 
-            if(targetEntityForMarket.hasTag("boggled_siphon_station"))
+            if(targetEntityForMarket.hasTag(boggledTools.BoggledTags.siphonStation))
             {
                 SectorEntityToken newLightsOnColonize = system.addCustomEntity("boggled_newLightsOnColonize", "New Lights Overlay From Colonizing Abandoned Station", targetEntityForMarket.getCustomEntityType() + "_lights_overlay", playerFleet.getFaction().getId());
                 newLightsOnColonize.setOrbit(targetEntityForMarket.getOrbit().makeCopy());
@@ -194,7 +223,6 @@ public class Colonize_Abandoned_Station extends BaseDurationAbility
         market.addCondition("cramped_quarters");
 
         boggledTools.surveyAll(market);
-        boggledTools.refreshSupplyAndDemand(market);
 
         Global.getSoundPlayer().playUISound("ui_boggled_station_constructed", 1.0F, 1.0F);
     }
@@ -203,13 +231,14 @@ public class Colonize_Abandoned_Station extends BaseDurationAbility
     public boolean isUsable()
     {
         SectorEntityToken playerFleet = Global.getSector().getPlayerFleet();
+        StarSystemAPI system = playerFleet.getStarSystem();
 
-        if (playerFleet.isInHyperspace() || Global.getSector().getPlayerFleet().isInHyperspaceTransition())
+        if (playerFleet.isInHyperspace() || Global.getSector().getPlayerFleet().isInHyperspaceTransition() || system == null)
         {
             return false;
         }
 
-        if(!boggledTools.systemHasJumpPoint(playerFleet.getStarSystem()))
+        if(system.getJumpPoints().isEmpty())
         {
             return false;
         }
@@ -220,11 +249,11 @@ public class Colonize_Abandoned_Station extends BaseDurationAbility
         {
             return false;
         }
-        else if(closestColonizableStation.getMarket() != null && !closestColonizableStation.getMarket().getFactionId().equals("neutral"))
+        else if(closestColonizableStation.getMarket() != null && !closestColonizableStation.getMarket().getFactionId().equals(Factions.NEUTRAL))
         {
             return false;
         }
-        else if(boggledTools.getDistanceBetweenTokens(closestColonizableStation, playerFleet) > 400f)
+        else if(Misc.getDistance(closestColonizableStation, playerFleet) > 400f)
         {
             return false;
         }
@@ -234,33 +263,24 @@ public class Colonize_Abandoned_Station extends BaseDurationAbility
         {
             return false;
         }
-
-        if(playerCargo.getCommodityQuantity("metals") < metalCost)
+        if(boggledDefaultCargo.active.getCommodityAmount(playerCargo, boggledDefaultCargo.Abandoned_Station, "metals") < metalCost)
+        {
+            return false;
+        }
+        if(boggledDefaultCargo.active.getCommodityAmount(playerCargo, boggledDefaultCargo.Abandoned_Station, "rare_metals") < transplutonicsCost)
+        {
+            return false;
+        }
+        if(boggledDefaultCargo.active.getCommodityAmount(playerCargo, boggledDefaultCargo.Abandoned_Station, "crew") < crewCost)
+        {
+            return false;
+        }
+        if(boggledDefaultCargo.active.getCommodityAmount(playerCargo, boggledDefaultCargo.Abandoned_Station, "heavy_machinery") < heavyMachineryCost)
         {
             return false;
         }
 
-        if(playerCargo.getCommodityQuantity("rare_metals") < transplutonicsCost)
-        {
-            return false;
-        }
-
-        if(playerCargo.getCommodityQuantity("crew") < crewCost)
-        {
-            return false;
-        }
-
-        if(playerCargo.getCommodityQuantity("heavy_machinery") < heavyMachineryCost)
-        {
-            return false;
-        }
-
-        if(this.isOnCooldown() || this.disableFrames > 0)
-        {
-            return false;
-        }
-
-        return true;
+        return super.isUsable();
     }
 
     @Override
@@ -279,36 +299,26 @@ public class Colonize_Abandoned_Station extends BaseDurationAbility
         tooltip.addPara("Colonize an abandoned station. Expends %s credits, %s crew, %s heavy machinery, %s metals and %s transplutonics for construction.", pad, highlight, new String[]{(int)creditCost + "",(int)crewCost + "",(int)heavyMachineryCost +"", (int)metalCost + "", (int)transplutonicsCost +""});
 
         SectorEntityToken playerFleet = Global.getSector().getPlayerFleet();
+        StarSystemAPI system = playerFleet.getStarSystem();
 
-        if(this.isUsable())
+        if(playerFleet.isInHyperspace() || Global.getSector().getPlayerFleet().isInHyperspaceTransition() || system == null)
         {
-            tooltip.addPara("Colonization target: %s", pad, highlight, new String[]{boggledTools.getClosestColonizableStationInSystem(playerFleet).getName()});
+            tooltip.addPara("You cannot colonize stations in hyperspace.", bad, pad);
         }
-
-        if(playerFleet.isInHyperspace() || Global.getSector().getPlayerFleet().isInHyperspaceTransition())
-        {
-            tooltip.addPara("You cannot colonize stations located in hyperspace.", bad, pad);
-        }
-        else if(!boggledTools.systemHasJumpPoint(playerFleet.getStarSystem()))
+        else if(system.getJumpPoints().isEmpty())
         {
             tooltip.addPara("You cannot construct a station in a system with no jump points.", bad, pad);
         }
-
-        if(!(playerFleet.isInHyperspace() || Global.getSector().getPlayerFleet().isInHyperspaceTransition()))
+        else
         {
-            if(!boggledTools.systemHasJumpPoint(playerFleet.getStarSystem()))
-            {
-                tooltip.addPara("You cannot construct a station in a system with no jump points.", bad, pad);
-            }
-
             SectorEntityToken closestStation = boggledTools.getClosestStationInSystem(playerFleet);
             SectorEntityToken closestColonizableStation = boggledTools.getClosestColonizableStationInSystem(playerFleet);
 
             if(closestStation == null)
             {
-                tooltip.addPara("There are no stations in this system.", bad, pad);
+                tooltip.addPara("There are no stations in " + system.getName() + ".", bad, pad);
             }
-            else if(closestStation.getMarket() != null && !closestStation.getMarket().getFactionId().equals("neutral"))
+            else if(closestStation.getMarket() != null && !closestStation.getMarket().getFactionId().equals(Factions.NEUTRAL))
             {
                 tooltip.addPara("The station closest to your location is " + closestStation.getName() + " and it is controlled by " + closestStation.getMarket().getFaction().getDisplayNameWithArticle() + ". You cannot colonize a station that is already under the control of a major faction.", bad, pad);
             }
@@ -316,9 +326,9 @@ public class Colonize_Abandoned_Station extends BaseDurationAbility
             {
                 tooltip.addPara("The station closest to your location is " + closestStation.getName() + ". It is in a state of extreme disrepair and is not a viable target for colonization.", bad, pad);
             }
-            else if(boggledTools.getDistanceBetweenTokens(closestColonizableStation, playerFleet) > 400f)
+            else if(Misc.getDistance(closestColonizableStation, playerFleet) > 400f)
             {
-                float distanceInSu = boggledTools.getDistanceBetweenTokens(playerFleet, closestColonizableStation) / 2000f;
+                float distanceInSu = Misc.getDistance(playerFleet, closestColonizableStation) / 2000f;
                 String distanceInSuString = String.format("%.2f", distanceInSu);
                 float requiredDistanceInSu = 400f / 2000f;
                 String requiredDistanceInSuString = String.format("%.2f", requiredDistanceInSu);
@@ -331,25 +341,26 @@ public class Colonize_Abandoned_Station extends BaseDurationAbility
         {
             tooltip.addPara("Insufficient credits.", bad, pad);
         }
-
-        if(playerCargo.getCommodityQuantity("crew") < crewCost)
+        if(boggledDefaultCargo.active.getCommodityAmount(playerCargo, boggledDefaultCargo.Abandoned_Station, "metals") < metalCost)
+        {
+            tooltip.addPara("Insufficient metals.", bad, pad);
+        }
+        if(boggledDefaultCargo.active.getCommodityAmount(playerCargo, boggledDefaultCargo.Abandoned_Station, "rare_metals") < transplutonicsCost)
+        {
+            tooltip.addPara("Insufficient transplutonics.", bad, pad);
+        }
+        if(boggledDefaultCargo.active.getCommodityAmount(playerCargo, boggledDefaultCargo.Abandoned_Station, "crew") < crewCost)
         {
             tooltip.addPara("Insufficient crew.", bad, pad);
         }
-
-        if(playerCargo.getCommodityQuantity("heavy_machinery") < heavyMachineryCost)
+        if(boggledDefaultCargo.active.getCommodityAmount(playerCargo, boggledDefaultCargo.Abandoned_Station, "heavy_machinery") < heavyMachineryCost)
         {
             tooltip.addPara("Insufficient heavy machinery.", bad, pad);
         }
 
-        if(playerCargo.getCommodityQuantity("metals") < metalCost)
+        if(this.isUsable())
         {
-            tooltip.addPara("Insufficient metals.", bad, pad);
-        }
-
-        if(playerCargo.getCommodityQuantity("rare_metals") < transplutonicsCost)
-        {
-            tooltip.addPara("Insufficient transplutonics.", bad, pad);
+            tooltip.addPara("Colonization target: %s", pad, highlight, new String[]{boggledTools.getClosestColonizableStationInSystem(playerFleet).getName()});
         }
     }
 

@@ -197,6 +197,11 @@ public class Construct_Siphon_Station extends BaseDurationAbility
         {
             tooltip.addPara("Insufficient heavy machinery.", bad, pad);
         }
+
+        if(this.isUsable())
+        {
+            tooltip.addPara("Siphoning target: %s", pad, highlight, new String[]{boggledTools.getClosestGasGiantToken(playerFleet).getName()});
+        }
     }
 
     public PlanetAPI getMoonBlockingSiphonStation(SectorEntityToken closestGasGiantToken)
