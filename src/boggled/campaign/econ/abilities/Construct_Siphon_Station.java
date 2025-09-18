@@ -10,7 +10,6 @@ import com.fs.starfarer.api.ui.LabelAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
 import java.awt.Color;
-import java.util.Iterator;
 
 public class Construct_Siphon_Station extends BaseDurationAbility
 {
@@ -87,12 +86,9 @@ public class Construct_Siphon_Station extends BaseDurationAbility
         }
 
         // Can't build a siphon station if there's a moon orbiting very close to the gas giant.
-        for(PlanetAPI planet : system.getPlanets())
+        if(getMoonBlockingSiphonStation(closestGasGiantToken) != null)
         {
-            if(planet.getOrbitFocus() != null && !planet.isStar() && planet.getOrbitFocus().equals(closestGasGiantToken) && planet.getCircularOrbitRadius() < (closestGasGiantToken.getRadius() + 250f))
-            {
-                return false;
-            }
+            return false;
         }
 
         CargoAPI playerCargo = playerFleet.getCargo();
@@ -159,90 +155,27 @@ public class Construct_Siphon_Station extends BaseDurationAbility
             {
                 tooltip.addPara("The gas giant closest to your fleet is " + closestGasGiantToken.getName() + " which is controlled by " + closestGasGiantToken.getMarket().getFaction().getDisplayName() + ". You cannot construct a siphon station in orbit around a gas giant controlled by another faction.", bad, pad);
             }
-            else if((Misc.getDistance(closestGasGiantToken, playerFleet) - closestGasGiantToken.getRadius()) > 250f)
-            {
-                float distanceInSu = (Misc.getDistance(playerFleet, closestGasGiantToken) - closestGasGiantToken.getRadius()) / 2000f;
-                String distanceInSuString = String.format("%.2f", distanceInSu);
-                float requiredDistanceInSu = 250f / 2000f;
-                String requiredDistanceInSuString = String.format("%.2f", requiredDistanceInSu);
-                tooltip.addPara("The gas giant closest to your location is " + closestGasGiantToken.getName() + ". Your fleet is " + distanceInSuString + " stellar units away. You must be within " + requiredDistanceInSuString + " stellar units to construct a siphon station.", bad, pad);
-            }
             else
             {
-                // Can't build a siphon station if there's a moon orbiting very close to the gas giant.
-                String planetName = null;
-                for(PlanetAPI planet : system.getPlanets())
+                if((Misc.getDistance(closestGasGiantToken, playerFleet) - closestGasGiantToken.getRadius()) > 250f)
                 {
-                    if(planet.getOrbitFocus() != null && !planet.isStar() && planet.getOrbitFocus().equals(closestGasGiantToken) && planet.getCircularOrbitRadius() < (closestGasGiantToken.getRadius() + 250f))
-                    {
-                        if(planet.getName().compareTo(planetName) <= 0) { planetName = planet.getName();}
-                    }
+                    float distanceInSu = (Misc.getDistance(playerFleet, closestGasGiantToken) - closestGasGiantToken.getRadius()) / 2000f;
+                    String distanceInSuString = String.format("%.2f", distanceInSu);
+                    float requiredDistanceInSu = 250f / 2000f;
+                    String requiredDistanceInSuString = String.format("%.2f", requiredDistanceInSu);
+                    tooltip.addPara("The gas giant closest to your location is " + closestGasGiantToken.getName() + ". Your fleet is " + distanceInSuString + " stellar units away. You must be within " + requiredDistanceInSuString + " stellar units to construct a siphon station.", bad, pad);
                 }
 
-                if(planetName != null)
+                if(gasGiantAlreadyHasSiphonStationInOrbit(closestGasGiantToken))
                 {
-                    tooltip.addPara("A siphon station would be unable to achieve a satisfactory orbit around " + closestGasGiantToken.getName() + " because " + planetName + " is too close to the projected orbital path.", bad, pad);
+                    tooltip.addPara("Each gas giant can only support a single siphon station.", bad, pad);
                 }
-            }
-        }
 
-        if(!(playerFleet.isInHyperspace() || Global.getSector().getPlayerFleet().isInHyperspaceTransition()))
-        {
-            SectorEntityToken closestGasGiantToken = null;
-            closestGasGiantToken = boggledTools.getClosestGasGiantToken(playerFleet);
-
-            if(closestGasGiantToken != null)
-            {
-                Iterator allEntitiesInSystem = Global.getSector().getPlayerFleet().getStarSystem().getAllEntities().iterator();
-                while(allEntitiesInSystem.hasNext())
+                PlanetAPI blockingMoon = getMoonBlockingSiphonStation(closestGasGiantToken);
+                if(blockingMoon != null)
                 {
-                    SectorEntityToken entity = (SectorEntityToken)allEntitiesInSystem.next();
-                    if(entity.hasTag("station") && entity.getOrbitFocus() != null && entity.getOrbitFocus().equals(closestGasGiantToken) && (entity.getCustomEntitySpec().getDefaultName().equals("Side Station") || entity.getCustomEntitySpec().getDefaultName().equals("Siphon Station")) && !entity.getId().equals("beholder_station") && !entity.getId().contains("armaa_"))
-                    {
-                        tooltip.addPara("Each gas giant can only support a single siphon station.", bad, pad);
-                    }
+                    tooltip.addPara("A siphon station would be unable to achieve a satisfactory orbit around " + closestGasGiantToken.getName() + " because " + blockingMoon.getName() + " is too close to the projected orbital path.", bad, pad);
                 }
-            }
-        }
-
-        //check if the host gas giant has a moon that is too close to it
-        if(!(playerFleet.isInHyperspace() || Global.getSector().getPlayerFleet().isInHyperspaceTransition()))
-        {
-            SectorEntityToken closestGasGiantToken = null;
-            closestGasGiantToken = boggledTools.getClosestGasGiantToken(playerFleet);
-
-            Iterator allPlanetsInSystem = playerFleet.getStarSystem().getPlanets().iterator();
-            while(allPlanetsInSystem.hasNext())
-            {
-                PlanetAPI planet = (PlanetAPI) allPlanetsInSystem.next();
-                if (planet.getOrbitFocus() != null && !planet.isStar() && planet.getOrbitFocus().equals(closestGasGiantToken) && planet.getCircularOrbitRadius() < (closestGasGiantToken.getRadius() + 250f))
-                {
-                    tooltip.addPara("A siphon station would be unable to achieve a satisfactory orbit around " + closestGasGiantToken.getName() + " because " + planet.getName() + " is too close to the projected orbital path.", bad, pad);
-                    break;
-                }
-            }
-        }
-
-        //Check if the host gas giant has four or more moons
-        if(!(playerFleet.isInHyperspace() || Global.getSector().getPlayerFleet().isInHyperspaceTransition()))
-        {
-            int numMoons = 0;
-            SectorEntityToken closestGasGiantToken = null;
-            closestGasGiantToken = boggledTools.getClosestGasGiantToken(playerFleet);
-
-            Iterator allPlanetsInSystem = playerFleet.getStarSystem().getPlanets().iterator();
-            while(allPlanetsInSystem.hasNext())
-            {
-                PlanetAPI planet = (PlanetAPI) allPlanetsInSystem.next();
-                if (planet.getOrbitFocus() != null && !planet.isStar() && planet.getOrbitFocus().equals(closestGasGiantToken) && planet.getRadius() != 0)
-                {
-                    numMoons++;
-                }
-            }
-
-            if(numMoons >= 4)
-            {
-                tooltip.addPara("A siphon station would be unable to maintain a satisfactory orbit around " + closestGasGiantToken.getName() + " because there are four or more moons orbiting it. The siphon station would be unable to maintain a stable orbit due to the gravitational fluctuations caused by the moons.", bad, pad);
             }
         }
 
@@ -251,28 +184,53 @@ public class Construct_Siphon_Station extends BaseDurationAbility
         {
             tooltip.addPara("Insufficient credits.", bad, pad);
         }
-
-        if(playerCargo.getCommodityQuantity("crew") < crewCost)
-        {
-            tooltip.addPara("Insufficient crew.", bad, pad);
-        }
-
-        if(playerCargo.getCommodityQuantity("heavy_machinery") < heavyMachineryCost)
-        {
-            tooltip.addPara("Insufficient heavy machinery.", bad, pad);
-        }
-
-        if(playerCargo.getCommodityQuantity("metals") < metalCost)
+        if(boggledDefaultCargo.active.getCommodityAmount(playerCargo, boggledDefaultCargo.Siphon_Station, "metals") < metalCost)
         {
             tooltip.addPara("Insufficient metals.", bad, pad);
         }
-
-        if(playerCargo.getCommodityQuantity("rare_metals") < transplutonicsCost)
+        if(boggledDefaultCargo.active.getCommodityAmount(playerCargo, boggledDefaultCargo.Siphon_Station, "rare_metals") < transplutonicsCost)
         {
             tooltip.addPara("Insufficient transplutonics.", bad, pad);
         }
+        if(boggledDefaultCargo.active.getCommodityAmount(playerCargo, boggledDefaultCargo.Siphon_Station, "crew") < crewCost)
+        {
+            tooltip.addPara("Insufficient crew.", bad, pad);
+        }
+        if(boggledDefaultCargo.active.getCommodityAmount(playerCargo, boggledDefaultCargo.Siphon_Station, "heavy_machinery") < heavyMachineryCost)
+        {
+            tooltip.addPara("Insufficient heavy machinery.", bad, pad);
+        }
     }
 
+    public PlanetAPI getMoonBlockingSiphonStation(SectorEntityToken closestGasGiantToken)
+    {
+        StarSystemAPI system = closestGasGiantToken.getStarSystem();
+
+        // Can't build a siphon station if there's a moon orbiting very close to the gas giant.
+        PlanetAPI returnPlanet = null;
+        for(PlanetAPI planet : system.getPlanets())
+        {
+            if(planet.getOrbitFocus() != null && !planet.isStar() && planet.getOrbitFocus().equals(closestGasGiantToken) && planet.getCircularOrbitRadius() < (closestGasGiantToken.getRadius() + 250f))
+            {
+                if(returnPlanet == null || planet.getName().compareTo(returnPlanet.getName()) <= 0) { returnPlanet = planet;}
+            }
+        }
+
+        return returnPlanet;
+    }
+
+    public boolean gasGiantAlreadyHasSiphonStationInOrbit(SectorEntityToken closestGasGiantToken)
+    {
+        for(SectorEntityToken token : closestGasGiantToken.getStarSystem().getAllEntities())
+        {
+            if(token.hasTag(boggledTools.BoggledTags.siphonStation) && token.getOrbitFocus() != null && token.getOrbitFocus().equals(closestGasGiantToken))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
     @Override
     public boolean isTooltipExpandable() {
         return false;
