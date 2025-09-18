@@ -7,6 +7,7 @@ import com.fs.starfarer.api.campaign.*;
 import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.impl.campaign.abilities.BaseDurationAbility;
 import com.fs.starfarer.api.impl.campaign.ids.Factions;
+import com.fs.starfarer.api.impl.campaign.ids.Submarkets;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
 import java.awt.Color;
@@ -69,6 +70,7 @@ public class Construct_Mining_Station extends BaseDurationAbility
         newMiningStationLights.setOrbit(newMiningStation.getOrbit().makeCopy());
 
         MarketAPI market = boggledTools.createMiningStationMarket(newMiningStation);
+        CargoAPI newMarketStorage = market.getSubmarket(Submarkets.SUBMARKET_STORAGE).getCargo();
 
         //Delete abandoned mining stations and transfer their cargo to the newly created one
         ArrayList<SectorEntityToken> stationsToDelete = new ArrayList<>();
@@ -85,12 +87,12 @@ public class Construct_Mining_Station extends BaseDurationAbility
         // Put the storage cargo and ships from the abandoned station into the new market so the player doesn't lose them
         for(SectorEntityToken station : stationsToDelete)
         {
-            CargoAPI cargoFromDeletedStation = station.getMarket().getSubmarket("storage").getCargo();
+            CargoAPI cargoFromDeletedStation = station.getMarket().getSubmarket(Submarkets.SUBMARKET_STORAGE).getCargo();
 
             if(!cargoFromDeletedStation.isEmpty())
             {
                 // Put the deleted station's cargo into the new station market if it was created
-                cargoFromDeletedStation.addAll(cargoFromDeletedStation);
+                newMarketStorage.addAll(cargoFromDeletedStation);
             }
 
             system.removeEntity(station);
@@ -108,7 +110,6 @@ public class Construct_Mining_Station extends BaseDurationAbility
             return false;
         }
 
-        boolean playerHasResources = true;
         int miningStationCap = boggledTools.getIntSetting("boggledMaxNumMiningStationsPerSystem");
 
         if(!boggledTools.playerFleetInAsteroidBelt(playerFleet) && !boggledTools.playerFleetInAsteroidField(playerFleet))
@@ -148,26 +149,21 @@ public class Construct_Mining_Station extends BaseDurationAbility
         CargoAPI playerCargo = playerFleet.getCargo();
         if(playerCargo.getCredits().get() < creditCost)
         {
-            playerHasResources = false;
+            return false;
         }
         if(boggledDefaultCargo.active.getCommodityAmount(playerCargo, boggledDefaultCargo.Mining_Station, "metals") < metalCost)
         {
-            playerHasResources = false;
+            return false;
         }
         if(boggledDefaultCargo.active.getCommodityAmount(playerCargo, boggledDefaultCargo.Mining_Station, "rare_metals") < transplutonicsCost)
         {
-            playerHasResources = false;
+            return false;
         }
         if(boggledDefaultCargo.active.getCommodityAmount(playerCargo, boggledDefaultCargo.Mining_Station, "crew") < crewCost)
         {
-            playerHasResources = false;
+            return false;
         }
         if(boggledDefaultCargo.active.getCommodityAmount(playerCargo, boggledDefaultCargo.Mining_Station, "heavy_machinery") < heavyMachineryCost)
-        {
-            playerHasResources = false;
-        }
-
-        if(!playerHasResources)
         {
             return false;
         }

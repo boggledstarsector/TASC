@@ -1916,16 +1916,25 @@ public class boggledTools {
     }
 
     public static SectorEntityToken getClosestGasGiantToken(SectorEntityToken playerFleet) {
+        StarSystemAPI system = playerFleet.getStarSystem();
+        if(system == null)
+        {
+            return null;
+        }
+
         List<SectorEntityToken> allGasGiantsInSystem = new ArrayList<>();
-        for (Object object : playerFleet.getStarSystem().getEntities(PlanetAPI.class)) {
-            PlanetAPI planet = (PlanetAPI) object;
-            if (planet.isGasGiant()) {
+        for(PlanetAPI planet : system.getPlanets())
+        {
+            // Make sure the gas giant has a valid market before considering it.
+            // Should never matter unless another mod adds an invalid planet.
+            if (planet.isGasGiant() && planet.getMarket() != null && planet.getMarket().getFaction() != null) {
                 allGasGiantsInSystem.add(planet);
             }
         }
 
         SectorEntityToken closestGasGiant = null;
-        for (SectorEntityToken entity : allGasGiantsInSystem) {
+        for (SectorEntityToken entity : allGasGiantsInSystem)
+        {
             if (closestGasGiant == null) {
                 closestGasGiant = entity;
             } else if (Misc.getDistance(entity, playerFleet) < Misc.getDistance(closestGasGiant, playerFleet)) {
@@ -2220,13 +2229,13 @@ public class boggledTools {
         boggledTools.surveyAll(market);
 
         Global.getSoundPlayer().playUISound("ui_boggled_station_constructed", 1.0F, 1.0F);
-
         return market;
     }
 
     public static MarketAPI createSiphonStationMarket(SectorEntityToken stationEntity, SectorEntityToken hostGasGiant)
     {
-        CampaignClockAPI clock = Global.getSector().getClock();
+        // Assumes the station is being created in a valid spot.
+        // isUsable() method of Construct_Siphon_Station handles validation.
         StarSystemAPI system = stationEntity.getStarSystem();
         String systemName = system.getName();
 
@@ -2269,21 +2278,13 @@ public class boggledTools {
         {
             String resourceLevel = "diffuse";
             int staticAmountPerSettings = boggledTools.getIntSetting("boggledSiphonStationStaticAmount");
-            switch(staticAmountPerSettings)
-            {
-                case 1:
-                    resourceLevel = "trace";
-                    break;
-                case 2:
-                    resourceLevel = "diffuse";
-                    break;
-                case 3:
-                    resourceLevel = "abundant";
-                    break;
-                case 4:
-                    resourceLevel = "plentiful";
-                    break;
-            }
+            resourceLevel = switch (staticAmountPerSettings) {
+                case 1 -> "trace";
+                case 2 -> "diffuse";
+                case 3 -> "abundant";
+                case 4 -> "plentiful";
+                default -> resourceLevel;
+            };
             market.addCondition("volatiles_" + resourceLevel);
         }
 
@@ -2316,7 +2317,6 @@ public class boggledTools {
         market.addSubmarket("local_resources");
 
         boggledTools.surveyAll(market);
-        boggledTools.refreshSupplyAndDemand(market);
 
         Global.getSoundPlayer().playUISound("ui_boggled_station_constructed", 1.0F, 1.0F);
         return market;
