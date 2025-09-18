@@ -77,12 +77,9 @@ public class Construct_Siphon_Station extends BaseDurationAbility
             return false;
         }
 
-        for(SectorEntityToken token : system.getAllEntities())
+        if(gasGiantAlreadyHasSiphonStationInOrbit(closestGasGiantToken))
         {
-            if(token.hasTag(boggledTools.BoggledTags.siphonStation) && token.getOrbitFocus() != null && token.getOrbitFocus().equals(closestGasGiantToken))
-            {
-                return false;
-            }
+            return false;
         }
 
         // Can't build a siphon station if there's a moon orbiting very close to the gas giant.
