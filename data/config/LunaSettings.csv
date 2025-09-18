@@ -50,8 +50,6 @@ The Ouyang Optimizer building can be constructed on a station orbiting a gas gia
 boggledStationConstructionContentEnabled,Enable station construction content,Boolean,True,,"Set this to false to completely disable all station construction content regardless of other settings.
 
 If the player has Ashes of the Domain - Vaults of Knowledge enabled, this setting is ignored and always true.",,,Station Construction
-boggledStationConstructionDelayEnabled,Enable station construction time,Boolean,False,,"Set this to true to cause station construction to take the specified number of days instead of completing instantly.",,,Station Construction
-boggledStationConstructionDelayDays,Station construction delay time,Int,90,,"If the station construction delay is enabled this controls how many days it will take to complete.",1,450,Station Construction
 boggledStationAccessibilityBoost,Modify station accessibility,Int,0,,"Adds an accessibility modifier to player-constructed stations. Negative values can be used to decrease accessibility.",-100,100,Station Construction
 boggledStationHazardRatingModifier,Modify station hazard,Int,0,,"Adds a hazard modifier to player-constructed stations. Negative values can be used to decrease hazard.",-100,100,Station Construction
 boggledApplyStationSettingsToAllStationsInSector,Apply settings to all stations,Boolean,True,,"Applies Cramped Quarters (if enabled), applies hazard and accessibility modifiers, and enables 'no atmosphere' special items on all stations sector-wide.

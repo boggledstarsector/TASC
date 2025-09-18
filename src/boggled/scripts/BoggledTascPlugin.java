@@ -11,8 +11,8 @@ import com.fs.starfarer.api.impl.campaign.ids.Factions;
 import com.fs.starfarer.api.impl.campaign.ids.Industries;
 import com.fs.starfarer.api.impl.campaign.ids.Conditions;
 import boggled.campaign.econ.boggledTools;
-import boggled.scripts.PlayerCargoCalculations.bogglesDefaultCargo;
-import boggled.scripts.PlayerCargoCalculations.booglesCrewReplacerCargo;
+import boggled.scripts.PlayerCargoCalculations.boggledDefaultCargo;
+import boggled.scripts.PlayerCargoCalculations.boggledCrewReplacerCargo;
 
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
@@ -429,9 +429,9 @@ public class BoggledTascPlugin extends BaseModPlugin {
         boggledTools.initialiseDefaultTerraformingProjectEffectFactories();
 
         if (Global.getSettings().getModManager().isModEnabled("aaacrew_replacer")){
-            bogglesDefaultCargo.active = new booglesCrewReplacerCargo();
+            boggledDefaultCargo.active = new boggledCrewReplacerCargo();
         } else {
-            bogglesDefaultCargo.active = new bogglesDefaultCargo();
+            boggledDefaultCargo.active = new boggledDefaultCargo();
         }
 
         if (aotdEnabled) {

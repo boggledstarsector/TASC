@@ -4,9 +4,9 @@ import com.fs.starfarer.api.impl.campaign.ids.Commodities;
 import data.scripts.crewReplacer_Job;
 import data.scripts.crewReplacer_Main;
 
-public class booglesCrewReplacerCargo extends bogglesDefaultCargo {
+public class boggledCrewReplacerCargo extends boggledDefaultCargo {
     private final String name = "boogles_TerraformingAndStationConstruction";
-    public booglesCrewReplacerCargo(){
+    public boggledCrewReplacerCargo(){
         String[] abandonedStationCommodities = { Commodities.METALS, Commodities.RARE_METALS, Commodities.CREW, Commodities.HEAVY_MACHINERY };
         String[] astropolisStationCommodities = { Commodities.METALS, Commodities.RARE_METALS, Commodities.CREW, Commodities.HEAVY_MACHINERY };
         String[] miningStationCommodities = { Commodities.METALS, Commodities.RARE_METALS, Commodities.CREW, Commodities.HEAVY_MACHINERY };

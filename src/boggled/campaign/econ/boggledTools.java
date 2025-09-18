@@ -18,6 +18,7 @@ import com.fs.starfarer.api.impl.campaign.intel.BaseIntelPlugin;
 import com.fs.starfarer.api.impl.campaign.intel.MessageIntel;
 import com.fs.starfarer.api.impl.campaign.intel.deciv.DecivTracker;
 import com.fs.starfarer.api.impl.campaign.rulecmd.salvage.MarketCMD;
+import com.fs.starfarer.api.impl.campaign.submarkets.StoragePlugin;
 import com.fs.starfarer.api.impl.campaign.terrain.AsteroidBeltTerrainPlugin;
 import com.fs.starfarer.api.impl.campaign.terrain.AsteroidFieldTerrainPlugin;
 import com.fs.starfarer.api.loading.IndustrySpecAPI;
@@ -2133,6 +2134,237 @@ public class boggledTools {
         }
 
         return true;
+    }
+
+    public static MarketAPI createMiningStationMarket(SectorEntityToken stationEntity)
+    {
+        CampaignClockAPI clock = Global.getSector().getClock();
+        StarSystemAPI system = stationEntity.getStarSystem();
+        String systemName = system.getName();
+
+        //Create the mining station market
+        MarketAPI market = Global.getFactory().createMarket(systemName + clock.getCycle() + clock.getMonth() + clock.getDay() + "MiningStationMarket", stationEntity.getName(), 3);
+        market.setSize(3);
+
+        market.setSurveyLevel(MarketAPI.SurveyLevel.FULL);
+        market.setPrimaryEntity(stationEntity);
+
+        market.setFactionId(Global.getSector().getPlayerFleet().getFaction().getId());
+        market.setPlayerOwned(true);
+
+        market.addCondition(Conditions.POPULATION_3);
+
+        if(boggledTools.getBooleanSetting("boggledMiningStationLinkToResourceBelts"))
+        {
+            int numAsteroidBeltsInSystem = boggledTools.getNumAsteroidTerrainsInSystem(stationEntity);
+            String resourceLevel = boggledTools.getMiningStationResourceString(numAsteroidBeltsInSystem);
+            market.addCondition("ore_" + resourceLevel);
+            market.addCondition("rare_ore_" + resourceLevel);
+        }
+        else
+        {
+            String resourceLevel = "moderate";
+            int staticAmountPerSettings = boggledTools.getIntSetting("boggledMiningStationStaticAmount");
+            switch(staticAmountPerSettings)
+            {
+                case 1:
+                    resourceLevel = "sparse";
+                    break;
+                case 2:
+                    resourceLevel = "moderate";
+                    break;
+                case 3:
+                    resourceLevel = "abundant";
+                    break;
+                case 4:
+                    resourceLevel = "rich";
+                    break;
+                case 5:
+                    resourceLevel = "ultrarich";
+                    break;
+            }
+            market.addCondition("ore_" + resourceLevel);
+            market.addCondition("rare_ore_" + resourceLevel);
+        }
+
+        market.addCondition("sprite_controller");
+        market.addCondition("cramped_quarters");
+
+        //Adds the no atmosphere condition, then suppresses it so it won't increase hazard
+        //market_conditions.csv overwrites the vanilla no_atmosphere condition
+        //the only change made is to hide the icon on markets where primary entity has station tag
+        //This is done so refining and fuel production can slot the special items
+        //Hopefully Alex will fix the no_atmosphere detection in the future so this hack can be removed
+        market.addCondition("no_atmosphere");
+        market.suppressCondition("no_atmosphere");
+
+        market.addIndustry(Industries.POPULATION);
+        market.getConstructionQueue().addToEnd(Industries.SPACEPORT, 0);
+        market.getConstructionQueue().addToEnd(Industries.MINING, 0);
+
+        stationEntity.setMarket(market);
+
+        Global.getSector().getEconomy().addMarket(market, true);
+
+
+        // If the player doesn't view the colony management screen within a few days of market creation, then there can be a bug related to population growth
+        // Still bugged as of 0.95.1a
+        Global.getSector().getCampaignUI().showInteractionDialog(stationEntity);
+        //Global.getSector().getCampaignUI().getCurrentInteractionDialog().dismiss();
+
+        market.addSubmarket("storage");
+        StoragePlugin storage = (StoragePlugin)market.getSubmarket("storage").getPlugin();
+        storage.setPlayerPaidToUnlock(true);
+        market.addSubmarket("local_resources");
+
+        boggledTools.surveyAll(market);
+
+        Global.getSoundPlayer().playUISound("ui_boggled_station_constructed", 1.0F, 1.0F);
+
+        return market;
+    }
+
+    public static MarketAPI createSiphonStationMarket(SectorEntityToken stationEntity, SectorEntityToken hostGasGiant)
+    {
+        CampaignClockAPI clock = Global.getSector().getClock();
+        StarSystemAPI system = stationEntity.getStarSystem();
+        String systemName = system.getName();
+
+        //Create the siphon station market
+        MarketAPI market = Global.getFactory().createMarket(systemName + ":" + hostGasGiant.getName() + "SiphonStationMarket", stationEntity.getName(), 3);
+        market.setSize(3);
+
+        market.setSurveyLevel(MarketAPI.SurveyLevel.FULL);
+        market.setPrimaryEntity(stationEntity);
+
+        market.setFactionId(Global.getSector().getPlayerFleet().getFaction().getId());
+        market.setPlayerOwned(true);
+
+        market.addCondition(Conditions.POPULATION_3);
+
+        if(boggledTools.getBooleanSetting("boggledSiphonStationLinkToGasGiant"))
+        {
+            if(hostGasGiant.getMarket().hasCondition(Conditions.VOLATILES_TRACE))
+            {
+                market.addCondition(Conditions.VOLATILES_TRACE);
+            }
+            else if(hostGasGiant.getMarket().hasCondition(Conditions.VOLATILES_DIFFUSE))
+            {
+                market.addCondition(Conditions.VOLATILES_DIFFUSE);
+            }
+            else if(hostGasGiant.getMarket().hasCondition(Conditions.VOLATILES_ABUNDANT))
+            {
+                market.addCondition(Conditions.VOLATILES_ABUNDANT);
+            }
+            else if(hostGasGiant.getMarket().hasCondition(Conditions.VOLATILES_PLENTIFUL))
+            {
+                market.addCondition(Conditions.VOLATILES_PLENTIFUL);
+            }
+            else //Can a gas giant not have any volatiles at all?
+            {
+                market.addCondition(Conditions.VOLATILES_TRACE);
+            }
+        }
+        else
+        {
+            String resourceLevel = "diffuse";
+            int staticAmountPerSettings = boggledTools.getIntSetting("boggledSiphonStationStaticAmount");
+            switch(staticAmountPerSettings)
+            {
+                case 1:
+                    resourceLevel = "trace";
+                    break;
+                case 2:
+                    resourceLevel = "diffuse";
+                    break;
+                case 3:
+                    resourceLevel = "abundant";
+                    break;
+                case 4:
+                    resourceLevel = "plentiful";
+                    break;
+            }
+            market.addCondition("volatiles_" + resourceLevel);
+        }
+
+        market.addCondition("sprite_controller");
+        market.addCondition("cramped_quarters");
+
+        //Adds the no atmosphere condition, then suppresses it so it won't increase hazard
+        //market_conditions.csv overwrites the vanilla no_atmosphere condition
+        //the only change made is to hide the icon on markets where primary entity has station tag
+        //This is done so refining and fuel production can slot the special items
+        //Hopefully Alex will fix the no_atmosphere detection in the future so this hack can be removed
+        market.addCondition("no_atmosphere");
+        market.suppressCondition("no_atmosphere");
+
+        market.addIndustry(Industries.POPULATION);
+        market.getConstructionQueue().addToEnd(Industries.SPACEPORT, 0);
+        market.getConstructionQueue().addToEnd(Industries.MINING, 0);
+
+        stationEntity.setMarket(market);
+
+        Global.getSector().getEconomy().addMarket(market, true);
+
+        //If the player doesn't view the colony management screen within a few days of market creation, then there can be a bug related to population growth
+        Global.getSector().getCampaignUI().showInteractionDialog(stationEntity);
+        //Global.getSector().getCampaignUI().getCurrentInteractionDialog().dismiss();
+
+        market.addSubmarket("storage");
+        StoragePlugin storage = (StoragePlugin)market.getSubmarket("storage").getPlugin();
+        storage.setPlayerPaidToUnlock(true);
+        market.addSubmarket("local_resources");
+
+        boggledTools.surveyAll(market);
+        boggledTools.refreshSupplyAndDemand(market);
+
+        Global.getSoundPlayer().playUISound("ui_boggled_station_constructed", 1.0F, 1.0F);
+        return market;
+    }
+
+    public static MarketAPI createAstropolisStationMarket(SectorEntityToken stationEntity, SectorEntityToken hostPlanet)
+    {
+        CampaignClockAPI clock = Global.getSector().getClock();
+
+        //Create the astropolis market
+        MarketAPI market = Global.getFactory().createMarket(hostPlanet.getName() + "astropolisMarket" + clock.getCycle() + clock.getMonth() + clock.getDay(), stationEntity.getName(), 3);
+        market.setSize(3);
+
+        market.setSurveyLevel(MarketAPI.SurveyLevel.FULL);
+        market.setPrimaryEntity(stationEntity);
+
+        market.setFactionId(Global.getSector().getPlayerFaction().getId());
+        market.setPlayerOwned(true);
+
+        market.addCondition(Conditions.POPULATION_3);
+
+        market.addCondition("sprite_controller");
+        market.addCondition("cramped_quarters");
+
+        //Adds the no atmosphere condition, then suppresses it so it won't increase hazard
+        //market_conditions.csv overwrites the vanilla no_atmosphere condition
+        //the only change made is to hide the icon on markets where primary entity has station tag
+        //This is done so refining and fuel production can slot the special items
+        //Hopefully Alex will fix the no_atmosphere detection in the future so this hack can be removed
+        market.addCondition("no_atmosphere");
+        market.suppressCondition("no_atmosphere");
+
+        market.addIndustry(Industries.POPULATION);
+        market.getConstructionQueue().addToEnd(Industries.SPACEPORT, 0);
+
+        stationEntity.setMarket(market);
+
+        Global.getSector().getEconomy().addMarket(market, true);
+
+        Global.getSector().getCampaignUI().showInteractionDialog(stationEntity);
+
+        market.addSubmarket("storage");
+        StoragePlugin storage = (StoragePlugin)market.getSubmarket("storage").getPlugin();
+        storage.setPlayerPaidToUnlock(true);
+        market.addSubmarket("local_resources");
+
+        Global.getSoundPlayer().playUISound("ui_boggled_station_constructed", 1.0F, 1.0F);
+        return market;
     }
 
     public static SectorEntityToken getFocusOfAsteroidBelt(SectorEntityToken playerFleet) {
