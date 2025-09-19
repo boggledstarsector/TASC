@@ -421,12 +421,12 @@ public class BoggledTascPlugin extends BaseModPlugin {
 
     @Override
     public void onApplicationLoad()  {
-        loadSettingsFromJSON();
-
         boggledTools.initialiseDefaultStationConstructionFactories();
         boggledTools.initialiseDefaultTerraformingRequirementFactories();
         boggledTools.initialiseDefaultTerraformingDurationModifierFactories();
         boggledTools.initialiseDefaultTerraformingProjectEffectFactories();
+
+        loadSettingsFromJSON();
 
         if (Global.getSettings().getModManager().isModEnabled("aaacrew_replacer")){
             boggledDefaultCargo.active = new boggledCrewReplacerCargo();
