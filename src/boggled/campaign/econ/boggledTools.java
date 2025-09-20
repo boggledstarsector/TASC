@@ -1,6 +1,5 @@
 package boggled.campaign.econ;
 
-import boggled.campaign.econ.abilities.BoggledBaseAbility;
 import boggled.campaign.econ.industries.BoggledCommonIndustry;
 import boggled.scripts.*;
 import com.fs.starfarer.api.Global;
@@ -43,7 +42,6 @@ import org.jetbrains.annotations.Nullable;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.awt.*;
 import java.util.*;
 import java.util.List;
@@ -1496,15 +1494,6 @@ public class boggledTools {
         return terraformingProjectEffects.get(effectId);
     }
 
-    public static BoggledBaseAbility getAbility(String abilityId) {
-        BoggledTerraformingProject project = getProject(abilityId);
-        if (project == null) {
-            Global.getLogger(boggledTools.class).error("Ability " + abilityId + " has no associated project");
-            return null;
-        }
-        return new BoggledBaseAbility(project.getId(), project.getEnableSettings(), project);
-    }
-
     public static String getResourceLimit(PlanetAPI planet, String resourceId) {
         String planetTypeId = getPlanetType(planet).getPlanetId();
         Map<String, String> planetResourceLimits = resourceLimits.get(planetTypeId);
@@ -2014,44 +2003,44 @@ public class boggledTools {
         return totalFactionMarketSize;
     }
 
-    public static boolean planetInSystem(SectorEntityToken playerFleet) {
-        for (Object object : playerFleet.getStarSystem().getEntities(PlanetAPI.class)) {
-            PlanetAPI planet = (PlanetAPI) object;
-            if (!getPlanetType((planet)).getPlanetId().equals(starPlanetId)) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
     public static PlanetAPI getClosestPlanetToken(CampaignFleetAPI playerFleet) {
-        if (playerFleet.isInHyperspace() || playerFleet.isInHyperspaceTransition()) {
+        StarSystemAPI system = playerFleet.getStarSystem();
+        if(playerFleet.isInHyperspace() || playerFleet.isInHyperspaceTransition() || system == null)
+        {
             return null;
         }
 
-        if (!planetInSystem(playerFleet)) {
-            return null;
-        }
-
-        PlanetAPI closestPlanet = null;
-        for (SectorEntityToken entity : playerFleet.getStarSystem().getAllEntities()) {
-            if (!(entity instanceof PlanetAPI)) {
-                continue;
-            }
-            PlanetAPI planet = (PlanetAPI) entity;
-            if (getPlanetType(planet).getPlanetId().equals(starPlanetId)) {
+        Pair<PlanetAPI, Float> closestPlanet = null;
+        for(PlanetAPI token : system.getPlanets())
+        {
+            // Black holes are stars
+            if(token.isStar())
+            {
                 continue;
             }
 
-            if (closestPlanet == null) {
-                closestPlanet = (PlanetAPI) entity;
-            } else if (Misc.getDistance(entity, playerFleet) < Misc.getDistance(closestPlanet, playerFleet)) {
-                closestPlanet = (PlanetAPI) entity;
+            // There's been issues in the past with other mods adding invalid planets and markets which could cause a NPE in TASC
+            if(token.getMarket() == null || token.getMarket().getFaction() == null)
+            {
+                continue;
+            }
+
+            if(closestPlanet == null)
+            {
+                closestPlanet = new Pair<>(token, Misc.getDistance(playerFleet, token));
+            }
+            else
+            {
+                float newDistance = Misc.getDistance(token, playerFleet);
+                if(newDistance < closestPlanet.two)
+                {
+                    closestPlanet.one = token;
+                    closestPlanet.two = newDistance;
+                }
             }
         }
 
-        return closestPlanet;
+        return closestPlanet != null ? closestPlanet.one : null;
     }
 
     public static MarketAPI getClosestMarketToEntity(SectorEntityToken entity) {
@@ -2356,15 +2345,182 @@ public class boggledTools {
 
         Global.getSector().getEconomy().addMarket(market, true);
 
+        //If the player doesn't view the colony management screen within a few days of market creation, then there can be a bug related to population growth
         Global.getSector().getCampaignUI().showInteractionDialog(stationEntity);
+        //Global.getSector().getCampaignUI().getCurrentInteractionDialog().dismiss();
 
         market.addSubmarket("storage");
         StoragePlugin storage = (StoragePlugin)market.getSubmarket("storage").getPlugin();
         storage.setPlayerPaidToUnlock(true);
         market.addSubmarket("local_resources");
 
+        boggledTools.surveyAll(market);
+
         Global.getSoundPlayer().playUISound("ui_boggled_station_constructed", 1.0F, 1.0F);
         return market;
+    }
+
+    public static ArrayList<SectorEntityToken> getMoonsInOrbitAroundPlanet(SectorEntityToken planet)
+    {
+        ArrayList<SectorEntityToken> moons = new ArrayList<>();
+        for(SectorEntityToken token : planet.getStarSystem().getPlanets())
+        {
+            if (token.getOrbitFocus() != null && !token.isStar() && token.getOrbitFocus().equals(planet) && token.getRadius() != 0)
+            {
+                moons.add(token);
+            }
+        }
+
+        return moons;
+    }
+
+    public static int getNumMoonsInOrbitAroundPlanet(SectorEntityToken planet)
+    {
+        return getMoonsInOrbitAroundPlanet(planet).size();
+    }
+
+    public static int numAstroInOrbit(SectorEntityToken targetPlanet)
+    {
+        return getExistingAstropolisStations(targetPlanet).size();
+    }
+
+    public static ArrayList<SectorEntityToken> getExistingAstropolisStations(SectorEntityToken targetPlanet)
+    {
+        ArrayList<SectorEntityToken> existingAstropolisStations = new ArrayList<>();
+        for(SectorEntityToken token : targetPlanet.getStarSystem().getAllEntities())
+        {
+            if (token.hasTag(boggledTools.BoggledTags.astropolisStation) && token.getOrbitFocus() != null && token.getOrbitFocus().equals(targetPlanet))
+            {
+                existingAstropolisStations.add(token);
+            }
+        }
+
+        return existingAstropolisStations;
+    }
+
+    public static int getNumExistingAstroplisStations(SectorEntityToken targetPlanet)
+    {
+        return getExistingAstropolisStations(targetPlanet).size();
+    }
+
+    public static float generateNewAngleForAstropolisStation(List<Float> existingAngles) {
+        // Normalize the angles to a 0-360 range and handle floating-point precision
+        // for comparisons.
+        final float ANGLE_STEP = 120.0f;
+        final float MAX_ANGLE = 360.0f;
+        // Epsilon for comparing floating-point numbers. A small value is
+        // necessary as direct equality checks (==) can be unreliable.
+        final float EPSILON = 0.0001f;
+
+        // Case 1: The list is empty.
+        // We now return a random angle instead of a fixed 0.0f.
+        if (existingAngles.isEmpty()) {
+            Random random = new Random();
+            return random.nextFloat() * MAX_ANGLE;
+        }
+
+        // Case 2: The list has one element.
+        // The new angle will be 120 degrees from the existing one.
+        if (existingAngles.size() == 1) {
+            float existing = existingAngles.get(0);
+            float newAngle = (existing + ANGLE_STEP) % MAX_ANGLE;
+            // Ensure the result is non-negative after the modulo operation
+            if (newAngle < 0) {
+                newAngle += MAX_ANGLE;
+            }
+            return newAngle;
+        }
+
+        // Case 3: The list has two elements.
+        // The third angle will be 120 degrees from the second existing one
+        // (which is 240 degrees from the first).
+        if (existingAngles.size() == 2) {
+            float a1 = existingAngles.get(0);
+            float a2 = existingAngles.get(1);
+
+            // A robust check to see which one is the "next" angle in the sequence.
+            float candidateA = (a1 + ANGLE_STEP) % MAX_ANGLE;
+            if (Math.abs(candidateA - a2) < EPSILON) {
+                float newAngle = (a2 + ANGLE_STEP) % MAX_ANGLE;
+                if (newAngle < 0) {
+                    newAngle += MAX_ANGLE;
+                }
+                return newAngle;
+            }
+
+            // Re-evaluating the logic in the opposite direction.
+            float candidateB = (a2 + ANGLE_STEP) % MAX_ANGLE;
+            if (Math.abs(candidateB - a1) < EPSILON) {
+                float newAngle = (a1 + ANGLE_STEP) % MAX_ANGLE;
+                if (newAngle < 0) {
+                    newAngle += MAX_ANGLE;
+                }
+                return newAngle;
+            }
+
+            // This block should technically not be reached given the problem constraints,
+            // but is included for defensive programming.
+            throw new IllegalArgumentException("Existing angles are not 120 degrees apart.");
+        }
+
+        // Case 4: The list has three or more elements.
+        // It's not possible to add a new angle while maintaining the pattern,
+        // as a 120-degree separation allows for only three distinct angles.
+        throw new IllegalArgumentException("Cannot add a new angle. The list already contains the maximum number of angles (3).");
+    }
+
+    public static String getGreekLetterForNextAstropolisCustomEntityId(int numAstroAlreadyPresent)
+    {
+        // Gets the greek letter to insert in the astropolis custom entity id used to
+        // determine whether to create a station with the low, midline or high-tech sprite.
+        int setting = boggledTools.getIntSetting("boggledAstropolisSpriteToUse");
+        if(setting == 1)
+        {
+            return "alpha";
+        }
+        else if(setting == 2)
+        {
+            return "beta";
+        }
+        else if(setting == 3)
+        {
+            return "gamma";
+        }
+        else
+        {
+            // Handles 0 setting and if the value somehow is a bad value (ex. not 0, 1, 2 or 3)
+            // TASC no longer supports more than three astropolis stations around a single planet.
+            if(numAstroAlreadyPresent == 0)
+            {
+                return "alpha";
+            }
+            else if(numAstroAlreadyPresent == 1)
+            {
+                return "beta";
+            }
+            else
+            {
+                return "gamma";
+            }
+        }
+    }
+
+    public static String getAstropolisColonyNameStringGreekLetter(int numAstroAlreadyPresent)
+    {
+        // This is different from the above function - this is used purely for the name of the colony on the station.
+        // TASC no longer supports more than three astropolis stations around a single planet.
+        if(numAstroAlreadyPresent == 0)
+        {
+            return "Alpha";
+        }
+        else if(numAstroAlreadyPresent == 1)
+        {
+            return "Beta";
+        }
+        else
+        {
+            return "Gamma";
+        }
     }
 
     public static SectorEntityToken getFocusOfAsteroidBelt(SectorEntityToken playerFleet) {

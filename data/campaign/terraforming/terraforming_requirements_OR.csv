@@ -153,11 +153,6 @@ industry_colony_water_or_frozen,,,false,"planet_water | planet_frozen"
 ,,
 industry_player_has_skill_automated_ships,"You lack the Automated Ships skill.",,false,"player_has_skill_automated_ships"
 ,,
-industry_colony_has_heavy_industry_with_corrupted_nanoforge,"Pollution cannot be removed while $Industry has $IndustryItem.",,false,"market_has_heavy_industry_with_corrupted_nanoforge"
-industry_colony_has_heavy_industry_with_pristine_nanoforge,"Pollution cannot be removed while $Industry has $IndustryItem.",,false,"market_has_heavy_industry_with_pristine_nanoforge"
-industry_colony_has_orbital_works_with_corrupted_nanoforge,"Pollution cannot be removed while $Industry has $IndustryItem.",,false,"market_has_orbital_works_with_corrupted_nanoforge"
-industry_colony_has_orbital_works_with_pristine_nanoforge,"Pollution cannot be removed while $Industry has $IndustryItem.",,false,"market_has_orbital_works_with_pristine_nanoforge"
-,,
 crafting_colony_has_at_least_100k_inhabitants,"$marketName has at least 100,000 inhabitants",,false,market_has_at_least_100k_residents
 crafting_colony_has_orbital_works_with_pristine_nanoforge,"$marketName has $Industry with $IndustryItem",,false,market_has_orbital_works_with_pristine_nanoforge
 crafting_colony_storage_contains_at_least_easy_domain_artifacts,"$marketName $submarket contains at least $itemQuantity $itemName",,false,market_storage_contains_at_least_easy_domain_artifacts
@@ -165,77 +160,3 @@ crafting_colony_storage_contains_at_least_medium_domain_artifacts,"$marketName $
 crafting_colony_storage_contains_at_least_hard_domain_artifacts,"$marketName $submarket contains at least $itemQuantity $itemName",,false,market_storage_contains_at_least_hard_domain_artifacts
 crafting_player_has_at_least_2_story_points,"$player has at least $storyPointsQuantity story points",,false,player_has_at_least_2_story_points
 ,,
-industry_effects_domain_archaeology_colony_ruins_scattered,,,false,"market_ruins_scattered"
-industry_effects_domain_archaeology_colony_ruins_widespread,,,false,"market_ruins_widespread"
-industry_effects_domain_archaeology_colony_ruins_extensive,,,false,"market_ruins_extensive"
-industry_effects_domain_archaeology_colony_ruins_vast,,,false,"market_ruins_vast"
-,,
-ability_astropolis_station_player_fleet_not_in_hyperspace,"You cannot construct an astropolis station in hyperspace.",,false,"player_fleet_not_in_hyperspace"
-ability_astropolis_station_system_has_jump_points,"You cannot construct an astropolis station in a system with no jump points.",,false,"system_has_jump_points"
-ability_astropolis_station_system_has_planets,"You cannot construct an astropolis station in a system with no planets.",,false,"system_has_planets"
-ability_astropolis_station_target_planet_owned_by_player,"You cannot construct an astropolis station in orbit around a world already controlled by $factionName.",,false,"target_planet_owned_by_player | target_planet_governed_by_player"
-ability_astropolis_station_target_planet_within_range,"The world closest to your location is $planetName. Your fleet is $distanceInSu stellar units away. You must be within $requiredDistanceInSu stellar units to construct an astropolis station.",,false,"ability_astropolis_station_target_planet_within_range"
-ability_astropolis_station_target_planet_too_small,"$planetName is too small to host an astropolis.",,false,"ability_astropolis_station_target_planet_too_small"
-ability_astropolis_station_target_planet_too_close_to_orbit_focus,"An astropolis would be unable to achieve a satisfactory orbit around $planetName because it is orbiting too close to $focusPlanetName.",,false,"target_planet_too_close_to_orbit_focus"
-ability_astropolis_station_target_planet_too_close_to_star,"$planetName is too close to $starName to host an astropolis.",,false,"target_planet_too_close_to_star"
-ability_astropolis_station_target_planet_moon_too_close,"An astropolis would be unable to achieve a satisfactory orbit around $planetName because $focusPlanetName is orbiting too close to it.",,false,"ability_astropolis_station_target_planet_moon_too_close"
-ability_astropolis_station_target_planet_too_many_moons,"An astropolis would be unable to maintain a satisfactory orbit around $planetName because there are $moonCount moons orbiting it.",,false,"target_planet_too_many_moons"
-ability_astropolis_station_target_planet_too_crowded,"An astropolis would be unable to maintain a satisfactory orbit around $planetName because $focusPlanetName periodically approaches very near to this world.",,false,"target_planet_too_crowded"
-ability_astropolis_station_target_planet_too_many_stations,"$planetName is already host to $numStations astropolis $stationOrStations. It cannot host more.",,false,"ability_astropolis_station_target_planet_too_many_stations"
-
-ability_astropolis_station_fleet_contains_credits,"Requires $itemQuantity credits. You have $currentItemQuantity.","[ '$creditsQuantity' ]",false,"ability_astropolis_station_fleet_contains_credits"
-ability_astropolis_station_fleet_contains_crew,"Requires $itemQuantity $itemName. You have $currentItemQuantity.","[ '$itemQuantity' ]",false,"ability_astropolis_station_fleet_contains_crew"
-ability_astropolis_station_fleet_contains_heavy_machinery,"Requires $itemQuantity $itemName. You have $currentItemQuantity.","[ '$itemQuantity' ]",false,"ability_astropolis_station_fleet_contains_heavy_machinery"
-ability_astropolis_station_fleet_contains_metals,"Requires $itemQuantity $itemName. You have $currentItemQuantity.","[ '$itemQuantity' ]",false,"ability_astropolis_station_fleet_contains_metals"
-ability_astropolis_station_fleet_contains_transplutonics,"Requires $itemQuantity $itemName. You have $currentItemQuantity.","[ '$itemQuantity' ]",false,"ability_astropolis_station_fleet_contains_transplutonics"
-
-ability_mining_station_player_fleet_not_in_hyperspace,"You cannot construct a mining station in hyperspace.",,false,"player_fleet_not_in_hyperspace"
-ability_mining_station_system_has_jump_points,"You cannot construct a mining station in a system with no jump points.",,false,"system_has_jump_points"
-ability_mining_station_too_close_to_jump_point,"You cannot construct a mining station so close to a jump point.",,false,"ability_mining_station_too_close_to_jump_point"
-ability_mining_station_fleet_in_asteroid_belt_or_field,"Your fleet is too far away from an asteroid belt or asteroid field to build a mining station.",,false,"ability_mining_station_fleet_in_asteroid_belt | ability_mining_station_fleet_in_asteroid_field"
-
-ability_mining_station_too_many_stations,"$systemName is already host to $numStations mining $stationOrStations. It cannot host more.",,false,"ability_mining_station_too_many_stations"
-
-ability_mining_station_fleet_contains_credits,"Requires $itemQuantity credits. You have $currentItemQuantity.","[ '$creditsQuantity' ]",false,"ability_mining_station_fleet_contains_credits"
-ability_mining_station_fleet_contains_crew,"Requires $itemQuantity $itemName. You have $currentItemQuantity.","[ '$itemQuantity' ]",false,"ability_mining_station_fleet_contains_crew"
-ability_mining_station_fleet_contains_heavy_machinery,"Requires $itemQuantity $itemName. You have $currentItemQuantity.","[ '$itemQuantity' ]",false,"ability_mining_station_fleet_contains_heavy_machinery"
-ability_mining_station_fleet_contains_metals,"Requires $itemQuantity $itemName. You have $currentItemQuantity.","[ '$itemQuantity' ]",false,"ability_mining_station_fleet_contains_metals"
-ability_mining_station_fleet_contains_transplutonics,"Requires $itemQuantity $itemName. You have $currentItemQuantity.","[ '$itemQuantity' ]",false,"ability_mining_station_fleet_contains_transplutonics"
-
-ability_siphon_station_player_fleet_not_in_hyperspace,"You cannot construct a siphon station in hyperspace.",,false,"player_fleet_not_in_hyperspace"
-ability_siphon_station_system_has_jump_points,"You cannot construct a siphon station in a system with no jump points.",,false,"system_has_jump_points"
-
-ability_siphon_station_target_planet_owned_by_player_or_neutral,"You cannot construct a siphon station in orbit around a world already controlled by $factionName.",,false,"target_planet_owned_by_player_or_neutral"
-ability_siphon_station_target_planet_within_range,"The world closest to your location is $planetName. Your fleet is $distanceInSu stellar units away. You must be within $requiredDistanceInSu stellar units to construct a siphon station.",,false,"ability_siphon_station_target_planet_within_range"
-ability_siphon_station_target_planet_moon_too_close,"A siphon station would be unable to achieve a satisfactory orbit around $planetName because $focusPlanetName is orbiting too close to it.",,false,"ability_siphon_station_target_planet_moon_too_close"
-ability_siphon_station_target_planet_is_gas_giant,"You cannot construct a siphon station around non-gas giant planets. $planetName is a $planetType.",,false,"planet_gas_giant"
-ability_siphon_station_target_planet_too_many_stations,"$planetName is already host to $numStations siphon $stationOrStations. It cannot host more.",,false,"ability_siphon_station_target_planet_too_many_stations"
-
-ability_siphon_station_fleet_contains_credits,"Requires $itemQuantity credits. You have $currentItemQuantity.","[ '$creditsQuantity' ]",false,"ability_siphon_station_fleet_contains_credits"
-ability_siphon_station_fleet_contains_crew,"Requires $itemQuantity $itemName. You have $currentItemQuantity.","[ '$itemQuantity' ]",false,"ability_siphon_station_fleet_contains_crew"
-ability_siphon_station_fleet_contains_heavy_machinery,"Requires $itemQuantity $itemName. You have $currentItemQuantity.","[ '$itemQuantity' ]",false,"ability_siphon_station_fleet_contains_heavy_machinery"
-ability_siphon_station_fleet_contains_metals,"Requires $itemQuantity $itemName. You have $currentItemQuantity.","[ '$itemQuantity' ]",false,"ability_siphon_station_fleet_contains_metals"
-ability_siphon_station_fleet_contains_transplutonics,"Requires $itemQuantity $itemName. You have $currentItemQuantity.","[ '$itemQuantity' ]",false,"ability_siphon_station_fleet_contains_transplutonics"
-
-ability_colonize_abandoned_station_player_fleet_not_in_hyperspace,"You cannot colonize stations located in hyperspace.",,false,"player_fleet_not_in_hyperspace"
-ability_colonize_abandoned_station_system_has_jump_points,"You cannot colonize a station in a system with no jump points.",,false,"system_has_jump_points"
-ability_colonize_abandoned_station_system_has_station,"There are no stations in $system.",,false,"ability_colonize_abandoned_station_system_has_station"
-ability_colonize_abandoned_station_target_station_owned_by_player_or_neutral,"You cannot colonize a station that is already controlled by $factionName.",,false,"target_station_owned_by_player_or_neutral"
-ability_colonize_abandoned_station_target_station_not_colonizable,"$stationName is in a state of extreme disrepair and is not a viable target for colonization.",,false,"target_station_not_colonizable"
-ability_colonize_abandoned_station_target_station_within_range,"The station closest to your location is $stationName. Your fleet is $distanceInSu stellar units away. You must be within $requiredDistanceInSu stellar units to colonize the station.",,false,"ability_colonize_abandoned_station_target_station_within_range"
-ability_colonize_abandoned_station_target_station_colonizable,"$stationName is in a state of extreme disrepair and is not a viable target for colonization.",,false,"ability_colonize_abandoned_station_target_station_colonizable"
-ability_colonize_abandoned_station_target_station_size_0,"$stationName is already colonized.",,false,"ability_colonize_abandoned_station_target_station_size_0"
-
-ability_colonize_abandoned_station_fleet_contains_credits,"Requires $itemQuantity credits. You have $currentItemQuantity.","[ '$creditsQuantity' ]",false,"ability_colonize_abandoned_station_fleet_contains_credits"
-ability_colonize_abandoned_station_fleet_contains_crew,"Requires $itemQuantity $itemName. You have $currentItemQuantity.","[ '$itemQuantity' ]",false,"ability_colonize_abandoned_station_fleet_contains_crew"
-ability_colonize_abandoned_station_fleet_contains_heavy_machinery,"Requires $itemQuantity $itemName. You have $currentItemQuantity.","[ '$itemQuantity' ]",false,"ability_colonize_abandoned_station_fleet_contains_heavy_machinery"
-ability_colonize_abandoned_station_fleet_contains_metals,"Requires $itemQuantity $itemName. You have $currentItemQuantity.","[ '$itemQuantity' ]",false,"ability_colonize_abandoned_station_fleet_contains_metals"
-ability_colonize_abandoned_station_fleet_contains_transplutonics,"Requires $itemQuantity $itemName. You have $currentItemQuantity.","[ '$itemQuantity' ]",false,"ability_colonize_abandoned_station_fleet_contains_transplutonics"
-
-ability_deploy_planet_killer_player_fleet_not_in_hyperspace,"You cannot deploy a planet-killer in hyperspace.",,false,"player_fleet_not_in_hyperspace"
-ability_deploy_planet_killer_target_planet_story_critical,"You cannot destroy $marketName because it is critical to the fate of the sector.",,false,"ability_deploy_planet_killer_target_planet_story_critical_setting"
-ability_deploy_planet_killer_target_planet_within_range,"The world closest to your location is $planetName. Your fleet is $distanceInSu stellar units away. You must be within $requiredDistanceInSu stellar units to deploy a planet-killer device.",,false,"ability_deploy_planet_killer_target_planet_within_range"
-ability_deploy_planet_killer_target_planet_not_owned_by_player,"You cannot destroy your own colony with a planet-killer device.",,false,"target_planet_not_owned_by_player"
-
-ability_deploy_planet_killer_fleet_contains_planet_killer_device,"You do not possess a planet-killer device.",,false,"ability_deploy_planet_killer_fleet_contains_planet_killer_device"
-

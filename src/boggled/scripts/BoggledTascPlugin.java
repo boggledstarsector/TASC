@@ -243,16 +243,6 @@ public class BoggledTascPlugin extends BaseModPlugin {
         }
     }
 
-    public void enablePlanetKiller() {
-        if(boggledTools.getBooleanSetting(boggledTools.BoggledSettings.domainTechContentEnabled) && boggledTools.getBooleanSetting(boggledTools.BoggledSettings.planetKillerEnabled)) {
-            // PK weapons are deployed via ability, not a ground raid.
-            // I left the mostly finished code for ground raid deployment in here in case I want to enable it in a future update.
-            // Global.getSector().getListenerManager().addListener(new boggledPlanetKillerGroundRaidObjectiveListener());
-
-            Global.getSector().getCharacterData().addAbility("boggled_deploy_planet_killer");
-        }
-    }
-
     private static JSONArray concatJSONArray(JSONArray... arrs) throws JSONException {
         JSONArray ret = new JSONArray();
         for (JSONArray arr : arrs) {
@@ -359,8 +349,6 @@ public class BoggledTascPlugin extends BaseModPlugin {
 
     @Override
     public void afterGameSave() {
-        enablePlanetKiller();
-
         applyStationSettingsToAllStationsInSector();
 
         applyStationConstructionAbilitiesPerSettingsFile();
@@ -398,8 +386,6 @@ public class BoggledTascPlugin extends BaseModPlugin {
 
     @Override
     public void onGameLoad(boolean newGame) {
-        enablePlanetKiller();
-
         applyStationSettingsToAllStationsInSector();
 
         applyStationConstructionAbilitiesPerSettingsFile();
@@ -409,8 +395,6 @@ public class BoggledTascPlugin extends BaseModPlugin {
         applyDomainEraArtifactSettings();
 
         addDomainTechBuildingsToVanillaColonies();
-
-        //debugActionsPleaseIgnore();
 
         registerListeners();
 
@@ -428,7 +412,7 @@ public class BoggledTascPlugin extends BaseModPlugin {
 
         loadSettingsFromJSON();
 
-        if (Global.getSettings().getModManager().isModEnabled("aaacrew_replacer")){
+        if (Global.getSettings().getModManager().isModEnabled("aaacrew_replacer")) {
             boggledDefaultCargo.active = new boggledCrewReplacerCargo();
         } else {
             boggledDefaultCargo.active = new boggledDefaultCargo();

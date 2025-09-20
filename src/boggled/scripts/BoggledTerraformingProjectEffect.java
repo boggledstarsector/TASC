@@ -2,7 +2,7 @@ package boggled.scripts;
 
 import boggled.campaign.econ.industries.BoggledCommonIndustry;
 import boggled.campaign.econ.industries.BoggledIndustryInterface;
-import boggled.scripts.PlayerCargoCalculations.bogglesDefaultCargo;
+import boggled.scripts.PlayerCargoCalculations.boggledDefaultCargo;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.*;
 import com.fs.starfarer.api.campaign.ai.CampaignFleetAIAPI;
@@ -447,7 +447,7 @@ public class BoggledTerraformingProjectEffect {
                     break;
                 case RESOURCES:
                     if (!jobId.isEmpty()) {
-                        bogglesDefaultCargo.active.removeCommodity(cargo, jobId, itemId, quantityToRemove);
+                        boggledDefaultCargo.active.removeCommodity(cargo, jobId, itemId, quantityToRemove);
                     } else {
                         cargo.removeItems(CargoAPI.CargoItemType.RESOURCES, itemId, quantityToRemove);
                     }

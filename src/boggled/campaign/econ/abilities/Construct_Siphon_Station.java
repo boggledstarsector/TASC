@@ -88,6 +88,12 @@ public class Construct_Siphon_Station extends BaseDurationAbility
             return false;
         }
 
+        // Prevent visual bug where if there are four or more moons in orbit the station will appear on top of them in the system view UI.
+        if(boggledTools.getNumMoonsInOrbitAroundPlanet(closestGasGiantToken) >= 4)
+        {
+            return false;
+        }
+
         CargoAPI playerCargo = playerFleet.getCargo();
         if(playerCargo.getCredits().get() < creditCost)
         {
@@ -172,6 +178,12 @@ public class Construct_Siphon_Station extends BaseDurationAbility
                 if(blockingMoon != null)
                 {
                     tooltip.addPara("A siphon station would be unable to achieve a satisfactory orbit around " + closestGasGiantToken.getName() + " because " + blockingMoon.getName() + " is too close to the projected orbital path.", bad, pad);
+                }
+
+                // Prevent visual bug where if there are four or more moons in orbit the station will appear on top of them in the system view UI.
+                if(boggledTools.getNumMoonsInOrbitAroundPlanet(closestGasGiantToken) >= 4)
+                {
+                    tooltip.addPara("A siphon station would be unable to achieve a satisfactory orbit around " + closestGasGiantToken.getName() + " because it has too many moons.", bad, pad);
                 }
             }
         }

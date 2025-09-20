@@ -3,8 +3,8 @@ package boggled.campaign.econ.abilities;
 import boggled.campaign.econ.boggledTools;
 import com.fs.starfarer.api.impl.campaign.abilities.BaseDurationAbility;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
-import lunalib.lunaExtensions.DialogExtensionsKt;
-import evangel.tascui.CommandUIIntelK;
+// import lunalib.lunaExtensions.DialogExtensionsKt;
+// import evangel.tascui.CommandUIIntelK;
 
 public class Open_Terraforming_Control_Panel extends BaseDurationAbility
 {
@@ -13,7 +13,8 @@ public class Open_Terraforming_Control_Panel extends BaseDurationAbility
     @Override
     protected void activateImpl()
     {
-        DialogExtensionsKt.openLunaCustomPanel(new CommandUIIntelK());
+        // Doesn't work apparently, will fix in next patch when I redo the terraforming control panel.
+        // DialogExtensionsKt.openLunaCustomPanel(new CommandUIIntelK());
         // Global.getSector().openLunaCustomPanel(CommandUIIntelK())
     }
 
