@@ -2201,18 +2201,18 @@ public class boggledTools {
 
         Global.getSector().getEconomy().addMarket(market, true);
 
-
-        // If the player doesn't view the colony management screen within a few days of market creation, then there can be a bug related to population growth
-        // Still bugged as of 0.95.1a
-        Global.getSector().getCampaignUI().showInteractionDialog(stationEntity);
-        //Global.getSector().getCampaignUI().getCurrentInteractionDialog().dismiss();
-
         market.addSubmarket("storage");
         StoragePlugin storage = (StoragePlugin)market.getSubmarket("storage").getPlugin();
         storage.setPlayerPaidToUnlock(true);
         market.addSubmarket("local_resources");
 
         boggledTools.surveyAll(market);
+
+        // If the player doesn't view the colony management screen within a few days of market creation, then there can be a bug related to population growth
+        // Need these EveryFrameScripts because we cannot replicate the vanilla behavior to show the player faction set up screen and the CoreUITab at the same time.
+        // See post from Alex at https://fractalsoftworks.com/forum/index.php?topic=5061.0, page 794
+        Global.getSector().addTransientScript(new BoggledPlayerFactionSetupScript());
+        Global.getSector().addTransientScript(new BoggledNewStationMarketInteractionScript(market));
 
         Global.getSoundPlayer().playUISound("ui_boggled_station_constructed", 1.0F, 1.0F);
         return market;
@@ -2300,9 +2300,11 @@ public class boggledTools {
 
         boggledTools.surveyAll(market);
 
-        //If the player doesn't view the colony management screen within a few days of market creation, then there can be a bug related to population growth
-        Global.getSector().getCampaignUI().showCoreUITab(CoreUITabId.OUTPOSTS, market);
-        Global.getSector().getCampaignUI().showPlayerFactionConfigDialog();
+        // If the player doesn't view the colony management screen within a few days of market creation, then there can be a bug related to population growth
+        // Need these EveryFrameScripts because we cannot replicate the vanilla behavior to show the player faction set up screen and the CoreUITab at the same time.
+        // See post from Alex at https://fractalsoftworks.com/forum/index.php?topic=5061.0, page 794
+        Global.getSector().addTransientScript(new BoggledPlayerFactionSetupScript());
+        Global.getSector().addTransientScript(new BoggledNewStationMarketInteractionScript(market));
 
         Global.getSoundPlayer().playUISound("ui_boggled_station_constructed", 1.0F, 1.0F);
         return market;
@@ -2342,16 +2344,18 @@ public class boggledTools {
 
         Global.getSector().getEconomy().addMarket(market, true);
 
-        //If the player doesn't view the colony management screen within a few days of market creation, then there can be a bug related to population growth
-        Global.getSector().getCampaignUI().showInteractionDialog(stationEntity);
-        //Global.getSector().getCampaignUI().getCurrentInteractionDialog().dismiss();
-
         market.addSubmarket("storage");
         StoragePlugin storage = (StoragePlugin)market.getSubmarket("storage").getPlugin();
         storage.setPlayerPaidToUnlock(true);
         market.addSubmarket("local_resources");
 
         boggledTools.surveyAll(market);
+
+        // If the player doesn't view the colony management screen within a few days of market creation, then there can be a bug related to population growth
+        // Need these EveryFrameScripts because we cannot replicate the vanilla behavior to show the player faction set up screen and the CoreUITab at the same time.
+        // See post from Alex at https://fractalsoftworks.com/forum/index.php?topic=5061.0, page 794
+        Global.getSector().addTransientScript(new BoggledPlayerFactionSetupScript());
+        Global.getSector().addTransientScript(new BoggledNewStationMarketInteractionScript(market));
 
         Global.getSoundPlayer().playUISound("ui_boggled_station_constructed", 1.0F, 1.0F);
         return market;

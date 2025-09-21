@@ -373,13 +373,9 @@ public class BoggledTascPlugin extends BaseModPlugin {
         Global.getSector().getCharacterData().removeAbility("boggled_construct_siphon_station");
         Global.getSector().getCharacterData().removeAbility("boggled_colonize_abandoned_station");
 
-        Global.getSector().getCharacterData().removeAbility("boggled_deploy_planet_killer");
-
         Global.getSector().getCharacterData().removeAbility("boggled_open_terraforming_control_panel");
 
         Global.getSettings().getCommoditySpec(boggledTools.BoggledCommodities.domainArtifacts).getTags().clear();
-
-        Global.getSector().getListenerManager().removeListenerOfClass(boggledPlanetKillerGroundRaidObjectiveListener.class);
 
         Global.getSector().getPlayerFleet().removeScriptsOfClass(BoggledAotDEveryFrameScript.class);
     }

@@ -152,7 +152,7 @@ public class Construct_Siphon_Station extends BaseDurationAbility
             SectorEntityToken closestGasGiantToken = boggledTools.getClosestGasGiantToken(playerFleet);
             if(closestGasGiantToken == null)
             {
-                tooltip.addPara("There are no gas giants in the " + system.getName(), bad, pad);
+                tooltip.addPara("There are no gas giants in the " + system.getName() + ".", bad, pad);
             }
             else if(!closestGasGiantToken.getMarket().getFactionId().equals(Factions.PLAYER) && !closestGasGiantToken.getMarket().getFactionId().equals(Factions.NEUTRAL))
             {

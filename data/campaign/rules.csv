@@ -5,24 +5,6 @@ id,trigger,conditions,script,text,options,notes
 boggledRemnantPatrolDefaultGreeting,OpenCommLink,boggledIsRemnantPatrol score:1000,"$menuState = fleetConvMain 0
 FireAll PopulateOptions","""AIS code confirmed. Greetings $playerName. My directive is to protect your assets in this system.""",,
 ,,,,,,
-#stations under construction interactions
-,,,,,,
-boggledMiningStationUnderConstructionOpenDialog,OpenInteractionDialog,"$tag:boggled_mining
-!$hasMarket","ShowDefaultVisual
-boggledStationUnderConstructionPrintDescription
-SetShortcut boggledMiningStationUnderConstructionLeave ""ESCAPE""",,boggledMiningStationUnderConstructionLeave:Leave,,
-boggledMiningStationUnderConstructionLeave,DialogOptionSelected,$option == boggledMiningStationUnderConstructionLeave,DismissDialog,,,,
-boggledSiphonStationUnderConstructionOpenDialog,OpenInteractionDialog,"$tag:boggled_siphon
-!$hasMarket","ShowDefaultVisual
-boggledStationUnderConstructionPrintDescription
-SetShortcut boggledSiphonStationUnderConstructionLeave ""ESCAPE""",,boggledSiphonStationUnderConstructionLeave:Leave,,
-boggledSiphonStationUnderConstructionLeave,DialogOptionSelected,$option == boggledSiphonStationUnderConstructionLeave,DismissDialog,,,,
-boggledAstropolisStationUnderConstructionOpenDialog,OpenInteractionDialog,"$tag:boggled_astropolis
-!$hasMarket","ShowDefaultVisual
-boggledStationUnderConstructionPrintDescription
-SetShortcut boggledAstropolisStationUnderConstructionLeave ""ESCAPE""",,boggledAstropolisStationUnderConstructionLeave:Leave,,
-boggledAstropolisStationUnderConstructionLeave,DialogOptionSelected,$option == boggledAstropolisStationUnderConstructionLeave,DismissDialog,,,,
-,,,,,,
 #Building Domain-era stable location structures
 ,,,,,,
 stable_buildRelayDomainOpt,Stable_AddBuildOptions,boggledObjectiveCheckEnabled,,,40:SL_buildDomainRelay:Construct a Domain-tech comm relay,

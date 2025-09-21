@@ -1,10 +1,13 @@
 package boggled.campaign.econ.abilities;
 
 import boggled.campaign.econ.boggledTools;
+import boggled.scripts.BoggledNewStationMarketInteractionScript;
+import boggled.scripts.BoggledPlayerFactionSetupScript;
 import boggled.scripts.PlayerCargoCalculations.boggledDefaultCargo;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.*;
 import com.fs.starfarer.api.campaign.econ.MarketAPI;
+import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.abilities.BaseDurationAbility;
 import com.fs.starfarer.api.impl.campaign.ids.Conditions;
 import com.fs.starfarer.api.impl.campaign.ids.Factions;
@@ -28,7 +31,7 @@ public class Colonize_Abandoned_Station extends BaseDurationAbility
     @Override
     protected void activateImpl()
     {
-        SectorEntityToken playerFleet = Global.getSector().getPlayerFleet();
+        CampaignFleetAPI playerFleet = Global.getSector().getPlayerFleet();
         SectorEntityToken targetEntityForMarket = boggledTools.getClosestColonizableStationInSystem(playerFleet);
         StarSystemAPI system = targetEntityForMarket.getStarSystem();
 
@@ -88,8 +91,6 @@ public class Colonize_Abandoned_Station extends BaseDurationAbility
                 market.addCondition("rare_ore_" + resourceLevel);
             }
             market.getConstructionQueue().addToEnd(Industries.MINING, 0);
-
-            // targetEntityForMarket.setCustomDescriptionId("boggled_mining_station");
 
             SectorEntityToken newLightsOnColonize = system.addCustomEntity("boggled_newLightsOnColonize", "New Lights Overlay From Colonizing Abandoned Station", targetEntityForMarket.getCustomEntityType() + "_lights_overlay", playerFleet.getFaction().getId());
             newLightsOnColonize.setOrbit(targetEntityForMarket.getOrbit().makeCopy());
@@ -206,9 +207,6 @@ public class Colonize_Abandoned_Station extends BaseDurationAbility
         targetEntityForMarket.setInteractionImage("illustrations", "orbital_construction");
         targetEntityForMarket.getMemoryWithoutUpdate().set("$abandonedStation", false);
 
-        //If the player doesn't view the colony management screen within a few days of market creation, then there can be a bug related to population growth
-        Global.getSector().getCampaignUI().showInteractionDialog(targetEntityForMarket);
-
         market.addSubmarket("storage");
         StoragePlugin storage = (StoragePlugin)market.getSubmarket("storage").getPlugin();
         storage.setPlayerPaidToUnlock(true);
@@ -216,13 +214,24 @@ public class Colonize_Abandoned_Station extends BaseDurationAbility
 
         if(!cargo.isEmpty())
         {
-            market.getSubmarket("storage").getCargo().addAll(cargo);
+            playerFleet.getCargo().addAll(cargo);
+            FleetDataAPI mothballedShips = cargo.getMothballedShips();
+            for(FleetMemberAPI ship : mothballedShips.getMembersInPriorityOrder())
+            {
+                Global.getSector().getPlayerFleet().getFleetData().addFleetMember(ship);
+            }
         }
 
         market.addCondition("sprite_controller");
         market.addCondition("cramped_quarters");
 
         boggledTools.surveyAll(market);
+
+        // If the player doesn't view the colony management screen within a few days of market creation, then there can be a bug related to population growth
+        // Need these EveryFrameScripts because we cannot replicate the vanilla behavior to show the player faction set up screen and the CoreUITab at the same time.
+        // See post from Alex at https://fractalsoftworks.com/forum/index.php?topic=5061.0, page 794
+        Global.getSector().addTransientScript(new BoggledPlayerFactionSetupScript());
+        Global.getSector().addTransientScript(new BoggledNewStationMarketInteractionScript(market));
 
         Global.getSoundPlayer().playUISound("ui_boggled_station_constructed", 1.0F, 1.0F);
     }
@@ -316,7 +325,7 @@ public class Colonize_Abandoned_Station extends BaseDurationAbility
 
             if(closestStation == null)
             {
-                tooltip.addPara("There are no stations in " + system.getName() + ".", bad, pad);
+                tooltip.addPara("There are no stations in the " + system.getName() + ".", bad, pad);
             }
             else if(closestStation.getMarket() != null && !closestStation.getMarket().getFactionId().equals(Factions.NEUTRAL))
             {

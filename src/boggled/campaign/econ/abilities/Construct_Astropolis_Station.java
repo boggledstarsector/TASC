@@ -218,7 +218,7 @@ public class Construct_Astropolis_Station extends BaseDurationAbility
         }
         else if(targetPlanet == null)
         {
-            tooltip.addPara("There are no planets in " + system.getName() + ".", bad, pad);
+            tooltip.addPara("There are no planets in the " + system.getName() + ".", bad, pad);
         }
 
         if(!playerFleet.isInHyperspace() && !Global.getSector().getPlayerFleet().isInHyperspaceTransition() && system != null && targetPlanet != null)
