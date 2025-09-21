@@ -31,9 +31,9 @@ public class Construct_Siphon_Station extends BaseDurationAbility
         CargoAPI playerCargo = playerFleet.getCargo();
         playerCargo.getCredits().subtract(creditCost);
         boggledDefaultCargo.active.removeCommodity(playerCargo, boggledDefaultCargo.Mining_Station, "metals", metalCost);
-        boggledDefaultCargo.active.removeCommodity(playerCargo, boggledDefaultCargo.Mining_Station, "rare_metals", metalCost);
-        boggledDefaultCargo.active.removeCommodity(playerCargo, boggledDefaultCargo.Mining_Station, "crew", metalCost);
-        boggledDefaultCargo.active.removeCommodity(playerCargo, boggledDefaultCargo.Mining_Station, "heavy_machinery", metalCost);
+        boggledDefaultCargo.active.removeCommodity(playerCargo, boggledDefaultCargo.Mining_Station, "rare_metals", transplutonicsCost);
+        boggledDefaultCargo.active.removeCommodity(playerCargo, boggledDefaultCargo.Mining_Station, "crew", crewCost);
+        boggledDefaultCargo.active.removeCommodity(playerCargo, boggledDefaultCargo.Mining_Station, "heavy_machinery", heavyMachineryCost);
 
         SectorEntityToken newSiphonStation = system.addCustomEntity("boggled_siphon_station", hostGasGiant.getName() + " Siphon Station", "boggled_siphon_station_small", Global.getSector().getPlayerFleet().getFaction().getId());
         newSiphonStation.setCircularOrbitPointingDown(hostGasGiant, boggledTools.getAngleFromPlayerFleet(hostGasGiant), hostGasGiant.getRadius() + 50f, (hostGasGiant.getRadius() + 50f) / 10.0F);

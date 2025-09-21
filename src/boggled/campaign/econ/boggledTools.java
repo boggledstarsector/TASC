@@ -23,10 +23,7 @@ import com.fs.starfarer.api.impl.campaign.terrain.AsteroidFieldTerrainPlugin;
 import com.fs.starfarer.api.loading.IndustrySpecAPI;
 import com.fs.starfarer.api.util.Misc;
 import com.fs.starfarer.api.util.Pair;
-import com.fs.starfarer.campaign.CircularFleetOrbit;
-import com.fs.starfarer.campaign.CircularOrbit;
-import com.fs.starfarer.campaign.CircularOrbitPointDown;
-import com.fs.starfarer.campaign.CircularOrbitWithSpin;
+import com.fs.starfarer.campaign.*;
 import com.fs.starfarer.loading.specs.PlanetSpec;
 import data.kaysaar.aotd.vok.scripts.research.AoTDMainResearchManager;
 import illustratedEntities.helper.ImageHandler;
@@ -2296,16 +2293,16 @@ public class boggledTools {
 
         Global.getSector().getEconomy().addMarket(market, true);
 
-        //If the player doesn't view the colony management screen within a few days of market creation, then there can be a bug related to population growth
-        Global.getSector().getCampaignUI().showInteractionDialog(stationEntity);
-        //Global.getSector().getCampaignUI().getCurrentInteractionDialog().dismiss();
-
         market.addSubmarket("storage");
         StoragePlugin storage = (StoragePlugin)market.getSubmarket("storage").getPlugin();
         storage.setPlayerPaidToUnlock(true);
         market.addSubmarket("local_resources");
 
         boggledTools.surveyAll(market);
+
+        //If the player doesn't view the colony management screen within a few days of market creation, then there can be a bug related to population growth
+        Global.getSector().getCampaignUI().showCoreUITab(CoreUITabId.OUTPOSTS, market);
+        Global.getSector().getCampaignUI().showPlayerFactionConfigDialog();
 
         Global.getSoundPlayer().playUISound("ui_boggled_station_constructed", 1.0F, 1.0F);
         return market;

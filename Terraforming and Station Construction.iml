@@ -13,5 +13,11 @@
     <orderEntry type="library" name="org.jetbrains.kotlin:kotlin-stdlib:1.5.32" level="project" />
     <orderEntry type="library" name="src1" level="project" />
     <orderEntry type="library" name="LunaLib" level="project" />
+    <orderEntry type="library" name="ExerelinCore" level="project" />
+    <orderEntry type="library" name="DIYPlanets" level="project" />
+    <orderEntry type="library" name="Qol" level="project" />
+    <orderEntry type="library" name="Cryos" level="project" />
+    <orderEntry type="library" name="Vos" level="project" />
+    <orderEntry type="library" name="AodCapitals" level="project" />
   </component>
 </module>

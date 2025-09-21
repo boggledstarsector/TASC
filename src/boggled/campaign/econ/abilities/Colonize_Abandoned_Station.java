@@ -35,9 +35,9 @@ public class Colonize_Abandoned_Station extends BaseDurationAbility
         CargoAPI playerCargo = playerFleet.getCargo();
         playerCargo.getCredits().subtract(creditCost);
         boggledDefaultCargo.active.removeCommodity(playerCargo, boggledDefaultCargo.Abandoned_Station, "metals", metalCost);
-        boggledDefaultCargo.active.removeCommodity(playerCargo, boggledDefaultCargo.Abandoned_Station, "rare_metals", metalCost);
-        boggledDefaultCargo.active.removeCommodity(playerCargo, boggledDefaultCargo.Abandoned_Station, "crew", metalCost);
-        boggledDefaultCargo.active.removeCommodity(playerCargo, boggledDefaultCargo.Abandoned_Station, "heavy_machinery", metalCost);
+        boggledDefaultCargo.active.removeCommodity(playerCargo, boggledDefaultCargo.Abandoned_Station, "rare_metals", transplutonicsCost);
+        boggledDefaultCargo.active.removeCommodity(playerCargo, boggledDefaultCargo.Abandoned_Station, "crew", crewCost);
+        boggledDefaultCargo.active.removeCommodity(playerCargo, boggledDefaultCargo.Abandoned_Station, "heavy_machinery", heavyMachineryCost);
 
         targetEntityForMarket.setFaction(Factions.PLAYER);
         CargoAPI cargo = targetEntityForMarket.getMarket().getSubmarket("storage").getCargo();

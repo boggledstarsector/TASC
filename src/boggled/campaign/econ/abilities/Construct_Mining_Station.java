@@ -35,9 +35,9 @@ public class Construct_Mining_Station extends BaseDurationAbility
         CargoAPI playerCargo = playerFleet.getCargo();
         playerCargo.getCredits().subtract(creditCost);
         boggledDefaultCargo.active.removeCommodity(playerCargo, boggledDefaultCargo.Mining_Station, "metals", metalCost);
-        boggledDefaultCargo.active.removeCommodity(playerCargo, boggledDefaultCargo.Mining_Station, "rare_metals", metalCost);
-        boggledDefaultCargo.active.removeCommodity(playerCargo, boggledDefaultCargo.Mining_Station, "crew", metalCost);
-        boggledDefaultCargo.active.removeCommodity(playerCargo, boggledDefaultCargo.Mining_Station, "heavy_machinery", metalCost);
+        boggledDefaultCargo.active.removeCommodity(playerCargo, boggledDefaultCargo.Mining_Station, "rare_metals", transplutonicsCost);
+        boggledDefaultCargo.active.removeCommodity(playerCargo, boggledDefaultCargo.Mining_Station, "crew", crewCost);
+        boggledDefaultCargo.active.removeCommodity(playerCargo, boggledDefaultCargo.Mining_Station, "heavy_machinery", heavyMachineryCost);
 
         StarSystemAPI system = playerFleet.getStarSystem();
         SectorEntityToken newMiningStation = system.addCustomEntity("boggled_mining_station" + clock.getCycle() + clock.getMonth() + clock.getDay(), system.getBaseName() + " Mining Station", "boggled_mining_station_small", playerFleet.getFaction().getId());

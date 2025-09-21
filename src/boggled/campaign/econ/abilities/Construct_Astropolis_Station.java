@@ -33,9 +33,9 @@ public class Construct_Astropolis_Station extends BaseDurationAbility
         CargoAPI playerCargo = playerFleet.getCargo();
         playerCargo.getCredits().subtract(creditCost);
         boggledDefaultCargo.active.removeCommodity(playerCargo, boggledDefaultCargo.Astropolis_Station, "metals", metalCost);
-        boggledDefaultCargo.active.removeCommodity(playerCargo, boggledDefaultCargo.Astropolis_Station, "rare_metals", metalCost);
-        boggledDefaultCargo.active.removeCommodity(playerCargo, boggledDefaultCargo.Astropolis_Station, "crew", metalCost);
-        boggledDefaultCargo.active.removeCommodity(playerCargo, boggledDefaultCargo.Astropolis_Station, "heavy_machinery", metalCost);
+        boggledDefaultCargo.active.removeCommodity(playerCargo, boggledDefaultCargo.Astropolis_Station, "rare_metals", transplutonicsCost);
+        boggledDefaultCargo.active.removeCommodity(playerCargo, boggledDefaultCargo.Astropolis_Station, "crew", crewCost);
+        boggledDefaultCargo.active.removeCommodity(playerCargo, boggledDefaultCargo.Astropolis_Station, "heavy_machinery", heavyMachineryCost);
 
         SectorEntityToken targetPlanet = boggledTools.getClosestPlanetToken(playerFleet);
         int numAstro = boggledTools.numAstroInOrbit(targetPlanet);
@@ -240,7 +240,14 @@ public class Construct_Astropolis_Station extends BaseDurationAbility
             // the controlling FactionAPI is still major faction, not player
             if(!(targetPlanet.getMarket().isPlayerOwned() && boggledTools.getBooleanSetting("boggledCanBuildAstropolisOnPurchasedGovernorshipPlanets")) && !targetPlanet.getMarket().getFactionId().equals(Factions.PLAYER))
             {
-                tooltip.addPara("You cannot construct an astropolis station in orbit around a world colonized by another faction.", bad, pad);
+                if(targetPlanet.getMarket().getFactionId().equals(Factions.NEUTRAL))
+                {
+                    tooltip.addPara("You can only construct astropolis stations in orbit around worlds you control.", bad, pad);
+                }
+                else
+                {
+                    tooltip.addPara("You cannot construct an astropolis station in orbit around a world colonized by another faction.", bad, pad);
+                }
             }
 
             if(!boggledTools.getBooleanSetting("boggledAstropolisIgnoreOrbitalRequirements"))
