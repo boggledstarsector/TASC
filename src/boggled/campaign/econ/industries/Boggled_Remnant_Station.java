@@ -150,6 +150,25 @@ public class Boggled_Remnant_Station extends OrbitalStation implements RouteMana
     {
         super.advance(amount);
 
+        // Handle case where player lost control of planet. Possibilities for this include:
+        // Nexerelin, Luddic Church takeover event
+        if(!this.stationEntity.getFaction().getId().equals(this.market.getFaction().getId()) || !this.stationFleet.getFaction().getId().equals(this.market.getFaction().getId()))
+        {
+            // "ai cores" is not a commodity but vanilla checks against this string
+            // Independents and pirates don't have AI cores marked illegal, all other factions do in vanilla
+            if(this.market.getFaction().getIllegalCommodities().contains("ai_cores"))
+            {
+                this.market.removeIndustry(this.id, null, false);
+                this.removeStationEntityAndFleetIfNeeded();
+            }
+            else
+            {
+                // Vanilla has a bug where the stationEntity gets updated to the new faction but the stationFleet doesn't
+                // Fixed it here for the Remnant Station but vanilla will need a fix for the OrbitalStation class
+                this.stationFleet.setFaction(this.market.getFactionId());
+            }
+        }
+
         if (Global.getSector().getEconomy().isSimMode()) return;
 
         if (!isFunctional()) return;

@@ -16,7 +16,6 @@
       <root url="jar://$PROJECT_DIR$/../../starsector-core/starfarer.api.jar!/" />
       <root url="jar://$PROJECT_DIR$/../../starsector-core/starfarer_obf.jar!/" />
       <root url="jar://$PROJECT_DIR$/../../starsector-core/xstream-1.4.10.jar!/" />
-      <root url="jar://$PROJECT_DIR$/libraries/illustrated_entities.jar!/" />
       <root url="file://$PROJECT_DIR$/../LunaLib/jars" />
     </CLASSES>
     <JAVADOC />

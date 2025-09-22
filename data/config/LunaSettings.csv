@@ -50,8 +50,6 @@ The Ouyang Optimizer building can be constructed on a station orbiting a gas gia
 boggledStationConstructionContentEnabled,Enable station construction content,Boolean,True,,"Set this to false to completely disable all station construction content regardless of other settings.
 
 If the player has Ashes of the Domain - Vaults of Knowledge enabled, this setting is ignored and always true.",,,Station Construction
-boggledStationConstructionDelayEnabled,Enable station construction time,Boolean,False,,"Set this to true to cause station construction to take the specified number of days instead of completing instantly.",,,Station Construction
-boggledStationConstructionDelayDays,Station construction delay time,Int,90,,"If the station construction delay is enabled this controls how many days it will take to complete.",1,450,Station Construction
 boggledStationAccessibilityBoost,Modify station accessibility,Int,0,,"Adds an accessibility modifier to player-constructed stations. Negative values can be used to decrease accessibility.",-100,100,Station Construction
 boggledStationHazardRatingModifier,Modify station hazard,Int,0,,"Adds a hazard modifier to player-constructed stations. Negative values can be used to decrease hazard.",-100,100,Station Construction
 boggledApplyStationSettingsToAllStationsInSector,Apply settings to all stations,Boolean,True,,"Applies Cramped Quarters (if enabled), applies hazard and accessibility modifiers, and enables 'no atmosphere' special items on all stations sector-wide.
@@ -78,9 +76,6 @@ boggled_AstropolisHeader,Astropolis Settings,Header,Astropolis Settings,,,,,Stat
 boggledAstropolisEnabled,Enable Astropolis construction,Boolean,True,,"Set this to false to disable construction of astropolis stations.
 
 Astropolis stations can be constructed using an ability when the player is close to a planet they have already colonized. The station will orbit the planet and have a separate market from the market on the colony. Astropolis stations have no resource deposits.",,,Station Construction
-boggledMaxNumAstropoliPerPlanet,Maximum number of astropolis stations per planet,Int,3,,"Controls how many astropolis stations can be constructed in orbit around a single planet.
-
-Large numbers will look very silly.",0,300,Station Construction
 boggledCanBuildAstropolisOnPurchasedGovernorshipPlanets,Astropolis stations can be built on purchased planets,Boolean,False,,"Set this to true to allow astropolis stations to be constructed in orbit around planets where the player purchased governorship.",,,Station Construction
 boggledAstropolisFollowOrbitalRequirements,Astropolis stations follow orbital requirements,Boolean,True,,"Set this to false to allow construction of astropolis stations in orbit around planets that otherwise do not meet the criteria for astropolis construction.
 

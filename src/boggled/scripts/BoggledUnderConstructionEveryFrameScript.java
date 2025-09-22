@@ -5,6 +5,9 @@ import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.*;
 import boggled.campaign.econ.boggledTools;
 
+// I removed this feature because of the bug where the market must be opened upon station building completion or else the population grows like crazy
+// If the station builds immediately it makes sense for the player to interact with the market, if there's a delay we will have to open the market
+// for player interaction remotely, which should not occur.
 public class BoggledUnderConstructionEveryFrameScript implements EveryFrameScript
 {
     private final SectorEntityToken stationEntity;

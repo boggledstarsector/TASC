@@ -1,6 +1,6 @@
 package boggled.scripts;
 
-import boggled.scripts.PlayerCargoCalculations.bogglesDefaultCargo;
+import boggled.scripts.PlayerCargoCalculations.boggledDefaultCargo;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.*;
 import com.fs.starfarer.api.campaign.econ.Industry;
@@ -318,7 +318,7 @@ public class BoggledTerraformingRequirement {
                 case CREDITS: return cargo.getCredits().get() >= quantityToCheck;
                 case RESOURCES: {
                     if (!jobId.isEmpty()) {
-                        return bogglesDefaultCargo.active.getCommodityAmount(cargo, jobId, itemId) >= quantityToCheck;
+                        return boggledDefaultCargo.active.getCommodityAmount(cargo, jobId, itemId) >= quantityToCheck;
                     }
                     return cargo.getQuantity(CargoAPI.CargoItemType.RESOURCES, itemId) >= quantityToCheck;
                 }
