@@ -71,6 +71,21 @@ public class Boggled_Limelight_Network extends BaseIndustry
     }
 
     @Override
+    public void unapply()
+    {
+        // Undo reduce production by one at all industries
+        for (Industry i : market.getIndustries()) {
+            for (MutableCommodityQuantity c : i.getAllSupply()) {
+                i.getSupply(c.getCommodityId()).getQuantity().unmodifyFlat(id);
+            }
+        }
+
+        market.getStability().unmodifyFlat("deficit_stability_malus");
+
+        super.unapply();
+    }
+
+    @Override
     protected void addPostDemandSection(TooltipMakerAPI tooltip, boolean hasDemand, IndustryTooltipMode mode)
     {
         // Only has negative effects on player-owned markets
