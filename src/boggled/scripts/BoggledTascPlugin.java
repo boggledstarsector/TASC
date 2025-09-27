@@ -1,11 +1,14 @@
 package boggled.scripts;
 
 import boggled.campaign.econ.industries.plugins.TerraformingMenuOptionProvider;
+import boggled.ui.BoggledCoreModificationListener;
+import boggled.ui.BoggledCoreModifierEveryFrameScript;
 import com.fs.starfarer.api.BaseModPlugin;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.SettingsAPI;
 import com.fs.starfarer.api.campaign.*;
 import com.fs.starfarer.api.campaign.econ.MarketAPI;
+import com.fs.starfarer.api.campaign.listeners.ListenerManagerAPI;
 import com.fs.starfarer.api.impl.campaign.econ.ResourceDepositsCondition;
 import com.fs.starfarer.api.impl.campaign.ids.Factions;
 import com.fs.starfarer.api.impl.campaign.ids.Industries;
@@ -341,6 +344,9 @@ public class BoggledTascPlugin extends BaseModPlugin {
 
     private void registerListeners()
     {
+        ListenerManagerAPI listenerManager = Global.getSector().getListenerManager();
+        listenerManager.addListener(new BoggledCoreModificationListener(), true);
+
         TerraformingMenuOptionProvider.register();
     }
 
@@ -395,6 +401,8 @@ public class BoggledTascPlugin extends BaseModPlugin {
         registerListeners();
 
         addAotDEveryFrameScript();
+
+        Global.getSector().addTransientScript(new BoggledCoreModifierEveryFrameScript());
 
         lastGameLoad = thisGameLoad;
     }
