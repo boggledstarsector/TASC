@@ -21,9 +21,15 @@ import java.util.Iterator;
 import java.util.List;
 
 public class BoggledCoreModifierEveryFrameScript implements EveryFrameScript {
-    HashMap<ButtonAPI, Object> panelMap = null;
-    ButtonAPI currentTab = null;
+    private HashMap<ButtonAPI, UIComponentAPI> outpostsButtonToPanelMapping = null;
 
+    private Float rootX = null;
+    private Float rootY = null;
+
+    private ButtonAPI currentButton = null;
+
+    private Float rootXForModdedPanels = null;
+    private Float rootYForModdedPanels = null;
     private static final MethodHandles.Lookup lookup = MethodHandles.lookup();
     private static final Class<?> methodClass;
     private static final MethodHandle invokeMethodHandle;
@@ -43,12 +49,54 @@ public class BoggledCoreModifierEveryFrameScript implements EveryFrameScript {
         return false;
     }
 
-    public static void setMemFlag(String value) {
-        Global.getSector().getMemory().set("$aotd_outpost_state", value);
-    }
-
     public boolean runWhilePaused() {
         return true;
+    }
+
+    private HashMap<ButtonAPI, UIComponentAPI> getOriginalPanelMap(UIPanelAPI outpostsMainPanel)
+    {
+        return (HashMap) invokeMethod("getButtonToTab", outpostsMainPanel, new Object[0]);
+    }
+
+    private HashMap<ButtonAPI, UIComponentAPI> getModifiedPanelMapWithTerraformingMenu(HashMap<ButtonAPI, UIComponentAPI> originalMap, UIPanelAPI outpostsParentPanel)
+    {
+        ButtonAPI existingTerraformingButton = tryToGetButtonProd("terraforming");
+
+        if(existingTerraformingButton == null)
+        {
+            ButtonAPI aotdbutton = tryToGetButtonProd("research & production");
+            String buttonInsertNextTo = aotdbutton != null ? "research & production" : "custom production";
+            ButtonAPI terraformingButton = this.insertButton(tryToGetButtonProd(buttonInsertNextTo), outpostsParentPanel, "Terraforming", new TooltipMakerAPI.TooltipCreator() {
+                public boolean isTooltipExpandable(Object tooltipParam) {
+                    return false;
+                }
+
+                public float getTooltipWidth(Object tooltipParam) {
+                    return 500.0F;
+                }
+
+                public void createTooltip(TooltipMakerAPI tooltip, boolean expanded, Object tooltipParam) {
+                    tooltip.addSectionHeading("Terraforming & Station Construction", Alignment.MID, 0.0F);
+                    tooltip.addPara("In this tab, you can find terraforming projects.", 5.0F);
+                }
+            }, tryToGetButtonProd("colonies"), 240.0F, 7, false);
+
+            existingTerraformingButton = terraformingButton;
+            BoggledTerraformingCoreUI terraformingUI = new BoggledTerraformingCoreUI();
+            terraformingUI.init(null);
+            originalMap.put(existingTerraformingButton, terraformingUI.getMainPanel());
+        }
+
+        return originalMap;
+    }
+
+    public static UIPanelAPI getCurrentTab() {
+        UIPanelAPI coreUltimate = getCoreUI();
+        if (getCoreUI() == null) {
+            return null;
+        } else {
+            return (UIPanelAPI) invokeMethod("getCurrentTab", coreUltimate, new Object[0]);
+        }
     }
 
     public void advance(float amount)
@@ -58,31 +106,99 @@ public class BoggledCoreModifierEveryFrameScript implements EveryFrameScript {
             UIPanelAPI mainParent = getCurrentTab();
             if (mainParent != null)
             {
-
-                if (tryToGetButtonProd("terraforming") == null)
+                if(rootX == null || rootY == null)
                 {
-                    ButtonAPI aotdbutton = tryToGetButtonProd("research & production");
-                    String buttonInsertNextTo = aotdbutton != null ? "research & production" : "custom production";
-                    this.insertButton(tryToGetButtonProd(buttonInsertNextTo), mainParent, "terraforming", new TooltipMakerAPI.TooltipCreator() {
-                        public boolean isTooltipExpandable(Object tooltipParam) {
-                            return false;
+                    HashMap<ButtonAPI, UIComponentAPI> originalMap = getOriginalPanelMap(mainParent);
+                    ButtonAPI coloniesButton = tryToGetButtonProd("colonies");
+                    UIComponentAPI coloniesPanel = originalMap.get(coloniesButton);
+                    rootX = coloniesPanel.getPosition().getX();
+                    rootY = coloniesPanel.getPosition().getY();
+                }
+
+                HashMap<ButtonAPI, UIComponentAPI> originalMap = getOriginalPanelMap(mainParent);
+                this.outpostsButtonToPanelMapping = getModifiedPanelMapWithTerraformingMenu(originalMap, mainParent);
+
+                ButtonAPI checkedButton = getCheckedButton();
+                if(checkedButton != null)
+                {
+                    for(ButtonAPI button : this.outpostsButtonToPanelMapping.keySet())
+                    {
+                        if(button.isChecked())
+                        {
+                            button.setChecked(false);
                         }
 
-                        public float getTooltipWidth(Object tooltipParam) {
-                            return 500.0F;
+                        if(button.isHighlighted())
+                        {
+                            button.unhighlight();
                         }
 
-                        public void createTooltip(TooltipMakerAPI tooltip, boolean expanded, Object tooltipParam) {
-                            tooltip.addSectionHeading("Terraforming & Station Construction", Alignment.MID, 0.0F);
-                            tooltip.addPara("In this tab, you can find terraforming projects.", 5.0F);
-                        }
-                    }, tryToGetButtonProd("colonies"), 240.0F, 7, false);
+                    }
 
-                    //this.handleButtons();
-                    //this.handleButtonsHighlight();
+                    checkedButton.highlight();
+                }
+
+                ButtonAPI highlightedButton = getHighlightedButton();
+                removeAllTabPanels(mainParent, highlightedButton);
+                if(highlightedButton != null && this.outpostsButtonToPanelMapping.containsKey(highlightedButton))
+                {
+                    if(this.currentButton != highlightedButton)
+                    {
+                        if(highlightedButton.getText().contains("Terraforming"))
+                        {
+                            BoggledTerraformingCoreUI terraformingUI = new BoggledTerraformingCoreUI();
+                            terraformingUI.init(null);
+                            this.outpostsButtonToPanelMapping.put(highlightedButton, terraformingUI.getMainPanel());
+                            UIComponentAPI componentToAdd = this.outpostsButtonToPanelMapping.get(highlightedButton);
+                            mainParent.addComponent(componentToAdd).inTL(0f, 35f);
+                        }
+                        else
+                        {
+                            UIComponentAPI componentToAdd = this.outpostsButtonToPanelMapping.get(highlightedButton);
+                            mainParent.addComponent(componentToAdd).setLocation(rootX, rootY);
+                        }
+                        this.currentButton = highlightedButton;
+                    }
                 }
             }
         }
+    }
+
+    private ButtonAPI getCheckedButton()
+    {
+        for(ButtonAPI button : this.outpostsButtonToPanelMapping.keySet())
+        {
+            if(button.isChecked())
+            {
+                return button;
+            }
+        }
+
+        return null;
+    }
+
+    private void removeAllTabPanels(UIPanelAPI mainParent, ButtonAPI keepButton)
+    {
+        for(ButtonAPI button : this.outpostsButtonToPanelMapping.keySet())
+        {
+            if(keepButton == null || button != keepButton)
+            {
+                mainParent.removeComponent(this.outpostsButtonToPanelMapping.get(button));
+            }
+        }
+    }
+
+    private ButtonAPI getHighlightedButton()
+    {
+        for(ButtonAPI button : this.outpostsButtonToPanelMapping.keySet())
+        {
+            if(button.isHighlighted())
+            {
+                return button;
+            }
+        }
+
+        return null;
     }
 
     public static UIPanelAPI getCoreUI() {
@@ -98,14 +214,7 @@ public class BoggledCoreModifierEveryFrameScript implements EveryFrameScript {
         return core == null ? null : (UIPanelAPI)core;
     }
 
-    public static UIPanelAPI getCurrentTab() {
-        UIPanelAPI coreUltimate = getCoreUI();
-        if (getCoreUI() == null) {
-            return null;
-        } else {
-            return (UIPanelAPI) invokeMethod("getCurrentTab", coreUltimate, new Object[0]);
-        }
-    }
+
 
     public static Object invokeMethod(String methodName, Object instance, Object... arguments) {
         try {
@@ -141,49 +250,11 @@ public class BoggledCoreModifierEveryFrameScript implements EveryFrameScript {
         }
     }
 
-    private void handleButtonsHighlight() {
-        Iterator var1 = this.panelMap.keySet().iterator();
-
-        while(var1.hasNext()) {
-            ButtonAPI buttonAPI = (ButtonAPI)var1.next();
-            if (!buttonAPI.equals(this.currentTab)) {
-                buttonAPI.unhighlight();
-            } else {
-                buttonAPI.highlight();
-            }
-        }
-
-    }
-
-//    private void handleButtons() {
-//        Iterator var1 = this.panelMap.keySet().iterator();
-//
-//        while(var1.hasNext()) {
-//            ButtonAPI buttonAPI = (ButtonAPI)var1.next();
-//            if (buttonAPI.isChecked()) {
-//                buttonAPI.setChecked(false);
-//                if (!this.currentTab.equals(buttonAPI)) {
-//                    ProductionUtil.getCurrentTab().removeComponent((UIComponentAPI)this.panelMap.get(this.currentTab));
-//                    if (buttonAPI.getText().toLowerCase().contains("terraforming")) {
-//                        if (this.coreUiTech.getCurrentlyChosen() != null) {
-//                            this.coreUiTech.playSound(this.coreUiTech.getCurrentlyChosen());
-//                        }
-//                    } else if (this.currentTab.getText().toLowerCase().contains("terraforming")) {
-//                        this.coreUiTech.pauseSound();
-//                    }
-//
-//                    this.currentTab = buttonAPI;
-//                    setMemFlag(this.currentTab.getText().toLowerCase());
-//                }
-//            }
-//        }
-//
-//    }
-
-    private void insertButton(ButtonAPI button, UIPanelAPI mainParent, String name, TooltipMakerAPI.TooltipCreator creator, ButtonAPI button2, float size, int keyBind, boolean dissabled) {
+    private ButtonAPI insertButton(ButtonAPI button, UIPanelAPI mainParent, String name, TooltipMakerAPI.TooltipCreator creator, ButtonAPI button2, float size, int keyBind, boolean dissabled) {
         ButtonAPI newButton = (ButtonAPI)this.createPanelButton(name, size, button.getPosition().getHeight(), keyBind, dissabled, creator).two;
         mainParent.addComponent(newButton).inTL(button.getPosition().getX() + button.getPosition().getWidth() - button2.getPosition().getX() + 1.0F, 0.0F);
         mainParent.bringComponentToTop(newButton);
+        return newButton;
     }
 
     private Pair<CustomPanelAPI, ButtonAPI> createPanelButton(String buttonName, float width, float height, int bindingValue, boolean dissabled, TooltipMakerAPI.TooltipCreator onHoverTooltip) {
@@ -191,7 +262,7 @@ public class BoggledCoreModifierEveryFrameScript implements EveryFrameScript {
         TooltipMakerAPI tooltipMakerAPI = panel.createUIElement(width, height, false);
         ButtonAPI button = tooltipMakerAPI.addButton(buttonName, (Object)null, Global.getSector().getPlayerFaction().getBaseUIColor(), Global.getSector().getPlayerFaction().getDarkUIColor(), Alignment.MID, CutStyle.TOP, width, height, 0.0F);
         button.setShortcut(bindingValue, false);
-        button.setEnabled(!dissabled);
+        button.setEnabled(true);
         if (onHoverTooltip != null) {
             tooltipMakerAPI.addTooltipToPrevious(onHoverTooltip, TooltipLocation.BELOW);
         }
