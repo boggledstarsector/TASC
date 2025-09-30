@@ -150,7 +150,7 @@ public class BoggledCoreModifierEveryFrameScript implements EveryFrameScript {
                             terraformingUI.init(null);
                             this.outpostsButtonToPanelMapping.put(highlightedButton, terraformingUI.getMainPanel());
                             UIComponentAPI componentToAdd = this.outpostsButtonToPanelMapping.get(highlightedButton);
-                            mainParent.addComponent(componentToAdd).inTL(0f, 35f);
+                            mainParent.addComponent(componentToAdd).inTL(0f, 30f);
                         }
                         else
                         {

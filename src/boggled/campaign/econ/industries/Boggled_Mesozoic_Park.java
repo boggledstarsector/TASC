@@ -36,8 +36,8 @@ public class Boggled_Mesozoic_Park extends BaseIndustry
 
         // This check exists to remove Mesozoic Park if the planet was terraformed to a type that is incompatible with Mesozoic Park
         PlanetAPI planet = this.market.getPlanetEntity();
-        String planetType = boggledTools.getPlanetType(planet).getPlanetId();
-        if(!(planetType.equals("terran") || planetType.equals("water") || planetType.equals("jungle") || planetType.equals("desert")))
+        String planetType = boggledTools.getTascPlanetType(planet);
+        if(!(planetType.equals(boggledTools.TascPlanetTypes.terranPlanetId) || planetType.equals(boggledTools.TascPlanetTypes.desertPlanetId) || planetType.equals(boggledTools.TascPlanetTypes.waterPlanetId) || planetType.equals(boggledTools.TascPlanetTypes.junglePlanetId)))
         {
             // If an AI core is installed, put one in storage so the player doesn't "lose" an AI core
             if(this.aiCoreId != null)
@@ -90,22 +90,22 @@ public class Boggled_Mesozoic_Park extends BaseIndustry
         }
 
         PlanetAPI planet = this.market.getPlanetEntity();
-        String planetType = boggledTools.getPlanetType(planet).getPlanetId();
+        String planetType = boggledTools.getTascPlanetType(planet);
 
         //Can only build on terran, water, jungle or desert planets
-        if(planetType.equals("terran"))
+        if(planetType.equals(boggledTools.TascPlanetTypes.terranPlanetId))
         {
             return Global.getSettings().getSpriteName("boggled", "mesozoic_park_terran");
         }
-        else if(planetType.equals("water"))
+        else if(planetType.equals(boggledTools.TascPlanetTypes.waterPlanetId))
         {
             return Global.getSettings().getSpriteName("boggled", "mesozoic_park_water");
         }
-        else if(planetType.equals("jungle"))
+        else if(planetType.equals(boggledTools.TascPlanetTypes.junglePlanetId))
         {
             return Global.getSettings().getSpriteName("boggled", "mesozoic_park_jungle");
         }
-        else if(planetType.equals("desert"))
+        else if(planetType.equals(boggledTools.TascPlanetTypes.desertPlanetId))
         {
             return Global.getSettings().getSpriteName("boggled", "mesozoic_park_desert");
         }
@@ -139,16 +139,16 @@ public class Boggled_Mesozoic_Park extends BaseIndustry
         }
 
         PlanetAPI planet = this.market.getPlanetEntity();
-        String planetType = boggledTools.getPlanetType(planet).getPlanetId();
+        String planetType = boggledTools.getTascPlanetType(planet);
 
         //Can't build on unknown planet types
-        if(planetType.equals("unknown"))
+        if(planetType.equals(boggledTools.TascPlanetTypes.unknownPlanetId))
         {
             return false;
         }
 
         //Can only build on terran, water, jungle or desert planets
-        if(!planetType.equals("terran") && !planetType.equals("water") && !planetType.equals("jungle") && !planetType.equals("desert"))
+        if(!planetType.equals(boggledTools.TascPlanetTypes.terranPlanetId) && !planetType.equals(boggledTools.TascPlanetTypes.waterPlanetId) && !planetType.equals(boggledTools.TascPlanetTypes.junglePlanetId) && !planetType.equals(boggledTools.TascPlanetTypes.desertPlanetId))
         {
             return false;
         }
@@ -188,16 +188,16 @@ public class Boggled_Mesozoic_Park extends BaseIndustry
         }
 
         PlanetAPI planet = this.market.getPlanetEntity();
-        String planetType = boggledTools.getPlanetType(planet).getPlanetId();
+        String planetType = boggledTools.getTascPlanetType(planet);
 
         //Can't build on unknown planet types
-        if(planetType.equals("unknown"))
+        if(planetType.equals(boggledTools.TascPlanetTypes.unknownPlanetId))
         {
             return super.showWhenUnavailable();
         }
 
         //Can only build on terran, water, jungle or desert planets
-        if(!planetType.equals("terran") && !planetType.equals("water") && !planetType.equals("jungle") && !planetType.equals("desert"))
+        if(!planetType.equals(boggledTools.TascPlanetTypes.terranPlanetId) && !planetType.equals(boggledTools.TascPlanetTypes.waterPlanetId) && !planetType.equals(boggledTools.TascPlanetTypes.junglePlanetId) && !planetType.equals(boggledTools.TascPlanetTypes.desertPlanetId))
         {
             return super.showWhenUnavailable();
         }
@@ -221,16 +221,16 @@ public class Boggled_Mesozoic_Park extends BaseIndustry
     public String getUnavailableReason()
     {
         PlanetAPI planet = this.market.getPlanetEntity();
-        String planetType = boggledTools.getPlanetType(planet).getPlanetId();
+        String planetType = boggledTools.getTascPlanetType(planet);
 
         //Can't build on unknown planet types
-        if(planetType.equals("unknown"))
+        if(planetType.equals(boggledTools.TascPlanetTypes.unknownPlanetId))
         {
             return "This planet type is unsupported by TASC. Please report this to boggled on the forums so he can add support. The planet type is: " + this.market.getPlanetEntity().getTypeId();
         }
 
         //Can only build on terran, water, jungle or desert planets
-        if(!planetType.equals("terran") && !planetType.equals("water") && !planetType.equals("jungle") && !planetType.equals("desert"))
+        if(!planetType.equals(boggledTools.TascPlanetTypes.terranPlanetId) && !planetType.equals(boggledTools.TascPlanetTypes.waterPlanetId) && !planetType.equals(boggledTools.TascPlanetTypes.junglePlanetId) && !planetType.equals(boggledTools.TascPlanetTypes.desertPlanetId))
         {
             return "Old Earth megafauna can only survive on world types that feature a relatively similar environment to Old Earth during the Mesozoic Era.";
         }

@@ -504,7 +504,7 @@ public class Boggled_Genelab extends BaseIndustry
     public String getCurrentImage()
     {
         PlanetAPI planet = this.market.getPlanetEntity();
-        if(planet != null && !boggledTools.getPlanetType(planet).getPlanetId().equals("water"))
+        if(planet != null && !boggledTools.getTascPlanetType(planet).equals("water"))
         {
             return Global.getSettings().getSpriteName("boggled", "genelab_trex");
         }
