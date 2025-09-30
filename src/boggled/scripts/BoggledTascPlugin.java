@@ -242,7 +242,7 @@ public class BoggledTascPlugin extends BaseModPlugin {
             SettingsAPI settings = Global.getSettings();
 
             // Planet type ID to TASC planet type mapping
-            JSONArray planetTypeMapping = settings.getMergedSpreadsheetDataForMod("condition_id", "data/campaign/terraforming/planet_type_mapping.csv", boggledTools.BoggledMods.tascModId);
+            JSONArray planetTypeMapping = settings.getMergedSpreadsheetDataForMod("planet_type_id", "data/campaign/terraforming/planet_type_mapping.csv", boggledTools.BoggledMods.tascModId);
 
             // Domed Cities suppressed conditions
             JSONArray domedCitiesSuppressedConditions = settings.getMergedSpreadsheetDataForMod("condition_id", "data/campaign/terraforming/domed_cities_suppressed_conditions.csv", boggledTools.BoggledMods.tascModId);
@@ -253,6 +253,8 @@ public class BoggledTascPlugin extends BaseModPlugin {
             boggledTools.initializeDomedCitiesSuppressedConditionsFromJSON(domedCitiesSuppressedConditions);
 
             boggledTools.initializeStellarReflectorArraySuppressedConditionsFromJSON(stellarReflectorArraySuppressedConditions);
+
+            boggledTools.initializePlanetMappingsFromJSON(planetTypeMapping);
 
         } catch (IOException | JSONException ex) {
             boggledTools.writeMessageToLog(ex.getMessage());

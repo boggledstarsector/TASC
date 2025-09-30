@@ -196,11 +196,29 @@ public class boggledTools {
         public static final String unknownPlanetId = "unknown";
     }
 
+    private static final Set<String> validPlanetTypes = new HashSet<>(Arrays.asList(
+            TascPlanetTypes.starPlanetId,
+            TascPlanetTypes.barrenPlanetId,
+            TascPlanetTypes.desertPlanetId,
+            TascPlanetTypes.frozenPlanetId,
+            TascPlanetTypes.gasGiantPlanetId,
+            TascPlanetTypes.junglePlanetId,
+            TascPlanetTypes.terranPlanetId,
+            TascPlanetTypes.toxicPlanetId,
+            TascPlanetTypes.tundraPlanetId,
+            TascPlanetTypes.volcanicPlanetId,
+            TascPlanetTypes.waterPlanetId,
+            TascPlanetTypes.unknownPlanetId
+    ));
+
     public enum BasePlanetWaterLevel {
         LOW_WATER, MEDIUM_WATER, HIGH_WATER
     }
 
     private static final HashMap<String, String> planetTypeIdToTascPlanetTypeMapping = new HashMap<>();
+
+    private static final HashMap<String, HashSet<String>> tascPlanetTypeToAllPlanetTypeIdsMapping = new HashMap<>();
+
     private static final HashMap<String, BasePlanetWaterLevel> tascPlanetTypeToBaseWaterLevelMapping = new HashMap<>(){{
         put(TascPlanetTypes.starPlanetId, BasePlanetWaterLevel.LOW_WATER);
         put(TascPlanetTypes.barrenPlanetId, BasePlanetWaterLevel.LOW_WATER);
@@ -334,6 +352,11 @@ public class boggledTools {
         return planetTypeIdToTascPlanetTypeMapping.getOrDefault(planetTypeId, TascPlanetTypes.unknownPlanetId);
     }
 
+    public static HashSet<String> getAllPlanetTypeIdsForTascPlanetType(String tascPlanetType)
+    {
+        return tascPlanetTypeToAllPlanetTypeIdsMapping.getOrDefault(tascPlanetType, new HashSet<>());
+    }
+
     public static BasePlanetWaterLevel getWaterLevelForTascPlanetType(String tascPlanetType)
     {
         return tascPlanetTypeToBaseWaterLevelMapping.getOrDefault(tascPlanetType, BasePlanetWaterLevel.LOW_WATER);
@@ -382,6 +405,39 @@ public class boggledTools {
         HashSet<String> conditions = getConditionsListFromJson(domedCitiesSuppressedConditionsJSON);
 
         boggledTools.domedCitiesSuppressedConditions = new ArrayList<String>(conditions);
+    }
+
+    public static void initializePlanetMappingsFromJSON(@NotNull JSONArray planetsJson)
+    {
+        for (int i = 0; i < planetsJson.length(); ++i) {
+            try
+            {
+                JSONObject row = planetsJson.getJSONObject(i);
+                String planetTypeId = row.getString("planet_type_id");
+                String tascPlanetType = row.getString("tasc_planet_type");
+                if(planetTypeId == null || planetTypeId.isBlank() || tascPlanetType == null || tascPlanetType.isBlank() || !validPlanetTypes.contains(tascPlanetType))
+                {
+                    throw new RuntimeException("You have a blank cell in the planet mapping CSV file, or you've specified an invalid TASC planet type. Delete the file and replace it with the original.");
+                }
+
+                planetTypeIdToTascPlanetTypeMapping.put(planetTypeId, tascPlanetType);
+                if(tascPlanetTypeToAllPlanetTypeIdsMapping.containsKey(tascPlanetType))
+                {
+                    tascPlanetTypeToAllPlanetTypeIdsMapping.get(tascPlanetType).add(planetTypeId);
+                }
+                else
+                {
+                    tascPlanetTypeToAllPlanetTypeIdsMapping.put(tascPlanetType, new HashSet<>(){{
+                        add(planetTypeId);
+                    }});
+                }
+
+            }
+            catch (JSONException e) {
+                // We can't swallow this exception because the game won't work correctly if the data isn't loaded
+                throw new RuntimeException("Error in planet mapping JSON parsing: " + e);
+            }
+        }
     }
 
     public static HashSet<String> getConditionsListFromJson(JSONArray json) {
