@@ -32,11 +32,11 @@ public class Boggled_Domed_Cities extends BaseIndustry implements MarketImmigrat
     // e.g. this.getCurrentName().equals("Domed Cities")
     @Override
     public String getCurrentName() {
-        if(boggledTools.getPlanetType(market.getPlanetEntity()).getPlanetId().equals("gas_giant"))
+        if(boggledTools.getTascPlanetType(market.getPlanetEntity()).equals(boggledTools.TascPlanetTypes.gasGiantPlanetId))
         {
             return "Sky Cities";
         }
-        else if(boggledTools.getPlanetType(market.getPlanetEntity()).getPlanetId().equals("water"))
+        else if(boggledTools.getTascPlanetType(market.getPlanetEntity()).equals(boggledTools.TascPlanetTypes.waterPlanetId))
         {
             return "Seafloor Cities";
         }

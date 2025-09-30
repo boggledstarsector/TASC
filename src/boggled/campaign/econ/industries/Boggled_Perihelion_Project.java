@@ -428,14 +428,11 @@ public class Boggled_Perihelion_Project extends BaseIndustry {
 
     public boolean planetIsBlueStar(@NotNull PlanetAPI planet)
     {
-        // Need to use planet type configuration from TASC because Unknown Skies or other mods can add additional blue star types.
-        // Vanilla does not appear to consider these modded star IDs so we need to implement it here.
-        boggledTools.PlanetType planetType = boggledTools.getPlanetType(planet);
-        String planetTerraformingType = planetType.getPlanetTypeName();
-        boggledTools.writeMessageToLog("Coronal tap logic debug: Planet " + planet.getName() + " has terraforming type " + planetTerraformingType + ".");
+        // Vanilla does not appear to consider modded star types as blue stars so we need to implement it here.
+        boggledTools.writeMessageToLog("Coronal tap logic debug: Planet " + planet.getName() + " has planet type ID: " + planet.getTypeId());
 
         // There are multiple IDs for blue stars (e.g. blue star, blue supergiant, blue giant) so use contains
-        return planet.isStar() && planetTerraformingType.contains("blue ");
+        return planet.isStar() && planet.getTypeId().contains("blue");
     }
 
     public ArrayList<PlanetAPI> getBlueStarsInSystem(@NotNull StarSystemAPI system)

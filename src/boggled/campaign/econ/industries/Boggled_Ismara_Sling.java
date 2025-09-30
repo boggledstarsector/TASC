@@ -31,7 +31,7 @@ public class Boggled_Ismara_Sling extends BaseIndustry
         super.advance(amount);
 
         // This check exists to remove Ismara's Sling if the planet was terraformed to a type that is incompatible with it.
-        if(!boggledTools.marketIsStation(this.market) && (!boggledTools.getPlanetType(this.market.getPlanetEntity()).getPlanetId().equals("water") && !boggledTools.getPlanetType(this.market.getPlanetEntity()).getPlanetId().equals("frozen")))
+        if(!boggledTools.marketIsStation(this.market) && (!boggledTools.getTascPlanetType(this.market.getPlanetEntity()).equals(boggledTools.TascPlanetTypes.waterPlanetId) && !boggledTools.getTascPlanetType(this.market.getPlanetEntity()).equals(boggledTools.TascPlanetTypes.frozenPlanetId)))
         {
             // If an AI core is installed, put one in storage so the player doesn't "lose" an AI core
             if(this.aiCoreId != null)
@@ -143,7 +143,7 @@ public class Boggled_Ismara_Sling extends BaseIndustry
             return super.isAvailableToBuild();
         }
 
-        if(!boggledTools.getPlanetType(this.market.getPlanetEntity()).getPlanetId().equals("water") && !boggledTools.getPlanetType(this.market.getPlanetEntity()).getPlanetId().equals("frozen"))
+        if(!boggledTools.getTascPlanetType(this.market.getPlanetEntity()).equals(boggledTools.TascPlanetTypes.waterPlanetId) && !boggledTools.getTascPlanetType(this.market.getPlanetEntity()).equals(boggledTools.TascPlanetTypes.frozenPlanetId))
         {
             return false;
         }
@@ -169,7 +169,7 @@ public class Boggled_Ismara_Sling extends BaseIndustry
             return super.showWhenUnavailable();
         }
 
-        if(!boggledTools.getPlanetType(this.market.getPlanetEntity()).getPlanetId().equals("water") && !boggledTools.getPlanetType(this.market.getPlanetEntity()).getPlanetId().equals("frozen"))
+        if(!boggledTools.getTascPlanetType(this.market.getPlanetEntity()).equals(boggledTools.TascPlanetTypes.waterPlanetId) && !boggledTools.getTascPlanetType(this.market.getPlanetEntity()).equals(boggledTools.TascPlanetTypes.frozenPlanetId))
         {
             return super.showWhenUnavailable();
         }
@@ -185,7 +185,7 @@ public class Boggled_Ismara_Sling extends BaseIndustry
             return super.getUnavailableReason();
         }
 
-        if(!boggledTools.getPlanetType(this.market.getPlanetEntity()).getPlanetId().equals("water") && !boggledTools.getPlanetType(this.market.getPlanetEntity()).getPlanetId().equals("frozen"))
+        if(!boggledTools.getTascPlanetType(this.market.getPlanetEntity()).equals(boggledTools.TascPlanetTypes.waterPlanetId) && !boggledTools.getTascPlanetType(this.market.getPlanetEntity()).equals(boggledTools.TascPlanetTypes.frozenPlanetId))
         {
             return "Ismara's Sling can only be built on cryovolcanic, frozen and water-covered worlds.";
         }

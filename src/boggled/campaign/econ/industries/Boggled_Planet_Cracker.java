@@ -52,7 +52,7 @@ public class Boggled_Planet_Cracker extends BaseIndustry
             return false;
         }
 
-        if(orbitFocus.getMarket() == null || orbitFocus.getMarket().getPlanetEntity() == null || boggledTools.getPlanetType(orbitFocus.getMarket().getPlanetEntity()).equals("gas_giant"))
+        if(orbitFocus.getMarket() == null || orbitFocus.getMarket().getPlanetEntity() == null || boggledTools.getTascPlanetType(orbitFocus.getMarket().getPlanetEntity()).equals(boggledTools.TascPlanetTypes.gasGiantPlanetId))
         {
             return false;
         }
@@ -143,8 +143,8 @@ public class Boggled_Planet_Cracker extends BaseIndustry
         }
 
         PlanetAPI planet = this.market.getPlanetEntity();
-        String planetType = boggledTools.getPlanetType(planet).getPlanetId();
-        if(planetType.equals("gas_giant") || planetType.contains("star"))
+        String planetType = boggledTools.getTascPlanetType(planet);
+        if(planetType.equals(boggledTools.TascPlanetTypes.gasGiantPlanetId) || planetType.contains(boggledTools.TascPlanetTypes.starPlanetId))
         {
             return false;
         }
@@ -192,8 +192,8 @@ public class Boggled_Planet_Cracker extends BaseIndustry
         }
 
         PlanetAPI planet = this.market.getPlanetEntity();
-        String planetType = boggledTools.getPlanetType(planet).getPlanetId();
-        if(planetType.equals("gas_giant") || planetType.contains("star"))
+        String planetType = boggledTools.getTascPlanetType(planet);
+        if(planetType.equals(boggledTools.TascPlanetTypes.gasGiantPlanetId) || planetType.contains(boggledTools.TascPlanetTypes.starPlanetId))
         {
             return super.showWhenUnavailable();
         }
@@ -230,8 +230,8 @@ public class Boggled_Planet_Cracker extends BaseIndustry
         }
 
         PlanetAPI planet = this.market.getPlanetEntity();
-        String planetType = boggledTools.getPlanetType(planet).getPlanetId();
-        if(planetType.equals("gas_giant") || planetType.contains("star"))
+        String planetType = boggledTools.getTascPlanetType(planet);
+        if(planetType.equals(boggledTools.TascPlanetTypes.gasGiantPlanetId) || planetType.contains(boggledTools.TascPlanetTypes.starPlanetId))
         {
             return "Gas giants and stars cannot be cracked.";
         }

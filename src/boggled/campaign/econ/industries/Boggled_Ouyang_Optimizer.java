@@ -58,8 +58,8 @@ public class Boggled_Ouyang_Optimizer extends BaseIndustry
         }
 
         PlanetAPI planet = this.market.getPlanetEntity();
-        String planetType = boggledTools.getPlanetType(planet).getPlanetId();
-        if(!planetType.equals("gas_giant"))
+        String planetType = boggledTools.getTascPlanetType(planet);
+        if(!planetType.equals(boggledTools.TascPlanetTypes.gasGiantPlanetId))
         {
             return false;
         }
@@ -151,8 +151,8 @@ public class Boggled_Ouyang_Optimizer extends BaseIndustry
         }
 
         PlanetAPI planet = this.market.getPlanetEntity();
-        String planetType = boggledTools.getPlanetType(planet).getPlanetId();
-        if(!planetType.equals("gas_giant"))
+        String planetType = boggledTools.getTascPlanetType(planet);
+        if(!planetType.equals(boggledTools.TascPlanetTypes.gasGiantPlanetId))
         {
             return false;
         }
@@ -199,8 +199,8 @@ public class Boggled_Ouyang_Optimizer extends BaseIndustry
         }
 
         PlanetAPI planet = this.market.getPlanetEntity();
-        String planetType = boggledTools.getPlanetType(planet).getPlanetId();
-        if(!planetType.equals("gas_giant"))
+        String planetType = boggledTools.getTascPlanetType(planet);
+        if(!planetType.equals(boggledTools.TascPlanetTypes.gasGiantPlanetId))
         {
             return super.showWhenUnavailable();
         }
@@ -237,8 +237,8 @@ public class Boggled_Ouyang_Optimizer extends BaseIndustry
         }
 
         PlanetAPI planet = this.market.getPlanetEntity();
-        String planetType = boggledTools.getPlanetType(planet).getPlanetId();
-        if(!planetType.equals("gas_giant"))
+        String planetType = boggledTools.getTascPlanetType(planet);
+        if(!planetType.equals(boggledTools.TascPlanetTypes.gasGiantPlanetId))
         {
             return "Only gas giants can undergo Ouyang optimization.";
         }
