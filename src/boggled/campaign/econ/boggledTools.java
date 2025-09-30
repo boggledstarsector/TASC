@@ -219,6 +219,8 @@ public class boggledTools {
 
     private static final HashMap<String, HashSet<String>> tascPlanetTypeToAllPlanetTypeIdsMapping = new HashMap<>();
 
+    private static final HashMap<String, PlanetSpecAPI> planetTypeIdToPlanetSpecApiMapping = new HashMap<>();
+
     private static final HashMap<String, BasePlanetWaterLevel> tascPlanetTypeToBaseWaterLevelMapping = new HashMap<>(){{
         put(TascPlanetTypes.starPlanetId, BasePlanetWaterLevel.LOW_WATER);
         put(TascPlanetTypes.barrenPlanetId, BasePlanetWaterLevel.LOW_WATER);
@@ -438,6 +440,17 @@ public class boggledTools {
                 throw new RuntimeException("Error in planet mapping JSON parsing: " + e);
             }
         }
+
+        List<PlanetSpecAPI> planetSpecList = Global.getSettings().getAllPlanetSpecs();
+        for(PlanetSpecAPI planetSpec : planetSpecList)
+        {
+            planetTypeIdToPlanetSpecApiMapping.put(planetSpec.getPlanetType(), planetSpec);
+        }
+    }
+
+    public static PlanetSpecAPI getPlanetSpec(String planetTypeId)
+    {
+        return planetTypeIdToPlanetSpecApiMapping.getOrDefault(planetTypeId, null);
     }
 
     public static HashSet<String> getConditionsListFromJson(JSONArray json) {

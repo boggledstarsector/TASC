@@ -102,4 +102,20 @@ public class BoggledBaseTerraformingProject extends BaseIntelPlugin
         PlanetAPI marketPlanet = this.market.getPlanetEntity();
         return new CampaignPlanet(null, "constructedDummy", marketPlanet.getTypeId(), marketPlanet.getRadius(), marketPlanet.getLocation().x, marketPlanet.getLocation().y, (CampaignEntity) marketPlanet.getLightSource());
     }
+
+    public String getProjectName()
+    {
+        return "Override this";
+    }
+
+    public static boolean isUnknownSkiesPlanetType(String str)
+    {
+        if (str == null || str.length() < 3) {
+            return false;
+        }
+
+        // Use a case-insensitive check
+        String prefix = str.substring(0, 3);
+        return prefix.equalsIgnoreCase("us_");
+    }
 }

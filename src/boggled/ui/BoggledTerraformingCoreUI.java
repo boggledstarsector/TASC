@@ -1,17 +1,19 @@
 package boggled.ui;
 
+import boggled.terraforming.BoggledBaseTerraformingProject;
+import boggled.terraforming.PlanetTypeChangeFrozen;
+import boggled.terraforming.PlanetTypeChangeTerran;
+import boggled.terraforming.PlanetTypeChangeWater;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.*;
 import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.campaign.econ.MarketConditionAPI;
+import com.fs.starfarer.api.characters.MarketConditionSpecAPI;
 import com.fs.starfarer.api.input.InputEventAPI;
 import com.fs.starfarer.api.ui.*;
 
 import java.awt.Color;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 public class BoggledTerraformingCoreUI implements CustomUIPanelPlugin {
     CustomPanelAPI mainPanel;
@@ -29,12 +31,16 @@ public class BoggledTerraformingCoreUI implements CustomUIPanelPlugin {
     private final float panePlanetVisualHeight = 400;
 
     private MarketAPI selectedMarket = null;
+    private BoggledBaseTerraformingProject selectedProject = null;
 
     private List<MarketAPI> markets = new ArrayList<>();
 
     private HashMap<ButtonAPI, MarketAPI> buttonToMarketMap = new HashMap<>();
 
+    private HashMap<ButtonAPI, BoggledBaseTerraformingProject> buttonToProjectMap = new HashMap<>();
+
     private CustomPanelAPI leftTerraformingPane = null;
+    private CustomPanelAPI rightTerraformingPane = null;
 
     public BoggledTerraformingCoreUI() { }
 
@@ -126,8 +132,47 @@ public class BoggledTerraformingCoreUI implements CustomUIPanelPlugin {
             if(this.selectedMarket != buttonToMarketMap.get(checkedButton))
             {
                 this.selectedMarket = buttonToMarketMap.get(checkedButton);
+                this.selectedProject = null;
+                this.buttonToProjectMap = null;
                 this.mainPanel.removeComponent(this.leftTerraformingPane);
+                this.mainPanel.removeComponent(this.rightTerraformingPane);
                 this.leftTerraformingPane = showTerraformingLeftPane(this.selectedMarket);
+                return;
+            }
+        }
+
+        ButtonAPI checkedProjectButton = null;
+        for(ButtonAPI button : buttonToProjectMap.keySet())
+        {
+            if(button.isChecked())
+            {
+                checkedProjectButton = button;
+
+                for(ButtonAPI buttonToDeselect : buttonToProjectMap.keySet())
+                {
+                    if(buttonToDeselect.isChecked())
+                    {
+                        button.setChecked(false);
+                    }
+
+                    if(button.isHighlighted())
+                    {
+                        button.unhighlight();
+                    }
+                }
+
+                break;
+            }
+        }
+
+        if(checkedProjectButton != null)
+        {
+            checkedProjectButton.highlight();
+            if(this.selectedProject != buttonToProjectMap.get(checkedProjectButton))
+            {
+                this.selectedProject = buttonToProjectMap.get(checkedProjectButton);
+                this.mainPanel.removeComponent(this.rightTerraformingPane);
+                this.rightTerraformingPane = showTerraformingRightPane(this.selectedMarket, this.selectedProject);
             }
         }
     }
@@ -146,7 +191,7 @@ public class BoggledTerraformingCoreUI implements CustomUIPanelPlugin {
         float horizontalPosition = 0;
         ArrayList<MarketConditionAPI> conditions = (ArrayList<MarketConditionAPI>) market.getConditions();
         conditions.sort(Comparator.comparing(BoggledTerraformingCoreUI::getSortOrderForCondition));
-        for(MarketConditionAPI condition : market.getConditions())
+        for(MarketConditionAPI condition : conditions)
         {
             if(!condition.isPlanetary() || !condition.getPlugin().showIcon() || condition.getName().equals("Population"))
             {
@@ -164,10 +209,16 @@ public class BoggledTerraformingCoreUI implements CustomUIPanelPlugin {
 
         TooltipMakerAPI projectsView = leftPanel.createUIElement(panePlanetVisualWidth, 600 - planetVisualHeight - 112, true);
         float projectHeight = 1;
-        for(int i = 0; i < 40; i++)
+        ArrayList<BoggledBaseTerraformingProject> projects = new ArrayList<>();
+        projects.add(new PlanetTypeChangeWater(market));
+        projects.add(new PlanetTypeChangeTerran(market));
+        projects.add(new PlanetTypeChangeFrozen(market));
+
+        for(int i = 0; i < projects.size(); i++)
         {
-            ButtonAPI projectButton = projectsView.addButton("Test Button Name", (Object)null, Global.getSector().getPlayerFaction().getBaseUIColor(), Global.getSector().getPlayerFaction().getDarkUIColor(), Alignment.TL, CutStyle.ALL, panePlanetVisualWidth - 4, 18, 0.0F);
+            ButtonAPI projectButton = projectsView.addButton(projects.get(i).getProjectName(), (Object)null, Global.getSector().getPlayerFaction().getBaseUIColor(), Global.getSector().getPlayerFaction().getDarkUIColor(), Alignment.TL, CutStyle.ALL, panePlanetVisualWidth - 4, 18, 0.0F);
             projectsView.addComponent(projectButton).inTL(0, projectHeight);
+            buttonToProjectMap.put(projectButton, projects.get(i));
             projectHeight += 18 + 1;
         }
 
@@ -183,9 +234,60 @@ public class BoggledTerraformingCoreUI implements CustomUIPanelPlugin {
         return leftPanel;
     }
 
+    private CustomPanelAPI showTerraformingRightPane(MarketAPI market, BoggledBaseTerraformingProject project)
+    {
+        CustomPanelAPI rightPanel = this.mainPanel.createCustomPanel(panePlanetVisualWidth, 600, null);
+        TooltipMakerAPI planetLargeViewRight = rightPanel.createUIElement(panePlanetVisualWidth, panePlanetVisualHeight, false);
+        planetLargeViewRight.addSectionHeading(this.selectedMarket.getName() + " - Appearance After Project Completed", Alignment.MID, 0.0F);
+        planetLargeViewRight.showPlanetInfo(project.constructFakePlanetWithAppearanceAfterTerraforming(), panePlanetVisualWidth, panePlanetVisualHeight, false, 0);
+
+        TooltipMakerAPI conditionsViewHeader = rightPanel.createUIElement(panePlanetVisualWidth, 0, false);
+        conditionsViewHeader.addSectionHeading(this.selectedMarket.getName() + " - Conditions After Project Completed", Alignment.MID, 0.0F);
+
+        TooltipMakerAPI conditionsView = rightPanel.createUIElement(panePlanetVisualWidth, 40, false);
+        float horizontalPosition = 0;
+        ArrayList<MarketConditionSpecAPI> conditions = new ArrayList<>();
+        HashSet<String> conditionStrings = project.constructConditionsListAfterProjectCompletion();
+        for(String conditionId : conditionStrings)
+        {
+            conditions.add(Global.getSettings().getMarketConditionSpec(conditionId));
+        }
+        conditions.sort(Comparator.comparing(BoggledTerraformingCoreUI::getSortOrderForCondition));
+        for(MarketConditionSpecAPI condition : conditions)
+        {
+            if(!condition.isPlanetary() || condition.getName().equals("Population"))
+            {
+                continue;
+            }
+            String pathToImage = condition.getIcon();
+            conditionsView.addImage(pathToImage,0);
+            UIComponentAPI conditionImage = conditionsView.getPrev();
+            conditionImage.getPosition().inTL(horizontalPosition, 0);
+            horizontalPosition += 40;
+        }
+
+        TooltipMakerAPI projectsViewHeader = rightPanel.createUIElement(panePlanetVisualWidth, 0, false);
+        projectsViewHeader.addSectionHeading("Project Requirements", Alignment.MID, 0.0F);
+
+        rightPanel.addUIElement(planetLargeViewRight).inTL(0, 0);
+
+        rightPanel.addUIElement(conditionsViewHeader).inTL(0, panePlanetVisualHeight + 18);
+        rightPanel.addUIElement(conditionsView).inTL(0, panePlanetVisualHeight + 36);
+
+        rightPanel.addUIElement(projectsViewHeader).inTL(0, panePlanetVisualHeight + 94);
+
+        this.mainPanel.addComponent(rightPanel).inTL(planetVisualWidth, 0);
+        return rightPanel;
+    }
+
     private static float getSortOrderForCondition(MarketConditionAPI condition)
     {
         return -1 * Global.getSettings().getMarketConditionSpec(condition.getId()).getOrder();
+    }
+
+    private static float getSortOrderForCondition(MarketConditionSpecAPI conditionSpec)
+    {
+        return -1 * conditionSpec.getOrder();
     }
 
     public void processInput(List<InputEventAPI> events) {

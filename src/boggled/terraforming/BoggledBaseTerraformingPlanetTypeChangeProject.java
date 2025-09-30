@@ -148,4 +148,15 @@ public class BoggledBaseTerraformingPlanetTypeChangeProject extends BoggledBaseT
         PlanetAPI marketPlanet = this.market.getPlanetEntity();
         return new CampaignPlanet(null, "constructedDummy", this.planetIdToChangeInto, marketPlanet.getRadius(), marketPlanet.getLocation().x, marketPlanet.getLocation().y, (CampaignEntity) marketPlanet.getLightSource());
     }
+
+    @Override
+    public String getProjectName()
+    {
+        String projectName = boggledTools.getPlanetSpec(planetIdToChangeInto).getName();
+        if(isUnknownSkiesPlanetType(planetIdToChangeInto))
+        {
+            projectName += " (Unknown Skies)";
+        }
+        return projectName + " Type Change";
+    }
 }
