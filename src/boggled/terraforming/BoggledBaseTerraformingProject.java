@@ -7,10 +7,13 @@ import com.fs.starfarer.api.campaign.PlanetAPI;
 import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.campaign.econ.MarketConditionAPI;
 import com.fs.starfarer.api.impl.campaign.intel.BaseIntelPlugin;
+import com.fs.starfarer.api.ui.TooltipMakerAPI;
+import com.fs.starfarer.api.util.Pair;
 import com.fs.starfarer.campaign.CampaignEntity;
 import com.fs.starfarer.campaign.CampaignPlanet;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 
 public class BoggledBaseTerraformingProject extends BaseIntelPlugin
@@ -117,5 +120,30 @@ public class BoggledBaseTerraformingProject extends BaseIntelPlugin
         // Use a case-insensitive check
         String prefix = str.substring(0, 3);
         return prefix.equalsIgnoreCase("us_");
+    }
+
+    public Triple<String, Boolean, TooltipMakerAPI.TooltipCreator> getRequirementWorldTypeAllowsTerraforming()
+    {
+        String tascPlanetType = boggledTools.getTascPlanetType(market.getPlanetEntity());
+        String currentPlanetTypeDisplayString = boggledTools.getPlanetSpec(tascPlanetType).getName();
+        Boolean worldTypeAllowsTerraforming = boggledTools.tascPlanetTypeAllowsTerraforming(tascPlanetType);
+        TooltipMakerAPI.TooltipCreator tooltip = new TooltipMakerAPI.TooltipCreator() {
+            @Override
+            public boolean isTooltipExpandable(Object o) {
+                return false;
+            }
+
+            @Override
+            public float getTooltipWidth(Object o) {
+                return 0;
+            }
+
+            @Override
+            public void createTooltip(TooltipMakerAPI tooltipMakerAPI, boolean b, Object o) {
+
+            }
+        };
+
+        return new ArrayList<>(Arrays.asList("World type allows terraforming", worldTypeAllowsTerraforming, tooltip));
     }
 }

@@ -270,6 +270,21 @@ public class boggledTools {
         put(TascPlanetTypes.unknownPlanetId, false);
     }};
 
+    private static final HashMap<String, Boolean> tascPlanetTypeAllowsForTerraforming = new HashMap<>(){{
+        put(TascPlanetTypes.starPlanetId, false);
+        put(TascPlanetTypes.barrenPlanetId, true);
+        put(TascPlanetTypes.desertPlanetId, true);
+        put(TascPlanetTypes.frozenPlanetId, true);
+        put(TascPlanetTypes.gasGiantPlanetId, false);
+        put(TascPlanetTypes.junglePlanetId, true);
+        put(TascPlanetTypes.terranPlanetId, true);
+        put(TascPlanetTypes.toxicPlanetId, true);
+        put(TascPlanetTypes.tundraPlanetId, true);
+        put(TascPlanetTypes.volcanicPlanetId, false);
+        put(TascPlanetTypes.waterPlanetId, true);
+        put(TascPlanetTypes.unknownPlanetId, false);
+    }};
+
     private static final HashMap<Integer, String> intToOrganicsLevel = new HashMap<>(){{
         put(0, null);
         put(1, "organics_trace");
@@ -352,6 +367,11 @@ public class boggledTools {
     public static String getTascPlanetType(String planetTypeId)
     {
         return planetTypeIdToTascPlanetTypeMapping.getOrDefault(planetTypeId, TascPlanetTypes.unknownPlanetId);
+    }
+
+    public static boolean tascPlanetTypeAllowsTerraforming(String tascPlanetType)
+    {
+        return tascPlanetTypeAllowsForTerraforming.getOrDefault(tascPlanetType, false);
     }
 
     public static HashSet<String> getAllPlanetTypeIdsForTascPlanetType(String tascPlanetType)
