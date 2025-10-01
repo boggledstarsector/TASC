@@ -15,8 +15,9 @@ import com.fs.starfarer.api.input.InputEventAPI;
 import com.fs.starfarer.api.ui.*;
 import com.fs.starfarer.api.util.Misc;
 
-import java.awt.Color;
+import java.awt.*;
 import java.util.*;
+import java.util.List;
 
 public class BoggledTerraformingCoreUI implements CustomUIPanelPlugin {
     CustomPanelAPI mainPanel;
@@ -44,6 +45,9 @@ public class BoggledTerraformingCoreUI implements CustomUIPanelPlugin {
 
     private CustomPanelAPI leftTerraformingPane = null;
     private CustomPanelAPI rightTerraformingPane = null;
+
+    private ButtonAPI startProjectButton = null;
+    private ButtonAPI cancelProjectButton = null;
 
     public BoggledTerraformingCoreUI() { }
 
@@ -178,6 +182,19 @@ public class BoggledTerraformingCoreUI implements CustomUIPanelPlugin {
                 this.rightTerraformingPane = showTerraformingRightPane(this.selectedMarket, this.selectedProject);
             }
         }
+
+        if(this.startProjectButton != null && this.startProjectButton.isChecked())
+        {
+            this.startProjectButton.setChecked(false);
+            startNewProject(this.selectedMarket, this.selectedProject);
+            return;
+        }
+
+        if(this.cancelProjectButton != null && this.cancelProjectButton.isChecked())
+        {
+            this.cancelProjectButton.setChecked(false);
+            cancelProject(this.selectedMarket);
+        }
     }
 
     private CustomPanelAPI showTerraformingLeftPane(MarketAPI market)
@@ -286,9 +303,56 @@ public class BoggledTerraformingCoreUI implements CustomUIPanelPlugin {
             requirementsView.addTooltipToPrevious(projectRequirement.tooltip, TooltipMakerAPI.TooltipLocation.ABOVE,false);
         }
 
-        TooltipMakerAPI projectTriggerButtonsPanel = rightPanel.createUIElement(panePlanetVisualWidth, 36, false);
-        ButtonAPI startProjectButton = projectTriggerButtonsPanel.addButton("Start Project", (Object)null, Global.getSector().getPlayerFaction().getBaseUIColor(), Global.getSector().getPlayerFaction().getDarkUIColor(), Alignment.TL, CutStyle.ALL, panePlanetVisualWidth - 4, 36, 0.0F);
-        projectTriggerButtonsPanel.addComponent(startProjectButton).inTL(0, 36);
+        TooltipMakerAPI projectTriggerButtonsPanel = rightPanel.createUIElement(panePlanetVisualWidth, 54, false);
+        LabelAPI triggerButtonsLabel = null;
+        String ongoingProject = getOngoingProjectAtMarket(market);
+        if(ongoingProject == null)
+        {
+            if(project.requirementsMet(projectRequirements))
+            {
+                triggerButtonsLabel = projectTriggerButtonsPanel.addPara("This project will take " + project.getDaysRemaining() + " days to complete.", Misc.getTextColor(), 1f);
+            }
+            else
+            {
+                triggerButtonsLabel = projectTriggerButtonsPanel.addPara("This project cannot be started because one or more requirements are not met.", Misc.getNegativeHighlightColor(), 1f);
+            }
+        }
+        else
+        {
+            if(ongoingProject.equals(project.getProjectName()))
+            {
+                if(project.requirementsMet(projectRequirements))
+                {
+                    triggerButtonsLabel = projectTriggerButtonsPanel.addPara("There are " + project.getDaysRemaining() + " day(s) remaining until this project is complete.", Misc.getTextColor(), 1f);
+                }
+                else
+                {
+                    triggerButtonsLabel = projectTriggerButtonsPanel.addPara("There are " + project.getDaysRemaining() + " day(s) remaining until this project is complete. Progress is stalled because one or more requirements are not met.", Misc.getNegativeHighlightColor(), 1f);
+                }
+            }
+            else
+            {
+                triggerButtonsLabel = projectTriggerButtonsPanel.addPara("There is already an ongoing project at " + this.selectedMarket.getName() + ". If you start a new project, all progress on the existing project will be lost.", Misc.getNegativeHighlightColor(), 1f);
+            }
+        }
+        triggerButtonsLabel.getPosition().inTL(0, 0);
+
+        ButtonAPI startProjectButton = projectTriggerButtonsPanel.addButton("Start Project", (Object)null, Global.getSector().getPlayerFaction().getBaseUIColor(), Global.getSector().getPlayerFaction().getDarkUIColor(), Alignment.TL, CutStyle.ALL, 100, 36, 0.0F);
+        if(!project.requirementsMet(projectRequirements))
+        {
+            startProjectButton.setEnabled(false);
+        }
+        projectTriggerButtonsPanel.addComponent(startProjectButton).inTL(0, 18);
+        this.startProjectButton = startProjectButton;
+
+        ButtonAPI cancelProjectButton = projectTriggerButtonsPanel.addButton("Cancel Project", (Object)null, Global.getSector().getPlayerFaction().getBaseUIColor(), Global.getSector().getPlayerFaction().getDarkUIColor(), Alignment.TL, CutStyle.ALL, 100, 36, 0.0F);
+        String ongoingProjectName = getOngoingProjectAtMarket(market);
+        if(ongoingProjectName == null || !ongoingProjectName.equals(project.getProjectName()))
+        {
+            cancelProjectButton.setEnabled(false);
+        }
+        projectTriggerButtonsPanel.addComponent(cancelProjectButton).inTL(105, 18);
+        this.cancelProjectButton = cancelProjectButton;
 
         rightPanel.addUIElement(planetLargeViewRight).inTL(0, 0);
 
@@ -309,6 +373,22 @@ public class BoggledTerraformingCoreUI implements CustomUIPanelPlugin {
         MarketConditionAPI terraformingController = boggledTools.addCondition(market, boggledTools.BoggledConditions.terraformingControllerConditionId);
         ((Terraforming_Controller) terraformingController).setCurrentProject(project);
         boggledTools.sendDebugIntelMessage("Project started!");
+        this.cancelProjectButton.setEnabled(true);
+    }
+
+    private void cancelProject(MarketAPI market)
+    {
+        MarketConditionAPI terraformingController = boggledTools.addCondition(market, boggledTools.BoggledConditions.terraformingControllerConditionId);
+        ((Terraforming_Controller) terraformingController).setCurrentProject(null);
+        boggledTools.sendDebugIntelMessage("Project cancelled!");
+        this.cancelProjectButton.setEnabled(false);
+    }
+
+    private String getOngoingProjectAtMarket(MarketAPI market)
+    {
+        MarketConditionAPI terraformingController = boggledTools.addCondition(market, boggledTools.BoggledConditions.terraformingControllerConditionId);
+        BoggledBaseTerraformingProject project = ((Terraforming_Controller) terraformingController).getCurrentProject();
+        return project != null ? project.getProjectName() : null;
     }
 
     private static float getSortOrderForCondition(MarketConditionAPI condition)

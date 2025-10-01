@@ -46,12 +46,21 @@ public class BoggledBaseTerraformingProject extends BaseIntelPlugin
         CampaignClockAPI clock = Global.getSector().getClock();
         if(clock.getDay() != this.lastDayChecked)
         {
-            this.daysCompleted++;
-            this.lastDayChecked = clock.getDay();
-
-            if(this.daysCompleted >= this.requiredDaysToCompleteProject)
+            // Avoid calling requirementsMet every frame because it does a lot of calculations
+            boolean requirementsMet = requirementsMet(getProjectRequirements());
+            if(requirementsMet)
             {
-                this.completeThisProject();
+                this.daysCompleted++;
+                this.lastDayChecked = clock.getDay();
+
+                if(this.daysCompleted >= this.requiredDaysToCompleteProject)
+                {
+                    this.completeThisProject();
+                }
+            }
+            else
+            {
+                this.lastDayChecked = clock.getDay();
             }
         }
     }
