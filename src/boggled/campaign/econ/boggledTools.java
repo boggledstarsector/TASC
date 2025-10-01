@@ -2411,7 +2411,8 @@ public class boggledTools {
         final float MAX_ANGLE = 360.0f;
         // Epsilon for comparing floating-point numbers. A small value is
         // necessary as direct equality checks (==) can be unreliable.
-        final float EPSILON = 0.0001f;
+        // Turns out Starsector angles can deviate by as much as ~.2 degrees
+        final float EPSILON = 1.0f;
 
         // Case 1: The list is empty.
         // We now return a random angle instead of a fixed 0.0f.
@@ -2461,6 +2462,7 @@ public class boggledTools {
 
             // This block should technically not be reached given the problem constraints,
             // but is included for defensive programming.
+            boggledTools.writeMessageToLog("Astropolis angles that caused the exception: " + a1 + " " + a2);
             throw new IllegalArgumentException("Existing angles are not 120 degrees apart.");
         }
 
