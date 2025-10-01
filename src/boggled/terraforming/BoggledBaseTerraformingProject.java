@@ -6,14 +6,13 @@ import com.fs.starfarer.api.campaign.CampaignClockAPI;
 import com.fs.starfarer.api.campaign.PlanetAPI;
 import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.campaign.econ.MarketConditionAPI;
+import com.fs.starfarer.api.impl.campaign.ids.Conditions;
 import com.fs.starfarer.api.impl.campaign.intel.BaseIntelPlugin;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
-import com.fs.starfarer.api.util.Pair;
 import com.fs.starfarer.campaign.CampaignEntity;
 import com.fs.starfarer.campaign.CampaignPlanet;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
 
 public class BoggledBaseTerraformingProject extends BaseIntelPlugin
@@ -122,7 +121,21 @@ public class BoggledBaseTerraformingProject extends BaseIntelPlugin
         return prefix.equalsIgnoreCase("us_");
     }
 
-    public Triple<String, Boolean, TooltipMakerAPI.TooltipCreator> getRequirementWorldTypeAllowsTerraforming()
+    public class TerraformingRequirementTooltipData
+    {
+        public String tooltipDisplayText;
+        public boolean requirementMet;
+        public TooltipMakerAPI.TooltipCreator tooltip;
+
+        public TerraformingRequirementTooltipData(String tooltipDisplayText, Boolean requirementMet, TooltipMakerAPI.TooltipCreator tooltip)
+        {
+            this.tooltipDisplayText = tooltipDisplayText;
+            this.requirementMet = requirementMet;
+            this.tooltip = tooltip;
+        }
+    }
+
+    public TerraformingRequirementTooltipData getRequirementWorldTypeAllowsTerraforming()
     {
         String tascPlanetType = boggledTools.getTascPlanetType(market.getPlanetEntity());
         String currentPlanetTypeDisplayString = boggledTools.getPlanetSpec(tascPlanetType).getName();
@@ -135,15 +148,79 @@ public class BoggledBaseTerraformingProject extends BaseIntelPlugin
 
             @Override
             public float getTooltipWidth(Object o) {
-                return 0;
+                return 500;
             }
 
             @Override
             public void createTooltip(TooltipMakerAPI tooltipMakerAPI, boolean b, Object o) {
-
+                tooltipMakerAPI.addPara("Dummy text here - world type allows terraforming",10f);
             }
         };
 
-        return new ArrayList<>(Arrays.asList("World type allows terraforming", worldTypeAllowsTerraforming, tooltip));
+        return new TerraformingRequirementTooltipData("World type allows terraforming", worldTypeAllowsTerraforming, tooltip);
+    }
+
+    public TerraformingRequirementTooltipData getRequirementAtmosphericDensityNormal()
+    {
+        Boolean requirementMet = !this.market.hasCondition(Conditions.NO_ATMOSPHERE) && !this.market.hasCondition(Conditions.THIN_ATMOSPHERE) && !this.market.hasCondition(Conditions.DENSE_ATMOSPHERE);
+        TooltipMakerAPI.TooltipCreator tooltip = new TooltipMakerAPI.TooltipCreator() {
+            @Override
+            public boolean isTooltipExpandable(Object o) {
+                return false;
+            }
+
+            @Override
+            public float getTooltipWidth(Object o) {
+                return 500;
+            }
+
+            @Override
+            public void createTooltip(TooltipMakerAPI tooltipMakerAPI, boolean b, Object o) {
+                tooltipMakerAPI.addPara("Dummy text here - atmo problem",10f);
+            }
+        };
+
+        return new TerraformingRequirementTooltipData(this.market.getName() + " has standard atmospheric density", requirementMet, tooltip);
+    }
+
+    public TerraformingRequirementTooltipData getRequirementAtmosphericNotToxicOrIrradiated()
+    {
+        Boolean requirementMet = !this.market.hasCondition(Conditions.IRRADIATED) && !this.market.hasCondition(Conditions.TOXIC_ATMOSPHERE);
+        TooltipMakerAPI.TooltipCreator tooltip = new TooltipMakerAPI.TooltipCreator() {
+            @Override
+            public boolean isTooltipExpandable(Object o) {
+                return false;
+            }
+
+            @Override
+            public float getTooltipWidth(Object o) {
+                return 500;
+            }
+
+            @Override
+            public void createTooltip(TooltipMakerAPI tooltipMakerAPI, boolean b, Object o) {
+                tooltipMakerAPI.addPara("Dummy text here - toxic or irrad",10f);
+            }
+        };
+
+        return new TerraformingRequirementTooltipData(this.market.getName() + " does not have a toxic or irradiated atmosphere", requirementMet, tooltip);
+    }
+
+    public ArrayList<TerraformingRequirementTooltipData> getProjectRequirements()
+    {
+        return new ArrayList<>();
+    }
+
+    public boolean requirementsMet(ArrayList<TerraformingRequirementTooltipData> projectRequirements)
+    {
+        for(TerraformingRequirementTooltipData projectRequirementData : projectRequirements)
+        {
+            if(!projectRequirementData.requirementMet)
+            {
+                return false;
+            }
+        }
+
+        return true;
     }
 }

@@ -3,9 +3,9 @@ package boggled.terraforming;
 import boggled.campaign.econ.boggledTools;
 import com.fs.starfarer.api.campaign.PlanetAPI;
 import com.fs.starfarer.api.campaign.econ.MarketAPI;
+import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.campaign.CampaignEntity;
 import com.fs.starfarer.campaign.CampaignPlanet;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -158,5 +158,42 @@ public class BoggledBaseTerraformingPlanetTypeChangeProject extends BoggledBaseT
             projectName += " (Unknown Skies)";
         }
         return projectName + " Type Change";
+    }
+
+    public TerraformingRequirementTooltipData getRequirementNotAlreadyTargetType()
+    {
+        String planetTypeId = this.market.getPlanetEntity().getTypeId();
+        String planetTypeDisplayString = boggledTools.getPlanetSpec(planetTypeId).getName();
+        Boolean requirementMet = !this.planetIdToChangeInto.equals(planetTypeId);
+        TooltipMakerAPI.TooltipCreator tooltip = new TooltipMakerAPI.TooltipCreator() {
+            @Override
+            public boolean isTooltipExpandable(Object o) {
+                return false;
+            }
+
+            @Override
+            public float getTooltipWidth(Object o) {
+                return 500;
+            }
+
+            @Override
+            public void createTooltip(TooltipMakerAPI tooltipMakerAPI, boolean b, Object o) {
+                tooltipMakerAPI.addPara("Dummy text here - not already target type",10f);
+            }
+        };
+
+        return new TerraformingRequirementTooltipData(this.market.getName() + " is not already a " + planetTypeDisplayString + " world", requirementMet, tooltip);
+    }
+
+    @Override
+    public ArrayList<TerraformingRequirementTooltipData> getProjectRequirements()
+    {
+        ArrayList<TerraformingRequirementTooltipData> projectRequirements = new ArrayList<>();
+        projectRequirements.add(getRequirementWorldTypeAllowsTerraforming());
+        projectRequirements.add(getRequirementNotAlreadyTargetType());
+        projectRequirements.add(getRequirementAtmosphericDensityNormal());
+        projectRequirements.add(getRequirementAtmosphericNotToxicOrIrradiated());
+
+        return projectRequirements;
     }
 }

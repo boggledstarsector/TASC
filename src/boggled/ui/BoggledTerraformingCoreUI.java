@@ -1,5 +1,7 @@
 package boggled.ui;
 
+import boggled.campaign.econ.boggledTools;
+import boggled.campaign.econ.conditions.Terraforming_Controller;
 import boggled.terraforming.BoggledBaseTerraformingProject;
 import boggled.terraforming.PlanetTypeChangeFrozen;
 import boggled.terraforming.PlanetTypeChangeTerran;
@@ -11,6 +13,7 @@ import com.fs.starfarer.api.campaign.econ.MarketConditionAPI;
 import com.fs.starfarer.api.characters.MarketConditionSpecAPI;
 import com.fs.starfarer.api.input.InputEventAPI;
 import com.fs.starfarer.api.ui.*;
+import com.fs.starfarer.api.util.Misc;
 
 import java.awt.Color;
 import java.util.*;
@@ -236,7 +239,7 @@ public class BoggledTerraformingCoreUI implements CustomUIPanelPlugin {
 
     private CustomPanelAPI showTerraformingRightPane(MarketAPI market, BoggledBaseTerraformingProject project)
     {
-        CustomPanelAPI rightPanel = this.mainPanel.createCustomPanel(panePlanetVisualWidth, 600, null);
+        CustomPanelAPI rightPanel = this.mainPanel.createCustomPanel(panePlanetVisualWidth, 636, null);
         TooltipMakerAPI planetLargeViewRight = rightPanel.createUIElement(panePlanetVisualWidth, panePlanetVisualHeight, false);
         planetLargeViewRight.addSectionHeading(this.selectedMarket.getName() + " - Appearance After Project Completed", Alignment.MID, 0.0F);
         planetLargeViewRight.showPlanetInfo(project.constructFakePlanetWithAppearanceAfterTerraforming(), panePlanetVisualWidth, panePlanetVisualHeight, false, 0);
@@ -266,18 +269,46 @@ public class BoggledTerraformingCoreUI implements CustomUIPanelPlugin {
             horizontalPosition += 40;
         }
 
-        TooltipMakerAPI projectsViewHeader = rightPanel.createUIElement(panePlanetVisualWidth, 0, false);
-        projectsViewHeader.addSectionHeading("Project Requirements", Alignment.MID, 0.0F);
+        TooltipMakerAPI requirementsViewHeader = rightPanel.createUIElement(panePlanetVisualWidth, 0, false);
+        requirementsViewHeader.addSectionHeading("Project Requirements", Alignment.MID, 0.0F);
+
+        TooltipMakerAPI requirementsView = rightPanel.createUIElement(panePlanetVisualWidth, 600 - planetVisualHeight - 112, true);
+        ArrayList<BoggledBaseTerraformingProject.TerraformingRequirementTooltipData> projectRequirements = project.getProjectRequirements();
+        float labelHeight = 1;
+        for(int i = 0; i < projectRequirements.size(); i++)
+        {
+            BoggledBaseTerraformingProject.TerraformingRequirementTooltipData projectRequirement = projectRequirements.get(i);
+            Color textColor = projectRequirement.requirementMet ? Misc.getPositiveHighlightColor() : Misc.getNegativeHighlightColor();
+            LabelAPI requirementLabel = requirementsView.addPara(projectRequirement.tooltipDisplayText, textColor,1f);
+            requirementLabel.getPosition().inTL(0,labelHeight);
+            labelHeight += 18 + 1;
+
+            requirementsView.addTooltipToPrevious(projectRequirement.tooltip, TooltipMakerAPI.TooltipLocation.ABOVE,false);
+        }
+
+        TooltipMakerAPI projectTriggerButtonsPanel = rightPanel.createUIElement(panePlanetVisualWidth, 36, false);
+        ButtonAPI startProjectButton = projectTriggerButtonsPanel.addButton("Start Project", (Object)null, Global.getSector().getPlayerFaction().getBaseUIColor(), Global.getSector().getPlayerFaction().getDarkUIColor(), Alignment.TL, CutStyle.ALL, panePlanetVisualWidth - 4, 36, 0.0F);
+        projectTriggerButtonsPanel.addComponent(startProjectButton).inTL(0, 36);
 
         rightPanel.addUIElement(planetLargeViewRight).inTL(0, 0);
 
         rightPanel.addUIElement(conditionsViewHeader).inTL(0, panePlanetVisualHeight + 18);
         rightPanel.addUIElement(conditionsView).inTL(0, panePlanetVisualHeight + 36);
 
-        rightPanel.addUIElement(projectsViewHeader).inTL(0, panePlanetVisualHeight + 94);
+        rightPanel.addUIElement(requirementsViewHeader).inTL(0, panePlanetVisualHeight + 94);
+        rightPanel.addUIElement(requirementsView).inTL(0, panePlanetVisualHeight + 112);
+
+        rightPanel.addUIElement(projectTriggerButtonsPanel).inTL(0, 600);
 
         this.mainPanel.addComponent(rightPanel).inTL(planetVisualWidth + panePlanetVisualWidth + 2, 0);
         return rightPanel;
+    }
+
+    private void startNewProject(MarketAPI market, BoggledBaseTerraformingProject project)
+    {
+        MarketConditionAPI terraformingController = boggledTools.addCondition(market, boggledTools.BoggledConditions.terraformingControllerConditionId);
+        ((Terraforming_Controller) terraformingController).setCurrentProject(project);
+        boggledTools.sendDebugIntelMessage("Project started!");
     }
 
     private static float getSortOrderForCondition(MarketConditionAPI condition)

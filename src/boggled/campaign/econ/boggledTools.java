@@ -1870,11 +1870,14 @@ public class boggledTools {
         }
     }
 
-    public static void addCondition(MarketAPI market, String condition) {
-        if(!market.hasCondition(condition)) {
+    public static MarketConditionAPI addCondition(MarketAPI market, String condition) {
+        if(!market.hasCondition(condition))
+        {
             market.addCondition(condition);
             boggledTools.surveyAll(market);
         }
+
+        return market.getCondition(condition);
     }
 
     public static void removeCondition(MarketAPI market, String condition) {
