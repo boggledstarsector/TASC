@@ -133,7 +133,7 @@ public class BoggledTerraformingCoreUI implements CustomUIPanelPlugin {
             {
                 this.selectedMarket = buttonToMarketMap.get(checkedButton);
                 this.selectedProject = null;
-                this.buttonToProjectMap = null;
+                this.buttonToProjectMap = new HashMap<>();
                 this.mainPanel.removeComponent(this.leftTerraformingPane);
                 this.mainPanel.removeComponent(this.rightTerraformingPane);
                 this.leftTerraformingPane = showTerraformingLeftPane(this.selectedMarket);
@@ -230,7 +230,7 @@ public class BoggledTerraformingCoreUI implements CustomUIPanelPlugin {
         leftPanel.addUIElement(projectsViewHeader).inTL(0, panePlanetVisualHeight + 94);
         leftPanel.addUIElement(projectsView).inTL(0, panePlanetVisualHeight + 112);
 
-        this.mainPanel.addComponent(leftPanel).inTL(planetVisualWidth, 0);
+        this.mainPanel.addComponent(leftPanel).inTL(planetVisualWidth + 1, 0);
         return leftPanel;
     }
 
@@ -276,7 +276,7 @@ public class BoggledTerraformingCoreUI implements CustomUIPanelPlugin {
 
         rightPanel.addUIElement(projectsViewHeader).inTL(0, panePlanetVisualHeight + 94);
 
-        this.mainPanel.addComponent(rightPanel).inTL(planetVisualWidth, 0);
+        this.mainPanel.addComponent(rightPanel).inTL(planetVisualWidth + panePlanetVisualWidth + 2, 0);
         return rightPanel;
     }
 
