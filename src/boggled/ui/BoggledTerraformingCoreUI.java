@@ -370,15 +370,18 @@ public class BoggledTerraformingCoreUI implements CustomUIPanelPlugin {
 
     private void startNewProject(MarketAPI market, BoggledBaseTerraformingProject project)
     {
-        MarketConditionAPI terraformingController = boggledTools.addCondition(market, boggledTools.BoggledConditions.terraformingControllerConditionId);
+        boggledTools.addCondition(market, boggledTools.BoggledConditions.terraformingControllerConditionId);
+        Terraforming_Controller terraformingController = getTerraformingControllerFromMarket(market);
         ((Terraforming_Controller) terraformingController).setCurrentProject(project);
         boggledTools.sendDebugIntelMessage("Project started!");
         this.cancelProjectButton.setEnabled(true);
+        Global.getSector().addTransientScript(project);
     }
 
     private void cancelProject(MarketAPI market)
     {
-        MarketConditionAPI terraformingController = boggledTools.addCondition(market, boggledTools.BoggledConditions.terraformingControllerConditionId);
+        boggledTools.addCondition(market, boggledTools.BoggledConditions.terraformingControllerConditionId);
+        Terraforming_Controller terraformingController = getTerraformingControllerFromMarket(market);
         ((Terraforming_Controller) terraformingController).setCurrentProject(null);
         boggledTools.sendDebugIntelMessage("Project cancelled!");
         this.cancelProjectButton.setEnabled(false);
@@ -386,9 +389,15 @@ public class BoggledTerraformingCoreUI implements CustomUIPanelPlugin {
 
     private String getOngoingProjectAtMarket(MarketAPI market)
     {
-        MarketConditionAPI terraformingController = boggledTools.addCondition(market, boggledTools.BoggledConditions.terraformingControllerConditionId);
+        boggledTools.addCondition(market, boggledTools.BoggledConditions.terraformingControllerConditionId);
+        Terraforming_Controller terraformingController = getTerraformingControllerFromMarket(market);
         BoggledBaseTerraformingProject project = ((Terraforming_Controller) terraformingController).getCurrentProject();
         return project != null ? project.getProjectName() : null;
+    }
+
+    private Terraforming_Controller getTerraformingControllerFromMarket(MarketAPI market)
+    {
+        return (Terraforming_Controller) market.getCondition(boggledTools.BoggledConditions.terraformingControllerConditionId).getPlugin();
     }
 
     private static float getSortOrderForCondition(MarketConditionAPI condition)

@@ -19,12 +19,6 @@ public class BoggledBaseTerraformingPlanetTypeChangeProject extends BoggledBaseT
     }
 
     @Override
-    public void advance(float amount)
-    {
-        super.advance(amount);
-    }
-
-    @Override
     public void completeThisProject()
     {
         // Remove conditions
@@ -41,6 +35,8 @@ public class BoggledBaseTerraformingPlanetTypeChangeProject extends BoggledBaseT
 
         // Change planet type (using vanilla method)
         this.market.getPlanetEntity().changeType(this.planetIdToChangeInto, null);
+
+        super.completeThisProject();
     }
 
     @Override

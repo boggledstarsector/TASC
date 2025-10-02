@@ -17,6 +17,8 @@ import java.util.HashSet;
 
 public class BoggledBaseTerraformingProject extends BaseIntelPlugin
 {
+    private boolean done = false;
+
     protected MarketAPI market;
     protected TerraformingProjectType projectType;
     private int daysCompleted = 0;
@@ -39,9 +41,22 @@ public class BoggledBaseTerraformingProject extends BaseIntelPlugin
     }
 
     @Override
+    public boolean isDone()
+    {
+        return done;
+    }
+
+    @Override
+    public boolean runWhilePaused()
+    {
+        return false;
+    }
+
+    @Override
     public void advance(float amount)
     {
         super.advance(amount);
+        boggledTools.writeMessageToLog("Triggered advance in base terraforming project.");
 
         CampaignClockAPI clock = Global.getSector().getClock();
         if(clock.getDay() != this.lastDayChecked)
@@ -55,7 +70,7 @@ public class BoggledBaseTerraformingProject extends BaseIntelPlugin
 
                 if(this.daysCompleted >= this.requiredDaysToCompleteProject)
                 {
-                    this.completeThisProject();
+                    completeThisProject();
                 }
             }
             else
@@ -77,7 +92,8 @@ public class BoggledBaseTerraformingProject extends BaseIntelPlugin
 
     public void completeThisProject()
     {
-
+        boggledTools.sendDebugIntelMessage("Project completed!");
+        this.done = true;
     }
 
     public HashSet<String> constructConditionsListAfterProjectCompletion()

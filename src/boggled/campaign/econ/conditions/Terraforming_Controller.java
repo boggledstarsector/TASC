@@ -2,9 +2,9 @@
 package boggled.campaign.econ.conditions;
 
 import boggled.terraforming.BoggledBaseTerraformingProject;
-import com.fs.starfarer.api.impl.campaign.econ.BaseHazardCondition;
+import com.fs.starfarer.api.impl.campaign.econ.BaseMarketConditionPlugin;
 
-public class Terraforming_Controller extends BaseHazardCondition
+public class Terraforming_Controller extends BaseMarketConditionPlugin
 {
     // This class is used purely to store and retrieve the current ongoing terraforming project at a given market.
     private BoggledBaseTerraformingProject currentProject = null;
