@@ -1,6 +1,7 @@
 package boggled.campaign.econ;
 
 import boggled.scripts.*;
+import boggled.terraforming.BoggledBaseTerraformingProject;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.*;
 import com.fs.starfarer.api.campaign.comm.CommMessageAPI;
@@ -27,7 +28,11 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
 import java.lang.String;
+import java.lang.reflect.Constructor;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.*;
 import java.util.List;
 import java.util.ArrayList;
@@ -417,14 +422,20 @@ public class boggledTools {
         aotdIgnoreSettings.add("boggledRemnantStationEnabled");
     }
 
+    public static void initializeTerraformingProjectClassPathStringsFromJSON(@NotNull JSONArray terraformingClassPathStringsJSON) {
+        HashSet<String> classPaths = getStringListFromJson(terraformingClassPathStringsJSON, "terraforming_project_class_path");
+
+        boggledTools.terraformingProjectClassStrings = new ArrayList<String>(classPaths);
+    }
+
     public static void initializeStellarReflectorArraySuppressedConditionsFromJSON(@NotNull JSONArray stellarReflectorArraySuppressedConditionsJSON) {
-        HashSet<String> conditions = getConditionsListFromJson(stellarReflectorArraySuppressedConditionsJSON);
+        HashSet<String> conditions = getStringListFromJson(stellarReflectorArraySuppressedConditionsJSON, "condition_id");
 
         boggledTools.stellarReflectorArraySuppressedConditions = new ArrayList<String>(conditions);
     }
 
     public static void initializeDomedCitiesSuppressedConditionsFromJSON(@NotNull JSONArray domedCitiesSuppressedConditionsJSON) {
-        HashSet<String> conditions = getConditionsListFromJson(domedCitiesSuppressedConditionsJSON);
+        HashSet<String> conditions = getStringListFromJson(domedCitiesSuppressedConditionsJSON, "condition_id");
 
         boggledTools.domedCitiesSuppressedConditions = new ArrayList<String>(conditions);
     }
@@ -468,29 +479,64 @@ public class boggledTools {
         }
     }
 
+    public static ArrayList<BoggledBaseTerraformingProject> getTerraformingProjects(MarketAPI market)
+    {
+        try {
+            List<String> jars = Global.getSettings().getModManager().getModSpec("Terraforming & Station Construction").getJars();
+            for(String jar : jars)
+            {
+                boggledTools.writeMessageToLog("Loaded JAR string: " + jar);
+            }
+
+            File file = new File(jars.get(0));
+            URL[] urls = {file.toURI().toURL()};
+            URLClassLoader classLoader = new URLClassLoader(urls);
+
+            ArrayList<BoggledBaseTerraformingProject> terraformingProjects = new ArrayList<>();
+            for(String className : terraformingProjectClassStrings)
+            {
+                Class<?> myClass = classLoader.loadClass(className);
+
+                // 3. Get the constructor with the specific parameter types
+                Constructor<?> constructor = myClass.getConstructor(MarketAPI.class);
+
+                // 4. Instantiate the object, passing the arguments
+                Object instance = constructor.newInstance(market);
+                terraformingProjects.add((BoggledBaseTerraformingProject) instance);
+            }
+
+            return terraformingProjects;
+
+        } catch (Exception e) {
+            String exceptionMessage = "Exception thrown loading the terraforming project class files. Please delete your terraforming_projects.csv file and redownload the original without any changes. Stack trace: \n\n" + e.getMessage();
+            boggledTools.writeMessageToLog(exceptionMessage);
+            throw new RuntimeException(exceptionMessage);
+        }
+    }
+
     public static PlanetSpecAPI getPlanetSpec(String planetTypeId)
     {
         return planetTypeIdToPlanetSpecApiMapping.getOrDefault(planetTypeId, null);
     }
 
-    public static HashSet<String> getConditionsListFromJson(JSONArray json) {
-        HashSet<String> conditionsSet = new HashSet<>();
+    public static HashSet<String> getStringListFromJson(JSONArray json, String key) {
+        HashSet<String> stringSet = new HashSet<>();
 
         for (int i = 0; i < json.length(); ++i) {
             try {
                 JSONObject row = json.getJSONObject(i);
 
-                String condition_id = row.getString("condition_id");
+                String condition_id = row.getString(key);
                 if (condition_id != null && !condition_id.isEmpty()) {
-                    conditionsSet.add(condition_id);
+                    stringSet.add(condition_id);
                 }
             } catch (JSONException e) {
                 // We can't swallow this exception because the game won't work correctly if the data isn't loaded
-                throw new RuntimeException("Error in condition list JSON parsing: " + e);
+                throw new RuntimeException("Error in string list JSON parsing: " + e);
             }
         }
 
-        return conditionsSet;
+        return stringSet;
     }
 
     public static List<String> getDomedCitiesSuppressedConditions() {
@@ -501,8 +547,14 @@ public class boggledTools {
         return boggledTools.stellarReflectorArraySuppressedConditions;
     }
 
+    public static List<String> getTerraformingProjectClassStrings() {
+        return boggledTools.terraformingProjectClassStrings;
+    }
+
     private static List<String> domedCitiesSuppressedConditions;
     private static List<String> stellarReflectorArraySuppressedConditions;
+
+    private static List<String> terraformingProjectClassStrings;
 
     public static void incrementOreForPlanetCracking(MarketAPI market)
     {

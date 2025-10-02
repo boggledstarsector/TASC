@@ -244,11 +244,16 @@ public class BoggledTascPlugin extends BaseModPlugin {
             // Planet type ID to TASC planet type mapping
             JSONArray planetTypeMapping = settings.getMergedSpreadsheetDataForMod("planet_type_id", "data/campaign/terraforming/planet_type_mapping.csv", boggledTools.BoggledMods.tascModId);
 
+            // Terraforming project class paths
+            JSONArray terraformingProjectClassPaths = settings.getMergedSpreadsheetDataForMod("terraforming_project_class_path", "data/campaign/terraforming/terraforming_projects.csv", boggledTools.BoggledMods.tascModId);
+
             // Domed Cities suppressed conditions
             JSONArray domedCitiesSuppressedConditions = settings.getMergedSpreadsheetDataForMod("condition_id", "data/campaign/terraforming/domed_cities_suppressed_conditions.csv", boggledTools.BoggledMods.tascModId);
 
             // Stellar Reflector Array suppressed conditions
             JSONArray stellarReflectorArraySuppressedConditions = settings.getMergedSpreadsheetDataForMod("condition_id", "data/campaign/terraforming/stellar_reflector_array_suppressed_conditions.csv", boggledTools.BoggledMods.tascModId);
+
+            boggledTools.initializeTerraformingProjectClassPathStringsFromJSON(terraformingProjectClassPaths);
 
             boggledTools.initializeDomedCitiesSuppressedConditionsFromJSON(domedCitiesSuppressedConditions);
 

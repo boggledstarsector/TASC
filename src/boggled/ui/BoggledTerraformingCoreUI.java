@@ -3,9 +3,6 @@ package boggled.ui;
 import boggled.campaign.econ.boggledTools;
 import boggled.campaign.econ.conditions.Terraforming_Controller;
 import boggled.terraforming.BoggledBaseTerraformingProject;
-import boggled.terraforming.PlanetTypeChangeFrozen;
-import boggled.terraforming.PlanetTypeChangeTerran;
-import boggled.terraforming.PlanetTypeChangeWater;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.*;
 import com.fs.starfarer.api.campaign.econ.MarketAPI;
@@ -229,10 +226,7 @@ public class BoggledTerraformingCoreUI implements CustomUIPanelPlugin {
 
         TooltipMakerAPI projectsView = leftPanel.createUIElement(panePlanetVisualWidth, 600 - planetVisualHeight - 112, true);
         float projectHeight = 1;
-        ArrayList<BoggledBaseTerraformingProject> projects = new ArrayList<>();
-        projects.add(new PlanetTypeChangeWater(market));
-        projects.add(new PlanetTypeChangeTerran(market));
-        projects.add(new PlanetTypeChangeFrozen(market));
+        ArrayList<BoggledBaseTerraformingProject> projects = boggledTools.getTerraformingProjects(market);
 
         for(int i = 0; i < projects.size(); i++)
         {
