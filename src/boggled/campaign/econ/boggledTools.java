@@ -188,6 +188,8 @@ public class boggledTools {
         public static final String remnantStationIndustryId = "BOGGLED_REMNANT_STATION";
         public static final String stellarReflectorArrayIndustryId = "BOGGLED_STELLAR_REFLECTOR_ARRAY";
         public static final String domedCitiesIndustryId = "BOGGLED_DOMED_CITIES";
+
+        public static final String ismaraSlingAsteroidProcessingId = "BOGGLED_ISMARA_SLING";
     }
 
     public static class BoggledResearchProjects {
@@ -226,8 +228,21 @@ public class boggledTools {
             TascPlanetTypes.unknownPlanetId
     ));
 
-    public enum BasePlanetWaterLevel {
+    public enum PlanetWaterLevel {
         LOW_WATER, MEDIUM_WATER, HIGH_WATER
+    }
+
+    public static PlanetWaterLevel getGreaterWaterLevel(PlanetWaterLevel level1, PlanetWaterLevel level2) {
+        // Enums implement the Comparable interface.
+        // compareTo returns:
+        // - a negative number if level1 comes before level2
+        // - 0 if they are the same
+        // - a positive number if level1 comes after level2 (is "greater")
+        if (level1.compareTo(level2) >= 0) {
+            return level1;
+        } else {
+            return level2;
+        }
     }
 
     private static final HashMap<String, String> planetTypeIdToTascPlanetTypeMapping = new HashMap<>();
@@ -236,19 +251,19 @@ public class boggledTools {
 
     private static final HashMap<String, PlanetSpecAPI> planetTypeIdToPlanetSpecApiMapping = new HashMap<>();
 
-    private static final HashMap<String, BasePlanetWaterLevel> tascPlanetTypeToBaseWaterLevelMapping = new HashMap<>(){{
-        put(TascPlanetTypes.starPlanetId, BasePlanetWaterLevel.LOW_WATER);
-        put(TascPlanetTypes.barrenPlanetId, BasePlanetWaterLevel.LOW_WATER);
-        put(TascPlanetTypes.desertPlanetId, BasePlanetWaterLevel.MEDIUM_WATER);
-        put(TascPlanetTypes.frozenPlanetId, BasePlanetWaterLevel.HIGH_WATER);
-        put(TascPlanetTypes.gasGiantPlanetId, BasePlanetWaterLevel.LOW_WATER);
-        put(TascPlanetTypes.junglePlanetId, BasePlanetWaterLevel.HIGH_WATER);
-        put(TascPlanetTypes.terranPlanetId, BasePlanetWaterLevel.HIGH_WATER);
-        put(TascPlanetTypes.toxicPlanetId, BasePlanetWaterLevel.LOW_WATER);
-        put(TascPlanetTypes.tundraPlanetId, BasePlanetWaterLevel.MEDIUM_WATER);
-        put(TascPlanetTypes.volcanicPlanetId, BasePlanetWaterLevel.LOW_WATER);
-        put(TascPlanetTypes.waterPlanetId, BasePlanetWaterLevel.HIGH_WATER);
-        put(TascPlanetTypes.unknownPlanetId, BasePlanetWaterLevel.LOW_WATER);
+    private static final HashMap<String, PlanetWaterLevel> tascPlanetTypeToBaseWaterLevelMapping = new HashMap<>(){{
+        put(TascPlanetTypes.starPlanetId, PlanetWaterLevel.LOW_WATER);
+        put(TascPlanetTypes.barrenPlanetId, PlanetWaterLevel.LOW_WATER);
+        put(TascPlanetTypes.desertPlanetId, PlanetWaterLevel.MEDIUM_WATER);
+        put(TascPlanetTypes.frozenPlanetId, PlanetWaterLevel.HIGH_WATER);
+        put(TascPlanetTypes.gasGiantPlanetId, PlanetWaterLevel.LOW_WATER);
+        put(TascPlanetTypes.junglePlanetId, PlanetWaterLevel.HIGH_WATER);
+        put(TascPlanetTypes.terranPlanetId, PlanetWaterLevel.HIGH_WATER);
+        put(TascPlanetTypes.toxicPlanetId, PlanetWaterLevel.LOW_WATER);
+        put(TascPlanetTypes.tundraPlanetId, PlanetWaterLevel.MEDIUM_WATER);
+        put(TascPlanetTypes.volcanicPlanetId, PlanetWaterLevel.LOW_WATER);
+        put(TascPlanetTypes.waterPlanetId, PlanetWaterLevel.HIGH_WATER);
+        put(TascPlanetTypes.unknownPlanetId, PlanetWaterLevel.LOW_WATER);
     }};
 
     // Stores the organics and volatiles base and maximum amounts for each TASC planet type.
@@ -324,6 +339,29 @@ public class boggledTools {
         put(4, "farmland_bountiful");
     }};
 
+    public static String getNextFarmlandConditionId(MarketAPI market)
+    {
+        if(market.hasCondition("farmland_poor"))
+        {
+            return "farmland_adequate";
+        }
+        else if(market.hasCondition("farmland_adequate"))
+        {
+            return "farmland_rich";
+        }
+        else if(market.hasCondition("farmland_rich"))
+        {
+            return "farmland_bountiful";
+        }
+        else if(market.hasCondition("farmland_bountiful"))
+        {
+            return null;
+        }
+        else
+        {
+            return "farmland_poor";
+        }
+    }
     public static String getCurrentFarmlandString(MarketAPI market)
     {
         if(market.hasCondition("farmland_poor"))
@@ -428,6 +466,48 @@ public class boggledTools {
         return intToOrganicsLevel.get(tascPlanetTypeToResourceLevelMapping.get(tascPlanetType).get(1));
     }
 
+    public static String getNextOrganicsConditionId(int currentOrganicsLevel)
+    {
+        // Calculate the next level by incrementing the current level.
+        int nextLevel = currentOrganicsLevel + 1;
+
+        // Cap the level at the maximum allowed value, which is 4 (organics_plentiful).
+        int finalLevel = Math.min(nextLevel, 4);
+
+        // Look up the corresponding String ID in the map.
+        // For levels 1, 2, 3, and 4, it returns the correct string.
+        // Note: Level 0 maps to null, which would only happen if currentOrganicsLevel was -1.
+        return intToOrganicsLevel.get(finalLevel);
+    }
+
+    public static String getNextOrganicsConditionId(MarketAPI market)
+    {
+        int currentLevel = 0;
+        if(market.hasCondition("organics_trace"))
+        {
+            currentLevel = 1;
+        }
+        else if(market.hasCondition("organics_common"))
+        {
+            currentLevel = 2;
+        }
+        else if(market.hasCondition("organics_abundant"))
+        {
+            currentLevel = 3;
+        }
+        else if(market.hasCondition("organics_plentiful"))
+        {
+            currentLevel = 4;
+        }
+
+        return getNextOrganicsConditionId(currentLevel);
+    }
+
+    public static String getOrganicsConditionIdForInteger(int level)
+    {
+        return intToOrganicsLevel.get(level);
+    }
+
     public static int getBaseVolatilesLevelForTascPlanetType(String tascPlanetType)
     {
         return tascPlanetTypeToResourceLevelMapping.get(tascPlanetType).get(2);
@@ -478,9 +558,29 @@ public class boggledTools {
         return tascPlanetTypeToAllPlanetTypeIdsMapping.getOrDefault(tascPlanetType, new HashSet<>());
     }
 
-    public static BasePlanetWaterLevel getBaseWaterLevelForTascPlanetType(String tascPlanetType)
+    public static PlanetWaterLevel getBaseWaterLevelForTascPlanetType(String tascPlanetType)
     {
-        return tascPlanetTypeToBaseWaterLevelMapping.getOrDefault(tascPlanetType, BasePlanetWaterLevel.LOW_WATER);
+        return tascPlanetTypeToBaseWaterLevelMapping.getOrDefault(tascPlanetType, PlanetWaterLevel.LOW_WATER);
+    }
+
+    public static PlanetWaterLevel getWaterLevelForMarket(MarketAPI market)
+    {
+        PlanetWaterLevel sourceInSystem = marketHasWaterSourceInSystem(market) ? PlanetWaterLevel.HIGH_WATER : PlanetWaterLevel.LOW_WATER;
+        PlanetWaterLevel baseWaterLevelForPlanetType = getBaseWaterLevelForTascPlanetType(boggledTools.getTascPlanetType(market.getPlanetEntity()));
+        return getGreaterWaterLevel(sourceInSystem, baseWaterLevelForPlanetType);
+    }
+
+    public static boolean marketHasWaterSourceInSystem(MarketAPI market)
+    {
+        for(MarketAPI systemMarket : Global.getSector().getEconomy().getMarkets(market.getStarSystem()))
+        {
+            if(systemMarket.isPlayerOwned() && systemMarket.hasIndustry(BoggledIndustries.ismaraSlingAsteroidProcessingId))
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public static class BoggledConditions {
