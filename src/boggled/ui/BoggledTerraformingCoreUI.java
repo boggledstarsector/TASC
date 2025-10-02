@@ -284,11 +284,11 @@ public class BoggledTerraformingCoreUI implements CustomUIPanelPlugin {
         requirementsViewHeader.addSectionHeading("Project Requirements", Alignment.MID, 0.0F);
 
         TooltipMakerAPI requirementsView = rightPanel.createUIElement(panePlanetVisualWidth, 600 - planetVisualHeight - 112, true);
-        ArrayList<BoggledBaseTerraformingProject.TerraformingRequirementTooltipData> projectRequirements = project.getProjectRequirements();
+        ArrayList<BoggledBaseTerraformingProject.TerraformingRequirementObject> projectRequirements = project.getProjectRequirements();
         float labelHeight = 1;
         for(int i = 0; i < projectRequirements.size(); i++)
         {
-            BoggledBaseTerraformingProject.TerraformingRequirementTooltipData projectRequirement = projectRequirements.get(i);
+            BoggledBaseTerraformingProject.TerraformingRequirementObject projectRequirement = projectRequirements.get(i);
             Color textColor = projectRequirement.requirementMet ? Misc.getPositiveHighlightColor() : Misc.getNegativeHighlightColor();
             LabelAPI requirementLabel = requirementsView.addPara(projectRequirement.tooltipDisplayText, textColor,1f);
             requirementLabel.getPosition().inTL(0,labelHeight);

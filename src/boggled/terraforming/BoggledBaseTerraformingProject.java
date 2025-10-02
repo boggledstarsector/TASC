@@ -146,13 +146,13 @@ public class BoggledBaseTerraformingProject extends BaseIntelPlugin
         return prefix.equalsIgnoreCase("us_");
     }
 
-    public class TerraformingRequirementTooltipData
+    public class TerraformingRequirementObject
     {
         public String tooltipDisplayText;
         public boolean requirementMet;
         public TooltipMakerAPI.TooltipCreator tooltip;
 
-        public TerraformingRequirementTooltipData(String tooltipDisplayText, Boolean requirementMet, TooltipMakerAPI.TooltipCreator tooltip)
+        public TerraformingRequirementObject(String tooltipDisplayText, Boolean requirementMet, TooltipMakerAPI.TooltipCreator tooltip)
         {
             this.tooltipDisplayText = tooltipDisplayText;
             this.requirementMet = requirementMet;
@@ -160,7 +160,7 @@ public class BoggledBaseTerraformingProject extends BaseIntelPlugin
         }
     }
 
-    public TerraformingRequirementTooltipData getRequirementWorldTypeAllowsTerraforming()
+    public TerraformingRequirementObject getRequirementWorldTypeAllowsTerraforming()
     {
         String tascPlanetType = boggledTools.getTascPlanetType(market.getPlanetEntity());
         String currentPlanetTypeDisplayString = boggledTools.getPlanetSpec(tascPlanetType).getName();
@@ -182,10 +182,10 @@ public class BoggledBaseTerraformingProject extends BaseIntelPlugin
             }
         };
 
-        return new TerraformingRequirementTooltipData("World type allows terraforming", worldTypeAllowsTerraforming, tooltip);
+        return new TerraformingRequirementObject("World type allows terraforming", worldTypeAllowsTerraforming, tooltip);
     }
 
-    public TerraformingRequirementTooltipData getRequirementAtmosphericDensityNormal()
+    public TerraformingRequirementObject getRequirementAtmosphericDensityNormal()
     {
         Boolean requirementMet = !this.market.hasCondition(Conditions.NO_ATMOSPHERE) && !this.market.hasCondition(Conditions.THIN_ATMOSPHERE) && !this.market.hasCondition(Conditions.DENSE_ATMOSPHERE);
         TooltipMakerAPI.TooltipCreator tooltip = new TooltipMakerAPI.TooltipCreator() {
@@ -205,10 +205,10 @@ public class BoggledBaseTerraformingProject extends BaseIntelPlugin
             }
         };
 
-        return new TerraformingRequirementTooltipData(this.market.getName() + " has standard atmospheric density", requirementMet, tooltip);
+        return new TerraformingRequirementObject(this.market.getName() + " has standard atmospheric density", requirementMet, tooltip);
     }
 
-    public TerraformingRequirementTooltipData getRequirementAtmosphericNotToxicOrIrradiated()
+    public TerraformingRequirementObject getRequirementAtmosphericNotToxicOrIrradiated()
     {
         Boolean requirementMet = !this.market.hasCondition(Conditions.IRRADIATED) && !this.market.hasCondition(Conditions.TOXIC_ATMOSPHERE);
         TooltipMakerAPI.TooltipCreator tooltip = new TooltipMakerAPI.TooltipCreator() {
@@ -228,17 +228,23 @@ public class BoggledBaseTerraformingProject extends BaseIntelPlugin
             }
         };
 
-        return new TerraformingRequirementTooltipData(this.market.getName() + " does not have a toxic or irradiated atmosphere", requirementMet, tooltip);
+        return new TerraformingRequirementObject(this.market.getName() + " does not have a toxic or irradiated atmosphere", requirementMet, tooltip);
     }
 
-    public ArrayList<TerraformingRequirementTooltipData> getProjectRequirements()
+    public ArrayList<TerraformingRequirementObject> getProjectRequirements()
     {
-        return new ArrayList<>();
+        ArrayList<TerraformingRequirementObject> projects = new ArrayList<>();
+        if(Global.getSettings().getModManager().isModEnabled(boggledTools.BoggledMods.atodVokModId))
+        {
+            projects.add(getRequirementProjectIsResearched());
+        }
+
+        return projects;
     }
 
-    public boolean requirementsMet(ArrayList<TerraformingRequirementTooltipData> projectRequirements)
+    public boolean requirementsMet(ArrayList<TerraformingRequirementObject> projectRequirements)
     {
-        for(TerraformingRequirementTooltipData projectRequirementData : projectRequirements)
+        for(TerraformingRequirementObject projectRequirementData : projectRequirements)
         {
             if(!projectRequirementData.requirementMet)
             {
@@ -246,6 +252,44 @@ public class BoggledBaseTerraformingProject extends BaseIntelPlugin
             }
         }
 
+        return true;
+    }
+
+    public TerraformingRequirementObject getRequirementProjectIsResearched()
+    {
+        Boolean requirementMet = switch (projectType) {
+            case PLANET_TYPE_CHANGE -> boggledTools.isResearched(boggledTools.BoggledResearchProjects.planetTypeManipulation);
+            case RESOURCE_IMPROVEMENT -> boggledTools.isResearched(boggledTools.BoggledResearchProjects.resourceManipulation);
+            case CONDITION_IMPROVEMENT -> boggledTools.isResearched(boggledTools.BoggledResearchProjects.atmosphereManipulation);
+        };
+
+        String terraformingProjectType = switch (projectType) {
+            case PLANET_TYPE_CHANGE -> "Planet Type Manipulation";
+            case RESOURCE_IMPROVEMENT -> "Resource Manipulation";
+            case CONDITION_IMPROVEMENT -> "Atmosphere Manipulation";
+        };
+        TooltipMakerAPI.TooltipCreator tooltip = new TooltipMakerAPI.TooltipCreator() {
+            @Override
+            public boolean isTooltipExpandable(Object o) {
+                return false;
+            }
+
+            @Override
+            public float getTooltipWidth(Object o) {
+                return 500;
+            }
+
+            @Override
+            public void createTooltip(TooltipMakerAPI tooltipMakerAPI, boolean b, Object o) {
+                tooltipMakerAPI.addPara("Dummy text here - researched",10f);
+            }
+        };
+
+        return new TerraformingRequirementObject(terraformingProjectType + " research project has been completed", requirementMet, tooltip);
+    }
+
+    public boolean sourceModIsEnabled()
+    {
         return true;
     }
 }

@@ -86,10 +86,15 @@ public class BoggledBaseTerraformingPlanetTypeChangeProject extends BoggledBaseT
             conditionsToAdd.add("water_surface");
         }
 
-        // Frozen planets aren't habitable and don't have farmland
+        // Frozen planets aren't habitable
         if(!boggledTools.getTascPlanetType(this.planetIdToChangeInto).equals(boggledTools.TascPlanetTypes.frozenPlanetId))
         {
             conditionsToAdd.add("habitable");
+        }
+
+        // Frozen planets and water planets don't have farmland
+        if(!boggledTools.getTascPlanetType(this.planetIdToChangeInto).equals(boggledTools.TascPlanetTypes.frozenPlanetId) && !boggledTools.getTascPlanetType(this.planetIdToChangeInto).equals(boggledTools.TascPlanetTypes.waterPlanetId))
+        {
             conditionsToAdd.add(getBaseFarmlandId());
         }
 
@@ -156,7 +161,7 @@ public class BoggledBaseTerraformingPlanetTypeChangeProject extends BoggledBaseT
         return projectName + " Type Change";
     }
 
-    public TerraformingRequirementTooltipData getRequirementNotAlreadyTargetType()
+    public TerraformingRequirementObject getRequirementNotAlreadyTargetType()
     {
         String planetTypeId = this.market.getPlanetEntity().getTypeId();
         String planetTypeDisplayString = boggledTools.getPlanetSpec(planetTypeId).getName();
@@ -178,13 +183,13 @@ public class BoggledBaseTerraformingPlanetTypeChangeProject extends BoggledBaseT
             }
         };
 
-        return new TerraformingRequirementTooltipData(this.market.getName() + " is not already a " + planetTypeDisplayString + " world", requirementMet, tooltip);
+        return new TerraformingRequirementObject(this.market.getName() + " is not already a " + planetTypeDisplayString + " world", requirementMet, tooltip);
     }
 
     @Override
-    public ArrayList<TerraformingRequirementTooltipData> getProjectRequirements()
+    public ArrayList<TerraformingRequirementObject> getProjectRequirements()
     {
-        ArrayList<TerraformingRequirementTooltipData> projectRequirements = new ArrayList<>();
+        ArrayList<TerraformingRequirementObject> projectRequirements = super.getProjectRequirements();
         projectRequirements.add(getRequirementWorldTypeAllowsTerraforming());
         projectRequirements.add(getRequirementNotAlreadyTargetType());
         projectRequirements.add(getRequirementAtmosphericDensityNormal());

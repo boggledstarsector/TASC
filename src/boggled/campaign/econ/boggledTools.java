@@ -6,6 +6,7 @@ import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.*;
 import com.fs.starfarer.api.campaign.comm.CommMessageAPI;
 import com.fs.starfarer.api.campaign.econ.*;
+import com.fs.starfarer.api.characters.MarketConditionSpecAPI;
 import com.fs.starfarer.api.impl.campaign.ids.*;
 import com.fs.starfarer.api.impl.campaign.intel.BaseIntelPlugin;
 import com.fs.starfarer.api.impl.campaign.intel.MessageIntel;
@@ -44,6 +45,8 @@ public class boggledTools {
         public static final String lunalibModId = "lunalib";
         public static final String illustratedEntitiesModId = "illustrated_entities";
         public static final String tascModId = "Terraforming & Station Construction";
+
+        public static final String atodVokModId = "aotd_vok";
     }
 
     public static class BoggledSettings {
@@ -186,6 +189,13 @@ public class boggledTools {
         public static final String stellarReflectorArrayIndustryId = "BOGGLED_STELLAR_REFLECTOR_ARRAY";
         public static final String domedCitiesIndustryId = "BOGGLED_DOMED_CITIES";
     }
+
+    public static class BoggledResearchProjects {
+        public static final String resourceManipulation = "tasc_resource_manipulation";
+        public static final String atmosphereManipulation = "tasc_atmosphere_manipulation";
+        public static final String planetTypeManipulation = "tasc_planet_type_manipulation";
+    }
+
     public static class TascPlanetTypes {
         public static final String starPlanetId = "star";
         public static final String barrenPlanetId = "barren";
@@ -314,6 +324,90 @@ public class boggledTools {
         put(4, "farmland_bountiful");
     }};
 
+    public static String getCurrentFarmlandString(MarketAPI market)
+    {
+        if(market.hasCondition("farmland_poor"))
+        {
+            return getConditionFromString("farmland_poor").getName();
+        }
+        else if(market.hasCondition("farmland_adequate"))
+        {
+            return getConditionFromString("farmland_adequate").getName();
+        }
+        else if(market.hasCondition("farmland_rich"))
+        {
+            return getConditionFromString("farmland_rich").getName();
+        }
+        else if(market.hasCondition("farmland_bountiful"))
+        {
+            return getConditionFromString("farmland_bountiful").getName();
+        }
+        else
+        {
+            return null;
+        }
+    }
+
+    public static String getNextFarmlandString(MarketAPI market)
+    {
+        Integer nextLevel = getNextFarmlandLevelInteger(market);
+        if(nextLevel != null)
+        {
+            return getConditionFromString(intToFarmlandLevel.get(nextLevel)).getName();
+        }
+        else
+        {
+            return null;
+        }
+    }
+
+    public static int getFarmlandLevelInteger(MarketAPI market)
+    {
+        if(market.hasCondition("farmland_poor"))
+        {
+            return 1;
+        }
+        else if(market.hasCondition("farmland_adequate"))
+        {
+            return 2;
+        }
+        else if(market.hasCondition("farmland_rich"))
+        {
+            return 3;
+        }
+        else if(market.hasCondition("farmland_bountiful"))
+        {
+            return 4;
+        }
+        else
+        {
+            return 0;
+        }
+    }
+
+    public static Integer getNextFarmlandLevelInteger(MarketAPI market)
+    {
+        int currentLevel = getFarmlandLevelInteger(market);
+        return getNextFarmlandLevelInteger(currentLevel);
+    }
+
+    public static Integer getNextFarmlandLevelInteger(int farmlandLevelInt)
+    {
+        if(farmlandLevelInt < 4)
+        {
+            return farmlandLevelInt + 1;
+        }
+        else
+        {
+            return null;
+        }
+    }
+
+    public static MarketConditionSpecAPI getConditionFromString(String condition)
+    {
+        return Global.getSettings().getMarketConditionSpec(condition);
+    }
+
     public static int getBaseOrganicsLevelForTascPlanetType(String tascPlanetType)
     {
         return tascPlanetTypeToResourceLevelMapping.get(tascPlanetType).get(0);
@@ -384,7 +478,7 @@ public class boggledTools {
         return tascPlanetTypeToAllPlanetTypeIdsMapping.getOrDefault(tascPlanetType, new HashSet<>());
     }
 
-    public static BasePlanetWaterLevel getWaterLevelForTascPlanetType(String tascPlanetType)
+    public static BasePlanetWaterLevel getBaseWaterLevelForTascPlanetType(String tascPlanetType)
     {
         return tascPlanetTypeToBaseWaterLevelMapping.getOrDefault(tascPlanetType, BasePlanetWaterLevel.LOW_WATER);
     }
@@ -482,7 +576,7 @@ public class boggledTools {
     public static ArrayList<BoggledBaseTerraformingProject> getTerraformingProjects(MarketAPI market)
     {
         try {
-            List<String> jars = Global.getSettings().getModManager().getModSpec("Terraforming & Station Construction").getJars();
+            List<String> jars = Global.getSettings().getModManager().getModSpec(BoggledMods.tascModId).getJars();
             for(String jar : jars)
             {
                 boggledTools.writeMessageToLog("Loaded JAR string: " + jar);

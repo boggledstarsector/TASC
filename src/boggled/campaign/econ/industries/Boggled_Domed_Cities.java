@@ -184,7 +184,7 @@ public class Boggled_Domed_Cities extends BaseIndustry implements MarketImmigrat
             return false;
         }
 
-        if(!boggledTools.isResearched("tasc_advanced_terraforming"))
+        if(!boggledTools.isResearched("tasc_resource_manipulation"))
         {
             return false;
         }
@@ -220,7 +220,7 @@ public class Boggled_Domed_Cities extends BaseIndustry implements MarketImmigrat
             return false;
         }
 
-        if(!boggledTools.isResearched("tasc_advanced_terraforming"))
+        if(!boggledTools.isResearched("tasc_resource_manipulation"))
         {
             return false;
         }

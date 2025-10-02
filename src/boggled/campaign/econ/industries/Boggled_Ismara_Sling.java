@@ -128,7 +128,7 @@ public class Boggled_Ismara_Sling extends BaseIndustry
     @Override
     public boolean isAvailableToBuild()
     {
-        if(!boggledTools.isResearched("tasc_advanced_terraforming"))
+        if(!boggledTools.isResearched("tasc_resource_manipulation"))
         {
             return false;
         }
@@ -154,7 +154,7 @@ public class Boggled_Ismara_Sling extends BaseIndustry
     @Override
     public boolean showWhenUnavailable()
     {
-        if(!boggledTools.isResearched("tasc_advanced_terraforming"))
+        if(!boggledTools.isResearched("tasc_resource_manipulation"))
         {
             return false;
         }

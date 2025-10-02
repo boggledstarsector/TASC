@@ -4,11 +4,12 @@ id,name,tier,timeToResearch,reqToResearchFirst,itemReqToResearch,iconId,rewards,
 tasc_domain_excavation,Domain Artifact Excavation,3,25,aotd_tech_streamlined_production,research_databank:1,none,BOGGLED_DOMAIN_ARCHAEOLOGY:industry,0,3,false,,,Terraforming & Station Construction
 ,,,,,,,,,,,,,
 tasc_light_manipulation,Stellar Light Manipulation,3,40,tasc_domain_excavation,research_databank:3,none,BOGGLED_STELLAR_REFLECTOR_ARRAY:industry,1,0,false,,,Terraforming & Station Construction
-tasc_atmosphere_manipulation,Atmosphere Manipulation,3,60,tasc_light_manipulation,research_databank:5,none,BOGGLED_ATMOSPHERE_PROCESSOR:industry,2,0,false,,,Terraforming & Station Construction
-tasc_advanced_terraforming,Resource Manipulation,3,90,tasc_atmosphere_manipulation,research_databank:7,none,"Allows increasing amount of resources on planets. Add the terraforming ability to your ability bar to start terraforming projects.:modifier
+tasc_atmosphere_manipulation,Atmosphere Manipulation,3,60,tasc_light_manipulation,research_databank:5,none,"Unlocks atmosphere modification terraforming projects:modifier
+BOGGLED_ATMOSPHERE_PROCESSOR:industry",2,0,false,,,Terraforming & Station Construction
+tasc_resource_manipulation,Resource Manipulation,3,90,tasc_atmosphere_manipulation,research_databank:7,none,"Unlocks resource improvement terraforming projects:modifier
 BOGGLED_DOMED_CITIES:industry
 BOGGLED_ISMARA_SLING:industry",3,0,false,,,Terraforming & Station Construction
-tasc_terraforming_templates,Planetary Manipulation,3,120,tasc_advanced_terraforming,research_databank:10,none,Allows changing type of planets:modifier,4,0,false,,,Terraforming & Station Construction
+tasc_planet_type_manipulation,Planet Type Manipulation,3,120,tasc_resource_manipulation,research_databank:10,none,"Unlocks planet type change terraforming projects:modifier",4,0,false,,,Terraforming & Station Construction
 ,,,,,,,,,,,,,
 tasc_genetic_manipulation,Genetics,3,40,tasc_domain_excavation,research_databank:3,none,"BOGGLED_GENELAB:industry
 BOGGLED_MESOZOIC_PARK:industry",1,6,false,,,Terraforming & Station Construction
