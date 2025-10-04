@@ -11,6 +11,7 @@ import com.fs.starfarer.api.characters.MarketConditionSpecAPI;
 import com.fs.starfarer.api.input.InputEventAPI;
 import com.fs.starfarer.api.ui.*;
 import com.fs.starfarer.api.util.Misc;
+
 import java.awt.*;
 import java.util.*;
 import java.util.List;
@@ -23,6 +24,10 @@ public class BoggledTerraformingCoreUI implements CustomUIPanelPlugin {
 
     private TooltipMakerAPI planetSelectView;
 
+    private TooltipMakerAPI projectsView;
+
+    private TooltipMakerAPI triggerButtonPanel;
+
     public static float SCREEN_WIDTH = Math.min(Global.getSettings().getScreenWidth(), 1200);
     public static float SCREEN_HEIGHT = Math.min(Global.getSettings().getScreenHeight() - 125, 1000);
 
@@ -34,6 +39,8 @@ public class BoggledTerraformingCoreUI implements CustomUIPanelPlugin {
     private final float panePlanetHeight = 400;
 
     private final float paneSeparator = 3;
+
+    private float triggerPanelVerticalPixelLocation;
 
     private MarketAPI market;
     private BoggledBaseTerraformingProject selectedProject;
@@ -49,6 +56,10 @@ public class BoggledTerraformingCoreUI implements CustomUIPanelPlugin {
     private HashMap<MarketAPI, ButtonAPI> marketToButtonMap = new HashMap<>();
 
     private HashMap<ButtonAPI, BoggledBaseTerraformingProject> buttonToProjectMap = new HashMap<>();
+
+    private HashMap<BoggledBaseTerraformingProject, ButtonAPI> projectToButtonMap = new HashMap<>();
+
+    private ArrayList<BoggledBaseTerraformingProject> terraformingProjectOrderedList = new ArrayList<>();
 
     private ButtonAPI startProjectButton;
     private ButtonAPI cancelProjectButton;
@@ -199,59 +210,23 @@ public class BoggledTerraformingCoreUI implements CustomUIPanelPlugin {
 
     public void advance(float amount)
     {
+        // Handle clicks to planet select buttons
         ButtonAPI clickedPlanetSelectButton = getClickedPlanetButton();
         if(clickedPlanetSelectButton != null)
         {
             handlePlanetSelectButtonClicked(clickedPlanetSelectButton);
         }
 
-        ButtonAPI checkedProjectButton = null;
-        for(ButtonAPI button : buttonToProjectMap.keySet())
+        // Handle clicks to project buttons
+        ButtonAPI clickedProjectButton = getClickedTerraformingProjectButton();
+        if(clickedProjectButton != null)
         {
-            if(button.isChecked())
-            {
-                checkedProjectButton = button;
-
-                for(ButtonAPI buttonToDeselect : buttonToProjectMap.keySet())
-                {
-                    if(buttonToDeselect.isChecked())
-                    {
-                        button.setChecked(false);
-                    }
-
-                    if(button.isHighlighted())
-                    {
-                        button.unhighlight();
-                    }
-                }
-
-                break;
-            }
+            handleTerraformingProjectButtonClicked(clickedProjectButton);
         }
 
-        if(checkedProjectButton != null)
-        {
-            checkedProjectButton.highlight();
-            if(this.selectedProject != buttonToProjectMap.get(checkedProjectButton))
-            {
-                this.selectedProject = buttonToProjectMap.get(checkedProjectButton);
-                this.mainPanel.removeComponent(this.rightTerraformingPane);
-                this.rightTerraformingPane = showTerraformingRightPane(this.market, this.selectedProject);
-            }
-        }
+        handleStartProjectButton();
 
-        if(this.startProjectButton != null && this.startProjectButton.isChecked())
-        {
-            this.startProjectButton.setChecked(false);
-            startNewProject(this.market, this.selectedProject);
-            return;
-        }
-
-        if(this.cancelProjectButton != null && this.cancelProjectButton.isChecked())
-        {
-            this.cancelProjectButton.setChecked(false);
-            cancelProject(this.market);
-        }
+        handleCancelProjectButton();
     }
 
     private ButtonAPI getClickedPlanetButton()
@@ -284,35 +259,126 @@ public class BoggledTerraformingCoreUI implements CustomUIPanelPlugin {
         }
     }
 
-    private void handleTerraformingProjectButtonClicked(ButtonAPI button)
+    private ButtonAPI getClickedTerraformingProjectButton()
     {
+        for(ButtonAPI button : buttonToProjectMap.keySet())
+        {
+            if(button.isChecked())
+            {
+                return button;
+            }
+        }
 
+        return null;
     }
 
-    private void handleStartProjectButtonClicked()
+    private void handleTerraformingProjectButtonClicked(ButtonAPI clickedButton)
     {
+        if(this.buttonToProjectMap.get(clickedButton) != this.selectedProject)
+        {
+            this.selectedProject = buttonToProjectMap.get(clickedButton);
+            this.mainPanel.removeComponent(this.rightTerraformingPane);
+            this.rightTerraformingPane = showTerraformingRightPane(this.market, this.selectedProject);
 
+            reloadProjectViewButtons();
+
+            ButtonAPI selectedButton = this.projectToButtonMap.get(this.selectedProject);
+            selectedButton.highlight();
+        }
     }
 
-    private void handleCancelProjectButtonClicked()
+    private void handleStartProjectButton()
     {
+        if(this.startProjectButton != null && this.startProjectButton.isChecked())
+        {
+            startNewProject(this.market, this.selectedProject);
+            this.rightTerraformingPane.removeComponent(this.triggerButtonPanel);
+            TooltipMakerAPI newTriggerButtonPanel = createTriggerButtonPanel(this.rightTerraformingPane, this.selectedProject, this.selectedProject.getProjectRequirements());
+            this.rightTerraformingPane.addUIElement(newTriggerButtonPanel).inTL(0, this.triggerPanelVerticalPixelLocation);
+        }
+    }
 
+    private void handleCancelProjectButton()
+    {
+        if(this.cancelProjectButton != null && this.cancelProjectButton.isChecked())
+        {
+            cancelProject(this.market);
+            this.rightTerraformingPane.removeComponent(this.triggerButtonPanel);
+            TooltipMakerAPI newTriggerButtonPanel = createTriggerButtonPanel(this.rightTerraformingPane, this.selectedProject, this.selectedProject.getProjectRequirements());
+            this.rightTerraformingPane.addUIElement(newTriggerButtonPanel).inTL(0, this.triggerPanelVerticalPixelLocation);
+        }
+    }
+
+    private void reloadProjectViewButtons()
+    {
+        for(ButtonAPI button : this.buttonToProjectMap.keySet())
+        {
+            this.projectsView.removeComponent(button);
+        }
+
+        HashMap<ButtonAPI, BoggledBaseTerraformingProject> newButtonToProjectMap = new HashMap<>();
+        HashMap<BoggledBaseTerraformingProject, ButtonAPI> newProjectToButtonMap = new HashMap<>();
+
+        float projectHeightSpacer = 1;
+        float projectHeight = projectHeightSpacer;
+        for(BoggledBaseTerraformingProject project : this.terraformingProjectOrderedList)
+        {
+            ButtonAPI projectButton = projectsView.addButton(project.getProjectName(), (Object)null, Global.getSector().getPlayerFaction().getBaseUIColor(), Global.getSector().getPlayerFaction().getDarkUIColor(), Alignment.TL, CutStyle.ALL, panePlanetWidth - 4, 18, 0.0F);
+            projectsView.addComponent(projectButton).inTL(0, projectHeight);
+            newButtonToProjectMap.put(projectButton, project);
+            newProjectToButtonMap.put(project, projectButton);
+            projectHeight += 18 + projectHeightSpacer;
+        }
+
+        this.buttonToProjectMap = newButtonToProjectMap;
+        this.projectToButtonMap = newProjectToButtonMap;
+    }
+
+    private CustomPanelAPI createProjectsPanel(CustomPanelAPI leftTerraformingPane, float height)
+    {
+        CustomPanelAPI projectsPanel = leftTerraformingPane.createCustomPanel(panePlanetWidth, height, null);
+
+        // Section header
+        TooltipMakerAPI projectsViewHeader = projectsPanel.createUIElement(panePlanetWidth, 0, false);
+        projectsViewHeader.addSectionHeading("Terraforming Projects", Alignment.MID, 0.0F);
+
+        TooltipMakerAPI projectsView = projectsPanel.createUIElement(panePlanetWidth, height - 18, true);
+        this.projectsView = projectsView;
+
+        // Handle logic like hiding projects for mods that aren't enabled in this boggledTools method
+        // Also handle sorting logic in there.
+        this.terraformingProjectOrderedList = boggledTools.getTerraformingProjects(market);
+
+        reloadProjectViewButtons();
+
+        projectsPanel.addUIElement(projectsViewHeader).inTL(0, 0);
+        projectsPanel.addUIElement(projectsView).inTL(0, 18);
+        return projectsPanel;
     }
 
     private CustomPanelAPI showTerraformingLeftPane(MarketAPI market)
     {
-        CustomPanelAPI leftPanel = this.mainPanel.createCustomPanel(panePlanetWidth, 600, null);
+        ArrayList<MarketConditionAPI> conditions = (ArrayList<MarketConditionAPI>) market.getConditions();
+        conditions.sort(Comparator.comparing(BoggledTerraformingCoreUI::getSortOrderForCondition));
+
+        CustomPanelAPI leftPanel = this.mainPanel.createCustomPanel(panePlanetWidth, SCREEN_HEIGHT, null);
+
+        // Create big left side current planet appearance view
         TooltipMakerAPI planetLargeViewLeft = leftPanel.createUIElement(panePlanetWidth, panePlanetHeight, false);
         planetLargeViewLeft.addSectionHeading(this.market.getName() + " - Current Appearance", Alignment.MID, 0.0F);
         planetLargeViewLeft.showPlanetInfo(market.getPlanetEntity(), panePlanetWidth, panePlanetHeight, false, 0);
 
+        // Conditions view
         TooltipMakerAPI conditionsViewHeader = leftPanel.createUIElement(panePlanetWidth, 0, false);
         conditionsViewHeader.addSectionHeading(this.market.getName() + " - Current Conditions", Alignment.MID, 0.0F);
 
-        TooltipMakerAPI conditionsView = leftPanel.createUIElement(panePlanetWidth, 40, false);
+        // We can fit 10 conditions per line. Create a second line if we have more than 10.
+        int numConditionsRows = (conditions.size() / 10) + 1;
+        float conditionHeight = numConditionsRows * 40;
+        TooltipMakerAPI conditionsView = leftPanel.createUIElement(panePlanetWidth, conditionHeight, false);
         float horizontalPosition = 0;
-        ArrayList<MarketConditionAPI> conditions = (ArrayList<MarketConditionAPI>) market.getConditions();
-        conditions.sort(Comparator.comparing(BoggledTerraformingCoreUI::getSortOrderForCondition));
+        float verticalPosition = 0;
+
         for(MarketConditionAPI condition : conditions)
         {
             if(!condition.isPlanetary() || !condition.getPlugin().showIcon() || condition.getName().equals("Population"))
@@ -322,49 +388,41 @@ public class BoggledTerraformingCoreUI implements CustomUIPanelPlugin {
             String pathToImage = Global.getSettings().getMarketConditionSpec(condition.getId()).getIcon();
             conditionsView.addImage(pathToImage,0);
             UIComponentAPI conditionImage = conditionsView.getPrev();
-            conditionImage.getPosition().inTL(horizontalPosition, 0);
+            conditionImage.getPosition().inTL(horizontalPosition, verticalPosition);
             horizontalPosition += 40;
+            if(horizontalPosition >= 400)
+            {
+                horizontalPosition = 0;
+                verticalPosition += 40;
+            }
         }
 
-        TooltipMakerAPI projectsViewHeader = leftPanel.createUIElement(panePlanetWidth, 0, false);
-        projectsViewHeader.addSectionHeading("Terraforming Projects", Alignment.MID, 0.0F);
+        // Get the custom panel for the list of projects
+        CustomPanelAPI projectsPanel = createProjectsPanel(leftPanel, SCREEN_HEIGHT - (18 + panePlanetHeight + 18 + conditionHeight + 18));
 
-        TooltipMakerAPI projectsView = leftPanel.createUIElement(panePlanetWidth, 600 - panePlanetHeight - 112, true);
-        float projectHeight = 1;
-        ArrayList<BoggledBaseTerraformingProject> projects = boggledTools.getTerraformingProjects(market);
-
-        for(int i = 0; i < projects.size(); i++)
-        {
-            ButtonAPI projectButton = projectsView.addButton(projects.get(i).getProjectName(), (Object)null, Global.getSector().getPlayerFaction().getBaseUIColor(), Global.getSector().getPlayerFaction().getDarkUIColor(), Alignment.TL, CutStyle.ALL, panePlanetWidth - 4, 18, 0.0F);
-            projectsView.addComponent(projectButton).inTL(0, projectHeight);
-            buttonToProjectMap.put(projectButton, projects.get(i));
-            projectHeight += 18 + 1;
-        }
-
+        // Height is panePlanetHeight + 18 because of section header
         leftPanel.addUIElement(planetLargeViewLeft).inTL(0, 0);
 
         leftPanel.addUIElement(conditionsViewHeader).inTL(0, panePlanetHeight + 18);
         leftPanel.addUIElement(conditionsView).inTL(0, panePlanetHeight + 36);
 
-        leftPanel.addUIElement(projectsViewHeader).inTL(0, panePlanetHeight + 94);
-        leftPanel.addUIElement(projectsView).inTL(0, panePlanetHeight + 112);
+        leftPanel.addComponent(projectsPanel).inTL(0, panePlanetHeight + conditionHeight + 54);
 
-        this.mainPanel.addComponent(leftPanel).inTL(planetSelectPaneWidth + 3, 0);
+        this.mainPanel.addComponent(leftPanel).inTL(planetSelectPaneWidth + paneSeparator, 0);
         return leftPanel;
     }
 
     private CustomPanelAPI showTerraformingRightPane(MarketAPI market, BoggledBaseTerraformingProject project)
     {
-        CustomPanelAPI rightPanel = this.mainPanel.createCustomPanel(panePlanetWidth, 636, null);
-        TooltipMakerAPI planetLargeViewRight = rightPanel.createUIElement(panePlanetWidth, panePlanetHeight, false);
-        planetLargeViewRight.addSectionHeading(this.market.getName() + " - Appearance After Project Completed", Alignment.MID, 0.0F);
-        planetLargeViewRight.showPlanetInfo(project.constructFakePlanetWithAppearanceAfterTerraforming(), panePlanetWidth, panePlanetHeight, false, 0);
+        CustomPanelAPI rightPanel = this.mainPanel.createCustomPanel(panePlanetWidth, SCREEN_HEIGHT, null);
 
-        TooltipMakerAPI conditionsViewHeader = rightPanel.createUIElement(panePlanetWidth, 0, false);
-        conditionsViewHeader.addSectionHeading(this.market.getName() + " - Conditions After Project Completed", Alignment.MID, 0.0F);
+        // Get requirements for the selected project
+        ArrayList<BoggledBaseTerraformingProject.TerraformingRequirementObject> projectRequirements = project.getProjectRequirements();
 
-        TooltipMakerAPI conditionsView = rightPanel.createUIElement(panePlanetWidth, 40, false);
-        float horizontalPosition = 0;
+        // Create the trigger button panel
+        TooltipMakerAPI projectTriggerButtonsPanel = createTriggerButtonPanel(rightPanel, project, projectRequirements);
+
+        // Get sorted conditions list for what they would be after the project is completed
         ArrayList<MarketConditionSpecAPI> conditions = new ArrayList<>();
         HashSet<String> conditionStrings = project.constructConditionsListAfterProjectCompletion();
         for(String conditionId : conditionStrings)
@@ -372,44 +430,98 @@ public class BoggledTerraformingCoreUI implements CustomUIPanelPlugin {
             conditions.add(Global.getSettings().getMarketConditionSpec(conditionId));
         }
         conditions.sort(Comparator.comparing(BoggledTerraformingCoreUI::getSortOrderForCondition));
+
+        //Filter out invalid conditions
+        ArrayList<MarketConditionSpecAPI> conditionsTemp = new ArrayList<>();
         for(MarketConditionSpecAPI condition : conditions)
         {
-            if(!condition.isPlanetary() || condition.getName().equals("Population"))
+            if(condition.isPlanetary() && !condition.getName().equals("Population") && Global.getSettings().getMarketConditionSpec(condition.getId()).getIcon() != null)
             {
-                continue;
+                conditionsTemp.add(condition);
             }
-            String pathToImage = condition.getIcon();
+        }
+        conditions = conditionsTemp;
+
+        // We can fit 10 conditions per line. Create a second line if we have more than 10.
+        int numConditionsRows = (conditions.size() / 10) + 1;
+        float conditionHeight = numConditionsRows * 40;
+
+        // Get the height of the requirements panel.
+        float spaceRemainingForRequirementsPanel = SCREEN_HEIGHT - (panePlanetHeight + conditionHeight + 72 + 72);
+
+        // Create planet view after project is complete.
+        TooltipMakerAPI planetLargeViewRight = rightPanel.createUIElement(panePlanetWidth, panePlanetHeight, false);
+        planetLargeViewRight.addSectionHeading(this.market.getName() + " - Appearance After Project Completed", Alignment.MID, 0.0F);
+        planetLargeViewRight.showPlanetInfo(project.constructFakePlanetWithAppearanceAfterTerraforming(), panePlanetWidth, panePlanetHeight, false, 0);
+
+        // Conditions view header
+        TooltipMakerAPI conditionsViewHeader = rightPanel.createUIElement(panePlanetWidth, 0, false);
+        conditionsViewHeader.addSectionHeading(this.market.getName() + " - Conditions After Project Completed", Alignment.MID, 0.0F);
+
+        // Conditions view panel
+        TooltipMakerAPI conditionsView = rightPanel.createUIElement(panePlanetWidth, conditionHeight, false);
+        float horizontalPosition = 0;
+        float verticalPosition = 0;
+        for(MarketConditionSpecAPI condition : conditions)
+        {
+            String pathToImage = Global.getSettings().getMarketConditionSpec(condition.getId()).getIcon();
+            boggledTools.writeMessageToLog("Condition: " + condition.getName() + " Path: " + pathToImage);
             conditionsView.addImage(pathToImage,0);
             UIComponentAPI conditionImage = conditionsView.getPrev();
-            conditionImage.getPosition().inTL(horizontalPosition, 0);
+            conditionImage.getPosition().inTL(horizontalPosition, verticalPosition);
             horizontalPosition += 40;
+            if(horizontalPosition >= 400)
+            {
+                horizontalPosition = 0;
+                verticalPosition += 40;
+            }
         }
 
+        // Projects requirements view
         TooltipMakerAPI requirementsViewHeader = rightPanel.createUIElement(panePlanetWidth, 0, false);
         requirementsViewHeader.addSectionHeading("Project Requirements", Alignment.MID, 0.0F);
 
-        TooltipMakerAPI requirementsView = rightPanel.createUIElement(panePlanetWidth, 600 - panePlanetHeight - 112, true);
-        ArrayList<BoggledBaseTerraformingProject.TerraformingRequirementObject> projectRequirements = project.getProjectRequirements();
-        float labelHeight = 1;
-        for(int i = 0; i < projectRequirements.size(); i++)
-        {
-            BoggledBaseTerraformingProject.TerraformingRequirementObject projectRequirement = projectRequirements.get(i);
-            Color textColor = projectRequirement.requirementMet ? Misc.getPositiveHighlightColor() : Misc.getNegativeHighlightColor();
-            LabelAPI requirementLabel = requirementsView.addPara(projectRequirement.tooltipDisplayText, textColor,1f);
-            requirementLabel.getPosition().inTL(0,labelHeight);
-            labelHeight += 18 + 1;
+        TooltipMakerAPI requirementsView = rightPanel.createUIElement(panePlanetWidth, spaceRemainingForRequirementsPanel, true);
 
-            requirementsView.addTooltipToPrevious(projectRequirement.tooltip, TooltipMakerAPI.TooltipLocation.ABOVE,false);
+        float labelSpacerHeight = 1;
+        float labelHeight = labelSpacerHeight;
+        for(BoggledBaseTerraformingProject.TerraformingRequirementObject requirement : projectRequirements)
+        {
+            Color textColor = requirement.requirementMet ? Misc.getPositiveHighlightColor() : Misc.getNegativeHighlightColor();
+            LabelAPI requirementLabel = requirementsView.addPara(requirement.tooltipDisplayText, textColor,1f);
+            requirementLabel.getPosition().inTL(0,labelHeight);
+            labelHeight += 18 + labelSpacerHeight;
+
+            requirementsView.addTooltipToPrevious(requirement.tooltip, TooltipMakerAPI.TooltipLocation.ABOVE,false);
         }
 
-        TooltipMakerAPI projectTriggerButtonsPanel = rightPanel.createUIElement(panePlanetWidth, 54, false);
-        LabelAPI triggerButtonsLabel = null;
+        rightPanel.addUIElement(planetLargeViewRight).inTL(0, 0);
+
+        rightPanel.addUIElement(conditionsViewHeader).inTL(0, panePlanetHeight + 18);
+        rightPanel.addUIElement(conditionsView).inTL(0, panePlanetHeight + 36);
+
+        rightPanel.addUIElement(requirementsViewHeader).inTL(0, panePlanetHeight + conditionHeight + 54);
+        rightPanel.addUIElement(requirementsView).inTL(0, panePlanetHeight + conditionHeight + 72);
+
+        this.triggerPanelVerticalPixelLocation = panePlanetHeight + conditionHeight + 72 + spaceRemainingForRequirementsPanel;
+        rightPanel.addUIElement(projectTriggerButtonsPanel).inTL(0, this.triggerPanelVerticalPixelLocation);
+
+        this.mainPanel.addComponent(rightPanel).inTL(planetSelectPaneWidth + paneSeparator + panePlanetWidth + paneSeparator, 0);
+        return rightPanel;
+    }
+
+    private TooltipMakerAPI createTriggerButtonPanel(CustomPanelAPI rightTerraformingPane, BoggledBaseTerraformingProject project, ArrayList<BoggledBaseTerraformingProject.TerraformingRequirementObject> projectRequirements)
+    {
+        // Start project and cancel project
+        float triggerButtonLabelHeight = getTriggerButtonLabelHeight(project, projectRequirements);
+        TooltipMakerAPI projectTriggerButtonsPanel = rightTerraformingPane.createUIElement(panePlanetWidth, 72, false);
+        LabelAPI triggerButtonsLabel;
         String ongoingProject = getOngoingProjectAtMarket(market);
         if(ongoingProject == null)
         {
             if(project.requirementsMet(projectRequirements))
             {
-                triggerButtonsLabel = projectTriggerButtonsPanel.addPara("This project will take " + project.getDaysRemaining() + " days to complete.", Misc.getTextColor(), 1f);
+                triggerButtonsLabel = projectTriggerButtonsPanel.addPara("This project will take " + project.getDaysRemaining() + " days to complete.", Misc.getPositiveHighlightColor(), 1f);
             }
             else
             {
@@ -422,7 +534,7 @@ public class BoggledTerraformingCoreUI implements CustomUIPanelPlugin {
             {
                 if(project.requirementsMet(projectRequirements))
                 {
-                    triggerButtonsLabel = projectTriggerButtonsPanel.addPara("There are " + project.getDaysRemaining() + " day(s) remaining until this project is complete.", Misc.getTextColor(), 1f);
+                    triggerButtonsLabel = projectTriggerButtonsPanel.addPara("There are " + project.getDaysRemaining() + " day(s) remaining until this project is complete.", Misc.getPositiveHighlightColor(), 1f);
                 }
                 else
                 {
@@ -431,49 +543,72 @@ public class BoggledTerraformingCoreUI implements CustomUIPanelPlugin {
             }
             else
             {
-                triggerButtonsLabel = projectTriggerButtonsPanel.addPara("There is already an ongoing project at " + this.market.getName() + ". If you start a new project, all progress on the existing project will be lost.", Misc.getNegativeHighlightColor(), 1f);
+                triggerButtonsLabel = projectTriggerButtonsPanel.addPara("There is already an ongoing project at here. If you start a new project, all progress on the existing project will be lost.", Misc.getNegativeHighlightColor(), 1f);
             }
         }
-        triggerButtonsLabel.getPosition().inTL(0, 0);
+        triggerButtonsLabel.getPosition().inTL(0, triggerButtonLabelHeight == 36 ? 0 : 18);
 
-        ButtonAPI startProjectButton = projectTriggerButtonsPanel.addButton("Start Project", (Object)null, Global.getSector().getPlayerFaction().getBaseUIColor(), Global.getSector().getPlayerFaction().getDarkUIColor(), Alignment.TL, CutStyle.ALL, 100, 36, 0.0F);
-        if(!project.requirementsMet(projectRequirements))
+        String ongoingProjectName = getOngoingProjectAtMarket(market);
+        ButtonAPI startProjectButton = projectTriggerButtonsPanel.addButton("Start Project", null, Global.getSector().getPlayerFaction().getBaseUIColor(), Global.getSector().getPlayerFaction().getDarkUIColor(), Alignment.LMID, CutStyle.ALL, 150, 36, 0.0F);
+        if((ongoingProjectName != null && ongoingProjectName.equals(project.getProjectName())) || !project.requirementsMet(projectRequirements))
         {
             startProjectButton.setEnabled(false);
         }
-        projectTriggerButtonsPanel.addComponent(startProjectButton).inTL(0, 18);
+        projectTriggerButtonsPanel.addComponent(startProjectButton).inTL(0, 36);
         this.startProjectButton = startProjectButton;
 
-        ButtonAPI cancelProjectButton = projectTriggerButtonsPanel.addButton("Cancel Project", (Object)null, Global.getSector().getPlayerFaction().getBaseUIColor(), Global.getSector().getPlayerFaction().getDarkUIColor(), Alignment.TL, CutStyle.ALL, 100, 36, 0.0F);
-        String ongoingProjectName = getOngoingProjectAtMarket(market);
+        ButtonAPI cancelProjectButton = projectTriggerButtonsPanel.addButton("Cancel Project", null, Global.getSector().getPlayerFaction().getBaseUIColor(), Global.getSector().getPlayerFaction().getDarkUIColor(), Alignment.LMID, CutStyle.ALL, 150, 36, 0.0F);
+
         if(ongoingProjectName == null || !ongoingProjectName.equals(project.getProjectName()))
         {
             cancelProjectButton.setEnabled(false);
         }
-        projectTriggerButtonsPanel.addComponent(cancelProjectButton).inTL(105, 18);
+        projectTriggerButtonsPanel.addComponent(cancelProjectButton).inTL(155, 36);
         this.cancelProjectButton = cancelProjectButton;
+        this.triggerButtonPanel = projectTriggerButtonsPanel;
+        return projectTriggerButtonsPanel;
+    }
 
-        rightPanel.addUIElement(planetLargeViewRight).inTL(0, 0);
-
-        rightPanel.addUIElement(conditionsViewHeader).inTL(0, panePlanetHeight + 18);
-        rightPanel.addUIElement(conditionsView).inTL(0, panePlanetHeight + 36);
-
-        rightPanel.addUIElement(requirementsViewHeader).inTL(0, panePlanetHeight + 94);
-        rightPanel.addUIElement(requirementsView).inTL(0, panePlanetHeight + 112);
-
-        rightPanel.addUIElement(projectTriggerButtonsPanel).inTL(0, 600);
-
-        this.mainPanel.addComponent(rightPanel).inTL(scrollPlanetWidth + panePlanetWidth + 2, 0);
-        return rightPanel;
+    private int getTriggerButtonLabelHeight(BoggledBaseTerraformingProject project, ArrayList<BoggledBaseTerraformingProject.TerraformingRequirementObject> projectRequirements)
+    {
+        String ongoingProject = getOngoingProjectAtMarket(market);
+        if(ongoingProject == null)
+        {
+            if(project.requirementsMet(projectRequirements))
+            {
+                return 18;
+            }
+            else
+            {
+                return 36;
+            }
+        }
+        else
+        {
+            if(ongoingProject.equals(project.getProjectName()))
+            {
+                if(project.requirementsMet(projectRequirements))
+                {
+                    return 18;
+                }
+                else
+                {
+                    return 36;
+                }
+            }
+            else
+            {
+                return 36;
+            }
+        }
     }
 
     private void startNewProject(MarketAPI market, BoggledBaseTerraformingProject project)
     {
         boggledTools.addCondition(market, boggledTools.BoggledConditions.terraformingControllerConditionId);
         Terraforming_Controller terraformingController = getTerraformingControllerFromMarket(market);
-        ((Terraforming_Controller) terraformingController).setCurrentProject(project);
+        terraformingController.setCurrentProject(project);
         boggledTools.sendDebugIntelMessage("Project started!");
-        this.cancelProjectButton.setEnabled(true);
         Global.getSector().addTransientScript(project);
     }
 
@@ -481,9 +616,8 @@ public class BoggledTerraformingCoreUI implements CustomUIPanelPlugin {
     {
         boggledTools.addCondition(market, boggledTools.BoggledConditions.terraformingControllerConditionId);
         Terraforming_Controller terraformingController = getTerraformingControllerFromMarket(market);
-        ((Terraforming_Controller) terraformingController).setCurrentProject(null);
+        terraformingController.setCurrentProject(null);
         boggledTools.sendDebugIntelMessage("Project cancelled!");
-        this.cancelProjectButton.setEnabled(false);
     }
 
     private String getOngoingProjectAtMarket(MarketAPI market)
