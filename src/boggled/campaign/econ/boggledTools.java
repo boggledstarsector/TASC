@@ -1,7 +1,7 @@
 package boggled.campaign.econ;
 
 import boggled.scripts.*;
-import boggled.terraforming.BoggledBaseTerraformingProject;
+import boggled.terraforming.*;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.*;
 import com.fs.starfarer.api.campaign.comm.CommMessageAPI;
@@ -28,12 +28,7 @@ import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.io.File;
 import java.lang.String;
-import java.lang.reflect.Constructor;
-import java.net.URL;
-import java.net.URLClassLoader;
 import java.util.*;
 import java.util.List;
 import java.util.ArrayList;
@@ -190,6 +185,8 @@ public class boggledTools {
         public static final String domedCitiesIndustryId = "BOGGLED_DOMED_CITIES";
 
         public static final String ismaraSlingAsteroidProcessingId = "BOGGLED_ISMARA_SLING";
+
+        public static final String atmosphereProcessorId = "BOGGLED_ATMOSPHERE_PROCESSOR";
     }
 
     public static class BoggledResearchProjects {
@@ -451,6 +448,54 @@ public class boggledTools {
         return tascPlanetTypeToResourceLevelMapping.get(tascPlanetType).get(0);
     }
 
+    public static int getCurrentOrganicsLevelForMarket(MarketAPI market)
+    {
+        if(market.hasCondition("organics_trace"))
+        {
+            return 1;
+        }
+        else if(market.hasCondition("organics_common"))
+        {
+            return 2;
+        }
+        else if(market.hasCondition("organics_abundant"))
+        {
+            return 3;
+        }
+        else if(market.hasCondition("organics_plentiful"))
+        {
+            return 4;
+        }
+        else
+        {
+            return 0;
+        }
+    }
+
+    public static int getCurrentVolatilesLevelForMarket(MarketAPI market)
+    {
+        if(market.hasCondition("volatiles_trace"))
+        {
+            return 1;
+        }
+        else if(market.hasCondition("volatiles_diffuse"))
+        {
+            return 2;
+        }
+        else if(market.hasCondition("volatiles_abundant"))
+        {
+            return 3;
+        }
+        else if(market.hasCondition("volatiles_plentiful"))
+        {
+            return 4;
+        }
+        else
+        {
+            return 0;
+        }
+    }
+
     public static String getConditionIdForBaseOrganicsLevelForTascPlanetType(String tascPlanetType)
     {
         return intToOrganicsLevel.get(tascPlanetTypeToResourceLevelMapping.get(tascPlanetType).get(0));
@@ -501,6 +546,43 @@ public class boggledTools {
         }
 
         return getNextOrganicsConditionId(currentLevel);
+    }
+
+    public static String getNextVolatilesConditionId(int currentVolatilesLevel)
+    {
+        // Calculate the next level by incrementing the current level.
+        int nextLevel = currentVolatilesLevel + 1;
+
+        // Cap the level at the maximum allowed value, which is 4 (organics_plentiful).
+        int finalLevel = Math.min(nextLevel, 4);
+
+        // Look up the corresponding String ID in the map.
+        // For levels 1, 2, 3, and 4, it returns the correct string.
+        // Note: Level 0 maps to null, which would only happen if currentOrganicsLevel was -1.
+        return intToVolatilesLevel.get(finalLevel);
+    }
+
+    public static String getNextVolatilesConditionId(MarketAPI market)
+    {
+        int currentLevel = 0;
+        if(market.hasCondition("volatiles_trace"))
+        {
+            currentLevel = 1;
+        }
+        else if(market.hasCondition("volatiles_diffuse"))
+        {
+            currentLevel = 2;
+        }
+        else if(market.hasCondition("volatiles_abundant"))
+        {
+            currentLevel = 3;
+        }
+        else if(market.hasCondition("volatiles_plentiful"))
+        {
+            currentLevel = 4;
+        }
+
+        return getNextVolatilesConditionId(currentLevel);
     }
 
     public static String getOrganicsConditionIdForInteger(int level)
@@ -616,12 +698,6 @@ public class boggledTools {
         aotdIgnoreSettings.add("boggledRemnantStationEnabled");
     }
 
-    public static void initializeTerraformingProjectClassPathStringsFromJSON(@NotNull JSONArray terraformingClassPathStringsJSON) {
-        HashSet<String> classPaths = getStringListFromJson(terraformingClassPathStringsJSON, "terraforming_project_class_path");
-
-        boggledTools.terraformingProjectClassStrings = new ArrayList<String>(classPaths);
-    }
-
     public static void initializeStellarReflectorArraySuppressedConditionsFromJSON(@NotNull JSONArray stellarReflectorArraySuppressedConditionsJSON) {
         HashSet<String> conditions = getStringListFromJson(stellarReflectorArraySuppressedConditionsJSON, "condition_id");
 
@@ -675,37 +751,20 @@ public class boggledTools {
 
     public static ArrayList<BoggledBaseTerraformingProject> getTerraformingProjects(MarketAPI market)
     {
-        try {
-            List<String> jars = Global.getSettings().getModManager().getModSpec(BoggledMods.tascModId).getJars();
-            for(String jar : jars)
-            {
-                boggledTools.writeMessageToLog("Loaded JAR string: " + jar);
-            }
+        ArrayList<BoggledBaseTerraformingProject> projects = new ArrayList<>();
+        projects.add(new PlanetTypeChangeTerran(market));
+        projects.add(new PlanetTypeChangeWater(market));
+        projects.add(new PlanetTypeChangeFrozen(market));
 
-            File file = new File(jars.get(0));
-            URL[] urls = {file.toURI().toURL()};
-            URLClassLoader classLoader = new URLClassLoader(urls);
+        projects.add(new ConditionModificationRemoveToxicAtmosphere(market));
 
-            ArrayList<BoggledBaseTerraformingProject> terraformingProjects = new ArrayList<>();
-            for(String className : terraformingProjectClassStrings)
-            {
-                Class<?> myClass = classLoader.loadClass(className);
+        projects.add(new ResourceImprovementFarmland(market));
+        projects.add(new ResourceImprovementOrganics(market));
+        projects.add(new ResourceImprovementVolatiles(market));
 
-                // 3. Get the constructor with the specific parameter types
-                Constructor<?> constructor = myClass.getConstructor(MarketAPI.class);
+        // Call methods in other mods here to get their custom terraforming projects
 
-                // 4. Instantiate the object, passing the arguments
-                Object instance = constructor.newInstance(market);
-                terraformingProjects.add((BoggledBaseTerraformingProject) instance);
-            }
-
-            return terraformingProjects;
-
-        } catch (Exception e) {
-            String exceptionMessage = "Exception thrown loading the terraforming project class files. Please delete your terraforming_projects.csv file and redownload the original without any changes. Stack trace: \n\n" + e.getMessage();
-            boggledTools.writeMessageToLog(exceptionMessage);
-            throw new RuntimeException(exceptionMessage);
-        }
+        return projects;
     }
 
     public static PlanetSpecAPI getPlanetSpec(String planetTypeId)
@@ -741,14 +800,8 @@ public class boggledTools {
         return boggledTools.stellarReflectorArraySuppressedConditions;
     }
 
-    public static List<String> getTerraformingProjectClassStrings() {
-        return boggledTools.terraformingProjectClassStrings;
-    }
-
     private static List<String> domedCitiesSuppressedConditions;
     private static List<String> stellarReflectorArraySuppressedConditions;
-
-    private static List<String> terraformingProjectClassStrings;
 
     public static void incrementOreForPlanetCracking(MarketAPI market)
     {

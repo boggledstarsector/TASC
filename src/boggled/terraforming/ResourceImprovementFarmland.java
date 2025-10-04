@@ -67,7 +67,7 @@ public class ResourceImprovementFarmland extends BoggledBaseTerraformingProject
     public TerraformingRequirementObject getRequirementWorldTypeSupportsFarmland()
     {
         String tascPlanetType = boggledTools.getTascPlanetType(market.getPlanetEntity());
-        String currentPlanetTypeDisplayString = boggledTools.getPlanetSpec(tascPlanetType).getName();
+        String currentPlanetTypeDisplayString = getCurrentPlanetTypeDisplayString();
         Boolean worldTypeSupportsFarmland = boggledTools.tascPlanetTypeSupportsFarmland(tascPlanetType);
         TooltipMakerAPI.TooltipCreator tooltip = new TooltipMakerAPI.TooltipCreator() {
             @Override

@@ -164,7 +164,7 @@ public class BoggledBaseTerraformingPlanetTypeChangeProject extends BoggledBaseT
     public TerraformingRequirementObject getRequirementNotAlreadyTargetType()
     {
         String planetTypeId = this.market.getPlanetEntity().getTypeId();
-        String planetTypeDisplayString = boggledTools.getPlanetSpec(planetTypeId).getName();
+        String planetTypeDisplayString = boggledTools.getPlanetSpec(this.planetIdToChangeInto).getName();
         Boolean requirementMet = !this.planetIdToChangeInto.equals(planetTypeId);
         TooltipMakerAPI.TooltipCreator tooltip = new TooltipMakerAPI.TooltipCreator() {
             @Override

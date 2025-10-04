@@ -92,7 +92,6 @@ public class BoggledBaseTerraformingConditionModificationProject extends Boggled
     public ArrayList<TerraformingRequirementObject> getProjectRequirements()
     {
         ArrayList<TerraformingRequirementObject> projectRequirements = super.getProjectRequirements();
-        projectRequirements.add(getRequirementConditionsWouldBeChanged());
 
         return projectRequirements;
     }
