@@ -4,20 +4,20 @@ import com.fs.starfarer.api.campaign.econ.MarketAPI;
 
 import java.util.ArrayList;
 
-public class PlanetTypeChangeWater extends BoggledBaseTerraformingPlanetTypeChangeProject
+public class PlanetTypeChangeArid extends BoggledBaseTerraformingPlanetTypeChangeProject
 {
-    public PlanetTypeChangeWater(MarketAPI market)
+    public PlanetTypeChangeArid(MarketAPI market)
     {
-        super(market, "water");
+        super(market, "arid");
     }
 
     @Override
     public ArrayList<TerraformingRequirementObject> getProjectRequirements()
     {
         ArrayList<TerraformingRequirementObject> projectRequirements = super.getProjectRequirements();
-        projectRequirements.add(getRequirementMarketIsNotVeryHotOrVeryCold());
+        projectRequirements.add(getRequirementMarketIsTemperateOrHot());
         projectRequirements.add(getRequirementMarketHasStellarReflectorArray());
-        projectRequirements.add(getRequirementMarketHasHighWater());
+        projectRequirements.add(getRequirementMarketHasModerateWater());
 
         return projectRequirements;
     }

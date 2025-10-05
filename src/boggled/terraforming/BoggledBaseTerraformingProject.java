@@ -157,6 +157,51 @@ public class BoggledBaseTerraformingProject extends BaseIntelPlugin {
         return new TerraformingRequirementObject("World type allows terraforming", worldTypeAllowsTerraforming, tooltip);
     }
 
+    public TerraformingRequirementObject getRequirementWorldTypeAllowsHumanHabitability() {
+        String tascPlanetType = boggledTools.getTascPlanetType(market.getPlanetEntity());
+        Boolean worldTypeAllowsTerraforming = boggledTools.tascPlanetTypeAllowsHumanHabitability(tascPlanetType);
+        TooltipMakerAPI.TooltipCreator tooltip = new TooltipMakerAPI.TooltipCreator() {
+            @Override
+            public boolean isTooltipExpandable(Object o) {
+                return false;
+            }
+
+            @Override
+            public float getTooltipWidth(Object o) {
+                return 500;
+            }
+
+            @Override
+            public void createTooltip(TooltipMakerAPI tooltipMakerAPI, boolean b, Object o) {
+                tooltipMakerAPI.addPara("Dummy text here - world type allows human habitability", 10f);
+            }
+        };
+
+        return new TerraformingRequirementObject("World type can be habitable for humans", worldTypeAllowsTerraforming, tooltip);
+    }
+
+    public TerraformingRequirementObject getRequirementMarketIsHabitable() {
+        boolean requirementMet = this.market.hasCondition(Conditions.HABITABLE);
+        TooltipMakerAPI.TooltipCreator tooltip = new TooltipMakerAPI.TooltipCreator() {
+            @Override
+            public boolean isTooltipExpandable(Object o) {
+                return false;
+            }
+
+            @Override
+            public float getTooltipWidth(Object o) {
+                return 500;
+            }
+
+            @Override
+            public void createTooltip(TooltipMakerAPI tooltipMakerAPI, boolean b, Object o) {
+                tooltipMakerAPI.addPara("Dummy text here - market is habitable", 10f);
+            }
+        };
+
+        return new TerraformingRequirementObject("Colony is habitable for humans", requirementMet, tooltip);
+    }
+
     public TerraformingRequirementObject getRequirementAtmosphericDensityNormal() {
         Boolean requirementMet = !this.market.hasCondition(Conditions.NO_ATMOSPHERE) && !this.market.hasCondition(Conditions.THIN_ATMOSPHERE) && !this.market.hasCondition(Conditions.DENSE_ATMOSPHERE);
         TooltipMakerAPI.TooltipCreator tooltip = new TooltipMakerAPI.TooltipCreator() {
@@ -299,8 +344,154 @@ public class BoggledBaseTerraformingProject extends BaseIntelPlugin {
         return new TerraformingRequirementObject(terraformingProjectType + " research project has been completed", requirementMet, tooltip);
     }
 
-    public String getModId() {
+    public TerraformingRequirementObject getRequirementMarketIsVeryCold() {
+        Boolean requirementMet = this.market.hasCondition(Conditions.VERY_COLD);
+
+        TooltipMakerAPI.TooltipCreator tooltip = new TooltipMakerAPI.TooltipCreator() {
+            @Override
+            public boolean isTooltipExpandable(Object o) {
+                return false;
+            }
+
+            @Override
+            public float getTooltipWidth(Object o) {
+                return 500;
+            }
+
+            @Override
+            public void createTooltip(TooltipMakerAPI tooltipMakerAPI, boolean b, Object o) {
+                tooltipMakerAPI.addPara("Dummy text here - very cold", 10f);
+            }
+        };
+
+        return new TerraformingRequirementObject("Temperature is very cold", requirementMet, tooltip);
+    }
+
+    public TerraformingRequirementObject getRequirementMarketIsTemperateOrCold() {
+        Boolean requirementMet = !this.market.hasCondition(Conditions.VERY_COLD) && !this.market.hasCondition(Conditions.HOT) && !this.market.hasCondition(Conditions.VERY_HOT);
+
+        TooltipMakerAPI.TooltipCreator tooltip = new TooltipMakerAPI.TooltipCreator() {
+            @Override
+            public boolean isTooltipExpandable(Object o) {
+                return false;
+            }
+
+            @Override
+            public float getTooltipWidth(Object o) {
+                return 500;
+            }
+
+            @Override
+            public void createTooltip(TooltipMakerAPI tooltipMakerAPI, boolean b, Object o) {
+                tooltipMakerAPI.addPara("Dummy text here - temperate or cold", 10f);
+            }
+        };
+
+        return new TerraformingRequirementObject("Temperature is temperate or cold", requirementMet, tooltip);
+    }
+
+    public TerraformingRequirementObject getRequirementMarketIsTemperateOrHot() {
+        Boolean requirementMet = !this.market.hasCondition(Conditions.VERY_COLD) && !this.market.hasCondition(Conditions.COLD) && !this.market.hasCondition(Conditions.VERY_HOT);
+
+        TooltipMakerAPI.TooltipCreator tooltip = new TooltipMakerAPI.TooltipCreator() {
+            @Override
+            public boolean isTooltipExpandable(Object o) {
+                return false;
+            }
+
+            @Override
+            public float getTooltipWidth(Object o) {
+                return 500;
+            }
+
+            @Override
+            public void createTooltip(TooltipMakerAPI tooltipMakerAPI, boolean b, Object o) {
+                tooltipMakerAPI.addPara("Dummy text here - temperate or hot", 10f);
+            }
+        };
+
+        return new TerraformingRequirementObject("Temperature is temperate or hot", requirementMet, tooltip);
+    }
+
+    public TerraformingRequirementObject getRequirementMarketIsNotVeryHotOrVeryCold() {
+        Boolean requirementMet = !this.market.hasCondition(Conditions.VERY_COLD) && !this.market.hasCondition(Conditions.VERY_HOT);
+
+        TooltipMakerAPI.TooltipCreator tooltip = new TooltipMakerAPI.TooltipCreator() {
+            @Override
+            public boolean isTooltipExpandable(Object o) {
+                return false;
+            }
+
+            @Override
+            public float getTooltipWidth(Object o) {
+                return 500;
+            }
+
+            @Override
+            public void createTooltip(TooltipMakerAPI tooltipMakerAPI, boolean b, Object o) {
+                tooltipMakerAPI.addPara("Dummy text here - not very hot or very cold", 10f);
+            }
+        };
+
+        return new TerraformingRequirementObject("Temperature is not very hot or very cold", requirementMet, tooltip);
+    }
+
+    public TerraformingRequirementObject getRequirementMarketHasModerateWater()
+    {
+        boggledTools.PlanetWaterLevel currentWaterLevel = boggledTools.getWaterLevelForMarket(this.market);
+        boolean requirementMet = currentWaterLevel == boggledTools.PlanetWaterLevel.HIGH_WATER || currentWaterLevel == boggledTools.PlanetWaterLevel.MEDIUM_WATER;
+
+        TooltipMakerAPI.TooltipCreator tooltip = new TooltipMakerAPI.TooltipCreator() {
+            @Override
+            public boolean isTooltipExpandable(Object o) {
+                return false;
+            }
+
+            @Override
+            public float getTooltipWidth(Object o) {
+                return 500;
+            }
+
+            @Override
+            public void createTooltip(TooltipMakerAPI tooltipMakerAPI, boolean b, Object o) {
+                tooltipMakerAPI.addPara("Dummy text here - Moderate water",10f);
+            }
+        };
+
+        return new TerraformingRequirementObject("Colony has at least a moderate amount of water", requirementMet, tooltip);
+    }
+
+    public TerraformingRequirementObject getRequirementMarketHasHighWater()
+    {
+        boggledTools.PlanetWaterLevel currentWaterLevel = boggledTools.getWaterLevelForMarket(this.market);
+        boolean requirementMet = currentWaterLevel == boggledTools.PlanetWaterLevel.HIGH_WATER;
+
+        TooltipMakerAPI.TooltipCreator tooltip = new TooltipMakerAPI.TooltipCreator() {
+            @Override
+            public boolean isTooltipExpandable(Object o) {
+                return false;
+            }
+
+            @Override
+            public float getTooltipWidth(Object o) {
+                return 500;
+            }
+
+            @Override
+            public void createTooltip(TooltipMakerAPI tooltipMakerAPI, boolean b, Object o) {
+                tooltipMakerAPI.addPara("Dummy text here - High water",10f);
+            }
+        };
+
+        return new TerraformingRequirementObject("Colony has a large amount of water", requirementMet, tooltip);
+    }
+
+    public static String getModId() {
         return boggledTools.BoggledMods.tascModId;
+    }
+
+    public static boolean isEnabledViaSettings() {
+        return true;
     }
 
     public String getCurrentPlanetTypeDisplayString()

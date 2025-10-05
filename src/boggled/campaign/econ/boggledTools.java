@@ -56,8 +56,6 @@ public class boggledTools {
         public static final String perihelionProjectEnabled = "boggledPerihelionProjectEnabled";
         public static final String planetCrackerEnabled = "boggledPlanetCrackerEnabled";
 
-        public static final String planetKillerEnabled = "boggledPlanetKillerEnabled";
-
         public static final String addDomainTechBuildingsToVanillaColonies = "boggledAddDomainTechBuildingsToVanillaColonies";
         public static final String cryosanctumReplaceEverywhere = "boggledCryosanctumReplaceEverywhere";
 
@@ -123,9 +121,10 @@ public class boggledTools {
 
         public static final String marketSizeRequiredToBuildInactiveGate = "boggledMarketSizeRequiredToBuildInactiveGate";
 
-        public static final String planetKillerAllowDestructionOfColoniesMarkedAsEssentialForQuests = "boggledPlanetKillerAllowDestructionOfColoniesMarkedAsEssentialForQuests";
-
         public static final String perihelionProjectDaysToFinish = "boggledPerihelionProjectDaysToFinish";
+        public static final String removeRadiationProjectEnabled = "boggledTerraformingRemoveRadiationProjectEnabled";
+        public static final String removeAtmosphereProjectEnabled = "boggledTerraformingRemoveAtmosphereProjectEnabled";
+
     }
 
     public static class BoggledTags {
@@ -306,6 +305,21 @@ public class boggledTools {
         put(TascPlanetTypes.junglePlanetId, true);
         put(TascPlanetTypes.terranPlanetId, true);
         put(TascPlanetTypes.toxicPlanetId, true);
+        put(TascPlanetTypes.tundraPlanetId, true);
+        put(TascPlanetTypes.volcanicPlanetId, false);
+        put(TascPlanetTypes.waterPlanetId, true);
+        put(TascPlanetTypes.unknownPlanetId, false);
+    }};
+
+    private static final HashMap<String, Boolean> tascPlanetTypeAllowsForHumanHabitability = new HashMap<>(){{
+        put(TascPlanetTypes.starPlanetId, false);
+        put(TascPlanetTypes.barrenPlanetId, false);
+        put(TascPlanetTypes.desertPlanetId, true);
+        put(TascPlanetTypes.frozenPlanetId, false);
+        put(TascPlanetTypes.gasGiantPlanetId, false);
+        put(TascPlanetTypes.junglePlanetId, true);
+        put(TascPlanetTypes.terranPlanetId, true);
+        put(TascPlanetTypes.toxicPlanetId, false);
         put(TascPlanetTypes.tundraPlanetId, true);
         put(TascPlanetTypes.volcanicPlanetId, false);
         put(TascPlanetTypes.waterPlanetId, true);
@@ -635,6 +649,11 @@ public class boggledTools {
         return tascPlanetTypeAllowsForTerraforming.getOrDefault(tascPlanetType, false);
     }
 
+    public static boolean tascPlanetTypeAllowsHumanHabitability(String tascPlanetType)
+    {
+        return tascPlanetTypeAllowsForHumanHabitability.getOrDefault(tascPlanetType, false);
+    }
+
     public static HashSet<String> getAllPlanetTypeIdsForTascPlanetType(String tascPlanetType)
     {
         return tascPlanetTypeToAllPlanetTypeIdsMapping.getOrDefault(tascPlanetType, new HashSet<>());
@@ -676,8 +695,6 @@ public class boggledTools {
 
     public static void initialiseModIgnoreSettings() {
         aotdIgnoreSettings.add("boggledTerraformingContentEnabled");
-        aotdIgnoreSettings.add("boggledTerraformingRemoveRadiationProjectEnabled");
-        aotdIgnoreSettings.add("boggledTerraformingRemoveAtmosphereProjectEnabled");
 
         aotdIgnoreSettings.add("boggledStellarReflectorArrayEnabled");
         aotdIgnoreSettings.add("boggledGenelabEnabled");
@@ -754,9 +771,26 @@ public class boggledTools {
         ArrayList<BoggledBaseTerraformingProject> projects = new ArrayList<>();
         projects.add(new PlanetTypeChangeTerran(market));
         projects.add(new PlanetTypeChangeWater(market));
+        projects.add(new PlanetTypeChangeArid(market));
+        projects.add(new PlanetTypeChangeJungle(market));
+        projects.add(new PlanetTypeChangeTundra(market));
         projects.add(new PlanetTypeChangeFrozen(market));
 
+        projects.add(new ConditionModificationAddHabitable(market));
+        projects.add(new ConditionModificationAddMildClimate(market));
+        projects.add(new ConditionModificationRemoveExtremeWeather(market));
+        projects.add(new ConditionModificationRemoveNoAtmosphere(market));
+        projects.add(new ConditionModificationRemoveThinAtmosphere(market));
+        projects.add(new ConditionModificationRemoveDenseAtmosphere(market));
         projects.add(new ConditionModificationRemoveToxicAtmosphere(market));
+        if(ConditionModificationRemoveAtmosphere.isEnabledViaSettings())
+        {
+            projects.add(new ConditionModificationRemoveAtmosphere(market));
+        }
+        if(ConditionModificationRemoveIrradiated.isEnabledViaSettings())
+        {
+            projects.add(new ConditionModificationRemoveIrradiated(market));
+        }
 
         projects.add(new ResourceImprovementFarmland(market));
         projects.add(new ResourceImprovementOrganics(market));

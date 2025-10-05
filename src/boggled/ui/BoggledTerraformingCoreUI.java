@@ -398,7 +398,7 @@ public class BoggledTerraformingCoreUI implements CustomUIPanelPlugin {
         }
 
         // Get the custom panel for the list of projects
-        CustomPanelAPI projectsPanel = createProjectsPanel(leftPanel, SCREEN_HEIGHT - (18 + panePlanetHeight + 18 + conditionHeight + 18));
+        CustomPanelAPI projectsPanel = createProjectsPanel(leftPanel, SCREEN_HEIGHT + 18 - (18 + panePlanetHeight + 18 + conditionHeight + 18));
 
         // Height is panePlanetHeight + 18 because of section header
         leftPanel.addUIElement(planetLargeViewLeft).inTL(0, 0);
@@ -503,7 +503,7 @@ public class BoggledTerraformingCoreUI implements CustomUIPanelPlugin {
         rightPanel.addUIElement(requirementsViewHeader).inTL(0, panePlanetHeight + conditionHeight + 54);
         rightPanel.addUIElement(requirementsView).inTL(0, panePlanetHeight + conditionHeight + 72);
 
-        this.triggerPanelVerticalPixelLocation = panePlanetHeight + conditionHeight + 72 + spaceRemainingForRequirementsPanel;
+        this.triggerPanelVerticalPixelLocation = panePlanetHeight + conditionHeight + 72 + spaceRemainingForRequirementsPanel + 18;
         rightPanel.addUIElement(projectTriggerButtonsPanel).inTL(0, this.triggerPanelVerticalPixelLocation);
 
         this.mainPanel.addComponent(rightPanel).inTL(planetSelectPaneWidth + paneSeparator + panePlanetWidth + paneSeparator, 0);

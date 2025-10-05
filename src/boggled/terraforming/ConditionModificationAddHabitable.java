@@ -8,26 +8,28 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
-public class ConditionModificationRemoveToxicAtmosphere extends BoggledBaseTerraformingConditionModificationProject
+public class ConditionModificationAddHabitable extends BoggledBaseTerraformingConditionModificationProject
 {
-    public ConditionModificationRemoveToxicAtmosphere(MarketAPI market)
+    public ConditionModificationAddHabitable(MarketAPI market)
     {
-        super(market, "Reduce atmospheric toxicity", new HashSet<>(), new HashSet<>(List.of(Conditions.TOXIC_ATMOSPHERE)));
+        super(market, "Make atmosphere habitable", new HashSet<>(List.of(Conditions.HABITABLE)), new HashSet<>());
     }
 
     @Override
     public ArrayList<TerraformingRequirementObject> getProjectRequirements()
     {
         ArrayList<TerraformingRequirementObject> projectRequirements = super.getProjectRequirements();
-        projectRequirements.add(getRequirementWorldTypeAllowsTerraforming());
-        projectRequirements.add(getRequirementMarketHasToxicAtmosphere());
+        projectRequirements.add(getRequirementWorldTypeAllowsHumanHabitability());
+        projectRequirements.add(getRequirementMarketNotHabitable());
+        projectRequirements.add(getRequirementAtmosphericDensityNormal());
+        projectRequirements.add(getRequirementAtmosphericNotToxicOrIrradiated());
         projectRequirements.add(getRequirementMarketHasAtmosphereProcessor());
         return projectRequirements;
     }
 
-    public TerraformingRequirementObject getRequirementMarketHasToxicAtmosphere()
+    public TerraformingRequirementObject getRequirementMarketNotHabitable()
     {
-        boolean requirementMet = this.market.hasCondition(Conditions.TOXIC_ATMOSPHERE);
+        boolean requirementMet = !this.market.hasCondition(Conditions.HABITABLE);
         TooltipMakerAPI.TooltipCreator tooltip = new TooltipMakerAPI.TooltipCreator() {
             @Override
             public boolean isTooltipExpandable(Object o) {
@@ -41,10 +43,10 @@ public class ConditionModificationRemoveToxicAtmosphere extends BoggledBaseTerra
 
             @Override
             public void createTooltip(TooltipMakerAPI tooltipMakerAPI, boolean b, Object o) {
-                tooltipMakerAPI.addPara("Dummy text here - has toxic atmo",10f);
+                tooltipMakerAPI.addPara("Dummy text here - not habitable",10f);
             }
         };
 
-        return new TerraformingRequirementObject("Colony has a toxic atmosphere", requirementMet, tooltip);
+        return new TerraformingRequirementObject("Colony is not habitable for humans", requirementMet, tooltip);
     }
 }

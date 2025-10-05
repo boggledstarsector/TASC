@@ -8,11 +8,11 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
-public class ConditionModificationRemoveToxicAtmosphere extends BoggledBaseTerraformingConditionModificationProject
+public class ConditionModificationRemoveDenseAtmosphere extends BoggledBaseTerraformingConditionModificationProject
 {
-    public ConditionModificationRemoveToxicAtmosphere(MarketAPI market)
+    public ConditionModificationRemoveDenseAtmosphere(MarketAPI market)
     {
-        super(market, "Reduce atmospheric toxicity", new HashSet<>(), new HashSet<>(List.of(Conditions.TOXIC_ATMOSPHERE)));
+        super(market, "Reduce atmospheric density", new HashSet<>(), new HashSet<>(List.of(Conditions.DENSE_ATMOSPHERE)));
     }
 
     @Override
@@ -20,14 +20,14 @@ public class ConditionModificationRemoveToxicAtmosphere extends BoggledBaseTerra
     {
         ArrayList<TerraformingRequirementObject> projectRequirements = super.getProjectRequirements();
         projectRequirements.add(getRequirementWorldTypeAllowsTerraforming());
-        projectRequirements.add(getRequirementMarketHasToxicAtmosphere());
+        projectRequirements.add(getRequirementMarketHasDenseAtmosphere());
         projectRequirements.add(getRequirementMarketHasAtmosphereProcessor());
         return projectRequirements;
     }
 
-    public TerraformingRequirementObject getRequirementMarketHasToxicAtmosphere()
+    public TerraformingRequirementObject getRequirementMarketHasDenseAtmosphere()
     {
-        boolean requirementMet = this.market.hasCondition(Conditions.TOXIC_ATMOSPHERE);
+        boolean requirementMet = this.market.hasCondition(Conditions.DENSE_ATMOSPHERE);
         TooltipMakerAPI.TooltipCreator tooltip = new TooltipMakerAPI.TooltipCreator() {
             @Override
             public boolean isTooltipExpandable(Object o) {
@@ -41,10 +41,10 @@ public class ConditionModificationRemoveToxicAtmosphere extends BoggledBaseTerra
 
             @Override
             public void createTooltip(TooltipMakerAPI tooltipMakerAPI, boolean b, Object o) {
-                tooltipMakerAPI.addPara("Dummy text here - has toxic atmo",10f);
+                tooltipMakerAPI.addPara("Dummy text here - has dense atmo",10f);
             }
         };
 
-        return new TerraformingRequirementObject("Colony has a toxic atmosphere", requirementMet, tooltip);
+        return new TerraformingRequirementObject("Colony has a dense atmosphere", requirementMet, tooltip);
     }
 }

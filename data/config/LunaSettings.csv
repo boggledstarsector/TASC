@@ -7,12 +7,8 @@ boggledTerraformingTime,Planet type change time,Int,400,,"Controls how long plan
 boggledResourceImprovementTime,Resource improvement time,Int,200,,"Controls how long resource improvement projects take (in days).",1,1000,Terraforming
 boggledConditionImprovementTime,Condition improvement time,Int,200,,"Controls how long condition improvement projects take (in days).",1,1000,Terraforming
 boggledTerraformingTypeChangeAddVolatiles,Add volatiles to Terran and tundra worlds,Boolean,True,,"Set this to false to prevent Terran and tundra type change projects from creating volatiles deposits.",,,Terraforming
-boggledTerraformingRemoveRadiationProjectEnabled,Enable radiation remediation project,Boolean,False,,"Set this to true to enable the terraforming project to remove radiation from a market.
-
-If the player has Ashes of the Domain - Vaults of Knowledge enabled, this setting is ignored and always true.",,,Terraforming
-boggledTerraformingRemoveAtmosphereProjectEnabled,Enable the remove atmosphere project,Boolean,False,,"Set this to true to enable the terraforming project to remove the atmosphere from a market.
-
-If the player has Ashes of the Domain - Vaults of Knowledge enabled, this setting is ignored and always true.",,,Terraforming
+boggledTerraformingRemoveRadiationProjectEnabled,Enable radiation remediation project,Boolean,False,,"Set this to true to enable the terraforming project to remove radiation from a market.",,,Terraforming
+boggledTerraformingRemoveAtmosphereProjectEnabled,Enable the remove atmosphere project,Boolean,False,,"Set this to true to enable the terraforming project to remove the atmosphere from a market.",,,Terraforming
 boggled_terraformingBuildingHeader,Building Settings,Header,Building Settings,,,,,Terraforming
 boggledStellarReflectorArrayEnabled,Enable Stellar Reflector Array,Boolean,True,,"Set this to false to disable the Stellar Reflector Array building.
 
