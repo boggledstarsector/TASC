@@ -134,6 +134,7 @@ public class BoggledCoreModifierEveryFrameScript implements EveryFrameScript {
 
     public void advance(float amount)
     {
+        // TODO every time you switch away from terraforming and try to go back it's blank, have to recreate each time somehow
         if (Global.getSector().getCampaignUI().getCurrentCoreTab() != null && Global.getSector().getCampaignUI().getCurrentCoreTab() == CoreUITabId.OUTPOSTS)
         {
             UIPanelAPI mainParent = getMainCorePanel();
@@ -180,7 +181,8 @@ public class BoggledCoreModifierEveryFrameScript implements EveryFrameScript {
                     removeAllTabPanels(mainParent, null);
                     if(highlightedButton.getText().contains("Terraforming"))
                     {
-                        mainParent.addComponent(this.outpostsButtonToPanelMapping.get(terraformingButton)).inTL(0f, 30f);
+                        UIComponentAPI terraformingPanel = this.outpostsButtonToPanelMapping.get(terraformingButton);
+                        mainParent.addComponent(terraformingPanel).inTL(0f, 30f);
                     }
                     else
                     {
