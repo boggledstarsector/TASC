@@ -498,8 +498,12 @@ public class BoggledBaseTerraformingProject extends BaseIntelPlugin {
     {
         // Volcanic planet type id is actually lava in vanilla
         String tascPlanetType = boggledTools.getTascPlanetType(market.getPlanetEntity());
-        if (tascPlanetType.equals(boggledTools.TascPlanetTypes.volcanicPlanetId)) {
+        if(tascPlanetType.equals(boggledTools.TascPlanetTypes.volcanicPlanetId)) {
             return "Volcanic";
+        }
+        // arid is the planet ID we're switching into for desert TASC type
+        else if(tascPlanetType.equals(boggledTools.TascPlanetTypes.desertPlanetId)) {
+            return "Arid";
         }
         else
         {

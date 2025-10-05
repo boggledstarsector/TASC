@@ -12,7 +12,7 @@ public class ConditionModificationRemoveNoAtmosphere extends BoggledBaseTerrafor
 {
     public ConditionModificationRemoveNoAtmosphere(MarketAPI market)
     {
-        super(market, "Add atmosphere", new HashSet<>(), new HashSet<>(List.of(Conditions.NO_ATMOSPHERE)));
+        super(market, "Add atmosphere", new HashSet<>(List.of(Conditions.THIN_ATMOSPHERE)), new HashSet<>(List.of(Conditions.NO_ATMOSPHERE)));
     }
 
     @Override

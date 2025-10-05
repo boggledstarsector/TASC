@@ -183,7 +183,7 @@ public class BoggledBaseTerraformingPlanetTypeChangeProject extends BoggledBaseT
             }
         };
 
-        return new TerraformingRequirementObject(this.market.getName() + " is not already a " + planetTypeDisplayString + " world", requirementMet, tooltip);
+        return new TerraformingRequirementObject("Colony is not already a " + planetTypeDisplayString + " world", requirementMet, tooltip);
     }
 
     @Override
