@@ -199,7 +199,7 @@ public class BoggledBaseTerraformingProject extends BaseIntelPlugin {
             }
         };
 
-        return new TerraformingRequirementObject("Colony is habitable for humans", requirementMet, tooltip);
+        return new TerraformingRequirementObject(this.market.getName() + " is habitable for humans", requirementMet, tooltip);
     }
 
     public TerraformingRequirementObject getRequirementAtmosphericDensityNormal() {
@@ -458,7 +458,7 @@ public class BoggledBaseTerraformingProject extends BaseIntelPlugin {
             }
         };
 
-        return new TerraformingRequirementObject("Colony has at least a moderate amount of water", requirementMet, tooltip);
+        return new TerraformingRequirementObject(this.market.getName() + " has at least a moderate amount of water", requirementMet, tooltip);
     }
 
     public TerraformingRequirementObject getRequirementMarketHasHighWater()
@@ -483,7 +483,7 @@ public class BoggledBaseTerraformingProject extends BaseIntelPlugin {
             }
         };
 
-        return new TerraformingRequirementObject("Colony has a large amount of water", requirementMet, tooltip);
+        return new TerraformingRequirementObject(this.market.getName() + " has a large amount of water", requirementMet, tooltip);
     }
 
     public static String getModId() {
@@ -494,16 +494,15 @@ public class BoggledBaseTerraformingProject extends BaseIntelPlugin {
         return true;
     }
 
-    public String getCurrentPlanetTypeDisplayString()
+    public String getTascPlanetTypeDisplayString(String tascPlanetType)
     {
         // Volcanic planet type id is actually lava in vanilla
-        String tascPlanetType = boggledTools.getTascPlanetType(market.getPlanetEntity());
         if(tascPlanetType.equals(boggledTools.TascPlanetTypes.volcanicPlanetId)) {
             return "Volcanic";
         }
         // arid is the planet ID we're switching into for desert TASC type
         else if(tascPlanetType.equals(boggledTools.TascPlanetTypes.desertPlanetId)) {
-            return "Arid";
+            return "Desert";
         }
         else
         {

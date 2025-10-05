@@ -15,6 +15,7 @@ public class PlanetTypeChangeTerran extends BoggledBaseTerraformingPlanetTypeCha
     public ArrayList<TerraformingRequirementObject> getProjectRequirements()
     {
         ArrayList<TerraformingRequirementObject> projectRequirements = super.getProjectRequirements();
+        projectRequirements.add(getRequirementAtmosphericNotToxicOrIrradiated());
         projectRequirements.add(getRequirementMarketIsNotVeryHotOrVeryCold());
         projectRequirements.add(getRequirementMarketHasStellarReflectorArray());
         projectRequirements.add(getRequirementMarketHasHighWater());

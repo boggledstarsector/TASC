@@ -20,6 +20,7 @@ public class ConditionModificationRemoveAtmosphere extends BoggledBaseTerraformi
                 Conditions.DENSE_ATMOSPHERE,
                 Conditions.HABITABLE,
                 Conditions.MILD_CLIMATE,
+                Conditions.EXTREME_WEATHER,
                 Conditions.INIMICAL_BIOSPHERE,
                 Conditions.FARMLAND_POOR,
                 Conditions.FARMLAND_ADEQUATE,
@@ -35,13 +36,14 @@ public class ConditionModificationRemoveAtmosphere extends BoggledBaseTerraformi
         ArrayList<TerraformingRequirementObject> projectRequirements = super.getProjectRequirements();
         projectRequirements.add(getRequirementWorldTypeAllowsTerraforming());
         projectRequirements.add(getRequirementMarketIsNotWaterWorld());
+        projectRequirements.add(getRequirementMarketHasAtmosphere());
         projectRequirements.add(getRequirementMarketHasAtmosphereProcessor());
         return projectRequirements;
     }
 
     public TerraformingRequirementObject getRequirementMarketIsNotWaterWorld()
     {
-        boolean requirementMet = this.market.hasCondition(Conditions.WATER_SURFACE);
+        boolean requirementMet = !this.market.hasCondition(Conditions.WATER_SURFACE);
         TooltipMakerAPI.TooltipCreator tooltip = new TooltipMakerAPI.TooltipCreator() {
             @Override
             public boolean isTooltipExpandable(Object o) {
@@ -59,7 +61,7 @@ public class ConditionModificationRemoveAtmosphere extends BoggledBaseTerraformi
             }
         };
 
-        return new TerraformingRequirementObject("Colony is not a Water world", requirementMet, tooltip);
+        return new TerraformingRequirementObject(this.market.getName() + " is not a Water world", requirementMet, tooltip);
     }
 
     public static boolean isEnabledViaSettings() {

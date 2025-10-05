@@ -1,6 +1,7 @@
 package boggled.campaign.econ.industries;
 
 import boggled.campaign.econ.boggledTools;
+import boggled.campaign.econ.industries.interfaces.ShowBoggledTerraformingMenuOption;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CargoAPI;
 import com.fs.starfarer.api.campaign.PlanetAPI;
@@ -15,7 +16,7 @@ import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
 import java.awt.*;
 
-public class Boggled_Mesozoic_Park extends BaseIndustry
+public class Boggled_Mesozoic_Park extends BaseIndustry implements ShowBoggledTerraformingMenuOption
 {
     //Need to update string in addImproveDesc if value changed
     private final float IMPROVE_BONUS = 1.40f;

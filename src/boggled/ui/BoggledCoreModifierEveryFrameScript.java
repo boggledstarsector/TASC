@@ -1,8 +1,10 @@
 package boggled.ui;
 
+import boggled.campaign.econ.boggledTools;
 import com.fs.starfarer.api.EveryFrameScript;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.*;
+import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.ui.Alignment;
 import com.fs.starfarer.api.ui.ButtonAPI;
 import com.fs.starfarer.api.ui.CustomPanelAPI;
@@ -34,6 +36,10 @@ public class BoggledCoreModifierEveryFrameScript implements EveryFrameScript {
     private static final Class<?> methodClass;
     private static final MethodHandle invokeMethodHandle;
 
+    private static MarketAPI marketToOpen = null;
+
+    UIComponentAPI terraformingPanel;
+
     static {
         try {
             methodClass = Class.forName("java.lang.reflect.Method", false, Class.class.getClassLoader());
@@ -51,6 +57,11 @@ public class BoggledCoreModifierEveryFrameScript implements EveryFrameScript {
 
     public boolean runWhilePaused() {
         return true;
+    }
+
+    public static void setMarketToOpen(MarketAPI market)
+    {
+        marketToOpen = market;
     }
 
     private HashMap<ButtonAPI, UIComponentAPI> getOriginalPanelMap(UIPanelAPI outpostsMainPanel)
@@ -77,13 +88,13 @@ public class BoggledCoreModifierEveryFrameScript implements EveryFrameScript {
 
                 public void createTooltip(TooltipMakerAPI tooltip, boolean expanded, Object tooltipParam) {
                     tooltip.addSectionHeading("Terraforming & Station Construction", Alignment.MID, 0.0F);
-                    tooltip.addPara("In this tab, you can find terraforming projects.", 5.0F);
+                    tooltip.addPara("Use this tab to manage terraforming projects on your colonies.", 5.0F);
                 }
             }, tryToGetButtonProd("colonies"), 240.0F, 7, false);
 
             existingTerraformingButton = terraformingButton;
             BoggledTerraformingCoreUI terraformingUI = new BoggledTerraformingCoreUI();
-            terraformingUI.init(null);
+            terraformingUI.init(marketToOpen);
             originalMap.put(existingTerraformingButton, terraformingUI.getMainPanel());
         }
 
@@ -118,6 +129,14 @@ public class BoggledCoreModifierEveryFrameScript implements EveryFrameScript {
                 HashMap<ButtonAPI, UIComponentAPI> originalMap = getOriginalPanelMap(mainParent);
                 this.outpostsButtonToPanelMapping = getModifiedPanelMapWithTerraformingMenu(originalMap, mainParent);
 
+                boggledTools.writeMessageToLog("Market to open is: " + (marketToOpen != null ? marketToOpen.getName() : "null"));
+                if(marketToOpen != null)
+                {
+                    switchToTerraformingPanel();
+                    marketToOpen = null;
+                    return;
+                }
+
                 ButtonAPI checkedButton = getCheckedButton();
                 if(checkedButton != null)
                 {
@@ -147,7 +166,7 @@ public class BoggledCoreModifierEveryFrameScript implements EveryFrameScript {
                         if(highlightedButton.getText().contains("Terraforming"))
                         {
                             BoggledTerraformingCoreUI terraformingUI = new BoggledTerraformingCoreUI();
-                            terraformingUI.init(null);
+                            terraformingUI.init(marketToOpen);
                             this.outpostsButtonToPanelMapping.put(highlightedButton, terraformingUI.getMainPanel());
                             UIComponentAPI componentToAdd = this.outpostsButtonToPanelMapping.get(highlightedButton);
                             mainParent.addComponent(componentToAdd).inTL(0f, 30f);
@@ -162,6 +181,34 @@ public class BoggledCoreModifierEveryFrameScript implements EveryFrameScript {
                 }
             }
         }
+    }
+
+    private void switchToTerraformingPanel()
+    {
+        UIPanelAPI mainParent = getCurrentTab();
+        ButtonAPI terraformingButton = tryToGetButtonProd("terraforming");
+
+        for(ButtonAPI button : this.outpostsButtonToPanelMapping.keySet())
+        {
+            if(button.isChecked())
+            {
+                button.setChecked(false);
+            }
+
+            if(button.isHighlighted())
+            {
+                button.unhighlight();
+            }
+        }
+
+        terraformingButton.highlight();
+
+        removeAllTabPanels(mainParent, terraformingButton);
+        BoggledTerraformingCoreUI terraformingUI = new BoggledTerraformingCoreUI();
+        terraformingUI.init(marketToOpen);
+        this.outpostsButtonToPanelMapping.put(terraformingButton, terraformingUI.getMainPanel());
+        UIComponentAPI componentToAdd = this.outpostsButtonToPanelMapping.get(terraformingButton);
+        mainParent.addComponent(componentToAdd).inTL(0f, 30f);
     }
 
     private ButtonAPI getCheckedButton()

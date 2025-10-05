@@ -2,13 +2,12 @@ package boggled.campaign.econ.industries;
 
 import java.lang.String;
 
-import boggled.campaign.econ.industries.interfaces.ShowBoggledTerraformingMenuOption;
 import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.impl.campaign.econ.impl.BaseIndustry;
 import com.fs.starfarer.api.impl.campaign.ids.Conditions;
 import boggled.campaign.econ.boggledTools;
 
-public class Boggled_Domain_Archaeology extends BaseIndustry implements ShowBoggledTerraformingMenuOption
+public class Boggled_Domain_Archaeology extends BaseIndustry
 {
     @Override
     public boolean canBeDisrupted() {

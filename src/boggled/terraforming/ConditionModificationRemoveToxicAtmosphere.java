@@ -45,6 +45,6 @@ public class ConditionModificationRemoveToxicAtmosphere extends BoggledBaseTerra
             }
         };
 
-        return new TerraformingRequirementObject("Colony has a toxic atmosphere", requirementMet, tooltip);
+        return new TerraformingRequirementObject(this.market.getName() + " has a toxic atmosphere", requirementMet, tooltip);
     }
 }

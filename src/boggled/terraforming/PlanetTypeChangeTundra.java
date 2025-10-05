@@ -15,6 +15,7 @@ public class PlanetTypeChangeTundra extends BoggledBaseTerraformingPlanetTypeCha
     public ArrayList<TerraformingRequirementObject> getProjectRequirements()
     {
         ArrayList<TerraformingRequirementObject> projectRequirements = super.getProjectRequirements();
+        projectRequirements.add(getRequirementAtmosphericNotToxicOrIrradiated());
         projectRequirements.add(getRequirementMarketIsTemperateOrCold());
         projectRequirements.add(getRequirementMarketHasStellarReflectorArray());
         projectRequirements.add(getRequirementMarketHasModerateWater());

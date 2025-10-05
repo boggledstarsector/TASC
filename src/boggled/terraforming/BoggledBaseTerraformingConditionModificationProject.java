@@ -2,6 +2,7 @@ package boggled.terraforming;
 
 import boggled.campaign.econ.boggledTools;
 import com.fs.starfarer.api.campaign.econ.MarketAPI;
+import com.fs.starfarer.api.impl.campaign.ids.Conditions;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -86,6 +87,52 @@ public class BoggledBaseTerraformingConditionModificationProject extends Boggled
         };
 
         return new TerraformingRequirementObject(this.projectName, conditionsWouldChange, tooltip);
+    }
+
+    public TerraformingRequirementObject getRequirementMarketDoesNotHaveExtremeWeather()
+    {
+        boolean requirementMet = !this.market.hasCondition(Conditions.EXTREME_WEATHER);
+        TooltipMakerAPI.TooltipCreator tooltip = new TooltipMakerAPI.TooltipCreator() {
+            @Override
+            public boolean isTooltipExpandable(Object o) {
+                return false;
+            }
+
+            @Override
+            public float getTooltipWidth(Object o) {
+                return 500;
+            }
+
+            @Override
+            public void createTooltip(TooltipMakerAPI tooltipMakerAPI, boolean b, Object o) {
+                tooltipMakerAPI.addPara("Dummy text here - does not have extreme weather",10f);
+            }
+        };
+
+        return new TerraformingRequirementObject(this.market.getName() + " does not have extreme weather", requirementMet, tooltip);
+    }
+
+    public TerraformingRequirementObject getRequirementMarketHasAtmosphere()
+    {
+        boolean requirementMet = !this.market.hasCondition(Conditions.NO_ATMOSPHERE);
+        TooltipMakerAPI.TooltipCreator tooltip = new TooltipMakerAPI.TooltipCreator() {
+            @Override
+            public boolean isTooltipExpandable(Object o) {
+                return false;
+            }
+
+            @Override
+            public float getTooltipWidth(Object o) {
+                return 500;
+            }
+
+            @Override
+            public void createTooltip(TooltipMakerAPI tooltipMakerAPI, boolean b, Object o) {
+                tooltipMakerAPI.addPara("Dummy text here - has atmosphere",10f);
+            }
+        };
+
+        return new TerraformingRequirementObject(this.market.getName() + " has an atmosphere", requirementMet, tooltip);
     }
 
     @Override

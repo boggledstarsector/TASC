@@ -21,6 +21,7 @@ public class ConditionModificationAddMildClimate extends BoggledBaseTerraforming
         ArrayList<TerraformingRequirementObject> projectRequirements = super.getProjectRequirements();
         projectRequirements.add(getRequirementWorldTypeAllowsHumanHabitability());
         projectRequirements.add(getRequirementMarketIsHabitable());
+        projectRequirements.add(getRequirementMarketDoesNotHaveExtremeWeather());
         projectRequirements.add(getRequirementMarketNotMildClimate());
         projectRequirements.add(getRequirementAtmosphericDensityNormal());
         projectRequirements.add(getRequirementAtmosphericNotToxicOrIrradiated());
@@ -48,6 +49,6 @@ public class ConditionModificationAddMildClimate extends BoggledBaseTerraforming
             }
         };
 
-        return new TerraformingRequirementObject("Colony does not have a mild climate", requirementMet, tooltip);
+        return new TerraformingRequirementObject(this.market.getName() + " does not have a mild climate", requirementMet, tooltip);
     }
 }

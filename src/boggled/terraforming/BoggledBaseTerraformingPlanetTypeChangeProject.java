@@ -135,12 +135,12 @@ public class BoggledBaseTerraformingPlanetTypeChangeProject extends BoggledBaseT
 
     public String getBaseOrganics()
     {
-        return boggledTools.getConditionIdForBaseOrganicsLevelForTascPlanetType(this.planetIdToChangeInto);
+        return boggledTools.getConditionIdForBaseOrganicsLevelForTascPlanetType(boggledTools.getTascPlanetType(this.planetIdToChangeInto));
     }
 
     public String getBaseVolatiles()
     {
-        return boggledTools.getConditionIdForBaseVolatilesLevelForTascPlanetType(this.planetIdToChangeInto);
+        return boggledTools.getConditionIdForBaseVolatilesLevelForTascPlanetType(boggledTools.getTascPlanetType(this.planetIdToChangeInto));
     }
 
     @Override
@@ -163,9 +163,10 @@ public class BoggledBaseTerraformingPlanetTypeChangeProject extends BoggledBaseT
 
     public TerraformingRequirementObject getRequirementNotAlreadyTargetType()
     {
-        String planetTypeId = this.market.getPlanetEntity().getTypeId();
-        String planetTypeDisplayString = boggledTools.getPlanetSpec(this.planetIdToChangeInto).getName();
-        Boolean requirementMet = !this.planetIdToChangeInto.equals(planetTypeId);
+        String tascPlanetType = boggledTools.getTascPlanetType(this.market.getPlanetEntity());
+        String tascPlanetTypeToChangeInto = boggledTools.getTascPlanetType(this.planetIdToChangeInto);
+        String planetTypeDisplayString = getTascPlanetTypeDisplayString(tascPlanetTypeToChangeInto);
+        Boolean requirementMet = !tascPlanetType.equals(tascPlanetTypeToChangeInto);
         TooltipMakerAPI.TooltipCreator tooltip = new TooltipMakerAPI.TooltipCreator() {
             @Override
             public boolean isTooltipExpandable(Object o) {
@@ -183,7 +184,7 @@ public class BoggledBaseTerraformingPlanetTypeChangeProject extends BoggledBaseT
             }
         };
 
-        return new TerraformingRequirementObject("Colony is not already a " + planetTypeDisplayString + " world", requirementMet, tooltip);
+        return new TerraformingRequirementObject(this.market.getName() + " is not already a " + planetTypeDisplayString + " world", requirementMet, tooltip);
     }
 
     @Override
@@ -193,7 +194,6 @@ public class BoggledBaseTerraformingPlanetTypeChangeProject extends BoggledBaseT
         projectRequirements.add(getRequirementWorldTypeAllowsTerraforming());
         projectRequirements.add(getRequirementNotAlreadyTargetType());
         projectRequirements.add(getRequirementAtmosphericDensityNormal());
-        projectRequirements.add(getRequirementAtmosphericNotToxicOrIrradiated());
 
         return projectRequirements;
     }

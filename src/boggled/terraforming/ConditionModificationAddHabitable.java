@@ -21,6 +21,7 @@ public class ConditionModificationAddHabitable extends BoggledBaseTerraformingCo
         ArrayList<TerraformingRequirementObject> projectRequirements = super.getProjectRequirements();
         projectRequirements.add(getRequirementWorldTypeAllowsHumanHabitability());
         projectRequirements.add(getRequirementMarketNotHabitable());
+        projectRequirements.add(getRequirementMarketDoesNotHaveExtremeWeather());
         projectRequirements.add(getRequirementAtmosphericDensityNormal());
         projectRequirements.add(getRequirementAtmosphericNotToxicOrIrradiated());
         projectRequirements.add(getRequirementMarketHasAtmosphereProcessor());
@@ -47,6 +48,6 @@ public class ConditionModificationAddHabitable extends BoggledBaseTerraformingCo
             }
         };
 
-        return new TerraformingRequirementObject("Colony is not habitable for humans", requirementMet, tooltip);
+        return new TerraformingRequirementObject(this.market.getName() + " is not habitable for humans", requirementMet, tooltip);
     }
 }

@@ -45,6 +45,6 @@ public class ConditionModificationRemoveDenseAtmosphere extends BoggledBaseTerra
             }
         };
 
-        return new TerraformingRequirementObject("Colony has a dense atmosphere", requirementMet, tooltip);
+        return new TerraformingRequirementObject(this.market.getName() + " has a dense atmosphere", requirementMet, tooltip);
     }
 }

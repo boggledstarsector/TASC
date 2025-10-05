@@ -2,6 +2,8 @@ package boggled.campaign.econ.industries;
 
 import java.util.*;
 import java.lang.String;
+
+import boggled.campaign.econ.industries.interfaces.ShowBoggledTerraformingMenuOption;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.econ.*;
 import com.fs.starfarer.api.impl.campaign.ids.Conditions;
@@ -13,7 +15,7 @@ import com.fs.starfarer.api.campaign.StarSystemAPI;
 import com.fs.starfarer.api.util.Pair;
 import boggled.campaign.econ.boggledTools;
 
-public class Boggled_Stellar_Reflector_Array extends BaseIndustry
+public class Boggled_Stellar_Reflector_Array extends BaseIndustry implements ShowBoggledTerraformingMenuOption
 {
     @Override
     public boolean canBeDisrupted() {

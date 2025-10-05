@@ -3,6 +3,7 @@ package boggled.campaign.econ.industries;
 import java.awt.*;
 import java.lang.String;
 
+import boggled.campaign.econ.industries.interfaces.ShowBoggledTerraformingMenuOption;
 import com.fs.starfarer.api.campaign.PlanetAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
@@ -10,7 +11,7 @@ import com.fs.starfarer.api.impl.campaign.econ.impl.BaseIndustry;
 import com.fs.starfarer.api.util.Pair;
 import boggled.campaign.econ.boggledTools;
 
-public class Boggled_Atmosphere_Processor extends BaseIndustry
+public class Boggled_Atmosphere_Processor extends BaseIndustry implements ShowBoggledTerraformingMenuOption
 {
     @Override
     public boolean canBeDisrupted()

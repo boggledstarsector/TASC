@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.util.ArrayList;
 
 import boggled.campaign.econ.boggledTools;
+import boggled.campaign.econ.industries.interfaces.ShowBoggledTerraformingMenuOption;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.*;
 import com.fs.starfarer.api.campaign.comm.CommMessageAPI;
@@ -15,7 +16,7 @@ import com.fs.starfarer.api.util.Misc;
 import com.fs.starfarer.api.impl.campaign.econ.impl.BaseIndustry;
 import com.fs.starfarer.api.util.Pair;
 
-public class Boggled_Ismara_Sling extends BaseIndustry
+public class Boggled_Ismara_Sling extends BaseIndustry implements ShowBoggledTerraformingMenuOption
 {
     private final int STATIC_HEAVY_MACHINERY_DEMAND = 6;
 
