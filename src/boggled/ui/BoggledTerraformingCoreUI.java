@@ -16,6 +16,8 @@ import java.awt.*;
 import java.util.*;
 import java.util.List;
 
+import static boggled.campaign.econ.boggledTools.getTerraformingControllerFromMarket;
+
 public class BoggledTerraformingCoreUI implements CustomUIPanelPlugin {
     CustomPanelAPI mainPanel;
     private CustomPanelAPI leftTerraformingPane;
@@ -608,6 +610,7 @@ public class BoggledTerraformingCoreUI implements CustomUIPanelPlugin {
         boggledTools.addCondition(market, boggledTools.BoggledConditions.terraformingControllerConditionId);
         Terraforming_Controller terraformingController = getTerraformingControllerFromMarket(market);
         terraformingController.setCurrentProject(project);
+        Global.getSector().getIntelManager().addIntel(project, true);
         boggledTools.sendDebugIntelMessage("Project started!");
         Global.getSector().addTransientScript(project);
     }
@@ -626,11 +629,6 @@ public class BoggledTerraformingCoreUI implements CustomUIPanelPlugin {
         Terraforming_Controller terraformingController = getTerraformingControllerFromMarket(market);
         BoggledBaseTerraformingProject project = ((Terraforming_Controller) terraformingController).getCurrentProject();
         return project != null ? project.getProjectName() : null;
-    }
-
-    private Terraforming_Controller getTerraformingControllerFromMarket(MarketAPI market)
-    {
-        return (Terraforming_Controller) market.getCondition(boggledTools.BoggledConditions.terraformingControllerConditionId).getPlugin();
     }
 
     private static float getSortOrderForCondition(MarketConditionAPI condition)

@@ -1,5 +1,6 @@
 package boggled.campaign.econ;
 
+import boggled.campaign.econ.conditions.Terraforming_Controller;
 import boggled.scripts.*;
 import boggled.terraforming.*;
 import com.fs.starfarer.api.Global;
@@ -799,6 +800,11 @@ public class boggledTools {
         // Call methods in other mods here to get their custom terraforming projects
 
         return projects;
+    }
+
+    public static Terraforming_Controller getTerraformingControllerFromMarket(MarketAPI market)
+    {
+        return (Terraforming_Controller) market.getCondition(boggledTools.BoggledConditions.terraformingControllerConditionId).getPlugin();
     }
 
     public static PlanetSpecAPI getPlanetSpec(String planetTypeId)

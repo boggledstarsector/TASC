@@ -13,5 +13,6 @@
     <orderEntry type="library" name="src1" level="project" />
     <orderEntry type="library" name="Vok" level="project" />
     <orderEntry type="library" name="realityforge.jetbrains.annotations1" level="project" />
+    <orderEntry type="library" name="sources" level="project" />
   </component>
 </module>

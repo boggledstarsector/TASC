@@ -4,18 +4,23 @@ import boggled.campaign.econ.boggledTools;
 import boggled.campaign.econ.conditions.Terraforming_Controller;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CampaignClockAPI;
+import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.campaign.econ.MarketConditionAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Conditions;
 import com.fs.starfarer.api.impl.campaign.intel.BaseIntelPlugin;
+import com.fs.starfarer.api.ui.CustomPanelAPI;
+import com.fs.starfarer.api.ui.LabelAPI;
+import com.fs.starfarer.api.ui.SectorMapAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
+import com.fs.starfarer.api.util.Misc;
 import com.fs.starfarer.campaign.CampaignPlanet;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Set;
 
 public class BoggledBaseTerraformingProject extends BaseIntelPlugin {
-    private boolean done = false;
 
     protected MarketAPI market;
     protected TerraformingProjectType projectType;
@@ -38,8 +43,8 @@ public class BoggledBaseTerraformingProject extends BaseIntelPlugin {
     }
 
     @Override
-    public boolean isDone() {
-        return done;
+    public SectorEntityToken getMapLocation(SectorMapAPI map) {
+        return this.market.getPlanetEntity();
     }
 
     @Override
@@ -50,6 +55,11 @@ public class BoggledBaseTerraformingProject extends BaseIntelPlugin {
     @Override
     public void advance(float amount) {
         super.advance(amount);
+        if(this.isEnded())
+        {
+            return;
+        }
+
         boggledTools.writeMessageToLog("Triggered advance in base terraforming project.");
 
         CampaignClockAPI clock = Global.getSector().getClock();
@@ -78,9 +88,10 @@ public class BoggledBaseTerraformingProject extends BaseIntelPlugin {
     }
 
     public void completeThisProject() {
+        Terraforming_Controller controller = boggledTools.getTerraformingControllerFromMarket(this.market);
+        controller.setCurrentProject(null);
         boggledTools.sendDebugIntelMessage("Project completed!");
-        ((Terraforming_Controller) this.market.getCondition(boggledTools.BoggledConditions.terraformingControllerConditionId)).setCurrentProject(null);
-        this.done = true;
+        this.endImmediately();
     }
 
     public HashSet<String> constructConditionsListAfterProjectCompletion() {
@@ -510,5 +521,42 @@ public class BoggledBaseTerraformingProject extends BaseIntelPlugin {
         {
             return boggledTools.getPlanetSpec(tascPlanetType).getName();
         }
+    }
+
+    @Override
+    public boolean hasSmallDescription() {
+        return true;
+    }
+
+    @Override
+    public String getSmallDescriptionTitle()
+    {
+        return this.market.getName() + " Terraforming Project";
+    }
+
+    @Override
+    public boolean hasLargeDescription() {
+        return true;
+    }
+
+    @Override
+    public void createLargeDescription(CustomPanelAPI panel, float width, float height) {
+        float pad = 3;
+        float opad = 10;
+
+        // holder for all other elements
+        TooltipMakerAPI outer = panel.createUIElement(width, height, true);
+        outer.addSectionHeading(getSmallDescriptionTitle(), com.fs.starfarer.api.ui.Alignment.MID, opad);
+        LabelAPI testLabel = outer.addPara("Dummy text", Misc.getTextColor(), 1f);
+        testLabel.getPosition().inTL(0,0);
+
+        panel.addUIElement(outer).inTL(0, 0);
+    }
+
+    @Override
+    public Set<String> getIntelTags(SectorMapAPI map) {
+        Set<String> tags = super.getIntelTags(map);
+        tags.add("Terraforming");
+        return tags;
     }
 }
