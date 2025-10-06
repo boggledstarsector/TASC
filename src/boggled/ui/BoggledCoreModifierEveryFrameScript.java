@@ -13,6 +13,7 @@ import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.ui.UIComponentAPI;
 import com.fs.starfarer.api.ui.UIPanelAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI.TooltipLocation;
+
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
@@ -158,6 +159,7 @@ public class BoggledCoreModifierEveryFrameScript implements EveryFrameScript {
 
                 // If the user opened the CoreUI from the colony management industry tooltip, switch to the terraforming menu immediately
                 boggledTools.writeMessageToLog("Market to open is: " + (marketToOpen != null ? marketToOpen.getName() : "null"));
+                MarketAPI marketTemp = marketToOpen;
                 if(marketToOpen != null)
                 {
                     uncheckButtons();
@@ -181,8 +183,11 @@ public class BoggledCoreModifierEveryFrameScript implements EveryFrameScript {
                     removeAllTabPanels(mainParent, null);
                     if(highlightedButton.getText().contains("Terraforming"))
                     {
-                        UIComponentAPI terraformingPanel = this.outpostsButtonToPanelMapping.get(terraformingButton);
-                        mainParent.addComponent(terraformingPanel).inTL(0f, 30f);
+                        BoggledTerraformingCoreUI terraformingUI = new BoggledTerraformingCoreUI();
+                        terraformingUI.init(marketTemp);
+                        this.outpostsButtonToPanelMapping.put(highlightedButton, terraformingUI.getMainPanel());
+                        UIComponentAPI componentToAdd = this.outpostsButtonToPanelMapping.get(highlightedButton);
+                        mainParent.addComponent(componentToAdd).inTL(0f, 30f);
                     }
                     else
                     {

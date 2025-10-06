@@ -1,6 +1,7 @@
 package boggled.terraforming;
 
 import boggled.campaign.econ.boggledTools;
+import boggled.campaign.econ.conditions.Terraforming_Controller;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CampaignClockAPI;
 import com.fs.starfarer.api.campaign.econ.MarketAPI;
@@ -78,6 +79,7 @@ public class BoggledBaseTerraformingProject extends BaseIntelPlugin {
 
     public void completeThisProject() {
         boggledTools.sendDebugIntelMessage("Project completed!");
+        ((Terraforming_Controller) this.market.getCondition(boggledTools.BoggledConditions.terraformingControllerConditionId)).setCurrentProject(null);
         this.done = true;
     }
 
