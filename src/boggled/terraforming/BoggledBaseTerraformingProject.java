@@ -2,21 +2,26 @@ package boggled.terraforming;
 
 import boggled.campaign.econ.boggledTools;
 import boggled.campaign.econ.conditions.Terraforming_Controller;
+import boggled.ui.BoggledCoreModifierEveryFrameScript;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CampaignClockAPI;
+import com.fs.starfarer.api.campaign.CoreUITabId;
+import com.fs.starfarer.api.campaign.FactionAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
+import com.fs.starfarer.api.campaign.comm.CommMessageAPI;
+import com.fs.starfarer.api.campaign.comm.IntelInfoPlugin;
 import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.campaign.econ.MarketConditionAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Conditions;
 import com.fs.starfarer.api.impl.campaign.intel.BaseIntelPlugin;
-import com.fs.starfarer.api.ui.CustomPanelAPI;
-import com.fs.starfarer.api.ui.LabelAPI;
-import com.fs.starfarer.api.ui.SectorMapAPI;
-import com.fs.starfarer.api.ui.TooltipMakerAPI;
+import com.fs.starfarer.api.impl.campaign.intel.MessageIntel;
+import com.fs.starfarer.api.ui.*;
 import com.fs.starfarer.api.util.Misc;
 import com.fs.starfarer.campaign.CampaignPlanet;
 
+import java.awt.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -28,9 +33,25 @@ public class BoggledBaseTerraformingProject extends BaseIntelPlugin {
     private int lastDayChecked = 0;
     private final int requiredDaysToCompleteProject;
 
+    private static String BUTTON_OPEN_TERRAFORMING_MENU = "Open terraforming menu";
+
+    private boolean requirementsWereMetLastTick = true;
+
     public enum TerraformingProjectType {
         PLANET_TYPE_CHANGE, RESOURCE_IMPROVEMENT, CONDITION_IMPROVEMENT
     }
+
+    public enum ProjectUpdateType {
+        STARTED, STALLED, RESUMED, COMPLETED, CANCELLED
+    }
+
+    private final HashMap<ProjectUpdateType, String> updateMessageMap = new HashMap<>(){{
+        put(ProjectUpdateType.STARTED, "Started");
+        put(ProjectUpdateType.STALLED, "Stalled");
+        put(ProjectUpdateType.RESUMED, "Resumed");
+        put(ProjectUpdateType.COMPLETED, "Completed");
+        put(ProjectUpdateType.CANCELLED, "Cancelled");
+    }};
 
     public BoggledBaseTerraformingProject(MarketAPI market, TerraformingProjectType projectType) {
         this.market = market;
@@ -60,13 +81,17 @@ public class BoggledBaseTerraformingProject extends BaseIntelPlugin {
             return;
         }
 
-        boggledTools.writeMessageToLog("Triggered advance in base terraforming project.");
-
         CampaignClockAPI clock = Global.getSector().getClock();
         if (clock.getDay() != this.lastDayChecked) {
-            // Avoid calling requirementsMet every frame because it does a lot of calculations
+            // Avoid calling requirementsMet() every frame because it does a lot of calculations
             boolean requirementsMet = requirementsMet(getProjectRequirements());
             if (requirementsMet) {
+                if(!this.requirementsWereMetLastTick)
+                {
+                    this.resumeThisProject();
+                    this.requirementsWereMetLastTick = true;
+                }
+
                 this.daysCompleted++;
                 this.lastDayChecked = clock.getDay();
 
@@ -74,6 +99,11 @@ public class BoggledBaseTerraformingProject extends BaseIntelPlugin {
                     completeThisProject();
                 }
             } else {
+                if(this.requirementsWereMetLastTick)
+                {
+                    this.stallThisProject();
+                    this.requirementsWereMetLastTick = false;
+                }
                 this.lastDayChecked = clock.getDay();
             }
         }
@@ -87,11 +117,51 @@ public class BoggledBaseTerraformingProject extends BaseIntelPlugin {
         return this.requiredDaysToCompleteProject - this.daysCompleted;
     }
 
+    public void startThisProject() {
+        sendUpdateNotificationToPlayer(ProjectUpdateType.STARTED);
+        boggledTools.addCondition(market, boggledTools.BoggledConditions.terraformingControllerConditionId);
+        Terraforming_Controller controller = boggledTools.getTerraformingControllerFromMarket(this.market);
+        controller.setCurrentProject(this);
+        Global.getSector().getIntelManager().addIntel(this, true);
+        Global.getSector().addTransientScript(this);
+    }
+
     public void completeThisProject() {
+        sendUpdateNotificationToPlayer(ProjectUpdateType.COMPLETED);
         Terraforming_Controller controller = boggledTools.getTerraformingControllerFromMarket(this.market);
         controller.setCurrentProject(null);
-        boggledTools.sendDebugIntelMessage("Project completed!");
         this.endImmediately();
+    }
+
+    public void cancelThisProject() {
+        sendUpdateNotificationToPlayer(ProjectUpdateType.CANCELLED);
+        Terraforming_Controller controller = boggledTools.getTerraformingControllerFromMarket(this.market);
+        controller.setCurrentProject(null);
+        this.endImmediately();
+    }
+
+    public void stallThisProject() {
+        sendUpdateNotificationToPlayer(ProjectUpdateType.STALLED);
+    }
+
+    public void resumeThisProject() {
+        sendUpdateNotificationToPlayer(ProjectUpdateType.RESUMED);
+    }
+
+    public void sendUpdateNotificationToPlayer(ProjectUpdateType type)
+    {
+        MessageIntel intel = new MessageIntel(this.getProjectName() + " project on " + this.market.getName(), Misc.getBasePlayerColor());
+        intel.addLine("    - " + updateMessageMap.get(type));
+        intel.setIcon(this.getIcon());
+        intel.setSound(BaseIntelPlugin.getSoundStandardUpdate());
+        if(type == ProjectUpdateType.STARTED || type == ProjectUpdateType.STALLED || type == ProjectUpdateType.RESUMED)
+        {
+            Global.getSector().getCampaignUI().addMessage(intel, CommMessageAPI.MessageClickAction.INTEL_TAB, this);
+        }
+        else
+        {
+            Global.getSector().getCampaignUI().addMessage(intel, CommMessageAPI.MessageClickAction.COLONY_INFO, market);
+        }
     }
 
     public HashSet<String> constructConditionsListAfterProjectCompletion() {
@@ -524,6 +594,54 @@ public class BoggledBaseTerraformingProject extends BaseIntelPlugin {
     }
 
     @Override
+    protected String getName()
+    {
+        return this.market.getName() + " Terraforming Project";
+    }
+
+    @Override
+    public String getIcon() {
+        return Global.getSettings().getSpriteName("boggled", "terraforming_intel_icon");
+    }
+
+    @Override
+    protected void addBulletPoints(TooltipMakerAPI info, IntelInfoPlugin.ListInfoMode mode) {
+        Color highlight = Misc.getHighlightColor();
+        Color gray = Misc.getGrayColor();
+        Color playerColor = Misc.getBasePlayerColor();
+        Color bad = Misc.getNegativeHighlightColor();
+        float pad = 3.0F;
+        float opad = 10.0F;
+        float initPad = pad;
+        if (mode == ListInfoMode.IN_DESC) {
+            initPad = opad;
+        }
+
+        Color tc = this.getBulletColorForMode(mode);
+        this.bullet(info);
+        info.addPara("Project: %s", initPad, tc, playerColor, new String[]{this.getProjectName()});
+
+        if(requirementsMet(getProjectRequirements()))
+        {
+            if(getDaysRemaining() == 1)
+            {
+                info.addPara("%s day remaining until completion", initPad, tc, highlight, new String[]{String.valueOf(getDaysRemaining())});
+            }
+            else
+            {
+                info.addPara("%s days remaining until completion", initPad, tc, highlight, new String[]{String.valueOf(getDaysRemaining())});
+            }
+        }
+        else
+        {
+            info.addPara("Progress is stalled due to unmet requirements", initPad, bad, bad, new String[]{});
+        }
+
+
+        this.unindent(info);
+    }
+
+    @Override
     public boolean hasSmallDescription() {
         return true;
     }
@@ -535,22 +653,59 @@ public class BoggledBaseTerraformingProject extends BaseIntelPlugin {
     }
 
     @Override
-    public boolean hasLargeDescription() {
-        return true;
+    public void createSmallDescription(TooltipMakerAPI info, float width, float height) {
+        Color highlight = Misc.getHighlightColor();
+        Color gray = Misc.getGrayColor();
+        Color tc = Misc.getTextColor();
+        float pad = 3.0F;
+        float opad = 10.0F;
+
+        // Player flag
+        FactionAPI faction = this.market.getFaction();
+        info.addImage(faction.getLogo(), width, 128.0F, 10);
+
+        // Project status
+        info.addPara("Project: %s", opad, tc, highlight, new String[]{this.getProjectName()});
+        if(getDaysRemaining() == 1)
+        {
+            info.addPara("There is %s day remaining until this project is complete.", pad, tc, highlight, new String[]{String.valueOf(getDaysRemaining())});
+        }
+        else
+        {
+            info.addPara("There are %s days remaining until this project is complete.", pad, tc, highlight, new String[]{String.valueOf(getDaysRemaining())});
+        }
+        if(!requirementsMet(getProjectRequirements()))
+        {
+            info.addPara("Progress on this project is currently stalled due to unmet requirements.", pad, highlight, null, new String[]{});
+        }
+
+        // Print requirements
+        info.addSectionHeading("Project Requirements", Alignment.MID, opad);
+
+        // Get requirements for the selected project
+        boolean firstRow = true;
+        ArrayList<BoggledBaseTerraformingProject.TerraformingRequirementObject> projectRequirements = this.getProjectRequirements();
+        for(BoggledBaseTerraformingProject.TerraformingRequirementObject requirement : projectRequirements)
+        {
+            Color textColor = requirement.requirementMet ? Misc.getPositiveHighlightColor() : Misc.getNegativeHighlightColor();
+            info.addPara(requirement.tooltipDisplayText, textColor,firstRow ? opad : pad);
+            info.addTooltipToPrevious(requirement.tooltip, TooltipMakerAPI.TooltipLocation.ABOVE,false);
+            firstRow = false;
+        }
+
+        info.addButton("Open terraforming menu", BUTTON_OPEN_TERRAFORMING_MENU, this.getFactionForUIColors().getBaseUIColor(), this.getFactionForUIColors().getDarkUIColor(), (float)((int)width), 20.0F, opad * 1.0F);
     }
 
     @Override
-    public void createLargeDescription(CustomPanelAPI panel, float width, float height) {
-        float pad = 3;
-        float opad = 10;
+    public void buttonPressConfirmed(Object buttonId, IntelUIAPI ui) {
+        if (buttonId == BUTTON_OPEN_TERRAFORMING_MENU)
+        {
+            MarketAPI targetMarket = this.market;
+            BoggledCoreModifierEveryFrameScript.setMarketToOpen(targetMarket);
+            Global.getSector().getCampaignUI().showCoreUITab(CoreUITabId.OUTPOSTS, null);
+        }
 
-        // holder for all other elements
-        TooltipMakerAPI outer = panel.createUIElement(width, height, true);
-        outer.addSectionHeading(getSmallDescriptionTitle(), com.fs.starfarer.api.ui.Alignment.MID, opad);
-        LabelAPI testLabel = outer.addPara("Dummy text", Misc.getTextColor(), 1f);
-        testLabel.getPosition().inTL(0,0);
-
-        panel.addUIElement(outer).inTL(0, 0);
+        super.buttonPressConfirmed(buttonId, ui);
     }
 
     @Override

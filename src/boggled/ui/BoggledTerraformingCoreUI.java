@@ -280,7 +280,7 @@ public class BoggledTerraformingCoreUI implements CustomUIPanelPlugin {
         {
             this.selectedProject = buttonToProjectMap.get(clickedButton);
             this.mainPanel.removeComponent(this.rightTerraformingPane);
-            this.rightTerraformingPane = showTerraformingRightPane(this.market, this.selectedProject);
+            this.rightTerraformingPane = showTerraformingRightPane(this.selectedProject);
 
             reloadProjectViewButtons();
 
@@ -320,6 +320,7 @@ public class BoggledTerraformingCoreUI implements CustomUIPanelPlugin {
 
         HashMap<ButtonAPI, BoggledBaseTerraformingProject> newButtonToProjectMap = new HashMap<>();
         HashMap<BoggledBaseTerraformingProject, ButtonAPI> newProjectToButtonMap = new HashMap<>();
+        String ongoingProjectName = this.getOngoingProjectAtMarket(market);
 
         float projectHeightSpacer = 1;
         float projectHeight = projectHeightSpacer;
@@ -330,6 +331,16 @@ public class BoggledTerraformingCoreUI implements CustomUIPanelPlugin {
             newButtonToProjectMap.put(projectButton, project);
             newProjectToButtonMap.put(project, projectButton);
             projectHeight += 18 + projectHeightSpacer;
+
+            // By default, select and display the right pane for the ongoing project, if there is one
+            if(ongoingProjectName != null && project.getProjectName().equals(ongoingProjectName))
+            {
+                projectButton.setChecked(true);
+            }
+            else
+            {
+                projectButton.setChecked(false);
+            }
         }
 
         this.buttonToProjectMap = newButtonToProjectMap;
@@ -414,7 +425,7 @@ public class BoggledTerraformingCoreUI implements CustomUIPanelPlugin {
         return leftPanel;
     }
 
-    private CustomPanelAPI showTerraformingRightPane(MarketAPI market, BoggledBaseTerraformingProject project)
+    private CustomPanelAPI showTerraformingRightPane(BoggledBaseTerraformingProject project)
     {
         CustomPanelAPI rightPanel = this.mainPanel.createCustomPanel(panePlanetWidth, SCREEN_HEIGHT, null);
 
@@ -607,20 +618,17 @@ public class BoggledTerraformingCoreUI implements CustomUIPanelPlugin {
 
     private void startNewProject(MarketAPI market, BoggledBaseTerraformingProject project)
     {
-        boggledTools.addCondition(market, boggledTools.BoggledConditions.terraformingControllerConditionId);
-        Terraforming_Controller terraformingController = getTerraformingControllerFromMarket(market);
-        terraformingController.setCurrentProject(project);
-        Global.getSector().getIntelManager().addIntel(project, true);
-        boggledTools.sendDebugIntelMessage("Project started!");
-        Global.getSector().addTransientScript(project);
+        project.startThisProject();
     }
 
     private void cancelProject(MarketAPI market)
     {
-        boggledTools.addCondition(market, boggledTools.BoggledConditions.terraformingControllerConditionId);
         Terraforming_Controller terraformingController = getTerraformingControllerFromMarket(market);
-        terraformingController.setCurrentProject(null);
-        boggledTools.sendDebugIntelMessage("Project cancelled!");
+        BoggledBaseTerraformingProject currentProject = terraformingController.getCurrentProject();
+        if(currentProject != null)
+        {
+            currentProject.cancelThisProject();
+        }
     }
 
     private String getOngoingProjectAtMarket(MarketAPI market)
