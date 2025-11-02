@@ -165,7 +165,7 @@ public class BoggledBaseTerraformingPlanetTypeChangeProject extends BoggledBaseT
     {
         String tascPlanetType = boggledTools.getTascPlanetType(this.market.getPlanetEntity());
         String tascPlanetTypeToChangeInto = boggledTools.getTascPlanetType(this.planetIdToChangeInto);
-        String planetTypeDisplayString = getTascPlanetTypeDisplayString(tascPlanetTypeToChangeInto);
+        String planetTypeDisplayString = boggledTools.tascPlanetTypeDisplayStringMap.get(tascPlanetTypeToChangeInto).two;
         Boolean requirementMet = !tascPlanetType.equals(tascPlanetTypeToChangeInto);
         TooltipMakerAPI.TooltipCreator tooltip = new TooltipMakerAPI.TooltipCreator() {
             @Override

@@ -30,6 +30,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import java.lang.String;
+import java.lang.reflect.Array;
 import java.util.*;
 import java.util.List;
 import java.util.ArrayList;
@@ -310,6 +311,21 @@ public class boggledTools {
         put(TascPlanetTypes.volcanicPlanetId, false);
         put(TascPlanetTypes.waterPlanetId, true);
         put(TascPlanetTypes.unknownPlanetId, false);
+    }};
+
+    public static final HashMap<String, Pair<String, String>> tascPlanetTypeDisplayStringMap = new HashMap<>(){{
+        put(TascPlanetTypes.starPlanetId, new Pair<>("Star", "star"));
+        put(TascPlanetTypes.barrenPlanetId, new Pair<>("Barren", "barren"));
+        put(TascPlanetTypes.desertPlanetId, new Pair<>("Desert", "desert"));
+        put(TascPlanetTypes.frozenPlanetId, new Pair<>("Frozen", "frozen"));
+        put(TascPlanetTypes.gasGiantPlanetId, new Pair<>("Gas giant", "gas giant"));
+        put(TascPlanetTypes.junglePlanetId, new Pair<>("Jungle", "jungle"));
+        put(TascPlanetTypes.terranPlanetId, new Pair<>("Terran", "terran"));
+        put(TascPlanetTypes.toxicPlanetId, new Pair<>("Toxic", "toxic"));
+        put(TascPlanetTypes.tundraPlanetId, new Pair<>("Tundra", "tundra"));
+        put(TascPlanetTypes.volcanicPlanetId, new Pair<>("Volcanic", "volcanic"));
+        put(TascPlanetTypes.waterPlanetId, new Pair<>("Water", "water"));
+        put(TascPlanetTypes.unknownPlanetId, new Pair<>("Unknown", "unknown"));
     }};
 
     private static final HashMap<String, Boolean> tascPlanetTypeAllowsForHumanHabitability = new HashMap<>(){{
@@ -684,6 +700,9 @@ public class boggledTools {
 
         return false;
     }
+
+    // Todo replace above with function that gets market and status of water industry on it.
+    public static ArrayList<>
 
     public static class BoggledConditions {
         public static final String terraformingControllerConditionId = "terraforming_controller";

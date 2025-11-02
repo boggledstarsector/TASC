@@ -2,6 +2,7 @@ package boggled.terraforming;
 
 import boggled.campaign.econ.boggledTools;
 import boggled.campaign.econ.conditions.Terraforming_Controller;
+import boggled.terraforming.tooltips.BoggledBaseTerraformingProjectTooltip;
 import boggled.ui.BoggledCoreModifierEveryFrameScript;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CampaignClockAPI;
@@ -33,7 +34,7 @@ public class BoggledBaseTerraformingProject extends BaseIntelPlugin {
     private int lastDayChecked = 0;
     private final int requiredDaysToCompleteProject;
 
-    private static String BUTTON_OPEN_TERRAFORMING_MENU = "Open terraforming menu";
+    private static final String BUTTON_OPEN_TERRAFORMING_MENU = "Open terraforming menu";
 
     private boolean requirementsWereMetLastTick = true;
 
@@ -220,20 +221,24 @@ public class BoggledBaseTerraformingProject extends BaseIntelPlugin {
     public TerraformingRequirementObject getRequirementWorldTypeAllowsTerraforming() {
         String tascPlanetType = boggledTools.getTascPlanetType(market.getPlanetEntity());
         Boolean worldTypeAllowsTerraforming = boggledTools.tascPlanetTypeAllowsTerraforming(tascPlanetType);
-        TooltipMakerAPI.TooltipCreator tooltip = new TooltipMakerAPI.TooltipCreator() {
-            @Override
-            public boolean isTooltipExpandable(Object o) {
-                return false;
-            }
-
-            @Override
-            public float getTooltipWidth(Object o) {
-                return 500;
-            }
-
+        BoggledBaseTerraformingProjectTooltip tooltip = new BoggledBaseTerraformingProjectTooltip(this) {
             @Override
             public void createTooltip(TooltipMakerAPI tooltipMakerAPI, boolean b, Object o) {
-                tooltipMakerAPI.addPara("Dummy text here - world type allows terraforming", 10f);
+                super.createTooltip(tooltipMakerAPI, b, o);
+                tooltipMakerAPI.setTitleFont(Fonts.ORBITRON_12);
+                tooltipMakerAPI.setTitleFontColor(worldTypeAllowsTerraforming ? Misc.getPositiveHighlightColor(): Misc.getNegativeHighlightColor());
+                tooltipMakerAPI.addTitle("World type allows terraforming");
+                tooltipMakerAPI.addPara("%s is considered a %s world. %s worlds %s be terraformed.", 10, Misc.getTextColor(), Misc.getHighlightColor(), new String[]{
+                        market.getName(),
+                        boggledTools.tascPlanetTypeDisplayStringMap.get(boggledTools.getTascPlanetType(market.getPlanetEntity())).two,
+                        boggledTools.tascPlanetTypeDisplayStringMap.get(boggledTools.getTascPlanetType(market.getPlanetEntity())).one,
+                        worldTypeAllowsTerraforming ? "can" : "cannot"
+                });
+
+                if(boggledTools.getTascPlanetType(market.getPlanetEntity()).equals(boggledTools.TascPlanetTypes.unknownPlanetId))
+                {
+                    tooltipMakerAPI.addPara("Please notify me (boggled) in the TASC forum thread that this planet type is unsupported. I will promptly issue a patch to add support. Be sure to provide this ID: " + market.getPlanetEntity().getTypeId(), 10);
+                }
             }
         };
 
@@ -256,7 +261,6 @@ public class BoggledBaseTerraformingProject extends BaseIntelPlugin {
 
             @Override
             public void createTooltip(TooltipMakerAPI tooltipMakerAPI, boolean b, Object o) {
-                tooltipMakerAPI.addPara("Dummy text here - world type allows human habitability", 10f);
             }
         };
 
@@ -278,7 +282,6 @@ public class BoggledBaseTerraformingProject extends BaseIntelPlugin {
 
             @Override
             public void createTooltip(TooltipMakerAPI tooltipMakerAPI, boolean b, Object o) {
-                tooltipMakerAPI.addPara("Dummy text here - market is habitable", 10f);
             }
         };
 
@@ -300,7 +303,6 @@ public class BoggledBaseTerraformingProject extends BaseIntelPlugin {
 
             @Override
             public void createTooltip(TooltipMakerAPI tooltipMakerAPI, boolean b, Object o) {
-                tooltipMakerAPI.addPara("Dummy text here - atmo problem", 10f);
             }
         };
 
@@ -524,20 +526,34 @@ public class BoggledBaseTerraformingProject extends BaseIntelPlugin {
         boggledTools.PlanetWaterLevel currentWaterLevel = boggledTools.getWaterLevelForMarket(this.market);
         boolean requirementMet = currentWaterLevel == boggledTools.PlanetWaterLevel.HIGH_WATER || currentWaterLevel == boggledTools.PlanetWaterLevel.MEDIUM_WATER;
 
-        TooltipMakerAPI.TooltipCreator tooltip = new TooltipMakerAPI.TooltipCreator() {
-            @Override
-            public boolean isTooltipExpandable(Object o) {
-                return false;
-            }
-
-            @Override
-            public float getTooltipWidth(Object o) {
-                return 500;
-            }
-
+        BoggledBaseTerraformingProjectTooltip tooltip = new BoggledBaseTerraformingProjectTooltip(this) {
             @Override
             public void createTooltip(TooltipMakerAPI tooltipMakerAPI, boolean b, Object o) {
-                tooltipMakerAPI.addPara("Dummy text here - Moderate water",10f);
+                super.createTooltip(tooltipMakerAPI, b, o);
+                tooltipMakerAPI.setTitleFont(Fonts.ORBITRON_12);
+                tooltipMakerAPI.setTitleFontColor(requirementMet ? Misc.getPositiveHighlightColor(): Misc.getNegativeHighlightColor());
+                tooltipMakerAPI.addTitle(market.getName() + " has at least a moderate amount of water");
+                String waterString = switch(boggledTools.getBaseWaterLevelForTascPlanetType(boggledTools.getTascPlanetType(market.getPlanetEntity())))
+                {
+                    case LOW_WATER -> "low";
+                    case MEDIUM_WATER -> "moderate";
+                    case HIGH_WATER -> "large";
+                };
+                tooltipMakerAPI.addPara("%s is considered a %s world. %s worlds always have a %s base amount of water.", 10, Misc.getTextColor(), Misc.getHighlightColor(), new String[]{
+                        market.getName(),
+                        boggledTools.tascPlanetTypeDisplayStringMap.get(boggledTools.getTascPlanetType(market.getPlanetEntity())).two,
+                        boggledTools.tascPlanetTypeDisplayStringMap.get(boggledTools.getTascPlanetType(market.getPlanetEntity())).one,
+                        waterString
+                });
+                tooltipMakerAPI.addPara("The amount of water available on a given planet for terraforming purposes can be increased to %s " +
+                        "by constructing an Ismara's Sling or Asteroid Processing building at a colony in the same system. " +
+                        "Friendly colonies in this system with one of those buildings: ", 10, Misc.getTextColor(), Misc.getHighlightColor(), new String[]{
+                        "large"
+                });
+
+
+
+                tooltipMakerAPI.addPara("%s           %s", 2f, Misc.getHighlightColor(), condName);
             }
         };
 
@@ -575,22 +591,6 @@ public class BoggledBaseTerraformingProject extends BaseIntelPlugin {
 
     public static boolean isEnabledViaSettings() {
         return true;
-    }
-
-    public String getTascPlanetTypeDisplayString(String tascPlanetType)
-    {
-        // Volcanic planet type id is actually lava in vanilla
-        if(tascPlanetType.equals(boggledTools.TascPlanetTypes.volcanicPlanetId)) {
-            return "Volcanic";
-        }
-        // arid is the planet ID we're switching into for desert TASC type
-        else if(tascPlanetType.equals(boggledTools.TascPlanetTypes.desertPlanetId)) {
-            return "Desert";
-        }
-        else
-        {
-            return boggledTools.getPlanetSpec(tascPlanetType).getName();
-        }
     }
 
     @Override

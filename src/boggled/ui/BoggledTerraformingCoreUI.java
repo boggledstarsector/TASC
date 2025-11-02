@@ -385,8 +385,18 @@ public class BoggledTerraformingCoreUI implements CustomUIPanelPlugin {
         TooltipMakerAPI conditionsViewHeader = leftPanel.createUIElement(panePlanetWidth, 0, false);
         conditionsViewHeader.addSectionHeading(this.market.getName() + " - Current Conditions", Alignment.MID, 0.0F);
 
+        ArrayList<MarketConditionAPI> conditionsTemp = new ArrayList<>();
+        for(MarketConditionAPI condition : conditions)
+        {
+            if(condition.isPlanetary() && condition.getPlugin().showIcon() && !condition.getName().equals("Population"))
+            {
+                conditionsTemp.add(condition);
+            }
+        }
+        conditions = conditionsTemp;
+
         // We can fit 10 conditions per line. Create a second line if we have more than 10.
-        int numConditionsRows = (conditions.size() / 10) + 1;
+        int numConditionsRows = (conditions.size() + 9) / 10;
         float conditionHeight = numConditionsRows * 40;
         TooltipMakerAPI conditionsView = leftPanel.createUIElement(panePlanetWidth, conditionHeight, false);
         float horizontalPosition = 0;
@@ -394,10 +404,6 @@ public class BoggledTerraformingCoreUI implements CustomUIPanelPlugin {
 
         for(MarketConditionAPI condition : conditions)
         {
-            if(!condition.isPlanetary() || !condition.getPlugin().showIcon() || condition.getName().equals("Population"))
-            {
-                continue;
-            }
             String pathToImage = Global.getSettings().getMarketConditionSpec(condition.getId()).getIcon();
             conditionsView.addImage(pathToImage,0);
             UIComponentAPI conditionImage = conditionsView.getPrev();
@@ -456,7 +462,7 @@ public class BoggledTerraformingCoreUI implements CustomUIPanelPlugin {
         conditions = conditionsTemp;
 
         // We can fit 10 conditions per line. Create a second line if we have more than 10.
-        int numConditionsRows = (conditions.size() / 10) + 1;
+        int numConditionsRows = (conditions.size() + 9) / 10;
         float conditionHeight = numConditionsRows * 40;
 
         // Get the height of the requirements panel.
