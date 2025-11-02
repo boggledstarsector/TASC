@@ -2,7 +2,6 @@ package boggled.terraforming.tooltips;
 
 import boggled.terraforming.BoggledBaseTerraformingProject;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
-import com.fs.starfarer.api.util.Misc;
 
 public class BoggledBaseTerraformingProjectTooltip implements TooltipMakerAPI.TooltipCreator {
     private static final float tooltipWidth = 500;

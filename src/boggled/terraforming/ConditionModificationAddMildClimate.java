@@ -49,6 +49,6 @@ public class ConditionModificationAddMildClimate extends BoggledBaseTerraforming
             }
         };
 
-        return new TerraformingRequirementObject(this.market.getName() + " does not have a mild climate", requirementMet, tooltip);
+        return new TerraformingRequirementObject(this.market.getName() + " does not have a mild climate", requirementMet, null);
     }
 }

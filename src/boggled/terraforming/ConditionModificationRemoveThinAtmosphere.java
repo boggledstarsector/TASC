@@ -45,6 +45,6 @@ public class ConditionModificationRemoveThinAtmosphere extends BoggledBaseTerraf
             }
         };
 
-        return new TerraformingRequirementObject(this.market.getName() + " has a thin atmosphere", requirementMet, tooltip);
+        return new TerraformingRequirementObject(this.market.getName() + " has a thin atmosphere", requirementMet, null);
     }
 }

@@ -1,6 +1,7 @@
 package boggled.campaign.econ;
 
 import boggled.campaign.econ.conditions.Terraforming_Controller;
+import boggled.campaign.econ.industries.Boggled_Ismara_Sling;
 import boggled.scripts.*;
 import boggled.terraforming.*;
 import com.fs.starfarer.api.Global;
@@ -30,7 +31,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import java.lang.String;
-import java.lang.reflect.Array;
 import java.util.*;
 import java.util.List;
 import java.util.ArrayList;
@@ -690,9 +690,14 @@ public class boggledTools {
 
     public static boolean marketHasWaterSourceInSystem(MarketAPI market)
     {
-        for(MarketAPI systemMarket : Global.getSector().getEconomy().getMarkets(market.getStarSystem()))
+        if(market.getStarSystem() == null)
         {
-            if(systemMarket.isPlayerOwned() && systemMarket.hasIndustry(BoggledIndustries.ismaraSlingAsteroidProcessingId))
+            return false;
+        }
+
+        for(Pair<MarketAPI, WaterIndustryStatus> marketStatus : getWaterIndustryStatusForSystem(market.getStarSystem()))
+        {
+            if(marketStatus.two == WaterIndustryStatus.OPERATIONAL)
             {
                 return true;
             }
@@ -701,8 +706,42 @@ public class boggledTools {
         return false;
     }
 
-    // Todo replace above with function that gets market and status of water industry on it.
-    public static ArrayList<>
+    public enum WaterIndustryStatus {
+        OPERATIONAL,
+        UNDER_CONSTRUCTION,
+        DISRUPTED,
+        SHORTAGE
+    }
+
+    public static ArrayList<Pair<MarketAPI, WaterIndustryStatus>> getWaterIndustryStatusForSystem(StarSystemAPI system)
+    {
+        ArrayList<Pair<MarketAPI, WaterIndustryStatus>> waterIndustries = new ArrayList<>();
+        for(MarketAPI systemMarket : Global.getSector().getEconomy().getMarkets(system))
+        {
+            if(systemMarket.isPlayerOwned() && systemMarket.hasIndustry(BoggledIndustries.ismaraSlingAsteroidProcessingId))
+            {
+                Boggled_Ismara_Sling waterIndustry = (Boggled_Ismara_Sling) systemMarket.getIndustry(BoggledIndustries.ismaraSlingAsteroidProcessingId);
+                if(waterIndustry.isDisrupted())
+                {
+                    waterIndustries.add(new Pair<>(systemMarket, WaterIndustryStatus.DISRUPTED));
+                }
+                else if(!waterIndustry.isFunctional())
+                {
+                    waterIndustries.add(new Pair<>(systemMarket, WaterIndustryStatus.UNDER_CONSTRUCTION));
+                }
+                else if(waterIndustry.ismaraSlingHasShortage())
+                {
+                    waterIndustries.add(new Pair<>(systemMarket, WaterIndustryStatus.SHORTAGE));
+                }
+                else
+                {
+                    waterIndustries.add(new Pair<>(systemMarket, WaterIndustryStatus.OPERATIONAL));
+                }
+            }
+        }
+
+        return waterIndustries;
+    }
 
     public static class BoggledConditions {
         public static final String terraformingControllerConditionId = "terraforming_controller";

@@ -86,7 +86,7 @@ public class BoggledBaseTerraformingConditionModificationProject extends Boggled
             }
         };
 
-        return new TerraformingRequirementObject(this.projectName, conditionsWouldChange, tooltip);
+        return new TerraformingRequirementObject(this.projectName, conditionsWouldChange, null);
     }
 
     public TerraformingRequirementObject getRequirementMarketDoesNotHaveExtremeWeather()
@@ -109,7 +109,7 @@ public class BoggledBaseTerraformingConditionModificationProject extends Boggled
             }
         };
 
-        return new TerraformingRequirementObject(this.market.getName() + " does not have extreme weather", requirementMet, tooltip);
+        return new TerraformingRequirementObject(this.market.getName() + " does not have extreme weather", requirementMet, null);
     }
 
     public TerraformingRequirementObject getRequirementMarketHasAtmosphere()
@@ -132,7 +132,7 @@ public class BoggledBaseTerraformingConditionModificationProject extends Boggled
             }
         };
 
-        return new TerraformingRequirementObject(this.market.getName() + " has an atmosphere", requirementMet, tooltip);
+        return new TerraformingRequirementObject(this.market.getName() + " has an atmosphere", requirementMet, null);
     }
 
     @Override

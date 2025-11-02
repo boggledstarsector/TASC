@@ -70,6 +70,8 @@ public class BoggledTerraformingCoreUI implements CustomUIPanelPlugin {
 
     private final Color highlight = Global.getSector().getPlayerFaction().getBrightUIColor();
 
+    private boolean automaticallySwitchToOngoingProject = false;
+
     public BoggledTerraformingCoreUI() { }
 
     private void populatePlayerMarkets()
@@ -333,9 +335,10 @@ public class BoggledTerraformingCoreUI implements CustomUIPanelPlugin {
             projectHeight += 18 + projectHeightSpacer;
 
             // By default, select and display the right pane for the ongoing project, if there is one
-            if(ongoingProjectName != null && project.getProjectName().equals(ongoingProjectName))
+            if(this.automaticallySwitchToOngoingProject && ongoingProjectName != null && project.getProjectName().equals(ongoingProjectName))
             {
                 projectButton.setChecked(true);
+                this.automaticallySwitchToOngoingProject = false;
             }
             else
             {
@@ -371,6 +374,15 @@ public class BoggledTerraformingCoreUI implements CustomUIPanelPlugin {
 
     private CustomPanelAPI showTerraformingLeftPane(MarketAPI market)
     {
+        // Set the boolean to automatically check the ongoing project.
+        // After switching this will get set back to false. Ensures we only switch to the ongoing project once per left pane load.
+        // Without this check, everytime the player clicks a different project, it will switch back to the ongoing one.
+        // Works because the left pane only gets loaded once when the player initially selects a planet.
+        if(this.getOngoingProjectAtMarket(market) != null)
+        {
+            this.automaticallySwitchToOngoingProject = true;
+        }
+
         ArrayList<MarketConditionAPI> conditions = (ArrayList<MarketConditionAPI>) market.getConditions();
         conditions.sort(Comparator.comparing(BoggledTerraformingCoreUI::getSortOrderForCondition));
 
@@ -511,7 +523,10 @@ public class BoggledTerraformingCoreUI implements CustomUIPanelPlugin {
             requirementLabel.getPosition().inTL(0,labelHeight);
             labelHeight += 18 + labelSpacerHeight;
 
-            requirementsView.addTooltipToPrevious(requirement.tooltip, TooltipMakerAPI.TooltipLocation.ABOVE,false);
+            if(requirement.tooltip != null)
+            {
+                requirementsView.addTooltipToPrevious(requirement.tooltip, TooltipMakerAPI.TooltipLocation.ABOVE,false);
+            }
         }
 
         rightPanel.addUIElement(planetLargeViewRight).inTL(0, 0);
@@ -562,7 +577,7 @@ public class BoggledTerraformingCoreUI implements CustomUIPanelPlugin {
             }
             else
             {
-                triggerButtonsLabel = projectTriggerButtonsPanel.addPara("There is already an ongoing project at here. If you start a new project, all progress on the existing project will be lost.", Misc.getNegativeHighlightColor(), 1f);
+                triggerButtonsLabel = projectTriggerButtonsPanel.addPara("There is already an ongoing project here. If you start a new project, all progress on the existing project will be lost.", Misc.getNegativeHighlightColor(), 1f);
             }
         }
         triggerButtonsLabel.getPosition().inTL(0, triggerButtonLabelHeight == 36 ? 0 : 18);

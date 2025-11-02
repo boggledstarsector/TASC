@@ -46,7 +46,7 @@ public class ConditionModificationRemoveIrradiated extends BoggledBaseTerraformi
             }
         };
 
-        return new TerraformingRequirementObject(this.market.getName() + " is irradiated", requirementMet, tooltip);
+        return new TerraformingRequirementObject(this.market.getName() + " is irradiated", requirementMet, null);
     }
 
     public static boolean isEnabledViaSettings() {

@@ -86,7 +86,7 @@ public class ResourceImprovementFarmland extends BoggledBaseTerraformingProject
             }
         };
 
-        return new TerraformingRequirementObject("World type supports farmland", worldTypeSupportsFarmland, tooltip);
+        return new TerraformingRequirementObject("World type supports farmland", worldTypeSupportsFarmland, null);
     }
 
     public TerraformingRequirementObject getRequirementFarmlandCanBeImproved()
@@ -109,7 +109,7 @@ public class ResourceImprovementFarmland extends BoggledBaseTerraformingProject
             }
         };
 
-        return new TerraformingRequirementObject("Farmland can be improved", requirementMet, tooltip);
+        return new TerraformingRequirementObject("Farmland can be improved", requirementMet, null);
     }
 
     public TerraformingRequirementObject getRequirementAdequateWaterToImproveFarmland()
@@ -143,6 +143,6 @@ public class ResourceImprovementFarmland extends BoggledBaseTerraformingProject
             }
         };
 
-        return new TerraformingRequirementObject(this.market.getName() + " has adequate water", requirementMet, tooltip);
+        return new TerraformingRequirementObject(this.market.getName() + " has adequate water", requirementMet, null);
     }
 }

@@ -61,7 +61,7 @@ public class ConditionModificationRemoveAtmosphere extends BoggledBaseTerraformi
             }
         };
 
-        return new TerraformingRequirementObject(this.market.getName() + " is not a Water world", requirementMet, tooltip);
+        return new TerraformingRequirementObject(this.market.getName() + " is not a Water world", requirementMet, null);
     }
 
     public static boolean isEnabledViaSettings() {

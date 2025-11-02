@@ -18,13 +18,11 @@ import com.fs.starfarer.api.impl.campaign.intel.BaseIntelPlugin;
 import com.fs.starfarer.api.impl.campaign.intel.MessageIntel;
 import com.fs.starfarer.api.ui.*;
 import com.fs.starfarer.api.util.Misc;
+import com.fs.starfarer.api.util.Pair;
 import com.fs.starfarer.campaign.CampaignPlanet;
 
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 public class BoggledBaseTerraformingProject extends BaseIntelPlugin {
 
@@ -119,9 +117,14 @@ public class BoggledBaseTerraformingProject extends BaseIntelPlugin {
     }
 
     public void startThisProject() {
-        sendUpdateNotificationToPlayer(ProjectUpdateType.STARTED);
         boggledTools.addCondition(market, boggledTools.BoggledConditions.terraformingControllerConditionId);
         Terraforming_Controller controller = boggledTools.getTerraformingControllerFromMarket(this.market);
+        BoggledBaseTerraformingProject existingProject = controller.getCurrentProject();
+        if(existingProject != null)
+        {
+            existingProject.cancelThisProject();
+        }
+        sendUpdateNotificationToPlayer(ProjectUpdateType.STARTED);
         controller.setCurrentProject(this);
         Global.getSector().getIntelManager().addIntel(this, true);
         Global.getSector().addTransientScript(this);
@@ -264,7 +267,7 @@ public class BoggledBaseTerraformingProject extends BaseIntelPlugin {
             }
         };
 
-        return new TerraformingRequirementObject("World type can be habitable for humans", worldTypeAllowsTerraforming, tooltip);
+        return new TerraformingRequirementObject("World type can be habitable for humans", worldTypeAllowsTerraforming, null);
     }
 
     public TerraformingRequirementObject getRequirementMarketIsHabitable() {
@@ -285,7 +288,7 @@ public class BoggledBaseTerraformingProject extends BaseIntelPlugin {
             }
         };
 
-        return new TerraformingRequirementObject(this.market.getName() + " is habitable for humans", requirementMet, tooltip);
+        return new TerraformingRequirementObject(this.market.getName() + " is habitable for humans", requirementMet, null);
     }
 
     public TerraformingRequirementObject getRequirementAtmosphericDensityNormal() {
@@ -306,7 +309,7 @@ public class BoggledBaseTerraformingProject extends BaseIntelPlugin {
             }
         };
 
-        return new TerraformingRequirementObject(this.market.getName() + " has standard atmospheric density", requirementMet, tooltip);
+        return new TerraformingRequirementObject(this.market.getName() + " has standard atmospheric density", requirementMet, null);
     }
 
     public TerraformingRequirementObject getRequirementAtmosphericNotToxicOrIrradiated() {
@@ -328,7 +331,7 @@ public class BoggledBaseTerraformingProject extends BaseIntelPlugin {
             }
         };
 
-        return new TerraformingRequirementObject(this.market.getName() + " does not have a toxic or irradiated atmosphere", requirementMet, tooltip);
+        return new TerraformingRequirementObject(this.market.getName() + " does not have a toxic or irradiated atmosphere", requirementMet, null);
     }
 
     public TerraformingRequirementObject getRequirementMarketHasAtmosphereProcessor() {
@@ -350,7 +353,7 @@ public class BoggledBaseTerraformingProject extends BaseIntelPlugin {
             }
         };
 
-        return new TerraformingRequirementObject(this.market.getName() + " has an atmosphere processor", requirementMet, tooltip);
+        return new TerraformingRequirementObject(this.market.getName() + " has an atmosphere processor", requirementMet, null);
     }
 
     public TerraformingRequirementObject getRequirementMarketHasStellarReflectorArray() {
@@ -372,7 +375,7 @@ public class BoggledBaseTerraformingProject extends BaseIntelPlugin {
             }
         };
 
-        return new TerraformingRequirementObject(this.market.getName() + " has a stellar reflector array", requirementMet, tooltip);
+        return new TerraformingRequirementObject(this.market.getName() + " has a stellar reflector array", requirementMet, null);
     }
 
     public ArrayList<TerraformingRequirementObject> getProjectRequirements() {
@@ -472,7 +475,7 @@ public class BoggledBaseTerraformingProject extends BaseIntelPlugin {
             }
         };
 
-        return new TerraformingRequirementObject("Temperature is temperate or cold", requirementMet, tooltip);
+        return new TerraformingRequirementObject("Temperature is temperate or cold", requirementMet, null);
     }
 
     public TerraformingRequirementObject getRequirementMarketIsTemperateOrHot() {
@@ -495,7 +498,7 @@ public class BoggledBaseTerraformingProject extends BaseIntelPlugin {
             }
         };
 
-        return new TerraformingRequirementObject("Temperature is temperate or hot", requirementMet, tooltip);
+        return new TerraformingRequirementObject("Temperature is temperate or hot", requirementMet, null);
     }
 
     public TerraformingRequirementObject getRequirementMarketIsNotVeryHotOrVeryCold() {
@@ -518,7 +521,7 @@ public class BoggledBaseTerraformingProject extends BaseIntelPlugin {
             }
         };
 
-        return new TerraformingRequirementObject("Temperature is not very hot or very cold", requirementMet, tooltip);
+        return new TerraformingRequirementObject("Temperature is not very hot or very cold", requirementMet, null);
     }
 
     public TerraformingRequirementObject getRequirementMarketHasModerateWater()
@@ -539,50 +542,123 @@ public class BoggledBaseTerraformingProject extends BaseIntelPlugin {
                     case MEDIUM_WATER -> "moderate";
                     case HIGH_WATER -> "large";
                 };
-                tooltipMakerAPI.addPara("%s is considered a %s world. %s worlds always have a %s base amount of water.", 10, Misc.getTextColor(), Misc.getHighlightColor(), new String[]{
+                tooltipMakerAPI.addPara("%s is considered a %s world. %s worlds always have a %s amount of water present.", 10, Misc.getTextColor(), Misc.getHighlightColor(), new String[]{
                         market.getName(),
                         boggledTools.tascPlanetTypeDisplayStringMap.get(boggledTools.getTascPlanetType(market.getPlanetEntity())).two,
                         boggledTools.tascPlanetTypeDisplayStringMap.get(boggledTools.getTascPlanetType(market.getPlanetEntity())).one,
                         waterString
                 });
-                tooltipMakerAPI.addPara("The amount of water available on a given planet for terraforming purposes can be increased to %s " +
-                        "by constructing an Ismara's Sling or Asteroid Processing building at a colony in the same system. " +
-                        "Friendly colonies in this system with one of those buildings: ", 10, Misc.getTextColor(), Misc.getHighlightColor(), new String[]{
+                tooltipMakerAPI.addPara("The amount of water present on a given planet for terraforming purposes can be increased to %s " +
+                        "by constructing an Ismara's Sling or Asteroid Processing building at a colony in the same system. ",
+                        10, Misc.getTextColor(), Misc.getHighlightColor(), new String[]{
                         "large"
                 });
 
-
-
-                tooltipMakerAPI.addPara("%s           %s", 2f, Misc.getHighlightColor(), condName);
+                ArrayList<Pair<MarketAPI, boggledTools.WaterIndustryStatus>> waterStatusList = boggledTools.getWaterIndustryStatusForSystem(market.getStarSystem());
+                waterStatusList.sort(Comparator.comparing(BoggledBaseTerraformingProject::getSortOrderForWaterStatus));
+                if(!waterStatusList.isEmpty())
+                {
+                    tooltipMakerAPI.addPara("Colonies you control in this system with one of those buildings: ", 10, Misc.getTextColor(), Misc.getTextColor(), new String[]{});
+                    for(Pair<MarketAPI, boggledTools.WaterIndustryStatus> marketStatus : waterStatusList)
+                    {
+                        if(marketStatus.two == boggledTools.WaterIndustryStatus.OPERATIONAL)
+                        {
+                            tooltipMakerAPI.addPara("           " + marketStatus.one.getName() + " (operational)", 2, Misc.getPositiveHighlightColor(), Misc.getPositiveHighlightColor(), new String[]{});
+                        }
+                        else if(marketStatus.two == boggledTools.WaterIndustryStatus.DISRUPTED)
+                        {
+                            tooltipMakerAPI.addPara("           " + marketStatus.one.getName() + " (disrupted)", 2, Misc.getNegativeHighlightColor(), Misc.getNegativeHighlightColor(), new String[]{});
+                        }
+                        else if(marketStatus.two == boggledTools.WaterIndustryStatus.SHORTAGE)
+                        {
+                            tooltipMakerAPI.addPara("           " + marketStatus.one.getName() + " (shortage)", 2, Misc.getNegativeHighlightColor(), Misc.getNegativeHighlightColor(), new String[]{});
+                        }
+                        else if(marketStatus.two == boggledTools.WaterIndustryStatus.UNDER_CONSTRUCTION)
+                        {
+                            tooltipMakerAPI.addPara("           " + marketStatus.one.getName() + " (under construction)", 2, Misc.getNegativeHighlightColor(), Misc.getNegativeHighlightColor(), new String[]{});
+                        }
+                    }
+                }
+                else
+                {
+                    tooltipMakerAPI.addPara("You don't control any colonies in this system with one of those buildings.", 10, Misc.getTextColor(), Misc.getTextColor(), new String[]{});
+                }
             }
         };
 
         return new TerraformingRequirementObject(this.market.getName() + " has at least a moderate amount of water", requirementMet, tooltip);
     }
 
+
+
     public TerraformingRequirementObject getRequirementMarketHasHighWater()
     {
         boggledTools.PlanetWaterLevel currentWaterLevel = boggledTools.getWaterLevelForMarket(this.market);
         boolean requirementMet = currentWaterLevel == boggledTools.PlanetWaterLevel.HIGH_WATER;
 
-        TooltipMakerAPI.TooltipCreator tooltip = new TooltipMakerAPI.TooltipCreator() {
-            @Override
-            public boolean isTooltipExpandable(Object o) {
-                return false;
-            }
-
-            @Override
-            public float getTooltipWidth(Object o) {
-                return 500;
-            }
-
+        BoggledBaseTerraformingProjectTooltip tooltip = new BoggledBaseTerraformingProjectTooltip(this) {
             @Override
             public void createTooltip(TooltipMakerAPI tooltipMakerAPI, boolean b, Object o) {
-                tooltipMakerAPI.addPara("Dummy text here - High water",10f);
+                super.createTooltip(tooltipMakerAPI, b, o);
+                tooltipMakerAPI.setTitleFont(Fonts.ORBITRON_12);
+                tooltipMakerAPI.setTitleFontColor(requirementMet ? Misc.getPositiveHighlightColor(): Misc.getNegativeHighlightColor());
+                tooltipMakerAPI.addTitle(market.getName() + " has a large amount of water");
+                String waterString = switch(boggledTools.getBaseWaterLevelForTascPlanetType(boggledTools.getTascPlanetType(market.getPlanetEntity())))
+                {
+                    case LOW_WATER -> "low";
+                    case MEDIUM_WATER -> "moderate";
+                    case HIGH_WATER -> "large";
+                };
+                tooltipMakerAPI.addPara("%s is considered a %s world. %s worlds always have a %s amount of water present.", 10, Misc.getTextColor(), Misc.getHighlightColor(), new String[]{
+                        market.getName(),
+                        boggledTools.tascPlanetTypeDisplayStringMap.get(boggledTools.getTascPlanetType(market.getPlanetEntity())).two,
+                        boggledTools.tascPlanetTypeDisplayStringMap.get(boggledTools.getTascPlanetType(market.getPlanetEntity())).one,
+                        waterString
+                });
+                tooltipMakerAPI.addPara("The amount of water present on a given planet for terraforming purposes can be increased to %s " +
+                                "by constructing an Ismara's Sling or Asteroid Processing building at a colony in the same system. ",
+                        10, Misc.getTextColor(), Misc.getHighlightColor(), new String[]{
+                                "large"
+                        });
+
+                ArrayList<Pair<MarketAPI, boggledTools.WaterIndustryStatus>> waterStatusList = boggledTools.getWaterIndustryStatusForSystem(market.getStarSystem());
+                waterStatusList.sort(Comparator.comparing(BoggledBaseTerraformingProject::getSortOrderForWaterStatus));
+                if(!waterStatusList.isEmpty())
+                {
+                    tooltipMakerAPI.addPara("Colonies you control in this system with one of those buildings: ", 10, Misc.getTextColor(), Misc.getTextColor(), new String[]{});
+                    for(Pair<MarketAPI, boggledTools.WaterIndustryStatus> marketStatus : waterStatusList)
+                    {
+                        if(marketStatus.two == boggledTools.WaterIndustryStatus.OPERATIONAL)
+                        {
+                            tooltipMakerAPI.addPara("           " + marketStatus.one.getName() + " (operational)", 2, Misc.getPositiveHighlightColor(), Misc.getPositiveHighlightColor(), new String[]{});
+                        }
+                        else if(marketStatus.two == boggledTools.WaterIndustryStatus.DISRUPTED)
+                        {
+                            tooltipMakerAPI.addPara("           " + marketStatus.one.getName() + " (disrupted)", 2, Misc.getNegativeHighlightColor(), Misc.getNegativeHighlightColor(), new String[]{});
+                        }
+                        else if(marketStatus.two == boggledTools.WaterIndustryStatus.SHORTAGE)
+                        {
+                            tooltipMakerAPI.addPara("           " + marketStatus.one.getName() + " (shortage)", 2, Misc.getNegativeHighlightColor(), Misc.getNegativeHighlightColor(), new String[]{});
+                        }
+                        else if(marketStatus.two == boggledTools.WaterIndustryStatus.UNDER_CONSTRUCTION)
+                        {
+                            tooltipMakerAPI.addPara("           " + marketStatus.one.getName() + " (under construction)", 2, Misc.getNegativeHighlightColor(), Misc.getNegativeHighlightColor(), new String[]{});
+                        }
+                    }
+                }
+                else
+                {
+                    tooltipMakerAPI.addPara("You don't control any colonies in this system with one of those buildings.", 10, Misc.getTextColor(), Misc.getTextColor(), new String[]{});
+                }
             }
         };
 
         return new TerraformingRequirementObject(this.market.getName() + " has a large amount of water", requirementMet, tooltip);
+    }
+
+    private static String getSortOrderForWaterStatus(Pair<MarketAPI, boggledTools.WaterIndustryStatus> marketStatus)
+    {
+        return marketStatus.one.getName();
     }
 
     public static String getModId() {
@@ -689,8 +765,12 @@ public class BoggledBaseTerraformingProject extends BaseIntelPlugin {
         {
             Color textColor = requirement.requirementMet ? Misc.getPositiveHighlightColor() : Misc.getNegativeHighlightColor();
             info.addPara(requirement.tooltipDisplayText, textColor,firstRow ? opad : pad);
-            info.addTooltipToPrevious(requirement.tooltip, TooltipMakerAPI.TooltipLocation.ABOVE,false);
             firstRow = false;
+
+            if(requirement.tooltip != null)
+            {
+                info.addTooltipToPrevious(requirement.tooltip, TooltipMakerAPI.TooltipLocation.ABOVE,false);
+            }
         }
 
         info.addButton("Open terraforming menu", BUTTON_OPEN_TERRAFORMING_MENU, this.getFactionForUIColors().getBaseUIColor(), this.getFactionForUIColors().getDarkUIColor(), (float)((int)width), 20.0F, opad * 1.0F);

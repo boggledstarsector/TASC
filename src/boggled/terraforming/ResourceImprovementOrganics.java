@@ -85,7 +85,7 @@ public class ResourceImprovementOrganics extends BoggledBaseTerraformingProject
             }
         };
 
-        return new TerraformingRequirementObject("World type supports organics deposits", maxOrganics > 0, tooltip);
+        return new TerraformingRequirementObject("World type supports organics deposits", maxOrganics > 0, null);
     }
 
     public TerraformingRequirementObject getRequirementOrganicsCanBeImproved()
@@ -109,6 +109,6 @@ public class ResourceImprovementOrganics extends BoggledBaseTerraformingProject
             }
         };
 
-        return new TerraformingRequirementObject("Organics can be improved", currentOrganics < maxOrganics, tooltip);
+        return new TerraformingRequirementObject("Organics can be improved", currentOrganics < maxOrganics, null);
     }
 }

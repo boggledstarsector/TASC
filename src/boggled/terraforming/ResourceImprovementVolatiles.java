@@ -85,7 +85,7 @@ public class ResourceImprovementVolatiles extends BoggledBaseTerraformingProject
             }
         };
 
-        return new TerraformingRequirementObject("World type supports volatiles deposits", maxVolatiles > 0, tooltip);
+        return new TerraformingRequirementObject("World type supports volatiles deposits", maxVolatiles > 0, null);
     }
 
     public TerraformingRequirementObject getRequirementVolatilesCanBeImproved()
@@ -109,6 +109,6 @@ public class ResourceImprovementVolatiles extends BoggledBaseTerraformingProject
             }
         };
 
-        return new TerraformingRequirementObject("Volatiles can be improved", currentVolatiles < maxVolatiles, tooltip);
+        return new TerraformingRequirementObject("Volatiles can be improved", currentVolatiles < maxVolatiles, null);
     }
 }

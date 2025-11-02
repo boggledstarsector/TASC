@@ -48,6 +48,6 @@ public class ConditionModificationAddHabitable extends BoggledBaseTerraformingCo
             }
         };
 
-        return new TerraformingRequirementObject(this.market.getName() + " is not habitable for humans", requirementMet, tooltip);
+        return new TerraformingRequirementObject(this.market.getName() + " is not habitable for humans", requirementMet, null);
     }
 }

@@ -45,6 +45,6 @@ public class ConditionModificationRemoveNoAtmosphere extends BoggledBaseTerrafor
             }
         };
 
-        return new TerraformingRequirementObject(this.market.getName() + " has no atmosphere", requirementMet, tooltip);
+        return new TerraformingRequirementObject(this.market.getName() + " has no atmosphere", requirementMet, null);
     }
 }

@@ -45,6 +45,6 @@ public class ConditionModificationRemoveExtremeWeather extends BoggledBaseTerraf
             }
         };
 
-        return new TerraformingRequirementObject(this.market.getName() + " has extreme weather", requirementMet, tooltip);
+        return new TerraformingRequirementObject(this.market.getName() + " has extreme weather", requirementMet, null);
     }
 }
