@@ -1,6 +1,5 @@
 package boggled.ui;
 
-import boggled.campaign.econ.boggledTools;
 import com.fs.starfarer.api.EveryFrameScript;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.*;
@@ -140,11 +139,17 @@ public class BoggledCoreModifierEveryFrameScript implements EveryFrameScript {
             UIPanelAPI mainParent = getMainCorePanel();
             if (mainParent != null)
             {
+                // If we can't get the map using reflection without an exception being thrown,
+                // that means we're not on the main menu with the tabs on top.
+                // This happens if you click intel that tries to open the colony management screen.
+                HashMap<ButtonAPI, UIComponentAPI> originalMap;
+                try { originalMap = getOriginalPanelMap(mainParent); }
+                catch(Exception e) { return; }
+
                 // Get the root coordinates of the Colonies tab in the top left.
                 // Used later to know where to insert the panels.
                 if(rootX == null || rootY == null)
                 {
-                    HashMap<ButtonAPI, UIComponentAPI> originalMap = getOriginalPanelMap(mainParent);
                     ButtonAPI coloniesButton = tryToGetButton("colonies");
                     UIComponentAPI coloniesPanel = originalMap.get(coloniesButton);
                     rootX = coloniesPanel.getPosition().getX();
@@ -152,12 +157,11 @@ public class BoggledCoreModifierEveryFrameScript implements EveryFrameScript {
                 }
 
                 // If terraforming button isn't on the screen, create it and add it to the map.
-                HashMap<ButtonAPI, UIComponentAPI> originalMap = getOriginalPanelMap(mainParent);
                 this.outpostsButtonToPanelMapping = getModifiedPanelMapWithTerraformingMenu(originalMap, mainParent);
                 ButtonAPI terraformingButton = tryToGetButton("terraforming");
 
                 // If the user opened the CoreUI from the colony management industry tooltip, switch to the terraforming menu immediately
-                boggledTools.writeMessageToLog("Market to open is: " + (marketToOpen != null ? marketToOpen.getName() : "null"));
+                // boggledTools.writeMessageToLog("Market to open is: " + (marketToOpen != null ? marketToOpen.getName() : "null"));
                 MarketAPI marketTemp = marketToOpen;
                 if(marketToOpen != null)
                 {
@@ -192,6 +196,7 @@ public class BoggledCoreModifierEveryFrameScript implements EveryFrameScript {
                     {
                         UIComponentAPI componentToAdd = this.outpostsButtonToPanelMapping.get(highlightedButton);
                         mainParent.addComponent(componentToAdd).setLocation(rootX, rootY);
+                        // componentToAdd.getPosition().inTL(rootX, rootY);
                     }
                     this.currentButton = highlightedButton;
                 }
@@ -251,7 +256,7 @@ public class BoggledCoreModifierEveryFrameScript implements EveryFrameScript {
                 if(panelToRemove != null)
                 {
                     mainParent.removeComponent(panelToRemove);
-                    // panelToRemove.getPosition().setLocation(10000, 0);
+                    // panelToRemove.getPosition().inTL(10000, 0);
                 }
             }
         }

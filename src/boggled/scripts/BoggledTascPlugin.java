@@ -272,7 +272,7 @@ public class BoggledTascPlugin extends BaseModPlugin {
             researchAndAbilityIds.put(Collections.singletonList("tasc_astropolis_construction"), Collections.singletonList("boggled_construct_astropolis_station"));
             researchAndAbilityIds.put(Collections.singletonList("tasc_industrial_stations"), asList("boggled_construct_mining_station", "boggled_construct_siphon_station"));
 
-            researchAndAbilityIds.put(asList("tasc_planet_type_manipulation", "tasc_atmosphere_manipulation", "tasc_genetic_manipulation"), Collections.singletonList("boggled_open_terraforming_control_panel"));
+            // researchAndAbilityIds.put(asList("tasc_planet_type_manipulation", "tasc_atmosphere_manipulation", "tasc_genetic_manipulation"), Collections.singletonList("boggled_open_terraforming_control_panel"));
 
             Global.getSector().getPlayerFleet().addScript(new BoggledAotDEveryFrameScript(researchAndAbilityIds));
         }
