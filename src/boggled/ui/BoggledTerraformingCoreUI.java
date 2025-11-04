@@ -2,6 +2,7 @@ package boggled.ui;
 
 import boggled.campaign.econ.boggledTools;
 import boggled.campaign.econ.conditions.Terraforming_Controller;
+import boggled.terraforming.BoggledBaseTerraformingPlanetTypeChangeProject;
 import boggled.terraforming.BoggledBaseTerraformingProject;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.*;
@@ -333,6 +334,12 @@ public class BoggledTerraformingCoreUI implements CustomUIPanelPlugin {
             newButtonToProjectMap.put(projectButton, project);
             newProjectToButtonMap.put(project, projectButton);
             projectHeight += 18 + projectHeightSpacer;
+
+            // Only display tooltip if it's a planet type change project (for now, maybe other projects will have tooltips in the future)
+            if(project instanceof BoggledBaseTerraformingPlanetTypeChangeProject)
+            {
+                projectsView.addTooltipToPrevious(((BoggledBaseTerraformingPlanetTypeChangeProject) project).getProjectTooltip(), TooltipMakerAPI.TooltipLocation.ABOVE,false);
+            }
 
             // By default, select and display the right pane for the ongoing project, if there is one
             if(this.automaticallySwitchToOngoingProject && ongoingProjectName != null && project.getProjectName().equals(ongoingProjectName))

@@ -40,9 +40,11 @@ The Magnetoshield building will suppress the irradiated market condition.",,,Ter
 boggledPlanetCrackerEnabled,Enable Planet Cracker,Boolean,False,,"Set this to true to enable the Planet Cracker building.
 
 The Planet Cracker building can be constructed on a station orbiting a planet. It will permanently improve ore and rare ore resources on that planet by one level but will add the tectonic activity market condition. Does nothing if the planet already has tectonic activity.",,,Terraforming
+boggledPlanetCrackerProjectTime,Planet cracking required time,Int,200,,"Controls how long planet cracking takes (in days).",1,1000,Terraforming
 boggledOuyangOptimizerEnabled,Enable Ouyang Optimzer,Boolean,False,,"Set this to true to enable the Ouyang Optimizer building.
 
 The Ouyang Optimizer building can be constructed on a station orbiting a gas giant. It will permanently improve volatiles resources on that planet by one level but will add the extreme weather market condition. Does nothing if the planet already has extreme weather.",,,Terraforming
+boggledOuyangOptimizerProjectTime,Ouyang optimization required time,Int,200,,"Controls how long Ouyang optimization takes (in days).",1,1000,Terraforming
 boggledStationConstructionContentEnabled,Enable station construction content,Boolean,True,,"Set this to false to completely disable all station construction content regardless of other settings.
 
 If the player has Ashes of the Domain - Vaults of Knowledge enabled, this setting is ignored and always true.",,,Station Construction

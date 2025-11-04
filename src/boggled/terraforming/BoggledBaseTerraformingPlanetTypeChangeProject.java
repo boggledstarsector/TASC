@@ -1,6 +1,7 @@
 package boggled.terraforming;
 
 import boggled.campaign.econ.boggledTools;
+import boggled.terraforming.tooltips.BoggledBasePlanetTypeChangeProjectTooltip;
 import com.fs.starfarer.api.campaign.PlanetAPI;
 import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
@@ -63,13 +64,23 @@ public class BoggledBaseTerraformingPlanetTypeChangeProject extends BoggledBaseT
                 "farmland_poor",
                 "farmland_adequate",
                 "farmland_rich",
-                "farmland_bountiful"
+                "farmland_bountiful",
+                "US_crash",
+                "US_storm"
         ));
 
         // Keep lobsters if planet goes from water -> water (only possible with Unknown Skies or other modded planet types added)
         if(!boggledTools.getTascPlanetType(this.planetIdToChangeInto).equals(boggledTools.TascPlanetTypes.waterPlanetId))
         {
             conditionsToRemove.add("volturnian_lobster_pens");
+        }
+
+        // Remove US conditions that seem to require habitable land to realistically remain present
+        if(!boggledTools.tascPlanetTypeSupportsFarmland(boggledTools.getTascPlanetType(this.getPlanetIdToChangeInto())))
+        {
+            conditionsToRemove.add("US_mind");
+            conditionsToRemove.add("US_shrooms");
+            conditionsToRemove.add("US_sakura");
         }
 
         return conditionsToRemove;
@@ -130,7 +141,7 @@ public class BoggledBaseTerraformingPlanetTypeChangeProject extends BoggledBaseT
 
     public String getBaseFarmlandId()
     {
-        return "farmland_adequate";
+        return boggledTools.getConditionIdForBaseFarmlandLevelForTascPlanetType(boggledTools.getTascPlanetType(this.planetIdToChangeInto));
     }
 
     public String getBaseOrganics()
@@ -196,5 +207,15 @@ public class BoggledBaseTerraformingPlanetTypeChangeProject extends BoggledBaseT
         projectRequirements.add(getRequirementAtmosphericDensityNormal());
 
         return projectRequirements;
+    }
+
+    public String getPlanetIdToChangeInto()
+    {
+        return this.planetIdToChangeInto;
+    }
+
+    public BoggledBasePlanetTypeChangeProjectTooltip getProjectTooltip()
+    {
+        return new BoggledBasePlanetTypeChangeProjectTooltip(this);
     }
 }

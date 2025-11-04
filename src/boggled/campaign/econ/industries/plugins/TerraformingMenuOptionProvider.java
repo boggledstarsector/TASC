@@ -51,6 +51,11 @@ public class TerraformingMenuOptionProvider extends BaseIndustryOptionProvider
             return true;
         }
 
+        if(!boggledTools.getBooleanSetting(boggledTools.BoggledSettings.terraformingContentEnabled))
+        {
+            return false;
+        }
+
         boolean isBoggledTerraformingIndustry = ind instanceof ShowBoggledTerraformingMenuOption;
         boolean isStation = boggledTools.marketIsStation(ind.getMarket());
         boolean playerOwned = ind.getMarket().isPlayerOwned();

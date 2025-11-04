@@ -8,7 +8,12 @@ public class PlanetTypeChangeTerran extends BoggledBaseTerraformingPlanetTypeCha
 {
     public PlanetTypeChangeTerran(MarketAPI market)
     {
-        super(market, "terran");
+        this(market, "terran");
+    }
+
+    public PlanetTypeChangeTerran(MarketAPI market, String planetTypeId)
+    {
+        super(market, planetTypeId);
     }
 
     @Override

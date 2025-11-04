@@ -4,6 +4,7 @@ import boggled.campaign.econ.conditions.Terraforming_Controller;
 import boggled.campaign.econ.industries.Boggled_Ismara_Sling;
 import boggled.scripts.*;
 import boggled.terraforming.*;
+import boggled.terraforming.us.PlanetTypeChangeSakura;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.*;
 import com.fs.starfarer.api.campaign.comm.CommMessageAPI;
@@ -42,7 +43,7 @@ public class boggledTools {
         public static final String lunalibModId = "lunalib";
         public static final String illustratedEntitiesModId = "illustrated_entities";
         public static final String tascModId = "Terraforming & Station Construction";
-
+        public static final String unknownSkiesModId = "US";
         public static final String atodVokModId = "aotd_vok";
     }
 
@@ -60,10 +61,6 @@ public class boggledTools {
 
         public static final String addDomainTechBuildingsToVanillaColonies = "boggledAddDomainTechBuildingsToVanillaColonies";
         public static final String cryosanctumReplaceEverywhere = "boggledCryosanctumReplaceEverywhere";
-
-        // Building enables, checked in campaign.econ.industries.*
-        // May move them to a CSV later
-
         public static final String boggledDomainArchaeologyEnabled = "boggledDomainArchaeologyEnabled";
         public static final String boggledDomainTechContentEnabled = "boggledDomainTechContentEnabled";
         public static final String enableAIMiningDronesStructure = "boggledEnableAIMiningDronesStructure";
@@ -126,6 +123,8 @@ public class boggledTools {
         public static final String perihelionProjectDaysToFinish = "boggledPerihelionProjectDaysToFinish";
         public static final String removeRadiationProjectEnabled = "boggledTerraformingRemoveRadiationProjectEnabled";
         public static final String removeAtmosphereProjectEnabled = "boggledTerraformingRemoveAtmosphereProjectEnabled";
+        public static final String boggledPlanetCrackerProjectTime = "boggledPlanetCrackerProjectTime";
+        public static final String boggledOuyangOptimizerProjectTime = "boggledOuyangOptimizerProjectTime";
 
     }
 
@@ -527,9 +526,19 @@ public class boggledTools {
         }
     }
 
+    public static String getConditionIdForBaseFarmlandLevelForTascPlanetType(String tascPlanetType)
+    {
+        return tascPlanetTypeCanImproveFarmlandMapping.get(tascPlanetType) ? "farmland_adequate" : null;
+    }
+
     public static String getConditionIdForBaseOrganicsLevelForTascPlanetType(String tascPlanetType)
     {
         return intToOrganicsLevel.get(tascPlanetTypeToResourceLevelMapping.get(tascPlanetType).get(0));
+    }
+
+    public static int getMaxFarmlandLevelForTascPlanetType(String tascPlanetType)
+    {
+        return tascPlanetTypeCanImproveFarmlandMapping.get(tascPlanetType) ? 4 : 0;
     }
 
     public static int getMaxOrganicsLevelForTascPlanetType(String tascPlanetType)
@@ -616,9 +625,19 @@ public class boggledTools {
         return getNextVolatilesConditionId(currentLevel);
     }
 
+    public static String getFarmlandConditionIdForInteger(int level)
+    {
+        return intToFarmlandLevel.get(level);
+    }
+
     public static String getOrganicsConditionIdForInteger(int level)
     {
         return intToOrganicsLevel.get(level);
+    }
+
+    public static String getVolatilesConditionIdForInteger(int level)
+    {
+        return intToVolatilesLevel.get(level);
     }
 
     public static int getBaseVolatilesLevelForTascPlanetType(String tascPlanetType)
@@ -634,11 +653,6 @@ public class boggledTools {
     public static int getMaxVolatilesLevelForTascPlanetType(String tascPlanetType)
     {
         return tascPlanetTypeToResourceLevelMapping.get(tascPlanetType).get(3);
-    }
-
-    public static String getConditionIdForMaxVolatilesLevelForTascPlanetType(String tascPlanetType)
-    {
-        return intToVolatilesLevel.get(tascPlanetTypeToResourceLevelMapping.get(tascPlanetType).get(3));
     }
 
     public static boolean tascPlanetTypeSupportsFarmland(String tascPlanetType)
@@ -835,6 +849,11 @@ public class boggledTools {
         projects.add(new PlanetTypeChangeTundra(market));
         projects.add(new PlanetTypeChangeFrozen(market));
 
+        if(Global.getSettings().getModManager().isModEnabled(BoggledMods.unknownSkiesModId))
+        {
+            projects.add(new PlanetTypeChangeSakura(market));
+        }
+
         projects.add(new ConditionModificationAddHabitable(market));
         projects.add(new ConditionModificationAddMildClimate(market));
         projects.add(new ConditionModificationRemoveExtremeWeather(market));
@@ -854,8 +873,6 @@ public class boggledTools {
         projects.add(new ResourceImprovementFarmland(market));
         projects.add(new ResourceImprovementOrganics(market));
         projects.add(new ResourceImprovementVolatiles(market));
-
-        // Call methods in other mods here to get their custom terraforming projects
 
         return projects;
     }

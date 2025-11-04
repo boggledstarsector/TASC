@@ -39,11 +39,13 @@ US_dust,desert
 US_desertA,desert
 US_desertB,desert
 US_desertC,desert
+US_habArid,desert
 US_red,desert
 US_redWind,desert
 US_lifelessArid,desert
 US_arid,desert
 US_crimson,desert
+US_crimsonB,desert
 US_storm,desert
 fds_desert,desert
 SCY_homePlanet,desert
@@ -111,8 +113,7 @@ US_lifeless,terran
 US_alkali,terran
 US_continent,terran
 US_magnetic,terran
-US_water,terran
-US_waterB,terran
+US_terran,terran
 terran_adapted,terran
 US_sakura,terran
 toxic,toxic
@@ -130,4 +131,8 @@ US_lava,volcanic
 US_volcanic,volcanic
 fds_lava,volcanic
 water,water
+US_water,water
+US_waterB,water
 US_waterHycean,water
+US_waterAtoll,water
+US_waterIsle,water

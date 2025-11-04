@@ -28,16 +28,6 @@ public class Boggled_CHAMELEON extends BaseIndustry
     private final int requiredDaysToRemoveRogue = boggledTools.getIntSetting("boggledChameleonRogueCoreTerminationDaysToFinish");
 
     @Override
-    public void buildingFinished()
-    {
-        MessageIntel intel = new MessageIntel("Rogue AI core on " + market.getName(), Misc.getBasePlayerColor());
-        intel.addLine("    - Terminated");
-        intel.setIcon(Global.getSector().getPlayerFaction().getCrest());
-        intel.setSound(BaseIntelPlugin.getSoundStandardUpdate());
-        Global.getSector().getCampaignUI().addMessage(intel, CommMessageAPI.MessageClickAction.COLONY_INFO, market);
-    }
-
-    @Override
     public void advance(float amount)
     {
         super.advance(amount);

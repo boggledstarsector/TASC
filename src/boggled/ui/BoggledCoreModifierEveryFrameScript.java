@@ -1,5 +1,6 @@
 package boggled.ui;
 
+import boggled.campaign.econ.boggledTools;
 import com.fs.starfarer.api.EveryFrameScript;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.*;
@@ -134,7 +135,7 @@ public class BoggledCoreModifierEveryFrameScript implements EveryFrameScript {
 
     public void advance(float amount)
     {
-        if (Global.getSector().getCampaignUI().getCurrentCoreTab() != null && Global.getSector().getCampaignUI().getCurrentCoreTab() == CoreUITabId.OUTPOSTS)
+        if(boggledTools.getBooleanSetting(boggledTools.BoggledSettings.terraformingContentEnabled) && Global.getSector().getCampaignUI().getCurrentCoreTab() != null && Global.getSector().getCampaignUI().getCurrentCoreTab() == CoreUITabId.OUTPOSTS)
         {
             UIPanelAPI mainParent = getMainCorePanel();
             if (mainParent != null)

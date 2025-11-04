@@ -25,7 +25,7 @@ public class Boggled_Planet_Cracker extends BaseIndustry
 
     private int daysWithoutShortage = 0;
     private int lastDayChecked = 0;
-    public static int requiredDaysToCrack = 200;
+    private final int requiredDaysToCrack = boggledTools.getIntSetting(boggledTools.BoggledSettings.boggledPlanetCrackerProjectTime);
 
     private SectorEntityToken getOrbitFocus()
     {
@@ -271,7 +271,7 @@ public class Boggled_Planet_Cracker extends BaseIndustry
         if(this.marketSuitableForCracker() && mode != IndustryTooltipMode.ADD_INDUSTRY && mode != IndustryTooltipMode.QUEUED && !isBuilding())
         {
             //200 days; divide daysWithoutShortage by 2 to get the percent
-            int percentComplete = daysWithoutShortage / 2;
+            int percentComplete = (int) (((float) this.daysWithoutShortage / (float) this.requiredDaysToCrack) * 100F);
 
             //Makes sure the tooltip doesn't say "100% complete" on the last day due to rounding up 99.5 to 100
             if(percentComplete > 99)

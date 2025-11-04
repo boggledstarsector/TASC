@@ -661,12 +661,8 @@ public class BoggledBaseTerraformingProject extends BaseIntelPlugin {
         return marketStatus.one.getName();
     }
 
-    public static String getModId() {
+    public String getModId() {
         return boggledTools.BoggledMods.tascModId;
-    }
-
-    public static boolean isEnabledViaSettings() {
-        return true;
     }
 
     @Override

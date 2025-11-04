@@ -6,7 +6,7 @@ import com.fs.starfarer.api.ui.TooltipMakerAPI;
 public class BoggledBaseTerraformingProjectTooltip implements TooltipMakerAPI.TooltipCreator {
     private static final float tooltipWidth = 500;
 
-    private BoggledBaseTerraformingProject project;
+    protected BoggledBaseTerraformingProject project;
 
     public BoggledBaseTerraformingProjectTooltip(BoggledBaseTerraformingProject project)
     {
@@ -23,5 +23,6 @@ public class BoggledBaseTerraformingProjectTooltip implements TooltipMakerAPI.To
     }
 
     @Override
-    public void createTooltip(TooltipMakerAPI tooltipMakerAPI, boolean b, Object o) { }
+    public void createTooltip(TooltipMakerAPI tooltipMakerAPI, boolean b, Object o) {
+    }
 }
