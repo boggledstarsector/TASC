@@ -17,14 +17,17 @@ public class ResourceImprovementFarmland extends BoggledBaseTerraformingProject
     @Override
     public void completeThisProject()
     {
+        ArrayList<String> conditionsToRemove = conditionsToRemoveUponCompletion();
+        ArrayList<String> conditionsToAdd = conditionsToAddUponCompletion();
+
         // Remove conditions
-        for(String conditionId : conditionsToRemoveUponCompletion())
+        for(String conditionId : conditionsToRemove)
         {
             boggledTools.removeCondition(this.market, conditionId);
         }
 
         // Add conditions
-        for(String conditionId : conditionsToAddUponCompletion())
+        for(String conditionId : conditionsToAdd)
         {
             boggledTools.addCondition(this.market, conditionId);
         }

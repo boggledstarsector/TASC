@@ -1,5 +1,6 @@
 package boggled.ui;
 
+import ashlib.data.plugins.coreui.CommandUIPlugin;
 import boggled.campaign.econ.boggledTools;
 import boggled.campaign.econ.conditions.Terraforming_Controller;
 import boggled.terraforming.BoggledBaseTerraformingPlanetTypeChangeProject;
@@ -19,7 +20,7 @@ import java.util.List;
 
 import static boggled.campaign.econ.boggledTools.getTerraformingControllerFromMarket;
 
-public class BoggledTerraformingCoreUI implements CustomUIPanelPlugin {
+public class BoggledTerraformingCoreUIAshlib extends CommandUIPlugin {
     CustomPanelAPI mainPanel;
     private CustomPanelAPI leftTerraformingPane;
     private CustomPanelAPI rightTerraformingPane;
@@ -73,7 +74,9 @@ public class BoggledTerraformingCoreUI implements CustomUIPanelPlugin {
 
     private boolean automaticallySwitchToOngoingProject = false;
 
-    public BoggledTerraformingCoreUI() { }
+    public BoggledTerraformingCoreUIAshlib() {
+        super(500, 500);
+    }
 
     private void populatePlayerMarkets()
     {
@@ -410,7 +413,7 @@ public class BoggledTerraformingCoreUI implements CustomUIPanelPlugin {
         }
 
         ArrayList<MarketConditionAPI> conditions = (ArrayList<MarketConditionAPI>) market.getConditions();
-        conditions.sort(Comparator.comparing(BoggledTerraformingCoreUI::getSortOrderForCondition));
+        conditions.sort(Comparator.comparing(BoggledTerraformingCoreUIAshlib::getSortOrderForCondition));
 
         CustomPanelAPI leftPanel = this.mainPanel.createCustomPanel(panePlanetWidth, SCREEN_HEIGHT, null);
 
@@ -492,7 +495,7 @@ public class BoggledTerraformingCoreUI implements CustomUIPanelPlugin {
         {
             conditions.add(Global.getSettings().getMarketConditionSpec(conditionId));
         }
-        conditions.sort(Comparator.comparing(BoggledTerraformingCoreUI::getSortOrderForCondition));
+        conditions.sort(Comparator.comparing(BoggledTerraformingCoreUIAshlib::getSortOrderForCondition));
 
         //Filter out invalid conditions
         ArrayList<MarketConditionSpecAPI> conditionsTemp = new ArrayList<>();

@@ -148,13 +148,6 @@ boggledDomainTechCraftingArtifactCostEasy,Domain-tech crafting cost,Int,1000,,"H
 boggledDomainTechCraftingArtifactCostMedium,Domain-tech crafting cost,Int,2000,,"How many Domain-era artifacts are required to craft one medium special item.",0,10000,Domain-tech Content
 boggledDomainTechCraftingArtifactCostHard,Domain-tech crafting cost,Int,4000,,"How many Domain-era artifacts are required to craft one hard special item.",0,20000,Domain-tech Content
 boggledDomainTechCraftingStoryPointCost,Domain-tech story point crafting cost,Int,2,,"How many story points are required to craft one special item.",0,10,Domain-tech Content
-boggled_PlanetKillerHeader,Planet-killer device settings,Header,Planet-killer device settings,,,,,Domain-tech Content
-boggledPlanetKillerEnabled,Enable planet-killer device,Boolean,False,,"Set this to true to enable the planet-killer device.
-
-Please note that this feature is problematic from a balance and lore standpoint and may cause bugs and/or crashes. Use it at your own risk.",,,Domain-tech Content
-boggledPlanetKillerAllowDestructionOfColoniesMarkedAsEssentialForQuests,Planet-killer device can destroy essential planets,Boolean,True,,"Set this to false to prevent the planet-killer device from being used on planets marked as essential to story quests.
-
-Using the planet-killer device on a story essential planet is guaranteed to cause bugs and/or crashes. This should only be used if the player has already completed all the story quests they intend to complete in the current save.",,,Domain-tech Content
 boggled_PerihelionProjectHeader,Coronal Tap construction settings,Header,Coronal Tap construction settings,,,,,Domain-tech Content
 boggledPerihelionProjectEnabled,Enable Perihelion Project,Boolean,False,,"Set this to true to enable the Perihelion Project.
 

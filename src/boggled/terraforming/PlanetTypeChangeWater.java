@@ -11,6 +11,11 @@ public class PlanetTypeChangeWater extends BoggledBaseTerraformingPlanetTypeChan
         super(market, "water");
     }
 
+    public PlanetTypeChangeWater(MarketAPI market, String planetTypeId)
+    {
+        super(market, planetTypeId);
+    }
+
     @Override
     public ArrayList<TerraformingRequirementObject> getProjectRequirements()
     {

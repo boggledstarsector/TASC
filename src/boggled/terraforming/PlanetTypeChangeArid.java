@@ -11,6 +11,11 @@ public class PlanetTypeChangeArid extends BoggledBaseTerraformingPlanetTypeChang
         super(market, "arid");
     }
 
+    public PlanetTypeChangeArid(MarketAPI market, String planetTypeId)
+    {
+        super(market, planetTypeId);
+    }
+
     @Override
     public ArrayList<TerraformingRequirementObject> getProjectRequirements()
     {

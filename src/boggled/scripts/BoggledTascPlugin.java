@@ -3,6 +3,7 @@ package boggled.scripts;
 import boggled.campaign.econ.industries.plugins.TerraformingMenuOptionProvider;
 import boggled.ui.BoggledCoreModificationListener;
 import boggled.ui.BoggledCoreModifierEveryFrameScript;
+import boggled.ui.TascAshlibCommandTabListener;
 import com.fs.starfarer.api.BaseModPlugin;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.SettingsAPI;
@@ -282,6 +283,12 @@ public class BoggledTascPlugin extends BaseModPlugin {
     {
         ListenerManagerAPI listenerManager = Global.getSector().getListenerManager();
         listenerManager.addListener(new BoggledCoreModificationListener(), true);
+
+        if(Global.getSettings().getModManager().isModEnabled("ashlib"))
+        {
+            listenerManager.addListener(new TascAshlibCommandTabListener(), true);
+            boggledTools.writeMessageToLog("Added Ashlib listener.");
+        }
 
         TerraformingMenuOptionProvider.register();
     }

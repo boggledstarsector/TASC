@@ -4,7 +4,7 @@ import boggled.campaign.econ.conditions.Terraforming_Controller;
 import boggled.campaign.econ.industries.Boggled_Ismara_Sling;
 import boggled.scripts.*;
 import boggled.terraforming.*;
-import boggled.terraforming.us.PlanetTypeChangeSakura;
+import boggled.terraforming.us.*;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.*;
 import com.fs.starfarer.api.campaign.comm.CommMessageAPI;
@@ -35,7 +35,7 @@ import java.lang.String;
 import java.util.*;
 import java.util.List;
 import java.util.ArrayList;
-
+import java.util.UUID;
 import static java.util.Arrays.asList;
 
 public class boggledTools {
@@ -851,7 +851,11 @@ public class boggledTools {
 
         if(Global.getSettings().getModManager().isModEnabled(BoggledMods.unknownSkiesModId))
         {
+            projects.add(new PlanetTypeChangeAlpine(market));
+            projects.add(new PlanetTypeChangeAtoll(market));
             projects.add(new PlanetTypeChangeSakura(market));
+            projects.add(new PlanetTypeChangeSavannah(market));
+            projects.add(new PlanetTypeChangeStorm(market));
         }
 
         projects.add(new ConditionModificationAddHabitable(market));
@@ -1579,10 +1583,9 @@ public class boggledTools {
 
     public static MarketAPI createAstropolisStationMarket(SectorEntityToken stationEntity, SectorEntityToken hostPlanet)
     {
-        CampaignClockAPI clock = Global.getSector().getClock();
-
-        //Create the astropolis market
-        MarketAPI market = Global.getFactory().createMarket(hostPlanet.getName() + "astropolisMarket" + clock.getCycle() + clock.getMonth() + clock.getDay(), stationEntity.getName(), 3);
+        //Create the astropolis market.
+        // Need to use a UUID since if two markets have the same ID it causes bugs.
+        MarketAPI market = Global.getFactory().createMarket(UUID.randomUUID().toString(), stationEntity.getName(), 3);
         market.setSize(3);
 
         market.setSurveyLevel(MarketAPI.SurveyLevel.FULL);

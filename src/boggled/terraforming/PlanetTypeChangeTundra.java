@@ -11,6 +11,11 @@ public class PlanetTypeChangeTundra extends BoggledBaseTerraformingPlanetTypeCha
         super(market, "tundra");
     }
 
+    public PlanetTypeChangeTundra(MarketAPI market, String planetTypeId)
+    {
+        super(market, planetTypeId);
+    }
+
     @Override
     public ArrayList<TerraformingRequirementObject> getProjectRequirements()
     {

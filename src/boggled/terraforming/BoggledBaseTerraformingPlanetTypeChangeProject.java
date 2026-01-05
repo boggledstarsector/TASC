@@ -80,8 +80,13 @@ public class BoggledBaseTerraformingPlanetTypeChangeProject extends BoggledBaseT
         {
             conditionsToRemove.add("US_mind");
             conditionsToRemove.add("US_shrooms");
-            conditionsToRemove.add("US_sakura");
         }
+
+        // Remove US Sakura
+        conditionsToRemove.add("US_sakura");
+
+        // Remove US Hybrid (water planet production bonus)
+        conditionsToRemove.add("US_hybrid");
 
         return conditionsToRemove;
     }
@@ -112,7 +117,7 @@ public class BoggledBaseTerraformingPlanetTypeChangeProject extends BoggledBaseT
         // Handle Mesozoic Park inimical biosphere
         if(this.market.hasIndustry("BOGGLED_MESOZOIC_PARK"))
         {
-            if(this.planetIdToChangeInto.equals(boggledTools.TascPlanetTypes.terranPlanetId) || this.planetIdToChangeInto.equals(boggledTools.TascPlanetTypes.waterPlanetId) || this.planetIdToChangeInto.equals(boggledTools.TascPlanetTypes.junglePlanetId) || this.planetIdToChangeInto.equals(boggledTools.TascPlanetTypes.desertPlanetId))
+            if(boggledTools.getTascPlanetType(this.planetIdToChangeInto).equals(boggledTools.TascPlanetTypes.terranPlanetId) || boggledTools.getTascPlanetType(this.planetIdToChangeInto).equals(boggledTools.TascPlanetTypes.waterPlanetId) || boggledTools.getTascPlanetType(this.planetIdToChangeInto).equals(boggledTools.TascPlanetTypes.junglePlanetId) || boggledTools.getTascPlanetType(this.planetIdToChangeInto).equals(boggledTools.TascPlanetTypes.desertPlanetId))
             {
                 conditionsToAdd.add("inimical_biosphere");
             }

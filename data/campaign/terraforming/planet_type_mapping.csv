@@ -31,6 +31,8 @@ rad_planet,barren
 ecumenopolis,barren
 nskr_ice_desert,barren
 irradiated,barren
+jdp_depleted,barren
+jdp_glassed,barren
 desert,desert
 desert1,desert
 arid,desert
@@ -71,9 +73,14 @@ US_fluorescent,gas_giant
 fds_gas_giant,gas_giant
 SCY_tartarus,gas_giant
 galaxytigers_gas_giant,gas_giant
+jdp_volatile_giant,gas_giant
+jdp_fractal,gas_giant
+jdp_beguiling,gas_giant
 jungle,jungle
 US_jungle,jungle
-US_savannah,jungle
+US_savannah,terran
+jdp_eutrophicated,terran
+jdp_infested,terran
 jungle_charkha,jungle
 nebula_center_old,star
 nebula_center_average,star
@@ -107,6 +114,7 @@ istl_dysonshell,star
 vayra_star_blue,star
 vayra_star_brown,star
 vayra_star_yellow_white,star
+jdp_red_pulsar,star
 terran,terran
 terran-eccentric,terran
 US_lifeless,terran
@@ -122,7 +130,7 @@ US_green,toxic
 SCY_acid,toxic
 tundra,tundra
 US_purple,tundra
-US_alpine,tundra
+US_alpine,terran
 fds_tundra,tundra
 galaxytigers_tundra,tundra
 lava,volcanic

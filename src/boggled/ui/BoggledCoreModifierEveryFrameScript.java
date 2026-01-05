@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.List;
 
 public class BoggledCoreModifierEveryFrameScript implements EveryFrameScript {
+    private boolean isDone = false;
     private HashMap<ButtonAPI, UIComponentAPI> outpostsButtonToPanelMapping = null;
 
     private Float rootX = null;
@@ -46,7 +47,7 @@ public class BoggledCoreModifierEveryFrameScript implements EveryFrameScript {
     public BoggledCoreModifierEveryFrameScript() { }
 
     public boolean isDone() {
-        return false;
+        return this.isDone;
     }
 
     public boolean runWhilePaused() {
@@ -135,6 +136,13 @@ public class BoggledCoreModifierEveryFrameScript implements EveryFrameScript {
 
     public void advance(float amount)
     {
+        if(Global.getSettings().getModManager().isModEnabled("ashlib"))
+        {
+            boggledTools.writeMessageToLog("BoggledCoreModifierEveryFrameScript disabled because Ashlib is active.");
+            this.isDone = true;
+            return;
+        }
+
         if(boggledTools.getBooleanSetting(boggledTools.BoggledSettings.terraformingContentEnabled) && Global.getSector().getCampaignUI().getCurrentCoreTab() != null && Global.getSector().getCampaignUI().getCurrentCoreTab() == CoreUITabId.OUTPOSTS)
         {
             UIPanelAPI mainParent = getMainCorePanel();

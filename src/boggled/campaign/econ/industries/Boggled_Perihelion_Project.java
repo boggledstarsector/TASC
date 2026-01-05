@@ -475,7 +475,6 @@ public class Boggled_Perihelion_Project extends BaseIndustry {
         {
             if(market.hasIndustry(this.getId()) && !market.getId().equals(exclude.getId()))
             {
-                boggledTools.writeMessageToLog("TASC: Market " + market.getName() + " already has Perihelion Project industry.");
                 return true;
             }
         }

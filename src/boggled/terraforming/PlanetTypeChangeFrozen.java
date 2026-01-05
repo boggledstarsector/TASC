@@ -11,6 +11,11 @@ public class PlanetTypeChangeFrozen extends BoggledBaseTerraformingPlanetTypeCha
         super(market, "frozen");
     }
 
+    public PlanetTypeChangeFrozen(MarketAPI market, String planetTypeId)
+    {
+        super(market, planetTypeId);
+    }
+
     @Override
     public ArrayList<TerraformingRequirementObject> getProjectRequirements()
     {
