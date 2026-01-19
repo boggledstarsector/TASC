@@ -429,7 +429,7 @@ public class BoggledBaseTerraformingProject extends BaseIntelPlugin {
             }
         };
 
-        return new TerraformingRequirementObject(terraformingProjectType + " research project has been completed", requirementMet, tooltip);
+        return new TerraformingRequirementObject(terraformingProjectType + " research project completed", requirementMet, tooltip);
     }
 
     public TerraformingRequirementObject getRequirementMarketIsVeryCold() {

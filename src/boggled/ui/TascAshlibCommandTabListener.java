@@ -2,7 +2,6 @@ package boggled.ui;
 
 import ashlib.data.plugins.coreui.CommandTabListener;
 import ashlib.data.plugins.coreui.CommandUIPlugin;
-import boggled.campaign.econ.boggledTools;
 import com.fs.starfarer.api.ui.Alignment;
 import com.fs.starfarer.api.ui.ButtonAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
@@ -41,7 +40,7 @@ public class TascAshlibCommandTabListener implements CommandTabListener {
             @Override
             public void createTooltip(TooltipMakerAPI tooltip, boolean expanded, Object tooltipParam) {
                 tooltip.addSectionHeading("TASC", Alignment.MID,0f);
-                tooltip.addPara("In this tab, test123",5f);
+                tooltip.addPara("Use this tab to manage terraforming projects on your colonies.",5f);
             }
         };
     }
@@ -63,9 +62,7 @@ public class TascAshlibCommandTabListener implements CommandTabListener {
     }
 
     @Override
-    public void performRecalculations(UIComponentAPI uiPanelAPI) {
-        boggledTools.writeMessageToLog("performRecalculations called.");
-    }
+    public void performRecalculations(UIComponentAPI uiPanelAPI) { }
 
     @Override
     public int getOrder() {
@@ -78,7 +75,5 @@ public class TascAshlibCommandTabListener implements CommandTabListener {
     }
 
     @Override
-    public void performRefresh(ButtonAPI buttonAPI) {
-        boggledTools.writeMessageToLog("performRefresh called.");
-    }
+    public void performRefresh(ButtonAPI buttonAPI) { }
 }

@@ -51,6 +51,12 @@ public class TerraformingMenuOptionProvider extends BaseIndustryOptionProvider
             return true;
         }
 
+        // Temporarily disabled in conjunction with AotD until support can be added to Ashlib
+        if(Global.getSettings().getModManager().isModEnabled("ashlib"))
+        {
+            return true;
+        }
+
         if(!boggledTools.getBooleanSetting(boggledTools.BoggledSettings.terraformingContentEnabled))
         {
             return false;
