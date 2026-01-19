@@ -7,12 +7,8 @@ boggledTerraformingTime,Planet type change time,Int,400,,"Controls how long plan
 boggledResourceImprovementTime,Resource improvement time,Int,200,,"Controls how long resource improvement projects take (in days).",1,1000,Terraforming
 boggledConditionImprovementTime,Condition improvement time,Int,200,,"Controls how long condition improvement projects take (in days).",1,1000,Terraforming
 boggledTerraformingTypeChangeAddVolatiles,Add volatiles to Terran and tundra worlds,Boolean,True,,"Set this to false to prevent Terran and tundra type change projects from creating volatiles deposits.",,,Terraforming
-boggledTerraformingRemoveRadiationProjectEnabled,Enable radiation remediation project,Boolean,False,,"Set this to true to enable the terraforming project to remove radiation from a market.
-
-If the player has Ashes of the Domain - Vaults of Knowledge enabled, this setting is ignored and always true.",,,Terraforming
-boggledTerraformingRemoveAtmosphereProjectEnabled,Enable the remove atmosphere project,Boolean,False,,"Set this to true to enable the terraforming project to remove the atmosphere from a market.
-
-If the player has Ashes of the Domain - Vaults of Knowledge enabled, this setting is ignored and always true.",,,Terraforming
+boggledTerraformingRemoveRadiationProjectEnabled,Enable radiation remediation project,Boolean,False,,"Set this to true to enable the terraforming project to remove radiation from a market.",,,Terraforming
+boggledTerraformingRemoveAtmosphereProjectEnabled,Enable the remove atmosphere project,Boolean,False,,"Set this to true to enable the terraforming project to remove the atmosphere from a market.",,,Terraforming
 boggled_terraformingBuildingHeader,Building Settings,Header,Building Settings,,,,,Terraforming
 boggledStellarReflectorArrayEnabled,Enable Stellar Reflector Array,Boolean,True,,"Set this to false to disable the Stellar Reflector Array building.
 
@@ -44,9 +40,11 @@ The Magnetoshield building will suppress the irradiated market condition.",,,Ter
 boggledPlanetCrackerEnabled,Enable Planet Cracker,Boolean,False,,"Set this to true to enable the Planet Cracker building.
 
 The Planet Cracker building can be constructed on a station orbiting a planet. It will permanently improve ore and rare ore resources on that planet by one level but will add the tectonic activity market condition. Does nothing if the planet already has tectonic activity.",,,Terraforming
+boggledPlanetCrackerProjectTime,Planet cracking required time,Int,200,,"Controls how long planet cracking takes (in days).",1,1000,Terraforming
 boggledOuyangOptimizerEnabled,Enable Ouyang Optimzer,Boolean,False,,"Set this to true to enable the Ouyang Optimizer building.
 
 The Ouyang Optimizer building can be constructed on a station orbiting a gas giant. It will permanently improve volatiles resources on that planet by one level but will add the extreme weather market condition. Does nothing if the planet already has extreme weather.",,,Terraforming
+boggledOuyangOptimizerProjectTime,Ouyang optimization required time,Int,200,,"Controls how long Ouyang optimization takes (in days).",1,1000,Terraforming
 boggledStationConstructionContentEnabled,Enable station construction content,Boolean,True,,"Set this to false to completely disable all station construction content regardless of other settings.
 
 If the player has Ashes of the Domain - Vaults of Knowledge enabled, this setting is ignored and always true.",,,Station Construction
@@ -77,7 +75,7 @@ boggledAstropolisEnabled,Enable Astropolis construction,Boolean,True,,"Set this 
 
 Astropolis stations can be constructed using an ability when the player is close to a planet they have already colonized. The station will orbit the planet and have a separate market from the market on the colony. Astropolis stations have no resource deposits.",,,Station Construction
 boggledCanBuildAstropolisOnPurchasedGovernorshipPlanets,Astropolis stations can be built on purchased planets,Boolean,False,,"Set this to true to allow astropolis stations to be constructed in orbit around planets where the player purchased governorship.",,,Station Construction
-boggledAstropolisFollowOrbitalRequirements,Astropolis stations follow orbital requirements,Boolean,True,,"Set this to false to allow construction of astropolis stations in orbit around planets that otherwise do not meet the criteria for astropolis construction.
+boggledAstropolisIgnoreOrbitalRequirements,Astropolis stations ignore orbital requirements,Boolean,False,,"Set this to true to allow construction of astropolis stations in orbit around planets that otherwise do not meet the criteria for astropolis construction.
 
 The criteria for astropolis construction are factors like the size of the planet, other planets or moons orbiting close to it, etc.",,,Station Construction
 boggledAstropolisStationBuildCreditCost,Astropolis station credit build cost,Int,500000,,"How many credits are required to construct an astropolis station.",0,2500000,Station Construction
@@ -150,13 +148,6 @@ boggledDomainTechCraftingArtifactCostEasy,Domain-tech crafting cost,Int,1000,,"H
 boggledDomainTechCraftingArtifactCostMedium,Domain-tech crafting cost,Int,2000,,"How many Domain-era artifacts are required to craft one medium special item.",0,10000,Domain-tech Content
 boggledDomainTechCraftingArtifactCostHard,Domain-tech crafting cost,Int,4000,,"How many Domain-era artifacts are required to craft one hard special item.",0,20000,Domain-tech Content
 boggledDomainTechCraftingStoryPointCost,Domain-tech story point crafting cost,Int,2,,"How many story points are required to craft one special item.",0,10,Domain-tech Content
-boggled_PlanetKillerHeader,Planet-killer device settings,Header,Planet-killer device settings,,,,,Domain-tech Content
-boggledPlanetKillerEnabled,Enable planet-killer device,Boolean,False,,"Set this to true to enable the planet-killer device.
-
-Please note that this feature is problematic from a balance and lore standpoint and may cause bugs and/or crashes. Use it at your own risk.",,,Domain-tech Content
-boggledPlanetKillerAllowDestructionOfColoniesMarkedAsEssentialForQuests,Planet-killer device can destroy essential planets,Boolean,True,,"Set this to false to prevent the planet-killer device from being used on planets marked as essential to story quests.
-
-Using the planet-killer device on a story essential planet is guaranteed to cause bugs and/or crashes. This should only be used if the player has already completed all the story quests they intend to complete in the current save.",,,Domain-tech Content
 boggled_PerihelionProjectHeader,Coronal Tap construction settings,Header,Coronal Tap construction settings,,,,,Domain-tech Content
 boggledPerihelionProjectEnabled,Enable Perihelion Project,Boolean,False,,"Set this to true to enable the Perihelion Project.
 

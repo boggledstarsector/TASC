@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.util.ArrayList;
 
 import boggled.campaign.econ.boggledTools;
+import boggled.campaign.econ.industries.interfaces.ShowBoggledTerraformingMenuOption;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.*;
 import com.fs.starfarer.api.campaign.comm.CommMessageAPI;
@@ -15,7 +16,7 @@ import com.fs.starfarer.api.util.Misc;
 import com.fs.starfarer.api.impl.campaign.econ.impl.BaseIndustry;
 import com.fs.starfarer.api.util.Pair;
 
-public class Boggled_Ismara_Sling extends BaseIndustry
+public class Boggled_Ismara_Sling extends BaseIndustry implements ShowBoggledTerraformingMenuOption
 {
     private final int STATIC_HEAVY_MACHINERY_DEMAND = 6;
 
@@ -31,7 +32,7 @@ public class Boggled_Ismara_Sling extends BaseIndustry
         super.advance(amount);
 
         // This check exists to remove Ismara's Sling if the planet was terraformed to a type that is incompatible with it.
-        if(!boggledTools.marketIsStation(this.market) && (!boggledTools.getPlanetType(this.market.getPlanetEntity()).getPlanetId().equals("water") && !boggledTools.getPlanetType(this.market.getPlanetEntity()).getPlanetId().equals("frozen")))
+        if(!boggledTools.marketIsStation(this.market) && (!boggledTools.getTascPlanetType(this.market.getPlanetEntity()).equals(boggledTools.TascPlanetTypes.waterPlanetId) && !boggledTools.getTascPlanetType(this.market.getPlanetEntity()).equals(boggledTools.TascPlanetTypes.frozenPlanetId)))
         {
             // If an AI core is installed, put one in storage so the player doesn't "lose" an AI core
             if(this.aiCoreId != null)
@@ -128,7 +129,7 @@ public class Boggled_Ismara_Sling extends BaseIndustry
     @Override
     public boolean isAvailableToBuild()
     {
-        if(!boggledTools.isResearched("tasc_advanced_terraforming"))
+        if(!boggledTools.isResearched("tasc_resource_manipulation"))
         {
             return false;
         }
@@ -143,7 +144,7 @@ public class Boggled_Ismara_Sling extends BaseIndustry
             return super.isAvailableToBuild();
         }
 
-        if(!boggledTools.getPlanetType(this.market.getPlanetEntity()).getPlanetId().equals("water") && !boggledTools.getPlanetType(this.market.getPlanetEntity()).getPlanetId().equals("frozen"))
+        if(!boggledTools.getTascPlanetType(this.market.getPlanetEntity()).equals(boggledTools.TascPlanetTypes.waterPlanetId) && !boggledTools.getTascPlanetType(this.market.getPlanetEntity()).equals(boggledTools.TascPlanetTypes.frozenPlanetId))
         {
             return false;
         }
@@ -154,7 +155,7 @@ public class Boggled_Ismara_Sling extends BaseIndustry
     @Override
     public boolean showWhenUnavailable()
     {
-        if(!boggledTools.isResearched("tasc_advanced_terraforming"))
+        if(!boggledTools.isResearched("tasc_resource_manipulation"))
         {
             return false;
         }
@@ -169,7 +170,7 @@ public class Boggled_Ismara_Sling extends BaseIndustry
             return super.showWhenUnavailable();
         }
 
-        if(!boggledTools.getPlanetType(this.market.getPlanetEntity()).getPlanetId().equals("water") && !boggledTools.getPlanetType(this.market.getPlanetEntity()).getPlanetId().equals("frozen"))
+        if(!boggledTools.getTascPlanetType(this.market.getPlanetEntity()).equals(boggledTools.TascPlanetTypes.waterPlanetId) && !boggledTools.getTascPlanetType(this.market.getPlanetEntity()).equals(boggledTools.TascPlanetTypes.frozenPlanetId))
         {
             return super.showWhenUnavailable();
         }
@@ -185,7 +186,7 @@ public class Boggled_Ismara_Sling extends BaseIndustry
             return super.getUnavailableReason();
         }
 
-        if(!boggledTools.getPlanetType(this.market.getPlanetEntity()).getPlanetId().equals("water") && !boggledTools.getPlanetType(this.market.getPlanetEntity()).getPlanetId().equals("frozen"))
+        if(!boggledTools.getTascPlanetType(this.market.getPlanetEntity()).equals(boggledTools.TascPlanetTypes.waterPlanetId) && !boggledTools.getTascPlanetType(this.market.getPlanetEntity()).equals(boggledTools.TascPlanetTypes.frozenPlanetId))
         {
             return "Ismara's Sling can only be built on cryovolcanic, frozen and water-covered worlds.";
         }

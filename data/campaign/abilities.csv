@@ -1,6 +1,4 @@
 name,id,type,tags,activationDays,activationCooldown,durationDays,deactivationDays,deactivationCooldown,unlockedAtStart,defaultForAIFleet,musicSuppression,uiOn,uiOff,uiLoop,worldOn,worldOff,worldLoop,icon,plugin,ai,desc,sortOrder
-Open Terraforming Control Panel,boggled_open_terraforming_control_panel,DURATION,"",0,,0,0,0,TRUE,FALSE,,,,,,,,graphics/icons/abilities/boggled_open_terraforming_control_panel.png,evangel.tascui.CommandUIAbilityK,,"Open the terraforming control panel.",5000
-
 Construct Astropolis Station,boggled_construct_astropolis_station,DURATION,"",0,0,0,0,0,TRUE,FALSE,,,,,,,,graphics/icons/abilities/construct_astropolis_station.png,boggled.campaign.econ.abilities.Construct_Astropolis_Station,,"Construct an astropolis station in orbit around a planet or moon.",5001
 Construct Mining Station,boggled_construct_mining_station,DURATION,"",0,0,0,0,0,TRUE,FALSE,,,,,,,,graphics/icons/abilities/construct_mining_station.png,boggled.campaign.econ.abilities.Construct_Mining_Station,,"Construct a mining station in an asteroid belt or asteroid field.",5001
 Construct Siphon Station,boggled_construct_siphon_station,DURATION,"",0,0,0,0,0,TRUE,FALSE,,,,,,,,graphics/icons/abilities/construct_siphon_station.png,boggled.campaign.econ.abilities.Construct_Siphon_Station,,"Construct a siphon station in low orbit around a gas giant.",5001

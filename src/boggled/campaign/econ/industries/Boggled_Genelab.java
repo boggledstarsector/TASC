@@ -3,6 +3,7 @@ package boggled.campaign.econ.industries;
 import java.awt.Color;
 import java.util.ArrayList;
 import boggled.campaign.econ.boggledTools;
+import boggled.campaign.econ.industries.interfaces.ShowBoggledTerraformingMenuOption;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.*;
 import com.fs.starfarer.api.campaign.comm.CommMessageAPI;
@@ -16,7 +17,7 @@ import com.fs.starfarer.api.util.Misc;
 import com.fs.starfarer.api.impl.campaign.econ.impl.BaseIndustry;
 import com.fs.starfarer.api.util.Pair;
 
-public class Boggled_Genelab extends BaseIndustry
+public class Boggled_Genelab extends BaseIndustry implements ShowBoggledTerraformingMenuOption
 {
     public final int BASE_MESOZOIC_PARK_INCOME_BONUS = 100;
     public final int MESOZOIC_PARK_INCOME_BONUS_IMPROVEMENT = 50;
@@ -504,7 +505,7 @@ public class Boggled_Genelab extends BaseIndustry
     public String getCurrentImage()
     {
         PlanetAPI planet = this.market.getPlanetEntity();
-        if(planet != null && !boggledTools.getPlanetType(planet).getPlanetId().equals("water"))
+        if(planet != null && !boggledTools.getTascPlanetType(planet).equals("water"))
         {
             return Global.getSettings().getSpriteName("boggled", "genelab_trex");
         }

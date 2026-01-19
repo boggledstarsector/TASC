@@ -6,6 +6,7 @@ import java.util.List;
 import java.lang.String;
 
 import boggled.campaign.econ.boggledTools;
+import boggled.campaign.econ.industries.interfaces.ShowBoggledTerraformingMenuOption;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
 
@@ -15,7 +16,7 @@ import com.fs.starfarer.api.impl.campaign.ids.*;
 import com.fs.starfarer.api.impl.campaign.econ.impl.BaseIndustry;
 import com.fs.starfarer.api.impl.campaign.ids.Conditions;
 
-public class Boggled_Harmonic_Damper extends BaseIndustry
+public class Boggled_Harmonic_Damper extends BaseIndustry implements ShowBoggledTerraformingMenuOption
 {
     public static float IMPROVE_DEFENSE_BONUS = 1.25f;
 

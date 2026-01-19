@@ -3,6 +3,7 @@ package boggled.campaign.econ.industries;
 import java.awt.*;
 import java.lang.String;
 
+import boggled.campaign.econ.industries.interfaces.ShowBoggledTerraformingMenuOption;
 import com.fs.starfarer.api.campaign.PlanetAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
@@ -10,7 +11,7 @@ import com.fs.starfarer.api.impl.campaign.econ.impl.BaseIndustry;
 import com.fs.starfarer.api.util.Pair;
 import boggled.campaign.econ.boggledTools;
 
-public class Boggled_Atmosphere_Processor extends BaseIndustry
+public class Boggled_Atmosphere_Processor extends BaseIndustry implements ShowBoggledTerraformingMenuOption
 {
     @Override
     public boolean canBeDisrupted()
@@ -106,7 +107,7 @@ public class Boggled_Atmosphere_Processor extends BaseIndustry
         if(!boggledTools.terraformingPossibleOnMarket(this.market))
         {
             PlanetAPI planet = this.market.getPlanetEntity();
-            if(boggledTools.getPlanetType(planet).getPlanetId().equals("unknown"))
+            if(boggledTools.getTascPlanetType(planet).equals(boggledTools.TascPlanetTypes.unknownPlanetId))
             {
                 return "This planet type is unsupported by TASC. Please report this to boggled on the forums so he can add support. The planet type is: " + market.getPlanetEntity().getTypeId();
             }

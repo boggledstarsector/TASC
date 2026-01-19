@@ -1,9 +1,0 @@
-<component name="libraryTable">
-  <library name="DIYPlanets">
-    <CLASSES>
-      <root url="jar://$PROJECT_DIR$/../StarSectorDIYPlanets-1.30/jars/DIYPlanets.jar!/" />
-    </CLASSES>
-    <JAVADOC />
-    <SOURCES />
-  </library>
-</component>

@@ -24,6 +24,7 @@
 
             "stellar_mirror_condition":"graphics/icons/conditions/stellar_mirror.png",
             "stellar_shade_condition":"graphics/icons/conditions/stellar_shade.png",
+            "terraforming_intel_icon":"graphics/icons/intel/terraforming.png"
         },
         "ui_icons_tech_tree":{
             "BOGGLED_GENELAB_sub":"graphics/icons/tech/subicon_BOGGLED_GENELAB.png",

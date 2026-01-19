@@ -1,30 +1,24 @@
 package boggled.campaign.econ;
 
-import boggled.campaign.econ.industries.BoggledCommonIndustry;
+import boggled.campaign.econ.conditions.Terraforming_Controller;
+import boggled.campaign.econ.industries.Boggled_Ismara_Sling;
 import boggled.scripts.*;
+import boggled.terraforming.*;
+import boggled.terraforming.us.*;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.*;
-import com.fs.starfarer.api.campaign.ai.CampaignFleetAIAPI;
 import com.fs.starfarer.api.campaign.comm.CommMessageAPI;
 import com.fs.starfarer.api.campaign.econ.*;
-import com.fs.starfarer.api.campaign.listeners.ListenerUtil;
-import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import com.fs.starfarer.api.characters.MarketConditionSpecAPI;
-import com.fs.starfarer.api.impl.campaign.MilitaryResponseScript;
-import com.fs.starfarer.api.impl.campaign.econ.impl.BaseIndustry;
 import com.fs.starfarer.api.impl.campaign.ids.*;
 import com.fs.starfarer.api.impl.campaign.intel.BaseIntelPlugin;
 import com.fs.starfarer.api.impl.campaign.intel.MessageIntel;
-import com.fs.starfarer.api.impl.campaign.intel.deciv.DecivTracker;
-import com.fs.starfarer.api.impl.campaign.rulecmd.salvage.MarketCMD;
 import com.fs.starfarer.api.impl.campaign.submarkets.StoragePlugin;
 import com.fs.starfarer.api.impl.campaign.terrain.AsteroidBeltTerrainPlugin;
 import com.fs.starfarer.api.impl.campaign.terrain.AsteroidFieldTerrainPlugin;
-import com.fs.starfarer.api.loading.IndustrySpecAPI;
 import com.fs.starfarer.api.util.Misc;
 import com.fs.starfarer.api.util.Pair;
 import com.fs.starfarer.campaign.*;
-import com.fs.starfarer.loading.specs.PlanetSpec;
 import data.kaysaar.aotd.vok.scripts.research.AoTDMainResearchManager;
 import illustratedEntities.helper.ImageHandler;
 import illustratedEntities.helper.Settings;
@@ -33,125 +27,24 @@ import illustratedEntities.memory.ImageDataMemory;
 import illustratedEntities.memory.TextDataEntry;
 import illustratedEntities.memory.TextDataMemory;
 import lunalib.lunaSettings.LunaSettings;
-import org.apache.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import java.awt.*;
+import java.lang.String;
 import java.util.*;
 import java.util.List;
 import java.util.ArrayList;
-import java.util.regex.Pattern;
-
+import java.util.UUID;
 import static java.util.Arrays.asList;
 
 public class boggledTools {
-
-    private static MarketAPI terraformingMenuTarget = null;
-
-    public static void setTerraformingMenuTarget(MarketAPI market) {
-        terraformingMenuTarget = market;
-    }
-
-    public static MarketAPI getTerraformingMenuTarget() {
-        return terraformingMenuTarget;
-    }
-
-    public static void CheckSubmarketExists(String source, String submarketId) {
-        for (SubmarketSpecAPI submarketSpec : Global.getSettings().getAllSubmarketSpecs()) {
-            if (submarketSpec.getId().equals(submarketId)) {
-                return;
-            }
-        }
-        Global.getLogger(boggledTools.class).warn(source + ": Market condition ID '" + submarketId + "' doesn't exist");
-    }
-
-    public static void CheckMarketConditionExists(String source, String conditionId) {
-        for (MarketConditionSpecAPI marketConditionSpec : Global.getSettings().getAllMarketConditionSpecs()) {
-            if (marketConditionSpec.getId().equals(conditionId)) {
-                return;
-            }
-        }
-        Global.getLogger(boggledTools.class).warn(source + ": Condition ID '" + conditionId + "' doesn't exist");
-    }
-
-    public static void CheckCommodityExists(String source, String commodityId) {
-        for (CommoditySpecAPI commoditySpec : Global.getSettings().getAllCommoditySpecs()) {
-            if (commoditySpec.getId().equals(commodityId)) {
-                return;
-            }
-        }
-        Global.getLogger(boggledTools.class).warn(source + ": Commodity ID '" + commodityId + "' doesn't exist");
-    }
-
-    public static void CheckSpecialItemExists(String source, String specialItemId) {
-        for (SpecialItemSpecAPI itemSpec : Global.getSettings().getAllSpecialItemSpecs()) {
-            if (itemSpec.getId().equals(specialItemId)) {
-                return;
-            }
-        }
-        Global.getLogger(boggledTools.class).warn(source + ": Special Item ID '" + specialItemId + "' doesn't exist");
-    }
-
-    public static void CheckResourceExists(String source, String resourceId) {
-        for (Map.Entry<String, List<String>> resourceProgression : getResourceProgressions().entrySet()) {
-            if (resourceProgression.getKey().equals(resourceId)) {
-                return;
-            }
-        }
-        Global.getLogger(boggledTools.class).warn(source + ": Resource ID '" + resourceId + "' doesn't exist");
-    }
-
-    public static void CheckPlanetSpecExists(String source, String planet) {
-        for (PlanetSpecAPI planetSpec : Global.getSettings().getAllPlanetSpecs()) {
-            if (planetSpec.getPlanetType().equals(planet)) {
-                return;
-            }
-        }
-        Global.getLogger(boggledTools.class).warn(source + ": Planet type '" + planet + "' doesn't exist");
-    }
-
-    public static void CheckPlanetTypeExists(String source, String planet) {
-        for (Map.Entry<String, PlanetType> planetType : planetTypesMap.entrySet()) {
-            if (planetType.getValue().getPlanetId().equals(planet)) {
-                return;
-            }
-        }
-        Global.getLogger(boggledTools.class).warn(source + ": Planet type '" + planet + "' doesn't exist");
-    }
-
-    public static void CheckIndustryExists(String source, String industryId) {
-        IndustrySpecAPI industrySpec = Global.getSettings().getIndustrySpec(industryId);
-        if (industrySpec != null) {
-            return;
-        }
-        Global.getLogger(boggledTools.class).warn(source + ": Industry ID '" + industryId + "' doesn't exist");
-    }
-
-    public static void CheckItemExists(String source, String itemId) {
-        for (SpecialItemSpecAPI specialItemSpec : Global.getSettings().getAllSpecialItemSpecs()) {
-            if (specialItemSpec.getId().equals(itemId)) {
-                return;
-            }
-        }
-        Global.getLogger(boggledTools.class).warn(source + ": Item ID '" + itemId + "' doesn't exist");
-    }
-
-    public static void CheckSkillExists(String source, String skillId) {
-        for (String skillSpecId : Global.getSettings().getSkillIds()) {
-            if (skillSpecId.equals(skillId)) {
-                return;
-            }
-        }
-        Global.getLogger(boggledTools.class).warn(source + ": Skill ID '" + skillId + "' doesn't exist");
-    }
-
     public static class BoggledMods {
         public static final String lunalibModId = "lunalib";
         public static final String illustratedEntitiesModId = "illustrated_entities";
         public static final String tascModId = "Terraforming & Station Construction";
+        public static final String unknownSkiesModId = "US";
+        public static final String atodVokModId = "aotd_vok";
     }
 
     public static class BoggledSettings {
@@ -166,14 +59,8 @@ public class boggledTools {
         public static final String perihelionProjectEnabled = "boggledPerihelionProjectEnabled";
         public static final String planetCrackerEnabled = "boggledPlanetCrackerEnabled";
 
-        public static final String planetKillerEnabled = "boggledPlanetKillerEnabled";
-
         public static final String addDomainTechBuildingsToVanillaColonies = "boggledAddDomainTechBuildingsToVanillaColonies";
         public static final String cryosanctumReplaceEverywhere = "boggledCryosanctumReplaceEverywhere";
-
-        // Building enables, checked in campaign.econ.industries.*
-        // May move them to a CSV later
-
         public static final String boggledDomainArchaeologyEnabled = "boggledDomainArchaeologyEnabled";
         public static final String boggledDomainTechContentEnabled = "boggledDomainTechContentEnabled";
         public static final String enableAIMiningDronesStructure = "boggledEnableAIMiningDronesStructure";
@@ -233,9 +120,12 @@ public class boggledTools {
 
         public static final String marketSizeRequiredToBuildInactiveGate = "boggledMarketSizeRequiredToBuildInactiveGate";
 
-        public static final String planetKillerAllowDestructionOfColoniesMarkedAsEssentialForQuests = "boggledPlanetKillerAllowDestructionOfColoniesMarkedAsEssentialForQuests";
-
         public static final String perihelionProjectDaysToFinish = "boggledPerihelionProjectDaysToFinish";
+        public static final String removeRadiationProjectEnabled = "boggledTerraformingRemoveRadiationProjectEnabled";
+        public static final String removeAtmosphereProjectEnabled = "boggledTerraformingRemoveAtmosphereProjectEnabled";
+        public static final String boggledPlanetCrackerProjectTime = "boggledPlanetCrackerProjectTime";
+        public static final String boggledOuyangOptimizerProjectTime = "boggledOuyangOptimizerProjectTime";
+
     }
 
     public static class BoggledTags {
@@ -293,22 +183,579 @@ public class boggledTools {
         public static final String remnantStationIndustryId = "BOGGLED_REMNANT_STATION";
         public static final String stellarReflectorArrayIndustryId = "BOGGLED_STELLAR_REFLECTOR_ARRAY";
         public static final String domedCitiesIndustryId = "BOGGLED_DOMED_CITIES";
+
+        public static final String ismaraSlingAsteroidProcessingId = "BOGGLED_ISMARA_SLING";
+
+        public static final String atmosphereProcessorId = "BOGGLED_ATMOSPHERE_PROCESSOR";
     }
 
-    private static final String starPlanetId = "star";
+    public static class BoggledResearchProjects {
+        public static final String resourceManipulation = "tasc_resource_manipulation";
+        public static final String atmosphereManipulation = "tasc_atmosphere_manipulation";
+        public static final String planetTypeManipulation = "tasc_planet_type_manipulation";
+    }
 
-    private static final String barrenPlanetId = "barren";
-    public static final String desertPlanetId = "desert";
-    public static final String frozenPlanetId = "frozen";
-    public static final String gasGiantPlanetId = "gas_giant";
-    public static final String junglePlanetId = "jungle";
-    public static final String terranPlanetId = "terran";
-    private static final String toxicPlanetId = "toxic";
-    private static final String tundraPlanetId = "tundra";
-    private static final String volcanicPlanetId = "volcanic";
-    public static final String waterPlanetId = "water";
+    public static class TascPlanetTypes {
+        public static final String starPlanetId = "star";
+        public static final String barrenPlanetId = "barren";
+        public static final String desertPlanetId = "desert";
+        public static final String frozenPlanetId = "frozen";
+        public static final String gasGiantPlanetId = "gas_giant";
+        public static final String junglePlanetId = "jungle";
+        public static final String terranPlanetId = "terran";
+        public static final String toxicPlanetId = "toxic";
+        public static final String tundraPlanetId = "tundra";
+        public static final String volcanicPlanetId = "volcanic";
+        public static final String waterPlanetId = "water";
+        public static final String unknownPlanetId = "unknown";
+    }
 
-    public static final String unknownPlanetId = "unknown";
+    private static final Set<String> validPlanetTypes = new HashSet<>(Arrays.asList(
+            TascPlanetTypes.starPlanetId,
+            TascPlanetTypes.barrenPlanetId,
+            TascPlanetTypes.desertPlanetId,
+            TascPlanetTypes.frozenPlanetId,
+            TascPlanetTypes.gasGiantPlanetId,
+            TascPlanetTypes.junglePlanetId,
+            TascPlanetTypes.terranPlanetId,
+            TascPlanetTypes.toxicPlanetId,
+            TascPlanetTypes.tundraPlanetId,
+            TascPlanetTypes.volcanicPlanetId,
+            TascPlanetTypes.waterPlanetId,
+            TascPlanetTypes.unknownPlanetId
+    ));
+
+    public enum PlanetWaterLevel {
+        LOW_WATER, MEDIUM_WATER, HIGH_WATER
+    }
+
+    public static PlanetWaterLevel getGreaterWaterLevel(PlanetWaterLevel level1, PlanetWaterLevel level2) {
+        // Enums implement the Comparable interface.
+        // compareTo returns:
+        // - a negative number if level1 comes before level2
+        // - 0 if they are the same
+        // - a positive number if level1 comes after level2 (is "greater")
+        if (level1.compareTo(level2) >= 0) {
+            return level1;
+        } else {
+            return level2;
+        }
+    }
+
+    private static final HashMap<String, String> planetTypeIdToTascPlanetTypeMapping = new HashMap<>();
+
+    private static final HashMap<String, HashSet<String>> tascPlanetTypeToAllPlanetTypeIdsMapping = new HashMap<>();
+
+    private static final HashMap<String, PlanetSpecAPI> planetTypeIdToPlanetSpecApiMapping = new HashMap<>();
+
+    private static final HashMap<String, PlanetWaterLevel> tascPlanetTypeToBaseWaterLevelMapping = new HashMap<>(){{
+        put(TascPlanetTypes.starPlanetId, PlanetWaterLevel.LOW_WATER);
+        put(TascPlanetTypes.barrenPlanetId, PlanetWaterLevel.LOW_WATER);
+        put(TascPlanetTypes.desertPlanetId, PlanetWaterLevel.MEDIUM_WATER);
+        put(TascPlanetTypes.frozenPlanetId, PlanetWaterLevel.HIGH_WATER);
+        put(TascPlanetTypes.gasGiantPlanetId, PlanetWaterLevel.LOW_WATER);
+        put(TascPlanetTypes.junglePlanetId, PlanetWaterLevel.HIGH_WATER);
+        put(TascPlanetTypes.terranPlanetId, PlanetWaterLevel.HIGH_WATER);
+        put(TascPlanetTypes.toxicPlanetId, PlanetWaterLevel.LOW_WATER);
+        put(TascPlanetTypes.tundraPlanetId, PlanetWaterLevel.MEDIUM_WATER);
+        put(TascPlanetTypes.volcanicPlanetId, PlanetWaterLevel.LOW_WATER);
+        put(TascPlanetTypes.waterPlanetId, PlanetWaterLevel.HIGH_WATER);
+        put(TascPlanetTypes.unknownPlanetId, PlanetWaterLevel.LOW_WATER);
+    }};
+
+    // Stores the organics and volatiles base and maximum amounts for each TASC planet type.
+    // Four elements in the ArrayList - 1st = organics base, 2nd = organics max, 3rd = volatiles base, 4th = volatiles max
+    // Zero = None, One = lowest amount (-1), Four = highest amount (+2)
+    // All habitable planet types can max out farmland.
+    private static final HashMap<String, ArrayList<Integer>> tascPlanetTypeToResourceLevelMapping = new HashMap<>(){{
+        put(TascPlanetTypes.starPlanetId, new ArrayList<>(Arrays.asList(0, 0, 0, 0)));
+        put(TascPlanetTypes.barrenPlanetId, new ArrayList<>(Arrays.asList(0, 0, 0, 0)));
+        put(TascPlanetTypes.desertPlanetId, new ArrayList<>(Arrays.asList(1, 2, 0, 1)));
+        put(TascPlanetTypes.frozenPlanetId, new ArrayList<>(Arrays.asList(0, 0, 2, 4)));
+        put(TascPlanetTypes.gasGiantPlanetId, new ArrayList<>(Arrays.asList(0, 0, 0, 0)));
+        put(TascPlanetTypes.junglePlanetId, new ArrayList<>(Arrays.asList(2, 4, 0, 0)));
+        put(TascPlanetTypes.terranPlanetId, new ArrayList<>(Arrays.asList(2, 4, 1, 4)));
+        put(TascPlanetTypes.toxicPlanetId, new ArrayList<>(Arrays.asList(0, 0, 0, 0)));
+        put(TascPlanetTypes.tundraPlanetId, new ArrayList<>(Arrays.asList(0, 1, 2, 4)));
+        put(TascPlanetTypes.volcanicPlanetId, new ArrayList<>(Arrays.asList(0, 0, 0, 0)));
+        put(TascPlanetTypes.waterPlanetId, new ArrayList<>(Arrays.asList(2, 4, 0, 3)));
+        put(TascPlanetTypes.unknownPlanetId, new ArrayList<>(Arrays.asList(0, 0, 0, 0)));
+    }};
+
+    private static final HashMap<String, Boolean> tascPlanetTypeCanImproveFarmlandMapping = new HashMap<>(){{
+        put(TascPlanetTypes.starPlanetId, false);
+        put(TascPlanetTypes.barrenPlanetId, false);
+        put(TascPlanetTypes.desertPlanetId, true);
+        put(TascPlanetTypes.frozenPlanetId, false);
+        put(TascPlanetTypes.gasGiantPlanetId, false);
+        put(TascPlanetTypes.junglePlanetId, true);
+        put(TascPlanetTypes.terranPlanetId, true);
+        put(TascPlanetTypes.toxicPlanetId, false);
+        put(TascPlanetTypes.tundraPlanetId, true);
+        put(TascPlanetTypes.volcanicPlanetId, false);
+        put(TascPlanetTypes.waterPlanetId, false);
+        put(TascPlanetTypes.unknownPlanetId, false);
+    }};
+
+    private static final HashMap<String, Boolean> tascPlanetTypeAllowsForTerraforming = new HashMap<>(){{
+        put(TascPlanetTypes.starPlanetId, false);
+        put(TascPlanetTypes.barrenPlanetId, true);
+        put(TascPlanetTypes.desertPlanetId, true);
+        put(TascPlanetTypes.frozenPlanetId, true);
+        put(TascPlanetTypes.gasGiantPlanetId, false);
+        put(TascPlanetTypes.junglePlanetId, true);
+        put(TascPlanetTypes.terranPlanetId, true);
+        put(TascPlanetTypes.toxicPlanetId, true);
+        put(TascPlanetTypes.tundraPlanetId, true);
+        put(TascPlanetTypes.volcanicPlanetId, false);
+        put(TascPlanetTypes.waterPlanetId, true);
+        put(TascPlanetTypes.unknownPlanetId, false);
+    }};
+
+    public static final HashMap<String, Pair<String, String>> tascPlanetTypeDisplayStringMap = new HashMap<>(){{
+        put(TascPlanetTypes.starPlanetId, new Pair<>("Star", "star"));
+        put(TascPlanetTypes.barrenPlanetId, new Pair<>("Barren", "barren"));
+        put(TascPlanetTypes.desertPlanetId, new Pair<>("Desert", "desert"));
+        put(TascPlanetTypes.frozenPlanetId, new Pair<>("Frozen", "frozen"));
+        put(TascPlanetTypes.gasGiantPlanetId, new Pair<>("Gas giant", "gas giant"));
+        put(TascPlanetTypes.junglePlanetId, new Pair<>("Jungle", "jungle"));
+        put(TascPlanetTypes.terranPlanetId, new Pair<>("Terran", "terran"));
+        put(TascPlanetTypes.toxicPlanetId, new Pair<>("Toxic", "toxic"));
+        put(TascPlanetTypes.tundraPlanetId, new Pair<>("Tundra", "tundra"));
+        put(TascPlanetTypes.volcanicPlanetId, new Pair<>("Volcanic", "volcanic"));
+        put(TascPlanetTypes.waterPlanetId, new Pair<>("Water", "water"));
+        put(TascPlanetTypes.unknownPlanetId, new Pair<>("Unknown", "unknown"));
+    }};
+
+    private static final HashMap<String, Boolean> tascPlanetTypeAllowsForHumanHabitability = new HashMap<>(){{
+        put(TascPlanetTypes.starPlanetId, false);
+        put(TascPlanetTypes.barrenPlanetId, false);
+        put(TascPlanetTypes.desertPlanetId, true);
+        put(TascPlanetTypes.frozenPlanetId, false);
+        put(TascPlanetTypes.gasGiantPlanetId, false);
+        put(TascPlanetTypes.junglePlanetId, true);
+        put(TascPlanetTypes.terranPlanetId, true);
+        put(TascPlanetTypes.toxicPlanetId, false);
+        put(TascPlanetTypes.tundraPlanetId, true);
+        put(TascPlanetTypes.volcanicPlanetId, false);
+        put(TascPlanetTypes.waterPlanetId, true);
+        put(TascPlanetTypes.unknownPlanetId, false);
+    }};
+
+    private static final HashMap<Integer, String> intToOrganicsLevel = new HashMap<>(){{
+        put(0, null);
+        put(1, "organics_trace");
+        put(2, "organics_common");
+        put(3, "organics_abundant");
+        put(4, "organics_plentiful");
+    }};
+
+    private static final HashMap<Integer, String> intToVolatilesLevel = new HashMap<>(){{
+        put(0, null);
+        put(1, "volatiles_trace");
+        put(2, "volatiles_diffuse");
+        put(3, "volatiles_abundant");
+        put(4, "volatiles_plentiful");
+    }};
+
+    private static final HashMap<Integer, String> intToFarmlandLevel = new HashMap<>(){{
+        put(0, null);
+        put(1, "farmland_poor");
+        put(2, "farmland_adequate");
+        put(3, "farmland_rich");
+        put(4, "farmland_bountiful");
+    }};
+
+    public static String getNextFarmlandConditionId(MarketAPI market)
+    {
+        if(market.hasCondition("farmland_poor"))
+        {
+            return "farmland_adequate";
+        }
+        else if(market.hasCondition("farmland_adequate"))
+        {
+            return "farmland_rich";
+        }
+        else if(market.hasCondition("farmland_rich"))
+        {
+            return "farmland_bountiful";
+        }
+        else if(market.hasCondition("farmland_bountiful"))
+        {
+            return null;
+        }
+        else
+        {
+            return "farmland_poor";
+        }
+    }
+    public static String getCurrentFarmlandString(MarketAPI market)
+    {
+        if(market.hasCondition("farmland_poor"))
+        {
+            return getConditionFromString("farmland_poor").getName();
+        }
+        else if(market.hasCondition("farmland_adequate"))
+        {
+            return getConditionFromString("farmland_adequate").getName();
+        }
+        else if(market.hasCondition("farmland_rich"))
+        {
+            return getConditionFromString("farmland_rich").getName();
+        }
+        else if(market.hasCondition("farmland_bountiful"))
+        {
+            return getConditionFromString("farmland_bountiful").getName();
+        }
+        else
+        {
+            return null;
+        }
+    }
+
+    public static String getNextFarmlandString(MarketAPI market)
+    {
+        Integer nextLevel = getNextFarmlandLevelInteger(market);
+        if(nextLevel != null)
+        {
+            return getConditionFromString(intToFarmlandLevel.get(nextLevel)).getName();
+        }
+        else
+        {
+            return null;
+        }
+    }
+
+    public static int getFarmlandLevelInteger(MarketAPI market)
+    {
+        if(market.hasCondition("farmland_poor"))
+        {
+            return 1;
+        }
+        else if(market.hasCondition("farmland_adequate"))
+        {
+            return 2;
+        }
+        else if(market.hasCondition("farmland_rich"))
+        {
+            return 3;
+        }
+        else if(market.hasCondition("farmland_bountiful"))
+        {
+            return 4;
+        }
+        else
+        {
+            return 0;
+        }
+    }
+
+    public static Integer getNextFarmlandLevelInteger(MarketAPI market)
+    {
+        int currentLevel = getFarmlandLevelInteger(market);
+        return getNextFarmlandLevelInteger(currentLevel);
+    }
+
+    public static Integer getNextFarmlandLevelInteger(int farmlandLevelInt)
+    {
+        if(farmlandLevelInt < 4)
+        {
+            return farmlandLevelInt + 1;
+        }
+        else
+        {
+            return null;
+        }
+    }
+
+    public static MarketConditionSpecAPI getConditionFromString(String condition)
+    {
+        return Global.getSettings().getMarketConditionSpec(condition);
+    }
+
+    public static int getBaseOrganicsLevelForTascPlanetType(String tascPlanetType)
+    {
+        return tascPlanetTypeToResourceLevelMapping.get(tascPlanetType).get(0);
+    }
+
+    public static int getCurrentOrganicsLevelForMarket(MarketAPI market)
+    {
+        if(market.hasCondition("organics_trace"))
+        {
+            return 1;
+        }
+        else if(market.hasCondition("organics_common"))
+        {
+            return 2;
+        }
+        else if(market.hasCondition("organics_abundant"))
+        {
+            return 3;
+        }
+        else if(market.hasCondition("organics_plentiful"))
+        {
+            return 4;
+        }
+        else
+        {
+            return 0;
+        }
+    }
+
+    public static int getCurrentVolatilesLevelForMarket(MarketAPI market)
+    {
+        if(market.hasCondition("volatiles_trace"))
+        {
+            return 1;
+        }
+        else if(market.hasCondition("volatiles_diffuse"))
+        {
+            return 2;
+        }
+        else if(market.hasCondition("volatiles_abundant"))
+        {
+            return 3;
+        }
+        else if(market.hasCondition("volatiles_plentiful"))
+        {
+            return 4;
+        }
+        else
+        {
+            return 0;
+        }
+    }
+
+    public static String getConditionIdForBaseFarmlandLevelForTascPlanetType(String tascPlanetType)
+    {
+        return tascPlanetTypeCanImproveFarmlandMapping.get(tascPlanetType) ? "farmland_adequate" : null;
+    }
+
+    public static String getConditionIdForBaseOrganicsLevelForTascPlanetType(String tascPlanetType)
+    {
+        return intToOrganicsLevel.get(tascPlanetTypeToResourceLevelMapping.get(tascPlanetType).get(0));
+    }
+
+    public static int getMaxFarmlandLevelForTascPlanetType(String tascPlanetType)
+    {
+        return tascPlanetTypeCanImproveFarmlandMapping.get(tascPlanetType) ? 4 : 0;
+    }
+
+    public static int getMaxOrganicsLevelForTascPlanetType(String tascPlanetType)
+    {
+        return tascPlanetTypeToResourceLevelMapping.get(tascPlanetType).get(1);
+    }
+
+    public static String getConditionIdForMaxOrganicsLevelForTascPlanetType(String tascPlanetType)
+    {
+        return intToOrganicsLevel.get(tascPlanetTypeToResourceLevelMapping.get(tascPlanetType).get(1));
+    }
+
+    public static String getNextOrganicsConditionId(int currentOrganicsLevel)
+    {
+        // Calculate the next level by incrementing the current level.
+        int nextLevel = currentOrganicsLevel + 1;
+
+        // Cap the level at the maximum allowed value, which is 4 (organics_plentiful).
+        int finalLevel = Math.min(nextLevel, 4);
+
+        // Look up the corresponding String ID in the map.
+        // For levels 1, 2, 3, and 4, it returns the correct string.
+        // Note: Level 0 maps to null, which would only happen if currentOrganicsLevel was -1.
+        return intToOrganicsLevel.get(finalLevel);
+    }
+
+    public static String getNextOrganicsConditionId(MarketAPI market)
+    {
+        int currentLevel = 0;
+        if(market.hasCondition("organics_trace"))
+        {
+            currentLevel = 1;
+        }
+        else if(market.hasCondition("organics_common"))
+        {
+            currentLevel = 2;
+        }
+        else if(market.hasCondition("organics_abundant"))
+        {
+            currentLevel = 3;
+        }
+        else if(market.hasCondition("organics_plentiful"))
+        {
+            currentLevel = 4;
+        }
+
+        return getNextOrganicsConditionId(currentLevel);
+    }
+
+    public static String getNextVolatilesConditionId(int currentVolatilesLevel)
+    {
+        // Calculate the next level by incrementing the current level.
+        int nextLevel = currentVolatilesLevel + 1;
+
+        // Cap the level at the maximum allowed value, which is 4 (organics_plentiful).
+        int finalLevel = Math.min(nextLevel, 4);
+
+        // Look up the corresponding String ID in the map.
+        // For levels 1, 2, 3, and 4, it returns the correct string.
+        // Note: Level 0 maps to null, which would only happen if currentOrganicsLevel was -1.
+        return intToVolatilesLevel.get(finalLevel);
+    }
+
+    public static String getNextVolatilesConditionId(MarketAPI market)
+    {
+        int currentLevel = 0;
+        if(market.hasCondition("volatiles_trace"))
+        {
+            currentLevel = 1;
+        }
+        else if(market.hasCondition("volatiles_diffuse"))
+        {
+            currentLevel = 2;
+        }
+        else if(market.hasCondition("volatiles_abundant"))
+        {
+            currentLevel = 3;
+        }
+        else if(market.hasCondition("volatiles_plentiful"))
+        {
+            currentLevel = 4;
+        }
+
+        return getNextVolatilesConditionId(currentLevel);
+    }
+
+    public static String getFarmlandConditionIdForInteger(int level)
+    {
+        return intToFarmlandLevel.get(level);
+    }
+
+    public static String getOrganicsConditionIdForInteger(int level)
+    {
+        return intToOrganicsLevel.get(level);
+    }
+
+    public static String getVolatilesConditionIdForInteger(int level)
+    {
+        return intToVolatilesLevel.get(level);
+    }
+
+    public static int getBaseVolatilesLevelForTascPlanetType(String tascPlanetType)
+    {
+        return tascPlanetTypeToResourceLevelMapping.get(tascPlanetType).get(2);
+    }
+
+    public static String getConditionIdForBaseVolatilesLevelForTascPlanetType(String tascPlanetType)
+    {
+        return intToVolatilesLevel.get(tascPlanetTypeToResourceLevelMapping.get(tascPlanetType).get(2));
+    }
+
+    public static int getMaxVolatilesLevelForTascPlanetType(String tascPlanetType)
+    {
+        return tascPlanetTypeToResourceLevelMapping.get(tascPlanetType).get(3);
+    }
+
+    public static boolean tascPlanetTypeSupportsFarmland(String tascPlanetType)
+    {
+        return tascPlanetTypeCanImproveFarmlandMapping.get(tascPlanetType);
+    }
+
+    public static String getTascPlanetType(PlanetAPI planet)
+    {
+        if(planet == null || planet.getSpec() == null || planet.getSpec().getPlanetType() == null) {
+            return TascPlanetTypes.unknownPlanetId;
+        }
+
+        String planetTypeId = planet.getSpec().getPlanetType();
+        return planetTypeIdToTascPlanetTypeMapping.getOrDefault(planetTypeId, TascPlanetTypes.unknownPlanetId);
+    }
+
+    public static String getTascPlanetType(String planetTypeId)
+    {
+        return planetTypeIdToTascPlanetTypeMapping.getOrDefault(planetTypeId, TascPlanetTypes.unknownPlanetId);
+    }
+
+    public static boolean tascPlanetTypeAllowsTerraforming(String tascPlanetType)
+    {
+        return tascPlanetTypeAllowsForTerraforming.getOrDefault(tascPlanetType, false);
+    }
+
+    public static boolean tascPlanetTypeAllowsHumanHabitability(String tascPlanetType)
+    {
+        return tascPlanetTypeAllowsForHumanHabitability.getOrDefault(tascPlanetType, false);
+    }
+
+    public static HashSet<String> getAllPlanetTypeIdsForTascPlanetType(String tascPlanetType)
+    {
+        return tascPlanetTypeToAllPlanetTypeIdsMapping.getOrDefault(tascPlanetType, new HashSet<>());
+    }
+
+    public static PlanetWaterLevel getBaseWaterLevelForTascPlanetType(String tascPlanetType)
+    {
+        return tascPlanetTypeToBaseWaterLevelMapping.getOrDefault(tascPlanetType, PlanetWaterLevel.LOW_WATER);
+    }
+
+    public static PlanetWaterLevel getWaterLevelForMarket(MarketAPI market)
+    {
+        PlanetWaterLevel sourceInSystem = marketHasWaterSourceInSystem(market) ? PlanetWaterLevel.HIGH_WATER : PlanetWaterLevel.LOW_WATER;
+        PlanetWaterLevel baseWaterLevelForPlanetType = getBaseWaterLevelForTascPlanetType(boggledTools.getTascPlanetType(market.getPlanetEntity()));
+        return getGreaterWaterLevel(sourceInSystem, baseWaterLevelForPlanetType);
+    }
+
+    public static boolean marketHasWaterSourceInSystem(MarketAPI market)
+    {
+        if(market.getStarSystem() == null)
+        {
+            return false;
+        }
+
+        for(Pair<MarketAPI, WaterIndustryStatus> marketStatus : getWaterIndustryStatusForSystem(market.getStarSystem()))
+        {
+            if(marketStatus.two == WaterIndustryStatus.OPERATIONAL)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public enum WaterIndustryStatus {
+        OPERATIONAL,
+        UNDER_CONSTRUCTION,
+        DISRUPTED,
+        SHORTAGE
+    }
+
+    public static ArrayList<Pair<MarketAPI, WaterIndustryStatus>> getWaterIndustryStatusForSystem(StarSystemAPI system)
+    {
+        ArrayList<Pair<MarketAPI, WaterIndustryStatus>> waterIndustries = new ArrayList<>();
+        for(MarketAPI systemMarket : Global.getSector().getEconomy().getMarkets(system))
+        {
+            if(systemMarket.isPlayerOwned() && systemMarket.hasIndustry(BoggledIndustries.ismaraSlingAsteroidProcessingId))
+            {
+                Boggled_Ismara_Sling waterIndustry = (Boggled_Ismara_Sling) systemMarket.getIndustry(BoggledIndustries.ismaraSlingAsteroidProcessingId);
+                if(waterIndustry.isDisrupted())
+                {
+                    waterIndustries.add(new Pair<>(systemMarket, WaterIndustryStatus.DISRUPTED));
+                }
+                else if(!waterIndustry.isFunctional())
+                {
+                    waterIndustries.add(new Pair<>(systemMarket, WaterIndustryStatus.UNDER_CONSTRUCTION));
+                }
+                else if(waterIndustry.ismaraSlingHasShortage())
+                {
+                    waterIndustries.add(new Pair<>(systemMarket, WaterIndustryStatus.SHORTAGE));
+                }
+                else
+                {
+                    waterIndustries.add(new Pair<>(systemMarket, WaterIndustryStatus.OPERATIONAL));
+                }
+            }
+        }
+
+        return waterIndustries;
+    }
 
     public static class BoggledConditions {
         public static final String terraformingControllerConditionId = "terraforming_controller";
@@ -316,22 +763,11 @@ public class boggledTools {
 
         public static final String crampedQuartersConditionId = "cramped_quarters";
     }
-    // A mistyped string compiles fine and leads to plenty of debugging. A mistyped constant gives an error.
-
-    public static final String csvOptionSeparator = "\\s*\\|\\s*";
-    public static final String noneProjectId = "None";
-
-    public static final HashMap<String, BoggledTerraformingRequirementFactory.TerraformingRequirementFactory> terraformingRequirementFactories = new HashMap<>();
-    public static final HashMap<String, BoggledTerraformingDurationModifierFactory.TerraformingDurationModifierFactory> terraformingDurationModifierFactories = new HashMap<>();
-    public static final HashMap<String, BoggledTerraformingProjectEffectFactory.TerraformingProjectEffectFactory> terraformingProjectEffectFactories = new HashMap<>();
-    public static Map<String, BoggledStationConstructionFactory.StationConstructionFactory> stationConstructionFactories = new HashMap<>();
 
     public static Set<String> aotdIgnoreSettings = new HashSet<>();
 
     public static void initialiseModIgnoreSettings() {
         aotdIgnoreSettings.add("boggledTerraformingContentEnabled");
-        aotdIgnoreSettings.add("boggledTerraformingRemoveRadiationProjectEnabled");
-        aotdIgnoreSettings.add("boggledTerraformingRemoveAtmosphereProjectEnabled");
 
         aotdIgnoreSettings.add("boggledStellarReflectorArrayEnabled");
         aotdIgnoreSettings.add("boggledGenelabEnabled");
@@ -352,514 +788,127 @@ public class boggledTools {
         aotdIgnoreSettings.add("boggledRemnantStationEnabled");
     }
 
-    @Nullable
-    public static BoggledTerraformingRequirement.TerraformingRequirement getTerraformingRequirement(String terraformingRequirementType, String id, String[] enableSettings, boolean invert, String data) throws JSONException {
-        Logger log = Global.getLogger(boggledTools.class);
-
-        BoggledTerraformingRequirementFactory.TerraformingRequirementFactory factory = terraformingRequirementFactories.get(terraformingRequirementType);
-        if (factory == null) {
-            log.error("Requirement " + id + " of type " + terraformingRequirementType + " has no assigned factory");
-            return null;
-        }
-        BoggledTerraformingRequirement.TerraformingRequirement req = factory.constructFromJSON(id, enableSettings, invert, data);
-        if (req == null) {
-            log.error("Requirement " + id + " of type " + terraformingRequirementType + " was null when created with data " + data);
-        }
-        return req;
-    }
-
-    @Nullable
-    public static BoggledProjectRequirementsOR getTerraformingRequirements(String terraformingRequirementId, String type, String id) {
-        Logger log = Global.getLogger(boggledTools.class);
-
-        BoggledProjectRequirementsOR req = terraformingRequirements.get(terraformingRequirementId);
-        if (req == null) {
-            log.error(type + " " + id + " has invalid requirement " + terraformingRequirementId);
-        }
-        return req;
-    }
-
-    @Nullable
-    public static BoggledTerraformingDurationModifier.TerraformingDurationModifier getDurationModifier(String durationModifierType, String id, String[] enableSettings, String data) {
-        Logger log = Global.getLogger(boggledTools.class);
-
-        BoggledTerraformingDurationModifierFactory.TerraformingDurationModifierFactory factory = terraformingDurationModifierFactories.get(durationModifierType);
-        if (factory == null) {
-            log.error("Duration modifier " + id + " of type " + durationModifierType + " has no assigned factory");
-            return null;
-        }
-        BoggledTerraformingDurationModifier.TerraformingDurationModifier mod = factory.constructFromJSON(id, enableSettings, data);
-        if (mod == null) {
-            log.error("Duration modifier " + id + " of type " + durationModifierType + " was null when created with data " + data);
-            return null;
-        }
-        return mod;
-    }
-
-    @Nullable
-    public static BoggledTerraformingProjectEffect.TerraformingProjectEffect getProjectEffect(String[] enableSettings, String projectEffectType, String id, String data) throws JSONException {
-        Logger log = Global.getLogger(boggledTools.class);
-
-        BoggledTerraformingProjectEffectFactory.TerraformingProjectEffectFactory factory = terraformingProjectEffectFactories.get(projectEffectType);
-        if (factory == null) {
-            log.error("Terraforming project effect " + id + " of type " + projectEffectType + " has no assigned factory");
-            return null;
-        }
-        BoggledTerraformingProjectEffect.TerraformingProjectEffect effect = factory.constructFromJSON(id, enableSettings, data);
-        if (effect == null) {
-            log.error("Terraforming project effect " + id + " of type " + projectEffectType + " was null when created with data " + data);
-        }
-        return effect;
-    }
-
-    public static boolean optionsAllowThis(String... options) {
-        for (String option : options) {
-            if (option.isEmpty()) {
-                continue;
-            }
-            if (!boggledTools.getBooleanSetting(option)) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    public static String doTokenAndFormatReplacement(String replace, Map<String, String> tokenReplacements) {
-        String ret = doTokenReplacement(replace, tokenReplacements);
-        return ret.replace("%", "%%");
-    }
-
-    public static String doTokenReplacement(String replace, Map<String, String> tokenReplacements) {
-        for (Map.Entry<String, String> replacement : tokenReplacements.entrySet()) {
-            replace = replace.replaceAll("(?!\\b)" + Pattern.quote(replacement.getKey()) + "(?=\\b)", replacement.getValue());
-        }
-        return replace;
-    }
-
-    public static String buildCommodityList(BaseIndustry industry, String[] commoditiesDemanded) {
-        if (commoditiesDemanded.length == 0) {
-            return "";
-        }
-
-        List<Pair<String, Integer>> deficits = industry.getAllDeficit(commoditiesDemanded);
-        String[] strings = new String[deficits.size()];
-        for (int i = 0; i < deficits.size(); ++i) {
-            strings[i] = Global.getSettings().getCommoditySpec(deficits.get(i).one).getLowerCaseName();
-        }
-        return Misc.getAndJoined(strings);
-    }
-
-    private static BoggledCommonIndustry.TooltipData buildUnavailableReason(@NotNull List<BoggledTerraformingProject.ProjectInstance> projects, BoggledTerraformingRequirement.RequirementContext ctx, Map<String, String> tokenReplacements) {
-        List<BoggledCommonIndustry.TooltipData> tooltips = new ArrayList<>();
-        StringBuilder builder = new StringBuilder();
-        List<Color> highlightColors = new ArrayList<>();
-        List<String> highlights = new ArrayList<>();
-        for (BoggledTerraformingProject.ProjectInstance project : projects) {
-            for (BoggledProjectRequirementsAND.RequirementAndThen req : project.getProject().getRequirements()) {
-                tooltips.addAll(req.getTooltip(ctx, tokenReplacements, true, false));
-            }
-        }
-
-        for (BoggledCommonIndustry.TooltipData tooltip : tooltips) {
-            if (tooltip.text.isEmpty()) {
-                continue;
-            }
-            if (builder.length() != 0) {
-                builder.append("\n");
-            }
-            builder.append(tooltip.text);
-            highlightColors.addAll(tooltip.highlightColors);
-            highlights.addAll(tooltip.highlights);
-        }
-
-        return new BoggledCommonIndustry.TooltipData(builder.toString(), highlightColors, highlights);
-    }
-
-    @NotNull
-    public static BoggledCommonIndustry.TooltipData getUnavailableReason(List<BoggledTerraformingProject.ProjectInstance> projects, String industry, BoggledTerraformingRequirement.RequirementContext ctx, Map<String, String> tokenReplacements) {
-        for (BoggledTerraformingProject.ProjectInstance project : projects) {
-            if (!boggledTools.optionsAllowThis(project.getProject().getEnableSettings())) {
-                return new BoggledCommonIndustry.TooltipData("Error in getUnavailableReason() in " + industry + ". Please tell Boggled about this on the forums.");
-            }
-        }
-
-        return buildUnavailableReason(projects, ctx, tokenReplacements);
-    }
-
-    public static void initialiseDefaultTerraformingRequirementFactories() {
-        addTerraformingRequirementFactory("AlwaysTrue", new BoggledTerraformingRequirementFactory.AlwaysTrue());
-
-        addTerraformingRequirementFactory("PlanetType", new BoggledTerraformingRequirementFactory.PlanetType());
-        addTerraformingRequirementFactory("MarketHasCondition", new BoggledTerraformingRequirementFactory.MarketHasCondition());
-        addTerraformingRequirementFactory("MarketConditionSuppressed", new BoggledTerraformingRequirementFactory.MarketConditionSuppressed());
-        addTerraformingRequirementFactory("MarketHasIndustry", new BoggledTerraformingRequirementFactory.MarketHasIndustry());
-        addTerraformingRequirementFactory("MarketHasIndustryWithItem", new BoggledTerraformingRequirementFactory.MarketHasIndustryWithItem());
-        addTerraformingRequirementFactory("MarketHasIndustryWithAICore", new BoggledTerraformingRequirementFactory.MarketHasIndustryWithAICore());
-        addTerraformingRequirementFactory("IndustryHasShortage", new BoggledTerraformingRequirementFactory.IndustryHasShortage());
-        addTerraformingRequirementFactory("PlanetWaterLevel", new BoggledTerraformingRequirementFactory.PlanetWaterLevel());
-        addTerraformingRequirementFactory("MarketHasWaterPresent", new BoggledTerraformingRequirementFactory.MarketHasWaterPresent());
-        addTerraformingRequirementFactory("MarketIsAtLeastSize", new BoggledTerraformingRequirementFactory.MarketIsAtLeastSize());
-        addTerraformingRequirementFactory("StationMarketIsExactlySize", new BoggledTerraformingRequirementFactory.StationMarketIsExactlySize());
-        addTerraformingRequirementFactory("TerraformingPossibleOnMarket", new BoggledTerraformingRequirementFactory.TerraformingPossibleOnMarket());
-        addTerraformingRequirementFactory("MarketHasTags", new BoggledTerraformingRequirementFactory.MarketHasTags());
-        addTerraformingRequirementFactory("MarketStorageContainsAtLeast", new BoggledTerraformingRequirementFactory.MarketStorageContainsAtLeast());
-        addTerraformingRequirementFactory("FleetStorageContainsAtLeast", new BoggledTerraformingRequirementFactory.FleetStorageContainsAtLeast());
-        addTerraformingRequirementFactory("FleetTooCloseToJumpPoint", new BoggledTerraformingRequirementFactory.FleetTooCloseToJumpPoint());
-        addTerraformingRequirementFactory("PlayerHasStoryPointsAtLeast", new BoggledTerraformingRequirementFactory.PlayerHasStoryPointsAtLeast());
-        addTerraformingRequirementFactory("WorldTypeSupportsResourceImprovement", new BoggledTerraformingRequirementFactory.WorldTypeSupportsResourceImprovement());
-
-        addTerraformingRequirementFactory("FocusPlanetType", new BoggledTerraformingRequirementFactory.FocusPlanetType());
-        addTerraformingRequirementFactory("FocusObjectIsPlanet", new BoggledTerraformingRequirementFactory.FocusObjectIsPlanet());
-        addTerraformingRequirementFactory("FocusMarketHasCondition", new BoggledTerraformingRequirementFactory.FocusMarketHasCondition());
-        addTerraformingRequirementFactory("FocusMarketConditionSuppressed", new BoggledTerraformingRequirementFactory.FocusMarketConditionSuppressed());
-
-        addTerraformingRequirementFactory("IntegerFromMarketTagSubstring", new BoggledTerraformingRequirementFactory.IntegerFromMarketTagSubstring());
-
-        addTerraformingRequirementFactory("PlayerHasSkill", new BoggledTerraformingRequirementFactory.PlayerHasSkill());
-
-        addTerraformingRequirementFactory("SystemStarHasTags", new BoggledTerraformingRequirementFactory.SystemStarHasTags());
-        addTerraformingRequirementFactory("SystemStarType", new BoggledTerraformingRequirementFactory.SystemStarType());
-
-        addTerraformingRequirementFactory("FleetInHyperspace", new BoggledTerraformingRequirementFactory.FleetInHyperspace());
-        addTerraformingRequirementFactory("SystemHasJumpPoints", new BoggledTerraformingRequirementFactory.SystemHasJumpPoints());
-        addTerraformingRequirementFactory("SystemHasPlanets", new BoggledTerraformingRequirementFactory.SystemHasPlanets());
-        addTerraformingRequirementFactory("SystemHasStations", new BoggledTerraformingRequirementFactory.SystemHasStations());
-        addTerraformingRequirementFactory("TargetPlanetOwnedBy", new BoggledTerraformingRequirementFactory.TargetPlanetOwnedBy());
-        addTerraformingRequirementFactory("TargetStationOwnedBy", new BoggledTerraformingRequirementFactory.TargetStationOwnedBy());
-        addTerraformingRequirementFactory("TargetPlanetGovernedByPlayer", new BoggledTerraformingRequirementFactory.TargetPlanetGovernedByPlayer());
-        addTerraformingRequirementFactory("TargetPlanetWithinDistance", new BoggledTerraformingRequirementFactory.TargetPlanetWithinDistance());
-        addTerraformingRequirementFactory("TargetStationWithinDistance", new BoggledTerraformingRequirementFactory.TargetStationWithinDistance());
-        addTerraformingRequirementFactory("TargetStationColonizable", new BoggledTerraformingRequirementFactory.TargetStationColonizable());
-        addTerraformingRequirementFactory("TargetPlanetIsAtLeastSize", new BoggledTerraformingRequirementFactory.TargetPlanetIsAtLeastSize());
-        addTerraformingRequirementFactory("TargetPlanetOrbitFocusWithinDistance", new BoggledTerraformingRequirementFactory.TargetPlanetOrbitFocusWithinDistance());
-        addTerraformingRequirementFactory("TargetPlanetStarWithinDistance", new BoggledTerraformingRequirementFactory.TargetPlanetStarWithinDistance());
-        addTerraformingRequirementFactory("TargetPlanetOrbitersWithinDistance", new BoggledTerraformingRequirementFactory.TargetPlanetOrbitersWithinDistance());
-        addTerraformingRequirementFactory("TargetPlanetMoonCountLessThan", new BoggledTerraformingRequirementFactory.TargetPlanetMoonCountLessThan());
-        addTerraformingRequirementFactory("TargetPlanetOrbitersTooClose", new BoggledTerraformingRequirementFactory.TargetPlanetOrbitersTooClose());
-        addTerraformingRequirementFactory("TargetPlanetStationCountLessThan", new BoggledTerraformingRequirementFactory.TargetPlanetStationCountLessThan());
-        addTerraformingRequirementFactory("TargetSystemStationCountLessThan", new BoggledTerraformingRequirementFactory.TargetSystemStationCountLessThan());
-
-        addTerraformingRequirementFactory("FleetInAsteroidBelt", new BoggledTerraformingRequirementFactory.FleetInAsteroidBelt());
-        addTerraformingRequirementFactory("FleetInAsteroidField", new BoggledTerraformingRequirementFactory.FleetInAsteroidField());
-
-        addTerraformingRequirementFactory("TargetPlanetStoryCritical", new BoggledTerraformingRequirementFactory.TargetPlanetStoryCritical());
-        addTerraformingRequirementFactory("TargetStationStoryCritical", new BoggledTerraformingRequirementFactory.TargetStationStoryCritical());
-
-        addTerraformingRequirementFactory("BooleanSettingIsTrue", new BoggledTerraformingRequirementFactory.BooleanSettingIsTrue());
-
-        addTerraformingRequirementFactory("AOTDResearchRequirement", new BoggledTerraformingRequirementFactory.AOTDResearchRequirementFactory());
-    }
-
-    public static void addTerraformingRequirementFactory(String key, BoggledTerraformingRequirementFactory.TerraformingRequirementFactory value) {
-        Global.getLogger(boggledTools.class).info("Adding terraforming requirement factory " + key);
-        terraformingRequirementFactories.put(key, value);
-    }
-
-    public static void initialiseDefaultTerraformingDurationModifierFactories() {
-        addTerraformingDurationModifierFactory("PlanetSize", new BoggledTerraformingDurationModifierFactory.PlanetSize());
-
-        addTerraformingDurationModifierFactory("DurationSettingModifier", new BoggledTerraformingDurationModifierFactory.DurationSettingModifier());
-    }
-
-    public static void addTerraformingDurationModifierFactory(String key, BoggledTerraformingDurationModifierFactory.TerraformingDurationModifierFactory value) {
-        Global.getLogger(boggledTools.class).info("Adding terraforming duration modifier factory " + key);
-        terraformingDurationModifierFactories.put(key, value);
-    }
-
-    public static void initialiseDefaultTerraformingProjectEffectFactories() {
-        addTerraformingProjectEffectFactory("PlanetTypeChange", new BoggledTerraformingProjectEffectFactory.PlanetTypeChange());
-        addTerraformingProjectEffectFactory("IndustrySwap", new BoggledTerraformingProjectEffectFactory.IndustrySwap());
-        addTerraformingProjectEffectFactory("MarketAddCondition", new BoggledTerraformingProjectEffectFactory.MarketAddCondition());
-        addTerraformingProjectEffectFactory("MarketAddConditionNoRemove", new BoggledTerraformingProjectEffectFactory.MarketAddConditionNoRemove());
-        addTerraformingProjectEffectFactory("MarketRemoveCondition", new BoggledTerraformingProjectEffectFactory.MarketRemoveCondition());
-        addTerraformingProjectEffectFactory("MarketOptionalCondition", new BoggledTerraformingProjectEffectFactory.MarketOptionalCondition());
-        addTerraformingProjectEffectFactory("MarketProgressResource", new BoggledTerraformingProjectEffectFactory.MarketProgressResource());
-
-        addTerraformingProjectEffectFactory("FocusMarketAddCondition", new BoggledTerraformingProjectEffectFactory.FocusMarketAddCondition());
-        addTerraformingProjectEffectFactory("FocusMarketRemoveCondition", new BoggledTerraformingProjectEffectFactory.FocusMarketRemoveCondition());
-        addTerraformingProjectEffectFactory("FocusMarketProgressResource", new BoggledTerraformingProjectEffectFactory.FocusMarketProgressResource());
-        addTerraformingProjectEffectFactory("FocusMarketAndSiphonStationProgressResource", new BoggledTerraformingProjectEffectFactory.FocusMarketAndSiphonStationProgressResource());
-
-        addTerraformingProjectEffectFactory("MarketRemoveIndustry", new BoggledTerraformingProjectEffectFactory.MarketRemoveIndustry());
-
-        addTerraformingProjectEffectFactory("RemoveItemFromSubmarket", new BoggledTerraformingProjectEffectFactory.RemoveItemFromSubmarket());
-        addTerraformingProjectEffectFactory("RemoveItemFromFleetStorage", new BoggledTerraformingProjectEffectFactory.RemoveItemFromFleetStorage());
-        addTerraformingProjectEffectFactory("RemoveStoryPointsFromPlayer", new BoggledTerraformingProjectEffectFactory.RemoveStoryPointsFromPlayer());
-        addTerraformingProjectEffectFactory("AddItemToSubmarket", new BoggledTerraformingProjectEffectFactory.AddItemToSubmarket());
-
-        addTerraformingProjectEffectFactory("AddStationToOrbit", new BoggledTerraformingProjectEffectFactory.AddStationToOrbit());
-        addTerraformingProjectEffectFactory("AddStationToAsteroids", new BoggledTerraformingProjectEffectFactory.AddStationToAsteroids());
-
-        addTerraformingProjectEffectFactory("ColonizeAbandonedStation", new BoggledTerraformingProjectEffectFactory.ColonizeAbandonedStation());
-
-        addTerraformingProjectEffectFactory("EffectWithRequirement", new BoggledTerraformingProjectEffectFactory.EffectWithRequirement());
-
-        addTerraformingProjectEffectFactory("AdjustRelationsWith", new BoggledTerraformingProjectEffectFactory.AdjustRelationsWith());
-        addTerraformingProjectEffectFactory("AdjustRelationsWithAllExcept", new BoggledTerraformingProjectEffectFactory.AdjustRelationsWithAllExcept());
-        addTerraformingProjectEffectFactory("TriggerMilitaryResponse", new BoggledTerraformingProjectEffectFactory.TriggerMilitaryResponse());
-        addTerraformingProjectEffectFactory("DecivilizeMarket", new BoggledTerraformingProjectEffectFactory.DecivilizeMarket());
-
-        addTerraformingProjectEffectFactory("ModifyPatherInterest", new BoggledTerraformingProjectEffectFactory.ModifyPatherInterest());
-        addTerraformingProjectEffectFactory("ModifyColonyGrowthRate", new BoggledTerraformingProjectEffectFactory.ModifyColonyGrowthRate());
-        addTerraformingProjectEffectFactory("ModifyColonyGroundDefense", new BoggledTerraformingProjectEffectFactory.ModifyColonyGroundDefense());
-        addTerraformingProjectEffectFactory("ModifyColonyAccessibility", new BoggledTerraformingProjectEffectFactory.ModifyColonyAccessibility());
-        addTerraformingProjectEffectFactory("ModifyColonyStability", new BoggledTerraformingProjectEffectFactory.ModifyColonyStability());
-        addTerraformingProjectEffectFactory("ModifyIndustryUpkeep", new BoggledTerraformingProjectEffectFactory.ModifyIndustryUpkeep());
-        addTerraformingProjectEffectFactory("ModifyIndustryIncome", new BoggledTerraformingProjectEffectFactory.ModifyIndustryIncome());
-        addTerraformingProjectEffectFactory("ModifyIndustryIncomeByAccessibility", new BoggledTerraformingProjectEffectFactory.ModifyIndustryIncomeByAccessibility());
-        addTerraformingProjectEffectFactory("ModifyIndustrySupplyWithDeficit", new BoggledTerraformingProjectEffectFactory.ModifyIndustrySupplyWithDeficit());
-        addTerraformingProjectEffectFactory("ModifyIndustryDemand", new BoggledTerraformingProjectEffectFactory.ModifyIndustryDemand());
-
-        addTerraformingProjectEffectFactory("EffectToIndustry", new BoggledTerraformingProjectEffectFactory.EffectToIndustry());
-
-        addTerraformingProjectEffectFactory("SuppressConditions", new BoggledTerraformingProjectEffectFactory.SuppressConditions());
-
-        addTerraformingProjectEffectFactory("IndustryMonthlyItemProduction", new BoggledTerraformingProjectEffectFactory.IndustryMonthlyItemProduction());
-        addTerraformingProjectEffectFactory("IndustryMonthlyItemProductionChance", new BoggledTerraformingProjectEffectFactory.IndustryMonthlyItemProductionChance());
-        addTerraformingProjectEffectFactory("IndustryMonthlyItemProductionChanceModifier", new BoggledTerraformingProjectEffectFactory.IndustryMonthlyItemProductionChanceModifier());
-
-        addTerraformingProjectEffectFactory("StepTag", new BoggledTerraformingProjectEffectFactory.StepTag());
-        addTerraformingProjectEffectFactory("IndustryRemove", new BoggledTerraformingProjectEffectFactory.IndustryRemove());
-        addTerraformingProjectEffectFactory("TagSubstringPowerModifyBuildCost", new BoggledTerraformingProjectEffectFactory.TagSubstringPowerModifyBuildCost());
-        addTerraformingProjectEffectFactory("EliminatePatherInterest", new BoggledTerraformingProjectEffectFactory.EliminatePatherInterest());
-
-        addTerraformingProjectEffectFactory("CommodityDemandFlat", new BoggledTerraformingProjectEffectFactory.CommodityDemandFlat());
-        addTerraformingProjectEffectFactory("CommodityDemandMarketSize", new BoggledTerraformingProjectEffectFactory.CommodityDemandMarketSize());
-        addTerraformingProjectEffectFactory("CommodityDemandPlayerMarketSizeElseFlat", new BoggledTerraformingProjectEffectFactory.CommodityDemandPlayerMarketSizeElseFlat());
-
-        addTerraformingProjectEffectFactory("CommoditySupplyFlat", new BoggledTerraformingProjectEffectFactory.CommoditySupplyFlat());
-        addTerraformingProjectEffectFactory("CommoditySupplyMarketSize", new BoggledTerraformingProjectEffectFactory.CommoditySupplyMarketSize());
-
-        addTerraformingProjectEffectFactory("CommodityDeficitToProduction", new BoggledTerraformingProjectEffectFactory.CommodityDeficitToProduction());
-        addTerraformingProjectEffectFactory("CommodityDeficitModifierToUpkeep", new BoggledTerraformingProjectEffectFactory.CommodityDeficitModifierToUpkeep());
-
-        addTerraformingProjectEffectFactory("AttachProjectToIndustry", new BoggledTerraformingProjectEffectFactory.AttachProjectToIndustry());
-    }
-
-    public static void addTerraformingProjectEffectFactory(String key, BoggledTerraformingProjectEffectFactory.TerraformingProjectEffectFactory value) {
-        Global.getLogger(boggledTools.class).info("Adding terraforming project effect factory " + key);
-        terraformingProjectEffectFactories.put(key, value);
-    }
-
-    public static void initialiseDefaultStationConstructionFactories() {
-        addStationConstructionFactory(boggledTools.BoggledTags.astropolisStation, new BoggledStationConstructionFactory.AstropolisConstructionFactory());
-        addStationConstructionFactory(boggledTools.BoggledTags.miningStation, new BoggledStationConstructionFactory.MiningStationConstructionFactory());
-        addStationConstructionFactory(boggledTools.BoggledTags.siphonStation, new BoggledStationConstructionFactory.SiphonStationConstructionFactory());
-    }
-
-    public static void addStationConstructionFactory(String key, BoggledStationConstructionFactory.StationConstructionFactory value) {
-        Global.getLogger(boggledTools.class).info("Adding station construction factory " + key);
-        stationConstructionFactories.put(key, value);
-    }
-
-    @NotNull
-    private static List<String> arrayListFromJSON(@NotNull JSONObject data, String key, String regex) throws JSONException {
-        String toSplit = data.getString(key);
-        if (toSplit.isEmpty()) {
-            return new ArrayList<>();
-        }
-        return new ArrayList<>(Arrays.asList(toSplit.split(regex)));
-    }
-
-    public static BoggledProjectRequirementsAND.RequirementAndThen requirementFromRequirementObject(JSONObject requirementObject, String sourceInfo, String id, String key) throws JSONException {
-        Logger log = Global.getLogger(boggledTools.class);
-        String requirementsString = requirementObject.getString("requirement_id");
-
-        JSONArray andThenArray = requirementObject.optJSONArray("and_then");
-        BoggledProjectRequirementsAND andThen = null;
-        if (andThenArray != null) {
-            andThen = requirementsFromRequirementsArray(andThenArray, sourceInfo, id, key);
-        }
-
-        BoggledProjectRequirementsOR req = terraformingRequirements.get(requirementsString);
-        if (req == null) {
-            log.info(sourceInfo + " " + id + " has invalid " + key + " " + requirementsString);
-            return null;
-        }
-        return new BoggledProjectRequirementsAND.RequirementAndThen(req, andThen);
-    }
-
-    public static BoggledProjectRequirementsAND requirementsFromRequirementsArray(JSONArray requirementArray, String sourceInfo, String id, String key) throws JSONException {
-        if (requirementArray == null) {
-            return new BoggledProjectRequirementsAND();
-        }
-
-        List<BoggledProjectRequirementsAND.RequirementAndThen> reqs = new ArrayList<>();
-        for (int i = 0; i < requirementArray.length(); ++i) {
-            JSONObject requirementObject = requirementArray.getJSONObject(i);
-
-            BoggledProjectRequirementsAND.RequirementAndThen req = requirementFromRequirementObject(requirementObject, sourceInfo, id, key);
-
-            if (req != null) {
-                reqs.add(req);
-            }
-        }
-
-        return new BoggledProjectRequirementsAND(reqs);
-    }
-
-    public static BoggledProjectRequirementsAND requirementsFromJSON(JSONObject object, String sourceInfo, String id, String key) throws JSONException {
-        String requirementsArrayString = object.optString(key);
-        if (!requirementsArrayString.isEmpty()) {
-            JSONArray reqsArray = new JSONArray(requirementsArrayString);
-            return requirementsFromRequirementsArray(reqsArray, sourceInfo, id, key);
-        }
-        return null;
-    }
-
-    public static BoggledProjectRequirementsAND requirementsFromJSONNeverNull(JSONObject object, String sourceInfo, String id, String key) throws JSONException {
-        BoggledProjectRequirementsAND ret = requirementsFromJSON(object, sourceInfo, id, key);
-        if (ret == null) {
-            return new BoggledProjectRequirementsAND();
-        }
-        return ret;
-    }
-
-    public static List<BoggledTerraformingProject.RequirementsWithId> requirementsWithIdFromJSON(JSONObject object, String sourceInfo, String id, String key) throws JSONException {
-        Logger log = Global.getLogger(boggledTools.class);
-
-        List<BoggledTerraformingProject.RequirementsWithId> ret = new ArrayList<>();
-        String requirementsString = object.getString(key);
-        if (requirementsString.isEmpty()) {
-            return ret;
-        }
-
-        JSONArray requirementsWithIdArray = new JSONArray(requirementsString);
-        for (int i = 0; i < requirementsWithIdArray.length(); ++i) {
-            JSONObject requirementsObject = requirementsWithIdArray.getJSONObject(i);
-
-            String requirementsId = requirementsObject.getString("requirements_id");
-            BoggledProjectRequirementsAND req = requirementsFromJSON(requirementsObject, sourceInfo, requirementsId, "requirements");
-            if (req != null) {
-                ret.add(new BoggledTerraformingProject.RequirementsWithId(requirementsId, req));
-            } else {
-                log.warn(sourceInfo + " " + id + " has empty invalid requirement " + requirementsId);
-            }
-        }
-
-        return ret;
-    }
-
-    private static Map<String, List<BoggledTerraformingProject>> aiCoreEffectsFromJSON(JSONObject object, String sourceInfo, String id, String key) throws JSONException {
-        Map<String, List<BoggledTerraformingProject>> ret = new HashMap<>();
-        String aiCoreEffectsString = object.optString(key);
-        if (aiCoreEffectsString.isEmpty()) {
-            return ret;
-        }
-
-        JSONArray aiCoreEffectsArray = new JSONArray(aiCoreEffectsString);
-        for (int i = 0; i < aiCoreEffectsArray.length(); ++i) {
-            JSONObject aiCoreObject = aiCoreEffectsArray.getJSONObject(i);
-            String aiCoreId = aiCoreObject.getString("ai_core_id");
-            List<BoggledTerraformingProject> projects = projectsFromJSON(aiCoreObject, sourceInfo, id, "projects");
-            List<BoggledTerraformingProject> entry = ret.get(aiCoreId);
-            if (entry == null) {
-                ret.put(aiCoreId, projects);
-            } else {
-                entry.addAll(projects);
-            }
-        }
-
-        return ret;
-    }
-
-    private static Map<String, List<String>> aiCoreEffectRemoveInfoFromJSON(JSONObject object, String sourceInfo, String id, String key) throws JSONException {
-        Map<String, List<String>> ret = new HashMap<>();
-        String aiCoreEffectsRemovedString = object.optString(key);
-        if (aiCoreEffectsRemovedString.isEmpty()) {
-            return ret;
-        }
-
-        JSONObject aiCoreEffectsRemoved = new JSONObject(aiCoreEffectsRemovedString);
-        for (Iterator<String> it = aiCoreEffectsRemoved.keys(); it.hasNext(); ) {
-            String aiCoreId = it.next();
-            JSONArray aiCoreEffectsArray = aiCoreEffectsRemoved.getJSONArray(aiCoreId);
-            List<String> aiCoreEffects = stringListFromJSON(aiCoreEffectsArray);
-
-            ret.put(aiCoreId, aiCoreEffects);
-        }
-
-        return ret;
-    }
-
-    public static void initialisePlanetTypesFromJSON(@NotNull JSONArray planetTypesJSON) {
-        Logger log = Global.getLogger(boggledTools.class);
-
-        HashMap<String, PlanetType> planetTypesMap = new HashMap<>();
-
-        planetTypesMap.put(unknownPlanetId, new PlanetType(unknownPlanetId, "unknown", false, 0, new ArrayList<Pair<BoggledProjectRequirementsAND, Integer>>()));
-
-        for (int i = 0; i < planetTypesJSON.length(); ++i) {
-            try {
-                JSONObject row = planetTypesJSON.getJSONObject(i);
-
-                String id = row.getString("id");
-                if (id == null || id.isEmpty()) {
-                    continue;
-                }
-
-                String[] conditions = row.getString("conditions").split(boggledTools.csvOptionSeparator);
-                String planetTypeName = row.getString("name");
-                String planetTypeId = row.getString("terraforming_type_id");
-                boolean terraformingPossible = row.getBoolean("terraforming_possible");
-
-                int baseWaterLevel = row.getInt("base_water_level");
-
-                List<Pair<BoggledProjectRequirementsAND, Integer>> conditionalWaterRequirements = new ArrayList<>();
-                String conditionalWaterLevelsString = row.getString("conditional_water_requirements");
-                if (!conditionalWaterLevelsString.isEmpty()) {
-                    JSONArray conditionalWaterLevels = new JSONArray(conditionalWaterLevelsString);
-                    for (int j = 0; j < conditionalWaterLevels.length(); ++j) {
-                        JSONObject conditionalWaterLevel = conditionalWaterLevels.getJSONObject(j);
-                        BoggledProjectRequirementsAND waterRequirement = requirementsFromJSONNeverNull(conditionalWaterLevel, "Conditional Water Level", id, "requirements");
-                        int waterLevel = conditionalWaterLevel.getInt("water_level");
-
-                        conditionalWaterRequirements.add(new Pair<>(waterRequirement, waterLevel));
-                    }
-                }
-
-                PlanetType planetType = new PlanetType(planetTypeId, planetTypeName, terraformingPossible, baseWaterLevel, conditionalWaterRequirements);
-
-                planetTypesMap.put(id, planetType);
-
-            } catch (JSONException e) {
-                log.error("Error in planet types map: " + e);
-            }
-        }
-
-        boggledTools.planetTypesMap = planetTypesMap;
-    }
-
     public static void initializeStellarReflectorArraySuppressedConditionsFromJSON(@NotNull JSONArray stellarReflectorArraySuppressedConditionsJSON) {
-        HashSet<String> conditions = getConditionsListFromJson(stellarReflectorArraySuppressedConditionsJSON);
+        HashSet<String> conditions = getStringListFromJson(stellarReflectorArraySuppressedConditionsJSON, "condition_id");
 
         boggledTools.stellarReflectorArraySuppressedConditions = new ArrayList<String>(conditions);
     }
 
     public static void initializeDomedCitiesSuppressedConditionsFromJSON(@NotNull JSONArray domedCitiesSuppressedConditionsJSON) {
-        HashSet<String> conditions = getConditionsListFromJson(domedCitiesSuppressedConditionsJSON);
+        HashSet<String> conditions = getStringListFromJson(domedCitiesSuppressedConditionsJSON, "condition_id");
 
         boggledTools.domedCitiesSuppressedConditions = new ArrayList<String>(conditions);
     }
 
-    public static HashSet<String> getConditionsListFromJson(JSONArray json) {
-        HashSet<String> conditionsSet = new HashSet<>();
+    public static void initializePlanetMappingsFromJSON(@NotNull JSONArray planetsJson)
+    {
+        for (int i = 0; i < planetsJson.length(); ++i) {
+            try
+            {
+                JSONObject row = planetsJson.getJSONObject(i);
+                String planetTypeId = row.getString("planet_type_id");
+                String tascPlanetType = row.getString("tasc_planet_type");
+                if(planetTypeId == null || planetTypeId.isBlank() || tascPlanetType == null || tascPlanetType.isBlank() || !validPlanetTypes.contains(tascPlanetType))
+                {
+                    throw new RuntimeException("You have a blank cell in the planet mapping CSV file, or you've specified an invalid TASC planet type. Delete the file and replace it with the original.");
+                }
+
+                planetTypeIdToTascPlanetTypeMapping.put(planetTypeId, tascPlanetType);
+                if(tascPlanetTypeToAllPlanetTypeIdsMapping.containsKey(tascPlanetType))
+                {
+                    tascPlanetTypeToAllPlanetTypeIdsMapping.get(tascPlanetType).add(planetTypeId);
+                }
+                else
+                {
+                    tascPlanetTypeToAllPlanetTypeIdsMapping.put(tascPlanetType, new HashSet<>(){{
+                        add(planetTypeId);
+                    }});
+                }
+
+            }
+            catch (JSONException e) {
+                // We can't swallow this exception because the game won't work correctly if the data isn't loaded
+                throw new RuntimeException("Error in planet mapping JSON parsing: " + e);
+            }
+        }
+
+        List<PlanetSpecAPI> planetSpecList = Global.getSettings().getAllPlanetSpecs();
+        for(PlanetSpecAPI planetSpec : planetSpecList)
+        {
+            planetTypeIdToPlanetSpecApiMapping.put(planetSpec.getPlanetType(), planetSpec);
+        }
+    }
+
+    public static ArrayList<BoggledBaseTerraformingProject> getTerraformingProjects(MarketAPI market)
+    {
+        ArrayList<BoggledBaseTerraformingProject> projects = new ArrayList<>();
+        projects.add(new PlanetTypeChangeTerran(market));
+        projects.add(new PlanetTypeChangeWater(market));
+        projects.add(new PlanetTypeChangeArid(market));
+        projects.add(new PlanetTypeChangeJungle(market));
+        projects.add(new PlanetTypeChangeTundra(market));
+        projects.add(new PlanetTypeChangeFrozen(market));
+
+        if(Global.getSettings().getModManager().isModEnabled(BoggledMods.unknownSkiesModId))
+        {
+            projects.add(new PlanetTypeChangeAlpine(market));
+            projects.add(new PlanetTypeChangeAtoll(market));
+            projects.add(new PlanetTypeChangeSakura(market));
+            projects.add(new PlanetTypeChangeSavannah(market));
+            projects.add(new PlanetTypeChangeStorm(market));
+        }
+
+        projects.add(new ConditionModificationAddHabitable(market));
+        projects.add(new ConditionModificationAddMildClimate(market));
+        projects.add(new ConditionModificationRemoveExtremeWeather(market));
+        projects.add(new ConditionModificationRemoveNoAtmosphere(market));
+        projects.add(new ConditionModificationRemoveThinAtmosphere(market));
+        projects.add(new ConditionModificationRemoveDenseAtmosphere(market));
+        projects.add(new ConditionModificationRemoveToxicAtmosphere(market));
+        if(ConditionModificationRemoveAtmosphere.isEnabledViaSettings())
+        {
+            projects.add(new ConditionModificationRemoveAtmosphere(market));
+        }
+        if(ConditionModificationRemoveIrradiated.isEnabledViaSettings())
+        {
+            projects.add(new ConditionModificationRemoveIrradiated(market));
+        }
+
+        projects.add(new ResourceImprovementFarmland(market));
+        projects.add(new ResourceImprovementOrganics(market));
+        projects.add(new ResourceImprovementVolatiles(market));
+
+        return projects;
+    }
+
+    public static Terraforming_Controller getTerraformingControllerFromMarket(MarketAPI market)
+    {
+        return (Terraforming_Controller) market.getCondition(boggledTools.BoggledConditions.terraformingControllerConditionId).getPlugin();
+    }
+
+    public static PlanetSpecAPI getPlanetSpec(String planetTypeId)
+    {
+        return planetTypeIdToPlanetSpecApiMapping.getOrDefault(planetTypeId, null);
+    }
+
+    public static HashSet<String> getStringListFromJson(JSONArray json, String key) {
+        HashSet<String> stringSet = new HashSet<>();
 
         for (int i = 0; i < json.length(); ++i) {
             try {
                 JSONObject row = json.getJSONObject(i);
 
-                String condition_id = row.getString("condition_id");
+                String condition_id = row.getString(key);
                 if (condition_id != null && !condition_id.isEmpty()) {
-                    conditionsSet.add(condition_id);
+                    stringSet.add(condition_id);
                 }
             } catch (JSONException e) {
                 // We can't swallow this exception because the game won't work correctly if the data isn't loaded
-                throw new RuntimeException("Error in condition list JSON parsing: " + e);
+                throw new RuntimeException("Error in string list JSON parsing: " + e);
             }
         }
 
-        return conditionsSet;
+        return stringSet;
     }
 
     public static List<String> getDomedCitiesSuppressedConditions() {
@@ -870,733 +919,8 @@ public class boggledTools {
         return boggledTools.stellarReflectorArraySuppressedConditions;
     }
 
-    public static void initialiseResourceProgressionsFromJSON(@NotNull JSONArray resourceProgressionsJSON) {
-        Logger log = Global.getLogger(boggledTools.class);
-
-        HashMap<String, List<String>> resourceProgressions = new HashMap<>();
-
-        for (int i = 0; i < resourceProgressionsJSON.length(); ++i) {
-            try {
-                JSONObject row = resourceProgressionsJSON.getJSONObject(i);
-
-                String id = row.getString("id");
-                if (id == null || id.isEmpty()) {
-                    continue;
-                }
-
-                List<String> resourceProgression = stringListFromJSON(row, "resource_progression");
-
-                resourceProgressions.put(id, resourceProgression);
-            } catch (JSONException e) {
-                log.error("Error in resource progressions: " + e);
-            }
-        }
-
-        boggledTools.resourceProgressions = resourceProgressions;
-    }
-
-    public static void initialiseResourceLimitsFromJSON(@NotNull JSONArray resourceLimitsJSON) {
-        Logger log = Global.getLogger(boggledTools.class);
-
-        Map<String, Map<String, String>> resourceLimits = new HashMap<>();
-
-        for (int i = 0; i < resourceLimitsJSON.length(); ++i) {
-            try {
-                JSONObject row = resourceLimitsJSON.getJSONObject(i);
-
-                String id = row.getString("id");
-                if (id == null || id.isEmpty()) {
-                    continue;
-                }
-
-                Map<String, String> planetResourceLimits = resourceLimits.get(id);
-                if (planetResourceLimits == null) {
-                    planetResourceLimits = new HashMap<>();
-                    resourceLimits.put(id, planetResourceLimits);
-                }
-
-                String resourcesMaxString = row.getString("resources_max");
-                if (!resourcesMaxString.isEmpty()) {
-                    JSONArray resourcesMax = new JSONArray(resourcesMaxString);
-                    for (int j = 0; j < resourcesMax.length(); ++j) {
-                        JSONObject resource = resourcesMax.getJSONObject(j);
-
-                        String resourceId = resource.getString("resource_id");
-                        String resourceMax = resource.getString("resource_max");
-
-                        CheckResourceExists("Planet Max Resource " + id, resourceId);
-
-                        planetResourceLimits.put(resourceId, resourceMax);
-                    }
-                }
-            } catch (JSONException e) {
-                log.error("Error in resource limits: " + e);
-            }
-        }
-
-        boggledTools.resourceLimits = resourceLimits;
-    }
-
-    private static List<BoggledCommonIndustry.ImageOverrideWithRequirement> imageOverridesFromJSON(JSONObject object, String key) throws JSONException {
-        List<BoggledCommonIndustry.ImageOverrideWithRequirement> ret = new ArrayList<>();
-
-        String imageOverridesString = object.getString(key);
-        if (!imageOverridesString.isEmpty()) {
-            JSONArray imageOverridesJson = new JSONArray(imageOverridesString);
-            for (int j = 0; j < imageOverridesJson.length(); ++j) {
-                JSONObject imageOverride = imageOverridesJson.getJSONObject(j);
-                String id = imageOverride.getString("id");
-
-                JSONArray requirementsArray = imageOverride.getJSONArray("requirements");
-                BoggledProjectRequirementsAND imageReqs = requirementsFromRequirementsArray(requirementsArray, "Industry Options", id, "image_overrides");
-
-                String category = imageOverride.getString("category");
-                String imageId = imageOverride.getString("image_id");
-
-                ret.add(new BoggledCommonIndustry.ImageOverrideWithRequirement(id, imageReqs, category, imageId));
-            }
-        }
-
-        return ret;
-    }
-
-    public static void initialiseIndustryOptionsFromJSON(@NotNull JSONArray industryOptionsJSON) {
-        Logger log = Global.getLogger(boggledTools.class);
-
-        HashMap<String, BoggledCommonIndustry> industryProjects = new HashMap<>();
-        String idForErrors = "";
-        String stage = "";
-        for (int i = 0; i < industryOptionsJSON.length(); ++i) {
-            try {
-                JSONObject row = industryOptionsJSON.getJSONObject(i);
-
-                stage = "id";
-                String id = row.getString("id");
-                if (id == null || id.isEmpty()) {
-                    continue;
-                }
-                idForErrors = id;
-
-                stage = "tooltip";
-                String industry = row.getString("tooltip");
-
-                stage = "projects";
-                String[] projectStrings = row.getString("projects").split(boggledTools.csvOptionSeparator);
-
-                ArrayList<BoggledTerraformingProject> projects = new ArrayList<>();
-                for (String projectString : projectStrings) {
-                    BoggledTerraformingProject project = boggledTools.getProject(projectString);
-                    if (project != null) {
-                        projects.add(project);
-                    }
-                }
-
-                stage = "building_finished_effects";
-                List<BoggledTerraformingProjectEffect.TerraformingProjectEffect> buildingFinishedEffects = projectEffectsFromJSON(row, "Industry Options", id, "building_finished_effects");
-
-                stage = "improve_effects";
-                List<BoggledTerraformingProjectEffect.TerraformingProjectEffect> improveEffects = projectEffectsFromJSON(row, "Industry Options", id, "improve_effects");
-
-                stage = "pre_build_effects";
-                List<BoggledTerraformingProjectEffect.TerraformingProjectEffect> preBuildEffects = projectEffectsFromJSON(row, "Industry Options", id, "pre_build_effects");
-
-                stage = "ai_core_effects";
-                Map<String, List<BoggledTerraformingProject>> aiCoreEffects = aiCoreEffectsFromJSON(row, "AI Core Effects", id, "ai_core_effects");
-
-                List<BoggledProjectRequirementsAND> disruptRequirements = new ArrayList<>();
-
-                stage = "base_pather_interest";
-                float basePatherInterest = (float) row.getDouble("base_pather_interest");
-
-                stage = "image_overrides";
-                List<BoggledCommonIndustry.ImageOverrideWithRequirement> imageOverrides = imageOverridesFromJSON(row, "image_overrides");
-
-                industryProjects.put(id, new BoggledCommonIndustry(id, industry, projects, buildingFinishedEffects, improveEffects, aiCoreEffects, disruptRequirements, basePatherInterest, imageOverrides, preBuildEffects));
-            } catch (JSONException e) {
-                log.error("Error in industry options " + idForErrors + " at stage " + stage + ": " + e);
-            }
-        }
-        boggledTools.industryProjects = industryProjects;
-    }
-
-    public static void initialiseTerraformingRequirementFromJSON(@NotNull JSONArray terraformingRequirementJSON) {
-        Logger log = Global.getLogger(boggledTools.class);
-
-        terraformingRequirement = new HashMap<>();
-        String idForErrors = "";
-        for (int i = 0; i < terraformingRequirementJSON.length(); ++i) {
-            try {
-                JSONObject row = terraformingRequirementJSON.getJSONObject(i);
-
-                String id = row.getString("id");
-                if (id == null || id.isEmpty()) {
-                    continue;
-                }
-                idForErrors = id;
-
-                String[] enableSettings = row.getString("enable_settings").split(csvOptionSeparator);
-
-                String requirementType = row.getString("requirement_type");
-                boolean invert = row.getBoolean("invert");
-                String data = row.getString("data");
-
-                BoggledTerraformingRequirement.TerraformingRequirement req = getTerraformingRequirement(requirementType, id, enableSettings, invert, data);
-                if (req != null) {
-                    terraformingRequirement.put(id, req);
-                }
-            } catch (JSONException e) {
-                log.error("Error in terraforming requirement " + idForErrors + ": " + e);
-            }
-        }
-    }
-
-    public static void initialiseTerraformingRequirementsFromJSON(@NotNull JSONArray terraformingRequirementsJSON) {
-        Logger log = Global.getLogger(boggledTools.class);
-
-        HashMap<String, BoggledProjectRequirementsOR> terraformingRequirements = new HashMap<>();
-        String idForErrors = "";
-        for (int i = 0; i < terraformingRequirementsJSON.length(); ++i) {
-            try {
-                JSONObject row = terraformingRequirementsJSON.getJSONObject(i);
-
-                String id = row.getString("id");
-                if (id.isEmpty()) {
-                    continue;
-                }
-                idForErrors = id;
-
-                String tooltipText = row.getString("tooltip");
-                List<String> tooltipHighlightText = stringListFromJSON(row, "tooltip_highlights");
-                List<Color> tooltipHighlight = new ArrayList<>(tooltipHighlightText.size());
-                for (String tt : tooltipHighlightText) {
-                    tooltipHighlight.add(Misc.getHighlightColor());
-                }
-
-                BoggledCommonIndustry.TooltipData tooltip = new BoggledCommonIndustry.TooltipData(tooltipText, tooltipHighlight, tooltipHighlightText);
-
-                boolean invertAll = row.getBoolean("invert_all");
-                String[] requirements = row.getString("requirements").split(boggledTools.csvOptionSeparator);
-
-                ArrayList<BoggledTerraformingRequirement.TerraformingRequirement> reqs = new ArrayList<>();
-                for (String requirement : requirements) {
-                    BoggledTerraformingRequirement.TerraformingRequirement req = terraformingRequirement.get(requirement);
-                    if (req != null) {
-                        reqs.add(req);
-                    } else {
-                        log.error("Requirements " + id + " has invalid requirement " + requirement);
-                    }
-                }
-
-                BoggledProjectRequirementsOR terraformingReqs = new BoggledProjectRequirementsOR(id, tooltip, invertAll, reqs);
-                terraformingRequirements.put(id, terraformingReqs);
-
-            } catch (JSONException e) {
-                log.error("Error in terraforming requirements " + idForErrors + ": " + e);
-            }
-        }
-        boggledTools.terraformingRequirements = terraformingRequirements;
-    }
-
-    public static void initialiseTerraformingDurationModifiersFromJSON(@NotNull JSONArray durationModifiersJSON) {
-        Logger log = Global.getLogger(boggledTools.class);
-
-        HashMap<String, BoggledTerraformingDurationModifier.TerraformingDurationModifier> durationModifiers = new HashMap<>();
-        for (int i = 0; i < durationModifiersJSON.length(); ++i) {
-            try {
-                JSONObject row = durationModifiersJSON.getJSONObject(i);
-
-                String id = row.getString("id");
-                if (id == null || id.isEmpty()) {
-                    continue;
-                }
-
-                String[] enableSettings = row.getString("enable_settings").split(csvOptionSeparator);
-
-                String durationModifierType = row.getString("duration_modifier_type");
-                String data = row.getString("data");
-
-                BoggledTerraformingDurationModifier.TerraformingDurationModifier mod = getDurationModifier(durationModifierType, id, enableSettings, data);
-                if (mod != null) {
-                    durationModifiers.put(id, mod);
-                }
-            } catch (JSONException e) {
-                log.error("Error in duration modifiers: " + e);
-            }
-        }
-
-        boggledTools.durationModifiers = durationModifiers;
-    }
-
-    public static void initialiseTerraformingProjectEffectsFromJSON(@NotNull JSONArray projectEffectsJSON) {
-        Logger log = Global.getLogger(boggledTools.class);
-
-        terraformingProjectEffects = new HashMap<>();
-        String idForErrors = "";
-        for (int i = 0; i < projectEffectsJSON.length(); ++i) {
-            try {
-                JSONObject row = projectEffectsJSON.getJSONObject(i);
-
-                String id = row.getString("id");
-                if (id == null || id.isEmpty()) {
-                    continue;
-                }
-                idForErrors = id;
-
-                String[] enableSettings = row.getString("enable_settings").split(csvOptionSeparator);
-                String projectEffectType = row.getString("effect_type");
-                String data = row.getString("data");
-
-                BoggledTerraformingProjectEffect.TerraformingProjectEffect projectEffect = getProjectEffect(enableSettings, projectEffectType, id, data);
-                if (projectEffect != null) {
-                    terraformingProjectEffects.put(id, projectEffect);
-                }
-            } catch (JSONException e) {
-                log.error("Error in project effect " + idForErrors + ": " + e);
-            }
-        }
-    }
-
-    public static void initialiseTerraformingProjectsFromJSON(@NotNull JSONArray terraformingProjectsJSON) {
-        Logger log = Global.getLogger(boggledTools.class);
-
-        boggledTools.terraformingProjects = new LinkedHashMap<>();
-        String idForErrors = "";
-        String stage = "";
-        for (int i = 0; i < terraformingProjectsJSON.length(); ++i) {
-            try {
-                JSONObject row = terraformingProjectsJSON.getJSONObject(i);
-
-                stage = "id";
-                String id = row.getString("id");
-                if (id == null || id.isEmpty()) {
-                    continue;
-                }
-                idForErrors = id;
-
-                stage = "enable_settings";
-                String[] enableSettings = row.getString("enable_settings").split(csvOptionSeparator);
-
-                stage = "project_type";
-                String projectType = row.getString("project_type");
-
-                stage = "tooltip";
-                String tooltip = row.getString("tooltip");
-
-                stage = "tooltip_highlights";
-                List<String> tooltipHighlights = stringListFromJSON(row, "tooltip_highlights");
-
-                stage = "intel_complete_message";
-                String intelCompleteMessage = row.getString("intel_complete_message");
-
-                stage = "incomplete_message";
-                String incompleteMessage = row.getString("incomplete_message");
-
-                stage = "incomplete_message_highlights";
-                List<String> incompleteMessageHighlights = stringListFromJSON(row, "incomplete_message_highlights");
-
-                stage = "disrupted_message";
-                String disruptedMessage = row.getString("disrupted_message");
-
-                stage = "disrupted_message_highlights";
-                List<String> disruptedMessageHighlights = stringListFromJSON(row, "disrupted_message_highlights");
-
-                stage = "requirements";
-                BoggledProjectRequirementsAND requirements = requirementsFromJSONNeverNull(row, "Terraforming Projects", id, "requirements");
-
-                stage = "requirements_hidden";
-                BoggledProjectRequirementsAND requirementsHidden = requirementsFromJSONNeverNull(row, "Terraforming Projects", id, "requirements_hidden");
-
-                stage = "requirements_stall";
-                List<BoggledTerraformingProject.RequirementsWithId> requirementsStall = requirementsWithIdFromJSON(row, "Terraforming Projects", id, "requirements_stall");
-
-                stage = "requirements_reset";
-                List<BoggledTerraformingProject.RequirementsWithId> requirementsReset = requirementsWithIdFromJSON(row, "Terraforming Projects", id, "requirements_reset");
-
-                stage = "base_project_duration";
-                int baseProjectDuration = row.optInt("base_project_duration", 0);
-
-                stage = "dynamic_project_duration_modifiers";
-                List<BoggledTerraformingDurationModifier.TerraformingDurationModifier> terraformingDurationModifiers = durationModifiersFromJSON(row, "Terraforming project", id, "dynamic_project_duration_modifiers");
-
-                stage = "project_complete_effects";
-                List<BoggledTerraformingProjectEffect.TerraformingProjectEffect> projectCompleteEffects = projectEffectsFromJSON(row, "Terraforming Projects", id, "project_complete_effects");
-
-                stage = "project_ongoing_effects";
-                List<BoggledTerraformingProjectEffect.TerraformingProjectEffect> projectOngoingEffects = projectEffectsFromJSON(row, "Terraforming Projects", id, "project_ongoing_effects");
-
-                BoggledTerraformingProject terraformingProj = new BoggledTerraformingProject(id, enableSettings, projectType, tooltip, intelCompleteMessage, incompleteMessage, incompleteMessageHighlights, disruptedMessage, disruptedMessageHighlights, requirements, requirementsHidden, requirementsStall, requirementsReset, baseProjectDuration, terraformingDurationModifiers, projectCompleteEffects, projectOngoingEffects);
-                boggledTools.terraformingProjects.put(id, terraformingProj);
-            } catch (JSONException e) {
-                log.error("Error in terraforming projects " + idForErrors + " at stage " + stage + ": " + e);
-            }
-        }
-    }
-
-    private static List<BoggledTerraformingDurationModifier.TerraformingDurationModifier> durationModifiersFromJSON(JSONObject object, String sourceInfo, String id, String key) throws JSONException {
-        Logger log = Global.getLogger(boggledTools.class);
-
-        String projectDurationModifiersString = object.optString(key);
-        List<BoggledTerraformingDurationModifier.TerraformingDurationModifier> ret = new ArrayList<>();
-        if (!projectDurationModifiersString.isEmpty()) {
-            JSONArray projectDurationModifiersArray = new JSONArray(projectDurationModifiersString);
-            for (int i = 0; i < projectDurationModifiersArray.length(); ++i) {
-                String durationModifiersId = projectDurationModifiersArray.getString(i);
-                BoggledTerraformingDurationModifier.TerraformingDurationModifier mod = durationModifiers.get(durationModifiersId);
-                if (mod == null) {
-                    log.info(sourceInfo + " " + id + " has invalid dynamic project duration modifier " + durationModifiersId);
-                } else {
-                    ret.add(mod);
-                }
-            }
-        }
-
-        return ret;
-    }
-
-    private static List<BoggledTerraformingProject> projectsFromJSON(JSONObject object, String sourceInfo, String id, String key) throws JSONException {
-        Logger log = Global.getLogger(boggledTools.class);
-
-        String projectsString = object.optString(key);
-        List<BoggledTerraformingProject> ret = new ArrayList<>();
-        if (projectsString.isEmpty()) {
-            return ret;
-        }
-
-        JSONArray projectsArray = new JSONArray(projectsString);
-        for (int i = 0; i < projectsArray.length(); ++i) {
-            String projectId = projectsArray.getString(i);
-            BoggledTerraformingProject project = boggledTools.terraformingProjects.get(projectId);
-            if (project != null) {
-                ret.add(project);
-            } else {
-                log.info(sourceInfo + " " + id + " has invalid project " + projectId);
-            }
-        }
-
-        return ret;
-    }
-
-    private static List<BoggledTerraformingProjectEffect.TerraformingProjectEffect> projectEffectsFromJSON(JSONObject object, String sourceInfo, String id, String key) throws JSONException {
-        Logger log = Global.getLogger(boggledTools.class);
-
-        String projectEffectsString = object.optString(key);
-        List<BoggledTerraformingProjectEffect.TerraformingProjectEffect> ret = new ArrayList<>();
-        if (projectEffectsString.isEmpty()) {
-            return ret;
-        }
-
-        JSONArray projectEffectsArray = new JSONArray(projectEffectsString);
-        for (int i = 0; i < projectEffectsArray.length(); ++i) {
-            String effectId = projectEffectsArray.getString(i);
-            BoggledTerraformingProjectEffect.TerraformingProjectEffect effect = boggledTools.terraformingProjectEffects.get(effectId);
-            if (effect != null) {
-                ret.add(effect);
-            } else {
-                log.info(sourceInfo + " " + id + " has invalid project effect " + effectId);
-            }
-        }
-
-        return ret;
-    }
-
-    private static List<BoggledProjectRequirementsAND.RequirementAdd> requirementAddFromJSON(JSONObject object, String sourceInfo, String id, String requirementType) throws JSONException {
-        List<BoggledProjectRequirementsAND.RequirementAdd> ret = new ArrayList<>();
-        String requirementAddString = object.optString(requirementType);
-        if (requirementAddString.isEmpty()) {
-            return ret;
-        }
-
-        JSONArray requirementsAddedArray = new JSONArray(requirementAddString);
-        for (int i = 0; i < requirementsAddedArray.length(); ++i) {
-            JSONObject requirementObject = requirementsAddedArray.getJSONObject(i);
-            BoggledProjectRequirementsAND.RequirementAndThen req = requirementFromRequirementObject(requirementObject, sourceInfo, id, requirementType);
-            String parentId = requirementObject.optString("parent_id");
-            if (req != null) {
-                ret.add(new BoggledProjectRequirementsAND.RequirementAdd(req, parentId));
-            }
-        }
-        return ret;
-    }
-
-    private static List<BoggledTerraformingProject.RequirementAddInfo> keyedRequirementAddFromJSON(JSONObject object, String sourceInfo, String id, String baseKey, String key) throws JSONException {
-        List<BoggledTerraformingProject.RequirementAddInfo> ret = new ArrayList<>();
-        String requirementAddString = object.optString(baseKey);
-        if (requirementAddString.isEmpty()) {
-            return ret;
-        }
-        JSONArray requirementAddArray = new JSONArray(requirementAddString);
-        for (int i = 0; i < requirementAddArray.length(); ++i) {
-            JSONObject requirementAddObject = requirementAddArray.getJSONObject(i);
-            String containingId = requirementAddObject.getString("containing_id");
-            List<BoggledProjectRequirementsAND.RequirementAdd> requirementsAdded = requirementAddFromJSON(requirementAddObject, sourceInfo, id, key);
-            ret.add(new BoggledTerraformingProject.RequirementAddInfo(containingId, requirementsAdded));
-        }
-
-        return ret;
-    }
-
-    public static List<String> stringListFromJSON(JSONArray object) throws JSONException {
-        List<String> ret = new ArrayList<>();
-        for (int i = 0; i < object.length(); ++i) {
-            ret.add(object.getString(i));
-        }
-        return ret;
-    }
-
-    private static List<String> stringListFromJSON(JSONObject object, String key) throws JSONException {
-        List<String> ret = new ArrayList<>();
-        String jsonString = object.optString(key);
-        if (jsonString.isEmpty()) {
-            return ret;
-        }
-        return stringListFromJSON(new JSONArray(jsonString));
-    }
-
-    private static List<BoggledTerraformingProject.RequirementRemoveInfo> keyedRequirementRemoveFromJSON(JSONObject object, String baseKey) throws JSONException {
-        List<BoggledTerraformingProject.RequirementRemoveInfo> ret = new ArrayList<>();
-        String requirementRemoveString = object.optString(baseKey);
-        if (requirementRemoveString.isEmpty()) {
-            return ret;
-        }
-        JSONArray requirementRemoveArray = new JSONArray(requirementRemoveString);
-        for (int i = 0; i < requirementRemoveArray.length(); ++i) {
-            JSONObject requirementRemoveObject = requirementRemoveArray.getJSONObject(i);
-            String containingId = requirementRemoveObject.getString("containing_id");
-            List<String> requirementsRemoved = stringListFromJSON(requirementRemoveObject, "requirements_removed");
-            ret.add(new BoggledTerraformingProject.RequirementRemoveInfo(containingId, requirementsRemoved));
-        }
-        return ret;
-    }
-
-    public static void initialiseTerraformingProjectOverrides(@NotNull JSONArray terraformingProjectsOverrideJSON) {
-        Logger log = Global.getLogger(boggledTools.class);
-
-        try {
-            for (int i = 0; i < terraformingProjectsOverrideJSON.length(); ++i) {
-                JSONObject row = terraformingProjectsOverrideJSON.getJSONObject(i);
-
-                String id = row.getString("id");
-                if (id == null || id.isEmpty() || id.equals("your_mod_id_goes_here")) {
-                    continue;
-                }
-
-                String projectId = row.getString("project_id");
-                BoggledTerraformingProject proj = terraformingProjects.get(projectId);
-                if (proj == null) {
-                    log.error("Mod " + id + " terraforming project " + projectId + " not found, ignoring");
-                    continue;
-                }
-
-                List<BoggledProjectRequirementsAND.RequirementAdd> reqsAdded = requirementAddFromJSON(row, "Terraforming Project Mods", id, "requirements_added");
-                List<String> reqsRemoved = stringListFromJSON(row, "requirements_removed");
-
-                List<BoggledProjectRequirementsAND.RequirementAdd> reqsHiddenAdded = requirementAddFromJSON(row, "Terraforming Project Mods", id, "requirements_hidden_added");
-                List<String> reqsHiddenRemoved = stringListFromJSON(row, "requirements_hidden_added");
-
-                List<BoggledTerraformingProject.RequirementAddInfo> reqsStallAdded = keyedRequirementAddFromJSON(row, "Terraforming Project Mods", id, "requirements_stall_added", "requirements_added");
-                List<BoggledTerraformingProject.RequirementRemoveInfo> reqsStallRemoved = keyedRequirementRemoveFromJSON(row, "requirements_stall_removed");
-
-                List<BoggledTerraformingProject.RequirementAddInfo> reqsResetAdded = keyedRequirementAddFromJSON(row, "Terraforming Project Mods", id, "requirements_reset_added", "requirements_added");
-                List<BoggledTerraformingProject.RequirementRemoveInfo> reqsResetRemoved = keyedRequirementRemoveFromJSON(row, "requirements_reset_removed");
-
-                Integer baseProjectDurationOverride = null;
-                String baseProjectDurationOverrideString = row.optString("base_project_duration_override");
-                if (!baseProjectDurationOverrideString.isEmpty()) {
-                    baseProjectDurationOverride = row.getInt("base_project_duration_override");
-                }
-                List<BoggledTerraformingDurationModifier.TerraformingDurationModifier> durationModifiersAdded = durationModifiersFromJSON(row, "Terraforming Project Mods", id, "dynamic_project_duration_modifiers_added");
-                List<String> durationModifiersRemoved = stringListFromJSON(row, "dynamic_project_duration_modifiers_removed");
-
-                List<BoggledTerraformingProjectEffect.TerraformingProjectEffect> projectCompleteEffectsAdded = projectEffectsFromJSON(row, "Terraforming Project Mods", id, "project_complete_effects_added");
-                List<String> projectCompleteEffectsRemoved = stringListFromJSON(row, "project_complete_effects_removed");
-
-                List<BoggledTerraformingProjectEffect.TerraformingProjectEffect> projectOngoingEffectsAdded = projectEffectsFromJSON(row, "Terraforming Project Mods", id, "project_ongoing_effects_added");
-                List<String> projectOngoingEffectsRemoved = stringListFromJSON(row, "project_ongoing_effects_removed");
-
-                proj.addRemoveProjectRequirements(reqsAdded, reqsRemoved, reqsHiddenAdded, reqsHiddenRemoved, reqsStallAdded, reqsStallRemoved, reqsResetAdded, reqsResetRemoved);
-                proj.addRemoveDurationModifiersAndDuration(baseProjectDurationOverride, durationModifiersAdded, durationModifiersRemoved);
-                proj.addRemoveProjectEffects(projectCompleteEffectsAdded, projectCompleteEffectsRemoved, projectOngoingEffectsAdded, projectOngoingEffectsRemoved);
-            }
-        } catch (JSONException e) {
-            log.error("Error in terraforming projects overrides: " + e);
-        }
-    }
-
-    public static void initialiseIndustryOptionOverrides(@NotNull JSONArray industryOptionOverridesJSON) {
-        Logger log = Global.getLogger(boggledTools.class);
-
-        String idForErrors = "";
-        for (int i = 0; i < industryOptionOverridesJSON.length(); ++i) {
-            try {
-                JSONObject row = industryOptionOverridesJSON.getJSONObject(i);
-
-                String id = row.getString("id");
-                if (id.isEmpty()) {
-                    continue;
-                }
-                idForErrors = id;
-
-                String industryId = row.getString("industry_id");
-                BoggledCommonIndustry industry = industryProjects.get(industryId);
-                if (industry == null) {
-                    log.error("Industry option override " + idForErrors + " has invalid industry ID " + industryId);
-                    continue;
-                }
-
-                List<BoggledTerraformingProject> projectsAdded = projectsFromJSON(row, "Industry Option Mods", id, "projects_added");
-                List<String> projectsRemoved = stringListFromJSON(row, "projects_removed");
-
-                List<BoggledTerraformingProjectEffect.TerraformingProjectEffect> buildingFinishedEffectsAdded = projectEffectsFromJSON(row, "Industry Option Mods", id, "building_finished_effects_added");
-                List<String> buildingFinishedEffectsRemoved = stringListFromJSON(row, "building_finished_effects_removed");
-
-                List<BoggledTerraformingProjectEffect.TerraformingProjectEffect> improveEffectsAdded = projectEffectsFromJSON(row, "Industry Option Mods", id, "improve_effects_added");
-                List<String> improveEffectsRemoved = stringListFromJSON(row, "improve_effects_removed");
-
-                Map<String, List<BoggledTerraformingProject>> aiCoreEffectsAdded = aiCoreEffectsFromJSON(row, "Industry Option Mods", id, "ai_core_effects_added");
-                Map<String, List<String>> aiCoreEffectsRemoved = aiCoreEffectRemoveInfoFromJSON(row, "Industry Option Mods", id, "ai_core_effects_removed");
-
-                String canBeDisruptedOverrideString = row.getString("can_be_disrupted_override");
-                boolean canBeDisruptedOverride = industry.canBeDisrupted();
-                if (!canBeDisruptedOverrideString.isEmpty()) {
-                    canBeDisruptedOverride = row.getBoolean("can_be_disrupted_override");
-                }
-                String basePatherInterestOverrideString = row.getString("base_pather_interest_override");
-                float basePatherInterestOverride = industry.getBasePatherInterest();
-                if (!basePatherInterestOverrideString.isEmpty()) {
-                    basePatherInterestOverride = (float) row.getDouble("base_pather_interest_override");
-                }
-
-                List<BoggledCommonIndustry.ImageOverrideWithRequirement> imageOverridesAdded = imageOverridesFromJSON(row, "image_overrides_added");
-                List<String> imageOverridesRemoved = stringListFromJSON(row, "image_overrides_removed");
-
-                List<BoggledTerraformingProjectEffect.TerraformingProjectEffect> preBuildEffectsAdded = projectEffectsFromJSON(row, "Industry Option Mods", id, "pre_build_effects_added");
-                List<String> preBuildEffectsRemoved = stringListFromJSON(row, "pre_build_effects_removed");
-
-                industry.addRemoveProjects(projectsAdded, projectsRemoved);
-                industry.addRemoveBuildingFinishImproveAiCorePrebuildEffects(buildingFinishedEffectsAdded, buildingFinishedEffectsRemoved, improveEffectsAdded, improveEffectsRemoved, aiCoreEffectsAdded, aiCoreEffectsRemoved, preBuildEffectsAdded, preBuildEffectsRemoved);
-                industry.addRemoveImageOverrides(imageOverridesAdded, imageOverridesRemoved);
-                industry.overrideCanBeDisruptedAndBasePatherInterest(canBeDisruptedOverride, basePatherInterestOverride);
-
-            } catch (JSONException e) {
-                log.error("Error in industry options overrides " + idForErrors + ": " + e);
-            }
-        }
-    }
-
-    public static BoggledTerraformingProject getProject(String projectId) {
-        return terraformingProjects.get(projectId);
-    }
-
-    public static BoggledTerraformingProjectEffect.TerraformingProjectEffect getProjectEffect(String effectId) {
-        return terraformingProjectEffects.get(effectId);
-    }
-
-    public static String getResourceLimit(PlanetAPI planet, String resourceId) {
-        String planetTypeId = getPlanetType(planet).getPlanetId();
-        Map<String, String> planetResourceLimits = resourceLimits.get(planetTypeId);
-        if (planetResourceLimits == null) {
-            return null;
-        }
-        return planetResourceLimits.get(resourceId);
-    }
-
-    public static Map<String, List<String>> getResourceProgressions() {
-        return resourceProgressions;
-    }
-
-    public static Map<String, BoggledTerraformingRequirement.TerraformingRequirement> getTerraformingRequirements() {
-        return terraformingRequirement;
-    }
-
-    private static Map<String, BoggledTerraformingRequirement.TerraformingRequirement> terraformingRequirement;
-    private static Map<String, BoggledProjectRequirementsOR> terraformingRequirements;
-    private static Map<String, BoggledTerraformingDurationModifier.TerraformingDurationModifier> durationModifiers;
-
-    private static Map<String, BoggledTerraformingProjectEffect.TerraformingProjectEffect> terraformingProjectEffects;
-    private static Map<String, BoggledCommonIndustry> industryProjects;
-    private static Map<String, BoggledTerraformingProject> terraformingProjects;
-
-    private static Map<String, List<String>> resourceProgressions;
-    private static Map<String, Map<String, String>> resourceLimits;
-
-    private static Map<String, PlanetType> planetTypesMap;
-
     private static List<String> domedCitiesSuppressedConditions;
     private static List<String> stellarReflectorArraySuppressedConditions;
-
-    public static BoggledCommonIndustry getIndustryProject(String industry) {
-        return industryProjects.get(industry);
-    }
-
-    public static BoggledTerraformingDurationModifier.TerraformingDurationModifier getDurationModifier(String modifier) {
-        return durationModifiers.get(modifier);
-    }
-
-    public static HashMap<String, Integer> getNumProjects() {
-        HashMap<String, Integer> ret = new HashMap<>();
-        for (Map.Entry<String, BoggledTerraformingProject> entry : terraformingProjects.entrySet()) {
-            if (!entry.getValue().isEnabled()) {
-                continue;
-            }
-            Integer val = ret.get(entry.getValue().getProjectType());
-            if (val != null) {
-                ret.put(entry.getValue().getProjectType(), ++val);
-            } else {
-                ret.put(entry.getValue().getProjectType(), 1);
-            }
-        }
-        return ret;
-    }
-
-    public static HashMap<String, LinkedHashMap<String, BoggledTerraformingProject>> getVisibleProjects(BoggledTerraformingRequirement.RequirementContext ctx) {
-        HashMap<String, LinkedHashMap<String, BoggledTerraformingProject>> ret = new HashMap<>();
-        for (Map.Entry<String, BoggledTerraformingProject> entry : terraformingProjects.entrySet()) {
-            if (!entry.getValue().isEnabled()) {
-                continue;
-            }
-            if (!entry.getValue().requirementsHiddenMet(ctx)) {
-                continue;
-            }
-            LinkedHashMap<String, BoggledTerraformingProject> val = ret.get(entry.getValue().getProjectType());
-            if (val == null) {
-                val = new LinkedHashMap<>();
-                ret.put(entry.getValue().getProjectType(), val);
-            }
-            val.put(entry.getKey(), entry.getValue());
-        }
-        return ret;
-    }
-
-    public static Map<String, String> getTokenReplacements(BoggledTerraformingRequirement.RequirementContext ctx) {
-        LinkedHashMap<String, String> ret = new LinkedHashMap<>();
-        ret.put("$player", Global.getSector().getPlayerPerson().getNameString());
-        MarketAPI market = ctx.getClosestMarket();
-        if (market != null) {
-            ret.put("$marketName", market.getName());
-        } else {
-            ret.put("$marketName", "market");
-        }
-        MarketAPI focusMarket = ctx.getFocusContext().getClosestMarket();
-        if (focusMarket != null) {
-            ret.put("$focusMarketName", focusMarket.getName());
-        } else {
-            ret.put("$focusMarketName", "orbited market");
-        }
-        PlanetAPI targetPlanet = ctx.getPlanet();
-        if (targetPlanet != null) {
-            ret.put("$planetTypeName", getPlanetType(targetPlanet).getPlanetTypeName());
-            ret.put("$planetName", targetPlanet.getName());
-        } else {
-            ret.put("$planetName", "planet");
-        }
-        StarSystemAPI starSystem = ctx.getStarSystem();
-        if (starSystem != null) {
-            ret.put("$system", starSystem.getName());
-        } else {
-            ret.put("$system", "star system");
-        }
-        return ret;
-    }
 
     public static void incrementOreForPlanetCracking(MarketAPI market)
     {
@@ -1750,10 +1074,6 @@ public class boggledTools {
         return getAngle(target.getLocation().x, target.getLocation().y, playerFleet.getLocation().x, playerFleet.getLocation().y);
     }
 
-    public static float getAngleFromEntity(SectorEntityToken entity, SectorEntityToken target) {
-        return getAngle(target.getLocation().x, target.getLocation().y, entity.getLocation().x, entity.getLocation().y);
-    }
-
     public static void surveyAll(MarketAPI market)
     {
         if(market == null)
@@ -1809,11 +1129,6 @@ public class boggledTools {
             }
         }
         market.addTag(tagToIncrement + step);
-    }
-
-    public static float getRandomOrbitalAngleFloat(float min, float max) {
-        Random rand = new Random();
-        return rand.nextFloat() * (max - min) + min;
     }
 
     public static int numStationsInOrbit(PlanetAPI targetPlanet, String... stationTags) {
@@ -1969,37 +1284,6 @@ public class boggledTools {
 
         return closestStation;
     }
-
-    public static ArrayList<String> getListOfFactionsWithMarketInSystem(StarSystemAPI system) {
-        ArrayList<String> factionsWithMarketInSystem = new ArrayList<>();
-
-        for (MarketAPI market : Global.getSector().getEconomy().getMarkets(system)) {
-            if (!factionsWithMarketInSystem.contains(market.getFactionId())) {
-                factionsWithMarketInSystem.add(market.getFactionId());
-            }
-        }
-
-        return factionsWithMarketInSystem;
-    }
-
-    public static ArrayList<Integer> getCompanionListOfTotalMarketPopulation(StarSystemAPI system, ArrayList<String> factions) {
-        ArrayList<Integer> totalFactionMarketSize = new ArrayList<>();
-        int buffer = 0;
-
-        for (String faction : factions) {
-            for (MarketAPI market : Global.getSector().getEconomy().getMarkets(system)) {
-                if (market.getFactionId().equals(faction)) {
-                    buffer = buffer + market.getSize();
-                }
-            }
-
-            totalFactionMarketSize.add(buffer);
-            buffer = 0;
-        }
-
-        return totalFactionMarketSize;
-    }
-
     public static PlanetAPI getClosestPlanetToken(CampaignFleetAPI playerFleet) {
         StarSystemAPI system = playerFleet.getStarSystem();
         if(playerFleet.isInHyperspace() || playerFleet.isInHyperspaceTransition() || system == null)
@@ -2058,20 +1342,7 @@ public class boggledTools {
         return closestMarket;
     }
 
-    public static PlanetType getPlanetType(PlanetAPI planet) {
-        // Sets the spec planet type, but not the actual planet type. Need the API fix from Alex to correct this.
-        // All code should rely on this function to get the planet type so it should work without bugs.
-        // String planetType = planet.getTypeId();
-        if(planet == null || planet.getSpec() == null || planet.getSpec().getPlanetType() == null) {
-            return planetTypesMap.get(unknownPlanetId); // Guaranteed to be there
-        }
 
-        PlanetType planetType = planetTypesMap.get(planet.getTypeId());
-        if (planetType != null) {
-            return planetType;
-        }
-        return planetTypesMap.get(unknownPlanetId); // Guaranteed to be there
-    }
 
     public static List<MarketAPI> getNonStationMarketsPlayerControls() {
         List<MarketAPI> allPlayerMarkets = Misc.getPlayerMarkets(true);
@@ -2122,9 +1393,9 @@ public class boggledTools {
             return false;
         }
 
-        if (boggledTools.getPlanetType(market.getPlanetEntity()).getPlanetId().equals(desertPlanetId) || boggledTools.getPlanetType(market.getPlanetEntity()).getPlanetId().equals(junglePlanetId)) {
+        if (boggledTools.getTascPlanetType(market.getPlanetEntity()).equals(TascPlanetTypes.desertPlanetId) || boggledTools.getTascPlanetType(market.getPlanetEntity()).equals(TascPlanetTypes.junglePlanetId)) {
             return false;
-        } else if (boggledTools.getPlanetType(market.getPlanetEntity()).getPlanetId().equals(tundraPlanetId) || boggledTools.getPlanetType(market.getPlanetEntity()).getPlanetId().equals(frozenPlanetId)) {
+        } else if (boggledTools.getTascPlanetType(market.getPlanetEntity()).equals(TascPlanetTypes.tundraPlanetId) || boggledTools.getTascPlanetType(market.getPlanetEntity()).equals(TascPlanetTypes.frozenPlanetId)) {
             return true;
         }
 
@@ -2312,10 +1583,9 @@ public class boggledTools {
 
     public static MarketAPI createAstropolisStationMarket(SectorEntityToken stationEntity, SectorEntityToken hostPlanet)
     {
-        CampaignClockAPI clock = Global.getSector().getClock();
-
-        //Create the astropolis market
-        MarketAPI market = Global.getFactory().createMarket(hostPlanet.getName() + "astropolisMarket" + clock.getCycle() + clock.getMonth() + clock.getDay(), stationEntity.getName(), 3);
+        //Create the astropolis market.
+        // Need to use a UUID since if two markets have the same ID it causes bugs.
+        MarketAPI market = Global.getFactory().createMarket(UUID.randomUUID().toString(), stationEntity.getName(), 3);
         market.setSize(3);
 
         market.setSurveyLevel(MarketAPI.SurveyLevel.FULL);
@@ -2682,11 +1952,6 @@ public class boggledTools {
         return rand.nextFloat() * (360f);
     }
 
-    public static boolean playerTooClose(StarSystemAPI system)
-    {
-        return Global.getSector().getPlayerFleet().isInOrNearSystem(system);
-    }
-
     public static void clearConnectedPlanets(MarketAPI market)
     {
         SectorEntityToken targetEntityToRemove = null;
@@ -3024,192 +2289,20 @@ public class boggledTools {
         }
     }
 
-    public static boolean marketHasOrbitalStation(MarketAPI market) {
-        for (SectorEntityToken entity : market.getStarSystem().getAllEntities()) {
-            if (entity.getOrbitFocus() != null && entity.getOrbitFocus().equals(market.getPrimaryEntity()) && entity.hasTag(Tags.STATION)) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    public static void addCondition(MarketAPI market, String condition) {
-        if(!market.hasCondition(condition)) {
+    public static MarketConditionAPI addCondition(MarketAPI market, String condition) {
+        if(!market.hasCondition(condition))
+        {
             market.addCondition(condition);
             boggledTools.surveyAll(market);
         }
+
+        return market.getCondition(condition);
     }
 
     public static void removeCondition(MarketAPI market, String condition) {
         if(market != null && market.hasCondition(condition)) {
             market.removeCondition(condition);
             boggledTools.surveyAll(market);
-        }
-    }
-
-    public static void changePlanetType(PlanetAPI planet, String newType) {
-        PlanetSpecAPI planetSpec = planet.getSpec();
-        for(PlanetSpecAPI targetSpec : Global.getSettings().getAllPlanetSpecs()) {
-            if (targetSpec.getPlanetType().equals(newType)) {
-                planetSpec.setAtmosphereColor(targetSpec.getAtmosphereColor());
-                planetSpec.setAtmosphereThickness(targetSpec.getAtmosphereThickness());
-                planetSpec.setAtmosphereThicknessMin(targetSpec.getAtmosphereThicknessMin());
-                planetSpec.setCloudColor(targetSpec.getCloudColor());
-                planetSpec.setCloudRotation(targetSpec.getCloudRotation());
-                planetSpec.setCloudTexture(targetSpec.getCloudTexture());
-                planetSpec.setGlowColor(targetSpec.getGlowColor());
-                planetSpec.setGlowTexture(targetSpec.getGlowTexture());
-
-                planetSpec.setIconColor(targetSpec.getIconColor());
-                planetSpec.setPlanetColor(targetSpec.getPlanetColor());
-                planetSpec.setStarscapeIcon(targetSpec.getStarscapeIcon());
-                planetSpec.setTexture(targetSpec.getTexture());
-                planetSpec.setUseReverseLightForGlow(targetSpec.isUseReverseLightForGlow());
-                ((PlanetSpec) planetSpec).planetType = newType;
-                ((PlanetSpec) planetSpec).name = targetSpec.getName();
-                ((PlanetSpec) planetSpec).descriptionId = ((PlanetSpec) targetSpec).descriptionId;
-                break;
-            }
-        }
-
-        planet.applySpecChanges();
-    }
-
-    public static void applyPlanetKiller(MarketAPI market) {
-        if(Misc.isStoryCritical(market) && !boggledTools.getBooleanSetting(BoggledSettings.planetKillerAllowDestructionOfColoniesMarkedAsEssentialForQuests)) {
-            // Should never be reached because deployment will be disabled.
-            return;
-        }
-
-        adjustRelationshipsDueToPlanetKillerUsage(market);
-        triggerMilitaryResponseToPlanetKillerUsage(market);
-        decivilizeMarketWithPlanetKiller(market);
-        if(market.getPlanetEntity() != null && market.getPlanetEntity().getSpec() != null) {
-            changePlanetTypeWithPlanetKiller(market);
-            changePlanetConditionsWithPlanetKiller(market);
-        }
-    }
-
-    public static void changePlanetTypeWithPlanetKiller(MarketAPI market) {
-        String planetType = getPlanetType(market.getPlanetEntity()).getPlanetId();
-        if(!planetType.equals(starPlanetId) && !planetType.equals(gasGiantPlanetId) && !planetType.equals(volcanicPlanetId) && !planetType.equals(unknownPlanetId))
-        {
-            changePlanetType(market.getPlanetEntity(), Conditions.IRRADIATED);
-            market.addCondition(Conditions.IRRADIATED);
-        }
-    }
-
-    public static void changePlanetConditionsWithPlanetKiller(MarketAPI market) {
-        // Modded conditions
-
-        // Vanilla Conditions
-        removeCondition(market, Conditions.HABITABLE);
-        removeCondition(market, Conditions.MILD_CLIMATE);
-        removeCondition(market, Conditions.WATER_SURFACE);
-        removeCondition(market, Conditions.VOLTURNIAN_LOBSTER_PENS);
-
-        removeCondition(market, Conditions.INIMICAL_BIOSPHERE);
-
-        removeCondition(market, Conditions.FARMLAND_POOR);
-        removeCondition(market, Conditions.FARMLAND_ADEQUATE);
-        removeCondition(market, Conditions.FARMLAND_RICH);
-        removeCondition(market, Conditions.FARMLAND_BOUNTIFUL);
-
-        String planetType = getPlanetType(market.getPlanetEntity()).getPlanetId();
-        if(!planetType.equals(gasGiantPlanetId) && !planetType.equals(unknownPlanetId)) {
-            removeCondition(market, Conditions.ORGANICS_TRACE);
-            removeCondition(market, Conditions.ORGANICS_COMMON);
-            removeCondition(market, Conditions.ORGANICS_ABUNDANT);
-            removeCondition(market, Conditions.ORGANICS_PLENTIFUL);
-
-            removeCondition(market, Conditions.VOLATILES_TRACE);
-            removeCondition(market, Conditions.VOLATILES_DIFFUSE);
-            removeCondition(market, Conditions.VOLATILES_ABUNDANT);
-            removeCondition(market, Conditions.VOLATILES_PLENTIFUL);
-        }
-    }
-
-    public static List<FactionAPI> factionsToMakeHostileDueToPlanetKillerUsage(MarketAPI market) {
-        List<FactionAPI> factionsToMakeHostile = new ArrayList<>();
-        for(FactionAPI faction : Global.getSector().getAllFactions())
-        {
-            String factionId = faction.getId();
-            if(factionId.equals(Factions.LUDDIC_PATH) && market.getFactionId().equals(Factions.LUDDIC_PATH))
-            {
-                factionsToMakeHostile.add(faction);
-            }
-
-            if(!factionId.equals(Factions.PLAYER) && !factionId.equals(Factions.DERELICT) && !factionId.equals(Factions.LUDDIC_PATH) && !factionId.equals(Factions.OMEGA) && !factionId.equals(Factions.REMNANTS) && !factionId.equals(Factions.SLEEPER))
-            {
-                factionsToMakeHostile.add(faction);
-            }
-        }
-
-        return factionsToMakeHostile;
-    }
-
-    public static void adjustRelationshipsDueToPlanetKillerUsage(MarketAPI market) {
-        for(FactionAPI faction : factionsToMakeHostileDueToPlanetKillerUsage(market)) {
-            faction.setRelationship(Factions.PLAYER, -100f);
-        }
-    }
-
-    public static void decivilizeMarketWithPlanetKiller(MarketAPI market) {
-        int atrocities = (int) Global.getSector().getCharacterData().getMemoryWithoutUpdate().getFloat(MemFlags.PLAYER_ATROCITIES);
-        atrocities++;
-        Global.getSector().getCharacterData().getMemoryWithoutUpdate().set(MemFlags.PLAYER_ATROCITIES, atrocities);
-
-        // Added per Histidine's comments in the forum - see Page 148, comment #2210 in the TASC thread.
-        // If you're reading this because it's not working properly for what you're trying to do, let me know!
-        //ListenerUtil.reportSaturationBombardmentFinished(null, market, null);
-        MarketCMD.TempData actionData = new MarketCMD.TempData();
-        actionData.bombardType = MarketCMD.BombardType.SATURATION;	/* probably not needed but just in case someone forgot which listener method they were using */
-        actionData.willBecomeHostile = factionsToMakeHostileDueToPlanetKillerUsage(market);	/* Fill this with FactionAPI that will get mad */
-        ListenerUtil.reportSaturationBombardmentFinished(null, market, actionData);
-        
-        DecivTracker.decivilize(market, true);
-        MarketCMD.addBombardVisual(market.getPrimaryEntity());
-        MarketCMD.addBombardVisual(market.getPrimaryEntity());
-        MarketCMD.addBombardVisual(market.getPrimaryEntity());
-
-        // Copied from MarketCMD saturation bombing code.
-        InteractionDialogAPI dialog = Global.getSector().getCampaignUI().getCurrentInteractionDialog();
-        if (dialog != null && dialog.getPlugin() instanceof RuleBasedDialog) {
-            if (dialog.getInteractionTarget() != null && dialog.getInteractionTarget().getMarket() != null) {
-                Global.getSector().setPaused(false);
-                dialog.getInteractionTarget().getMarket().getMemoryWithoutUpdate().advance(0.0001f);
-                Global.getSector().setPaused(true);
-            }
-
-            ((RuleBasedDialog) dialog.getPlugin()).updateMemory();
-        }
-
-        if (dialog != null && dialog.getPlugin() instanceof RuleBasedDialog) {
-            ((RuleBasedDialog) dialog.getPlugin()).updateMemory();
-        }
-    }
-
-    public static void triggerMilitaryResponseToPlanetKillerUsage(MarketAPI market) {
-        // Copied from MarketCMD addMilitaryResponse()
-        if (market == null) return;
-
-        if (!market.getFaction().getCustomBoolean(Factions.CUSTOM_NO_WAR_SIM)) {
-            MilitaryResponseScript.MilitaryResponseParams params = new MilitaryResponseScript.MilitaryResponseParams(CampaignFleetAIAPI.ActionType.HOSTILE,
-                    "player_ground_raid_" + market.getId(),
-                    market.getFaction(),
-                    market.getPrimaryEntity(),
-                    0.75f,
-                    30f);
-            market.getContainingLocation().addScript(new MilitaryResponseScript(params));
-        }
-
-        List<CampaignFleetAPI> fleets = market.getContainingLocation().getFleets();
-        for (CampaignFleetAPI other : fleets) {
-            if (other.getFaction() == market.getFaction()) {
-                MemoryAPI mem = other.getMemoryWithoutUpdate();
-                Misc.setFlagWithReason(mem, MemFlags.MEMORY_KEY_MAKE_HOSTILE_WHILE_TOFF, "raidAlarm", true, 1f);
-            }
         }
     }
 
@@ -3224,157 +2317,6 @@ public class boggledTools {
             intel.setSound(BaseIntelPlugin.getSoundStandardUpdate());
             Global.getSector().getCampaignUI().addMessage(intel, CommMessageAPI.MessageClickAction.COLONY_INFO, market);
         }
-    }
-
-    public static class PlanetType {
-        private final String planetId;
-        private final String planetTypeName;
-        private final boolean terraformingPossible;
-        private final int baseWaterLevel;
-        private final List<Pair<BoggledProjectRequirementsAND, Integer>> conditionalWaterRequirements;
-
-        public String getPlanetId() { return planetId; }
-        public String getPlanetTypeName() { return planetTypeName; }
-        public boolean getTerraformingPossible() { return terraformingPossible; }
-        public int getWaterLevel(BoggledTerraformingRequirement.RequirementContext ctx) {
-            if (conditionalWaterRequirements.isEmpty()) {
-                return baseWaterLevel;
-            }
-
-            for (Pair<BoggledProjectRequirementsAND, Integer> conditionalWaterRequirement : conditionalWaterRequirements) {
-                if (conditionalWaterRequirement.one.requirementsMet(ctx)) {
-                    return conditionalWaterRequirement.two;
-                }
-            }
-            return baseWaterLevel;
-        }
-
-        public PlanetType(String planetId, String planetTypeName, boolean terraformingPossible, int baseWaterLevel, List<Pair<BoggledProjectRequirementsAND, Integer>> conditionalWaterRequirements) {
-            this.planetId = planetId;
-            this.planetTypeName = planetTypeName;
-            this.terraformingPossible = terraformingPossible;
-            this.baseWaterLevel = baseWaterLevel;
-            this.conditionalWaterRequirements = conditionalWaterRequirements;
-            Collections.sort(this.conditionalWaterRequirements, new Comparator<Pair<BoggledProjectRequirementsAND, Integer>>() {
-                @Override
-                public int compare(Pair<BoggledProjectRequirementsAND, Integer> p1, Pair<BoggledProjectRequirementsAND, Integer> p2) {
-                    return p1.two.compareTo(p2.two);
-                }
-            });
-        }
-    }
-
-    public static String getTooltipProjectName(BoggledTerraformingRequirement.RequirementContext ctx, BoggledTerraformingProject currentProject) {
-        if(currentProject == null) {
-            return noneProjectId;
-        }
-
-        return currentProject.getProjectTooltip();
-    }
-
-    public static int getLastDayCheckedForConstruction(SectorEntityToken stationEntity) {
-        for (String tag : stationEntity.getTags()) {
-            if (tag.contains(BoggledTags.constructionProgressLastDayChecked)) {
-                return Integer.parseInt(tag.replaceAll(BoggledTags.constructionProgressLastDayChecked, ""));
-            }
-        }
-
-        return 0;
-    }
-
-    public static void clearClockCheckTagsForConstruction(SectorEntityToken stationEntity) {
-        String tagToDelete = null;
-        for (String tag : stationEntity.getTags()) {
-            if (tag.contains(BoggledTags.constructionProgressLastDayChecked)) {
-                tagToDelete = tag;
-                break;
-            }
-        }
-
-        if(tagToDelete != null)
-        {
-            stationEntity.removeTag(tagToDelete);
-            clearClockCheckTagsForConstruction(stationEntity);
-        }
-    }
-
-    public static void clearBoggledTerraformingControllerTags(MarketAPI market) {
-        String tagToDelete = null;
-        for (String tag : market.getTags()) {
-            if (tag.contains(BoggledTags.terraformingController)) {
-                tagToDelete = tag;
-                break;
-            }
-        }
-
-        if(tagToDelete != null) {
-            market.removeTag(tagToDelete);
-            clearBoggledTerraformingControllerTags(market);
-        }
-    }
-
-    public static String getStationTypeName(SectorEntityToken stationEntity) {
-        for (String tag : stationEntity.getTags()) {
-            if (tag.contains(BoggledTags.stationNamePrefix)) {
-                String workingTag = tag.toLowerCase();
-                if (workingTag.endsWith(" station")) {
-                    return workingTag.substring(BoggledTags.stationNamePrefix.length(), workingTag.length() - " station".length());
-                }
-                return workingTag.substring(BoggledTags.stationNamePrefix.length());
-            }
-        }
-        return "unknown";
-    }
-
-    public static int getConstructionProgressDays(SectorEntityToken stationEntity) {
-        for (String tag : stationEntity.getTags()) {
-            if (tag.contains(BoggledTags.constructionProgressDays)) {
-                return Integer.parseInt(tag.substring(BoggledTags.constructionProgressDays.length()));
-            }
-        }
-        return 0;
-    }
-
-    public static int getConstructionRequiredDays(SectorEntityToken stationEntity) {
-        for (String tag : stationEntity.getTags()) {
-            if (tag.contains(BoggledTags.constructionRequiredDays)) {
-                return Integer.parseInt(tag.substring(BoggledTags.constructionRequiredDays.length()));
-            }
-        }
-        return 0;
-    }
-
-    public static void clearProgressCheckTagsForConstruction(SectorEntityToken stationEntity) {
-        String tagToDelete = null;
-        for (String tag : stationEntity.getTags()) {
-            if (tag.contains(BoggledTags.constructionProgressDays)) {
-                tagToDelete = tag;
-                break;
-            }
-        }
-
-        if(tagToDelete != null)
-        {
-            stationEntity.removeTag(tagToDelete);
-            clearProgressCheckTagsForConstruction(stationEntity);
-        }
-    }
-
-    public static void incrementConstructionProgressDays(SectorEntityToken stationEntity, int amount) {
-        int currentDays = getConstructionProgressDays(stationEntity);
-
-        clearProgressCheckTagsForConstruction(stationEntity);
-
-        currentDays = currentDays + amount;
-
-        String strDays = currentDays + "";
-
-        while(strDays.length() < 6)
-        {
-            strDays = "0" + strDays;
-        }
-
-        stationEntity.addTag(BoggledTags.constructionProgressDays + strDays);
     }
 
     public static int[] getQuantitiesForStableLocationConstruction(String type) {
@@ -3463,11 +2405,6 @@ public class boggledTools {
         }
     }
 
-    public static String getIndustryUnavailableReasonResearchRequiredString()
-    {
-        return "This building must be researched before it can be constructed.";
-    }
-
     public static boolean domainEraArtifactDemandEnabled()
     {
         if(getBooleanSetting(BoggledSettings.domainTechContentEnabled) && getBooleanSetting(BoggledSettings.domainArchaeologyEnabled))
@@ -3479,15 +2416,6 @@ public class boggledTools {
             return false;
         }
     }
-
-    public void setDomainEraArtifactDemandIfEnabled(BaseIndustry baseIndustry, String commodityId, int amount)
-    {
-        if(domainEraArtifactDemandEnabled())
-        {
-            baseIndustry.demand(commodityId, amount);
-        }
-    }
-
 
     public static void writeMessageToLog(String message)
     {
@@ -3501,12 +2429,5 @@ public class boggledTools {
         intel.setIcon(Global.getSector().getPlayerFaction().getCrest());
         intel.setSound(BaseIntelPlugin.getSoundStandardUpdate());
         Global.getSector().getCampaignUI().addMessage(intel, CommMessageAPI.MessageClickAction.COLONY_INFO, null);
-    }
-
-
-    public static void terraformDebug(MarketAPI market) {
-        market.getPlanetEntity().changeType(boggledTools.waterPlanetId, null);
-        sendDebugIntelMessage(market.getPlanetEntity().getTypeId());
-        sendDebugIntelMessage(market.getPlanetEntity().getSpec().getPlanetType());
     }
 }

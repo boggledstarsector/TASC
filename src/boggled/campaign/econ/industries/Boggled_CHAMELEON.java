@@ -3,8 +3,6 @@ package boggled.campaign.econ.industries;
 import java.awt.*;
 import java.lang.String;
 import java.util.ArrayList;
-
-import boggled.campaign.econ.industries.interfaces.ShowBoggledTerraformingMenuOption;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.*;
 import com.fs.starfarer.api.campaign.comm.CommMessageAPI;
@@ -17,7 +15,7 @@ import com.fs.starfarer.api.impl.campaign.econ.impl.BaseIndustry;
 import com.fs.starfarer.api.util.Pair;
 import boggled.campaign.econ.boggledTools;
 
-public class Boggled_CHAMELEON extends BaseIndustry implements ShowBoggledTerraformingMenuOption
+public class Boggled_CHAMELEON extends BaseIndustry
 {
     public static float IMPROVE_STABILITY_BONUS = 1f;
 

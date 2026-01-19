@@ -25,7 +25,7 @@ public class Boggled_Ouyang_Optimizer extends BaseIndustry
 
     private int daysWithoutShortage = 0;
     private int lastDayChecked = 0;
-    public static int requiredDaysToOptimize = 200;
+    private final int requiredDaysToOptimize = boggledTools.getIntSetting(boggledTools.BoggledSettings.boggledOuyangOptimizerProjectTime);
 
     private SectorEntityToken getOrbitFocus()
     {
@@ -57,9 +57,9 @@ public class Boggled_Ouyang_Optimizer extends BaseIndustry
             return false;
         }
 
-        PlanetAPI planet = this.market.getPlanetEntity();
-        String planetType = boggledTools.getPlanetType(planet).getPlanetId();
-        if(!planetType.equals("gas_giant"))
+        PlanetAPI planet = orbitFocus.getMarket().getPlanetEntity();
+        String planetType = boggledTools.getTascPlanetType(planet);
+        if(!planetType.equals(boggledTools.TascPlanetTypes.gasGiantPlanetId))
         {
             return false;
         }
@@ -150,9 +150,9 @@ public class Boggled_Ouyang_Optimizer extends BaseIndustry
             return false;
         }
 
-        PlanetAPI planet = this.market.getPlanetEntity();
-        String planetType = boggledTools.getPlanetType(planet).getPlanetId();
-        if(!planetType.equals("gas_giant"))
+        PlanetAPI planet = orbitFocus.getMarket().getPlanetEntity();
+        String planetType = boggledTools.getTascPlanetType(planet);
+        if(!planetType.equals(boggledTools.TascPlanetTypes.gasGiantPlanetId))
         {
             return false;
         }
@@ -198,9 +198,9 @@ public class Boggled_Ouyang_Optimizer extends BaseIndustry
             return super.showWhenUnavailable();
         }
 
-        PlanetAPI planet = this.market.getPlanetEntity();
-        String planetType = boggledTools.getPlanetType(planet).getPlanetId();
-        if(!planetType.equals("gas_giant"))
+        PlanetAPI planet = orbitFocus.getMarket().getPlanetEntity();
+        String planetType = boggledTools.getTascPlanetType(planet);
+        if(!planetType.equals(boggledTools.TascPlanetTypes.gasGiantPlanetId))
         {
             return super.showWhenUnavailable();
         }
@@ -236,9 +236,9 @@ public class Boggled_Ouyang_Optimizer extends BaseIndustry
             return this.market.getName() + " is not in orbit around a planet.";
         }
 
-        PlanetAPI planet = this.market.getPlanetEntity();
-        String planetType = boggledTools.getPlanetType(planet).getPlanetId();
-        if(!planetType.equals("gas_giant"))
+        PlanetAPI planet = orbitFocus.getMarket().getPlanetEntity();
+        String planetType = boggledTools.getTascPlanetType(planet);
+        if(!planetType.equals(boggledTools.TascPlanetTypes.gasGiantPlanetId))
         {
             return "Only gas giants can undergo Ouyang optimization.";
         }
@@ -277,8 +277,7 @@ public class Boggled_Ouyang_Optimizer extends BaseIndustry
         //Inserts optimization status after description
         if(this.marketSuitableForOptimizer() && mode != IndustryTooltipMode.ADD_INDUSTRY && mode != IndustryTooltipMode.QUEUED && !isBuilding())
         {
-            //200 days; divide daysWithoutShortage by 2 to get the percent
-            int percentComplete = daysWithoutShortage / 2;
+            int percentComplete = (int) (((float) this.daysWithoutShortage / (float) this.requiredDaysToOptimize) * 100F);
 
             //Makes sure the tooltip doesn't say "100% complete" on the last day due to rounding up 99.5 to 100
             if(percentComplete > 99)

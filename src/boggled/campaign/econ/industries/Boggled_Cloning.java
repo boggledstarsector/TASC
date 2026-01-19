@@ -1,6 +1,7 @@
 package boggled.campaign.econ.industries;
 
 import boggled.campaign.econ.boggledTools;
+import boggled.campaign.econ.industries.interfaces.ShowBoggledTerraformingMenuOption;
 import com.fs.starfarer.api.campaign.econ.*;
 import com.fs.starfarer.api.impl.campaign.population.PopulationComposition;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
@@ -10,7 +11,7 @@ import com.fs.starfarer.api.util.Pair;
 import java.lang.String;
 import java.util.ArrayList;
 
-public class Boggled_Cloning extends BaseIndustry implements MarketImmigrationModifier
+public class Boggled_Cloning extends BaseIndustry implements MarketImmigrationModifier, ShowBoggledTerraformingMenuOption
 {
     @Override
     public boolean canBeDisrupted() {

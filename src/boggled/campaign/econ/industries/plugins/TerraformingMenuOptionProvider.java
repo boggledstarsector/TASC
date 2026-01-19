@@ -1,19 +1,17 @@
 package boggled.campaign.econ.industries.plugins;
 
-//import boggled.campaign.econ.boggledTools;
-//import boggled.campaign.econ.industries.interfaces.ShowBoggledTerraformingMenuOption;
-//import com.fs.starfarer.api.campaign.econ.MarketAPI;
-//import com.fs.starfarer.api.campaign.PlanetAPI;
-//import com.fs.starfarer.api.campaign.SectorEntityToken;
-
+import boggled.campaign.econ.boggledTools;
+import boggled.campaign.econ.industries.interfaces.ShowBoggledTerraformingMenuOption;
+import boggled.ui.BoggledCoreModifierEveryFrameScript;
 import com.fs.starfarer.api.Global;
+import com.fs.starfarer.api.campaign.CoreUITabId;
 import com.fs.starfarer.api.campaign.econ.Industry;
+import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.campaign.listeners.BaseIndustryOptionProvider;
 import com.fs.starfarer.api.campaign.listeners.DialogCreatorUI;
 import com.fs.starfarer.api.campaign.listeners.IndustryOptionProvider;
 import com.fs.starfarer.api.campaign.listeners.ListenerManagerAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
-import evangel.tascui.CommandUIAbilityK;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -48,37 +46,46 @@ public class TerraformingMenuOptionProvider extends BaseIndustryOptionProvider
     @Override
     public boolean isUnsuitable(Industry ind, boolean allowUnderConstruction)
     {
-        // Opening the menu doesn't work with this code. Need to fix it in a future patch.
-        return true;
+        if(ind == null || ind.getMarket() == null)
+        {
+            return true;
+        }
 
-//        if(ind == null || ind.getMarket() == null)
-//        {
-//            return true;
-//        }
-//
-//        boolean isBoggledTerraformingIndustry = ind instanceof ShowBoggledTerraformingMenuOption;
-//        boolean isStation = boggledTools.marketIsStation(ind.getMarket());
-//        boolean playerOwned = ind.getMarket().isPlayerOwned();
-//
-//        return super.isUnsuitable(ind, allowUnderConstruction) || !isBoggledTerraformingIndustry || isStation || !playerOwned;
+        // Temporarily disabled in conjunction with AotD until support can be added to Ashlib
+        if(Global.getSettings().getModManager().isModEnabled("ashlib"))
+        {
+            return true;
+        }
+
+        if(!boggledTools.getBooleanSetting(boggledTools.BoggledSettings.terraformingContentEnabled))
+        {
+            return false;
+        }
+
+        boolean isBoggledTerraformingIndustry = ind instanceof ShowBoggledTerraformingMenuOption;
+        boolean isStation = boggledTools.marketIsStation(ind.getMarket());
+        boolean playerOwned = ind.getMarket().isPlayerOwned();
+
+        return super.isUnsuitable(ind, allowUnderConstruction) || !isBoggledTerraformingIndustry || isStation || !playerOwned;
     }
 
     @Override
     public void createTooltip(IndustryOptionData opt, TooltipMakerAPI tooltip, float width)
     {
-        if (opt.id == OPTION_OPEN_TERRAFORMING_MENU)
+        if(opt.id == OPTION_OPEN_TERRAFORMING_MENU)
         {
-            tooltip.addPara("Opens the terraforming menu with this market already selected.", 0f);
+            tooltip.addPara("Opens the terraforming menu with this colony already selected.", 0f);
         }
     }
 
     @Override
     public void optionSelected(IndustryOptionData opt, DialogCreatorUI ui)
     {
-        if (opt.id == OPTION_OPEN_TERRAFORMING_MENU)
+        if(opt.id == OPTION_OPEN_TERRAFORMING_MENU)
         {
-            // boggledTools.sendDebugIntelMessage("Hello world!");
-            CommandUIAbilityK.Companion.openTerraformingMenuForSpecificPlanet(opt.ind.getMarket());
+            MarketAPI targetMarket = opt.ind.getMarket();
+            BoggledCoreModifierEveryFrameScript.setMarketToOpen(targetMarket);
+            Global.getSector().getCampaignUI().showCoreUITab(CoreUITabId.OUTPOSTS, null);
         }
     }
 }

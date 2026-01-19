@@ -37,15 +37,7 @@ public class boggledInactiveGateCheckEnabled extends BaseCommandPlugin
         {
             if(boggledTools.getBooleanSetting("boggledDomainTechInactiveGateConstructionMainQuestCompletionRequired"))
             {
-                Boolean gatesActive = (Boolean) Global.getSector().getMemoryWithoutUpdate().get(GateEntityPlugin.PLAYER_CAN_USE_GATES);
-                if(gatesActive)
-                {
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
+                return (Boolean) Global.getSector().getMemoryWithoutUpdate().get(GateEntityPlugin.PLAYER_CAN_USE_GATES);
             }
             else
             {
