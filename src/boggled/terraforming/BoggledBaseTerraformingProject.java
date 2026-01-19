@@ -127,7 +127,7 @@ public class BoggledBaseTerraformingProject extends BaseIntelPlugin {
         sendUpdateNotificationToPlayer(ProjectUpdateType.STARTED);
         controller.setCurrentProject(this);
         Global.getSector().getIntelManager().addIntel(this, true);
-        Global.getSector().addTransientScript(this);
+        Global.getSector().addScript(this);
     }
 
     public void completeThisProject() {
