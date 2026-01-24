@@ -1677,15 +1677,10 @@ public class boggledTools {
     public static float generateNewAngleForAstropolisStation(List<Float> existingAngles) {
         // Normalize the angles to a 0-360 range and handle floating-point precision
         // for comparisons.
-        final float ANGLE_STEP = 120.0f;
         final float MAX_ANGLE = 360.0f;
-        // Epsilon for comparing floating-point numbers. A small value is
-        // necessary as direct equality checks (==) can be unreliable.
-        // Turns out Starsector angles can deviate by as much as ~.2 degrees
-        final float EPSILON = 1.0f;
 
         // Case 1: The list is empty.
-        // We now return a random angle instead of a fixed 0.0f.
+        // We return a random angle instead of a fixed 0.0f.
         if (existingAngles.isEmpty()) {
             Random random = new Random();
             return random.nextFloat() * MAX_ANGLE;
@@ -1695,7 +1690,7 @@ public class boggledTools {
         // The new angle will be 120 degrees from the existing one.
         if (existingAngles.size() == 1) {
             float existing = existingAngles.get(0);
-            float newAngle = (existing + ANGLE_STEP) % MAX_ANGLE;
+            float newAngle = (existing + 120.0f) % MAX_ANGLE;
             // Ensure the result is non-negative after the modulo operation
             if (newAngle < 0) {
                 newAngle += MAX_ANGLE;
@@ -1704,36 +1699,42 @@ public class boggledTools {
         }
 
         // Case 3: The list has two elements.
-        // The third angle will be 120 degrees from the second existing one
-        // (which is 240 degrees from the first).
+        // Find the larger gap between the two angles and place the third angle
+        // in the middle of that gap. This approximates 120-degree separation
+        // when there's no drift in the angles of the first two stations.
         if (existingAngles.size() == 2) {
             float a1 = existingAngles.get(0);
             float a2 = existingAngles.get(1);
 
-            // A robust check to see which one is the "next" angle in the sequence.
-            float candidateA = (a1 + ANGLE_STEP) % MAX_ANGLE;
-            if (Math.abs(candidateA - a2) < EPSILON) {
-                float newAngle = (a2 + ANGLE_STEP) % MAX_ANGLE;
-                if (newAngle < 0) {
-                    newAngle += MAX_ANGLE;
-                }
-                return newAngle;
+            // Calculate the clockwise gap from a1 to a2
+            float clockwiseGap = (a2 - a1 + MAX_ANGLE) % MAX_ANGLE;
+            if (clockwiseGap < 0) {
+                clockwiseGap += MAX_ANGLE;
             }
 
-            // Re-evaluating the logic in the opposite direction.
-            float candidateB = (a2 + ANGLE_STEP) % MAX_ANGLE;
-            if (Math.abs(candidateB - a1) < EPSILON) {
-                float newAngle = (a1 + ANGLE_STEP) % MAX_ANGLE;
-                if (newAngle < 0) {
-                    newAngle += MAX_ANGLE;
-                }
-                return newAngle;
+            // Calculate the counterclockwise gap from a2 to a1
+            // This is the "other" gap going the long way around
+            float counterclockwiseGap = MAX_ANGLE - clockwiseGap;
+
+            float newAngle;
+
+            // Determine which gap is larger and place the new angle in its middle
+            if (clockwiseGap > counterclockwiseGap) {
+                // The larger gap is from a1 to a2 (clockwise)
+                // Place the new angle in the middle of this gap
+                newAngle = (a1 + (clockwiseGap / 2.0f)) % MAX_ANGLE;
+            } else {
+                // The larger gap is from a2 to a1 (counterclockwise/going the long way)
+                // Place the new angle in the middle of this gap
+                newAngle = (a2 + (counterclockwiseGap / 2.0f)) % MAX_ANGLE;
             }
 
-            // This block should technically not be reached given the problem constraints,
-            // but is included for defensive programming.
-            boggledTools.writeMessageToLog("Astropolis angles that caused the exception: " + a1 + " " + a2);
-            throw new IllegalArgumentException("Existing angles are not 120 degrees apart.");
+            // Ensure the result is non-negative after the modulo operation
+            if (newAngle < 0) {
+                newAngle += MAX_ANGLE;
+            }
+
+            return newAngle;
         }
 
         // Case 4: The list has three or more elements.

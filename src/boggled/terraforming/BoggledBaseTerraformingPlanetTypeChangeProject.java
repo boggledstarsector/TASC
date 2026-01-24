@@ -163,7 +163,25 @@ public class BoggledBaseTerraformingPlanetTypeChangeProject extends BoggledBaseT
     public CampaignPlanet constructFakePlanetWithAppearanceAfterTerraforming()
     {
         PlanetAPI marketPlanet = this.market.getPlanetEntity();
-        return new CampaignPlanet(null, "constructedDummy", this.planetIdToChangeInto, marketPlanet.getRadius(), marketPlanet.getLocation().x, marketPlanet.getLocation().y, (CampaignEntity) marketPlanet.getLightSource());
+
+        // Apparently the light source can sometimes be an object that can't be cast to CampaignEntity.
+        // I suspect this happens in binary/trinary systems but I'm not sure. It might be some mod interaction.
+        // First check if the light source can be cast to CampaignEntity, if not, check if the system exists
+        // and has a primary star that can be cast to CampaignEntity. Otherwise pass null.
+        // Passing null results in the light source coming from a seemingly random angle instead of the same angle
+        // as the light source hitting the "original" planet visual in the left pane.
+        CampaignEntity campaignEntityLightSource = null;
+        if (marketPlanet.getLightSource() instanceof CampaignEntity) {
+            campaignEntityLightSource = (CampaignEntity) marketPlanet.getLightSource();
+        }
+        else if(marketPlanet.getStarSystem() != null && marketPlanet.getStarSystem().getStar() != null)
+        {
+            if(marketPlanet.getStarSystem().getStar() instanceof CampaignEntity) {
+                campaignEntityLightSource = (CampaignEntity) marketPlanet.getStarSystem().getStar();
+            }
+        }
+
+        return new CampaignPlanet(null, "constructedDummy", this.planetIdToChangeInto, marketPlanet.getRadius(), marketPlanet.getLocation().x, marketPlanet.getLocation().y, campaignEntityLightSource);
     }
 
     @Override
