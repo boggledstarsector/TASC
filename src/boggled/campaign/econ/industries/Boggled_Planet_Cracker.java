@@ -108,7 +108,8 @@ public class Boggled_Planet_Cracker extends BaseIndustry
 
     public void apply()
     {
-        super.apply(true);
+        super.apply(false);
+        super.applyIncomeAndUpkeep(3);
     }
 
     public void unapply()

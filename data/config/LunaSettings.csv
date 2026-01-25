@@ -34,9 +34,6 @@ The Harmonic Damper building suppresses tectonic activity market conditions.",,,
 boggledPlanetaryAgravFieldEnabled,Enable Planetary Agrav Field,Boolean,False,,"Set this to true to enable the Planetary Agrav Field building.
 
 The Planetary Agrav Field building supresses high and low gravity market conditions if the Domed Cities building is present on the colony.",,,Terraforming
-boggledMagnetoshieldEnabled,Enable Magnetoshield,Boolean,False,,"Set this to true to enable the Magnetoshield building.
-
-The Magnetoshield building will suppress the irradiated market condition.",,,Terraforming
 boggledPlanetCrackerEnabled,Enable Planet Cracker,Boolean,False,,"Set this to true to enable the Planet Cracker building.
 
 The Planet Cracker building can be constructed on a station orbiting a planet. It will permanently improve ore and rare ore resources on that planet by one level but will add the tectonic activity market condition. Does nothing if the planet already has tectonic activity.",,,Terraforming
@@ -152,9 +149,7 @@ boggled_PerihelionProjectHeader,Coronal Tap construction settings,Header,Coronal
 boggledPerihelionProjectEnabled,Enable Perihelion Project,Boolean,False,,"Set this to true to enable the Perihelion Project.
 
 The Perihelion Project allows the player to construct a coronal tap in a star system that meets certain requirements.",,,Domain-tech Content
-boggledPerihelionProjectDaysToFinish,Days to finish Perihelion Project,Int,400,,"How many days are required to finish the Perihelion Project.
-
-Only applicable if Ashes of the Domain - Vaults of Knowledge is not enabled.",1,3000,Domain-tech Content
+boggledPerihelionProjectDaysToFinish,Days to finish Perihelion Project,Int,400,,"How many days are required to finish the Perihelion Project.",1,3000,Domain-tech Content
 boggled_DomainArchaeologyHeader,Domain-tech building settings,Header,Domain-tech building settings,,,,,Domain-tech Content
 boggledDomainArchaeologyEnabled,Enable Domain Archaeology,Boolean,True,,"Set this to false to disable the Domain Archaeology building.
 
