@@ -5,6 +5,8 @@ import java.lang.String;
 
 import boggled.campaign.econ.industries.interfaces.ShowBoggledTerraformingMenuOption;
 import com.fs.starfarer.api.campaign.PlanetAPI;
+import com.fs.starfarer.api.campaign.econ.MarketAPI;
+import com.fs.starfarer.api.impl.campaign.ids.Conditions;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
 import com.fs.starfarer.api.impl.campaign.econ.impl.BaseIndustry;
@@ -57,7 +59,7 @@ public class Boggled_Atmosphere_Processor extends BaseIndustry implements ShowBo
             return false;
         }
 
-        if(!boggledTools.terraformingPossibleOnMarket(this.market))
+        if(!terraformingPossibleOnMarket(this.market))
         {
             return false;
         }
@@ -88,7 +90,7 @@ public class Boggled_Atmosphere_Processor extends BaseIndustry implements ShowBo
             return super.showWhenUnavailable();
         }
 
-        if(!boggledTools.terraformingPossibleOnMarket(this.market))
+        if(!terraformingPossibleOnMarket(this.market))
         {
             return super.showWhenUnavailable();
         }
@@ -104,7 +106,7 @@ public class Boggled_Atmosphere_Processor extends BaseIndustry implements ShowBo
             return "Atmospheric conditions on " + this.market.getName() + " are already optimal. There is no reason to build an atmosphere processor here.";
         }
 
-        if(!boggledTools.terraformingPossibleOnMarket(this.market))
+        if(!terraformingPossibleOnMarket(this.market))
         {
             PlanetAPI planet = this.market.getPlanetEntity();
             if(boggledTools.getTascPlanetType(planet).equals(boggledTools.TascPlanetTypes.unknownPlanetId))
@@ -170,6 +172,12 @@ public class Boggled_Atmosphere_Processor extends BaseIndustry implements ShowBo
     @Override
     public boolean canInstallAICores() {
         return false;
+    }
+
+    private static boolean terraformingPossibleOnMarket(MarketAPI market)
+    {
+        // Irradiated planets cannot be terraformed unless the setting to allow this is toggled to true
+        return !market.hasCondition(Conditions.IRRADIATED) || boggledTools.getBooleanSetting(boggledTools.BoggledSettings.removeRadiationProjectEnabled);
     }
 }
 

@@ -1046,17 +1046,14 @@ public class boggledTools {
     }
 
     public static boolean marketHasAtmoProblem(MarketAPI market) {
-        return !market.hasCondition(Conditions.MILD_CLIMATE) ||
-                !market.hasCondition(Conditions.HABITABLE) ||
-                market.hasCondition(Conditions.NO_ATMOSPHERE) ||
-                market.hasCondition(Conditions.THIN_ATMOSPHERE) ||
-                market.hasCondition(Conditions.DENSE_ATMOSPHERE) ||
-                market.hasCondition(Conditions.TOXIC_ATMOSPHERE);
-    }
-
-    public static boolean terraformingPossibleOnMarket(MarketAPI market)
-    {
-        return !market.hasCondition(Conditions.IRRADIATED);
+        return market.hasCondition(Conditions.NO_ATMOSPHERE)
+                || market.hasCondition(Conditions.THIN_ATMOSPHERE)
+                || market.hasCondition(Conditions.DENSE_ATMOSPHERE)
+                || market.hasCondition(Conditions.TOXIC_ATMOSPHERE)
+                || (boggledTools.getBooleanSetting(BoggledSettings.removeRadiationProjectEnabled)
+                && market.hasCondition(Conditions.IRRADIATED))
+                || !market.hasCondition(Conditions.MILD_CLIMATE)
+                || !market.hasCondition(Conditions.HABITABLE);
     }
 
     public static float getAngle(float focusX, float focusY, float playerX, float playerY) {
