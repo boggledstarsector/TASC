@@ -11,6 +11,7 @@ import com.fs.starfarer.api.campaign.FactionAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.campaign.comm.CommMessageAPI;
 import com.fs.starfarer.api.campaign.comm.IntelInfoPlugin;
+import com.fs.starfarer.api.campaign.econ.Industry;
 import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.campaign.econ.MarketConditionAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Conditions;
@@ -335,7 +336,8 @@ public class BoggledBaseTerraformingProject extends BaseIntelPlugin {
     }
 
     public TerraformingRequirementObject getRequirementMarketHasAtmosphereProcessor() {
-        boolean requirementMet = this.market.hasIndustry(boggledTools.BoggledIndustries.atmosphereProcessorId);
+        Industry atmosphereProcessor = this.market.getIndustry(boggledTools.BoggledIndustries.atmosphereProcessorId);
+        boolean requirementMet = atmosphereProcessor != null && atmosphereProcessor.isFunctional();
         TooltipMakerAPI.TooltipCreator tooltip = new TooltipMakerAPI.TooltipCreator() {
             @Override
             public boolean isTooltipExpandable(Object o) {
@@ -357,7 +359,8 @@ public class BoggledBaseTerraformingProject extends BaseIntelPlugin {
     }
 
     public TerraformingRequirementObject getRequirementMarketHasStellarReflectorArray() {
-        boolean requirementMet = this.market.hasIndustry(boggledTools.BoggledIndustries.stellarReflectorArrayIndustryId);
+        Industry stellarReflectorArray = this.market.getIndustry(boggledTools.BoggledIndustries.stellarReflectorArrayIndustryId);
+        boolean requirementMet = stellarReflectorArray != null && stellarReflectorArray.isFunctional();
         TooltipMakerAPI.TooltipCreator tooltip = new TooltipMakerAPI.TooltipCreator() {
             @Override
             public boolean isTooltipExpandable(Object o) {
