@@ -14,12 +14,13 @@ public class Boggled_GPA extends BaseIndustry
     @Override
     public void apply()
     {
-        super.apply(true);
-
         if(boggledTools.domainEraArtifactDemandEnabled())
         {
             this.demand("domain_artifacts", 3);
         }
+
+        super.apply(false);
+        super.applyIncomeAndUpkeep(3);
     }
 
     @Override

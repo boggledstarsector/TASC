@@ -116,7 +116,8 @@ public class Boggled_Ouyang_Optimizer extends BaseIndustry
     @Override
     public void apply()
     {
-        super.apply(true);
+        super.apply(false);
+        super.applyIncomeAndUpkeep(3);
     }
 
     @Override

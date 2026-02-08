@@ -24,7 +24,8 @@ public class Boggled_Atmosphere_Processor extends BaseIndustry implements ShowBo
     @Override
     public void apply()
     {
-        super.apply(true);
+        super.apply(false);
+        super.applyIncomeAndUpkeep(3);
 
         int size = this.market.getSize();
         this.demand("heavy_machinery", size);

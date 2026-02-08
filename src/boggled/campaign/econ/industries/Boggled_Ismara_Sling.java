@@ -115,7 +115,7 @@ public class Boggled_Ismara_Sling extends BaseIndustry implements ShowBoggledTer
     @Override
     public void apply()
     {
-        super.apply(true);
+        super.apply(false);
         super.applyIncomeAndUpkeep(3);
 
         this.demand("heavy_machinery", STATIC_HEAVY_MACHINERY_DEMAND);
