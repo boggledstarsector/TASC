@@ -59,6 +59,12 @@ public class Boggled_Cryosanctum extends Cryosanctum
             return false;
         }
 
+        // Check research requirement
+        if(!boggledTools.isBuildingResearchComplete(this.getId()))
+        {
+            return false;
+        }
+
         // Can't call super.isAvailableToBuild() because vanilla Cryosanctum always returns false
         return isAvailableToBuildBaseIndustryHack();
     }

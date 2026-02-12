@@ -239,7 +239,7 @@ public class Boggled_Kletka_Simulator extends BaseIndustry
     @Override
     public boolean isAvailableToBuild()
     {
-        if(!boggledTools.isResearched("tasc_remnant_algorithms"))
+        if(!boggledTools.isBuildingResearchComplete(this.getId()))
         {
             return false;
         }
@@ -255,7 +255,7 @@ public class Boggled_Kletka_Simulator extends BaseIndustry
     @Override
     public boolean showWhenUnavailable()
     {
-        if(!boggledTools.isResearched("tasc_remnant_algorithms"))
+        if(!boggledTools.isBuildingResearchComplete(this.getId()))
         {
             return false;
         }

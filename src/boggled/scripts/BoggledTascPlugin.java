@@ -22,12 +22,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 
 import java.io.IOException;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-
-import static java.util.Arrays.asList;
 
 public class BoggledTascPlugin extends BaseModPlugin {
     static {
@@ -257,6 +251,9 @@ public class BoggledTascPlugin extends BaseModPlugin {
 
             boggledTools.initializePlanetMappingsFromJSON(planetTypeMapping);
 
+            // Load AoTD research options for data-driven building research system
+            boggledTools.loadAotdTechOptionsCSV();
+
         } catch (IOException | JSONException ex) {
             boggledTools.writeMessageToLog(ex.getMessage());
         }
@@ -268,14 +265,8 @@ public class BoggledTascPlugin extends BaseModPlugin {
 
     private void addAotDEveryFrameScript() {
         if (aotdEnabled) {
-            Map<List<String>, List<String>> researchAndAbilityIds = new LinkedHashMap<>();
-            researchAndAbilityIds.put(Collections.singletonList("tasc_station_restoration"), Collections.singletonList("boggled_colonize_abandoned_station"));
-            researchAndAbilityIds.put(Collections.singletonList("tasc_astropolis_construction"), Collections.singletonList("boggled_construct_astropolis_station"));
-            researchAndAbilityIds.put(Collections.singletonList("tasc_industrial_stations"), asList("boggled_construct_mining_station", "boggled_construct_siphon_station"));
-
-            // researchAndAbilityIds.put(asList("tasc_planet_type_manipulation", "tasc_atmosphere_manipulation", "tasc_genetic_manipulation"), Collections.singletonList("boggled_open_terraforming_control_panel"));
-
-            Global.getSector().getPlayerFleet().addScript(new BoggledAotDEveryFrameScript(researchAndAbilityIds));
+            // No hardcoded mapping needed - uses data-driven map from boggledTools
+            Global.getSector().getPlayerFleet().addScript(new BoggledAotDEveryFrameScript());
         }
     }
 

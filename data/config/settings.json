@@ -1,6 +1,7 @@
 {
     # IMPORTANT NOTE
     # Customization is now handled exclusively via LunaLib.
+    # You must use the in-game LunaLib UI to edit settings.
 
 	"ruleCommandPackages":[
 		"data.scripts"
@@ -45,7 +46,9 @@
             "BOGGLED_PLANET_CRACKER_sub":"graphics/icons/tech/subicon_planet_cracker.png",
             "BOGGLED_OUYANG_OPTIMIZER_sub":"graphics/icons/tech/subicon_ouyang_optimizer.png",
             "BOGGLED_CLONING_sub":"graphics/icons/tech/subicon_cloning.png",
-            "BOGGLED_AI_STATION_sub":"graphics/icons/tech/subicon_ai_battlestation.png"
+            "BOGGLED_REMNANT_STATION_sub":"graphics/icons/tech/subicon_remnant_station.png",
+            "BOGGLED_HYDROPONICS_sub":"graphics/icons/tech/subicon_hydroponics.png",
+            "BOGGLED_CRYOSANCTUM_sub":"graphics/icons/tech/subicon_cryosanctum.png"
         }
     }
 }

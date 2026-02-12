@@ -172,6 +172,12 @@ public class Boggled_Perihelion_Project extends BaseIndustry {
             return false;
         }
 
+        // Check research requirement
+        if(!boggledTools.isBuildingResearchComplete(this.getId()))
+        {
+            return false;
+        }
+
         return super.isAvailableToBuild();
     }
 

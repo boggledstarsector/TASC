@@ -671,7 +671,7 @@ public class Boggled_Remnant_Station extends OrbitalStation implements RouteMana
             return false;
         }
 
-        if(!boggledTools.isResearched("tasc_remnant_station"))
+        if(!boggledTools.isBuildingResearchComplete(this.getId()))
         {
             return false;
         }
@@ -692,7 +692,7 @@ public class Boggled_Remnant_Station extends OrbitalStation implements RouteMana
             return false;
         }
 
-        if(!boggledTools.isResearched("tasc_remnant_station"))
+        if(!boggledTools.isBuildingResearchComplete(this.getId()))
         {
             return false;
         }

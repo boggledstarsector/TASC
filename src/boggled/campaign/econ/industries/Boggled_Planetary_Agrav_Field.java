@@ -76,6 +76,12 @@ public class Boggled_Planetary_Agrav_Field extends BaseIndustry implements ShowB
             return false;
         }
 
+        // Check research requirement
+        if(!boggledTools.isBuildingResearchComplete(this.getId()))
+        {
+            return false;
+        }
+
         return super.isAvailableToBuild();
     }
 

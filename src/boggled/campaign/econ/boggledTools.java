@@ -6,6 +6,7 @@ import boggled.scripts.*;
 import boggled.terraforming.*;
 import boggled.terraforming.us.*;
 import com.fs.starfarer.api.Global;
+import com.fs.starfarer.api.SettingsAPI;
 import com.fs.starfarer.api.campaign.*;
 import com.fs.starfarer.api.campaign.comm.CommMessageAPI;
 import com.fs.starfarer.api.campaign.econ.*;
@@ -364,6 +365,21 @@ public class boggledTools {
         put(3, "farmland_rich");
         put(4, "farmland_bountiful");
     }};
+
+    // Maps industry IDs to their required research project IDs
+    // Key: Industry ID (e.g., "boggled_stellar_reflector_array")
+    // Value: Research project ID (e.g., "tasc_light_manipulation") or null if no research required
+    private static Map<String, String> industryResearchMap = new HashMap<>();
+
+    // Maps research project IDs to their display names
+    // Key: Research ID (e.g., "tasc_light_manipulation")
+    // Value: Display name (e.g., "Stellar Light Manipulation")
+    private static Map<String, String> researchNamesMap = new HashMap<>();
+
+    // Maps ability IDs to their required research project IDs
+    // Key: Ability ID (e.g., "boggled_construct_astropolis_station")
+    // Value: Research project ID (e.g., "tasc_astropolis_construction") or null if no research required
+    private static Map<String, String> abilityResearchMap = new HashMap<>();
 
     public static String getNextFarmlandConditionId(MarketAPI market)
     {
@@ -2387,6 +2403,154 @@ public class boggledTools {
         return 0f;
     }
 
+    /**
+     * Loads AoTD tech options CSV to build a mapping of industry IDs to required research projects.
+     * This enables a data-driven research system where buildings can be gated behind research
+     * projects defined in CSV files, rather than hardcoded in Java.
+     */
+    public static void loadAotdTechOptionsCSV() {
+        industryResearchMap.clear();
+        researchNamesMap.clear();
+
+        // If AoTD is not enabled, no research requirements
+        if (!Global.getSettings().getModManager().isModEnabled("aotd_vok")) {
+            writeMessageToLog("AoTD not enabled - skipping research requirements");
+            return;
+        }
+
+        String csvPath = "data/campaign/aotd_tech_options.csv";
+
+        try {
+            SettingsAPI settings = Global.getSettings();
+            JSONArray researchData = settings.getMergedSpreadsheetDataForMod(
+                "id",
+                csvPath,
+                BoggledMods.tascModId
+            );
+
+            int tascMappingCount = 0;
+
+            for (int i = 0; i < researchData.length(); i++) {
+                JSONObject row = researchData.getJSONObject(i);
+                String researchId = row.getString("id");
+                String researchName = row.getString("name");
+                String rewardsRaw = row.getString("rewards");
+
+                // Skip empty rows
+                if (researchId == null || researchId.trim().isEmpty()) {
+                    continue;
+                }
+
+                researchNamesMap.put(researchId, researchName);
+                tascMappingCount += parseResearchRewards(researchId, rewardsRaw);
+            }
+
+            writeMessageToLog("Loaded " + tascMappingCount + " TASC industry research mappings");
+            writeMessageToLog("Loaded " + abilityResearchMap.size() + " TASC ability research mappings");
+
+        } catch (Exception e) {
+            writeMessageToLog("Error loading aotd_tech_options.csv: " + e.getMessage());
+            // Continue with empty map - buildings will be available (graceful degradation)
+        }
+    }
+
+    /**
+     * Helper method to parse the rewards column from AoTD tech options CSV.
+     * Extracts TASC industry rewards and builds the industry-to-research mapping.
+     *
+     * @param researchId The research project ID
+     * @param rewardsRaw The raw rewards string from the CSV
+     * @return The number of TASC industry mappings found
+     */
+    private static int parseResearchRewards(String researchId, String rewardsRaw) {
+        int count = 0;
+
+        // Handle multi-line rewards (split by newline character)
+        String[] rewardEntries = rewardsRaw.split("\\n");
+
+        for (String entry : rewardEntries) {
+            entry = entry.trim();
+            if (entry.isEmpty()) continue;
+
+            // Check if this is a TASC industry reward
+            // Format: BOGGLED_XXX:industry or boggled_xxx:industry
+            if (entry.contains(":industry")) {
+                // Use lastIndexOf to handle entries with multiple colons
+                int colonIndex = entry.lastIndexOf(':');
+                String itemId = entry.substring(0, colonIndex).trim();
+
+                // Verify it's a TASC building
+                if (itemId.startsWith("BOGGLED_") || itemId.startsWith("boggled_")) {
+                    // Normalize to lowercase for consistency (industry IDs are lowercase)
+                    String industryId = itemId.toLowerCase();
+                    industryResearchMap.put(industryId, researchId);
+                    count++;
+                }
+            }
+
+            // Check if this is a TASC ability reward
+            // Format: boggled_xxx:ability
+            if (entry.contains(":ability")) {
+                // Use lastIndexOf to handle entries with multiple colons
+                int colonIndex = entry.lastIndexOf(':');
+                String itemId = entry.substring(0, colonIndex).trim();
+
+                if (itemId.startsWith("boggled_")) {
+                    // Normalize to lowercase for consistency
+                    String abilityId = itemId.toLowerCase();
+                    abilityResearchMap.put(abilityId, researchId);
+                    count++;
+                }
+            }
+        }
+
+        return count;
+    }
+
+    /**
+     * Gets the research ID required for a building, or null if no research is required.
+     *
+     * @param industryId The industry ID to check
+     * @return Research project ID (e.g., "tasc_light_manipulation"), or null if building has no research requirement
+     */
+    public static String getRequiredResearchForIndustry(String industryId) {
+        industryId = industryId.toLowerCase();
+        return industryResearchMap.get(industryId);
+    }
+
+    /**
+     * Gets the display name for a research project.
+     *
+     * @param researchId The research project ID
+     * @return The display name, or the research ID if not found
+     */
+    public static String getResearchDisplayName(String researchId) {
+        if (researchId == null) {
+            return "Unknown";
+        }
+
+        String displayName = researchNamesMap.get(researchId);
+        return displayName != null ? displayName : researchId;
+    }
+
+    /**
+     * Gets the research ID required for an ability, or null if no research is required.
+     * @param abilityId The ability ID to check
+     * @return Research project ID (e.g., "tasc_astropolis_construction"), or null if ability has no research requirement
+     */
+    public static String getRequiredResearchForAbility(String abilityId) {
+        abilityId = abilityId.toLowerCase();
+        return abilityResearchMap.get(abilityId);
+    }
+
+    /**
+     * Gets the ability research map (for use by BoggledAotDEveryFrameScript).
+     * @return Map of ability IDs to research IDs
+     */
+    public static Map<String, String> getAbilityResearchMap() {
+        return new HashMap<>(abilityResearchMap);
+    }
+
     public static boolean isResearched(String key)
     {
         // Pass this.getId() as key if this function is called from an industry
@@ -2400,6 +2564,45 @@ public class boggledTools {
             // Always return true if the player is not using a mod that implements research.
             return true;
         }
+    }
+
+    /**
+     * Checks if the required research for a building has been completed.
+     * This enables a data-driven research system where buildings can be gated
+     * behind research projects defined in CSV files.
+     *
+     * @param industryId The industry ID to check (e.g., "boggled_stellar_reflector_array")
+     * @return true if:
+     *         - AoTD is not enabled, OR
+     *         - Building has no research requirement in CSV, OR
+     *         - Required research is completed
+     *         false if:
+     *         - AoTD is enabled AND
+     *         - Building has research requirement AND
+     *         - Research is not completed
+     */
+    public static boolean isBuildingResearchComplete(String industryId) {
+        // If AoTD is not enabled, all buildings are available
+        if (!Global.getSettings().getModManager().isModEnabled("aotd_vok")) {
+            return true;
+        }
+
+        // Normalize industry ID to lowercase
+        industryId = industryId.toLowerCase();
+
+        // Check if this building has a research requirement
+        boggledTools.writeMessageToLog("Industry ID checked: " + industryId);
+        boggledTools.writeMessageToLog("Industry research map: " + industryResearchMap);
+        String requiredResearch = industryResearchMap.get(industryId);
+        boggledTools.writeMessageToLog("Required research: " + requiredResearch);
+
+        // If no research requirement in map, building is available
+        if (requiredResearch == null) {
+            return true;
+        }
+
+        // Check if the research is completed
+        return isResearched(requiredResearch);
     }
 
     public static boolean domainEraArtifactDemandEnabled()

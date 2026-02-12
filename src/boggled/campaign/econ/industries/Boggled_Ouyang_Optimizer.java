@@ -171,6 +171,12 @@ public class Boggled_Ouyang_Optimizer extends BaseIndustry
             return false;
         }
 
+        // Check research requirement
+        if(!boggledTools.isBuildingResearchComplete(this.getId()))
+        {
+            return false;
+        }
+
         return super.isAvailableToBuild();
     }
 

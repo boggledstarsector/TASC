@@ -40,7 +40,7 @@ public class Boggled_Atmosphere_Processor extends BaseIndustry implements ShowBo
     @Override
     public boolean isAvailableToBuild()
     {
-        if(!boggledTools.isResearched("tasc_atmosphere_manipulation"))
+        if(!boggledTools.isBuildingResearchComplete(this.getId()))
         {
             return false;
         }
@@ -71,7 +71,7 @@ public class Boggled_Atmosphere_Processor extends BaseIndustry implements ShowBo
     @Override
     public boolean showWhenUnavailable()
     {
-        if(!boggledTools.isResearched("tasc_atmosphere_manipulation"))
+        if(!boggledTools.isBuildingResearchComplete(this.getId()))
         {
             return false;
         }

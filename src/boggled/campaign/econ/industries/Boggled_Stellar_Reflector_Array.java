@@ -234,7 +234,7 @@ public class Boggled_Stellar_Reflector_Array extends BaseIndustry implements Sho
     @Override
     public boolean isAvailableToBuild()
     {
-        if(!boggledTools.isResearched("tasc_light_manipulation"))
+        if(!boggledTools.isBuildingResearchComplete(this.getId()))
         {
             return false;
         }
@@ -262,7 +262,7 @@ public class Boggled_Stellar_Reflector_Array extends BaseIndustry implements Sho
     @Override
     public boolean showWhenUnavailable()
     {
-        if(!boggledTools.isResearched("tasc_light_manipulation"))
+        if(!boggledTools.isBuildingResearchComplete(this.getId()))
         {
             return false;
         }

@@ -97,6 +97,7 @@ Custom industries in `src/boggled/campaign/econ/industries/`:
 - Market and planet helper functions
 - Terraforming validation logic
 - Water level calculations for terraforming
+- **Research system integration** - Data-driven research checking via CSV loading
 
 **Settings System:**
 - Customization is now handled **exclusively via LunaLib**
@@ -114,9 +115,10 @@ Located in `src/boggled/ui/`:
 ### Data Files Structure
 
 - `data/campaign/terraforming/` - Terraforming configuration (planet type mappings, suppressed conditions)
+- `data/campaign/aotd_tech_options.csv` - Default AoTD research tree definitions (11 buildings)
+- `data/campaign/custom_tech_trees/aotd_tech_options.csv` - Alternate complete tech tree (21 buildings)
 - `data/campaign/industries.csv` - Industry definitions
 - `data/campaign/abilities.csv` - Ability definitions
-- `data/campaign/abilities.csv` - Station construction abilities
 - `data/campaign/market_conditions.csv` - Market condition definitions
 - `data/campaign/commodities.csv` - Commodity definitions (e.g., domain_artifacts)
 - `data/strings/descriptions.csv` - Text descriptions
@@ -126,10 +128,31 @@ Located in `src/boggled/ui/`:
 
 ### AoTD (Vaults of Knowledge) Integration
 
-When AoTD mod is enabled, terraforming projects require research completion:
-- Research IDs: `tasc_planet_type_manipulation`, `tasc_atmosphere_manipulation`, `tasc_genetic_manipulation`
-- **BoggledAotDEveryFrameScript** - Manages ability unlocking based on research
-- Terraforming projects check research status via `boggledTools.isResearched()`
+TASC features a **data-driven research system** that integrates with AoTD's Vaults of Knowledge:
+
+**How It Works:**
+- Research definitions are loaded from CSV files (`data/campaign/aotd_tech_options.csv`)
+- Buildings and abilities are locked behind research via `rewards` column in CSV
+- **No hardcoded research checks** - all buildings use `boggledTools.isBuildingResearchComplete(this.getId())`
+- The system gracefully degrades when AoTD is disabled (all features available)
+
+**Key Components:**
+- **CSV Loading**: `boggledTools.loadAotdTechOptionsCSV()` - Parses research definitions from CSV
+- **Research Checking**: `boggledTools.isBuildingResearchComplete(industryId)` - Unified research check
+- **Ability Granting**: `BoggledAotDEveryFrameScript` - Dynamically grants abilities when research completes
+- **Research Maps**: `industryResearchMap`, `abilityResearchMap`, `researchNamesMap` - Store CSV data
+
+**Terraforming Project Research:**
+- Projects require research based on type:
+  - Planet Type Changes: `tasc_planet_type_manipulation`
+  - Resource Improvements: `tasc_resource_manipulation`
+  - Condition Modifications: `tasc_atmosphere_manipulation`
+- Checked via `boggledTools.isResearched(researchId)` in terraforming project requirements
+
+**Tech Trees:**
+- **Default Tree** (`data/campaign/aotd_tech_options.csv`): 11 buildings, core progression
+- **Alternate Complete Tree** (`data/campaign/custom_tech_trees/aotd_tech_options.csv`): 21 buildings, comprehensive coverage
+- See `docs/data-driven-research-system.md` for detailed implementation guide
 
 ### Unknown Skies (US) Planet Types
 
@@ -160,6 +183,33 @@ This prevents save file corruption when settings change or mods are enabled/disa
 3. For planet type changes, extend `BoggledBaseTerraformingPlanetTypeChangeProject` and implement the target planet type logic
 4. Register the project in the terraforming menu UI
 
+### Adding a New Research-Locked Building
+
+Using the data-driven research system:
+
+1. **Add CSV entry** to `data/campaign/aotd_tech_options.csv`:
+   ```csv
+   tasc_my_research,My Research Name,3,60,tasc_prerequisite_research,research_databank:5,none,BOGGLED_MY_BUILDING:industry,2,0,false,,,Terraforming & Station Construction
+   ```
+
+2. **Building code** - Use unified research check:
+   ```java
+   @Override
+   public boolean isAvailableToBuild()
+   {
+       if(!boggledTools.isBuildingResearchComplete(this.getId()))
+       {
+           return false;
+       }
+       // Other requirement checks...
+       return true;
+   }
+   ```
+
+3. **No Java code changes needed** for research definitions - all configured via CSV
+
+See `docs/data-driven-research-system.md` for complete guide.
+
 ### Checking Terraforming Eligibility
 
 Use the requirement pattern:
@@ -180,6 +230,9 @@ Key utilities in `boggledTools`:
 - `addCondition(market, conditionId)` - Safely add condition
 - `getTerraformingControllerFromMarket(market)` - Get active project
 - `getWaterLevelForMarket(market)` - Get water level for terraforming
+- `isBuildingResearchComplete(industryId)` - Check if building's research is complete
+- `getRequiredResearchForIndustry(industryId)` - Get research ID required for building
+- `isResearched(researchId)` - Check if specific research project is complete
 
 ## Debugging
 
@@ -196,3 +249,7 @@ Key utilities in `boggledTools`:
 ## Additional Documentation
 
 - **[Industry Upkeep Costs](docs/industry-upkeep-costs.md)** - Detailed documentation of which TASC industries use fixed vs market-scaled construction costs and upkeep
+- **[CSV Data Loading](docs/csv-data-loading.md)** - In-depth guide to how TASC loads configuration data from CSV files (planet mappings, suppressed conditions, etc.)
+- **[AoTD Research Integration](docs/aotd-research-integration.md)** - Complete guide to TASC's integration with Ashes of the Domain Vaults of Knowledge research system, including tech tree structure, research-locked buildings/projects, and ability unlocking
+- **[Data-Driven Research System](docs/data-driven-research-system.md)** - Technical documentation of TASC's CSV-based research system, including how to add custom research, the parsing system, and building/ability integration
+- **[Ability Research Implementation](docs/ability-research-implementation.md)** - Guide to implementing research-locked abilities using the data-driven system

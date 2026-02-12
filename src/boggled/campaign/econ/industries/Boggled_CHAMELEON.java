@@ -121,7 +121,7 @@ public class Boggled_CHAMELEON extends BaseIndustry
     @Override
     public boolean isAvailableToBuild()
     {
-        if(!boggledTools.isResearched("tasc_chameleon"))
+        if(!boggledTools.isBuildingResearchComplete(this.getId()))
         {
             return false;
         }
@@ -137,7 +137,7 @@ public class Boggled_CHAMELEON extends BaseIndustry
     @Override
     public boolean showWhenUnavailable()
     {
-        if(!boggledTools.isResearched("tasc_chameleon"))
+        if(!boggledTools.isBuildingResearchComplete(this.getId()))
         {
             return false;
         }

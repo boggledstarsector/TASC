@@ -242,7 +242,7 @@ public class Boggled_Genelab extends BaseIndustry implements ShowBoggledTerrafor
     @Override
     public boolean isAvailableToBuild()
     {
-        if(!boggledTools.isResearched("tasc_genetic_manipulation"))
+        if(!boggledTools.isBuildingResearchComplete(this.getId()))
         {
             return false;
         }
@@ -264,7 +264,7 @@ public class Boggled_Genelab extends BaseIndustry implements ShowBoggledTerrafor
     @Override
     public boolean showWhenUnavailable()
     {
-        if(!boggledTools.isResearched("tasc_genetic_manipulation"))
+        if(!boggledTools.isBuildingResearchComplete(this.getId()))
         {
             return false;
         }

@@ -129,7 +129,7 @@ public class Boggled_Ismara_Sling extends BaseIndustry implements ShowBoggledTer
     @Override
     public boolean isAvailableToBuild()
     {
-        if(!boggledTools.isResearched("tasc_resource_manipulation"))
+        if(!boggledTools.isBuildingResearchComplete(this.getId()))
         {
             return false;
         }
@@ -155,7 +155,7 @@ public class Boggled_Ismara_Sling extends BaseIndustry implements ShowBoggledTer
     @Override
     public boolean showWhenUnavailable()
     {
-        if(!boggledTools.isResearched("tasc_resource_manipulation"))
+        if(!boggledTools.isBuildingResearchComplete(this.getId()))
         {
             return false;
         }
