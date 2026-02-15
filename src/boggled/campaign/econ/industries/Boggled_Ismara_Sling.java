@@ -104,7 +104,7 @@ public class Boggled_Ismara_Sling extends BaseIndustry implements ShowBoggledTer
     {
         if(boggledTools.marketIsStation(this.market))
         {
-            return "Crashing asteroids rich in water-ice into planets is an effective means of terraforming - except when the asteroid is so large that the impact would be cataclysmic. In this case, the asteroid can be towed to a space station, where the water-ice is safely extracted and shipped to the destination planet. Can only help terraform worlds in the same system.";
+            return "Crashing asteroids rich in water-ice into planets is an effective means of terraforming - except when the asteroid is so large that the impact would be cataclysmic. In this case, the asteroid can be towed to a space station, where the water-ice is safely extracted and shipped to the destination planet. \n\nCan only help terraform worlds in the same system.";
         }
         else
         {
