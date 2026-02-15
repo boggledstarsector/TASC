@@ -25,7 +25,13 @@
 
             "stellar_mirror_condition":"graphics/icons/conditions/stellar_mirror.png",
             "stellar_shade_condition":"graphics/icons/conditions/stellar_shade.png",
-            "terraforming_intel_icon":"graphics/icons/intel/terraforming.png"
+        },
+        "boggled_intel_icons":
+        {
+            "intel_icon_terraforming":"graphics/icons/intel/terraforming.png",
+            "intel_icon_chameleon":"graphics/icons/intel/intel_icon_chameleon.png",
+            "intel_icon_genelab_trex":"graphics/icons/intel/intel_icon_genelab_trex.png",
+            "intel_icon_genelab_lobster":"graphics/icons/intel/intel_icon_genelab_lobster.png",
         },
         "ui_icons_tech_tree":{
             "BOGGLED_GENELAB_sub":"graphics/icons/tech/subicon_genelab_lobster.png",

@@ -48,7 +48,7 @@ public class Boggled_CHAMELEON extends BaseIndustry
                     {
                         MessageIntel intel = new MessageIntel("Decivilized subpopulation on " + market.getName(), Misc.getBasePlayerColor());
                         intel.addLine("    - Eradicated");
-                        intel.setIcon(Global.getSector().getPlayerFaction().getCrest());
+                        intel.setIcon(Global.getSettings().getSpriteName("boggled_intel_icons", "intel_icon_chameleon"));
                         intel.setSound(BaseIntelPlugin.getSoundStandardUpdate());
                         Global.getSector().getCampaignUI().addMessage(intel, CommMessageAPI.MessageClickAction.COLONY_INFO, market);
                     }
@@ -74,7 +74,7 @@ public class Boggled_CHAMELEON extends BaseIndustry
                     {
                         MessageIntel intel = new MessageIntel("Rogue AI core on " + market.getName(), Misc.getBasePlayerColor());
                         intel.addLine("    - Terminated");
-                        intel.setIcon(Global.getSector().getPlayerFaction().getCrest());
+                        intel.setIcon(Global.getSettings().getSpriteName("boggled_intel_icons", "intel_icon_chameleon"));
                         intel.setSound(BaseIntelPlugin.getSoundStandardUpdate());
                         Global.getSector().getCampaignUI().addMessage(intel, CommMessageAPI.MessageClickAction.COLONY_INFO, market);
                     }

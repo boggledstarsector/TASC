@@ -184,6 +184,11 @@ public class Boggled_Perihelion_Project extends BaseIndustry {
     @Override
     public boolean showWhenUnavailable()
     {
+        if(!boggledTools.isBuildingResearchComplete(this.getId()))
+        {
+            return false;
+        }
+
         if(!boggledTools.getBooleanSetting("boggledDomainTechContentEnabled") || !boggledTools.getBooleanSetting("boggledPerihelionProjectEnabled"))
         {
             return false;

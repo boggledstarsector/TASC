@@ -81,6 +81,11 @@ public class Boggled_Cryosanctum extends Cryosanctum
 
     @Override
     public boolean showWhenUnavailable() {
+        if(!boggledTools.isBuildingResearchComplete(this.getId()))
+        {
+            return false;
+        }
+
         if(!boggledTools.getBooleanSetting("boggledCryosanctumPlayerBuildEnabled"))
         {
             return false;

@@ -135,6 +135,11 @@ public class Boggled_AI_Mining_Drones extends BaseIndustry
     @Override
     public boolean showWhenUnavailable()
     {
+        if(!boggledTools.isBuildingResearchComplete(this.getId()))
+        {
+            return false;
+        }
+
         if(!boggledTools.marketIsStation(this.market))
         {
             return false;

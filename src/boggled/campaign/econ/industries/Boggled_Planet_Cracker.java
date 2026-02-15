@@ -175,6 +175,11 @@ public class Boggled_Planet_Cracker extends BaseIndustry
     @Override
     public boolean showWhenUnavailable()
     {
+        if(!boggledTools.isBuildingResearchComplete(this.getId()))
+        {
+            return false;
+        }
+
         if(!boggledTools.getBooleanSetting("boggledTerraformingContentEnabled") || !boggledTools.getBooleanSetting("boggledPlanetCrackerEnabled"))
         {
             return false;

@@ -781,26 +781,27 @@ public class boggledTools {
 
     public static Set<String> aotdIgnoreSettings = new HashSet<>();
 
+    // Not ignoring anything anymore after 10.0.4 AotD research changes
     public static void initialiseModIgnoreSettings() {
-        aotdIgnoreSettings.add("boggledTerraformingContentEnabled");
-
-        aotdIgnoreSettings.add("boggledStellarReflectorArrayEnabled");
-        aotdIgnoreSettings.add("boggledGenelabEnabled");
-        aotdIgnoreSettings.add("boggledMesozoicParkEnabled");
-        aotdIgnoreSettings.add("boggledDomedCitiesEnabled");
-        aotdIgnoreSettings.add("boggledStationConstructionContentEnabled");
-
-        aotdIgnoreSettings.add("boggledAstropolisEnabled");
-        aotdIgnoreSettings.add("boggledMiningStationEnabled");
-        aotdIgnoreSettings.add("boggledSiphonStationEnabled");
-        aotdIgnoreSettings.add("boggledStationColonizationEnabled");
-
-        aotdIgnoreSettings.add("boggledDomainTechContentEnabled");
-        aotdIgnoreSettings.add("boggledDomainArchaeologyEnabled");
-        aotdIgnoreSettings.add("boggledKletkaSimulatorEnabled");
-        aotdIgnoreSettings.add("boggledCHAMELEONEnabled");
-        aotdIgnoreSettings.add("boggledLimelightNetworkPlayerBuildEnabled");
-        aotdIgnoreSettings.add("boggledRemnantStationEnabled");
+//        aotdIgnoreSettings.add("boggledTerraformingContentEnabled");
+//
+//        aotdIgnoreSettings.add("boggledStellarReflectorArrayEnabled");
+//        aotdIgnoreSettings.add("boggledGenelabEnabled");
+//        aotdIgnoreSettings.add("boggledMesozoicParkEnabled");
+//        aotdIgnoreSettings.add("boggledDomedCitiesEnabled");
+//        aotdIgnoreSettings.add("boggledStationConstructionContentEnabled");
+//
+//        aotdIgnoreSettings.add("boggledAstropolisEnabled");
+//        aotdIgnoreSettings.add("boggledMiningStationEnabled");
+//        aotdIgnoreSettings.add("boggledSiphonStationEnabled");
+//        aotdIgnoreSettings.add("boggledStationColonizationEnabled");
+//
+//        aotdIgnoreSettings.add("boggledDomainTechContentEnabled");
+//        aotdIgnoreSettings.add("boggledDomainArchaeologyEnabled");
+//        aotdIgnoreSettings.add("boggledKletkaSimulatorEnabled");
+//        aotdIgnoreSettings.add("boggledCHAMELEONEnabled");
+//        aotdIgnoreSettings.add("boggledLimelightNetworkPlayerBuildEnabled");
+//        aotdIgnoreSettings.add("boggledRemnantStationEnabled");
     }
 
     public static void initializeStellarReflectorArraySuppressedConditionsFromJSON(@NotNull JSONArray stellarReflectorArraySuppressedConditionsJSON) {
@@ -1116,15 +1117,25 @@ public class boggledTools {
         }
         else
         {
-            if(market.hasIndustry("farming") && market.hasCondition("water_surface"))
+            if(market.hasIndustry("farming") && marketHasWaterSurface(market))
             {
                 market.getIndustry("farming").init("aquaculture", market);
             }
-            else if(market.hasIndustry("aquaculture") && !market.hasCondition("water_surface"))
+            else if(market.hasIndustry("aquaculture") && !marketHasWaterSurface(market))
             {
                 market.getIndustry("aquaculture").init("farming", market);
             }
         }
+    }
+
+    public static boolean marketHasWaterSurface(MarketAPI market)
+    {
+        if(market == null)
+        {
+            return false;
+        }
+
+        return market.hasCondition("water_surface") || market.hasCondition("US_hybrid");
     }
 
     public static void stepTag(MarketAPI market, String tagToIncrement, int step) {

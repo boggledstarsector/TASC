@@ -67,9 +67,9 @@ public class BoggledCoreModifierEveryFrameScript implements EveryFrameScript {
     public static ButtonAPI getNewTerraformingButton()
     {
         // Create a dummy CustomPanelAPI and TooltipMakerAPI, so we can make a button, which then gets inserted directly into the core panel
-        CustomPanelAPI dummyPanel = Global.getSettings().createCustom(240, 18, null);
-        TooltipMakerAPI dummyTooltip = dummyPanel.createUIElement(240, 18, false);
-        ButtonAPI terraformingButton = dummyTooltip.addButton("Terraforming",null, Global.getSector().getPlayerFaction().getBaseUIColor(), Global.getSector().getPlayerFaction().getDarkUIColor(), Alignment.MID, CutStyle.TOP, 240, 18, 0.0F);
+        CustomPanelAPI dummyPanel = Global.getSettings().createCustom(170, 18, null);
+        TooltipMakerAPI dummyTooltip = dummyPanel.createUIElement(170, 18, false);
+        ButtonAPI terraformingButton = dummyTooltip.addButton("Terraforming",null, Global.getSector().getPlayerFaction().getBaseUIColor(), Global.getSector().getPlayerFaction().getDarkUIColor(), Alignment.MID, CutStyle.TOP, 170, 18, 0.0F);
 
         // Setting the shortcut to 7 actually binds it to the 6 key...
         terraformingButton.setShortcut(7, false);

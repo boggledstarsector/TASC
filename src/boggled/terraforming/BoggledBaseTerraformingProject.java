@@ -676,7 +676,7 @@ public class BoggledBaseTerraformingProject extends BaseIntelPlugin {
 
     @Override
     public String getIcon() {
-        return Global.getSettings().getSpriteName("boggled", "terraforming_intel_icon");
+        return Global.getSettings().getSpriteName("boggled_intel_icons", "intel_icon_terraforming");
     }
 
     @Override

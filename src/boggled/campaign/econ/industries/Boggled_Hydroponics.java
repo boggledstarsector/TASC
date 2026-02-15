@@ -62,6 +62,11 @@ public class Boggled_Hydroponics extends BaseIndustry
     @Override
     public boolean showWhenUnavailable()
     {
+        if(!boggledTools.isBuildingResearchComplete(this.getId()))
+        {
+            return false;
+        }
+
         if(!boggledTools.getBooleanSetting("boggledHydroponicsEnabled"))
         {
             return false;
