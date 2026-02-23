@@ -3,6 +3,7 @@ package boggled.terraforming;
 import boggled.campaign.econ.boggledTools;
 import boggled.terraforming.tooltips.BoggledBasePlanetTypeChangeProjectTooltip;
 import com.fs.starfarer.api.campaign.PlanetAPI;
+import com.fs.starfarer.api.campaign.PlanetSpecAPI;
 import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.campaign.CampaignEntity;
@@ -187,7 +188,12 @@ public class BoggledBaseTerraformingPlanetTypeChangeProject extends BoggledBaseT
     @Override
     public String getProjectName()
     {
-        String projectName = boggledTools.getPlanetSpec(planetIdToChangeInto).getName();
+        PlanetSpecAPI planetSpec = boggledTools.getPlanetSpec(planetIdToChangeInto);
+        if(planetSpec == null)
+        {
+            throw new IllegalArgumentException("planetIdToChangeInto had invalid value: " + planetIdToChangeInto);
+        }
+        String projectName = planetSpec.getName();
         if(isUnknownSkiesPlanetType(planetIdToChangeInto))
         {
             projectName += " (Unknown Skies)";

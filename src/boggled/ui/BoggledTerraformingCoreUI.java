@@ -80,7 +80,13 @@ public class BoggledTerraformingCoreUI implements CustomUIPanelPlugin {
         List<MarketAPI> playerMarketsIncludingStations = Misc.getPlayerMarkets(true);
         for(MarketAPI market : playerMarketsIncludingStations)
         {
-            if(!boggledTools.marketIsStation(market) && market.getPlanetEntity() != null && market.getFaction() != null)
+            if(
+                    !boggledTools.marketIsStation(market)
+                    && market.getPlanetEntity() != null
+                    && market.getPlanetEntity().getTypeId() != null
+                    && boggledTools.getPlanetSpec(market.getPlanetEntity().getTypeId()) != null
+                    && market.getFaction() != null
+            )
             {
                 this.playerMarkets.add(market);
             }
