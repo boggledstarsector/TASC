@@ -248,6 +248,7 @@ Key utilities in `boggledTools`:
 
 ## Additional Documentation
 
+- **[Changelog](CHANGELOG.md)** - Version history and release notes for TASC
 - **[Industry Upkeep Costs](docs/industry-upkeep-costs.md)** - Detailed documentation of which TASC industries use fixed vs market-scaled construction costs and upkeep
 - **[CSV Data Loading](docs/csv-data-loading.md)** - In-depth guide to how TASC loads configuration data from CSV files (planet mappings, suppressed conditions, etc.)
 - **[AoTD Research Integration](docs/aotd-research-integration.md)** - Complete guide to TASC's integration with Ashes of the Domain Vaults of Knowledge research system, including tech tree structure, research-locked buildings/projects, and ability unlocking

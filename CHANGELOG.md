@@ -1,21 +1,21 @@
 # Changelog
 
-## [10.0.3]
+## 10.0.3
 - Fixed a bug where terraforming projects that require the Atmosphere Processor and/or Stellar Reflectors could be started if those buildings were still under construction. Thanks lchronosl for reporting this!
 - Updated the art for certain buildings.
 - Updated all AotD Vaults of Knowledge research project thumbnails to utilize current artwork.
 
-## [10.0.2]
+## 10.0.2
 - Fixed a bug where the Atmosphere Processor couldn't be constructed on irradiated planets even when the LunaLib setting to enable the "remove radiation" terraforming project was toggled on. Thanks abramsxie and Astrefernal for reporting this!
 - Added new artwork for several buildings. I intend to make further updates to the artwork. If you strongly like or dislike any of the artwork in TASC, please let me know why in this thread!
 - Updated the instructions for setting up a local development environment for TASC in the GitHub readme file.
 - Cleaned up some outdated or incorrect information in the LunaLib settings file.
 
-## [10.0.1]
+## 10.0.1
 - Fixed a bug where constructing a third astropolis in orbit around a colony could cause a crash. Thanks Dadada for reporting this and taking the time to provide your log file!
 - Fixed a bug where clicking a terraforming project could cause a crash. Thanks LeNainBerb and Daredevil for reporting this!
 
-## [10.0.0]
+## 10.0.0
 - Added a new UI for terraforming projects. It shows the appearance and conditions a planet will have when terraforming is complete. Thanks Kaysaar for all your help with integrating the new UI with AotD!
 - Terraforming projects now appear in the intel screen and notify the player when an event occurs, such as project completion.
 - The terraforming menu can now be opened from the colony management screen by clicking on a TASC building related to terraforming and selecting the "Open terraforming menu" option.
@@ -32,14 +32,14 @@
 - Added support for planet types from JaydeePiracy. Thanks Dubdog for bringing this to my attention!
 - Fixed a bug where building multiple astropolis stations on the same in-game day could result in the markets failing to function properly. Thanks Tukkan1 for reporting this, and including extra detail that made it easy to replicate and debug!
 
-## [9.1.4]
+## 9.1.4
 - Fixed a bug where constructing the third astropolis station in orbit around a planet could sometimes cause a crash. Thanks SNIPERER_3413 for reporting this!
 
-## [9.1.3]
+## 9.1.3
 - Fixed a bug where the production malus from the Limelight Network would not disappear if the building was deconstructed. Thanks SNIPERER_3413 for reporting this!
 - Fixed a bug where the stability malus from the Limelight Network having a Domain-era artifact shortage would not disappear if the building was deconstructed.
 
-## [9.1.2]
+## 9.1.2
 It's my belief that I fixed all the bugs and exploits related to all TASC abilities and stations in this patch. If you discover any bugs/issues/inconsistencies/bad grammar/etc please report it in this thread so I can fix it!
 
 - Fixed a bug where colonizing an abandoned station could result in cargo and ships stored there by the player being lost. They are now added to the player fleet. Thanks Def16 for reporting this!
@@ -52,10 +52,10 @@ It's my belief that I fixed all the bugs and exploits related to all TASC abilit
 - Removed a setting to control the maximum number of astropolis stations per planet. The number is now fixed at the default three. I removed this feature because building large numbers of astropolis stations would lead to performance issues.
 - Removed the non-default setting to enable destroying planets with a Planet-Killer Device. I removed this feature because it was buggy and had the potential to brick saves.
 
-## [9.1.1]
+## 9.1.1
 - Fixed a bug where upon loading an existing save terraforming projects could fail to work correctly. Thanks PolkTech and SecFel for reporting this and helping with troubleshooting!
 
-## [9.1.0]
+## 9.1.0
 It's my belief that I fixed all the bugs and exploits related to all TASC buildings in this patch. If you discover any bugs/issues/inconsistencies/bad grammar/etc please report it in this thread so I can fix it!
 
 - Updated artwork for most of the default buildings. I intend to update the artwork for the non-default buildings in a future patch.
@@ -128,12 +128,12 @@ It's my belief that I fixed all the bugs and exploits related to all TASC buildi
 - Updated industries.csv descriptions for several buildings.
 - There was some discussion about the Planetary Shield and an interaction with IndEvo. TASC does not modify or interact with the Planetary Shield so any issues with this building should be reported in the IndEvo thread. TASC previously modified the Planetary Shield to make it remove the Meteor Impacts condition, but that functionality was implemented in vanilla so I deleted it from TASC. I'm not planning to implement any features in TASC related to the Planetary Shield at this time, including anything related to Domed Cities or making the Planetary Shield demand Domain-era artifacts.
 
-## [9.0.15]
+## 9.0.15
 - Conditions suppressed by Stellar Reflector Array can now be configured via CSV file. The player can use this to make it suppress very_hot and very_cold if desired.
 - Fixed a bug where Domed Cities provided the population growth bonus even when disabled or under construction. Thanks sardis19 for reporting this!
 - Fixed a bug where mousing over the Perihelion Project icon in the AotD research menu could cause a crash. Thanks Ptikobj for reporting this!
 
-## [9.0.14]
+## 9.0.14
 - Fixed a bug where building a Stellar Reflector Array in a nebula could cause a crash on save. Thanks Stretop for reporting this!
 - Fixed a bug where constructing a coronal hypershunt using the Perihelion Project while Ashes of the Domain - Vaults of Knowledge is enabled would result in the newly constructed hypershunt being unusable. Thanks zrx1000 for reporting this!
 - Adjusted rules for where the Perihelion Project can be constructed. Previously it could only be constructed at systems with a blue star, now it can also be constructed at trinary star systems (e.g. systems where there are three stars located right next to each other at the center of the map) and there are at least two star colors among the three stars. I am not planning to implement a settings option to disable this requirement as the logic to place the hypershunt assumes certain star configurations.
@@ -146,17 +146,17 @@ It's my belief that I fixed all the bugs and exploits related to all TASC buildi
 
 It's my belief that I fixed all the bugs and exploits related to the Perihelion Project with this patch. If you discover any additional issues please report them in this thread!
 
-## [9.0.13]
+## 9.0.13
 - Fixed a bug where hovering over the Stellar Reflector icon in the VoK research tree could cause a crash. Thanks to the many players who reported this and my apologies for the delay in fixing it!
 - Updated Illustrated Entities integration. Big thanks to SirHartley for providing the code for this change!
 
-## [9.0.12]
+## 9.0.12
 - Updated TASC for Starsector 0.98a-RC7.
 - Fixed a bug where hovering over the Seafloor Cities icon in the AotD research tree would cause a crash. Thanks to Aposkus for reporting this and providing a workaround!
 - Fixed a bug where Domed Cities and several other TASC buildings were incorrectly unlocked even if not yet researched. Thanks ToeCutter23 for reporting this!
 - Fixed a bug where the tooltip for Domed Cities could incorrectly state that it was increasing accessibility by 10%. Only the Sky Cities version increases accessibility.
 
-## [9.0.11]
+## 9.0.11
 - Added the Sky Cities building, a version of Domed Cities buildable on gas giants.
   - Increases stability and accessibility and suppresses negative conditions, but reduces ground defenses and has high construction and upkeep costs.
   - All versions of Domed Cities now suppress additional conditions from Unknown Skies. The list of suppressed conditions can be viewed and edited using the domed_cities_suppressed_conditions.csv file at tasc/data/campaign/terraforming.
@@ -174,7 +174,7 @@ It's my belief that I fixed all the bugs and exploits related to the Perihelion 
 - A bug was reported where CHAMELEON stops working for colonies above size 6. I tested and was unable to replicate it. Please let me know if you encounter this going forward.
 - I previously indicated I was going to make changes regarding stalling vs. restarting terraforming progress in this patch. I wasn't able to make those changes yet and they will be included in a future patch. Sorry for the delay!
 
-## [9.0.10]
+## 9.0.10
 This patch focuses exclusively on the Remnant Station. I think I've addressed all outstanding bugs and feature requests. Please let me know if I missed anything!
 
 **Edit 9/22/24:** 9.0.10 is confirmed not backwards compatible with 9.0.9 even if you never built a Remnant Station. Please start a new save after upgrading to 9.0.10!
@@ -191,19 +191,19 @@ This patch focuses exclusively on the Remnant Station. I think I've addressed al
 - Changed the artwork for the Remnant Station building in the colony management screen.
 - Fixed some grammatical errors and inconsistencies in the tooltips for the Remnant Station.
 
-## [9.0.9]
+## 9.0.9
 - Fixed a bug where after completing a terraforming project to improve a resource deposit, buildings would use the old deposit amount until a save was loaded.
 - Added support for several Unknown Skies planet types. Thanks MahMeer for your code contribution!
 - Added a gitignore file to remove unnecessary files on the GitHub repository. Thanks Wispborne for the suggestion!
 
-## [9.0.8]
+## 9.0.8
 - Fixed a bug where Domed Cities could fail to suppress the Perpetual Dust Storms condition from the Unknown Skies mod. Thanks to zrx1000 for reporting this!
 - Fixed a bug where if a planet with Seafloor Cities was terraformed, the -25% hazard bonus from Seafloor Cities would incorrectly remain in place.
 - Fixed a bug where setting astroplis stations to always use a certain sprite variant would result in the wrong sprite being used. Thanks YourLocalMairaaboo for reporting this!
 - Fixed a bug where Hydroponics could incorrectly be buildable even if it was disabled in the LunaLib settings if AotD is also enabled. Thanks Axisoflint for reporting this!
 - Fixed a bug where the Genelab could incorrectly be buildable if AotD is enabled but the Genelab is not yet researched. Thanks Axisoflint for reporting this!
 
-## [9.0.7]
+## 9.0.7
 - Fixed a bug where stations might not be buildable around purchased planets. Thanks YourLocalMairaaboo for reporting this!
 - Fixed a bug where a crash related to installable items could occur in very specific circumstances. Thanks Soric for reporting this!
 - Fixed a bug where the terraforming menu couldn't be opened to craft item if terraforming is disabled in the settings. Thanks MagnaSonic3000 for reporting this!
@@ -211,12 +211,12 @@ This patch focuses exclusively on the Remnant Station. I think I've addressed al
 - Fixed a bug where Domed Cities incorrectly could not be built on gas giants with the Floating Continents condition from Unknown Skies. Thanks YourLocalMairaaboo for reporting this!
 - Fixed a bug where a crash could occur after using the Ouyang Optimizer to improve a gas giant. Thanks Niten for reporting this!
 
-## [9.0.6]
+## 9.0.6
 - Made various improvements to the Ashes of the Domain integration. Thanks terminal, Baren, Erlkonig and others for reporting issues with this integration!
 - Fixed a bug where a crash could occur if a coronal tap is installed on a station. Thanks Princess_of_Evil for reporting this!
 - Fixed a bug where the terraforming menu couldn't be used on stations, thereby preventing Domain-tech crafting using those colonies. Thanks Princess_of_Evil for reporting this!
 
-## [9.0.5]
+## 9.0.5
 - Fixed a bug where star types from Unknown Skies could fail to be detected by the Perihelion Project. Thanks Bangchow for reporting this!
 - Fixed a bug where Seafloor Cities fails to properly stop suppressing the hazard from water surface when it's removed from the colony. Thanks Morgan Rue for reporting this!
 - Fixed multiple bugs related to certain settings not being used in-game to alter features as intended. Thanks Arrean and Princess_of_Evil for reporting these!
@@ -227,79 +227,79 @@ This patch focuses exclusively on the Remnant Station. I think I've addressed al
 - Added a setting to toggle whether suppressing temperature conditions removes the upkeep modifier on the Kletka Simulator.
 - Added a feature to show the roll for the Kletka Simulator to aid with debugging if an anomalous series of drops is occurring.
 
-## [9.0.4]
+## 9.0.4
 - Fixed a bug where the Remnant AI Battlestation could get stuck permanently in an "under repair" state. Thanks to Troika and Azina for reporting this!
 - Fixed a bug related to input validation for planet types.
 - Fixed a bug where changing the maximum number of mining stations per system in the LunaLib settings didn't actually change the construction limit. Thanks MRTL for reporting this!
 - Fixed a bug where siphon stations could be incorrectly blocked from being constructed in orbit around a gas giant in certain circumstances. Thanks Chaotic Law for reporting this!
 - Fixed a bug where stations built with TASC could incorrectly have a hazard rating of 150% due No Atmosphere not being suppressed properly. Thanks SaucyBagel for reporting this!
 
-## [9.0.3]
+## 9.0.3
 - Fixed a bug where the Cloning, Hydroponics and Limelight Network industries could be missing the option to install an AI core or make improvements. Thanks n3xuiz for reporting this!
 - Stations built using TASC now correctly set the $startingFactionId memory flag. Thanks to sawert42 for reporting this and Histidine for explaining how to fix it!
 - Fixed multiple bugs with the Kletka Simulator that prevented it from working properly. Thanks Moon Spirit for reporting this!
 - Fixed a bug with the Cryosanctum where installing an AI core could incorrectly reduce the supply of organs by one. Thanks WyldMann for reporting this!
 
-## [9.0.2]
+## 9.0.2
 - Fixed a bug where not having LunaLib enabled could cause a crash when hovering over certain abilities. LunaLib is now a dependency for TASC. Thanks Arrean and andrro for reporting this!
 - Fixed a bug where the Domain Archaeology, Remnant Station, and Cryosanctum industries could be missing the option to install an AI core or make improvements. Thanks Apocryphos and WyldMann for reporting this!
 
-## [9.0.1]
+## 9.0.1
 - Fixed a bug where a crash could occur upon interacting with certain markets while Grand Colonies is enabled. Thanks to Apocryphos, Saevarna and several others for reporting this and assisting with troubleshooting, and thanks to SirHartley for providing a workaround until a fix could be implemented!
 - Fixed a bug where a crash could occur if a new game is started, and then another new game is started in the same session. Thanks to Benizakura and several others for reporting this!
 
-## [9.0.0]
+## 9.0.0
 - Added Terraforming Control Panel UI. It can be accessed via the ability bar. Thanks Evangel for your excellent work on this feature and the others below!
 - Many features of TASC can now be modified via CSV files located at Starsector\mods\Terraforming and Station Construction\data\campaign\terraforming. See the documentation file for details.
 - If Genelab or CHAMELEON is currently working on a project, it will be displayed with a progress bar under the building icon in the colony management screen.
 - Many different tooltips were updated to be more descriptive.
 
-## [8.4.6]
+## 8.4.6
 - Fixed an issue where the version file was pointed at the old GitHub repo instead of the new one. Thanks INH_Raider for reporting this!
 - Added support for a Lost Sector planet with type nskr_ice_desert. Thanks OmegaInfinita, JimminyCrimbles, and several others for reporting this!
 - Added compatibility with Crew Replacer (https://fractalsoftworks.com/forum/index.php?topic=24249.0). Thanks alaricdragon for your code contributions adding this!
 
-## [8.4.5]
+## 8.4.5
 - Updated TASC to support compatibility with the 0.96a version of Illustrated Entities. Thanks Crimsteel for reporting a crash caused by TASC incompatibility with the latest version of IE!
 
-## [8.4.4]
+## 8.4.4
 - Added an option to the terraforming control panel to cancel the current terraforming project. Thanks scorpico69 for making me aware of this oversight!
 
-## [8.4.3]
+## 8.4.3
 - Fixed a bug where viewing a market in the terraforming control panel that the player governs but that is not part of the player faction could cause a crash. Big thanks to YourLocalMairaaboo for taking the time to upload their mods and saves folder to help me identify the cause of this crash!
 
-## [8.4.2]
+## 8.4.2
 - Fixed a bug where the terraforming control panel could fail to list governed colonies (from Nex). Thanks Spacegoat for reporting this!
 - Added an option in the terraforming control panel to list the current resources and conditions on a colony. Thanks MikroPik for the suggestion!
 
-## [8.4.1]
+## 8.4.1
 - Fixed a bug where stations could appear on the terraforming menu (and cause a crash if clicked). Thanks to Hasufel and several others for reporting this!
 - Fixed a bug where changing terraforming project duration settings via LunaLib was not reflected in-game. Thanks AERO for reporting this!
 - A crash with Grand Colonies in the stack trace was reported. I did some testing and was unable to replicate this crash on my machine. I added some logic to fix what I suspect may have caused it, but if the crash persists please let me know. Thanks Malignantcookie and medKon for reporting this!
 
-## [8.4.0]
+## 8.4.0
 - The terraforming menu is now opened via an ability instead of via an interaction option when docked at a planet.
   - The ability can be used anywhere - this allows the player to control terraforming projects remotely.
 - Crafting costs for some special items is increased or decreased depending on the power level of the item.
   - The player-configured Domain-era artifact cost (default: 2000) is multiplied by two for more powerful items and divided by two for less powerful items.
 - Added a non-default terraforming project to remove the atmosphere from a planet.
 
-## [8.3.3]
+## 8.3.3
 - Fixed a bug where the colony name could be displayed incorrectly in terraforming dialogs. Thanks Spshamrocks3 for reporting this!
 - Fixed a bug where the Planetary Agrav Field could fail to correctly suppress high or low gravity on gas giants. Thanks erik17 for reporting this!
 - Added support for the terran_adapted planet type from the Volantian Reclamation Initiative mod. Thanks Lappers for letting me know about this!
 
-## [8.3.2]
+## 8.3.2
 - Added compatibility with the Ashes of the Domain mod. If Ashes and TASC are both enabled many of the buildings in TASC are included as part of the research system in Ashes. Thanks Kaysaar for all your help with adding compatibility!
   - Please be sure to download the latest version of Ashes with the compatibility changes from https://fractalsoftworks.com/forum/index.php?topic=26307.0.
 - Categorized the Ecumenopolis planet type from the Star Wars 2020 mod as barren for terraforming purposes. Thanks Jac90876 for letting me know about this!
 - Added a note to the settings file to clarify that LunaLib settings override the settings file if LunaLib is enabled.
 
-## [8.3.1]
+## 8.3.1
 - The artwork for several buildings has been updated. Big thanks to SirHartley for providing some very high quality images that match the art style of Starsector!
 - Fixed a bug where building the Remnant Station could cause a crash if LunaLib is enabled. Thanks MonolithSF for reporting this!
 
-## [8.3.0]
+## 8.3.0
 - Added support for LunaLib. Please be sure to report any bugs or grammatical problems related to the LunaLib settings!
   - LunaLib is not a dependency for TASC. If LunaLib is enabled, the settings in LunaLib will take effect. If LunaLib is not enabled, the settings in the settings file will be used instead.
 - Updated CHAMELEON building for 0.96a. The alpha core bonus now reduces Pather interest on the colony to zero, instead of simply subtracting 1000. Please post in this thread if you encounter a situation where the Pather interest on a colony is a value other than zero while an alpha core is installed.
@@ -329,13 +329,13 @@ This patch focuses exclusively on the Remnant Station. I think I've addressed al
 - There were some compatibility issues with Illustrated Entities reported. Once that mod updates for 0.96a I will investigate this.
 - I understand the Remnant Station is still not compatible with the artillery station from IndEvo. Once IndEvo updates to 0.96a I will investigate this.
 
-## [8.2.1]
+## 8.2.1
 - Fixed a bug where the Perihelion Project could incorrectly display 1% construction progress in the UI even if the actual construction progress was higher. Thanks Nérévar42 for reporting this!
 - Fixed a bug where the station population growth malus from Cramped Quarters could be calculated incorrectly. Thanks taerkar for reporting this!
 - Markets with an Autonomous AI Battlestation no longer receive the MARKET_MILITARY memory flag. Thanks e for pointing this out!
 - I was unable to replicate a bug where building multiple astropolis stations around a planet could cause two of the stations overlap in the same place instead of being placed at 120 degree intervals around the planet. I added logging statements to the astropolis construction code - if anyone experiences this bug in the future, please let me know and post your log file so I can identify the cause of the bug. Thanks Aran1 for reporting this!
 
-## [8.2.0]
+## 8.2.0
 - Coronal Hypershunts can now be constructed by the player. Enable the non-default building Perihelion Project using the settings file to build them.
 - Fixed a bug where using the Planet-Killer with the Nexerlin mod enabled could cause a crash. Thanks for your help Histidine!
 - Fixed multiple bugs caused by compatibility issues with the Illustrated Entities mod. Thanks YourLocalMairaaboo for reporting this!
@@ -346,7 +346,7 @@ This patch focuses exclusively on the Remnant Station. I think I've addressed al
 - Added terraforming support for the planet Charkha from the ScalarTech Solutions mod. Thanks e for reporting this!
 - Fixed a compatibility problem with the Everbody Loves KoC mod caused by replacing the Tech-mining industry on Agreus with Domain Archaeology. Now the replacement won't happen if the player has Everybody Loves KoC enabled. Thanks bodeshmoun for reporting this!
 
-## [8.1.6]
+## 8.1.6
 - Removed version checker and analytics reporting. I considered creating a popup to allow players to opt-in, but decided against this for a number of reasons, some of which I mentioned previously in posts in this thread.
 - Friendly patrols from Remnant battlestations now have a unique dialogue message if the player interacts with them (instead of using the default friendly patrol dialogue).
 - Added an option in the settings file to make all astropoli use low tech, midline or high tech sprites instead of alternating between them.
@@ -364,7 +364,7 @@ This patch focuses exclusively on the Remnant Station. I think I've addressed al
 - I previously indicated in a post in this thread I would add a settings option to control the base cost for station expansion. This is unnecessary as the cost for the Expand Station building can already be modified using industries.csv. My apologies for the confusion.
 - ListenerUtil.reportSaturationBombardmentFinished(null, market, null) is now called when the player uses a planet-killer device.
 
-## [8.1.5]
+## 8.1.5
 - Fixed a bug where mousing over the Deploy Planet Killer ability in a system with no planets could cause a crash. Thanks TheHZDev (and several others) for reporting this!
 - Fixed a bug where the Remnant battlestation could fail to repair over time after being destroyed in a battle. Thanks TheHZDev for reporting this!
 - Fixed a bug where the terraforming menu and crafting menu options could appear during dialogs with characters when using the comm directory.
@@ -372,17 +372,17 @@ This patch focuses exclusively on the Remnant Station. I think I've addressed al
 - Fixed a bug where terraforming progress could get frozen on planets where the player granted autonomy (via Nexerelin). Thanks Hexxod for reporting this!
 - Added support for prv Starworks. Thanks J2Greene for bringing this incompatibility to my attention!
 
-## [8.1.4]
+## 8.1.4
 - Remnant battlestations built by the player now spawn their own patrol fleets to guard the colony. The Remant battlestation patrols are separate from and in addition to any regular colony patrols.
 - Added the Planet-Killer Device as a special item. I made this a non-default feature due to what I feel are significant gameplay problems associated with it.
     - Once enabled in the settings file, the Planet-Killer Device can be obtained through Domain-tech crafting under the Domain Restricted category.
     - The Planet-Killer Device is activated via an ability that can be added to the ability bar.
 - By default all Cryosanctum buildings in the Sector will now demand Domain-era artifacts, not just the one on Nomios.
 
-## [8.1.3]
+## 8.1.3
 - Fixed a bug where a crash could occur if the player is using randomized core worlds. Thanks Whisena for reporting this!
 
-## [8.1.2]
+## 8.1.2
 - Added Limelight Network, a building unique to Fikenhild that demands Domain-era artifacts. There's a settings file option to allow the player to build it.
 - By default, the Cryosanctum on Nomios will demand Domain-era artifacts.
 - Added a settings option to allow the player build the Cryosanctum.
@@ -393,11 +393,11 @@ This patch focuses exclusively on the Remnant Station. I think I've addressed al
 - Fixed a bug where a research station from the Arma Armatura mod could block construction of a siphon station at the gas giant Raven in the Nekki system. Thanks Aran1 for reporting this!
 - Attempted to fix a bug involving a crash where the stack trace indicated the problem is related to data.scripts.terrain.MagicAsteroidFieldTerrainPlugin. I couldn't reproduce the crash on my system, but I think I fixed the cause, so let me know if it's still happening. Thanks DrTechman42 for reporting this!
 
-## [8.1.1]
+## 8.1.1
 - Fixed a bug where Domain-tech crafting didn't work on station markets. Thanks Noobishnoob for reporting this!
 - Crafting Domain-tech items now costs two story points by default. This amount can be changed using the settings file, and setting boggledDomainTechCraftingStoryPointCost to zero will eliminate the story point cost.
 
-## [8.1.0]
+## 8.1.0
 - Implemented crafting of special items using Domain-era artifacts. This can be disabled using the settings file.
 - Added Seafloor Cities building. It can only be built on water planets and has similar but not identical functionality to Domed Cities.
 - Gates can only be built if there is a player-controlled colony of at least size 5 in the system. This can be modified using the settings file.
@@ -406,14 +406,14 @@ This patch focuses exclusively on the Remnant Station. I think I've addressed al
 - Reduced Stellar Reflector Array pather interest.
 - When checking whether conditions for terraforming projects are met, a planet will be considered to have a Stellar Reflector Array based on whether it has the Orbital Reflector Array condition.
 
-## [8.0.2]
+## 8.0.2
 - Fixed a bug where Domed Cities couldn't be built on Water planets even if the appropriate setting was enabled.
 - Fixed a bug where the Kletka Simulator could have an incorrect upkeep on station markets with a Fusion Lamp installed.
 - Stations can no longer be constructed in systems without any jump points.
 - Rebalanced the number of asteroid belts required for certain ore resource levels on mining stations if boggledMiningStationLinkToResourceBelts is set to true.
 - Added options in the settings file to control the number of asteroid belts required for certain ore resource levels on mining stations.
 
-## [8.0.1]
+## 8.0.1
 - Fixed a bug where resource levels on Arid planets couldn't be improved via terraforming.
 - Fixed a bug where gas giants could be terraformed.
 - Reverted the change that removed the Domain-era artifact demand from stellar reflectors.
@@ -423,7 +423,7 @@ This patch focuses exclusively on the Remnant Station. I think I've addressed al
 - Added support for the built-in Version Checker in Nexerelin.
 - Created my own update checker API to replace using Pastebin, which had caused issues for some players.
 
-## [8.0.0]
+## 8.0.0
 - Completely reworked the terraforming system (again). Terraforming is now controlled via a menu when you interact with your colony, not the Genelab. Please be sure to leave feedback regarding the options available and requirements for same!
 - E.U.T.E.C.K. removed.
 - Added an option in the settings file to enable/disable inactive gate construction.
@@ -436,18 +436,18 @@ This patch focuses exclusively on the Remnant Station. I think I've addressed al
 - Updated descriptions for several structures.
 - Mining stations can no longer be constructed on top of jump points.
 
-## [7.1.3]
+## 7.1.3
 - Fixed a bug where terraforming a planet into a jungle world would incorrectly make it a paradise world instead. Thanks SenSayed for reporting this!
 
-## [7.1.2]
+## 7.1.2
 - Stellar Reflector Arrays now provide a ground defense bonus if improved.
 - Added the Planetary Agrav Field building. This is a new non-default structure that suppresses high/low gravity if the colony also has the Domed Cities building. Thanks to ozemandea for the inspiration to create this!
 - Harmonic Damper no longer suppresses high/low gravity.
 
-## [7.1.1]
+## 7.1.1
 - Fixed a bug where the open market from the Commerce industry would incorrectly have no tariffs on player-built stations. Thanks Vendral for reporting this!
 
-## [7.1.0]
+## 7.1.0
 - Added the Harmonic Damper building. Suppresses tectonic activity and high/low gravity, and adds some ground defense if improved and/or an AI core is installed. This is a non-default option for now, although I think a version that only suppresses tectonic activity might become default in the future.
 - The Atmosphere Processor is back. It will permanently remove no/thin/dense/toxic atmosphere from the planet it's built on. It's a non-default option.
 - The Terraforming Platform is back. It will permanently add Habitable and Mild Climate to the planet if it doesn't have no/thin/dense/toxic atmosphere. It's a non-default option.
@@ -457,13 +457,13 @@ This patch focuses exclusively on the Remnant Station. I think I've addressed al
 - The terraforming menu now has a tooltip which states the number of days remaining until terraforming is complete.
 - The conditions section of the terraforming menu has been removed because the functions have been replaced with the new non-default terraforming buildings listed above. If the player wants this menu back, simply uncomment the line in rules.csv that adds the condition section.
 
-## [7.0.1]
+## 7.0.1
 - Fixed multiple bugs relating to the Genelab/EUTECK and terraforming progress. Thanks to chrizeren, CrimsonPhalanx and Goldendragonfinn for reporting these issues!
 - Fixed a bug where the farming/aquaculture script could set the wrong building type on Archipelago planets. Thanks Farya!
 - The Remnant Battlestation will now be visible in the build menu if the player lacks the Automated Ships skill.
 - Added a tooltip to CHAMELEON if there is a DEA shortage that clarifies the structure provides no benefits during the shortage.
 
-## [7.0.0]
+## 7.0.0
 - The E.U.T.E.C.K. has returned! It's a special item that can be installed in the Genelab to begin terraforming. By default, the E.U.T.E.C.K. is single-use and will create a Paradise world, which is essentially a Terran planet with bountiful farmland and mild climate. Terraforming takes 400 days to complete, which can be adjusted in the settings file.
 - For those who want more options for terraforming (despite the lore and balance problems I feel are associated with them), the "boggledEnableAllTerraformingProjects" setting can be switched to true to enable the "old-style" terraforming. It's now controlled via an option on the colony interaction menu, and there are planet type change options for both vanilla planet types and Unknown Skies types. There are also miscellaneous projects to alter resources and conditions on the planet. Please let me know if there are any projects you want but aren't implemented - I will add more based on popular demand!
 - Genelabs now seed lobsters on planets with a water-covered surface. This process takes 200 days.
@@ -475,7 +475,7 @@ This patch focuses exclusively on the Remnant Station. I think I've addressed al
 - The Remnant Station is now only buildable if the player has the "Automated Ships" skill unlocked.
 - Modified the Mining Station resource deposits if the "boggledMiningStationLinkToResourceBelts" setting is enabled. Rich and Ultrarich ore deposits are now possible in cases where there is an extreme number of asteroid belts in the system.
 
-## [6.0.0]
+## 6.0.0
 - Terraforming and Domain-tech content has been re-enabled by default.
 - Planet type transformations have been removed temporarily. Between the new 0.95a special items and the hazard-suppressing buildings in this mod, the old-style planet type transformations are largely unnecessary. Planet type transformations (and the EUTECK) will be back in a future update once I've reworked the system to be worthwhile in 0.95a. Players who don't like the new 0.95a suppression mechanic and prefer the old-style system are encouraged to check out the DIY Planets mod.
 - Wildlife Exploitation replaced by Mesozoic Park industry. See the mod guide for details on how this industry works. It is a default option for now, but may be converted to non-default based on player feedback.
@@ -500,7 +500,7 @@ This patch focuses exclusively on the Remnant Station. I think I've addressed al
 - Fixed a bug where the second and third astropolis built around a single planet would not use the construction timer (if enabled).
 - I understand there have been requests to allow for turning gas giants into stars as part of terraforming. This will not be implemented because the fusion lamp makes this largely unnecessary in 0.95a, and because of lore compatibility problems.
 
-## [5.5.0]
+## 5.5.0
 - All Terraforming, Domain-Tech, Astral Gate and Miscellaneous features have been disabled by default while I update them for 0.95a. Astral gates will likely be removed from the mod in 6.0.0 due to new content in vanilla.
 - The settings file has been reorganized by content type.
 - Added a "check for updates" feature to this mod. I copied a bunch of code from Version Checker, so thanks LazyWizard! If Version Checker is updated for 0.95a I will remove this feature. It can also be disabled using the settings file.
