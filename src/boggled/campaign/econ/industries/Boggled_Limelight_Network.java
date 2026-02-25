@@ -109,7 +109,7 @@ public class Boggled_Limelight_Network extends BaseIndustry
     @Override
     public boolean isAvailableToBuild()
     {
-        if(!boggledTools.isResearched("tasc_limelight_network"))
+        if(!boggledTools.isBuildingResearchComplete(this.getId()))
         {
             return false;
         }
@@ -125,7 +125,7 @@ public class Boggled_Limelight_Network extends BaseIndustry
     @Override
     public boolean showWhenUnavailable()
     {
-        if(!boggledTools.isResearched("tasc_limelight_network"))
+        if(!boggledTools.isBuildingResearchComplete(this.getId()))
         {
             return false;
         }

@@ -95,12 +95,23 @@ public class Boggled_Harmonic_Damper extends BaseIndustry implements ShowBoggled
             return false;
         }
 
+        // Check research requirement
+        if(!boggledTools.isBuildingResearchComplete(this.getId()))
+        {
+            return false;
+        }
+
         return super.isAvailableToBuild();
     }
 
     @Override
     public boolean showWhenUnavailable()
     {
+        if(!boggledTools.isBuildingResearchComplete(this.getId()))
+        {
+            return false;
+        }
+
         if(!boggledTools.getBooleanSetting("boggledHarmonicDamperEnabled") || !boggledTools.getBooleanSetting("boggledTerraformingContentEnabled"))
         {
             return false;

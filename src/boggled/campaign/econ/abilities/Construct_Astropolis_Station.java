@@ -121,6 +121,13 @@ public class Construct_Astropolis_Station extends BaseDurationAbility
     @Override
     public boolean isUsable()
     {
+        // Check if required research is completed (data-driven system)
+        String requiredResearch = boggledTools.getRequiredResearchForAbility("boggled_construct_astropolis_station");
+        if (requiredResearch != null && !boggledTools.isResearched(requiredResearch))
+        {
+            return false;
+        }
+
         CampaignFleetAPI playerFleet = Global.getSector().getPlayerFleet();
         StarSystemAPI system = playerFleet.getStarSystem();
         SectorEntityToken targetPlanet = boggledTools.getClosestPlanetToken(playerFleet);
@@ -207,6 +214,14 @@ public class Construct_Astropolis_Station extends BaseDurationAbility
         tooltip.addTitle("Construct Astropolis Station");
         float pad = 10.0F;
         tooltip.addPara("Construct an astropolis station in orbit around a planet. Expends %s credits, %s crew, %s heavy machinery, %s metals and %s transplutonics for construction.", pad, highlight, new String[]{(int)creditCost + "",(int)crewCost + "",(int)heavyMachineryCost +"", (int)metalCost + "", (int)transplutonicsCost +""});
+
+        // Check research requirement for tooltip
+        String requiredResearch = boggledTools.getRequiredResearchForAbility("boggled_construct_astropolis_station");
+        if (requiredResearch != null && !boggledTools.isResearched(requiredResearch))
+        {
+            String researchName = boggledTools.getResearchDisplayName(requiredResearch);
+            tooltip.addPara("Requires the " + researchName + " research to be completed.", bad, pad);
+        }
 
         if(playerFleet.isInHyperspace() || Global.getSector().getPlayerFleet().isInHyperspaceTransition() || system == null)
         {

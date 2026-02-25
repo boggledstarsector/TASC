@@ -24,7 +24,8 @@ public class Boggled_Atmosphere_Processor extends BaseIndustry implements ShowBo
     @Override
     public void apply()
     {
-        super.apply(true);
+        super.apply(false);
+        super.applyIncomeAndUpkeep(3);
 
         int size = this.market.getSize();
         this.demand("heavy_machinery", size);
@@ -39,7 +40,7 @@ public class Boggled_Atmosphere_Processor extends BaseIndustry implements ShowBo
     @Override
     public boolean isAvailableToBuild()
     {
-        if(!boggledTools.isResearched("tasc_atmosphere_manipulation"))
+        if(!boggledTools.isBuildingResearchComplete(this.getId()))
         {
             return false;
         }
@@ -70,7 +71,7 @@ public class Boggled_Atmosphere_Processor extends BaseIndustry implements ShowBo
     @Override
     public boolean showWhenUnavailable()
     {
-        if(!boggledTools.isResearched("tasc_atmosphere_manipulation"))
+        if(!boggledTools.isBuildingResearchComplete(this.getId()))
         {
             return false;
         }

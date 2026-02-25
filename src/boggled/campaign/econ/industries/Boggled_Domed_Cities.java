@@ -179,12 +179,17 @@ public class Boggled_Domed_Cities extends BaseIndustry implements MarketImmigrat
     public boolean isAvailableToBuild()
     {
         MarketAPI market = this.market;
+        if(!boggledTools.isBuildingResearchComplete(this.getId()))
+        {
+            return false;
+        }
+
         if(!boggledTools.getBooleanSetting("boggledDomedCitiesEnabled") || !boggledTools.getBooleanSetting("boggledTerraformingContentEnabled"))
         {
             return false;
         }
 
-        if(!boggledTools.isResearched("tasc_resource_manipulation"))
+        if(!boggledTools.isBuildingResearchComplete(this.getId()))
         {
             return false;
         }
@@ -215,12 +220,17 @@ public class Boggled_Domed_Cities extends BaseIndustry implements MarketImmigrat
     public boolean showWhenUnavailable()
     {
         MarketAPI market = this.market;
+        if(!boggledTools.isBuildingResearchComplete(this.getId()))
+        {
+            return false;
+        }
+
         if(!boggledTools.getBooleanSetting("boggledDomedCitiesEnabled") || !boggledTools.getBooleanSetting("boggledTerraformingContentEnabled"))
         {
             return false;
         }
 
-        if(!boggledTools.isResearched("tasc_resource_manipulation"))
+        if(!boggledTools.isBuildingResearchComplete(this.getId()))
         {
             return false;
         }

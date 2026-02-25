@@ -53,7 +53,7 @@ public class TascAshlibCommandTabListener implements CommandTabListener {
 
     @Override
     public float getWidthOfButton() {
-        return 240;
+        return 170;
     }
 
     @Override

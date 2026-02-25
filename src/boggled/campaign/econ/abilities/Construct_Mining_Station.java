@@ -102,6 +102,13 @@ public class Construct_Mining_Station extends BaseDurationAbility
     @Override
     public boolean isUsable()
     {
+        // Check if required research is completed (data-driven system)
+        String requiredResearch = boggledTools.getRequiredResearchForAbility("boggled_construct_mining_station");
+        if (requiredResearch != null && !boggledTools.isResearched(requiredResearch))
+        {
+            return false;
+        }
+
         SectorEntityToken playerFleet = Global.getSector().getPlayerFleet();
         StarSystemAPI system = playerFleet.getStarSystem();
 
@@ -191,6 +198,14 @@ public class Construct_Mining_Station extends BaseDurationAbility
         tooltip.addTitle("Construct Mining Station");
         float pad = 10.0F;
         tooltip.addPara("Construct a mining station in an asteroid belt or asteroid field. Expends %s credits, %s crew, %s heavy machinery, %s metals and %s transplutonics for construction.", pad, highlight, new String[]{(int)creditCost + "",(int)crewCost + "",(int)heavyMachineryCost +"", (int)metalCost + "", (int)transplutonicsCost +""});
+
+        // Check research requirement for tooltip
+        String requiredResearch = boggledTools.getRequiredResearchForAbility("boggled_construct_mining_station");
+        if (requiredResearch != null && !boggledTools.isResearched(requiredResearch))
+        {
+            String researchName = boggledTools.getResearchDisplayName(requiredResearch);
+            tooltip.addPara("Requires the " + researchName + " research to be completed.", bad, pad);
+        }
 
         SectorEntityToken playerFleet = Global.getSector().getPlayerFleet();
         StarSystemAPI system = playerFleet.getStarSystem();

@@ -33,6 +33,11 @@ public class Boggled_Genelab extends BaseIndustry implements ShowBoggledTerrafor
     private int lastDayCheckedLobsters = 0;
     private final int requiredDaysToAddLobsters = boggledTools.getIntSetting("boggledGenelabLobsterSeedingDaysToFinish");
 
+    public enum GenelabMode {
+        LOBSTER,
+        TREX
+    }
+
     @Override
     public boolean canBeDisrupted() { return true; }
 
@@ -93,7 +98,7 @@ public class Boggled_Genelab extends BaseIndustry implements ShowBoggledTerrafor
                     {
                         MessageIntel intel = new MessageIntel("Pollution on " + this.market.getName(), Misc.getBasePlayerColor());
                         intel.addLine("    - Remediated");
-                        intel.setIcon(Global.getSector().getPlayerFaction().getCrest());
+                        intel.setIcon(getCurrentIntelIcon());
                         intel.setSound(BaseIntelPlugin.getSoundStandardUpdate());
                         Global.getSector().getCampaignUI().addMessage(intel, CommMessageAPI.MessageClickAction.COLONY_INFO, this.market);
                     }
@@ -110,7 +115,7 @@ public class Boggled_Genelab extends BaseIndustry implements ShowBoggledTerrafor
         // Lobster seeding
         //
 
-        if(this.market.hasCondition("water_surface") && !this.market.hasCondition("volturnian_lobster_pens") && this.isFunctional())
+        if(boggledTools.marketHasWaterSurface(this.market) && !this.market.hasCondition("volturnian_lobster_pens") && this.isFunctional())
         {
             if(clock.getDay() != this.lastDayCheckedLobsters && !shortage)
             {
@@ -123,7 +128,7 @@ public class Boggled_Genelab extends BaseIndustry implements ShowBoggledTerrafor
                     {
                         MessageIntel intel = new MessageIntel("Lobster seeding on " + this.market.getName(), Misc.getBasePlayerColor());
                         intel.addLine("    - Completed");
-                        intel.setIcon(Global.getSector().getPlayerFaction().getCrest());
+                        intel.setIcon(getCurrentIntelIcon());
                         intel.setSound(BaseIntelPlugin.getSoundStandardUpdate());
                         Global.getSector().getCampaignUI().addMessage(intel, CommMessageAPI.MessageClickAction.COLONY_INFO, this.market);
                     }
@@ -177,7 +182,7 @@ public class Boggled_Genelab extends BaseIndustry implements ShowBoggledTerrafor
         // Inserts lobster seeding status
         //
 
-        if(this.market.hasCondition("water_surface") && !this.market.hasCondition("volturnian_lobster_pens") && mode != IndustryTooltipMode.ADD_INDUSTRY && mode != IndustryTooltipMode.QUEUED && !isBuilding())
+        if(boggledTools.marketHasWaterSurface(this.market) && !this.market.hasCondition("volturnian_lobster_pens") && mode != IndustryTooltipMode.ADD_INDUSTRY && mode != IndustryTooltipMode.QUEUED && !isBuilding())
         {
             int percentComplete = (int) (((float) this.daysWithoutShortageLobsters / (float) this.requiredDaysToAddLobsters) * 100F);
 
@@ -191,7 +196,7 @@ public class Boggled_Genelab extends BaseIndustry implements ShowBoggledTerrafor
 
         }
 
-        if(this.isDisrupted() && this.market.hasCondition("water_surface") && !this.market.hasCondition("volturnian_lobster_pens") && mode != IndustryTooltipMode.ADD_INDUSTRY && mode != IndustryTooltipMode.QUEUED && !isBuilding())
+        if(this.isDisrupted() && boggledTools.marketHasWaterSurface(this.market) && !this.market.hasCondition("volturnian_lobster_pens") && mode != IndustryTooltipMode.ADD_INDUSTRY && mode != IndustryTooltipMode.QUEUED && !isBuilding())
         {
             tooltip.addPara("Lobster seeding progress is stalled while the Genelab is disrupted.", bad, opad);
         }
@@ -242,7 +247,7 @@ public class Boggled_Genelab extends BaseIndustry implements ShowBoggledTerrafor
     @Override
     public boolean isAvailableToBuild()
     {
-        if(!boggledTools.isResearched("tasc_genetic_manipulation"))
+        if(!boggledTools.isBuildingResearchComplete(this.getId()))
         {
             return false;
         }
@@ -264,7 +269,7 @@ public class Boggled_Genelab extends BaseIndustry implements ShowBoggledTerrafor
     @Override
     public boolean showWhenUnavailable()
     {
-        if(!boggledTools.isResearched("tasc_genetic_manipulation"))
+        if(!boggledTools.isBuildingResearchComplete(this.getId()))
         {
             return false;
         }
@@ -337,7 +342,7 @@ public class Boggled_Genelab extends BaseIndustry implements ShowBoggledTerrafor
             tooltip.addPara("Pollution remediation progress is stalled due to a shortage of %s.", opad, bad, boggledTools.getCommidityNameFromId(deficit.one));
         }
 
-        if(deficit.two > 0 && this.market.hasCondition("water_surface") && !this.market.hasCondition("volturnian_lobster_pens") && mode != IndustryTooltipMode.ADD_INDUSTRY && mode != IndustryTooltipMode.QUEUED && !isBuilding())
+        if(deficit.two > 0 && boggledTools.marketHasWaterSurface(this.market) && !this.market.hasCondition("volturnian_lobster_pens") && mode != IndustryTooltipMode.ADD_INDUSTRY && mode != IndustryTooltipMode.QUEUED && !isBuilding())
         {
             tooltip.addPara("Lobster seeding progress is stalled due to a shortage of %s.", opad, bad, boggledTools.getCommidityNameFromId(deficit.one));
         }
@@ -504,14 +509,32 @@ public class Boggled_Genelab extends BaseIndustry implements ShowBoggledTerrafor
     @Override
     public String getCurrentImage()
     {
-        PlanetAPI planet = this.market.getPlanetEntity();
-        if(planet != null && !boggledTools.getTascPlanetType(planet).equals("water"))
+        if(getGenelabMode() == GenelabMode.TREX)
         {
             return Global.getSettings().getSpriteName("boggled", "genelab_trex");
         }
         else
         {
             return this.getSpec().getImageName();
+        }
+    }
+
+    public String getCurrentIntelIcon()
+    {
+        return getGenelabMode() == GenelabMode.LOBSTER ?
+                Global.getSettings().getSpriteName("boggled_intel_icons", "intel_icon_genelab_lobster") :
+                Global.getSettings().getSpriteName("boggled_intel_icons", "intel_icon_genelab_trex");
+    }
+
+    public GenelabMode getGenelabMode()
+    {
+        if(boggledTools.marketHasWaterSurface(this.market))
+        {
+            return GenelabMode.LOBSTER;
+        }
+        else
+        {
+            return GenelabMode.TREX;
         }
     }
 }

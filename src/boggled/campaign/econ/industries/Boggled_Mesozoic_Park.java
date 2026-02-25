@@ -123,7 +123,7 @@ public class Boggled_Mesozoic_Park extends BaseIndustry implements ShowBoggledTe
     @Override
     public boolean isAvailableToBuild()
     {
-        if(!boggledTools.isResearched("tasc_genetic_manipulation"))
+        if(!boggledTools.isBuildingResearchComplete(this.getId()))
         {
             return false;
         }
@@ -172,7 +172,7 @@ public class Boggled_Mesozoic_Park extends BaseIndustry implements ShowBoggledTe
     @Override
     public boolean showWhenUnavailable()
     {
-        if(!boggledTools.isResearched("tasc_genetic_manipulation"))
+        if(!boggledTools.isBuildingResearchComplete(this.getId()))
         {
             return false;
         }

@@ -50,12 +50,23 @@ public class Boggled_Hydroponics extends BaseIndustry
             return false;
         }
 
+        // Check research requirement
+        if(!boggledTools.isBuildingResearchComplete(this.getId()))
+        {
+            return false;
+        }
+
         return super.isAvailableToBuild();
     }
 
     @Override
     public boolean showWhenUnavailable()
     {
+        if(!boggledTools.isBuildingResearchComplete(this.getId()))
+        {
+            return false;
+        }
+
         if(!boggledTools.getBooleanSetting("boggledHydroponicsEnabled"))
         {
             return false;

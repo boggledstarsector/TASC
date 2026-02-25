@@ -239,6 +239,13 @@ public class Colonize_Abandoned_Station extends BaseDurationAbility
     @Override
     public boolean isUsable()
     {
+        // Check if required research is completed (data-driven system)
+        String requiredResearch = boggledTools.getRequiredResearchForAbility("boggled_colonize_abandoned_station");
+        if (requiredResearch != null && !boggledTools.isResearched(requiredResearch))
+        {
+            return false;
+        }
+
         SectorEntityToken playerFleet = Global.getSector().getPlayerFleet();
         StarSystemAPI system = playerFleet.getStarSystem();
 
@@ -306,6 +313,14 @@ public class Colonize_Abandoned_Station extends BaseDurationAbility
         LabelAPI title = tooltip.addTitle("Colonize Abandoned Station");
         float pad = 10.0F;
         tooltip.addPara("Colonize an abandoned station. Expends %s credits, %s crew, %s heavy machinery, %s metals and %s transplutonics for construction.", pad, highlight, new String[]{(int)creditCost + "",(int)crewCost + "",(int)heavyMachineryCost +"", (int)metalCost + "", (int)transplutonicsCost +""});
+
+        // Check research requirement for tooltip
+        String requiredResearch = boggledTools.getRequiredResearchForAbility("boggled_colonize_abandoned_station");
+        if (requiredResearch != null && !boggledTools.isResearched(requiredResearch))
+        {
+            String researchName = boggledTools.getResearchDisplayName(requiredResearch);
+            tooltip.addPara("Requires the " + researchName + " research to be completed.", bad, pad);
+        }
 
         SectorEntityToken playerFleet = Global.getSector().getPlayerFleet();
         StarSystemAPI system = playerFleet.getStarSystem();

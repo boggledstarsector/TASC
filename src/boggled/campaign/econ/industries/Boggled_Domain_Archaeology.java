@@ -39,7 +39,7 @@ public class Boggled_Domain_Archaeology extends BaseIndustry
     @Override
     public boolean isAvailableToBuild()
     {
-        if(!boggledTools.isResearched("tasc_domain_excavation"))
+        if(!boggledTools.isBuildingResearchComplete(this.getId()))
         {
             return false;
         }
@@ -60,7 +60,7 @@ public class Boggled_Domain_Archaeology extends BaseIndustry
     @Override
     public boolean showWhenUnavailable()
     {
-        if(!boggledTools.isResearched("tasc_domain_excavation"))
+        if(!boggledTools.isBuildingResearchComplete(this.getId()))
         {
             return false;
         }

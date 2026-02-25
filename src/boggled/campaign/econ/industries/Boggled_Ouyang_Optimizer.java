@@ -116,7 +116,8 @@ public class Boggled_Ouyang_Optimizer extends BaseIndustry
     @Override
     public void apply()
     {
-        super.apply(true);
+        super.apply(false);
+        super.applyIncomeAndUpkeep(3);
     }
 
     @Override
@@ -170,12 +171,23 @@ public class Boggled_Ouyang_Optimizer extends BaseIndustry
             return false;
         }
 
+        // Check research requirement
+        if(!boggledTools.isBuildingResearchComplete(this.getId()))
+        {
+            return false;
+        }
+
         return super.isAvailableToBuild();
     }
 
     @Override
     public boolean showWhenUnavailable()
     {
+        if(!boggledTools.isBuildingResearchComplete(this.getId()))
+        {
+            return false;
+        }
+
         if(!boggledTools.getBooleanSetting("boggledTerraformingContentEnabled") || !boggledTools.getBooleanSetting("boggledOuyangOptimizerEnabled")) {
             return false;
         }

@@ -45,9 +45,10 @@ public class Boggled_Perihelion_Project extends BaseIndustry {
 
         //
         // Coronal tap construction
+        // Only applies with AotD is disabled - see below from AotD behavior
         //
 
-        if(this.isFunctional())
+        if(!Global.getSettings().getModManager().isModEnabled("aotd_vok") && this.isFunctional())
         {
             if(clock.getDay() != this.lastDayCheckedCoronalTap && !shortage)
             {
@@ -172,12 +173,23 @@ public class Boggled_Perihelion_Project extends BaseIndustry {
             return false;
         }
 
+        // Check research requirement
+        if(!boggledTools.isBuildingResearchComplete(this.getId()))
+        {
+            return false;
+        }
+
         return super.isAvailableToBuild();
     }
 
     @Override
     public boolean showWhenUnavailable()
     {
+        if(!boggledTools.isBuildingResearchComplete(this.getId()))
+        {
+            return false;
+        }
+
         if(!boggledTools.getBooleanSetting("boggledDomainTechContentEnabled") || !boggledTools.getBooleanSetting("boggledPerihelionProjectEnabled"))
         {
             return false;
