@@ -1,21 +1,34 @@
 # Changelog
 
-## 10.0.3
+## 10.0.4 *(not backwards compatible)*
+- Fixed a crash that occurs if the player is using the 2023 version of Unknown Skies instead of the modern version maintained by JamesTripleQ at https://fractalsoftworks.com/forum/index.php?topic=29876.0. If you're using the old version, please upgrade to take advantage of all TASC-Unknown Skies integration features! Thanks YuriKim and FireSnake for reporting this!
+- Added an alternate non-default AotD tech tree CSV file which contains research projects encompassing all buildings and abilities from TASC, not just the default ones. Swap the alternate tech tree CSV file with the original to enable it.
+- All TASC buildings and abilities now support being gated behind AotD research projects. The player can use one of the two included AotD tech tree CSV files or create their own.
+- TASC is no longer locked to default settings for certain content when AotD is enabled. If a building or ability is enabled but not part of the player's AotD tech tree CSV file, it will be available for construction.
+- Genelab can now seed lobsters on water worlds from Unknown Skies. Thanks Temstar for bringing this to my attention!
+- Added full support for TriOS (https://fractalsoftworks.com/forum/index.php?topic=29674.0). Please let me know if you encounter any issues!
+- Adjusted the build cost, upkeep and build time for several buildings.
+- Several buildings now have a fixed upkeep cost regardless of colony size.
+- Removed references to the crafting system in the LunaLib settings file. Domain-tech crafting was removed from TASC in 10.0.0.
+- CHAMELEON and Genelab intel messages now show the building artwork instead of the default player crest.
+- Minor updates to the descriptions of certain buildings.
+
+## 10.0.3 *(backwards compatible through 10.0.0)*
 - Fixed a bug where terraforming projects that require the Atmosphere Processor and/or Stellar Reflectors could be started if those buildings were still under construction. Thanks lchronosl for reporting this!
 - Updated the art for certain buildings.
 - Updated all AotD Vaults of Knowledge research project thumbnails to utilize current artwork.
 
-## 10.0.2
+## 10.0.2 *(backwards compatible through 10.0.0)*
 - Fixed a bug where the Atmosphere Processor couldn't be constructed on irradiated planets even when the LunaLib setting to enable the "remove radiation" terraforming project was toggled on. Thanks abramsxie and Astrefernal for reporting this!
 - Added new artwork for several buildings. I intend to make further updates to the artwork. If you strongly like or dislike any of the artwork in TASC, please let me know why in this thread!
 - Updated the instructions for setting up a local development environment for TASC in the GitHub readme file.
 - Cleaned up some outdated or incorrect information in the LunaLib settings file.
 
-## 10.0.1
+## 10.0.1 *(backwards compatible through 10.0.0)*
 - Fixed a bug where constructing a third astropolis in orbit around a colony could cause a crash. Thanks Dadada for reporting this and taking the time to provide your log file!
 - Fixed a bug where clicking a terraforming project could cause a crash. Thanks LeNainBerb and Daredevil for reporting this!
 
-## 10.0.0
+## 10.0.0 *(not backwards compatible)*
 - Added a new UI for terraforming projects. It shows the appearance and conditions a planet will have when terraforming is complete. Thanks Kaysaar for all your help with integrating the new UI with AotD!
 - Terraforming projects now appear in the intel screen and notify the player when an event occurs, such as project completion.
 - The terraforming menu can now be opened from the colony management screen by clicking on a TASC building related to terraforming and selecting the "Open terraforming menu" option.
