@@ -865,12 +865,21 @@ public class boggledTools {
         projects.add(new PlanetTypeChangeTundra(market));
         projects.add(new PlanetTypeChangeFrozen(market));
 
+        // Some players are using an old version of Unknown Skies from 2023 that's
+        // missing some of these planet types. Don't show the missing ones.
         if(Global.getSettings().getModManager().isModEnabled(BoggledMods.unknownSkiesModId))
         {
-            projects.add(new PlanetTypeChangeAlpine(market));
-            projects.add(new PlanetTypeChangeAtoll(market));
-            projects.add(new PlanetTypeChangeSakura(market));
-            projects.add(new PlanetTypeChangeSavannah(market));
+            // 2023 Version is 1.0.0rc2
+            // Modern version is 3+ major version
+            if(Integer.parseInt(Global.getSettings().getModManager().getModSpec(BoggledMods.unknownSkiesModId).getVersionInfo().getMajor()) >= 3)
+            {
+                projects.add(new PlanetTypeChangeAlpine(market));
+                projects.add(new PlanetTypeChangeAtoll(market));
+                projects.add(new PlanetTypeChangeSakura(market));
+                projects.add(new PlanetTypeChangeSavannah(market));
+            }
+
+            // Only US_storm is present in 2023 version
             projects.add(new PlanetTypeChangeStorm(market));
         }
 
