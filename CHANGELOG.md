@@ -5,7 +5,7 @@
 - Fixed a bug where the setting that controls whether terran and tundra planets have volatiles when created via terraforming was ignored for Unknown Skies planet types. Thanks DrTechman42 for reporting this!
 - Fixed a bug where hovering over the Planet Cracker or Ouyang Optimizer in the AotD research menu caused a crash. Thanks Fwiffo, YourLocalMairaaboo and Purple Nebula for your assistance with this!
 - Fixed a bug where ruins still show Domain-era artifact yield even when TASC Domain-tech features are disabled. Thanks Strato for reporting this!
-- 
+
 ## 10.0.4 *(not backwards compatible)*
 - Fixed a crash that occurs if the player is using the 2023 version of Unknown Skies instead of the modern version maintained by JamesTripleQ at https://fractalsoftworks.com/forum/index.php?topic=29876.0. If you're using the old version, please upgrade to take advantage of all TASC-Unknown Skies integration features! Thanks YuriKim and FireSnake for reporting this!
 - Added an alternate non-default AotD tech tree CSV file which contains research projects encompassing all buildings and abilities from TASC, not just the default ones. Swap the alternate tech tree CSV file with the original to enable it.
