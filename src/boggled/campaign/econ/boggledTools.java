@@ -2625,6 +2625,12 @@ public class boggledTools {
         return isResearched(requiredResearch);
     }
 
+    public static boolean isMarketAotdFakeForResearchMenu(MarketAPI market)
+    {
+        // As of 4/4/2026, AotD appears to use a "fake" market with the name "TEst", but it has no primary entity
+        return market.getPrimaryEntity() == null;
+    }
+
     public static boolean domainEraArtifactDemandEnabled()
     {
         if(getBooleanSetting(BoggledSettings.domainTechContentEnabled) && getBooleanSetting(BoggledSettings.domainArchaeologyEnabled))

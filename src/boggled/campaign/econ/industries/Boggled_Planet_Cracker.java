@@ -120,6 +120,12 @@ public class Boggled_Planet_Cracker extends BaseIndustry
     @Override
     public boolean isAvailableToBuild()
     {
+        // Exit immediately if we're in the AotD research menu
+        if(boggledTools.isMarketAotdFakeForResearchMenu(this.market))
+        {
+            return false;
+        }
+
         if(!boggledTools.getBooleanSetting("boggledTerraformingContentEnabled") || !boggledTools.getBooleanSetting("boggledPlanetCrackerEnabled"))
         {
             return false;
@@ -276,6 +282,12 @@ public class Boggled_Planet_Cracker extends BaseIndustry
     @Override
     protected void addRightAfterDescriptionSection(TooltipMakerAPI tooltip, IndustryTooltipMode mode)
     {
+        // Don't show in AotD research panel
+        if(boggledTools.isMarketAotdFakeForResearchMenu(this.market))
+        {
+            return;
+        }
+
         float opad = 10.0F;
         Color highlight = Misc.getHighlightColor();
 

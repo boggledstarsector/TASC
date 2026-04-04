@@ -24,21 +24,24 @@ import org.json.JSONException;
 import java.io.IOException;
 
 public class BoggledTascPlugin extends BaseModPlugin {
-    static {
-        ResourceDepositsCondition.COMMODITY.put(Conditions.RUINS_SCATTERED, boggledTools.BoggledCommodities.domainArtifacts);
-        ResourceDepositsCondition.COMMODITY.put(Conditions.RUINS_WIDESPREAD, boggledTools.BoggledCommodities.domainArtifacts);
-        ResourceDepositsCondition.COMMODITY.put(Conditions.RUINS_EXTENSIVE, boggledTools.BoggledCommodities.domainArtifacts);
-        ResourceDepositsCondition.COMMODITY.put(Conditions.RUINS_VAST, boggledTools.BoggledCommodities.domainArtifacts);
-
-        ResourceDepositsCondition.MODIFIER.put(Conditions.RUINS_SCATTERED, -1);
-        ResourceDepositsCondition.MODIFIER.put(Conditions.RUINS_WIDESPREAD, 0);
-        ResourceDepositsCondition.MODIFIER.put(Conditions.RUINS_EXTENSIVE, 1);
-        ResourceDepositsCondition.MODIFIER.put(Conditions.RUINS_VAST, 2);
-
-        ResourceDepositsCondition.INDUSTRY.put(boggledTools.BoggledCommodities.domainArtifacts, boggledTools.BoggledIndustries.domainArchaeologyIndustryId);
-
-        ResourceDepositsCondition.BASE_MODIFIER.put(boggledTools.BoggledCommodities.domainArtifacts, -2);
-    }
+//    static {
+//        if(boggledTools.getBooleanSetting("boggledDomainTechContentEnabled") && boggledTools.getBooleanSetting("boggledDomainArchaeologyEnabled"))
+//        {
+//            ResourceDepositsCondition.COMMODITY.put(Conditions.RUINS_SCATTERED, boggledTools.BoggledCommodities.domainArtifacts);
+//            ResourceDepositsCondition.COMMODITY.put(Conditions.RUINS_WIDESPREAD, boggledTools.BoggledCommodities.domainArtifacts);
+//            ResourceDepositsCondition.COMMODITY.put(Conditions.RUINS_EXTENSIVE, boggledTools.BoggledCommodities.domainArtifacts);
+//            ResourceDepositsCondition.COMMODITY.put(Conditions.RUINS_VAST, boggledTools.BoggledCommodities.domainArtifacts);
+//
+//            ResourceDepositsCondition.MODIFIER.put(Conditions.RUINS_SCATTERED, -1);
+//            ResourceDepositsCondition.MODIFIER.put(Conditions.RUINS_WIDESPREAD, 0);
+//            ResourceDepositsCondition.MODIFIER.put(Conditions.RUINS_EXTENSIVE, 1);
+//            ResourceDepositsCondition.MODIFIER.put(Conditions.RUINS_VAST, 2);
+//
+//            ResourceDepositsCondition.INDUSTRY.put(boggledTools.BoggledCommodities.domainArtifacts, boggledTools.BoggledIndustries.domainArchaeologyIndustryId);
+//
+//            ResourceDepositsCondition.BASE_MODIFIER.put(boggledTools.BoggledCommodities.domainArtifacts, -2);
+//        }
+//    }
 
     static int lastGameLoad = 0;
     static int thisGameLoad = 0;
@@ -138,6 +141,39 @@ public class BoggledTascPlugin extends BaseModPlugin {
 
     public void applyDomainEraArtifactSettings() {
         //Enable/disable Domain-tech content
+
+        if(boggledTools.getBooleanSetting(boggledTools.BoggledSettings.domainTechContentEnabled) && boggledTools.getBooleanSetting(boggledTools.BoggledSettings.domainArchaeologyEnabled)) {
+            ResourceDepositsCondition.COMMODITY.put(Conditions.RUINS_SCATTERED, boggledTools.BoggledCommodities.domainArtifacts);
+            ResourceDepositsCondition.COMMODITY.put(Conditions.RUINS_WIDESPREAD, boggledTools.BoggledCommodities.domainArtifacts);
+            ResourceDepositsCondition.COMMODITY.put(Conditions.RUINS_EXTENSIVE, boggledTools.BoggledCommodities.domainArtifacts);
+            ResourceDepositsCondition.COMMODITY.put(Conditions.RUINS_VAST, boggledTools.BoggledCommodities.domainArtifacts);
+
+            ResourceDepositsCondition.MODIFIER.put(Conditions.RUINS_SCATTERED, -1);
+            ResourceDepositsCondition.MODIFIER.put(Conditions.RUINS_WIDESPREAD, 0);
+            ResourceDepositsCondition.MODIFIER.put(Conditions.RUINS_EXTENSIVE, 1);
+            ResourceDepositsCondition.MODIFIER.put(Conditions.RUINS_VAST, 2);
+
+            ResourceDepositsCondition.INDUSTRY.put(boggledTools.BoggledCommodities.domainArtifacts, boggledTools.BoggledIndustries.domainArchaeologyIndustryId);
+
+            ResourceDepositsCondition.BASE_MODIFIER.put(boggledTools.BoggledCommodities.domainArtifacts, -2);
+        }
+        else
+        {
+            ResourceDepositsCondition.COMMODITY.put(Conditions.RUINS_SCATTERED, null);
+            ResourceDepositsCondition.COMMODITY.put(Conditions.RUINS_WIDESPREAD, null);
+            ResourceDepositsCondition.COMMODITY.put(Conditions.RUINS_EXTENSIVE, null);
+            ResourceDepositsCondition.COMMODITY.put(Conditions.RUINS_VAST, null);
+
+            ResourceDepositsCondition.MODIFIER.put(Conditions.RUINS_SCATTERED, null);
+            ResourceDepositsCondition.MODIFIER.put(Conditions.RUINS_WIDESPREAD, null);
+            ResourceDepositsCondition.MODIFIER.put(Conditions.RUINS_EXTENSIVE, null);
+            ResourceDepositsCondition.MODIFIER.put(Conditions.RUINS_VAST, null);
+
+            ResourceDepositsCondition.INDUSTRY.put(boggledTools.BoggledCommodities.domainArtifacts, null);
+
+            ResourceDepositsCondition.BASE_MODIFIER.put(boggledTools.BoggledCommodities.domainArtifacts, null);
+        }
+
         if(boggledTools.getBooleanSetting(boggledTools.BoggledSettings.domainTechContentEnabled) && boggledTools.getBooleanSetting(boggledTools.BoggledSettings.domainArchaeologyEnabled)) {
             if(Global.getSector().getFaction(Factions.LUDDIC_CHURCH) != null && !Global.getSector().getFaction(Factions.LUDDIC_CHURCH).isIllegal(boggledTools.BoggledCommodities.domainArtifacts)) {
                 Global.getSector().getFaction(Factions.LUDDIC_CHURCH).makeCommodityIllegal(boggledTools.BoggledCommodities.domainArtifacts);
