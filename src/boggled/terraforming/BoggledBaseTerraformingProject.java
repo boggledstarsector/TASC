@@ -751,7 +751,7 @@ public class BoggledBaseTerraformingProject extends BaseIntelPlugin {
         }
         if(!requirementsMet(getProjectRequirements()))
         {
-            info.addPara("Progress on this project is currently stalled due to unmet requirements.", pad, highlight, null, new String[]{});
+            info.addPara("Progress on this project is currently stalled due to unmet requirements.", pad, tc, highlight, new String[]{});
         }
 
         // Print requirements
