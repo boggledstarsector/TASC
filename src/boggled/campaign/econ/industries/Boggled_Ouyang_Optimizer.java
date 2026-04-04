@@ -129,6 +129,12 @@ public class Boggled_Ouyang_Optimizer extends BaseIndustry
     @Override
     public boolean isAvailableToBuild()
     {
+        // Exit immediately if we're in the AotD research menu
+        if(boggledTools.isMarketAotdFakeForResearchMenu(this.market))
+        {
+            return false;
+        }
+
         if(!boggledTools.getBooleanSetting("boggledTerraformingContentEnabled") || !boggledTools.getBooleanSetting("boggledOuyangOptimizerEnabled")) {
             return false;
         }
@@ -283,6 +289,12 @@ public class Boggled_Ouyang_Optimizer extends BaseIndustry
     @Override
     protected void addRightAfterDescriptionSection(TooltipMakerAPI tooltip, IndustryTooltipMode mode)
     {
+        // Exit immediately if we're in the AotD research menu
+        if(boggledTools.isMarketAotdFakeForResearchMenu(this.market))
+        {
+            return;
+        }
+
         float opad = 10.0F;
         Color highlight = Misc.getHighlightColor();
 
