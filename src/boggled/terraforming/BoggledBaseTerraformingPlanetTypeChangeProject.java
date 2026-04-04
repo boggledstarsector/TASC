@@ -136,7 +136,8 @@ public class BoggledBaseTerraformingPlanetTypeChangeProject extends BoggledBaseT
         if(volatilesId != null)
         {
             // Don't add volatiles to terran or tundra worlds if setting to do so has been toggled to false
-            if(boggledTools.getBooleanSetting("boggledTerraformingTypeChangeAddVolatiles") || (!this.planetIdToChangeInto.equals(boggledTools.TascPlanetTypes.terranPlanetId) && !this.planetIdToChangeInto.equals(boggledTools.TascPlanetTypes.tundraPlanetId)))
+            String tascPlanetType = boggledTools.getTascPlanetType(this.getPlanetIdToChangeInto());
+            if(boggledTools.getBooleanSetting("boggledTerraformingTypeChangeAddVolatiles") || (!tascPlanetType.equals("terran") && !tascPlanetType.equals("tundra")))
             {
                 conditionsToAdd.add(volatilesId);
             }
