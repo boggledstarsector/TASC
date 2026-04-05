@@ -17,6 +17,19 @@ public class BoggledTerraformingCoreUIAshlib extends CommandUIPlugin {
     }
 
     @Override
+    public void init(String panelToShowcase, Object data, Object customData)
+    {
+        if(customData instanceof MarketAPI)
+        {
+            init((MarketAPI) customData);
+        }
+        else
+        {
+            init(null);
+        }
+    }
+
+    @Override
     public void init(String panelToShowcase, Object data) {
         init(null);
     }

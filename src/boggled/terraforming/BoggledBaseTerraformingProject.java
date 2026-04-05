@@ -3,10 +3,8 @@ package boggled.terraforming;
 import boggled.campaign.econ.boggledTools;
 import boggled.campaign.econ.conditions.Terraforming_Controller;
 import boggled.terraforming.tooltips.BoggledBaseTerraformingProjectTooltip;
-import boggled.ui.BoggledCoreModifierEveryFrameScript;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CampaignClockAPI;
-import com.fs.starfarer.api.campaign.CoreUITabId;
 import com.fs.starfarer.api.campaign.FactionAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.campaign.comm.CommMessageAPI;
@@ -780,8 +778,8 @@ public class BoggledBaseTerraformingProject extends BaseIntelPlugin {
         if (buttonId == BUTTON_OPEN_TERRAFORMING_MENU)
         {
             MarketAPI targetMarket = this.market;
-            BoggledCoreModifierEveryFrameScript.setMarketToOpen(targetMarket);
-            Global.getSector().getCampaignUI().showCoreUITab(CoreUITabId.OUTPOSTS, null);
+            boggledTools.setDefaultMarketToOpenForTerraformingTab(targetMarket);
+            boggledTools.openCommandTabWithTerraformingSelected();
         }
 
         super.buttonPressConfirmed(buttonId, ui);
