@@ -222,6 +222,11 @@ public class Boggled_Mesozoic_Park extends BaseIndustry implements ShowBoggledTe
     public String getUnavailableReason()
     {
         PlanetAPI planet = this.market.getPlanetEntity();
+        // Handles case where AotD VoK creates a fake market with a null planet entity
+        if(planet == null)
+        {
+            return super.getUnavailableReason();
+        }
         String planetType = boggledTools.getTascPlanetType(planet);
 
         //Can't build on unknown planet types

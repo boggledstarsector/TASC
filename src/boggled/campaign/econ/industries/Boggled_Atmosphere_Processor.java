@@ -96,6 +96,11 @@ public class Boggled_Atmosphere_Processor extends BaseIndustry implements ShowBo
         if(!terraformingPossibleOnMarket(this.market))
         {
             PlanetAPI planet = this.market.getPlanetEntity();
+            // Handles case where AotD VoK creates a fake market with a null planet entity
+            if(planet == null)
+            {
+                return super.getUnavailableReason();
+            }
             if(boggledTools.getTascPlanetType(planet).equals(boggledTools.TascPlanetTypes.unknownPlanetId))
             {
                 return "This planet type is unsupported by TASC. Please report this to boggled on the forums so he can add support. The planet type is: " + market.getPlanetEntity().getTypeId();
