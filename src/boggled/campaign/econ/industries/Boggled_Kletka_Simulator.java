@@ -19,9 +19,9 @@ public class Boggled_Kletka_Simulator extends BaseIndustry
     private final int ROLL_THRESHOLD_BETA = 75;
     private final int ROLL_THRESHOLD_GAMMA = 50;
     private final int IMPROVEMENT_BONUS = 10;
-    private final int ALPHA_CORE_BONUS = 30;
-    private final int BETA_CORE_BONUS = 20;
-    private final int GAMMA_CORE_BONUS = 10;
+    private final int ALPHA_CORE_BONUS = 15;
+    private final int BETA_CORE_BONUS = 10;
+    private final int GAMMA_CORE_BONUS = 5;
     @Override
     public boolean canBeDisrupted()
     {

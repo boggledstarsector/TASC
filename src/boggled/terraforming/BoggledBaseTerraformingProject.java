@@ -2,6 +2,7 @@ package boggled.terraforming;
 
 import boggled.campaign.econ.boggledTools;
 import boggled.campaign.econ.conditions.Terraforming_Controller;
+import boggled.campaign.econ.industries.Boggled_Atmosphere_Processor;
 import boggled.terraforming.tooltips.BoggledBaseTerraformingProjectTooltip;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CampaignClockAPI;
@@ -335,7 +336,7 @@ public class BoggledBaseTerraformingProject extends BaseIntelPlugin {
 
     public TerraformingRequirementObject getRequirementMarketHasAtmosphereProcessor() {
         Industry atmosphereProcessor = this.market.getIndustry(boggledTools.BoggledIndustries.atmosphereProcessorId);
-        boolean requirementMet = atmosphereProcessor != null && atmosphereProcessor.isFunctional();
+        boolean requirementMet = atmosphereProcessor != null && atmosphereProcessor.isFunctional() && atmosphereProcessor instanceof Boggled_Atmosphere_Processor && (((Boggled_Atmosphere_Processor) atmosphereProcessor).getAtmosphereProcessorDeficit().two <= 0);
         TooltipMakerAPI.TooltipCreator tooltip = new TooltipMakerAPI.TooltipCreator() {
             @Override
             public boolean isTooltipExpandable(Object o) {

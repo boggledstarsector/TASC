@@ -1074,17 +1074,6 @@ public class boggledTools {
         return Global.getSettings().getCommoditySpec(commodityId).getName();
     }
 
-    public static boolean marketHasAtmoProblem(MarketAPI market) {
-        return market.hasCondition(Conditions.NO_ATMOSPHERE)
-                || market.hasCondition(Conditions.THIN_ATMOSPHERE)
-                || market.hasCondition(Conditions.DENSE_ATMOSPHERE)
-                || market.hasCondition(Conditions.TOXIC_ATMOSPHERE)
-                || (boggledTools.getBooleanSetting(BoggledSettings.removeRadiationProjectEnabled)
-                && market.hasCondition(Conditions.IRRADIATED))
-                || !market.hasCondition(Conditions.MILD_CLIMATE)
-                || !market.hasCondition(Conditions.HABITABLE);
-    }
-
     public static float getAngle(float focusX, float focusY, float playerX, float playerY) {
         float angle = (float) Math.toDegrees(Math.atan2(focusY - playerY, focusX - playerX));
 
