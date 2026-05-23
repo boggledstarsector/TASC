@@ -10,6 +10,7 @@ import com.fs.starfarer.api.ui.LabelAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
 import java.awt.Color;
+import com.fs.starfarer.api.impl.campaign.ids.Tags;
 
 public class Construct_Siphon_Station extends BaseDurationAbility
 {
@@ -80,6 +81,11 @@ public class Construct_Siphon_Station extends BaseDurationAbility
 
 
         if(system.getJumpPoints().isEmpty())
+        {
+            return false;
+        }
+
+        if(system.hasTag(Tags.SYSTEM_ABYSSAL))
         {
             return false;
         }
@@ -159,6 +165,10 @@ public class Construct_Siphon_Station extends BaseDurationAbility
         else if(system.getJumpPoints().isEmpty())
         {
             tooltip.addPara("You cannot construct a station in a system with no jump points.", bad, pad);
+        }
+        else if(system.hasTag(Tags.SYSTEM_ABYSSAL))
+        {
+            tooltip.addPara("You cannot construct a station in a system in abyssal hyperspace.", bad, pad);
         }
 
         if(!playerFleet.isInHyperspace() && !Global.getSector().getPlayerFleet().isInHyperspaceTransition() && system != null)

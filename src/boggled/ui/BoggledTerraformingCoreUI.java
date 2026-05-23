@@ -609,13 +609,14 @@ public class BoggledTerraformingCoreUI implements CustomUIPanelPlugin {
         {
             if(ongoingProject.getProjectName().equals(project.getProjectName()))
             {
+                String dayCopyString = ongoingProject.getDaysRemaining() > 1 ? "are " + ongoingProject.getDaysRemaining() + " days" : "is " + ongoingProject.getDaysRemaining() + " day";
                 if(project.requirementsMet(projectRequirements))
                 {
-                    triggerButtonsLabel = projectTriggerButtonsPanel.addPara("There are " + ongoingProject.getDaysRemaining() + " day(s) remaining until this project is complete.", Misc.getPositiveHighlightColor(), 1f);
+                    triggerButtonsLabel = projectTriggerButtonsPanel.addPara("There " + dayCopyString + " remaining until this project is complete.", Misc.getPositiveHighlightColor(), 1f);
                 }
                 else
                 {
-                    triggerButtonsLabel = projectTriggerButtonsPanel.addPara("There are " + ongoingProject.getDaysRemaining() + " day(s) remaining until this project is complete. Progress is stalled because requirements are not met.", Misc.getNegativeHighlightColor(), 1f);
+                    triggerButtonsLabel = projectTriggerButtonsPanel.addPara("There " + dayCopyString + " remaining until this project is complete. Progress is stalled because requirements are not met.", Misc.getNegativeHighlightColor(), 1f);
                 }
             }
             else
