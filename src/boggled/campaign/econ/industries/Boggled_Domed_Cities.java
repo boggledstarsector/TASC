@@ -355,7 +355,27 @@ public class Boggled_Domed_Cities extends BaseIndustry implements MarketImmigrat
         }
         else
         {
-            return this.getSpec().getImageName();
+            String currentPlanetType = boggledTools.getTascPlanetType(this.market.getPlanetEntity());
+            return switch (currentPlanetType) {
+                // Terran is the default (will be shown in AotD VoK research menu)
+                case boggledTools.TascPlanetTypes.terranPlanetId ->
+                        Global.getSettings().getSpriteName("boggled", "domed_cities_terran");
+                case boggledTools.TascPlanetTypes.barrenPlanetId ->
+                        Global.getSettings().getSpriteName("boggled", "domed_cities_barren");
+                case boggledTools.TascPlanetTypes.volcanicPlanetId ->
+                        Global.getSettings().getSpriteName("boggled", "domed_cities_volcanic");
+                case boggledTools.TascPlanetTypes.toxicPlanetId ->
+                        Global.getSettings().getSpriteName("boggled", "domed_cities_toxic");
+                case boggledTools.TascPlanetTypes.tundraPlanetId ->
+                        Global.getSettings().getSpriteName("boggled", "domed_cities_tundra");
+                case boggledTools.TascPlanetTypes.frozenPlanetId ->
+                        Global.getSettings().getSpriteName("boggled", "domed_cities_frozen");
+                case boggledTools.TascPlanetTypes.junglePlanetId ->
+                        Global.getSettings().getSpriteName("boggled", "domed_cities_jungle");
+                case boggledTools.TascPlanetTypes.desertPlanetId ->
+                        Global.getSettings().getSpriteName("boggled", "domed_cities_desert");
+                default -> this.getSpec().getImageName();
+            };
         }
     }
 
