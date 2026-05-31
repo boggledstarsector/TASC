@@ -2,11 +2,10 @@ package boggled.terraforming;
 
 import boggled.campaign.econ.boggledTools;
 import boggled.campaign.econ.conditions.Terraforming_Controller;
+import boggled.campaign.econ.industries.Boggled_Atmosphere_Processor;
 import boggled.terraforming.tooltips.BoggledBaseTerraformingProjectTooltip;
-import boggled.ui.BoggledCoreModifierEveryFrameScript;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CampaignClockAPI;
-import com.fs.starfarer.api.campaign.CoreUITabId;
 import com.fs.starfarer.api.campaign.FactionAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.campaign.comm.CommMessageAPI;
@@ -337,7 +336,7 @@ public class BoggledBaseTerraformingProject extends BaseIntelPlugin {
 
     public TerraformingRequirementObject getRequirementMarketHasAtmosphereProcessor() {
         Industry atmosphereProcessor = this.market.getIndustry(boggledTools.BoggledIndustries.atmosphereProcessorId);
-        boolean requirementMet = atmosphereProcessor != null && atmosphereProcessor.isFunctional();
+        boolean requirementMet = atmosphereProcessor != null && atmosphereProcessor.isFunctional() && atmosphereProcessor instanceof Boggled_Atmosphere_Processor && (((Boggled_Atmosphere_Processor) atmosphereProcessor).getAtmosphereProcessorDeficit().two <= 0);
         TooltipMakerAPI.TooltipCreator tooltip = new TooltipMakerAPI.TooltipCreator() {
             @Override
             public boolean isTooltipExpandable(Object o) {
@@ -751,7 +750,7 @@ public class BoggledBaseTerraformingProject extends BaseIntelPlugin {
         }
         if(!requirementsMet(getProjectRequirements()))
         {
-            info.addPara("Progress on this project is currently stalled due to unmet requirements.", pad, highlight, null, new String[]{});
+            info.addPara("Progress on this project is currently stalled due to unmet requirements.", pad, tc, highlight, new String[]{});
         }
 
         // Print requirements
@@ -780,8 +779,8 @@ public class BoggledBaseTerraformingProject extends BaseIntelPlugin {
         if (buttonId == BUTTON_OPEN_TERRAFORMING_MENU)
         {
             MarketAPI targetMarket = this.market;
-            BoggledCoreModifierEveryFrameScript.setMarketToOpen(targetMarket);
-            Global.getSector().getCampaignUI().showCoreUITab(CoreUITabId.OUTPOSTS, null);
+            boggledTools.setDefaultMarketToOpenForTerraformingTab(targetMarket);
+            boggledTools.openCommandTabWithTerraformingSelected();
         }
 
         super.buttonPressConfirmed(buttonId, ui);

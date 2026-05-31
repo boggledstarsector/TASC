@@ -1,10 +1,13 @@
 package boggled.campaign.econ;
 
+import ashlib.data.plugins.coreui.CommandTabInterceptor;
+import ashlib.data.plugins.coreui.CommandTabTracker;
 import boggled.campaign.econ.conditions.Terraforming_Controller;
 import boggled.campaign.econ.industries.Boggled_Ismara_Sling;
 import boggled.scripts.*;
 import boggled.terraforming.*;
 import boggled.terraforming.us.*;
+import boggled.ui.BoggledCoreModifierEveryFrameScript;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.SettingsAPI;
 import com.fs.starfarer.api.campaign.*;
@@ -1069,17 +1072,6 @@ public class boggledTools {
 
     public static String getCommidityNameFromId(String commodityId) {
         return Global.getSettings().getCommoditySpec(commodityId).getName();
-    }
-
-    public static boolean marketHasAtmoProblem(MarketAPI market) {
-        return market.hasCondition(Conditions.NO_ATMOSPHERE)
-                || market.hasCondition(Conditions.THIN_ATMOSPHERE)
-                || market.hasCondition(Conditions.DENSE_ATMOSPHERE)
-                || market.hasCondition(Conditions.TOXIC_ATMOSPHERE)
-                || (boggledTools.getBooleanSetting(BoggledSettings.removeRadiationProjectEnabled)
-                && market.hasCondition(Conditions.IRRADIATED))
-                || !market.hasCondition(Conditions.MILD_CLIMATE)
-                || !market.hasCondition(Conditions.HABITABLE);
     }
 
     public static float getAngle(float focusX, float focusY, float playerX, float playerY) {
@@ -2629,6 +2621,33 @@ public class boggledTools {
     {
         // As of 4/4/2026, AotD appears to use a "fake" market with the name "TEst", but it has no primary entity
         return market.getPrimaryEntity() == null;
+    }
+
+    public static void setDefaultMarketToOpenForTerraformingTab(MarketAPI targetMarket)
+    {
+        // Call this right before sending the trigger to open the command tab due to the player clicking a button.
+        // Sets a static variable to the targetMarket MarketAPI, which is then passed to BoggledTerraformingCoreUI to open it by default.
+        if(Global.getSettings().getModManager().isModEnabled("ashlib"))
+        {
+            CommandTabTracker.commandUiPluginArgument = targetMarket;
+        }
+        else
+        {
+            BoggledCoreModifierEveryFrameScript.setMarketToOpen(targetMarket);
+        }
+    }
+
+    public static void openCommandTabWithTerraformingSelected()
+    {
+        if(Global.getSettings().getModManager().isModEnabled("ashlib"))
+        {
+            CommandTabInterceptor.tabIdToSwitchToUponOpen = "terraforming";
+            Global.getSector().getCampaignUI().showCoreUITab(CoreUITabId.OUTPOSTS, null);
+        }
+        else
+        {
+            Global.getSector().getCampaignUI().showCoreUITab(CoreUITabId.OUTPOSTS, null);
+        }
     }
 
     public static boolean domainEraArtifactDemandEnabled()

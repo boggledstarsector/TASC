@@ -2,6 +2,7 @@ package boggled.campaign.econ.industries;
 
 import java.awt.*;
 import java.lang.String;
+import java.util.ArrayList;
 
 import boggled.campaign.econ.industries.interfaces.ShowBoggledTerraformingMenuOption;
 import com.fs.starfarer.api.campaign.PlanetAPI;
@@ -55,11 +56,6 @@ public class Boggled_Atmosphere_Processor extends BaseIndustry implements ShowBo
             return false;
         }
 
-        if(!boggledTools.marketHasAtmoProblem(this.market))
-        {
-            return false;
-        }
-
         if(!terraformingPossibleOnMarket(this.market))
         {
             return false;
@@ -86,11 +82,6 @@ public class Boggled_Atmosphere_Processor extends BaseIndustry implements ShowBo
             return false;
         }
 
-        if(!boggledTools.marketHasAtmoProblem(this.market))
-        {
-            return super.showWhenUnavailable();
-        }
-
         if(!terraformingPossibleOnMarket(this.market))
         {
             return super.showWhenUnavailable();
@@ -102,14 +93,14 @@ public class Boggled_Atmosphere_Processor extends BaseIndustry implements ShowBo
     @Override
     public String getUnavailableReason()
     {
-        if(!boggledTools.marketHasAtmoProblem(this.market))
-        {
-            return "Atmospheric conditions on " + this.market.getName() + " are already optimal. There is no reason to build an atmosphere processor here.";
-        }
-
         if(!terraformingPossibleOnMarket(this.market))
         {
             PlanetAPI planet = this.market.getPlanetEntity();
+            // Handles case where AotD VoK creates a fake market with a null planet entity
+            if(planet == null)
+            {
+                return super.getUnavailableReason();
+            }
             if(boggledTools.getTascPlanetType(planet).equals(boggledTools.TascPlanetTypes.unknownPlanetId))
             {
                 return "This planet type is unsupported by TASC. Please report this to boggled on the forums so he can add support. The planet type is: " + market.getPlanetEntity().getTypeId();
@@ -131,7 +122,7 @@ public class Boggled_Atmosphere_Processor extends BaseIndustry implements ShowBo
         Color bad = Misc.getNegativeHighlightColor();
         Color good = Misc.getPositiveHighlightColor();
 
-        if(this.isDisrupted() && boggledTools.marketHasAtmoProblem(this.market) && mode != IndustryTooltipMode.ADD_INDUSTRY && mode != IndustryTooltipMode.QUEUED && !isBuilding())
+        if(this.isDisrupted() && mode != IndustryTooltipMode.ADD_INDUSTRY && mode != IndustryTooltipMode.QUEUED && !isBuilding())
         {
             tooltip.addPara("Terraforming progress is stalled while the atmosphere processor is disrupted.", bad, opad);
         }
@@ -179,6 +170,14 @@ public class Boggled_Atmosphere_Processor extends BaseIndustry implements ShowBo
     {
         // Irradiated planets cannot be terraformed unless the setting to allow this is toggled to true
         return !market.hasCondition(Conditions.IRRADIATED) || boggledTools.getBooleanSetting(boggledTools.BoggledSettings.removeRadiationProjectEnabled);
+    }
+
+    public Pair<String, Integer> getAtmosphereProcessorDeficit()
+    {
+        ArrayList<String> deficitCommodities = new ArrayList<>();
+        deficitCommodities.add("heavy_machinery");
+
+        return this.getMaxDeficit(deficitCommodities.toArray(new String[0]));
     }
 }
 

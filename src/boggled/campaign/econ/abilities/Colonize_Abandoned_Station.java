@@ -17,6 +17,7 @@ import com.fs.starfarer.api.ui.LabelAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
 import java.awt.Color;
+import com.fs.starfarer.api.impl.campaign.ids.Tags;
 
 public class Colonize_Abandoned_Station extends BaseDurationAbility
 {
@@ -259,6 +260,11 @@ public class Colonize_Abandoned_Station extends BaseDurationAbility
             return false;
         }
 
+        if(system.hasTag(Tags.SYSTEM_ABYSSAL))
+        {
+            return false;
+        }
+
         SectorEntityToken closestColonizableStation = boggledTools.getClosestColonizableStationInSystem(playerFleet);
 
         if(closestColonizableStation == null)
@@ -332,6 +338,10 @@ public class Colonize_Abandoned_Station extends BaseDurationAbility
         else if(system.getJumpPoints().isEmpty())
         {
             tooltip.addPara("You cannot construct a station in a system with no jump points.", bad, pad);
+        }
+        else if(system.hasTag(Tags.SYSTEM_ABYSSAL))
+        {
+            tooltip.addPara("You cannot construct a station in a system in abyssal hyperspace.", bad, pad);
         }
         else
         {

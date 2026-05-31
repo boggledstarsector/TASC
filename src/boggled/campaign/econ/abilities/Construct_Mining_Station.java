@@ -12,6 +12,7 @@ import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
 import java.awt.Color;
 import java.util.ArrayList;
+import com.fs.starfarer.api.impl.campaign.ids.Tags;
 
 public class Construct_Mining_Station extends BaseDurationAbility
 {
@@ -134,6 +135,11 @@ public class Construct_Mining_Station extends BaseDurationAbility
             return false;
         }
 
+        if(system.hasTag(Tags.SYSTEM_ABYSSAL))
+        {
+            return false;
+        }
+
         if(miningStationCap == 0)
         {
             return false;
@@ -248,6 +254,10 @@ public class Construct_Mining_Station extends BaseDurationAbility
         if(playerFleet.isInHyperspace() || Global.getSector().getPlayerFleet().isInHyperspaceTransition() || system == null)
         {
             tooltip.addPara("You cannot construct a mining station in hyperspace.", bad, pad);
+        }
+        else if(system.hasTag(Tags.SYSTEM_ABYSSAL))
+        {
+            tooltip.addPara("You cannot construct a station in a system in abyssal hyperspace.", bad, pad);
         }
         else if(boggledTools.playerFleetTooCloseToJumpPoint(playerFleet))
         {

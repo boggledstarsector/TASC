@@ -2,9 +2,7 @@ package boggled.campaign.econ.industries.plugins;
 
 import boggled.campaign.econ.boggledTools;
 import boggled.campaign.econ.industries.interfaces.ShowBoggledTerraformingMenuOption;
-import boggled.ui.BoggledCoreModifierEveryFrameScript;
 import com.fs.starfarer.api.Global;
-import com.fs.starfarer.api.campaign.CoreUITabId;
 import com.fs.starfarer.api.campaign.econ.Industry;
 import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.campaign.listeners.BaseIndustryOptionProvider;
@@ -51,12 +49,6 @@ public class TerraformingMenuOptionProvider extends BaseIndustryOptionProvider
             return true;
         }
 
-        // Temporarily disabled in conjunction with AotD until support can be added to Ashlib
-        if(Global.getSettings().getModManager().isModEnabled("ashlib"))
-        {
-            return true;
-        }
-
         if(!boggledTools.getBooleanSetting(boggledTools.BoggledSettings.terraformingContentEnabled))
         {
             return false;
@@ -84,8 +76,8 @@ public class TerraformingMenuOptionProvider extends BaseIndustryOptionProvider
         if(opt.id == OPTION_OPEN_TERRAFORMING_MENU)
         {
             MarketAPI targetMarket = opt.ind.getMarket();
-            BoggledCoreModifierEveryFrameScript.setMarketToOpen(targetMarket);
-            Global.getSector().getCampaignUI().showCoreUITab(CoreUITabId.OUTPOSTS, null);
+            boggledTools.setDefaultMarketToOpenForTerraformingTab(targetMarket);
+            boggledTools.openCommandTabWithTerraformingSelected();
         }
     }
 }
