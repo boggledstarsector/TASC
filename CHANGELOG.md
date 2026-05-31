@@ -1,5 +1,16 @@
 # Changelog
 
+## 10.0.6 *(backwards compatible through 10.0.4, requires Ashlib 2.2.1 (or higher) if you have Ashes of the Domain mods enabled)*
+- Added support for opening the terraforming menu from the intel screen and colony management screen when Ashes of the Domain is enabled. Thanks Kaysaar for taking the time to help out with this change!
+- Updated Domed Cities artwork. There is now a unique industry icon for each planet type, similar to Mesozoic Park.
+- Updated Sky Cities artwork.
+- Added support for custom planet types from the Volantian Reclamation Initiative mod. Thanks Dorf for bringing these new planet types to my attention!
+- Kletka Simulator installed AI core bonuses have been reduced. Drop rate bonuses were +10% (gamma core), +20% (beta core), +30% (alpha core). They're now +5% (gamma core), +10% (beta core), +15% (alpha core).
+- Fixed a bug where hovering over certain buildings in the AotD VoK research menu could cause a crash. Thanks AzraelElda for reporting this!
+- Fixed a bug where a shortage of heavy machinery at the Atmosphere Processor didn't stall terraforming projects that require it.
+- The Atmosphere Processor can now be built on colonies that don't currently have any negative atmospheric conditions.
+- Stations can no longer be constructed in systems located in abyssal hyperspace. Thanks YourLocalMairaaboo for bringing this to my attention!
+
 ## 10.0.5 *(backwards compatible through 10.0.4)*
 - Added support for planet types from Interstellar Imperium. Thanks Creedxii for bringing this to my attention!
 - Fixed a bug where the setting that controls whether terran and tundra planets have volatiles when created via terraforming was ignored for Unknown Skies planet types. Thanks DrTechman42 for reporting this!
