@@ -37,7 +37,9 @@ public class ConditionModificationRemoveAtmosphere extends BoggledBaseTerraformi
         projectRequirements.add(getRequirementWorldTypeAllowsTerraforming());
         projectRequirements.add(getRequirementMarketIsNotWaterWorld());
         projectRequirements.add(getRequirementMarketHasAtmosphere());
-        projectRequirements.add(getRequirementMarketHasAtmosphereProcessor());
+        if (isAtmosphereProcessorBuildingEnabled()) {
+            projectRequirements.add(getRequirementMarketHasAtmosphereProcessor());
+        }
         return projectRequirements;
     }
 

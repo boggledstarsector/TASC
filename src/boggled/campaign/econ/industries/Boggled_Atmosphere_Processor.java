@@ -46,7 +46,7 @@ public class Boggled_Atmosphere_Processor extends BaseIndustry implements ShowBo
             return false;
         }
 
-        if(!boggledTools.getBooleanSetting("boggledTerraformingContentEnabled"))
+        if(!boggledTools.getBooleanSetting(boggledTools.BoggledSettings.terraformingContentEnabled) || !boggledTools.getBooleanSetting(boggledTools.BoggledSettings.atmosphereProcessorEnabled))
         {
             return false;
         }
@@ -72,7 +72,7 @@ public class Boggled_Atmosphere_Processor extends BaseIndustry implements ShowBo
             return false;
         }
 
-        if(!boggledTools.getBooleanSetting("boggledTerraformingContentEnabled"))
+        if(!boggledTools.getBooleanSetting(boggledTools.BoggledSettings.terraformingContentEnabled) || !boggledTools.getBooleanSetting(boggledTools.BoggledSettings.atmosphereProcessorEnabled))
         {
             return false;
         }

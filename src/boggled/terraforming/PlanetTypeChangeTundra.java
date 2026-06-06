@@ -23,7 +23,9 @@ public class PlanetTypeChangeTundra extends BoggledBaseTerraformingPlanetTypeCha
         projectRequirements.add(getRequirementAtmosphericNotToxicOrIrradiated());
         projectRequirements.add(getRequirementMarketIsTemperateOrCold());
         projectRequirements.add(getRequirementMarketHasStellarReflectorArray());
-        projectRequirements.add(getRequirementMarketHasModerateWater());
+        if (isIsmaraSlingBuildingEnabled()) {
+            projectRequirements.add(getRequirementMarketHasModerateWater());
+        }
 
         return projectRequirements;
     }

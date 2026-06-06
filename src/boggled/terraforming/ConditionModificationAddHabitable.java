@@ -24,7 +24,9 @@ public class ConditionModificationAddHabitable extends BoggledBaseTerraformingCo
         projectRequirements.add(getRequirementMarketDoesNotHaveExtremeWeather());
         projectRequirements.add(getRequirementAtmosphericDensityNormal());
         projectRequirements.add(getRequirementAtmosphericNotToxicOrIrradiated());
-        projectRequirements.add(getRequirementMarketHasAtmosphereProcessor());
+        if (isAtmosphereProcessorBuildingEnabled()) {
+            projectRequirements.add(getRequirementMarketHasAtmosphereProcessor());
+        }
         return projectRequirements;
     }
 
