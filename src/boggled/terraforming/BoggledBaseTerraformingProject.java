@@ -357,6 +357,10 @@ public class BoggledBaseTerraformingProject extends BaseIntelPlugin {
         return new TerraformingRequirementObject(this.market.getName() + " has an atmosphere processor", requirementMet, null);
     }
 
+    protected boolean isStellarReflectorArrayBuildingEnabled() {
+        return boggledTools.getBooleanSetting(boggledTools.BoggledSettings.stellarReflectorArrayEnabled);
+    }
+
     public TerraformingRequirementObject getRequirementMarketHasStellarReflectorArray() {
         Industry stellarReflectorArray = this.market.getIndustry(boggledTools.BoggledIndustries.stellarReflectorArrayIndustryId);
         boolean requirementMet = stellarReflectorArray != null && stellarReflectorArray.isFunctional();
