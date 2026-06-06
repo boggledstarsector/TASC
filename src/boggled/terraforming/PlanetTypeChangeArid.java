@@ -23,7 +23,9 @@ public class PlanetTypeChangeArid extends BoggledBaseTerraformingPlanetTypeChang
         projectRequirements.add(getRequirementAtmosphericNotToxicOrIrradiated());
         projectRequirements.add(getRequirementMarketIsTemperateOrHot());
         projectRequirements.add(getRequirementMarketHasStellarReflectorArray());
-        projectRequirements.add(getRequirementMarketHasModerateWater());
+        if (isIsmaraSlingBuildingEnabled()) {
+            projectRequirements.add(getRequirementMarketHasModerateWater());
+        }
 
         return projectRequirements;
     }

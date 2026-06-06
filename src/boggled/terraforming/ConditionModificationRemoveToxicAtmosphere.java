@@ -21,7 +21,9 @@ public class ConditionModificationRemoveToxicAtmosphere extends BoggledBaseTerra
         ArrayList<TerraformingRequirementObject> projectRequirements = super.getProjectRequirements();
         projectRequirements.add(getRequirementWorldTypeAllowsTerraforming());
         projectRequirements.add(getRequirementMarketHasToxicAtmosphere());
-        projectRequirements.add(getRequirementMarketHasAtmosphereProcessor());
+        if (isAtmosphereProcessorBuildingEnabled()) {
+            projectRequirements.add(getRequirementMarketHasAtmosphereProcessor());
+        }
         return projectRequirements;
     }
 

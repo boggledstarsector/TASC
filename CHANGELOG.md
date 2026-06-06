@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+- Added support for disabling Atmosphere Processor and Ismara's Sling/Asteroid Processing without blocking terraforming progression. Terraforming projects now omit those building-dependent requirements when the corresponding building is disabled in LunaLib.
+- Updated LunaLib setting descriptions for Atmosphere Processor and Ismara's Sling to clarify how terraforming project requirements change when those buildings are disabled.
+
 ## 10.0.6 *(backwards compatible through 10.0.4, requires Ashlib 2.2.1 (or higher) if you have Ashes of the Domain mods enabled)*
 - Added support for opening the terraforming menu from the intel screen and colony management screen when Ashes of the Domain is enabled. Thanks Kaysaar for taking the time to help out with this change!
 - Updated Domed Cities artwork. There is now a unique industry icon for each planet type, similar to Mesozoic Park.
