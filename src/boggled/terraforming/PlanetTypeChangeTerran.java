@@ -22,7 +22,9 @@ public class PlanetTypeChangeTerran extends BoggledBaseTerraformingPlanetTypeCha
         ArrayList<TerraformingRequirementObject> projectRequirements = super.getProjectRequirements();
         projectRequirements.add(getRequirementAtmosphericNotToxicOrIrradiated());
         projectRequirements.add(getRequirementMarketIsNotVeryHotOrVeryCold());
-        projectRequirements.add(getRequirementMarketHasStellarReflectorArray());
+        if (isStellarReflectorArrayBuildingEnabled()) {
+            projectRequirements.add(getRequirementMarketHasStellarReflectorArray());
+        }
         if (isIsmaraSlingBuildingEnabled()) {
             projectRequirements.add(getRequirementMarketHasHighWater());
         }
