@@ -23,7 +23,7 @@ public class Boggled_Solar_Array_Overwrite extends BaseMarketConditionPlugin
     {
         super.advance(amount);
 
-        if(!this.market.getFactionId().equals(Factions.NEUTRAL) && boggledTools.getBooleanSetting(boggledTools.BoggledSettings.terraformingContentEnabled) && boggledTools.getBooleanSetting("boggledStellarReflectorArrayMarketAutoPlacementEnabled") && !this.market.hasIndustry(boggledTools.BoggledIndustries.stellarReflectorArrayIndustryId))
+        if(!this.market.getFactionId().equals(Factions.NEUTRAL) && boggledTools.getBooleanSetting(boggledTools.BoggledSettings.terraformingContentEnabled) && boggledTools.getBooleanSetting(boggledTools.BoggledSettings.stellarReflectorArrayEnabled) && boggledTools.getBooleanSetting("boggledStellarReflectorArrayMarketAutoPlacementEnabled") && !this.market.hasIndustry(boggledTools.BoggledIndustries.stellarReflectorArrayIndustryId))
         {
             this.market.addIndustry(boggledTools.BoggledIndustries.stellarReflectorArrayIndustryId);
         }

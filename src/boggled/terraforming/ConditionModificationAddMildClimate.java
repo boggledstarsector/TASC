@@ -25,7 +25,9 @@ public class ConditionModificationAddMildClimate extends BoggledBaseTerraforming
         projectRequirements.add(getRequirementMarketNotMildClimate());
         projectRequirements.add(getRequirementAtmosphericDensityNormal());
         projectRequirements.add(getRequirementAtmosphericNotToxicOrIrradiated());
-        projectRequirements.add(getRequirementMarketHasAtmosphereProcessor());
+        if (isAtmosphereProcessorBuildingEnabled()) {
+            projectRequirements.add(getRequirementMarketHasAtmosphereProcessor());
+        }
         return projectRequirements;
     }
 

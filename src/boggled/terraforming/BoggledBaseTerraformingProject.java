@@ -357,6 +357,18 @@ public class BoggledBaseTerraformingProject extends BaseIntelPlugin {
         return new TerraformingRequirementObject(this.market.getName() + " has an atmosphere processor", requirementMet, null);
     }
 
+    protected boolean isAtmosphereProcessorBuildingEnabled() {
+        return boggledTools.getBooleanSetting(boggledTools.BoggledSettings.atmosphereProcessorEnabled);
+    }
+
+    protected boolean isIsmaraSlingBuildingEnabled() {
+        return boggledTools.getBooleanSetting(boggledTools.BoggledSettings.ismaraSlingEnabled);
+    }
+
+    protected boolean isStellarReflectorArrayBuildingEnabled() {
+        return boggledTools.getBooleanSetting(boggledTools.BoggledSettings.stellarReflectorArrayEnabled);
+    }
+
     public TerraformingRequirementObject getRequirementMarketHasStellarReflectorArray() {
         Industry stellarReflectorArray = this.market.getIndustry(boggledTools.BoggledIndustries.stellarReflectorArrayIndustryId);
         boolean requirementMet = stellarReflectorArray != null && stellarReflectorArray.isFunctional();
@@ -590,8 +602,6 @@ public class BoggledBaseTerraformingProject extends BaseIntelPlugin {
 
         return new TerraformingRequirementObject(this.market.getName() + " has at least a moderate amount of water", requirementMet, tooltip);
     }
-
-
 
     public TerraformingRequirementObject getRequirementMarketHasHighWater()
     {

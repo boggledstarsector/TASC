@@ -1,5 +1,12 @@
 # Changelog
 
+## 10.0.7 *(backwards compatible through 10.0.4, requires Ashlib 2.2.1 (or higher) if you have Ashes of the Domain mods enabled)*
+- Added LunaLib settings to disable the Atmosphere Processor and Ismara's Sling/Asteroid Processing. Thanks bombatop for contributing the code for this!
+- Updated Stellar Reflector Array artwork.
+- Fixed a bug where disabling the Stellar Reflector Array in the LunaLib settings did not suppress terraforming requirements to build one.
+- Updated Hydroponics artwork.
+- Updated GPA artwork.
+
 ## 10.0.6 *(backwards compatible through 10.0.4, requires Ashlib 2.2.1 (or higher) if you have Ashes of the Domain mods enabled)*
 - Added support for opening the terraforming menu from the intel screen and colony management screen when Ashes of the Domain is enabled. Thanks Kaysaar for taking the time to help out with this change!
 - Updated Domed Cities artwork. There is now a unique industry icon for each planet type, similar to Mesozoic Park.

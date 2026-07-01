@@ -134,7 +134,7 @@ public class Boggled_Ismara_Sling extends BaseIndustry implements ShowBoggledTer
             return false;
         }
 
-        if(!boggledTools.getBooleanSetting("boggledTerraformingContentEnabled"))
+        if(!boggledTools.getBooleanSetting(boggledTools.BoggledSettings.terraformingContentEnabled) || !boggledTools.getBooleanSetting(boggledTools.BoggledSettings.ismaraSlingEnabled))
         {
             return false;
         }
@@ -160,7 +160,7 @@ public class Boggled_Ismara_Sling extends BaseIndustry implements ShowBoggledTer
             return false;
         }
 
-        if(!boggledTools.getBooleanSetting("boggledTerraformingContentEnabled"))
+        if(!boggledTools.getBooleanSetting(boggledTools.BoggledSettings.terraformingContentEnabled) || !boggledTools.getBooleanSetting(boggledTools.BoggledSettings.ismaraSlingEnabled))
         {
             return false;
         }

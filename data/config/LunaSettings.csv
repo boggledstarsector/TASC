@@ -8,7 +8,9 @@ boggledTerraformingTypeChangeAddVolatiles,Add volatiles to Terran and tundra wor
 boggledTerraformingRemoveRadiationProjectEnabled,Enable radiation remediation project,Boolean,False,,"Set this to true to enable the terraforming project to remove radiation from a market.",,,Terraforming
 boggledTerraformingRemoveAtmosphereProjectEnabled,Enable the remove atmosphere project,Boolean,False,,"Set this to true to enable the terraforming project to remove the atmosphere from a market.",,,Terraforming
 boggled_terraformingBuildingHeader,Building Settings,Header,Building Settings,,,,,Terraforming
-boggledStellarReflectorArrayEnabled,Enable Stellar Reflector Array,Boolean,True,,"Set this to false to disable the Stellar Reflector Array building.",,,Terraforming
+boggledStellarReflectorArrayEnabled,Enable Stellar Reflector Array,Boolean,True,,"Set this to false to disable the Stellar Reflector Array building.
+
+Terraforming projects that require the Stellar Reflector Array will no longer include that requirement.",,,Terraforming
 boggledStellarReflectorArrayMarketAutoPlacementEnabled,Enable Stellar Reflector Array Autoplacement,Boolean,True,,"Set this to false to prevent certain markets from starting the game with the Stellar Reflector Array building already constructed.
 
 If set to false, Eventide, Eochu Bres and certain other markets will get to keep their Solar Array market condition for free without needing to maintain the Stellar Reflector Array building.",,,Terraforming
@@ -16,6 +18,12 @@ boggledGenelabEnabled,Enable Genelab,Boolean,True,,"Set this to false to disable
 boggledGenelabPollutionRemediationDaysToFinish,Days to finish pollution remediation with Genelab,Int,200,,"How many days are required to remove the pollution condition with the Genelab.",1,2000,Terraforming
 boggledGenelabLobsterSeedingDaysToFinish,Days to finish lobster seeding with Genelab,Int,200,,"How many days are required to add the Volturnian Lobsters resource to a colony on a water planet with the Genelab.",1,2000,Terraforming
 boggledMesozoicParkEnabled,Enable Mesozoic Park,Boolean,True,,"Set this to false to disable the Mesozoic Park building.",,,Terraforming
+boggledAtmosphereProcessorEnabled,Enable Atmosphere Processor,Boolean,True,,"Set this to false to disable the Atmosphere Processor building.
+
+Terraforming projects that require the Atmosphere Processor will no longer include that requirement.",,,Terraforming
+boggledIsmaraSlingEnabled,Enable Ismara's Sling,Boolean,True,,"Set this to false to disable Ismara's Sling and Asteroid Processing.
+
+Terraforming projects that require water levels raised by Ismara's Sling/Asteroid Processing will no longer include those requirements.",,,Terraforming
 boggledDomedCitiesEnabled,Enable Domed Cities,Boolean,True,,"Set this to false to disable the Domed Cities building. Also controls whether the Seafloor Cities building is enabled or disabled.",,,Terraforming
 boggledDomedCitiesDefensePenaltyEnabled,Enable Domed Cities defense penalty,Boolean,True,,"Set this to false to remove the defense penalty from the Domed Cities building.",,,Terraforming
 boggledHarmonicDamperEnabled,Enable Harmonic Damper,Boolean,False,,"Set this to true to enable the Harmonic Damper building.

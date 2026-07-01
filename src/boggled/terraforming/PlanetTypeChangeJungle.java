@@ -22,8 +22,12 @@ public class PlanetTypeChangeJungle extends BoggledBaseTerraformingPlanetTypeCha
         ArrayList<TerraformingRequirementObject> projectRequirements = super.getProjectRequirements();
         projectRequirements.add(getRequirementAtmosphericNotToxicOrIrradiated());
         projectRequirements.add(getRequirementMarketIsTemperateOrHot());
-        projectRequirements.add(getRequirementMarketHasStellarReflectorArray());
-        projectRequirements.add(getRequirementMarketHasHighWater());
+        if (isStellarReflectorArrayBuildingEnabled()) {
+            projectRequirements.add(getRequirementMarketHasStellarReflectorArray());
+        }
+        if (isIsmaraSlingBuildingEnabled()) {
+            projectRequirements.add(getRequirementMarketHasHighWater());
+        }
 
         return projectRequirements;
     }

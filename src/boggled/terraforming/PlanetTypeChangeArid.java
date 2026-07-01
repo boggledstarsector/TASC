@@ -22,8 +22,12 @@ public class PlanetTypeChangeArid extends BoggledBaseTerraformingPlanetTypeChang
         ArrayList<TerraformingRequirementObject> projectRequirements = super.getProjectRequirements();
         projectRequirements.add(getRequirementAtmosphericNotToxicOrIrradiated());
         projectRequirements.add(getRequirementMarketIsTemperateOrHot());
-        projectRequirements.add(getRequirementMarketHasStellarReflectorArray());
-        projectRequirements.add(getRequirementMarketHasModerateWater());
+        if (isStellarReflectorArrayBuildingEnabled()) {
+            projectRequirements.add(getRequirementMarketHasStellarReflectorArray());
+        }
+        if (isIsmaraSlingBuildingEnabled()) {
+            projectRequirements.add(getRequirementMarketHasModerateWater());
+        }
 
         return projectRequirements;
     }
