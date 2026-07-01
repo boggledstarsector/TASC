@@ -22,7 +22,9 @@ public class ConditionModificationRemoveIrradiated extends BoggledBaseTerraformi
         ArrayList<TerraformingRequirementObject> projectRequirements = super.getProjectRequirements();
         projectRequirements.add(getRequirementWorldTypeAllowsTerraforming());
         projectRequirements.add(getRequirementMarketHasIrradiated());
-        projectRequirements.add(getRequirementMarketHasAtmosphereProcessor());
+        if (isAtmosphereProcessorBuildingEnabled()) {
+            projectRequirements.add(getRequirementMarketHasAtmosphereProcessor());
+        }
         return projectRequirements;
     }
 

@@ -21,7 +21,9 @@ public class ConditionModificationRemoveNoAtmosphere extends BoggledBaseTerrafor
         ArrayList<TerraformingRequirementObject> projectRequirements = super.getProjectRequirements();
         projectRequirements.add(getRequirementWorldTypeAllowsTerraforming());
         projectRequirements.add(getRequirementMarketHasNoAtmosphere());
-        projectRequirements.add(getRequirementMarketHasAtmosphereProcessor());
+        if (isAtmosphereProcessorBuildingEnabled()) {
+            projectRequirements.add(getRequirementMarketHasAtmosphereProcessor());
+        }
         return projectRequirements;
     }
 

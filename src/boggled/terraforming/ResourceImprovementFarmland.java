@@ -47,7 +47,9 @@ public class ResourceImprovementFarmland extends BoggledBaseTerraformingProject
         ArrayList<TerraformingRequirementObject> projectRequirements = super.getProjectRequirements();
         projectRequirements.add(getRequirementWorldTypeSupportsFarmland());
         projectRequirements.add(getRequirementFarmlandCanBeImproved());
-        projectRequirements.add(getRequirementAdequateWaterToImproveFarmland());
+        if (isIsmaraSlingBuildingEnabled()) {
+            projectRequirements.add(getRequirementAdequateWaterToImproveFarmland());
+        }
         projectRequirements.add(getRequirementAtmosphericDensityNormal());
         projectRequirements.add(getRequirementAtmosphericNotToxicOrIrradiated());
 

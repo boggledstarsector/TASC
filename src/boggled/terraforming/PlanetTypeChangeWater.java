@@ -22,11 +22,12 @@ public class PlanetTypeChangeWater extends BoggledBaseTerraformingPlanetTypeChan
         ArrayList<TerraformingRequirementObject> projectRequirements = super.getProjectRequirements();
         projectRequirements.add(getRequirementAtmosphericNotToxicOrIrradiated());
         projectRequirements.add(getRequirementMarketIsNotVeryHotOrVeryCold());
-        if(isStellarReflectorArrayBuildingEnabled())
-        {
+        if (isStellarReflectorArrayBuildingEnabled()) {
             projectRequirements.add(getRequirementMarketHasStellarReflectorArray());
         }
-        projectRequirements.add(getRequirementMarketHasHighWater());
+        if (isIsmaraSlingBuildingEnabled()) {
+            projectRequirements.add(getRequirementMarketHasHighWater());
+        }
 
         return projectRequirements;
     }

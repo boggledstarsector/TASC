@@ -21,7 +21,9 @@ public class ConditionModificationRemoveExtremeWeather extends BoggledBaseTerraf
         ArrayList<TerraformingRequirementObject> projectRequirements = super.getProjectRequirements();
         projectRequirements.add(getRequirementWorldTypeAllowsTerraforming());
         projectRequirements.add(getRequirementMarketHasExtremeWeather());
-        projectRequirements.add(getRequirementMarketHasAtmosphereProcessor());
+        if (isAtmosphereProcessorBuildingEnabled()) {
+            projectRequirements.add(getRequirementMarketHasAtmosphereProcessor());
+        }
         return projectRequirements;
     }
 

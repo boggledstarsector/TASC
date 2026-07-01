@@ -81,6 +81,8 @@ public class boggledTools {
         public static final String kletkaSimulatorEnabled = "boggledKletkaSimulatorEnabled";
         public static final String limelightNetworkPlayerBuildEnabled = "boggledLimelightNetworkPlayerBuildEnabled";
         public static final String mesozoicParkEnabled = "boggledMesozoicParkEnabled";
+        public static final String atmosphereProcessorEnabled = "boggledAtmosphereProcessorEnabled";
+        public static final String ismaraSlingEnabled = "boggledIsmaraSlingEnabled";
         public static final String ouyangOptimizerEnabled = "boggledOuyangOptimizerEnabled";
         public static final String planetaryAgravFieldEnabled = "boggledPlanetaryAgravFieldEnabled";
         public static final String remnantStationEnabled = "boggledRemnantStationEnabled";

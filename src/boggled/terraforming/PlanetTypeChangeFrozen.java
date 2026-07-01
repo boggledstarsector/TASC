@@ -21,7 +21,9 @@ public class PlanetTypeChangeFrozen extends BoggledBaseTerraformingPlanetTypeCha
     {
         ArrayList<TerraformingRequirementObject> projectRequirements = super.getProjectRequirements();
         projectRequirements.add(getRequirementMarketIsVeryCold());
-        projectRequirements.add(getRequirementMarketHasHighWater());
+        if (isIsmaraSlingBuildingEnabled()) {
+            projectRequirements.add(getRequirementMarketHasHighWater());
+        }
 
         return projectRequirements;
     }
