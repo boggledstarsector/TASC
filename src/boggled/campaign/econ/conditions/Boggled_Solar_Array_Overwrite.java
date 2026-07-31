@@ -23,7 +23,14 @@ public class Boggled_Solar_Array_Overwrite extends BaseMarketConditionPlugin
     {
         super.advance(amount);
 
-        if(!this.market.getFactionId().equals(Factions.NEUTRAL) && boggledTools.getBooleanSetting(boggledTools.BoggledSettings.terraformingContentEnabled) && boggledTools.getBooleanSetting(boggledTools.BoggledSettings.stellarReflectorArrayEnabled) && boggledTools.getBooleanSetting("boggledStellarReflectorArrayMarketAutoPlacementEnabled") && !this.market.hasIndustry(boggledTools.BoggledIndustries.stellarReflectorArrayIndustryId))
+        // This check shouldn't be necessary.
+        // Some poorly-coded mod is creating markets with no faction ID, which is an invalid state.
+        String factionId = this.market.getFactionId();
+        if (factionId == null) {
+            return;
+        }
+
+        if(!factionId.equals(Factions.NEUTRAL) && boggledTools.getBooleanSetting(boggledTools.BoggledSettings.terraformingContentEnabled) && boggledTools.getBooleanSetting(boggledTools.BoggledSettings.stellarReflectorArrayEnabled) && boggledTools.getBooleanSetting("boggledStellarReflectorArrayMarketAutoPlacementEnabled") && !this.market.hasIndustry(boggledTools.BoggledIndustries.stellarReflectorArrayIndustryId))
         {
             this.market.addIndustry(boggledTools.BoggledIndustries.stellarReflectorArrayIndustryId);
         }
