@@ -274,10 +274,16 @@ public class BoggledTerraformingCoreUI implements CustomUIPanelPlugin {
 
     private void handlePlanetSelectButtonClicked(ButtonAPI clickedButton)
     {
+        // Reset highlight on all colony buttons, then highlight the clicked one.
+        // The buttons + z-order are already built once in createPlanetSelectPane; rebuilding them every
+        // click leaked components into the scroller (TooltipMakerAPI.removeComponent does not truly
+        // remove), making each selection O(number of selections made). This is O(colonies) with no churn.
+        for(ButtonAPI button : this.buttonToMarketMap.keySet())
+        {
+            button.unhighlight();
+            button.setChecked(false);
+        }
         clickedButton.highlight();
-        clickedButton.setChecked(false);
-        populatePlanetSelectViewWithButtons(this.planetSelectView, clickedButton);
-        handlePlanetSelectPaneZAxis(this.planetSelectView);
         if(this.market != buttonToMarketMap.get(clickedButton))
         {
             this.market = buttonToMarketMap.get(clickedButton);
