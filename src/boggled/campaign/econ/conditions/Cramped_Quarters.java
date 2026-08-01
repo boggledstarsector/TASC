@@ -89,7 +89,7 @@ public class Cramped_Quarters extends BaseHazardCondition implements MarketImmig
         if(boggledTools.getIntSetting("boggledStationAccessibilityBoost") != 0) {
             // Accessibility boost
             float access = (float)boggledTools.getIntSetting("boggledStationAccessibilityBoost") / 100.0F;
-            this.market.getAccessibilityMod().modifyFlat(this.getModId(), access, "Space station");
+            this.market.getAccessibilityMod().modifyFlat(id, access, "Space station");
         }
     }
 
@@ -105,17 +105,11 @@ public class Cramped_Quarters extends BaseHazardCondition implements MarketImmig
 
         this.market.getTariff().unmodifyFlat("base_tariff_for_station");
 
-        if(boggledTools.getBooleanSetting(boggledTools.BoggledSettings.stationCrampedQuartersEnabled)) {
-            this.market.removeTransientImmigrationModifier(this);
-        }
+        this.market.removeTransientImmigrationModifier(this);
 
-        if(boggledTools.getIntSetting("boggledStationHazardRatingModifier") != 0) {
-            this.market.getHazard().unmodifyFlat(id);
-        }
+        this.market.getHazard().unmodifyFlat(id);
 
-        if(boggledTools.getIntSetting("boggledStationAccessibilityBoost") != 0) {
-            this.market.getAccessibilityMod().unmodifyFlat("Space station");
-        }
+        this.market.getAccessibilityMod().unmodifyFlat(id);
     }
 
     @Override
