@@ -12,6 +12,7 @@ import com.fs.starfarer.api.characters.MarketConditionSpecAPI;
 import com.fs.starfarer.api.input.InputEventAPI;
 import com.fs.starfarer.api.ui.*;
 import com.fs.starfarer.api.util.Misc;
+import org.lwjgl.input.Mouse;
 
 import java.awt.*;
 import java.util.*;
@@ -24,6 +25,7 @@ public class BoggledTerraformingCoreUI implements CustomUIPanelPlugin {
     private CustomPanelAPI leftTerraformingPane;
     private CustomPanelAPI rightTerraformingPane;
 
+    private TooltipMakerAPI planetSelectView;
     private TooltipMakerAPI triggerButtonPanel;
 
     public static float SCREEN_WIDTH = Math.min(Global.getSettings().getScreenWidth(), 1200);
@@ -32,6 +34,7 @@ public class BoggledTerraformingCoreUI implements CustomUIPanelPlugin {
     private final float planetSelectPaneWidth = 155;
     private final float scrollPlanetWidth = 130;
     private final float scrollPlanetHeight = 130;
+    private final float scrollPlanetInputPadding = 20;
 
     private final float panePlanetWidth = 400;
     private final float panePlanetHeight = 400;
@@ -41,6 +44,8 @@ public class BoggledTerraformingCoreUI implements CustomUIPanelPlugin {
     private float triggerPanelVerticalPixelLocation;
 
     private MarketAPI market;
+    private MarketAPI pressedPlanetMarket;
+    private boolean leftMouseButtonWasDown = false;
     private BoggledBaseTerraformingProject selectedProject;
 
     private final List<MarketAPI> playerMarkets = new ArrayList<>();
@@ -163,6 +168,7 @@ public class BoggledTerraformingCoreUI implements CustomUIPanelPlugin {
 
         planetSelectPane.addUIElement(planetSelectViewHeader).inTL(0, 0);
         planetSelectPane.addUIElement(planetSelectView).inTL(0,18);
+        this.planetSelectView = planetSelectView;
         return planetSelectPane;
     }
 
@@ -208,6 +214,8 @@ public class BoggledTerraformingCoreUI implements CustomUIPanelPlugin {
 
     public void advance(float amount)
     {
+        handlePlanetVisualMousePolling();
+
         // Handle clicks to planet select buttons
         ButtonAPI clickedPlanetSelectButton = getClickedPlanetButton();
         if(clickedPlanetSelectButton != null)
@@ -691,7 +699,73 @@ public class BoggledTerraformingCoreUI implements CustomUIPanelPlugin {
         return -1 * conditionSpec.getOrder();
     }
 
-    public void processInput(List<InputEventAPI> events) {
+    private boolean positionContainsPoint(PositionAPI position, float x, float y)
+    {
+        return x >= position.getX()
+                && x <= position.getX() + position.getWidth()
+                && y >= position.getY()
+                && y <= position.getY() + position.getHeight();
+    }
+
+    private boolean positionContainsPlanetVisual(PositionAPI position, float x, float y)
+    {
+        // Starsector's animated planet component only consumes LMB input inside the rendered planet,
+        // not across its full rectangular UI bounds. Match its circular hit area so a click is handled
+        // by either planet polling or the surrounding checkbox, never both.
+        float radius = Math.max(0, Math.min(position.getWidth(), position.getHeight()) / 2.0F - scrollPlanetInputPadding);
+        float deltaX = x - position.getCenterX();
+        float deltaY = y - position.getCenterY();
+        return deltaX * deltaX + deltaY * deltaY <= radius * radius;
+    }
+
+    private MarketAPI getMarketForPlanetVisualAt(float mouseX, float mouseY)
+    {
+        if(this.planetSelectView == null || !positionContainsPoint(this.planetSelectView.getPosition(), mouseX, mouseY))
+        {
+            return null;
+        }
+
+        for(UIComponentAPI planetVisual : this.planetVisualOrderedList)
+        {
+            if(positionContainsPlanetVisual(planetVisual.getPosition(), mouseX, mouseY))
+            {
+                return this.planetVisualToMarketMap.get(planetVisual);
+            }
+        }
+
+        return null;
+    }
+
+    private void handlePlanetVisualMousePolling()
+    {
+        boolean leftMouseButtonIsDown = Mouse.isButtonDown(0);
+        float mouseX = Global.getSettings().getMouseX();
+        float mouseY = Global.getSettings().getMouseY();
+
+        if(leftMouseButtonIsDown && !this.leftMouseButtonWasDown)
+        {
+            this.pressedPlanetMarket = getMarketForPlanetVisualAt(mouseX, mouseY);
+        }
+        else if(!leftMouseButtonIsDown && this.leftMouseButtonWasDown)
+        {
+            MarketAPI releasedPlanetMarket = getMarketForPlanetVisualAt(mouseX, mouseY);
+            if(this.pressedPlanetMarket != null && this.pressedPlanetMarket == releasedPlanetMarket)
+            {
+                ButtonAPI planetButton = this.marketToButtonMap.get(releasedPlanetMarket);
+                if(planetButton != null)
+                {
+                    planetButton.setChecked(true);
+                    Global.getSoundPlayer().playUISound("ui_button_pressed", 1.0F, 1.0F);
+                }
+            }
+            this.pressedPlanetMarket = null;
+        }
+
+        this.leftMouseButtonWasDown = leftMouseButtonIsDown;
+    }
+
+    public void processInput(List<InputEventAPI> events)
+    {
     }
 
     public void buttonPressed(Object buttonId) {
