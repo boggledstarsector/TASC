@@ -23,11 +23,6 @@ public class BoggledTerraformingCoreUI implements CustomUIPanelPlugin {
     CustomPanelAPI mainPanel;
     private CustomPanelAPI leftTerraformingPane;
     private CustomPanelAPI rightTerraformingPane;
-    private CustomPanelAPI planetSelectPane;
-
-    private TooltipMakerAPI planetSelectView;
-
-    private TooltipMakerAPI projectsView;
 
     private TooltipMakerAPI triggerButtonPanel;
 
@@ -59,8 +54,6 @@ public class BoggledTerraformingCoreUI implements CustomUIPanelPlugin {
     private HashMap<MarketAPI, ButtonAPI> marketToButtonMap = new HashMap<>();
 
     private HashMap<ButtonAPI, BoggledBaseTerraformingProject> buttonToProjectMap = new HashMap<>();
-
-    private HashMap<BoggledBaseTerraformingProject, ButtonAPI> projectToButtonMap = new HashMap<>();
 
     private ArrayList<BoggledBaseTerraformingProject> terraformingProjectOrderedList = new ArrayList<>();
 
@@ -111,45 +104,22 @@ public class BoggledTerraformingCoreUI implements CustomUIPanelPlugin {
         this.planetVisualOrderedList = newPlanetVisualOrderedList;
     }
 
-    private void populatePlanetSelectViewWithButtons(TooltipMakerAPI planetSelectView, ButtonAPI buttonToKeep)
+    private void populatePlanetSelectViewWithButtons(TooltipMakerAPI planetSelectView)
     {
-        // Generate new mappings and replace the existing ones after method is finished
         HashMap<ButtonAPI, MarketAPI> newButtonToMarketMap = new HashMap<>();
         HashMap<MarketAPI, ButtonAPI> newMarketToButtonMap = new HashMap<>();
-
-        // Figure out which market is mapped to the button to keep, if any.
-        // Purpose of this is to clear all the other buttons which may be stuck in the highlighted state,
-        // while leaving intact the one the player has selected.
-        MarketAPI marketToKeep = buttonToKeep != null ? this.buttonToMarketMap.get(buttonToKeep) : null;
-
-        // Remove all buttons except the one the player selected.
-        for(ButtonAPI button : this.buttonToMarketMap.keySet())
-        {
-            if(button != buttonToKeep)
-            {
-                planetSelectView.removeComponent(button);
-            }
-        }
 
         float yPos = 0;
         for(UIComponentAPI planetVisual : this.planetVisualOrderedList)
         {
-            if(marketToKeep == null || this.planetVisualToMarketMap.get(planetVisual) != marketToKeep)
-            {
-                MarketAPI currentMarket = this.planetVisualToMarketMap.get(planetVisual);
-                ButtonAPI button = planetSelectView.addAreaCheckbox("", null, highlight, transparent, transparent, planetSelectPaneWidth, scrollPlanetHeight, 0.0F);
-                button.setEnabled(true);
-                planetSelectView.addComponent(button).inTL(0, yPos);
-                button.unhighlight();
-                button.setChecked(false);
-                newButtonToMarketMap.put(button, currentMarket);
-                newMarketToButtonMap.put(currentMarket, button);
-            }
-            else
-            {
-                newButtonToMarketMap.put(buttonToKeep, marketToKeep);
-                newMarketToButtonMap.put(marketToKeep, buttonToKeep);
-            }
+            MarketAPI currentMarket = this.planetVisualToMarketMap.get(planetVisual);
+            ButtonAPI button = planetSelectView.addAreaCheckbox("", null, highlight, transparent, transparent, planetSelectPaneWidth, scrollPlanetHeight, 0.0F);
+            button.setEnabled(true);
+            planetSelectView.addComponent(button).inTL(0, yPos);
+            button.unhighlight();
+            button.setChecked(false);
+            newButtonToMarketMap.put(button, currentMarket);
+            newMarketToButtonMap.put(currentMarket, button);
             yPos += scrollPlanetHeight;
         }
 
@@ -184,7 +154,7 @@ public class BoggledTerraformingCoreUI implements CustomUIPanelPlugin {
         TooltipMakerAPI planetSelectView = planetSelectPane.createUIElement(planetSelectPaneWidth, SCREEN_HEIGHT,true);
 
         populatePlanetSelectViewWithPlanetVisuals(planetSelectView);
-        populatePlanetSelectViewWithButtons(planetSelectView, null);
+        populatePlanetSelectViewWithButtons(planetSelectView);
         handlePlanetSelectPaneZAxis(planetSelectView);
 
         // Check the default market button so advance will set up the left terraforming pane for it.
@@ -193,8 +163,6 @@ public class BoggledTerraformingCoreUI implements CustomUIPanelPlugin {
 
         planetSelectPane.addUIElement(planetSelectViewHeader).inTL(0, 0);
         planetSelectPane.addUIElement(planetSelectView).inTL(0,18);
-        this.planetSelectView = planetSelectView;
-        this.planetSelectPane = planetSelectPane;
         return planetSelectPane;
     }
 
@@ -310,16 +278,21 @@ public class BoggledTerraformingCoreUI implements CustomUIPanelPlugin {
 
     private void handleTerraformingProjectButtonClicked(ButtonAPI clickedButton)
     {
-        if(this.buttonToProjectMap.get(clickedButton) != this.selectedProject)
+        // The project buttons are built once when the left pane is created. Reset their state in place;
+        // removing and recreating them leaks components into the scrolling TooltipMakerAPI.
+        for(ButtonAPI button : this.buttonToProjectMap.keySet())
         {
-            this.selectedProject = buttonToProjectMap.get(clickedButton);
+            button.unhighlight();
+            button.setChecked(false);
+        }
+        clickedButton.highlight();
+
+        BoggledBaseTerraformingProject clickedProject = this.buttonToProjectMap.get(clickedButton);
+        if(clickedProject != this.selectedProject)
+        {
+            this.selectedProject = clickedProject;
             this.mainPanel.removeComponent(this.rightTerraformingPane);
             this.rightTerraformingPane = showTerraformingRightPane(this.selectedProject);
-
-            reloadProjectViewButtons();
-
-            ButtonAPI selectedButton = this.projectToButtonMap.get(this.selectedProject);
-            selectedButton.highlight();
         }
     }
 
@@ -345,15 +318,9 @@ public class BoggledTerraformingCoreUI implements CustomUIPanelPlugin {
         }
     }
 
-    private void reloadProjectViewButtons()
+    private void populateProjectsViewWithButtons(TooltipMakerAPI projectsView)
     {
-        for(ButtonAPI button : this.buttonToProjectMap.keySet())
-        {
-            this.projectsView.removeComponent(button);
-        }
-
         HashMap<ButtonAPI, BoggledBaseTerraformingProject> newButtonToProjectMap = new HashMap<>();
-        HashMap<BoggledBaseTerraformingProject, ButtonAPI> newProjectToButtonMap = new HashMap<>();
         String ongoingProjectName = this.getOngoingProjectAtMarket(market);
 
         float projectHeightSpacer = 1;
@@ -363,7 +330,6 @@ public class BoggledTerraformingCoreUI implements CustomUIPanelPlugin {
             ButtonAPI projectButton = projectsView.addButton(project.getProjectName(), (Object)null, Global.getSector().getPlayerFaction().getBaseUIColor(), Global.getSector().getPlayerFaction().getDarkUIColor(), Alignment.TL, CutStyle.ALL, panePlanetWidth - 4, 18, 0.0F);
             projectsView.addComponent(projectButton).inTL(0, projectHeight);
             newButtonToProjectMap.put(projectButton, project);
-            newProjectToButtonMap.put(project, projectButton);
             projectHeight += 18 + projectHeightSpacer;
 
             // Only display tooltip if it's a planet type change project (for now, maybe other projects will have tooltips in the future)
@@ -385,7 +351,6 @@ public class BoggledTerraformingCoreUI implements CustomUIPanelPlugin {
         }
 
         this.buttonToProjectMap = newButtonToProjectMap;
-        this.projectToButtonMap = newProjectToButtonMap;
     }
 
     private CustomPanelAPI createProjectsPanel(CustomPanelAPI leftTerraformingPane, float height)
@@ -397,13 +362,12 @@ public class BoggledTerraformingCoreUI implements CustomUIPanelPlugin {
         projectsViewHeader.addSectionHeading("Terraforming Projects", Alignment.MID, 0.0F);
 
         TooltipMakerAPI projectsView = projectsPanel.createUIElement(panePlanetWidth, height - 18, true);
-        this.projectsView = projectsView;
 
         // Handle logic like hiding projects for mods that aren't enabled in this boggledTools method
         // Also handle sorting logic in there.
         this.terraformingProjectOrderedList = boggledTools.getTerraformingProjects(market);
 
-        reloadProjectViewButtons();
+        populateProjectsViewWithButtons(projectsView);
 
         projectsPanel.addUIElement(projectsViewHeader).inTL(0, 0);
         projectsPanel.addUIElement(projectsView).inTL(0, 18);
