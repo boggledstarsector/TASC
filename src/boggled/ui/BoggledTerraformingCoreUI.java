@@ -340,13 +340,12 @@ public class BoggledTerraformingCoreUI implements CustomUIPanelPlugin {
         String ongoingProjectName = this.getOngoingProjectAtMarket(market);
 
         float projectHeightSpacer = 1;
-        float projectHeight = projectHeightSpacer;
         for(BoggledBaseTerraformingProject project : this.terraformingProjectOrderedList)
         {
-            ButtonAPI projectButton = projectsView.addButton(project.getProjectName(), (Object)null, Global.getSector().getPlayerFaction().getBaseUIColor(), Global.getSector().getPlayerFaction().getDarkUIColor(), Alignment.TL, CutStyle.ALL, panePlanetWidth - 4, 18, 0.0F);
-            projectsView.addComponent(projectButton).inTL(0, projectHeight);
+            // addButton() inserts the component and includes its padding in the tooltip's content
+            // height. Let it lay the buttons out so the scroller can reach the final row.
+            ButtonAPI projectButton = projectsView.addButton(project.getProjectName(), (Object)null, Global.getSector().getPlayerFaction().getBaseUIColor(), Global.getSector().getPlayerFaction().getDarkUIColor(), Alignment.TL, CutStyle.ALL, panePlanetWidth - 4, 18, projectHeightSpacer);
             newButtonToProjectMap.put(projectButton, project);
-            projectHeight += 18 + projectHeightSpacer;
 
             // Only display tooltip if it's a planet type change project (for now, maybe other projects will have tooltips in the future)
             if(project instanceof BoggledBaseTerraformingPlanetTypeChangeProject)
@@ -452,8 +451,10 @@ public class BoggledTerraformingCoreUI implements CustomUIPanelPlugin {
             }
         }
 
-        // Get the custom panel for the list of projects
-        CustomPanelAPI projectsPanel = createProjectsPanel(leftPanel, SCREEN_HEIGHT + 18 - (18 + panePlanetHeight + 18 + conditionHeight + 18));
+        // Get the custom panel for the list of projects. Use the same top position to calculate
+        // its height so the scrolling viewport ends at the bottom of the left panel, not below it.
+        float projectsPanelTop = panePlanetHeight + conditionHeight + 54;
+        CustomPanelAPI projectsPanel = createProjectsPanel(leftPanel, SCREEN_HEIGHT - projectsPanelTop);
 
         // Height is panePlanetHeight + 18 because of section header
         leftPanel.addUIElement(planetLargeViewLeft).inTL(0, 0);
@@ -461,7 +462,7 @@ public class BoggledTerraformingCoreUI implements CustomUIPanelPlugin {
         leftPanel.addUIElement(conditionsViewHeader).inTL(0, panePlanetHeight + 18);
         leftPanel.addUIElement(conditionsView).inTL(0, panePlanetHeight + 36);
 
-        leftPanel.addComponent(projectsPanel).inTL(0, panePlanetHeight + conditionHeight + 54);
+        leftPanel.addComponent(projectsPanel).inTL(0, projectsPanelTop);
 
         this.mainPanel.addComponent(leftPanel).inTL(planetSelectPaneWidth + paneSeparator, 0);
         return leftPanel;
