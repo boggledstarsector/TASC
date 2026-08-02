@@ -1,5 +1,14 @@
 # Changelog
 
+## 10.0.8 *(backwards compatible through 10.0.4, requires Ashlib 2.2.1 (or higher) if you have Ashes of the Domain mods enabled)*
+- Fixed a bug where clicking on an animated planet icon in the terraforming UI did not select that market.
+- Fixed a bug where the scroller for the terraforming UI colony selection pane extended far beyond the actual planet icons.
+- Fixed a bug where the bottom-most terraforming project in the terraforming UI could be hidden at certain resolution settings. Thanks to the many players who reported this issue and my apologies for the delay in fixing it!
+- Fixed a bug where certain text in the terraforming UI could be formatted incorrectly for colonies with very long names.
+- Fixed a bug where the setting to apply a flat modifier to station accessibility could get stuck at a certain value and ignore the LunaLib configuration. The fix is not retroactive and can't "unstick" a station with the bugged modifier already applied. Thanks Plasion for taking the time to submit a GitHub issue regarding this!
+- Fixed a crash that was caused by another mod incorrectly creating markets with no faction during sector generation. Thanks ZhangYHT for taking the time to submit a GitHub issue regarding this!
+- Fixed a bug where the terraforming UI could have degraded performance when the player controls a very large number of colonies. Thanks temotodochi for making a detailed forum post and GitHub issue about this bug!
+
 ## 10.0.7 *(backwards compatible through 10.0.4, requires Ashlib 2.2.1 (or higher) if you have Ashes of the Domain mods enabled)*
 - Added LunaLib settings to disable the Atmosphere Processor and Ismara's Sling/Asteroid Processing. Thanks bombatop for contributing the code for this!
 - Updated Stellar Reflector Array artwork.
