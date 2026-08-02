@@ -545,13 +545,12 @@ public class BoggledTerraformingCoreUI implements CustomUIPanelPlugin {
         TooltipMakerAPI requirementsView = rightPanel.createUIElement(panePlanetWidth, spaceRemainingForRequirementsPanel, true);
 
         float labelSpacerHeight = 1;
-        float labelHeight = labelSpacerHeight;
         for(BoggledBaseTerraformingProject.TerraformingRequirementObject requirement : projectRequirements)
         {
             Color textColor = requirement.requirementMet ? Misc.getPositiveHighlightColor() : Misc.getNegativeHighlightColor();
-            LabelAPI requirementLabel = requirementsView.addPara(requirement.tooltipDisplayText, textColor,1f);
-            requirementLabel.getPosition().inTL(0,labelHeight);
-            labelHeight += 18 + labelSpacerHeight;
+            // Let TooltipMaker lay out each paragraph using its actual rendered height. Requirement
+            // text can wrap when market names are long, so fixed 18-pixel rows overlap.
+            requirementsView.addPara(requirement.tooltipDisplayText, textColor, labelSpacerHeight);
 
             if(requirement.tooltip != null)
             {
