@@ -114,19 +114,27 @@ public class BoggledTerraformingCoreUI implements CustomUIPanelPlugin {
         HashMap<ButtonAPI, MarketAPI> newButtonToMarketMap = new HashMap<>();
         HashMap<MarketAPI, ButtonAPI> newMarketToButtonMap = new HashMap<>();
 
+        // The planet visuals are the actual scrollable content. addAreaCheckbox() adds each
+        // overlay to the tooltip's layout and increases its height, so restore this height after
+        // creating the overlays to avoid an invisible checkbox-sized tail in the scroller.
+        float planetContentHeight = planetSelectView.getHeightSoFar();
+
         float yPos = 0;
         for(UIComponentAPI planetVisual : this.planetVisualOrderedList)
         {
             MarketAPI currentMarket = this.planetVisualToMarketMap.get(planetVisual);
             ButtonAPI button = planetSelectView.addAreaCheckbox("", null, highlight, transparent, transparent, planetSelectPaneWidth, scrollPlanetHeight, 0.0F);
             button.setEnabled(true);
-            planetSelectView.addComponent(button).inTL(0, yPos);
+            // addAreaCheckbox() has already added the button; only reposition it over its planet.
+            button.getPosition().inTL(0, yPos);
             button.unhighlight();
             button.setChecked(false);
             newButtonToMarketMap.put(button, currentMarket);
             newMarketToButtonMap.put(currentMarket, button);
             yPos += scrollPlanetHeight;
         }
+
+        planetSelectView.setHeightSoFar(planetContentHeight);
 
         this.buttonToMarketMap = newButtonToMarketMap;
         this.marketToButtonMap = newMarketToButtonMap;
