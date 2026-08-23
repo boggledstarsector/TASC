@@ -1,5 +1,8 @@
 # Changelog
 
+## 10.0.9 *(backwards compatible through 10.0.4, requires Ashlib 2.2.1 (or higher) if you have Ashes of the Domain mods enabled)*
+- Fixed a bug where Domed Cities did not suppress four Unknown Skies conditions (Perpetual Dust Storm, Military Virus, Psychoactive Fungus, and Parasitic Spores). Thanks Nalaz for reporting this!
+
 ## 10.0.8 *(backwards compatible through 10.0.4, requires Ashlib 2.2.1 (or higher) if you have Ashes of the Domain mods enabled)*
 - Fixed a bug where clicking on an animated planet icon in the terraforming UI did not select that market.
 - Fixed a bug where the scroller for the terraforming UI colony selection pane extended far beyond the actual planet icons.
