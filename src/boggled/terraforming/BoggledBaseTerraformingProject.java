@@ -568,7 +568,7 @@ public class BoggledBaseTerraformingProject extends BaseIntelPlugin {
                         "large"
                 });
 
-                ArrayList<Pair<MarketAPI, boggledTools.WaterIndustryStatus>> waterStatusList = boggledTools.getWaterIndustryStatusForSystem(market.getStarSystem());
+                ArrayList<Pair<MarketAPI, boggledTools.WaterIndustryStatus>> waterStatusList = boggledTools.getWaterIndustryStatusForSystemPlayerMarketsOnly(market.getStarSystem());
                 waterStatusList.sort(Comparator.comparing(BoggledBaseTerraformingProject::getSortOrderForWaterStatus));
                 if(!waterStatusList.isEmpty())
                 {
@@ -633,7 +633,7 @@ public class BoggledBaseTerraformingProject extends BaseIntelPlugin {
                                 "large"
                         });
 
-                ArrayList<Pair<MarketAPI, boggledTools.WaterIndustryStatus>> waterStatusList = boggledTools.getWaterIndustryStatusForSystem(market.getStarSystem());
+                ArrayList<Pair<MarketAPI, boggledTools.WaterIndustryStatus>> waterStatusList = boggledTools.getWaterIndustryStatusForSystemPlayerMarketsOnly(market.getStarSystem());
                 waterStatusList.sort(Comparator.comparing(BoggledBaseTerraformingProject::getSortOrderForWaterStatus));
                 if(!waterStatusList.isEmpty())
                 {

@@ -722,6 +722,11 @@ public class boggledTools {
         return getGreaterWaterLevel(sourceInSystem, baseWaterLevelForPlanetType);
     }
 
+    public static boolean marketIsPlayerAssociated(MarketAPI market)
+    {
+        return market.isPlayerOwned() || (market.getFaction() != null && market.getFaction().isPlayerFaction());
+    }
+
     public static boolean marketHasWaterSourceInSystem(MarketAPI market)
     {
         if(market.getStarSystem() == null)
@@ -729,11 +734,30 @@ public class boggledTools {
             return false;
         }
 
+        boolean marketBeingCheckedIsPlayedAssociated = marketIsPlayerAssociated(market);
+
+        // This could be much more efficient but given there will typically only be one water industry per system it doesn't matter.
         for(Pair<MarketAPI, WaterIndustryStatus> marketStatus : getWaterIndustryStatusForSystem(market.getStarSystem()))
         {
-            if(marketStatus.two == WaterIndustryStatus.OPERATIONAL)
+            // First handle the case where the market being checked is player-associated.
+            // (i.e. it belongs to the player faction or the player purchased control via Nexerelin)
+            if(marketBeingCheckedIsPlayedAssociated)
             {
-                return true;
+                if(marketStatus.two == WaterIndustryStatus.OPERATIONAL && marketIsPlayerAssociated(marketStatus.one))
+                {
+                    return true;
+                }
+            }
+            // Only check if the faction ID matches to determine if NPC markets belong to the same faction for water-sharing purposes.
+            else
+            {
+                if(marketStatus.two == WaterIndustryStatus.OPERATIONAL &&
+                        market.getFaction() != null &&
+                        marketStatus.one.getFaction() != null &&
+                        marketStatus.one.getFactionId().equals(market.getFactionId()))
+                {
+                    return true;
+                }
             }
         }
 
@@ -747,12 +771,26 @@ public class boggledTools {
         SHORTAGE
     }
 
+    public static ArrayList<Pair<MarketAPI, WaterIndustryStatus>> getWaterIndustryStatusForSystemPlayerMarketsOnly(StarSystemAPI system)
+    {
+        ArrayList<Pair<MarketAPI, WaterIndustryStatus>> playerWaterIndustries = new ArrayList<>();
+        for(Pair<MarketAPI, WaterIndustryStatus> marketStatus : getWaterIndustryStatusForSystem(system))
+        {
+            if(marketIsPlayerAssociated(marketStatus.one))
+            {
+                playerWaterIndustries.add(marketStatus);
+            }
+        }
+
+        return playerWaterIndustries;
+    }
+
     public static ArrayList<Pair<MarketAPI, WaterIndustryStatus>> getWaterIndustryStatusForSystem(StarSystemAPI system)
     {
         ArrayList<Pair<MarketAPI, WaterIndustryStatus>> waterIndustries = new ArrayList<>();
         for(MarketAPI systemMarket : Global.getSector().getEconomy().getMarkets(system))
         {
-            if(systemMarket.isPlayerOwned() && systemMarket.hasIndustry(BoggledIndustries.ismaraSlingAsteroidProcessingId))
+            if(systemMarket.hasIndustry(BoggledIndustries.ismaraSlingAsteroidProcessingId))
             {
                 Boggled_Ismara_Sling waterIndustry = (Boggled_Ismara_Sling) systemMarket.getIndustry(BoggledIndustries.ismaraSlingAsteroidProcessingId);
                 if(waterIndustry.isDisrupted())
