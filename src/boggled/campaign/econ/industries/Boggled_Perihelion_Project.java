@@ -223,6 +223,11 @@ public class Boggled_Perihelion_Project extends BaseIndustry {
     public String getUnavailableReason()
     {
         StarSystemAPI system = this.market.getStarSystem();
+        if(system == null)
+        {
+            return null;
+        }
+
         if(system.hasTag(Tags.HAS_CORONAL_TAP))
         {
             return "The " + this.market.getStarSystem().getName() + " already has a coronal tap.";
