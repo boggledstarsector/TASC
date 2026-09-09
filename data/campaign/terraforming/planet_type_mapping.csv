@@ -33,6 +33,7 @@ nskr_ice_desert,barren
 irradiated,barren
 jdp_depleted,barren
 jdp_glassed,barren
+bt_ruined,barren
 desert,desert
 desert1,desert
 arid,desert
@@ -115,6 +116,7 @@ vayra_star_blue,star
 vayra_star_brown,star
 vayra_star_yellow_white,star
 jdp_red_pulsar,star
+bt_divine_star,star
 terran,terran
 terran-eccentric,terran
 US_lifeless,terran

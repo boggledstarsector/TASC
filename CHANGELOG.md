@@ -1,5 +1,9 @@
 # Changelog
 
+## 10.0.10 *(backwards compatible through 10.0.4, requires Ashlib 2.2.1 (or higher) if you have Ashes of the Domain mods enabled)*
+- Fixed a crash that could occur under certain circumstances when the player opened the command menu after losing a colony (due to abandonment, capture, decivilization, etc.). Thanks Hexxod for reporting this and providing detailed instructions for reproducing it!
+- Added support for planet types from Bultach Coalition. Thanks potatopants123 for bringing this to my attention!
+
 ## 10.0.9 *(backwards compatible through 10.0.4, requires Ashlib 2.2.1 (or higher) if you have Ashes of the Domain mods enabled)*
 - Fixed a bug where Domed Cities did not suppress four Unknown Skies conditions (Perpetual Dust Storm, Military Virus, Psychoactive Fungus, and Parasitic Spores). Thanks Nalaz for reporting this!
 - Ismara's Sling and Asteroid Processing now supply water for terraforming between player colonies, Nexerelin autonomous player-faction colonies, and Nexerelin purchased-governorship colonies in the same system.

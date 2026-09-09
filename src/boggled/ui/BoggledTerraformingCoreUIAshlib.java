@@ -1,5 +1,6 @@
 package boggled.ui;
 
+import ashlib.data.plugins.coreui.CommandTabTracker;
 import ashlib.data.plugins.coreui.CommandUIPlugin;
 import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.input.InputEventAPI;
@@ -21,6 +22,9 @@ public class BoggledTerraformingCoreUIAshlib extends CommandUIPlugin {
     {
         if(customData instanceof MarketAPI)
         {
+            // Ashlib never clears this static. Consume it here so a later command-tab rebuild
+            // (for example after abandoning a colony) does not re-open this dead market.
+            CommandTabTracker.commandUiPluginArgument = null;
             init((MarketAPI) customData);
         }
         else
