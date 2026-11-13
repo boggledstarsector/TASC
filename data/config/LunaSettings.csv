@@ -145,9 +145,9 @@ boggledKletkaSimulatorTemperatureBasedUpkeep,Kletka Simulator upkeep is based on
 boggledKletkaSimulatorSuppressTemperatureBasedUpkeep,Kletka Simulator upkeep modifier can be suppressed along with the temperature,Boolean,False,,"Set this to true to make suppressing the temperature condition on a colony remove the Kletka Simulator's temperature-based upkeep modifier. For example, the Stellar Reflector Array can suppress hot and cold temperatures.",,,Domain-tech Content
 boggledCHAMELEONEnabled,Enable CHAMELEON,Boolean,True,,"Set this to false to disable the CHAMELEON building.
 
-The CHAMELEON is a building that can slowly remove certain hazardous conditions from a market, such as a decivilized subpopulation, a rogue AI core, or a rampant military core.",,,Domain-tech Content
+The CHAMELEON is a building that can slowly remove certain hazardous conditions from a market, such as a decivilized subpopulation or rogue AI core.",,,Domain-tech Content
 boggledChameleonDecivilizedSubpopEradicationDaysToFinish,Days to finish eradicating a decivilized subpopulation with CHAMELEON,Int,200,,"How many days are required to eradicate a decivilized subpopulation with the CHAMELEON.",1,2000,Domain-tech Content
-boggledChameleonRogueCoreTerminationDaysToFinish,Days to finish terminating a rogue AI core with CHAMELEON,Int,200,,"How many days are required to terminate a rogue AI core or a rampant military core with the CHAMELEON.",1,2000,Domain-tech Content
+boggledChameleonRogueCoreTerminationDaysToFinish,Days to finish terminating a rogue AI core with CHAMELEON,Int,200,,"How many days are required to terminate a rogue AI core with the CHAMELEON.",1,2000,Domain-tech Content
 boggledLimelightNetworkPlayerBuildEnabled,Limelight Network building can be constructed by the player,Boolean,True,,"Set this to true to allow the player to construct the Limelight Network building.",,,Domain-tech Content
 boggledCryosanctumPlayerBuildEnabled,Cryosanctum building can be constructed by the player,Boolean,False,,"Set this to true to allow the player to construct the Cryosanctum building.",,,Domain-tech Content
 boggled_ObjectivesHeader,Stable Location Structure Settings,Header,Stable Location Structure Settings,,,,,Domain-tech Content

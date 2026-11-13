@@ -7,9 +7,6 @@ import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.*;
 import com.fs.starfarer.api.campaign.comm.CommMessageAPI;
 import com.fs.starfarer.api.campaign.econ.*;
-import com.fs.starfarer.api.characters.PersonAPI;
-import com.fs.starfarer.api.impl.campaign.ids.Ranks;
-import com.fs.starfarer.api.impl.campaign.ids.Stats;
 import com.fs.starfarer.api.impl.campaign.intel.BaseIntelPlugin;
 import com.fs.starfarer.api.impl.campaign.intel.MessageIntel;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
@@ -32,15 +29,23 @@ public class Boggled_CHAMELEON extends BaseIndustry
 
     private static final String RAT_MOD_ID = "assortment_of_things";
     private static final String RAT_RAMPANT_MILITARY_CORE = "rat_rampant_military_core";
-    private static final String RAT_MILITARY_CORE_PERSON_KEY = "$rat_military_core_person";
 
-    private int daysWithoutShortageRampant = 0;
-    private int lastDayCheckedRampant = 0;
+    private boolean marketHasRampantMilitaryCore()
+    {
+        return Global.getSettings().getModManager().isModEnabled(RAT_MOD_ID)
+                && this.market.hasCondition(RAT_RAMPANT_MILITARY_CORE);
+    }
 
     @Override
     public void advance(float amount)
     {
         super.advance(amount);
+
+        // The core will not allow a facility that could find and remove it to operate.
+        if(this.marketHasRampantMilitaryCore())
+        {
+            return;
+        }
 
         Pair<String, Integer> deficit = getChameleonDeficit();
 
@@ -93,74 +98,6 @@ public class Boggled_CHAMELEON extends BaseIndustry
                 }
             }
         }
-
-        if(this.marketHasRampantMilitaryCore() && this.isFunctional())
-        {
-            CampaignClockAPI clock = Global.getSector().getClock();
-
-            if(clock.getDay() != this.lastDayCheckedRampant && deficit.two <= 0)
-            {
-                this.daysWithoutShortageRampant++;
-                this.lastDayCheckedRampant = clock.getDay();
-
-                if(this.daysWithoutShortageRampant >= this.requiredDaysToRemoveRogue)
-                {
-                    if (this.market.isPlayerOwned())
-                    {
-                        MessageIntel intel = new MessageIntel("Rampant military core on " + market.getName(), Misc.getBasePlayerColor());
-                        intel.addLine("    - Terminated");
-                        intel.setIcon(Global.getSettings().getSpriteName("boggled_intel_icons", "intel_icon_chameleon"));
-                        intel.setSound(BaseIntelPlugin.getSoundStandardUpdate());
-                        Global.getSector().getCampaignUI().addMessage(intel, CommMessageAPI.MessageClickAction.COLONY_INFO, market);
-                    }
-
-                    this.terminateRampantMilitaryCore();
-                }
-            }
-        }
-    }
-
-    private boolean marketHasRampantMilitaryCore()
-    {
-        return Global.getSettings().getModManager().isModEnabled(RAT_MOD_ID)
-                && this.market.hasCondition(RAT_RAMPANT_MILITARY_CORE);
-    }
-
-    private void terminateRampantMilitaryCore()
-    {
-        // RAT's condition leaves its administrator and stat modifiers in place when removed.
-        MarketConditionAPI condition = this.market.getCondition(RAT_RAMPANT_MILITARY_CORE);
-        String modifierId = condition != null ? condition.getIdForPluginModifications() : null;
-        Object storedCore = this.market.getMemoryWithoutUpdate().get(RAT_MILITARY_CORE_PERSON_KEY);
-
-        boggledTools.removeCondition(this.market, RAT_RAMPANT_MILITARY_CORE);
-
-        if(modifierId != null)
-        {
-            this.market.getStability().unmodify(modifierId);
-            this.market.getStats().getDynamic().getMod(Stats.COMBAT_FLEET_SIZE_MULT).unmodify(modifierId);
-            this.market.getStats().getDynamic().getMod(Stats.PATROL_NUM_LIGHT_MOD).unmodify(modifierId);
-            this.market.getStats().getDynamic().getMod(Stats.PATROL_NUM_MEDIUM_MOD).unmodify(modifierId);
-            this.market.getStats().getDynamic().getMod(Stats.PATROL_NUM_HEAVY_MOD).unmodify(modifierId);
-        }
-
-        if(storedCore instanceof PersonAPI core)
-        {
-            PersonAPI admin = this.market.getAdmin();
-            if(admin != null && core.getId() != null && core.getId().equals(admin.getId()))
-            {
-                PersonAPI replacement = this.market.getFaction().createRandomPerson();
-                replacement.setRankId(Ranks.CITIZEN);
-                replacement.setPostId(Ranks.POST_ADMINISTRATOR);
-                this.market.setAdmin(replacement);
-                this.market.addPerson(replacement);
-                this.market.getCommDirectory().addPerson(replacement);
-            }
-
-            this.market.getCommDirectory().removePerson(core);
-            this.market.removePerson(core);
-            this.market.getMemoryWithoutUpdate().unset(RAT_MILITARY_CORE_PERSON_KEY);
-        }
     }
 
     @Override
@@ -209,7 +146,23 @@ public class Boggled_CHAMELEON extends BaseIndustry
             return false;
         }
 
+        if(this.marketHasRampantMilitaryCore())
+        {
+            return false;
+        }
+
         return super.isAvailableToBuild();
+    }
+
+    @Override
+    public String getUnavailableReason()
+    {
+        if(this.marketHasRampantMilitaryCore())
+        {
+            return "The rampant military core will not allow a CHAMELEON to be constructed.";
+        }
+
+        return super.getUnavailableReason();
     }
 
     @Override
@@ -235,8 +188,6 @@ public class Boggled_CHAMELEON extends BaseIndustry
         this.lastDayCheckedDeciv = 0;
         this.daysWithoutShortageRogue = 0;
         this.lastDayCheckedRogue = 0;
-        this.daysWithoutShortageRampant = 0;
-        this.lastDayCheckedRampant = 0;
 
         super.notifyBeingRemoved(mode, forUpgrade);
     }
@@ -247,6 +198,12 @@ public class Boggled_CHAMELEON extends BaseIndustry
         float opad = 10.0F;
         Color highlight = Misc.getHighlightColor();
         Color bad = Misc.getNegativeHighlightColor();
+
+        if(this.marketHasRampantMilitaryCore() && mode != IndustryTooltipMode.ADD_INDUSTRY && mode != IndustryTooltipMode.QUEUED && !isBuilding())
+        {
+            tooltip.addPara("The rampant military core has disabled this facility to prevent itself from being removed.", bad, opad);
+            return;
+        }
 
         // Inserts pacification status after description
         if((this.market.hasCondition("decivilized_subpop") || this.market.hasCondition("decivilized")) && mode != IndustryTooltipMode.ADD_INDUSTRY && mode != IndustryTooltipMode.QUEUED && !isBuilding())
@@ -285,23 +242,51 @@ public class Boggled_CHAMELEON extends BaseIndustry
         {
             tooltip.addPara("Rogue AI core termination is stalled while the CHAMELEON is disrupted.", bad, opad);
         }
+    }
 
-        if(this.marketHasRampantMilitaryCore() && mode != IndustryTooltipMode.ADD_INDUSTRY && mode != IndustryTooltipMode.QUEUED && !isBuilding())
+    @Override
+    protected void applyAICoreToIncomeAndUpkeep()
+    {
+        if(this.marketHasRampantMilitaryCore())
         {
-            int percentComplete = (int) (((float) this.daysWithoutShortageRampant / (float) this.requiredDaysToRemoveRogue) * 100F);
-
-            if(percentComplete > 99)
-            {
-                percentComplete = 99;
-            }
-
-            tooltip.addPara("An investigation into the whereabouts of the rampant military core on " + this.market.getName() + " is approximately %s complete.", opad, highlight, new String[]{percentComplete + "%"});
+            getUpkeep().unmodifyMult("ind_core");
+            return;
         }
 
-        if(this.isDisrupted() && this.marketHasRampantMilitaryCore() && mode != IndustryTooltipMode.ADD_INDUSTRY && mode != IndustryTooltipMode.QUEUED && !isBuilding())
+        super.applyAICoreToIncomeAndUpkeep();
+    }
+
+    @Override
+    protected void applyAlphaCoreSupplyAndDemandModifiers()
+    {
+        if(this.marketHasRampantMilitaryCore())
         {
-            tooltip.addPara("Rampant military core termination is stalled while the CHAMELEON is disrupted.", bad, opad);
+            return;
         }
+
+        super.applyAlphaCoreSupplyAndDemandModifiers();
+    }
+
+    @Override
+    protected void applyBetaCoreSupplyAndDemandModifiers()
+    {
+        if(this.marketHasRampantMilitaryCore())
+        {
+            return;
+        }
+
+        super.applyBetaCoreSupplyAndDemandModifiers();
+    }
+
+    @Override
+    protected void applyGammaCoreSupplyAndDemandModifiers()
+    {
+        if(this.marketHasRampantMilitaryCore())
+        {
+            return;
+        }
+
+        super.applyGammaCoreSupplyAndDemandModifiers();
     }
 
     @Override
@@ -322,7 +307,7 @@ public class Boggled_CHAMELEON extends BaseIndustry
     {
         Pair<String, Integer> deficit = getChameleonDeficit();
 
-        if(isFunctional() && !isBuilding() && this.aiCoreId != null && this.aiCoreId.equals("alpha_core") && deficit.two <= 0)
+        if(isFunctional() && !isBuilding() && !this.marketHasRampantMilitaryCore() && this.aiCoreId != null && this.aiCoreId.equals("alpha_core") && deficit.two <= 0)
         {
             // Neutralizes Pather interest to zero.
             // Previously this just returned -1000, but with the 0.96a event system the large negative amount would be subtracted from the hostile event progress.
@@ -355,6 +340,15 @@ public class Boggled_CHAMELEON extends BaseIndustry
 
     @Override
     public void addAlphaCoreDescription(TooltipMakerAPI tooltip, AICoreDescriptionMode mode) {
+        if(this.marketHasRampantMilitaryCore())
+        {
+            if(mode != AICoreDescriptionMode.INDUSTRY_TOOLTIP)
+            {
+                tooltip.addPara("The rampant military core has disabled this facility, so this core provides no bonuses.", Misc.getNegativeHighlightColor(), 10.0F);
+            }
+            return;
+        }
+
         float UPKEEP_MULT = 0.75F;
         int DEMAND_REDUCTION = 1;
 
@@ -384,7 +378,7 @@ public class Boggled_CHAMELEON extends BaseIndustry
     protected void applyImproveModifiers()
     {
         Pair<String, Integer> deficit = getChameleonDeficit();
-        if(this.isImproved() && this.isFunctional() && deficit.two <= 0)
+        if(this.isImproved() && this.isFunctional() && !this.marketHasRampantMilitaryCore() && deficit.two <= 0)
         {
             market.getStability().modifyFlat("chameleon_improve", IMPROVE_STABILITY_BONUS, getImprovementsDescForModifiers() + " (CHAMELEON)");
         }
