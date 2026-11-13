@@ -7,6 +7,9 @@ import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.*;
 import com.fs.starfarer.api.campaign.comm.CommMessageAPI;
 import com.fs.starfarer.api.campaign.econ.*;
+import com.fs.starfarer.api.characters.PersonAPI;
+import com.fs.starfarer.api.impl.campaign.ids.Ranks;
+import com.fs.starfarer.api.impl.campaign.ids.Stats;
 import com.fs.starfarer.api.impl.campaign.intel.BaseIntelPlugin;
 import com.fs.starfarer.api.impl.campaign.intel.MessageIntel;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
@@ -26,6 +29,13 @@ public class Boggled_CHAMELEON extends BaseIndustry
     private int daysWithoutShortageRogue = 0;
     private int lastDayCheckedRogue = 0;
     private final int requiredDaysToRemoveRogue = boggledTools.getIntSetting("boggledChameleonRogueCoreTerminationDaysToFinish");
+
+    private static final String RAT_MOD_ID = "assortment_of_things";
+    private static final String RAT_RAMPANT_MILITARY_CORE = "rat_rampant_military_core";
+    private static final String RAT_MILITARY_CORE_PERSON_KEY = "$rat_military_core_person";
+
+    private int daysWithoutShortageRampant = 0;
+    private int lastDayCheckedRampant = 0;
 
     @Override
     public void advance(float amount)
@@ -82,6 +92,74 @@ public class Boggled_CHAMELEON extends BaseIndustry
                     boggledTools.removeCondition(this.market, "rogue_ai_core");
                 }
             }
+        }
+
+        if(this.marketHasRampantMilitaryCore() && this.isFunctional())
+        {
+            CampaignClockAPI clock = Global.getSector().getClock();
+
+            if(clock.getDay() != this.lastDayCheckedRampant && deficit.two <= 0)
+            {
+                this.daysWithoutShortageRampant++;
+                this.lastDayCheckedRampant = clock.getDay();
+
+                if(this.daysWithoutShortageRampant >= this.requiredDaysToRemoveRogue)
+                {
+                    if (this.market.isPlayerOwned())
+                    {
+                        MessageIntel intel = new MessageIntel("Rampant military core on " + market.getName(), Misc.getBasePlayerColor());
+                        intel.addLine("    - Terminated");
+                        intel.setIcon(Global.getSettings().getSpriteName("boggled_intel_icons", "intel_icon_chameleon"));
+                        intel.setSound(BaseIntelPlugin.getSoundStandardUpdate());
+                        Global.getSector().getCampaignUI().addMessage(intel, CommMessageAPI.MessageClickAction.COLONY_INFO, market);
+                    }
+
+                    this.terminateRampantMilitaryCore();
+                }
+            }
+        }
+    }
+
+    private boolean marketHasRampantMilitaryCore()
+    {
+        return Global.getSettings().getModManager().isModEnabled(RAT_MOD_ID)
+                && this.market.hasCondition(RAT_RAMPANT_MILITARY_CORE);
+    }
+
+    private void terminateRampantMilitaryCore()
+    {
+        // RAT's condition leaves its administrator and stat modifiers in place when removed.
+        MarketConditionAPI condition = this.market.getCondition(RAT_RAMPANT_MILITARY_CORE);
+        String modifierId = condition != null ? condition.getIdForPluginModifications() : null;
+        Object storedCore = this.market.getMemoryWithoutUpdate().get(RAT_MILITARY_CORE_PERSON_KEY);
+
+        boggledTools.removeCondition(this.market, RAT_RAMPANT_MILITARY_CORE);
+
+        if(modifierId != null)
+        {
+            this.market.getStability().unmodify(modifierId);
+            this.market.getStats().getDynamic().getMod(Stats.COMBAT_FLEET_SIZE_MULT).unmodify(modifierId);
+            this.market.getStats().getDynamic().getMod(Stats.PATROL_NUM_LIGHT_MOD).unmodify(modifierId);
+            this.market.getStats().getDynamic().getMod(Stats.PATROL_NUM_MEDIUM_MOD).unmodify(modifierId);
+            this.market.getStats().getDynamic().getMod(Stats.PATROL_NUM_HEAVY_MOD).unmodify(modifierId);
+        }
+
+        if(storedCore instanceof PersonAPI core)
+        {
+            PersonAPI admin = this.market.getAdmin();
+            if(admin != null && core.getId() != null && core.getId().equals(admin.getId()))
+            {
+                PersonAPI replacement = this.market.getFaction().createRandomPerson();
+                replacement.setRankId(Ranks.CITIZEN);
+                replacement.setPostId(Ranks.POST_ADMINISTRATOR);
+                this.market.setAdmin(replacement);
+                this.market.addPerson(replacement);
+                this.market.getCommDirectory().addPerson(replacement);
+            }
+
+            this.market.getCommDirectory().removePerson(core);
+            this.market.removePerson(core);
+            this.market.getMemoryWithoutUpdate().unset(RAT_MILITARY_CORE_PERSON_KEY);
         }
     }
 
@@ -157,6 +235,8 @@ public class Boggled_CHAMELEON extends BaseIndustry
         this.lastDayCheckedDeciv = 0;
         this.daysWithoutShortageRogue = 0;
         this.lastDayCheckedRogue = 0;
+        this.daysWithoutShortageRampant = 0;
+        this.lastDayCheckedRampant = 0;
 
         super.notifyBeingRemoved(mode, forUpgrade);
     }
@@ -204,6 +284,23 @@ public class Boggled_CHAMELEON extends BaseIndustry
         if(this.isDisrupted() && this.market.hasCondition("rogue_ai_core") && mode != IndustryTooltipMode.ADD_INDUSTRY && mode != IndustryTooltipMode.QUEUED && !isBuilding())
         {
             tooltip.addPara("Rogue AI core termination is stalled while the CHAMELEON is disrupted.", bad, opad);
+        }
+
+        if(this.marketHasRampantMilitaryCore() && mode != IndustryTooltipMode.ADD_INDUSTRY && mode != IndustryTooltipMode.QUEUED && !isBuilding())
+        {
+            int percentComplete = (int) (((float) this.daysWithoutShortageRampant / (float) this.requiredDaysToRemoveRogue) * 100F);
+
+            if(percentComplete > 99)
+            {
+                percentComplete = 99;
+            }
+
+            tooltip.addPara("An investigation into the whereabouts of the rampant military core on " + this.market.getName() + " is approximately %s complete.", opad, highlight, new String[]{percentComplete + "%"});
+        }
+
+        if(this.isDisrupted() && this.marketHasRampantMilitaryCore() && mode != IndustryTooltipMode.ADD_INDUSTRY && mode != IndustryTooltipMode.QUEUED && !isBuilding())
+        {
+            tooltip.addPara("Rampant military core termination is stalled while the CHAMELEON is disrupted.", bad, opad);
         }
     }
 

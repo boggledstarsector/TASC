@@ -1,10 +1,11 @@
 # Changelog
 
-## 10.1.0 *(backwards compatible through 10.0.4, requires Ashlib 2.2.1 (or higher) if you have Ashes of the Domain mods enabled)*
+## 10.1.0 *(not backwards compatible)*
 - Updated TASC for Starsector 0.98.5a-RC5.
 - Fixed a crash that could occur under certain circumstances when the player opened the command menu after losing a colony (due to abandonment, capture, decivilization, etc.). Thanks Hexxod for reporting this and providing detailed instructions for reproducing it!
 - Added support for planet types from Bultach Coalition. Thanks potatopants123 for bringing this to my attention!
 - Added or updated terraforming support for colonizable planet types from Nightcross Armory Corporation, FSF Military Corporation, Halo Dynamics Ship Industry, Xhan Empire, Secrets of the Frontier, the Tellasian League, and Unknown Skies.
+- CHAMELEON can now terminate a Rampant Military Core from Random Assortment of Things. The project uses the same length as rogue AI core termination.
 
 ## 10.0.9 *(backwards compatible through 10.0.4, requires Ashlib 2.2.1 (or higher) if you have Ashes of the Domain mods enabled)*
 - Fixed a bug where Domed Cities did not suppress four Unknown Skies conditions (Perpetual Dust Storm, Military Virus, Psychoactive Fungus, and Parasitic Spores). Thanks Nalaz for reporting this!
