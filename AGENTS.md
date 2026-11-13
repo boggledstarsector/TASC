@@ -1,4 +1,4 @@
-# CLAUDE.md
+# AGENTS.md
 
 This file provides guidance to AI coding tools when working with code in this repository.
 
@@ -12,6 +12,14 @@ This is a **Java project** for Starsector modding. The project uses:
 - **IntelliJ IDEA** as the primary IDE (though any Java IDE with Gradle/Maven support could work)
 - **JDK 17.0.12** (specific version required)
 - No traditional build system files (gradle/maven) - compilation is handled by IntelliJ's project structure
+
+## Player-facing documentation
+
+Player-facing documentation for TASC's content and systems lives in [tascdocs](https://github.com/boggledstarsector/tascdocs), a separate website repository. The guides under `docs/` in this repository are for developers working on the mod. They do not replace the site.
+
+Whenever any change is made in this repository, open a companion pull request against `boggledstarsector/tascdocs` that updates existing pages or adds new ones for that change. A TASC change is not finished while that companion pull request is missing.
+
+Site pages are organized by topic under `app/docs/` and `app/components/` (buildings, station abilities, and terraforming projects). Follow `docs/creating-new-building-pages.md` in tascdocs when adding a building page.
 
 ## Code Architecture
 
@@ -157,30 +165,3 @@ The plugin carefully manages state:
 - **[AoTD Research Integration](docs/aotd-research-integration.md)** - Complete guide to TASC's integration with Ashes of the Domain Vaults of Knowledge research system, including tech tree structure, research-locked buildings/projects, and ability unlocking
 - **[Data-Driven Research System](docs/data-driven-research-system.md)** - Technical documentation of TASC's CSV-based research system, including how to add custom research, the parsing system, and building/ability integration
 - **[Ability Research Implementation](docs/ability-research-implementation.md)** - Guide to implementing research-locked abilities using the data-driven system
-- **[Vanilla Game Lore and Data](docs/lore/)** - Extracted vanilla Starsector game data for reference and consistency
-
-## Vanilla Game Reference Data
-
-The `/docs/lore/` folder contains extracted vanilla Starsector game data for reference when writing descriptions, tooltips, and lore for TASC content:
-
-- **[abilities.csv](docs/lore/abilities.csv)** - Vanilla ship and fleet ability definitions, including active abilities and system stats
-- **[descriptions.csv](docs/lore/descriptions.csv)** - Full game descriptions for industries, items, commodities, and other entities
-- **[game_mechanics.txt](docs/lore/game_mechanics.txt)** - Core game mechanics documentation and formulas
-- **[industries.csv](docs/lore/industries.csv)** - Vanilla industry definitions with requirements, outputs, and modifiers
-- **[market_conditions.csv](docs/lore/market_conditions.csv)** - All market/hazard condition definitions and their effects
-- **[planets.json](docs/lore/planets.json)** - Planet type definitions and properties
-- **[rules.csv](docs/lore/rules.csv)** - Rule command definitions for dialog scripts and triggered actions
-- **[ship_names.json](docs/lore/ship_names.json)** - Vanilla ship naming conventions and faction-specific name patterns
-- **[spacers_manual_combat.txt](docs/lore/spacers_manual_combat.txt)** - Combat mechanics from the in-game Spacers' Manual
-- **[spacers_manual_other.txt](docs/lore/spacers_manual_other.txt)** - General gameplay guides from the Spacers' Manual
-- **[spacers_manual_ui.txt](docs/lore/spacers_manual_ui.txt)** - Interface and controls documentation from the Spacers' Manual
-- **[special_items.csv](docs/lore/special_items.csv)** - Special item definitions (industry-boosting artifacts, AI cores, etc.)
-- **[strings.json](docs/lore/strings.json)** - General string constants and localization data
-- **[tips.json](docs/lore/tips.json)** - Loading screen tips and gameplay hints
-- **[tooltips.json](docs/lore/tooltips.json)** - Tooltip text definitions for UI elements
-
-**Usage Guidelines:**
-- Use these files to match vanilla game terminology, tone, and formatting
-- Reference vanilla descriptions when writing new TASC content for consistency
-- Understand existing game mechanics before implementing new features
-- Maintain style consistency with vanilla tooltips and ability descriptions
