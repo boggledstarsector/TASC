@@ -117,8 +117,21 @@ public class Boggled_Remnant_Station extends OrbitalStation implements RouteMana
         {
             this.demand(demand.one, demand.two);
         }
+        if (!boggledTools.domainEraArtifactDemandEnabled())
+        {
+            this.demand(boggledTools.BoggledCommodities.domainArtifacts, 0);
+        }
 
-        this.market.getStats().getDynamic().getMod("ground_defenses_mod").modifyMult(this.getModId(), getGroundDefenseMultiplierAfterCommodityShortage(), this.getNameForModifier());
+        float defenseMult = getDeficitMult(Commodities.SUPPLIES);
+        String defenseExtra = "";
+        if (defenseMult != 1f)
+        {
+            defenseExtra = " (" + getDeficitText(getMaxDeficit(Commodities.SUPPLIES).one).toLowerCase() + ")";
+        }
+        this.market.getStats().getDynamic().getMod(Stats.GROUND_DEFENSES_MOD).modifyMult(
+                this.getModId(),
+                1f + BASE_DEFENSE_BONUS_BOGGLED_REMNANT_BATTLESTATION * defenseMult,
+                this.getNameForModifier() + defenseExtra);
 
         this.matchCommanderToAICore(this.aiCoreId);
 
@@ -521,7 +534,7 @@ public class Boggled_Remnant_Station extends OrbitalStation implements RouteMana
             tooltip.addPara("Station combat readiness: %s", opad, h, Math.round(cr * 100.0F) + "%");
             this.addStabilityPostDemandSectionBoggledRemnantStation(tooltip, hasDemand, mode);
 
-            this.addGroundDefensesImpactSectionBoggledRemnantStation(tooltip, BASE_DEFENSE_BONUS_BOGGLED_REMNANT_BATTLESTATION, getCommodityStringArray());
+            this.addGroundDefensesImpactSection(tooltip, BASE_DEFENSE_BONUS_BOGGLED_REMNANT_BATTLESTATION, Commodities.SUPPLIES);
         }
     }
 
@@ -580,68 +593,6 @@ public class Boggled_Remnant_Station extends OrbitalStation implements RouteMana
                 return null;
             }
         });
-    }
-
-    protected void addGroundDefensesImpactSectionBoggledRemnantStation(TooltipMakerAPI tooltip, float bonus, String... commodities) {
-        Color h = Misc.getHighlightColor();
-        float opad = 10.0F;
-        MutableStat fake = new MutableStat(1.0F);
-        fake.modifyFlat("1", bonus, this.getNameForModifier());
-        float mult;
-        String totalStr;
-        if (commodities != null) {
-            mult = getGroundDefenseMultiplierAfterCommodityShortage();
-            if (mult < 1.0F + BASE_DEFENSE_BONUS_BOGGLED_REMNANT_BATTLESTATION) {
-                totalStr = (String)this.getMaxDeficit(commodities).one;
-                fake.modifyFlat("2", getGroundDefenseTooltipCommodityShortageSubtractionAmount(), getDeficitText(totalStr));
-            }
-        }
-
-        mult = Misc.getRoundedValueFloat(fake.getModifiedValue());
-        totalStr = "×" + mult;
-        if (mult < 1.0F) {
-            h = Misc.getNegativeHighlightColor();
-        }
-
-        float pad = 3.0F;
-        tooltip.addPara("Ground defense strength: %s", opad, h, new String[]{totalStr});
-        tooltip.addStatModGrid(400.0F, 35.0F, opad, pad, fake, new TooltipMakerAPI.StatModValueGetter() {
-            public String getPercentValue(MutableStat.StatMod mod) {
-                return null;
-            }
-
-            public String getMultValue(MutableStat.StatMod mod) {
-                return null;
-            }
-
-            public Color getModColor(MutableStat.StatMod mod) {
-                return mod.value < 0.0F ? Misc.getNegativeHighlightColor() : null;
-            }
-
-            public String getFlatValue(MutableStat.StatMod mod) {
-                String r = Misc.getRoundedValue(mod.value);
-                return mod.value >= 0.0F ? "+" + r : r;
-            }
-        });
-    }
-
-    // I don't understand how addGroundDefensesImpactSection really works,
-    // but we need to get the smaller of the max deficit and the base ground defense bonus (2 for this building).
-    private float getGroundDefenseTooltipCommodityShortageSubtractionAmount()
-    {
-        return -1 * Math.min(BASE_DEFENSE_BONUS_BOGGLED_REMNANT_BATTLESTATION, this.getMaxDeficit(getCommodityStringArray()).two);
-    }
-
-    // Vanilla as of 0.97a has a bug where the tooltip window says the ground defense multiplier is reduced due
-    // to a shortage, but the actual defense calculation is not impacted and is still the base modifier.
-    // This building actually supports reducing the ground defense multiplier due to a shortage.
-    private float getGroundDefenseMultiplierAfterCommodityShortage()
-    {
-        // 1 + base bonus (2 here) - the max deficit.
-        // Since this building requires 7 supplies and 4 DEA this could easily be negative.
-        // The worst case should be a flat 1x multiplier, so use Math.max below to never return less than 1.0F.
-        float groundDefenseMult = 1.0F + BASE_DEFENSE_BONUS_BOGGLED_REMNANT_BATTLESTATION - this.getMaxDeficit(getCommodityStringArray()).two;
-        return Math.max(1.0F, groundDefenseMult);
     }
 
     @Override
