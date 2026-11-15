@@ -2,6 +2,7 @@ package boggled.campaign.econ.industries;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.*;
+import com.fs.starfarer.api.campaign.FactionAPI.ShipPickMode;
 import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.campaign.econ.MarketImmigrationModifier;
 import com.fs.starfarer.api.campaign.listeners.FleetEventListener;
@@ -372,6 +373,7 @@ public class Boggled_Remnant_Station extends OrbitalStation implements RouteMana
             params.timestamp = route.getTimestamp();
         }
         params.random = random;
+        params.modeOverride = ShipPickMode.PRIORITY_THEN_ALL;
         CampaignFleetAPI fleet = FleetFactoryV3.createFleet(params);
 
         if (fleet == null || fleet.isEmpty()) return null;
