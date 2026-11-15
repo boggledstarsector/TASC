@@ -43,6 +43,8 @@ public class Boggled_Remnant_Station extends OrbitalStation implements RouteMana
 
     public static float BASE_DEFENSE_BONUS_BOGGLED_REMNANT_BATTLESTATION = 2.0F;
     public static int BASE_STABILITY_MOD_BOGGLED_REMNANT_BATTLESTATION = 3;
+    private static final String SECOND_IN_COMMAND_MOD_ID = "second_in_command";
+    private static final String SECOND_IN_COMMAND_AUTOMATED_SHIPS_SKILL_ID = "sc_automated_automated_ships";
 
     // Use this to dynamically handle demand whether DEA is enabled or not.
     // Need to use some ordered data structure because we don't want the UI to display the commodities in a random order
@@ -718,9 +720,44 @@ public class Boggled_Remnant_Station extends OrbitalStation implements RouteMana
 
     private boolean playerHasAutomatedShipsSkill()
     {
-        // Handles skill rework in Second in Command (https://fractalsoftworks.com/forum/index.php?topic=30407.0)
-        // Both SC and vanilla add this tag when the player unlocks the automated ships skill
-        return Misc.getAllowedRecoveryTags().contains(Tags.AUTOMATED_RECOVERABLE);
+        if (Global.getSettings().getModManager().isModEnabled(SECOND_IN_COMMAND_MOD_ID))
+        {
+            return playerHasSecondInCommandAutomatedShipsSkill();
+        }
+
+        if (Global.getSector() == null || Global.getSector().getPlayerPerson() == null)
+        {
+            return false;
+        }
+
+        return Global.getSector().getPlayerPerson().getStats().getSkillLevel(Skills.AUTOMATED_SHIPS) > 0f;
+    }
+
+    private boolean playerHasSecondInCommandAutomatedShipsSkill()
+    {
+        try
+        {
+            if (Global.getSector() == null || Global.getSector().getPlayerFleet() == null)
+            {
+                return false;
+            }
+
+            Class<?> scUtils = Class.forName("second_in_command.SCUtils");
+            Object playerData = scUtils.getMethod("getPlayerData").invoke(null);
+            if (playerData == null)
+            {
+                return false;
+            }
+
+            Object active = playerData.getClass().getMethod("isSkillActive", String.class)
+                    .invoke(playerData, SECOND_IN_COMMAND_AUTOMATED_SHIPS_SKILL_ID);
+            return Boolean.TRUE.equals(active);
+        }
+        catch (Exception e)
+        {
+            // Second in Command is optional. A missing or changed class must not break the industry picker.
+            return false;
+        }
     }
 
     @Override
