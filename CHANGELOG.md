@@ -6,7 +6,7 @@
 - Added support for planet types from Bultach Coalition. Thanks potatopants123 for bringing this to my attention!
 - Added or updated terraforming support for colonizable planet types from Nightcross Armory Corporation, FSF Military Corporation, Halo Dynamics Ship Industry, Xhan Empire, Secrets of the Frontier, the Tellasian League, and Unknown Skies.
 - CHAMELEON now cannot be built on a colony controlled by a Rampant Military Core from Random Assortment of Things. A CHAMELEON already on that colony is disabled and provides no bonuses. Thanks Active Ink for bringing this to my attention!
-- Building an Autonomous AI Battlestation again requires Automated Ships. With Second-in-Command, that is its Automated Ships skill on an assigned Automation officer.
+- Building an Autonomous AI Battlestation again requires Automated Ships. That requirement is skipped while Second-in-Command is enabled.
 
 ## 10.0.9 *(backwards compatible through 10.0.4, requires Ashlib 2.2.1 (or higher) if you have Ashes of the Domain mods enabled)*
 - Fixed a bug where Domed Cities did not suppress four Unknown Skies conditions (Perpetual Dust Storm, Military Virus, Psychoactive Fungus, and Parasitic Spores). Thanks Nalaz for reporting this!
