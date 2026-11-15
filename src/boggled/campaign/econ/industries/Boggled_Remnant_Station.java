@@ -8,6 +8,7 @@ import com.fs.starfarer.api.campaign.listeners.FleetEventListener;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import com.fs.starfarer.api.characters.PersonAPI;
 import com.fs.starfarer.api.combat.MutableStat;
+import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.DebugFlags;
 import com.fs.starfarer.api.impl.campaign.econ.impl.*;
 import com.fs.starfarer.api.impl.campaign.fleets.*;
@@ -138,7 +139,6 @@ public class Boggled_Remnant_Station extends OrbitalStation implements RouteMana
     {
         super.unapply();
         this.unmodifyStabilityWithBaseMod();
-        this.matchCommanderToAICore((String)null);
         this.market.getStats().getDynamic().getMod("ground_defenses_mod").unmodifyMult(this.getModId());
 
         MemoryAPI memory = market.getMemoryWithoutUpdate();
@@ -734,46 +734,34 @@ public class Boggled_Remnant_Station extends OrbitalStation implements RouteMana
     @Override
     protected void matchCommanderToAICore(String aiCore)
     {
-        // OrbitStation method only sets an AI core commander if you install an alpha core.
-        // We need to customize it to always set an AI core commander, even if there's no core installed.
-        if (this.stationFleet != null) {
-            PersonAPI commander = null;
-            if ("alpha_core".equals(aiCore))
-            {
-                AICoreOfficerPlugin plugin = Misc.getAICoreOfficerPlugin("alpha_core");
-                commander = plugin.createPerson("alpha_core", "remnant", (Random)null);
-                if (this.stationFleet.getFlagship() != null)
-                {
-                    RemnantOfficerGeneratorPlugin.integrateAndAdaptCoreForAIFleet(this.stationFleet.getFlagship());
-                }
-            }
-            else if ("beta_core".equals(aiCore))
-            {
-                AICoreOfficerPlugin plugin = Misc.getAICoreOfficerPlugin("beta_core");
-                commander = plugin.createPerson("beta_core", "remnant", (Random)null);
-                if (this.stationFleet.getFlagship() != null)
-                {
-                    RemnantOfficerGeneratorPlugin.integrateAndAdaptCoreForAIFleet(this.stationFleet.getFlagship());
-                }
-            }
-            //else if ("gamma_core".equals(aiCore))
-            // Always set at least a gamma core, even if no core is installed.
-            // I think vanilla stations always have a commander, so not setting one might cause null exceptions, bugs, etc.
-            else
-            {
-                AICoreOfficerPlugin plugin = Misc.getAICoreOfficerPlugin("gamma_core");
-                commander = plugin.createPerson("gamma_core", "remnant", (Random)null);
-                if (this.stationFleet.getFlagship() != null)
-                {
-                    RemnantOfficerGeneratorPlugin.integrateAndAdaptCoreForAIFleet(this.stationFleet.getFlagship());
-                }
-            }
+        if (Global.getSector().getEconomy().isSimMode()) return;
+        if (this.stationFleet == null || this.stationFleet.getFlagship() == null) return;
+        // createTooltip swaps in a market clone and reapplies this same industry. The live station
+        // fleet must keep its captain across that hover.
+        if (this.stationEntity != null && this.stationEntity.getMarket() != this.market) return;
 
-            if (commander != null && this.stationFleet.getFlagship() != null) {
-                this.stationFleet.getFlagship().setCaptain(commander);
-                this.stationFleet.getFlagship().setFlagship(false);
+        FleetMemberAPI flagship = this.stationFleet.getFlagship();
+        if (aiCore == null)
+        {
+            PersonAPI current = flagship.getCaptain();
+            if (current == null || current.isAICore() || !current.isDefault())
+            {
+                flagship.setCaptain(Global.getFactory().createPerson());
+                flagship.setFlagship(false);
             }
-
+            return;
         }
+
+        String coreId = aiCore;
+        if (!"alpha_core".equals(aiCore) && !"beta_core".equals(aiCore))
+        {
+            coreId = "gamma_core";
+        }
+
+        AICoreOfficerPlugin plugin = Misc.getAICoreOfficerPlugin(coreId);
+        PersonAPI commander = plugin.createPerson(coreId, Factions.REMNANTS, (Random)null);
+        flagship.setCaptain(commander);
+        flagship.setFlagship(false);
+        RemnantOfficerGeneratorPlugin.integrateAndAdaptCoreForAIFleet(flagship);
     }
 }
