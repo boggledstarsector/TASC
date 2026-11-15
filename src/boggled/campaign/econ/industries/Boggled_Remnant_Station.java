@@ -150,6 +150,10 @@ public class Boggled_Remnant_Station extends OrbitalStation implements RouteMana
     {
         super.advance(amount);
 
+        // OrbitalStation.advance returns before spawnStation() in sim mode, so these stay null on a sim copy.
+        if (Global.getSector().getEconomy().isSimMode()) return;
+        if (this.stationEntity == null || this.stationFleet == null) return;
+
         // Handle case where player lost control of planet. Possibilities for this include:
         // Nexerelin, Luddic Church takeover event
         if(!this.stationEntity.getFaction().getId().equals(this.market.getFaction().getId()) || !this.stationFleet.getFaction().getId().equals(this.market.getFaction().getId()))
@@ -168,8 +172,6 @@ public class Boggled_Remnant_Station extends OrbitalStation implements RouteMana
                 this.stationFleet.setFaction(this.market.getFactionId());
             }
         }
-
-        if (Global.getSector().getEconomy().isSimMode()) return;
 
         if (!isFunctional()) return;
 
