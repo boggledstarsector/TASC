@@ -358,6 +358,20 @@ public class Boggled_Remnant_Station extends OrbitalStation implements RouteMana
         return fleet;
     }
 
+    private static float getRemnantPatrolSizeMult(MarketAPI market) {
+        if (market == null) return 1f;
+
+        float marketMult = market.getStats().getDynamic().getMod(Stats.COMBAT_FLEET_SIZE_MULT).computeEffective(0f);
+        float playerDoctrineMult = 1f;
+        if (market.getFaction() != null) {
+            playerDoctrineMult = FleetFactoryV3.getDoctrineNumShipsMult(market.getFaction().getDoctrine().getNumShips());
+        }
+        float remnantDoctrineMult = FleetFactoryV3.getDoctrineNumShipsMult(
+                Global.getSector().getFaction(Factions.REMNANTS).getDoctrine().getNumShips());
+        if (playerDoctrineMult == 0f) return marketMult;
+        return marketMult / playerDoctrineMult * remnantDoctrineMult;
+    }
+
     public static CampaignFleetAPI createPatrol(FleetFactory.PatrolType type, String factionId, RouteManager.RouteData route, MarketAPI market, Vector2f locInHyper, Random random) {
         if (random == null) random = new Random();
 
@@ -377,6 +391,10 @@ public class Boggled_Remnant_Station extends OrbitalStation implements RouteMana
                 freighter = Math.round((float) random.nextFloat() * 10f);
                 break;
         }
+        float sizeMult = getRemnantPatrolSizeMult(market);
+        combat *= sizeMult;
+        tanker *= sizeMult;
+        freighter *= sizeMult;
 
         FleetParamsV3 params = new FleetParamsV3(
                 market,
@@ -395,6 +413,7 @@ public class Boggled_Remnant_Station extends OrbitalStation implements RouteMana
         if (route != null) {
             params.timestamp = route.getTimestamp();
         }
+        params.ignoreMarketFleetSizeMult = true;
         params.random = random;
         params.modeOverride = ShipPickMode.PRIORITY_THEN_ALL;
         CampaignFleetAPI fleet = FleetFactoryV3.createFleet(params);
@@ -463,7 +482,7 @@ public class Boggled_Remnant_Station extends OrbitalStation implements RouteMana
     protected float getCR()
     {
         // Deviates from vanilla logic since the Remnant station demands an unequal amount of supplies and DEA
-        float q = Misc.getShipQuality(this.market);
+        float q = Misc.getShipQuality(this.market, Factions.REMNANTS);
         if (q < 0.0F)
         {
             q = 0.0F;
