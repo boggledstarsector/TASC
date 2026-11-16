@@ -41,6 +41,7 @@ public class Boggled_Remnant_Station extends OrbitalStation implements RouteMana
             Global.getSettings().getFloat("averagePatrolSpawnInterval") * 1.3f);
 
     protected float returningPatrolValue = 0f;
+    protected float sinceReturn = MilitaryBase.PATROL_NO_SPAWN_AFTER_RETURN_TIMEOUT_DAYS;
 
     public static float BASE_DEFENSE_BONUS_BOGGLED_REMNANT_BATTLESTATION = 2.0F;
     public static int BASE_STABILITY_MOD_BOGGLED_REMNANT_BATTLESTATION = 3;
@@ -191,6 +192,9 @@ public class Boggled_Remnant_Station extends OrbitalStation implements RouteMana
 
         float days = Global.getSector().getClock().convertToDays(amount);
 
+        sinceReturn += days;
+        if (sinceReturn < MilitaryBase.PATROL_NO_SPAWN_AFTER_RETURN_TIMEOUT_DAYS) return;
+
         float spawnRate = 1f;
         float rateMult = market.getStats().getDynamic().getStat(Stats.COMBAT_FLEET_SPAWN_RATE_MULT).getModifiedValue();
         spawnRate *= rateMult;
@@ -316,6 +320,7 @@ public class Boggled_Remnant_Station extends OrbitalStation implements RouteMana
                 {
                     float fraction = (float) fleet.getFleetPoints() / custom.spawnFP;
                     returningPatrolValue += fraction;
+                    sinceReturn = 0f;
                 }
             }
         }
@@ -337,11 +342,13 @@ public class Boggled_Remnant_Station extends OrbitalStation implements RouteMana
         market.getContainingLocation().addEntity(fleet);
         fleet.setFacing((float) Math.random() * 360f);
         // this will get overridden by the patrol assignment AI, depending on route-time elapsed etc
-        fleet.setLocation(market.getLocation().x, market.getLocation().y);
+        fleet.setLocation(market.getPrimaryEntity().getLocation().x, market.getPrimaryEntity().getLocation().y);
 
         fleet.addScript(new PatrolAssignmentAIV4(fleet, route));
 
-        fleet.getMemoryWithoutUpdate().set(MemFlags.FLEET_IGNORES_OTHER_FLEETS, true, 0.3f);
+        fleet.getMemoryWithoutUpdate().set(MemFlags.FLEET_IGNORES_OTHER_FLEETS, true, MilitaryBase.PATROL_IGNORE_OTHER_FLEETS_DELAY_DAYS);
+        fleet.getStats().addTemporaryModMult(MilitaryBase.PATROL_IGNORE_OTHER_FLEETS_DELAY_DAYS, "preparingForPatrol", "Preparing for patrol duty", 0f,
+                fleet.getStats().getSensorRangeMod());
 
         if (custom.spawnFP <= 0) {
             custom.spawnFP = fleet.getFleetPoints();
