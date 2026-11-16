@@ -27,10 +27,25 @@ public class Boggled_CHAMELEON extends BaseIndustry
     private int lastDayCheckedRogue = 0;
     private final int requiredDaysToRemoveRogue = boggledTools.getIntSetting("boggledChameleonRogueCoreTerminationDaysToFinish");
 
+    private static final String RAT_MOD_ID = "assortment_of_things";
+    private static final String RAT_RAMPANT_MILITARY_CORE = "rat_rampant_military_core";
+
+    private boolean marketHasRampantMilitaryCore()
+    {
+        return Global.getSettings().getModManager().isModEnabled(RAT_MOD_ID)
+                && this.market.hasCondition(RAT_RAMPANT_MILITARY_CORE);
+    }
+
     @Override
     public void advance(float amount)
     {
         super.advance(amount);
+
+        // The core will not allow a facility that could find and remove it to operate.
+        if(this.marketHasRampantMilitaryCore())
+        {
+            return;
+        }
 
         Pair<String, Integer> deficit = getChameleonDeficit();
 
@@ -131,7 +146,23 @@ public class Boggled_CHAMELEON extends BaseIndustry
             return false;
         }
 
+        if(this.marketHasRampantMilitaryCore())
+        {
+            return false;
+        }
+
         return super.isAvailableToBuild();
+    }
+
+    @Override
+    public String getUnavailableReason()
+    {
+        if(this.marketHasRampantMilitaryCore())
+        {
+            return "The rampant military core will not allow a CHAMELEON to be constructed.";
+        }
+
+        return super.getUnavailableReason();
     }
 
     @Override
@@ -167,6 +198,12 @@ public class Boggled_CHAMELEON extends BaseIndustry
         float opad = 10.0F;
         Color highlight = Misc.getHighlightColor();
         Color bad = Misc.getNegativeHighlightColor();
+
+        if(this.marketHasRampantMilitaryCore() && mode != IndustryTooltipMode.ADD_INDUSTRY && mode != IndustryTooltipMode.QUEUED && !isBuilding())
+        {
+            tooltip.addPara("The rampant military core has disabled this facility to prevent itself from being removed.", bad, opad);
+            return;
+        }
 
         // Inserts pacification status after description
         if((this.market.hasCondition("decivilized_subpop") || this.market.hasCondition("decivilized")) && mode != IndustryTooltipMode.ADD_INDUSTRY && mode != IndustryTooltipMode.QUEUED && !isBuilding())
@@ -208,6 +245,51 @@ public class Boggled_CHAMELEON extends BaseIndustry
     }
 
     @Override
+    protected void applyAICoreToIncomeAndUpkeep()
+    {
+        if(this.marketHasRampantMilitaryCore())
+        {
+            getUpkeep().unmodifyMult("ind_core");
+            return;
+        }
+
+        super.applyAICoreToIncomeAndUpkeep();
+    }
+
+    @Override
+    protected void applyAlphaCoreSupplyAndDemandModifiers()
+    {
+        if(this.marketHasRampantMilitaryCore())
+        {
+            return;
+        }
+
+        super.applyAlphaCoreSupplyAndDemandModifiers();
+    }
+
+    @Override
+    protected void applyBetaCoreSupplyAndDemandModifiers()
+    {
+        if(this.marketHasRampantMilitaryCore())
+        {
+            return;
+        }
+
+        super.applyBetaCoreSupplyAndDemandModifiers();
+    }
+
+    @Override
+    protected void applyGammaCoreSupplyAndDemandModifiers()
+    {
+        if(this.marketHasRampantMilitaryCore())
+        {
+            return;
+        }
+
+        super.applyGammaCoreSupplyAndDemandModifiers();
+    }
+
+    @Override
     protected void addPostDemandSection(TooltipMakerAPI tooltip, boolean hasDemand, IndustryTooltipMode mode)
     {
         Pair<String, Integer> deficit = getChameleonDeficit();
@@ -225,7 +307,7 @@ public class Boggled_CHAMELEON extends BaseIndustry
     {
         Pair<String, Integer> deficit = getChameleonDeficit();
 
-        if(isFunctional() && !isBuilding() && this.aiCoreId != null && this.aiCoreId.equals("alpha_core") && deficit.two <= 0)
+        if(isFunctional() && !isBuilding() && !this.marketHasRampantMilitaryCore() && this.aiCoreId != null && this.aiCoreId.equals("alpha_core") && deficit.two <= 0)
         {
             // Neutralizes Pather interest to zero.
             // Previously this just returned -1000, but with the 0.96a event system the large negative amount would be subtracted from the hostile event progress.
@@ -258,6 +340,15 @@ public class Boggled_CHAMELEON extends BaseIndustry
 
     @Override
     public void addAlphaCoreDescription(TooltipMakerAPI tooltip, AICoreDescriptionMode mode) {
+        if(this.marketHasRampantMilitaryCore())
+        {
+            if(mode != AICoreDescriptionMode.INDUSTRY_TOOLTIP)
+            {
+                tooltip.addPara("The rampant military core has disabled this facility, so this core provides no bonuses.", Misc.getNegativeHighlightColor(), 10.0F);
+            }
+            return;
+        }
+
         float UPKEEP_MULT = 0.75F;
         int DEMAND_REDUCTION = 1;
 
@@ -287,7 +378,7 @@ public class Boggled_CHAMELEON extends BaseIndustry
     protected void applyImproveModifiers()
     {
         Pair<String, Integer> deficit = getChameleonDeficit();
-        if(this.isImproved() && this.isFunctional() && deficit.two <= 0)
+        if(this.isImproved() && this.isFunctional() && !this.marketHasRampantMilitaryCore() && deficit.two <= 0)
         {
             market.getStability().modifyFlat("chameleon_improve", IMPROVE_STABILITY_BONUS, getImprovementsDescForModifiers() + " (CHAMELEON)");
         }

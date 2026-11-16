@@ -171,8 +171,17 @@ public class BoggledTerraformingCoreUI implements CustomUIPanelPlugin {
         handlePlanetSelectPaneZAxis(planetSelectView);
 
         // Check the default market button so advance will set up the left terraforming pane for it.
+        // The requested market can be missing (abandoned, captured, station, etc.) because Ashlib
+        // re-inits this tab with a leftover market argument when the command UI is rebuilt.
         ButtonAPI defaultMarketButton = this.marketToButtonMap.get(defaultSelectedMarket);
-        defaultMarketButton.setChecked(true);
+        if(defaultMarketButton == null && !this.playerMarkets.isEmpty())
+        {
+            defaultMarketButton = this.marketToButtonMap.get(this.playerMarkets.get(0));
+        }
+        if(defaultMarketButton != null)
+        {
+            defaultMarketButton.setChecked(true);
+        }
 
         planetSelectPane.addUIElement(planetSelectViewHeader).inTL(0, 0);
         planetSelectPane.addUIElement(planetSelectView).inTL(0,18);
@@ -195,7 +204,7 @@ public class BoggledTerraformingCoreUI implements CustomUIPanelPlugin {
 
         if(!this.playerMarkets.isEmpty())
         {
-            MarketAPI defaultMarket = market != null ? market : this.playerMarkets.get(0);
+            MarketAPI defaultMarket = (market != null && this.playerMarkets.contains(market)) ? market : this.playerMarkets.get(0);
             this.mainPanel.addComponent(createPlanetSelectPane(defaultMarket)).inTL(0,0);
         }
         // Handle case where the player controls no planet-based colonies
