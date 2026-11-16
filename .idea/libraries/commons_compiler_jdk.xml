@@ -19,10 +19,7 @@
       <root url="file://$PROJECT_DIR$/../LunaLib-2.1.0/jars" />
     </CLASSES>
     <JAVADOC />
-    <SOURCES>
-      <root url="file://$PROJECT_DIR$/../LunaLib-2.1.0/jars" />
-    </SOURCES>
+    <SOURCES />
     <jarDirectory url="file://$PROJECT_DIR$/../LunaLib-2.1.0/jars" recursive="false" />
-    <jarDirectory url="file://$PROJECT_DIR$/../LunaLib-2.1.0/jars" recursive="false" type="SOURCES" />
   </library>
 </component>
