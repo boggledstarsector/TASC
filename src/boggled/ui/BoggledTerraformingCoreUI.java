@@ -9,7 +9,6 @@ import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.*;
 import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.campaign.econ.MarketConditionAPI;
-import com.fs.starfarer.api.impl.campaign.ids.Conditions;
 import com.fs.starfarer.api.characters.MarketConditionSpecAPI;
 import com.fs.starfarer.api.input.InputEventAPI;
 import com.fs.starfarer.api.ui.*;
@@ -434,7 +433,7 @@ public class BoggledTerraformingCoreUI implements CustomUIPanelPlugin {
                 conditionsTemp.add(condition);
             }
 
-            if(condition.isPlanetary() && condition.getPlugin().showIcon() && !condition.getId().equals(Conditions.POPULATION))
+            if(condition.isPlanetary() && condition.getPlugin().showIcon() && !isColonyPopulation(condition.getId()))
             {
                 conditionsTemp.add(condition);
             }
@@ -508,7 +507,7 @@ public class BoggledTerraformingCoreUI implements CustomUIPanelPlugin {
                 conditionsTemp.add(condition);
             }
 
-            if(condition.isPlanetary() && !condition.getId().equals(Conditions.POPULATION) && Global.getSettings().getMarketConditionSpec(condition.getId()).getIcon() != null)
+            if(condition.isPlanetary() && !isColonyPopulation(condition.getId()) && Global.getSettings().getMarketConditionSpec(condition.getId()).getIcon() != null)
             {
                 conditionsTemp.add(condition);
             }
@@ -721,6 +720,12 @@ public class BoggledTerraformingCoreUI implements CustomUIPanelPlugin {
         boggledTools.addCondition(market, boggledTools.BoggledConditions.terraformingControllerConditionId);
         Terraforming_Controller terraformingController = getTerraformingControllerFromMarket(market);
         return terraformingController.getCurrentProject();
+    }
+
+    // Vanilla names population_1 through population_10 "Population". There is no Conditions.POPULATION.
+    private static boolean isColonyPopulation(String conditionId)
+    {
+        return conditionId != null && conditionId.startsWith("population_");
     }
 
     private static float getSortOrderForCondition(MarketConditionAPI condition)

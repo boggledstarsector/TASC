@@ -132,8 +132,8 @@ public class Cramped_Quarters extends BaseHazardCondition implements MarketImmig
         if(boggledTools.getBooleanSetting(boggledTools.BoggledSettings.stationCrampedQuartersPlayerCanPayToIncreaseStationSize))
         {
             String expansions = boggledTools.getNumberOfStationExpansions(this.market) + "";
-            String expanded = StringHelper.getString(StringHelper.INDUSTRIES, "cramped_quarters_expanded", StringHelper.tokens("count", expansions));
-            StringHelper.applyHighlight(tooltip.addPara(expanded, 10.0F), Misc.getHighlightColor(), expansions);
+            String expandedCount = StringHelper.getString(StringHelper.INDUSTRIES, "cramped_quarters_expanded", StringHelper.tokens("count", expansions));
+            StringHelper.applyHighlight(tooltip.addPara(expandedCount, 10.0F), Misc.getHighlightColor(), expansions);
         }
 
         if(boggledTools.getBooleanSetting(boggledTools.BoggledSettings.stationCrampedQuartersPlayerCanPayToIncreaseStationSize) && boggledTools.getBooleanSetting(boggledTools.BoggledSettings.stationProgressIncreaseInCostsToExpandStation))
