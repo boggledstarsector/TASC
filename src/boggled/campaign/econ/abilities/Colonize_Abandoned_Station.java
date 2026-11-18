@@ -1,5 +1,6 @@
 package boggled.campaign.econ.abilities;
 
+import boggled.campaign.econ.StringHelper;
 import boggled.campaign.econ.boggledTools;
 import boggled.scripts.BoggledNewStationMarketInteractionScript;
 import boggled.scripts.BoggledPlayerFactionSetupScript;
@@ -13,7 +14,6 @@ import com.fs.starfarer.api.impl.campaign.ids.Conditions;
 import com.fs.starfarer.api.impl.campaign.ids.Factions;
 import com.fs.starfarer.api.impl.campaign.ids.Industries;
 import com.fs.starfarer.api.impl.campaign.submarkets.StoragePlugin;
-import com.fs.starfarer.api.ui.LabelAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
 import java.awt.Color;
@@ -28,6 +28,34 @@ public class Colonize_Abandoned_Station extends BaseDurationAbility
     private final float transplutonicsCost = boggledTools.getIntSetting("boggledStationRecolonizeTransplutonicsCost");
 
     public Colonize_Abandoned_Station() { }
+
+    private static boolean isSiphonStation(SectorEntityToken entity) {
+        return entity != null && (entity.hasTag(boggledTools.BoggledTags.siphonStation) || isBoggledSiphonEntity(entity) || matchesVanillaAbandonedSiphonName(entity));
+    }
+
+    private static boolean isBoggledSiphonEntity(SectorEntityToken entity) {
+        String type = entity.getCustomEntityType();
+        return type != null && type.startsWith("boggled_siphon_station");
+    }
+
+    /**
+     * tasc_abilities vanilla_abandoned_siphon_station. The English value is the fallback.
+     * A translation sets it to the base game's station name. Blank or missing matches nothing.
+     */
+    private static boolean matchesVanillaAbandonedSiphonName(SectorEntityToken entity) {
+        if (entity == null) {
+            return false;
+        }
+        String fullName = entity.getFullName();
+        if (fullName == null || fullName.isEmpty()) {
+            return false;
+        }
+        String search = StringHelper.getString(StringHelper.ABILITIES, "vanilla_abandoned_siphon_station");
+        if (search == null || search.isBlank() || search.startsWith("[INVALID]")) {
+            return false;
+        }
+        return fullName.contains(search);
+    }
 
     @Override
     protected void activateImpl()
@@ -96,7 +124,7 @@ public class Colonize_Abandoned_Station extends BaseDurationAbility
             SectorEntityToken newLightsOnColonize = system.addCustomEntity("boggled_newLightsOnColonize", "New Lights Overlay From Colonizing Abandoned Station", targetEntityForMarket.getCustomEntityType() + "_lights_overlay", playerFleet.getFaction().getId());
             newLightsOnColonize.setOrbit(targetEntityForMarket.getOrbit().makeCopy());
         }
-        else if(targetEntityForMarket.hasTag(boggledTools.BoggledTags.siphonStation) || targetEntityForMarket.getFullName().contains("Abandoned Siphon Station"))
+        else if(isSiphonStation(targetEntityForMarket))
         {
             SectorEntityToken hostGasGiant = null;
             if(targetEntityForMarket.getOrbitFocus() != null && targetEntityForMarket.getOrbitFocus() instanceof PlanetAPI && targetEntityForMarket.getOrbitFocus().getMarket() != null && ((PlanetAPI) targetEntityForMarket.getOrbitFocus()).isGasGiant())
@@ -145,16 +173,14 @@ public class Colonize_Abandoned_Station extends BaseDurationAbility
 
                 market.getConstructionQueue().addToEnd(Industries.MINING, 0);
 
-                if(targetEntityForMarket.getFullName().contains("Abandoned Siphon Station"))
-                {
-                    targetEntityForMarket.setName(hostGasGiant.getName() + " Siphon Station");
-                    market.setName(hostGasGiant.getName() + " Siphon Station");
+                if (matchesVanillaAbandonedSiphonName(targetEntityForMarket)) {
+                    String renamed = StringHelper.getString(StringHelper.ABILITIES, "siphon_entity_name", StringHelper.tokens("planet", hostGasGiant.getName()));
+                    targetEntityForMarket.setName(renamed);
+                    market.setName(renamed);
                 }
             }
 
-            // targetEntityForMarket.setCustomDescriptionId("boggled_siphon_station");
-
-            if(targetEntityForMarket.hasTag(boggledTools.BoggledTags.siphonStation))
+            if(targetEntityForMarket.hasTag(boggledTools.BoggledTags.siphonStation) || isBoggledSiphonEntity(targetEntityForMarket))
             {
                 SectorEntityToken newLightsOnColonize = system.addCustomEntity("boggled_newLightsOnColonize", "New Lights Overlay From Colonizing Abandoned Station", targetEntityForMarket.getCustomEntityType() + "_lights_overlay", playerFleet.getFaction().getId());
                 newLightsOnColonize.setOrbit(targetEntityForMarket.getOrbit().makeCopy());
@@ -316,16 +342,23 @@ public class Colonize_Abandoned_Station extends BaseDurationAbility
         Color highlight = Misc.getHighlightColor();
         Color bad = Misc.getNegativeHighlightColor();
 
-        LabelAPI title = tooltip.addTitle("Colonize Abandoned Station");
+        tooltip.addTitle(StringHelper.getString(StringHelper.ABILITIES, "colonize_title"));
         float pad = 10.0F;
-        tooltip.addPara("Colonize an abandoned station. Expends %s credits, %s crew, %s heavy machinery, %s metals and %s transplutonics for construction.", pad, highlight, new String[]{(int)creditCost + "",(int)crewCost + "",(int)heavyMachineryCost +"", (int)metalCost + "", (int)transplutonicsCost +""});
+        String credits = (int) creditCost + "";
+        String crew = (int) crewCost + "";
+        String heavyMachinery = (int) heavyMachineryCost + "";
+        String metals = (int) metalCost + "";
+        String transplutonics = (int) transplutonicsCost + "";
+        String costSentence = StringHelper.getString(StringHelper.ABILITIES, "colonize_cost", StringHelper.tokens(
+                "credits", credits, "crew", crew, "heavyMachinery", heavyMachinery, "metals", metals, "transplutonics", transplutonics));
+        StringHelper.applyHighlight(tooltip.addPara(costSentence, pad), highlight, credits, crew, heavyMachinery, metals, transplutonics);
 
         // Check research requirement for tooltip
         String requiredResearch = boggledTools.getRequiredResearchForAbility("boggled_colonize_abandoned_station");
         if (requiredResearch != null && !boggledTools.isResearched(requiredResearch))
         {
             String researchName = boggledTools.getResearchDisplayName(requiredResearch);
-            tooltip.addPara("Requires the " + researchName + " research to be completed.", bad, pad);
+            tooltip.addPara(StringHelper.getString(StringHelper.GENERAL, "requires_research", StringHelper.tokens("research", researchName)), bad, pad);
         }
 
         SectorEntityToken playerFleet = Global.getSector().getPlayerFleet();
@@ -333,15 +366,15 @@ public class Colonize_Abandoned_Station extends BaseDurationAbility
 
         if(playerFleet.isInHyperspace() || Global.getSector().getPlayerFleet().isInHyperspaceTransition() || system == null)
         {
-            tooltip.addPara("You cannot colonize stations in hyperspace.", bad, pad);
+            tooltip.addPara(StringHelper.getString(StringHelper.ABILITIES, "colonize_hyperspace"), bad, pad);
         }
         else if(system.getJumpPoints().isEmpty())
         {
-            tooltip.addPara("You cannot construct a station in a system with no jump points.", bad, pad);
+            tooltip.addPara(StringHelper.getString("cannot_construct_no_jump_points"), bad, pad);
         }
         else if(system.hasTag(Tags.SYSTEM_ABYSSAL))
         {
-            tooltip.addPara("You cannot construct a station in a system in abyssal hyperspace.", bad, pad);
+            tooltip.addPara(StringHelper.getString("cannot_construct_abyssal"), bad, pad);
         }
         else
         {
@@ -350,15 +383,17 @@ public class Colonize_Abandoned_Station extends BaseDurationAbility
 
             if(closestStation == null)
             {
-                tooltip.addPara("There are no stations in the " + system.getName() + ".", bad, pad);
+                tooltip.addPara(StringHelper.getString(StringHelper.ABILITIES, "colonize_no_stations", StringHelper.tokens("system", system.getName())), bad, pad);
             }
             else if(closestStation.getMarket() != null && !closestStation.getMarket().getFactionId().equals(Factions.NEUTRAL))
             {
-                tooltip.addPara("The station closest to your location is " + closestStation.getName() + " and it is controlled by " + closestStation.getMarket().getFaction().getDisplayNameWithArticle() + ". You cannot colonize a station that is already under the control of a major faction.", bad, pad);
+                tooltip.addPara(StringHelper.getString(StringHelper.ABILITIES, "colonize_controlled", StringHelper.tokens(
+                        "station", closestStation.getName(),
+                        "faction", closestStation.getMarket().getFaction().getDisplayNameWithArticle())), bad, pad);
             }
             else if(!closestStation.equals(closestColonizableStation))
             {
-                tooltip.addPara("The station closest to your location is " + closestStation.getName() + ". It is in a state of extreme disrepair and is not a viable target for colonization.", bad, pad);
+                tooltip.addPara(StringHelper.getString(StringHelper.ABILITIES, "colonize_disrepair", StringHelper.tokens("station", closestStation.getName())), bad, pad);
             }
             else if(Misc.getDistance(closestColonizableStation, playerFleet) > 400f)
             {
@@ -366,35 +401,38 @@ public class Colonize_Abandoned_Station extends BaseDurationAbility
                 String distanceInSuString = String.format("%.2f", distanceInSu);
                 float requiredDistanceInSu = 400f / 2000f;
                 String requiredDistanceInSuString = String.format("%.2f", requiredDistanceInSu);
-                tooltip.addPara("The station closest to your location is " + closestStation.getName() + ". Your fleet is " + distanceInSuString + " stellar units away. You must be within " + requiredDistanceInSuString + " stellar units to colonize the station.", bad, pad);
+                tooltip.addPara(StringHelper.getString(StringHelper.ABILITIES, "colonize_too_far", StringHelper.tokens(
+                        "station", closestStation.getName(), "distance", distanceInSuString, "required", requiredDistanceInSuString)), bad, pad);
             }
         }
 
         CargoAPI playerCargo = playerFleet.getCargo();
         if(playerCargo.getCredits().get() < creditCost)
         {
-            tooltip.addPara("Insufficient credits.", bad, pad);
+            tooltip.addPara(StringHelper.getString("insufficient_credits"), bad, pad);
         }
         if(boggledDefaultCargo.active.getCommodityAmount(playerCargo, boggledDefaultCargo.Abandoned_Station, "metals") < metalCost)
         {
-            tooltip.addPara("Insufficient metals.", bad, pad);
+            tooltip.addPara(StringHelper.getString("insufficient_metals"), bad, pad);
         }
         if(boggledDefaultCargo.active.getCommodityAmount(playerCargo, boggledDefaultCargo.Abandoned_Station, "rare_metals") < transplutonicsCost)
         {
-            tooltip.addPara("Insufficient transplutonics.", bad, pad);
+            tooltip.addPara(StringHelper.getString("insufficient_transplutonics"), bad, pad);
         }
         if(boggledDefaultCargo.active.getCommodityAmount(playerCargo, boggledDefaultCargo.Abandoned_Station, "crew") < crewCost)
         {
-            tooltip.addPara("Insufficient crew.", bad, pad);
+            tooltip.addPara(StringHelper.getString("insufficient_crew"), bad, pad);
         }
         if(boggledDefaultCargo.active.getCommodityAmount(playerCargo, boggledDefaultCargo.Abandoned_Station, "heavy_machinery") < heavyMachineryCost)
         {
-            tooltip.addPara("Insufficient heavy machinery.", bad, pad);
+            tooltip.addPara(StringHelper.getString("insufficient_heavy_machinery"), bad, pad);
         }
 
         if(this.isUsable())
         {
-            tooltip.addPara("Colonization target: %s", pad, highlight, new String[]{boggledTools.getClosestColonizableStationInSystem(playerFleet).getName()});
+            String targetName = boggledTools.getClosestColonizableStationInSystem(playerFleet).getName();
+            String targetSentence = StringHelper.getString(StringHelper.ABILITIES, "colonize_target", StringHelper.tokens("station", targetName));
+            StringHelper.applyHighlight(tooltip.addPara(targetSentence, pad), highlight, targetName);
         }
     }
 

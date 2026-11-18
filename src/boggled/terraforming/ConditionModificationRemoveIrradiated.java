@@ -1,5 +1,6 @@
 package boggled.terraforming;
 
+import boggled.campaign.econ.StringHelper;
 import boggled.campaign.econ.boggledTools;
 import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Conditions;
@@ -13,7 +14,7 @@ public class ConditionModificationRemoveIrradiated extends BoggledBaseTerraformi
 {
     public ConditionModificationRemoveIrradiated(MarketAPI market)
     {
-        super(market, "Remove radiation", new HashSet<>(), new HashSet<>(List.of(Conditions.IRRADIATED)));
+        super(market, StringHelper.getString(StringHelper.TERRAFORMING, "project_remove_radiation"), new HashSet<>(), new HashSet<>(List.of(Conditions.IRRADIATED)));
     }
 
     @Override
@@ -48,7 +49,7 @@ public class ConditionModificationRemoveIrradiated extends BoggledBaseTerraformi
             }
         };
 
-        return new TerraformingRequirementObject(this.market.getName() + " is irradiated", requirementMet, null);
+        return new TerraformingRequirementObject(marketRequirement("req_is_irradiated"), requirementMet, null);
     }
 
     public static boolean isEnabledViaSettings() {

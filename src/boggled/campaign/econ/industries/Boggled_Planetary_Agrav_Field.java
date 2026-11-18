@@ -11,6 +11,7 @@ import com.fs.starfarer.api.util.Misc;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.impl.campaign.econ.impl.BaseIndustry;
 import com.fs.starfarer.api.impl.campaign.ids.Conditions;
+import boggled.campaign.econ.StringHelper;
 import boggled.campaign.econ.boggledTools;
 
 public class Boggled_Planetary_Agrav_Field extends BaseIndustry implements ShowBoggledTerraformingMenuOption
@@ -121,12 +122,12 @@ public class Boggled_Planetary_Agrav_Field extends BaseIndustry implements ShowB
     {
         if(!this.market.hasIndustry("BOGGLED_DOMED_CITIES"))
         {
-            return "It is not economically feasible to blanket an entire world with agrav generators. The population must be housed within a few centralized domed cities for a colony-wide agrav field to be practical.";
+            return StringHelper.getString(StringHelper.INDUSTRIES, "agrav_needs_domes");
         }
 
         if(!this.market.hasCondition("high_gravity") && !this.market.hasCondition("low_gravity"))
         {
-            return "Gravity on " + this.market.getName() + " is within the optimal range for humans. Building agrav generators here would serve little purpose.";
+            return StringHelper.getString(StringHelper.INDUSTRIES, "agrav_gravity_optimal", StringHelper.tokens("market", this.market.getName()));
         }
 
         return super.getUnavailableReason();
@@ -160,41 +161,45 @@ public class Boggled_Planetary_Agrav_Field extends BaseIndustry implements ShowB
 
         if(mode == IndustryTooltipMode.ADD_INDUSTRY || mode == IndustryTooltipMode.QUEUED ||!isFunctional() || !this.market.hasIndustry("BOGGLED_DOMED_CITIES"))
         {
-            tooltip.addPara("If operational, would counter the effects of:", opad, Misc.getHighlightColor(), "");
+            tooltip.addPara(StringHelper.getString(StringHelper.INDUSTRIES, "agrav_would_counter"), opad);
             int numCondsCountered = 0;
             for (String id : SUPPRESSED_CONDITIONS)
             {
                 if(this.market.hasCondition(id))
                 {
                     String condName = Global.getSettings().getMarketConditionSpec(id).getName();
-                    tooltip.addPara("           %s", 2f, Misc.getHighlightColor(), condName);
+                    String line = StringHelper.getString(StringHelper.INDUSTRIES, "agrav_condition", StringHelper.tokens("condition", condName));
+                    StringHelper.applyHighlight(tooltip.addPara(line, 2f), Misc.getHighlightColor(), condName);
                     numCondsCountered++;
                 }
             }
 
             if(numCondsCountered == 0)
             {
-                tooltip.addPara("           %s", 2f, Misc.getGrayColor(), "(none)");
+                String none = StringHelper.getString(StringHelper.INDUSTRIES, "agrav_none");
+                StringHelper.applyHighlight(tooltip.addPara(none, 2f), Misc.getGrayColor(), "(none)");
             }
         }
 
         if(mode != IndustryTooltipMode.ADD_INDUSTRY && mode != IndustryTooltipMode.QUEUED && isFunctional() && this.market.hasIndustry("BOGGLED_DOMED_CITIES"))
         {
-            tooltip.addPara("Countering the effects of:", opad, Misc.getHighlightColor(), "");
+            tooltip.addPara(StringHelper.getString(StringHelper.INDUSTRIES, "agrav_countering"), opad);
             int numCondsCountered = 0;
             for (String id : SUPPRESSED_CONDITIONS)
             {
                 if(this.market.hasCondition(id))
                 {
                     String condName = Global.getSettings().getMarketConditionSpec(id).getName();
-                    tooltip.addPara("           %s", 2f, Misc.getHighlightColor(), condName);
+                    String line = StringHelper.getString(StringHelper.INDUSTRIES, "agrav_condition", StringHelper.tokens("condition", condName));
+                    StringHelper.applyHighlight(tooltip.addPara(line, 2f), Misc.getHighlightColor(), condName);
                     numCondsCountered++;
                 }
             }
 
             if(numCondsCountered == 0)
             {
-                tooltip.addPara("           %s", 2f, Misc.getGrayColor(), "(none)");
+                String none = StringHelper.getString(StringHelper.INDUSTRIES, "agrav_none");
+                StringHelper.applyHighlight(tooltip.addPara(none, 2f), Misc.getGrayColor(), "(none)");
             }
         }
     }

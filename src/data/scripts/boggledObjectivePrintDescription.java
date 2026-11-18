@@ -10,6 +10,7 @@ import com.fs.starfarer.api.impl.campaign.rulecmd.BaseCommandPlugin;
 import com.fs.starfarer.api.loading.Description;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
+import boggled.campaign.econ.StringHelper;
 import boggled.campaign.econ.boggledTools;
 import java.awt.*;
 import java.util.*;
@@ -43,22 +44,23 @@ public class boggledObjectivePrintDescription extends BaseCommandPlugin
 
         printDescription(type);
         //Misc.showCost(text, (Color)null, (Color)null, getResources(), getQuantities(type));
-        Misc.showCost(text, "Resources: consumed (available)", true, 120.0F, (Color)null, (Color)null, getResources(), boggledTools.getQuantitiesForStableLocationConstruction(type), (boolean[])null);
+        Misc.showCost(text, StringHelper.getString(StringHelper.INTEL, "objective_resources_cost_label"), true, 120.0F, (Color)null, (Color)null, getResources(), boggledTools.getQuantitiesForStableLocationConstruction(type), (boolean[])null);
         StarSystemAPI system = Global.getSector().getPlayerFleet().getStarSystem();
         if(!canBuild(type))
         {
-            text.addPara("You do not have the necessary resources to build this structure.");
+            text.addPara(StringHelper.getString(StringHelper.INTEL, "objective_no_resources"));
 
             if(type.equals("inactive_gate"))
             {
                 if(boggledTools.gateInSystem(system))
                 {
-                    text.addPara("There is already a gate in this system. You cannot build a second one.");
+                    text.addPara(StringHelper.getString(StringHelper.INTEL, "objective_gate_exists"));
                 }
 
                 if(boggledTools.getBooleanSetting("boggledPlayerMustHaveMarketInSystemToBuildInactiveGate") && boggledTools.getSizeOfLargestPlayerMarketInSystem(system) < boggledTools.getPlayerMarketSizeRequirementToBuildGate())
                 {
-                    text.addPara("You must have a market with a size of at least " + boggledTools.getPlayerMarketSizeRequirementToBuildGate() + " in this system to build a gate.");
+                    text.addPara(StringHelper.getString(StringHelper.INTEL, "objective_gate_market_size",
+                            StringHelper.tokens("size", String.valueOf(boggledTools.getPlayerMarketSizeRequirementToBuildGate()))));
                 }
             }
         }
@@ -68,17 +70,18 @@ public class boggledObjectivePrintDescription extends BaseCommandPlugin
             {
                 if(boggledTools.gateInSystem(system))
                 {
-                    text.addPara("There is already a gate in this system. You cannot build a second one.");
+                    text.addPara(StringHelper.getString(StringHelper.INTEL, "objective_gate_exists"));
                 }
 
                 if(boggledTools.getBooleanSetting("boggledPlayerMustHaveMarketInSystemToBuildInactiveGate") && boggledTools.getSizeOfLargestPlayerMarketInSystem(system) < boggledTools.getPlayerMarketSizeRequirementToBuildGate())
                 {
-                    text.addPara("You must have a market with a size of at least " + boggledTools.getPlayerMarketSizeRequirementToBuildGate() + " in this system to build a gate.");
+                    text.addPara(StringHelper.getString(StringHelper.INTEL, "objective_gate_market_size",
+                            StringHelper.tokens("size", String.valueOf(boggledTools.getPlayerMarketSizeRequirementToBuildGate()))));
                 }
             }
             else
             {
-                text.addPara("Proceed with construction?");
+                text.addPara(StringHelper.getString(StringHelper.INTEL, "objective_proceed"));
             }
         }
 
@@ -164,19 +167,22 @@ public class boggledObjectivePrintDescription extends BaseCommandPlugin
             if(plugin instanceof CommRelayEntityPlugin)
             {
                 int bonus = Math.abs(Math.round(CommRelayCondition.COMM_RELAY_BONUS));
-                info.addPara("      %s stability for same-faction colonies in system", 0.0F, Misc.getHighlightColor(), new String[]{"+" + bonus});
+                String sentence = StringHelper.getString(StringHelper.INTEL, "objective_effect_stability", StringHelper.tokens("bonus", "+" + bonus));
+                StringHelper.applyHighlight(info.addPara(sentence, 0.0F), Misc.getHighlightColor(), "+" + bonus);
             }
             else if(plugin instanceof SensorArrayEntityPlugin)
             {
                 float SENSOR_BONUS = 700.0F;
                 int bonus = (int)SENSOR_BONUS;
-                info.addPara("      %s sensor range for all same-faction fleets in system", 0.0F, Misc.getHighlightColor(), new String[]{"+" + bonus});
+                String sentence = StringHelper.getString(StringHelper.INTEL, "objective_effect_sensor_range", StringHelper.tokens("bonus", "+" + bonus));
+                StringHelper.applyHighlight(info.addPara(sentence, 0.0F), Misc.getHighlightColor(), "+" + bonus);
             }
             else if(plugin instanceof NavBuoyEntityPlugin)
             {
                 float NAV_BONUS = 3.0F;
                 int bonus = (int)NAV_BONUS;
-                info.addPara("      %s burn level for all same-faction fleets in system", 0.0F, Misc.getHighlightColor(), new String[]{"+" + bonus});
+                String sentence = StringHelper.getString(StringHelper.INTEL, "objective_effect_burn", StringHelper.tokens("bonus", "+" + bonus));
+                StringHelper.applyHighlight(info.addPara(sentence, 0.0F), Misc.getHighlightColor(), "+" + bonus);
             }
 
             text.addTooltip();
@@ -190,9 +196,12 @@ public class boggledObjectivePrintDescription extends BaseCommandPlugin
                     CampaignObjective o = (CampaignObjective) ccep;
                     if (c == o.getClass()) {
                         if (this.entity == curr) {
-                            text.addPara("Another one in this star system would have no effect beyond providing redundancy in case this one is lost.");
+                            text.addPara(StringHelper.getString(StringHelper.INTEL, "objective_redundancy_this"));
                         } else {
-                            text.addPara("There's already " + curr.getCustomEntitySpec().getAOrAn() + " " + curr.getCustomEntitySpec().getNameInText() + " under your control " + "in this star system. Another one would have no effect " + "beyond providing redundancy if one is lost.");
+                            text.addPara(StringHelper.getString(StringHelper.INTEL, "objective_redundancy_other",
+                                    StringHelper.tokens(
+                                            "article", curr.getCustomEntitySpec().getAOrAn(),
+                                            "name", curr.getCustomEntitySpec().getNameInText())));
                         }
                         break;
                     }

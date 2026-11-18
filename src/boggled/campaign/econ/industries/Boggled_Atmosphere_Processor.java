@@ -12,6 +12,7 @@ import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
 import com.fs.starfarer.api.impl.campaign.econ.impl.BaseIndustry;
 import com.fs.starfarer.api.util.Pair;
+import boggled.campaign.econ.StringHelper;
 import boggled.campaign.econ.boggledTools;
 
 public class Boggled_Atmosphere_Processor extends BaseIndustry implements ShowBoggledTerraformingMenuOption
@@ -103,11 +104,11 @@ public class Boggled_Atmosphere_Processor extends BaseIndustry implements ShowBo
             }
             if(boggledTools.getTascPlanetType(planet).equals(boggledTools.TascPlanetTypes.unknownPlanetId))
             {
-                return "This planet type is unsupported by TASC. Please report this to boggled on the forums so he can add support. The planet type is: " + market.getPlanetEntity().getTypeId();
+                return StringHelper.getString(StringHelper.INDUSTRIES, "atmosphere_processor_unsupported_planet", StringHelper.tokens("planetType", market.getPlanetEntity().getTypeId()));
             }
             else
             {
-                return "Stars, gas giants, volcanic worlds and irradiated worlds cannot be terraformed.";
+                return StringHelper.getString(StringHelper.INDUSTRIES, "atmosphere_processor_cannot_terraform");
             }
         }
 
@@ -124,7 +125,7 @@ public class Boggled_Atmosphere_Processor extends BaseIndustry implements ShowBo
 
         if(this.isDisrupted() && mode != IndustryTooltipMode.ADD_INDUSTRY && mode != IndustryTooltipMode.QUEUED && !isBuilding())
         {
-            tooltip.addPara("Terraforming progress is stalled while the atmosphere processor is disrupted.", bad, opad);
+            tooltip.addPara(StringHelper.getString(StringHelper.INDUSTRIES, "atmosphere_processor_stalled_disrupted"), bad, opad);
         }
     }
 
@@ -150,7 +151,7 @@ public class Boggled_Atmosphere_Processor extends BaseIndustry implements ShowBo
 
             if(deficit.two != 0)
             {
-                tooltip.addPara("The atmosphere processor is inactive due to a shortage of heavy machinery.", bad, opad);
+                tooltip.addPara(StringHelper.getString(StringHelper.INDUSTRIES, "atmosphere_processor_shortage_heavy_machinery"), bad, opad);
             }
         }
     }

@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.lang.String;
 
+import boggled.campaign.econ.StringHelper;
 import boggled.campaign.econ.boggledTools;
 import boggled.campaign.econ.industries.interfaces.ShowBoggledTerraformingMenuOption;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
@@ -55,15 +56,15 @@ public class Boggled_Harmonic_Damper extends BaseIndustry implements ShowBoggled
         }
         else if (this.aiCoreId.equals("gamma_core"))
         {
-            this.market.getStats().getDynamic().getMod(Stats.GROUND_DEFENSES_MOD).modifyMult("boggled_harmonic_damper_ai_bonus", GAMMA_DEFENSE_BONUS, "Gamma core (Harmonic damper)");
+            this.market.getStats().getDynamic().getMod(Stats.GROUND_DEFENSES_MOD).modifyMult("boggled_harmonic_damper_ai_bonus", GAMMA_DEFENSE_BONUS, StringHelper.getString(StringHelper.INDUSTRIES, "harmonic_damper_modifier_gamma"));
         }
         else if (this.aiCoreId.equals("beta_core"))
         {
-            this.market.getStats().getDynamic().getMod(Stats.GROUND_DEFENSES_MOD).modifyMult("boggled_harmonic_damper_ai_bonus", BETA_DEFENSE_BONUS, "Beta core (Harmonic damper)");
+            this.market.getStats().getDynamic().getMod(Stats.GROUND_DEFENSES_MOD).modifyMult("boggled_harmonic_damper_ai_bonus", BETA_DEFENSE_BONUS, StringHelper.getString(StringHelper.INDUSTRIES, "harmonic_damper_modifier_beta"));
         }
         else if (this.aiCoreId.equals("alpha_core"))
         {
-            this.market.getStats().getDynamic().getMod(Stats.GROUND_DEFENSES_MOD).modifyMult("boggled_harmonic_damper_ai_bonus", ALPHA_DEFENSE_BONUS, "Alpha core (Harmonic damper)");
+            this.market.getStats().getDynamic().getMod(Stats.GROUND_DEFENSES_MOD).modifyMult("boggled_harmonic_damper_ai_bonus", ALPHA_DEFENSE_BONUS, StringHelper.getString(StringHelper.INDUSTRIES, "harmonic_damper_modifier_alpha"));
         }
     }
 
@@ -142,21 +143,22 @@ public class Boggled_Harmonic_Damper extends BaseIndustry implements ShowBoggled
     public void addAlphaCoreDescription(TooltipMakerAPI tooltip, AICoreDescriptionMode mode) {
         float opad = 10.0F;
         Color highlight = Misc.getHighlightColor();
-        String pre = "Alpha-level AI core currently assigned. ";
+        String pre = StringHelper.getString(StringHelper.INDUSTRIES, "ai_core_alpha_assigned");
         if (mode == AICoreDescriptionMode.MANAGE_CORE_DIALOG_LIST || mode == AICoreDescriptionMode.INDUSTRY_TOOLTIP) {
-            pre = "Alpha-level AI core. ";
+            pre = StringHelper.getString(StringHelper.INDUSTRIES, "ai_core_alpha_short");
         }
 
         float a = ALPHA_DEFENSE_BONUS;
         String str = Strings.X + (a) + "";
+        String sentence = StringHelper.getString(StringHelper.INDUSTRIES, "harmonic_damper_ai_increases_ground_defenses", StringHelper.tokens("prefix", pre, "bonus", str));
 
         if (mode == AICoreDescriptionMode.INDUSTRY_TOOLTIP) {
             CommoditySpecAPI coreSpec = Global.getSettings().getCommoditySpec(this.aiCoreId);
             TooltipMakerAPI text = tooltip.beginImageWithText(coreSpec.getIconName(), 48.0F);
-            text.addPara(pre + "Increases ground defenses by %s.", 0.0F, highlight, str);
+            StringHelper.applyHighlight(text.addPara(sentence, 0.0F), highlight, str);
             tooltip.addImageWithText(opad);
         } else {
-            tooltip.addPara(pre + "Increases ground defenses by %s.", opad, highlight, str);
+            StringHelper.applyHighlight(tooltip.addPara(sentence, opad), highlight, str);
         }
     }
 
@@ -164,21 +166,22 @@ public class Boggled_Harmonic_Damper extends BaseIndustry implements ShowBoggled
     public void addBetaCoreDescription(TooltipMakerAPI tooltip, AICoreDescriptionMode mode) {
         float opad = 10.0F;
         Color highlight = Misc.getHighlightColor();
-        String pre = "Beta-level AI core currently assigned. ";
+        String pre = StringHelper.getString(StringHelper.INDUSTRIES, "ai_core_beta_assigned");
         if (mode == AICoreDescriptionMode.MANAGE_CORE_DIALOG_LIST || mode == AICoreDescriptionMode.INDUSTRY_TOOLTIP) {
-            pre = "Beta-level AI core. ";
+            pre = StringHelper.getString(StringHelper.INDUSTRIES, "ai_core_beta_short");
         }
 
         float a = BETA_DEFENSE_BONUS;
         String str = Strings.X + (a) + "";
+        String sentence = StringHelper.getString(StringHelper.INDUSTRIES, "harmonic_damper_ai_increases_ground_defenses", StringHelper.tokens("prefix", pre, "bonus", str));
 
         if (mode == AICoreDescriptionMode.INDUSTRY_TOOLTIP) {
             CommoditySpecAPI coreSpec = Global.getSettings().getCommoditySpec(this.aiCoreId);
             TooltipMakerAPI text = tooltip.beginImageWithText(coreSpec.getIconName(), 48.0F);
-            text.addPara(pre + "Increases ground defenses by %s.", opad, highlight, str);
+            StringHelper.applyHighlight(text.addPara(sentence, opad), highlight, str);
             tooltip.addImageWithText(opad);
         } else {
-            tooltip.addPara(pre + "Increases ground defenses by %s.", opad, highlight, str);
+            StringHelper.applyHighlight(tooltip.addPara(sentence, opad), highlight, str);
         }
     }
 
@@ -186,21 +189,22 @@ public class Boggled_Harmonic_Damper extends BaseIndustry implements ShowBoggled
     public void addGammaCoreDescription(TooltipMakerAPI tooltip, AICoreDescriptionMode mode) {
         float opad = 10.0F;
         Color highlight = Misc.getHighlightColor();
-        String pre = "Gamma-level AI core currently assigned. ";
+        String pre = StringHelper.getString(StringHelper.INDUSTRIES, "ai_core_gamma_assigned");
         if (mode == AICoreDescriptionMode.MANAGE_CORE_DIALOG_LIST || mode == AICoreDescriptionMode.INDUSTRY_TOOLTIP) {
-            pre = "Gamma-level AI core. ";
+            pre = StringHelper.getString(StringHelper.INDUSTRIES, "ai_core_gamma_short");
         }
 
         float a = GAMMA_DEFENSE_BONUS;
         String str = Strings.X + (a) + "";
+        String sentence = StringHelper.getString(StringHelper.INDUSTRIES, "harmonic_damper_ai_increases_ground_defenses", StringHelper.tokens("prefix", pre, "bonus", str));
 
         if (mode == AICoreDescriptionMode.INDUSTRY_TOOLTIP) {
             CommoditySpecAPI coreSpec = Global.getSettings().getCommoditySpec(this.aiCoreId);
             TooltipMakerAPI text = tooltip.beginImageWithText(coreSpec.getIconName(), 48.0F);
-            text.addPara(pre + "Increases ground defenses by %s.", opad, highlight, str);
+            StringHelper.applyHighlight(text.addPara(sentence, opad), highlight, str);
             tooltip.addImageWithText(opad);
         } else {
-            tooltip.addPara(pre + "Increases ground defenses by %s.", opad, highlight, str);
+            StringHelper.applyHighlight(tooltip.addPara(sentence, opad), highlight, str);
         }
     }
 
@@ -214,7 +218,7 @@ public class Boggled_Harmonic_Damper extends BaseIndustry implements ShowBoggled
     {
         if (isImproved())
         {
-            this.market.getStats().getDynamic().getMod(Stats.GROUND_DEFENSES_MOD).modifyMult("boggled_harmonic_damper_improve_bonus", IMPROVE_DEFENSE_BONUS, "Improvements (Harmonic damper)");
+            this.market.getStats().getDynamic().getMod(Stats.GROUND_DEFENSES_MOD).modifyMult("boggled_harmonic_damper_improve_bonus", IMPROVE_DEFENSE_BONUS, StringHelper.getString(StringHelper.INDUSTRIES, "harmonic_damper_modifier_improve"));
         }
         else
         {
@@ -231,9 +235,11 @@ public class Boggled_Harmonic_Damper extends BaseIndustry implements ShowBoggled
         String str = Strings.X + (a) + "";
 
         if (mode == ImprovementDescriptionMode.INDUSTRY_TOOLTIP) {
-            info.addPara("Ground defenses increased by %s.", 0f, highlight, str);
+            String sentence = StringHelper.getString(StringHelper.INDUSTRIES, "harmonic_damper_ground_defenses_increased", StringHelper.tokens("bonus", str));
+            StringHelper.applyHighlight(info.addPara(sentence, 0f), highlight, str);
         } else {
-            info.addPara("Increases ground defenses by %s.", 0f, highlight, str);
+            String sentence = StringHelper.getString(StringHelper.INDUSTRIES, "harmonic_damper_increases_ground_defenses", StringHelper.tokens("bonus", str));
+            StringHelper.applyHighlight(info.addPara(sentence, 0f), highlight, str);
         }
 
         info.addSpacer(opad);
@@ -250,41 +256,47 @@ public class Boggled_Harmonic_Damper extends BaseIndustry implements ShowBoggled
 
         if(mode == IndustryTooltipMode.ADD_INDUSTRY || mode == IndustryTooltipMode.QUEUED ||!isFunctional())
         {
-            tooltip.addPara("If operational, would counter the effects of:", opad, Misc.getHighlightColor(), "");
+            tooltip.addPara(StringHelper.getString(StringHelper.INDUSTRIES, "harmonic_damper_would_counter"), opad);
             int numCondsCountered = 0;
             for (String id : SUPPRESSED_CONDITIONS)
             {
                 if(this.market.hasCondition(id))
                 {
                     String condName = Global.getSettings().getMarketConditionSpec(id).getName();
-                    tooltip.addPara("           %s", 2f, Misc.getHighlightColor(), condName);
+                    String line = StringHelper.getString(StringHelper.INDUSTRIES, "harmonic_damper_condition_line", StringHelper.tokens("condition", condName));
+                    StringHelper.applyHighlight(tooltip.addPara(line, 2f), Misc.getHighlightColor(), condName);
                     numCondsCountered++;
                 }
             }
 
             if(numCondsCountered == 0)
             {
-                tooltip.addPara("           %s", 2f, Misc.getGrayColor(), "(none)");
+                String none = StringHelper.getString(StringHelper.INDUSTRIES, "harmonic_damper_none");
+                String line = StringHelper.getString(StringHelper.INDUSTRIES, "harmonic_damper_condition_line", StringHelper.tokens("condition", none));
+                StringHelper.applyHighlight(tooltip.addPara(line, 2f), Misc.getGrayColor(), none);
             }
         }
 
         if(mode != IndustryTooltipMode.ADD_INDUSTRY && mode != IndustryTooltipMode.QUEUED && isFunctional())
         {
-            tooltip.addPara("Countering the effects of:", opad, Misc.getHighlightColor(), "");
+            tooltip.addPara(StringHelper.getString(StringHelper.INDUSTRIES, "harmonic_damper_countering"), opad);
             int numCondsCountered = 0;
             for (String id : SUPPRESSED_CONDITIONS)
             {
                 if(this.market.hasCondition(id))
                 {
                     String condName = Global.getSettings().getMarketConditionSpec(id).getName();
-                    tooltip.addPara("           %s", 2f, Misc.getHighlightColor(), condName);
+                    String line = StringHelper.getString(StringHelper.INDUSTRIES, "harmonic_damper_condition_line", StringHelper.tokens("condition", condName));
+                    StringHelper.applyHighlight(tooltip.addPara(line, 2f), Misc.getHighlightColor(), condName);
                     numCondsCountered++;
                 }
             }
 
             if(numCondsCountered == 0)
             {
-                tooltip.addPara("           %s", 2f, Misc.getGrayColor(), "(none)");
+                String none = StringHelper.getString(StringHelper.INDUSTRIES, "harmonic_damper_none");
+                String line = StringHelper.getString(StringHelper.INDUSTRIES, "harmonic_damper_condition_line", StringHelper.tokens("condition", none));
+                StringHelper.applyHighlight(tooltip.addPara(line, 2f), Misc.getGrayColor(), none);
             }
         }
     }

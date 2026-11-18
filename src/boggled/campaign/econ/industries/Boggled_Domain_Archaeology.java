@@ -5,6 +5,7 @@ import java.lang.String;
 import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.impl.campaign.econ.impl.BaseIndustry;
 import com.fs.starfarer.api.impl.campaign.ids.Conditions;
+import boggled.campaign.econ.StringHelper;
 import boggled.campaign.econ.boggledTools;
 
 public class Boggled_Domain_Archaeology extends BaseIndustry
@@ -83,7 +84,7 @@ public class Boggled_Domain_Archaeology extends BaseIndustry
     {
         if(!marketHasRuins(this.market))
         {
-            return "Requires ruins";
+            return StringHelper.getString(StringHelper.INDUSTRIES, "domain_archaeology_requires_ruins");
         }
 
         return super.getUnavailableReason();

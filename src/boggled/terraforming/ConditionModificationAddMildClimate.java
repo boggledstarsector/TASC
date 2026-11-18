@@ -1,5 +1,6 @@
 package boggled.terraforming;
 
+import boggled.campaign.econ.StringHelper;
 import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Conditions;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
@@ -12,7 +13,7 @@ public class ConditionModificationAddMildClimate extends BoggledBaseTerraforming
 {
     public ConditionModificationAddMildClimate(MarketAPI market)
     {
-        super(market, "Make climate mild", new HashSet<>(List.of(Conditions.MILD_CLIMATE)), new HashSet<>());
+        super(market, StringHelper.getString(StringHelper.TERRAFORMING, "project_make_climate_mild"), new HashSet<>(List.of(Conditions.MILD_CLIMATE)), new HashSet<>());
     }
 
     @Override
@@ -51,6 +52,6 @@ public class ConditionModificationAddMildClimate extends BoggledBaseTerraforming
             }
         };
 
-        return new TerraformingRequirementObject(this.market.getName() + " does not have a mild climate", requirementMet, null);
+        return new TerraformingRequirementObject(marketRequirement("req_not_mild_climate"), requirementMet, null);
     }
 }

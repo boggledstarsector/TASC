@@ -1,5 +1,6 @@
 package boggled.terraforming;
 
+import boggled.campaign.econ.StringHelper;
 import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Conditions;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
@@ -12,7 +13,7 @@ public class ConditionModificationRemoveDenseAtmosphere extends BoggledBaseTerra
 {
     public ConditionModificationRemoveDenseAtmosphere(MarketAPI market)
     {
-        super(market, "Reduce atmospheric density", new HashSet<>(), new HashSet<>(List.of(Conditions.DENSE_ATMOSPHERE)));
+        super(market, StringHelper.getString(StringHelper.TERRAFORMING, "project_reduce_atmospheric_density"), new HashSet<>(), new HashSet<>(List.of(Conditions.DENSE_ATMOSPHERE)));
     }
 
     @Override
@@ -47,6 +48,6 @@ public class ConditionModificationRemoveDenseAtmosphere extends BoggledBaseTerra
             }
         };
 
-        return new TerraformingRequirementObject(this.market.getName() + " has a dense atmosphere", requirementMet, null);
+        return new TerraformingRequirementObject(marketRequirement("req_has_dense_atmosphere"), requirementMet, null);
     }
 }

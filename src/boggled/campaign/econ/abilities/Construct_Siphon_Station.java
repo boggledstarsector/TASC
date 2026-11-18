@@ -1,12 +1,12 @@
 package boggled.campaign.econ.abilities;
 
+import boggled.campaign.econ.StringHelper;
 import boggled.campaign.econ.boggledTools;
 import boggled.scripts.PlayerCargoCalculations.boggledDefaultCargo;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.*;
 import com.fs.starfarer.api.impl.campaign.abilities.BaseDurationAbility;
 import com.fs.starfarer.api.impl.campaign.ids.Factions;
-import com.fs.starfarer.api.ui.LabelAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
 import java.awt.Color;
@@ -36,7 +36,8 @@ public class Construct_Siphon_Station extends BaseDurationAbility
         boggledDefaultCargo.active.removeCommodity(playerCargo, boggledDefaultCargo.Mining_Station, "crew", crewCost);
         boggledDefaultCargo.active.removeCommodity(playerCargo, boggledDefaultCargo.Mining_Station, "heavy_machinery", heavyMachineryCost);
 
-        SectorEntityToken newSiphonStation = system.addCustomEntity("boggled_siphon_station", hostGasGiant.getName() + " Siphon Station", "boggled_siphon_station_small", Global.getSector().getPlayerFleet().getFaction().getId());
+        String siphonName = StringHelper.getString(StringHelper.ABILITIES, "siphon_entity_name", StringHelper.tokens("planet", hostGasGiant.getName()));
+        SectorEntityToken newSiphonStation = system.addCustomEntity("boggled_siphon_station", siphonName, "boggled_siphon_station_small", Global.getSector().getPlayerFleet().getFaction().getId());
         newSiphonStation.setCircularOrbitPointingDown(hostGasGiant, boggledTools.getAngleFromPlayerFleet(hostGasGiant), hostGasGiant.getRadius() + 50f, (hostGasGiant.getRadius() + 50f) / 10.0F);
 
         SectorEntityToken newSiphonStationLights = system.addCustomEntity("boggled_siphonStationLights", "Siphon Station Lights Overlay", "boggled_siphon_station_small_lights_overlay", Global.getSector().getPlayerFleet().getFaction().getId());
@@ -143,16 +144,23 @@ public class Construct_Siphon_Station extends BaseDurationAbility
         Color highlight = Misc.getHighlightColor();
         Color bad = Misc.getNegativeHighlightColor();
 
-        LabelAPI title = tooltip.addTitle("Construct Siphon Station");
+        tooltip.addTitle(StringHelper.getString(StringHelper.ABILITIES, "siphon_title"));
         float pad = 10.0F;
-        tooltip.addPara("Construct a siphon station in low orbit around a gas giant. Expends %s credits, %s crew, %s heavy machinery, %s metals and %s transplutonics for construction.", pad, highlight, new String[]{(int)creditCost + "",(int)crewCost + "",(int)heavyMachineryCost +"", (int)metalCost + "", (int)transplutonicsCost +""});
+        String credits = (int) creditCost + "";
+        String crew = (int) crewCost + "";
+        String heavyMachinery = (int) heavyMachineryCost + "";
+        String metals = (int) metalCost + "";
+        String transplutonics = (int) transplutonicsCost + "";
+        String costSentence = StringHelper.getString(StringHelper.ABILITIES, "siphon_cost", StringHelper.tokens(
+                "credits", credits, "crew", crew, "heavyMachinery", heavyMachinery, "metals", metals, "transplutonics", transplutonics));
+        StringHelper.applyHighlight(tooltip.addPara(costSentence, pad), highlight, credits, crew, heavyMachinery, metals, transplutonics);
 
         // Check research requirement for tooltip
         String requiredResearch = boggledTools.getRequiredResearchForAbility("boggled_construct_siphon_station");
         if (requiredResearch != null && !boggledTools.isResearched(requiredResearch))
         {
             String researchName = boggledTools.getResearchDisplayName(requiredResearch);
-            tooltip.addPara("Requires the " + researchName + " research to be completed.", bad, pad);
+            tooltip.addPara(StringHelper.getString(StringHelper.GENERAL, "requires_research", StringHelper.tokens("research", researchName)), bad, pad);
         }
 
         SectorEntityToken playerFleet = Global.getSector().getPlayerFleet();
@@ -160,15 +168,15 @@ public class Construct_Siphon_Station extends BaseDurationAbility
 
         if(playerFleet.isInHyperspace() || Global.getSector().getPlayerFleet().isInHyperspaceTransition() || system == null)
         {
-            tooltip.addPara("Siphon stations cannot be constructed in hyperspace.", bad, pad);
+            tooltip.addPara(StringHelper.getString(StringHelper.ABILITIES, "siphon_hyperspace"), bad, pad);
         }
         else if(system.getJumpPoints().isEmpty())
         {
-            tooltip.addPara("You cannot construct a station in a system with no jump points.", bad, pad);
+            tooltip.addPara(StringHelper.getString("cannot_construct_no_jump_points"), bad, pad);
         }
         else if(system.hasTag(Tags.SYSTEM_ABYSSAL))
         {
-            tooltip.addPara("You cannot construct a station in a system in abyssal hyperspace.", bad, pad);
+            tooltip.addPara(StringHelper.getString("cannot_construct_abyssal"), bad, pad);
         }
 
         if(!playerFleet.isInHyperspace() && !Global.getSector().getPlayerFleet().isInHyperspaceTransition() && system != null)
@@ -177,11 +185,13 @@ public class Construct_Siphon_Station extends BaseDurationAbility
             SectorEntityToken closestGasGiantToken = boggledTools.getClosestGasGiantToken(playerFleet);
             if(closestGasGiantToken == null)
             {
-                tooltip.addPara("There are no gas giants in the " + system.getName() + ".", bad, pad);
+                tooltip.addPara(StringHelper.getString(StringHelper.ABILITIES, "siphon_no_gas_giants", StringHelper.tokens("system", system.getName())), bad, pad);
             }
             else if(!closestGasGiantToken.getMarket().getFactionId().equals(Factions.PLAYER) && !closestGasGiantToken.getMarket().getFactionId().equals(Factions.NEUTRAL))
             {
-                tooltip.addPara("The gas giant closest to your fleet is " + closestGasGiantToken.getName() + " which is controlled by " + closestGasGiantToken.getMarket().getFaction().getDisplayName() + ". You cannot construct a siphon station in orbit around a gas giant controlled by another faction.", bad, pad);
+                tooltip.addPara(StringHelper.getString(StringHelper.ABILITIES, "siphon_other_faction", StringHelper.tokens(
+                        "planet", closestGasGiantToken.getName(),
+                        "faction", closestGasGiantToken.getMarket().getFaction().getDisplayName())), bad, pad);
             }
             else
             {
@@ -191,24 +201,26 @@ public class Construct_Siphon_Station extends BaseDurationAbility
                     String distanceInSuString = String.format("%.2f", distanceInSu);
                     float requiredDistanceInSu = 250f / 2000f;
                     String requiredDistanceInSuString = String.format("%.2f", requiredDistanceInSu);
-                    tooltip.addPara("The gas giant closest to your location is " + closestGasGiantToken.getName() + ". Your fleet is " + distanceInSuString + " stellar units away. You must be within " + requiredDistanceInSuString + " stellar units to construct a siphon station.", bad, pad);
+                    tooltip.addPara(StringHelper.getString(StringHelper.ABILITIES, "siphon_too_far", StringHelper.tokens(
+                            "planet", closestGasGiantToken.getName(), "distance", distanceInSuString, "required", requiredDistanceInSuString)), bad, pad);
                 }
 
                 if(gasGiantAlreadyHasSiphonStationInOrbit(closestGasGiantToken))
                 {
-                    tooltip.addPara("Each gas giant can only support a single siphon station.", bad, pad);
+                    tooltip.addPara(StringHelper.getString(StringHelper.ABILITIES, "siphon_one_per_giant"), bad, pad);
                 }
 
                 PlanetAPI blockingMoon = getMoonBlockingSiphonStation(closestGasGiantToken);
                 if(blockingMoon != null)
                 {
-                    tooltip.addPara("A siphon station would be unable to achieve a satisfactory orbit around " + closestGasGiantToken.getName() + " because " + blockingMoon.getName() + " is too close to the projected orbital path.", bad, pad);
+                    tooltip.addPara(StringHelper.getString(StringHelper.ABILITIES, "siphon_moon_too_close", StringHelper.tokens(
+                            "planet", closestGasGiantToken.getName(), "moon", blockingMoon.getName())), bad, pad);
                 }
 
                 // Prevent visual bug where if there are four or more moons in orbit the station will appear on top of them in the system view UI.
                 if(boggledTools.getNumMoonsInOrbitAroundPlanet(closestGasGiantToken) >= 4)
                 {
-                    tooltip.addPara("A siphon station would be unable to achieve a satisfactory orbit around " + closestGasGiantToken.getName() + " because it has too many moons.", bad, pad);
+                    tooltip.addPara(StringHelper.getString(StringHelper.ABILITIES, "siphon_too_many_moons", StringHelper.tokens("planet", closestGasGiantToken.getName())), bad, pad);
                 }
             }
         }
@@ -216,28 +228,30 @@ public class Construct_Siphon_Station extends BaseDurationAbility
         CargoAPI playerCargo = playerFleet.getCargo();
         if(playerCargo.getCredits().get() < creditCost)
         {
-            tooltip.addPara("Insufficient credits.", bad, pad);
+            tooltip.addPara(StringHelper.getString("insufficient_credits"), bad, pad);
         }
         if(boggledDefaultCargo.active.getCommodityAmount(playerCargo, boggledDefaultCargo.Siphon_Station, "metals") < metalCost)
         {
-            tooltip.addPara("Insufficient metals.", bad, pad);
+            tooltip.addPara(StringHelper.getString("insufficient_metals"), bad, pad);
         }
         if(boggledDefaultCargo.active.getCommodityAmount(playerCargo, boggledDefaultCargo.Siphon_Station, "rare_metals") < transplutonicsCost)
         {
-            tooltip.addPara("Insufficient transplutonics.", bad, pad);
+            tooltip.addPara(StringHelper.getString("insufficient_transplutonics"), bad, pad);
         }
         if(boggledDefaultCargo.active.getCommodityAmount(playerCargo, boggledDefaultCargo.Siphon_Station, "crew") < crewCost)
         {
-            tooltip.addPara("Insufficient crew.", bad, pad);
+            tooltip.addPara(StringHelper.getString("insufficient_crew"), bad, pad);
         }
         if(boggledDefaultCargo.active.getCommodityAmount(playerCargo, boggledDefaultCargo.Siphon_Station, "heavy_machinery") < heavyMachineryCost)
         {
-            tooltip.addPara("Insufficient heavy machinery.", bad, pad);
+            tooltip.addPara(StringHelper.getString("insufficient_heavy_machinery"), bad, pad);
         }
 
         if(this.isUsable())
         {
-            tooltip.addPara("Siphoning target: %s", pad, highlight, new String[]{boggledTools.getClosestGasGiantToken(playerFleet).getName()});
+            String targetName = boggledTools.getClosestGasGiantToken(playerFleet).getName();
+            String targetSentence = StringHelper.getString(StringHelper.ABILITIES, "siphon_target", StringHelper.tokens("planet", targetName));
+            StringHelper.applyHighlight(tooltip.addPara(targetSentence, pad), highlight, targetName);
         }
     }
 

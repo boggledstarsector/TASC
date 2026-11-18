@@ -1,5 +1,6 @@
 package boggled.ui;
 
+import boggled.campaign.econ.StringHelper;
 import boggled.campaign.econ.boggledTools;
 import boggled.campaign.econ.conditions.Terraforming_Controller;
 import boggled.terraforming.BoggledBaseTerraformingPlanetTypeChangeProject;
@@ -8,6 +9,7 @@ import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.*;
 import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.campaign.econ.MarketConditionAPI;
+import com.fs.starfarer.api.impl.campaign.ids.Conditions;
 import com.fs.starfarer.api.characters.MarketConditionSpecAPI;
 import com.fs.starfarer.api.input.InputEventAPI;
 import com.fs.starfarer.api.ui.*;
@@ -161,7 +163,7 @@ public class BoggledTerraformingCoreUI implements CustomUIPanelPlugin {
 
         // Add "Colonies" header
         TooltipMakerAPI planetSelectViewHeader = planetSelectPane.createUIElement(planetSelectPaneWidth,0,false);
-        planetSelectViewHeader.addSectionHeading("Colonies", Alignment.MID, 0.0F);
+        planetSelectViewHeader.addSectionHeading(StringHelper.getString(StringHelper.UI, "colonies"), Alignment.MID, 0.0F);
 
         // Main scrolling panel with all the player colonies
         TooltipMakerAPI planetSelectView = planetSelectPane.createUIElement(planetSelectPaneWidth, SCREEN_HEIGHT,true);
@@ -217,7 +219,7 @@ public class BoggledTerraformingCoreUI implements CustomUIPanelPlugin {
             // Put placeholder text in center of screen
             TooltipMakerAPI noPlanetsTooltip = noPlanetsPanel.createUIElement(noPlanetsPanelWidth, SCREEN_HEIGHT, true);
             Color textColor = Misc.getBasePlayerColor();
-            LabelAPI requirementLabel = noPlanetsTooltip.addPara("Colonized planets you control will appear here", textColor,1f);
+            LabelAPI requirementLabel = noPlanetsTooltip.addPara(StringHelper.getString(StringHelper.UI, "no_controlled_planets"), textColor,1f);
             requirementLabel.getPosition().inTL(noPlanetsPanelWidth / 2, SCREEN_HEIGHT / 2);
 
             noPlanetsPanel.addUIElement(noPlanetsTooltip).inTL(0, 0);
@@ -383,7 +385,7 @@ public class BoggledTerraformingCoreUI implements CustomUIPanelPlugin {
 
         // Section header
         TooltipMakerAPI projectsViewHeader = projectsPanel.createUIElement(panePlanetWidth, 0, false);
-        projectsViewHeader.addSectionHeading("Terraforming Projects", Alignment.MID, 0.0F);
+        projectsViewHeader.addSectionHeading(StringHelper.getString(StringHelper.UI, "terraforming_projects"), Alignment.MID, 0.0F);
 
         TooltipMakerAPI projectsView = projectsPanel.createUIElement(panePlanetWidth, height - 18, true);
 
@@ -416,12 +418,12 @@ public class BoggledTerraformingCoreUI implements CustomUIPanelPlugin {
 
         // Create big left side current planet appearance view
         TooltipMakerAPI planetLargeViewLeft = leftPanel.createUIElement(panePlanetWidth, panePlanetHeight, false);
-        planetLargeViewLeft.addSectionHeading(this.market.getName() + " - Current Appearance", Alignment.MID, 0.0F);
+        planetLargeViewLeft.addSectionHeading(StringHelper.getString(StringHelper.UI, "market_current_appearance", StringHelper.tokens("market", this.market.getName())), Alignment.MID, 0.0F);
         planetLargeViewLeft.showPlanetInfo(market.getPlanetEntity(), panePlanetWidth, panePlanetHeight, false, 0);
 
         // Conditions view
         TooltipMakerAPI conditionsViewHeader = leftPanel.createUIElement(panePlanetWidth, 0, false);
-        conditionsViewHeader.addSectionHeading(this.market.getName() + " - Current Conditions", Alignment.MID, 0.0F);
+        conditionsViewHeader.addSectionHeading(StringHelper.getString(StringHelper.UI, "market_current_conditions", StringHelper.tokens("market", this.market.getName())), Alignment.MID, 0.0F);
 
         ArrayList<MarketConditionAPI> conditionsTemp = new ArrayList<>();
         for(MarketConditionAPI condition : conditions)
@@ -432,7 +434,7 @@ public class BoggledTerraformingCoreUI implements CustomUIPanelPlugin {
                 conditionsTemp.add(condition);
             }
 
-            if(condition.isPlanetary() && condition.getPlugin().showIcon() && !condition.getName().equals("Population"))
+            if(condition.isPlanetary() && condition.getPlugin().showIcon() && !condition.getId().equals(Conditions.POPULATION))
             {
                 conditionsTemp.add(condition);
             }
@@ -506,7 +508,7 @@ public class BoggledTerraformingCoreUI implements CustomUIPanelPlugin {
                 conditionsTemp.add(condition);
             }
 
-            if(condition.isPlanetary() && !condition.getName().equals("Population") && Global.getSettings().getMarketConditionSpec(condition.getId()).getIcon() != null)
+            if(condition.isPlanetary() && !condition.getId().equals(Conditions.POPULATION) && Global.getSettings().getMarketConditionSpec(condition.getId()).getIcon() != null)
             {
                 conditionsTemp.add(condition);
             }
@@ -522,12 +524,12 @@ public class BoggledTerraformingCoreUI implements CustomUIPanelPlugin {
 
         // Create planet view after project is complete.
         TooltipMakerAPI planetLargeViewRight = rightPanel.createUIElement(panePlanetWidth, panePlanetHeight, false);
-        planetLargeViewRight.addSectionHeading(this.market.getName() + " - Appearance After Project Completed", Alignment.MID, 0.0F);
+        planetLargeViewRight.addSectionHeading(StringHelper.getString(StringHelper.UI, "market_appearance_after", StringHelper.tokens("market", this.market.getName())), Alignment.MID, 0.0F);
         planetLargeViewRight.showPlanetInfo(project.constructFakePlanetWithAppearanceAfterTerraforming(), panePlanetWidth, panePlanetHeight, false, 0);
 
         // Conditions view header
         TooltipMakerAPI conditionsViewHeader = rightPanel.createUIElement(panePlanetWidth, 0, false);
-        conditionsViewHeader.addSectionHeading(this.market.getName() + " - Conditions After Project Completed", Alignment.MID, 0.0F);
+        conditionsViewHeader.addSectionHeading(StringHelper.getString(StringHelper.UI, "market_conditions_after", StringHelper.tokens("market", this.market.getName())), Alignment.MID, 0.0F);
 
         // Conditions view panel
         TooltipMakerAPI conditionsView = rightPanel.createUIElement(panePlanetWidth, conditionHeight, false);
@@ -549,7 +551,7 @@ public class BoggledTerraformingCoreUI implements CustomUIPanelPlugin {
 
         // Projects requirements view
         TooltipMakerAPI requirementsViewHeader = rightPanel.createUIElement(panePlanetWidth, 0, false);
-        requirementsViewHeader.addSectionHeading("Project Requirements", Alignment.MID, 0.0F);
+        requirementsViewHeader.addSectionHeading(StringHelper.getString(StringHelper.UI, "project_requirements"), Alignment.MID, 0.0F);
 
         TooltipMakerAPI requirementsView = rightPanel.createUIElement(panePlanetWidth, spaceRemainingForRequirementsPanel, true);
 
@@ -593,36 +595,51 @@ public class BoggledTerraformingCoreUI implements CustomUIPanelPlugin {
         {
             if(project.requirementsMet(projectRequirements))
             {
-                triggerButtonsLabel = projectTriggerButtonsPanel.addPara("This project will take " + project.getDaysRemaining() + " days to complete.", Misc.getPositiveHighlightColor(), 1f);
+                String duration = StringHelper.getString(StringHelper.UI, "project_will_take_days", StringHelper.tokens("days", String.valueOf(project.getDaysRemaining())));
+                triggerButtonsLabel = projectTriggerButtonsPanel.addPara(duration, Misc.getPositiveHighlightColor(), 1f);
             }
             else
             {
-                triggerButtonsLabel = projectTriggerButtonsPanel.addPara("This project cannot be started because one or more requirements are not met.", Misc.getNegativeHighlightColor(), 1f);
+                triggerButtonsLabel = projectTriggerButtonsPanel.addPara(StringHelper.getString(StringHelper.UI, "project_cannot_start"), Misc.getNegativeHighlightColor(), 1f);
             }
         }
         else
         {
             if(ongoingProject.getProjectName().equals(project.getProjectName()))
             {
-                String dayCopyString = ongoingProject.getDaysRemaining() > 1 ? "are " + ongoingProject.getDaysRemaining() + " days" : "is " + ongoingProject.getDaysRemaining() + " day";
-                if(project.requirementsMet(projectRequirements))
+                int daysRemaining = ongoingProject.getDaysRemaining();
+                boolean plural = daysRemaining > 1;
+                boolean requirementsMet = project.requirementsMet(projectRequirements);
+                String key;
+                if(plural && requirementsMet)
                 {
-                    triggerButtonsLabel = projectTriggerButtonsPanel.addPara("There " + dayCopyString + " remaining until this project is complete.", Misc.getPositiveHighlightColor(), 1f);
+                    key = "project_days_remaining";
+                }
+                else if(plural)
+                {
+                    key = "project_days_remaining_stalled";
+                }
+                else if(requirementsMet)
+                {
+                    key = "project_day_remaining";
                 }
                 else
                 {
-                    triggerButtonsLabel = projectTriggerButtonsPanel.addPara("There " + dayCopyString + " remaining until this project is complete. Progress is stalled because requirements are not met.", Misc.getNegativeHighlightColor(), 1f);
+                    key = "project_day_remaining_stalled";
                 }
+                String remaining = StringHelper.getString(StringHelper.UI, key, StringHelper.tokens("days", String.valueOf(daysRemaining)));
+                Color color = requirementsMet ? Misc.getPositiveHighlightColor() : Misc.getNegativeHighlightColor();
+                triggerButtonsLabel = projectTriggerButtonsPanel.addPara(remaining, color, 1f);
             }
             else
             {
-                triggerButtonsLabel = projectTriggerButtonsPanel.addPara("There is already an ongoing project here. If you start a new project, all progress on the existing project will be lost.", Misc.getNegativeHighlightColor(), 1f);
+                triggerButtonsLabel = projectTriggerButtonsPanel.addPara(StringHelper.getString(StringHelper.UI, "project_already_ongoing"), Misc.getNegativeHighlightColor(), 1f);
             }
         }
         triggerButtonsLabel.getPosition().inTL(0, triggerButtonLabelHeight == 36 ? 0 : 18);
 
         String ongoingProjectName = getOngoingProjectAtMarket(market);
-        ButtonAPI startProjectButton = projectTriggerButtonsPanel.addButton("Start Project", null, Global.getSector().getPlayerFaction().getBaseUIColor(), Global.getSector().getPlayerFaction().getDarkUIColor(), Alignment.LMID, CutStyle.ALL, 150, 36, 0.0F);
+        ButtonAPI startProjectButton = projectTriggerButtonsPanel.addButton(StringHelper.getString(StringHelper.UI, "start_project"), null, Global.getSector().getPlayerFaction().getBaseUIColor(), Global.getSector().getPlayerFaction().getDarkUIColor(), Alignment.LMID, CutStyle.ALL, 150, 36, 0.0F);
         if((ongoingProjectName != null && ongoingProjectName.equals(project.getProjectName())) || !project.requirementsMet(projectRequirements))
         {
             startProjectButton.setEnabled(false);
@@ -630,7 +647,7 @@ public class BoggledTerraformingCoreUI implements CustomUIPanelPlugin {
         projectTriggerButtonsPanel.addComponent(startProjectButton).inTL(0, 36);
         this.startProjectButton = startProjectButton;
 
-        ButtonAPI cancelProjectButton = projectTriggerButtonsPanel.addButton("Cancel Project", null, Global.getSector().getPlayerFaction().getBaseUIColor(), Global.getSector().getPlayerFaction().getDarkUIColor(), Alignment.LMID, CutStyle.ALL, 150, 36, 0.0F);
+        ButtonAPI cancelProjectButton = projectTriggerButtonsPanel.addButton(StringHelper.getString(StringHelper.UI, "cancel_project"), null, Global.getSector().getPlayerFaction().getBaseUIColor(), Global.getSector().getPlayerFaction().getDarkUIColor(), Alignment.LMID, CutStyle.ALL, 150, 36, 0.0F);
 
         if(ongoingProjectName == null || !ongoingProjectName.equals(project.getProjectName()))
         {

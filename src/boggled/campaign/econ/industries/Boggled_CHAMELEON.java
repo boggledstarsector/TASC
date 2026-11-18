@@ -13,6 +13,7 @@ import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
 import com.fs.starfarer.api.impl.campaign.econ.impl.BaseIndustry;
 import com.fs.starfarer.api.util.Pair;
+import boggled.campaign.econ.StringHelper;
 import boggled.campaign.econ.boggledTools;
 
 public class Boggled_CHAMELEON extends BaseIndustry
@@ -61,8 +62,8 @@ public class Boggled_CHAMELEON extends BaseIndustry
                 {
                     if(this.market.isPlayerOwned())
                     {
-                        MessageIntel intel = new MessageIntel("Decivilized subpopulation on " + market.getName(), Misc.getBasePlayerColor());
-                        intel.addLine("    - Eradicated");
+                        MessageIntel intel = new MessageIntel(StringHelper.getString(StringHelper.INDUSTRIES, "chameleon_deciv_intel_title", StringHelper.tokens("market", market.getName())), Misc.getBasePlayerColor());
+                        intel.addLine(StringHelper.getString(StringHelper.INDUSTRIES, "chameleon_deciv_intel_line"));
                         intel.setIcon(Global.getSettings().getSpriteName("boggled_intel_icons", "intel_icon_chameleon"));
                         intel.setSound(BaseIntelPlugin.getSoundStandardUpdate());
                         Global.getSector().getCampaignUI().addMessage(intel, CommMessageAPI.MessageClickAction.COLONY_INFO, market);
@@ -87,8 +88,8 @@ public class Boggled_CHAMELEON extends BaseIndustry
                 {
                     if (this.market.isPlayerOwned())
                     {
-                        MessageIntel intel = new MessageIntel("Rogue AI core on " + market.getName(), Misc.getBasePlayerColor());
-                        intel.addLine("    - Terminated");
+                        MessageIntel intel = new MessageIntel(StringHelper.getString(StringHelper.INDUSTRIES, "chameleon_rogue_intel_title", StringHelper.tokens("market", market.getName())), Misc.getBasePlayerColor());
+                        intel.addLine(StringHelper.getString(StringHelper.INDUSTRIES, "chameleon_rogue_intel_line"));
                         intel.setIcon(Global.getSettings().getSpriteName("boggled_intel_icons", "intel_icon_chameleon"));
                         intel.setSound(BaseIntelPlugin.getSoundStandardUpdate());
                         Global.getSector().getCampaignUI().addMessage(intel, CommMessageAPI.MessageClickAction.COLONY_INFO, market);
@@ -159,7 +160,7 @@ public class Boggled_CHAMELEON extends BaseIndustry
     {
         if(this.marketHasRampantMilitaryCore())
         {
-            return "The rampant military core will not allow a CHAMELEON to be constructed.";
+            return StringHelper.getString(StringHelper.INDUSTRIES, "chameleon_unavailable_rampant_core");
         }
 
         return super.getUnavailableReason();
@@ -201,7 +202,7 @@ public class Boggled_CHAMELEON extends BaseIndustry
 
         if(this.marketHasRampantMilitaryCore() && mode != IndustryTooltipMode.ADD_INDUSTRY && mode != IndustryTooltipMode.QUEUED && !isBuilding())
         {
-            tooltip.addPara("The rampant military core has disabled this facility to prevent itself from being removed.", bad, opad);
+            tooltip.addPara(StringHelper.getString(StringHelper.INDUSTRIES, "chameleon_disabled_by_rampant_core"), bad, opad);
             return;
         }
 
@@ -216,12 +217,14 @@ public class Boggled_CHAMELEON extends BaseIndustry
                 percentComplete = 99;
             }
 
-            tooltip.addPara("Approximately %s of the decivilized subpopulation on " + this.market.getName() + " has been eradicated.", opad, highlight, new String[]{percentComplete + "%"});
+            String percent = percentComplete + "%";
+            String sentence = StringHelper.getString(StringHelper.INDUSTRIES, "chameleon_deciv_eradicated", StringHelper.tokens("percent", percent, "market", this.market.getName()));
+            StringHelper.applyHighlight(tooltip.addPara(sentence, opad), highlight, percent);
         }
 
         if(this.isDisrupted() && (this.market.hasCondition("decivilized_subpop") || this.market.hasCondition("decivilized")) && mode != IndustryTooltipMode.ADD_INDUSTRY && mode != IndustryTooltipMode.QUEUED && !isBuilding())
         {
-            tooltip.addPara("Decivilized subpopulation eradication is stalled while the CHAMELEON is disrupted.", bad, opad);
+            tooltip.addPara(StringHelper.getString(StringHelper.INDUSTRIES, "chameleon_deciv_stalled_disrupted"), bad, opad);
         }
 
         // Inserts rogue AI core removal status after description
@@ -235,12 +238,14 @@ public class Boggled_CHAMELEON extends BaseIndustry
                 percentComplete = 99;
             }
 
-            tooltip.addPara("An investigation into the whereabouts of the rogue AI core on " + this.market.getName() + " is approximately %s complete.", opad, highlight, new String[]{percentComplete + "%"});
+            String percent = percentComplete + "%";
+            String sentence = StringHelper.getString(StringHelper.INDUSTRIES, "chameleon_rogue_investigation", StringHelper.tokens("market", this.market.getName(), "percent", percent));
+            StringHelper.applyHighlight(tooltip.addPara(sentence, opad), highlight, percent);
         }
 
         if(this.isDisrupted() && this.market.hasCondition("rogue_ai_core") && mode != IndustryTooltipMode.ADD_INDUSTRY && mode != IndustryTooltipMode.QUEUED && !isBuilding())
         {
-            tooltip.addPara("Rogue AI core termination is stalled while the CHAMELEON is disrupted.", bad, opad);
+            tooltip.addPara(StringHelper.getString(StringHelper.INDUSTRIES, "chameleon_rogue_stalled_disrupted"), bad, opad);
         }
     }
 
@@ -298,7 +303,9 @@ public class Boggled_CHAMELEON extends BaseIndustry
         {
             float opad = 10.0F;
             Color bad = Misc.getNegativeHighlightColor();
-            tooltip.addPara("CHAMELEON is inactive due to a shortage of %s.", opad, bad, boggledTools.getCommidityNameFromId(deficit.one));
+            String commodity = boggledTools.getCommidityNameFromId(deficit.one);
+            String sentence = StringHelper.getString(StringHelper.INDUSTRIES, "chameleon_inactive_shortage", StringHelper.tokens("commodity", commodity));
+            StringHelper.applyHighlight(tooltip.addPara(sentence, opad), bad, commodity);
         }
     }
 
@@ -344,7 +351,7 @@ public class Boggled_CHAMELEON extends BaseIndustry
         {
             if(mode != AICoreDescriptionMode.INDUSTRY_TOOLTIP)
             {
-                tooltip.addPara("The rampant military core has disabled this facility, so this core provides no bonuses.", Misc.getNegativeHighlightColor(), 10.0F);
+                tooltip.addPara(StringHelper.getString(StringHelper.INDUSTRIES, "chameleon_core_no_bonuses"), Misc.getNegativeHighlightColor(), 10.0F);
             }
             return;
         }
@@ -354,18 +361,22 @@ public class Boggled_CHAMELEON extends BaseIndustry
 
         float opad = 10.0F;
         Color highlight = Misc.getHighlightColor();
-        String pre = "Alpha-level AI core currently assigned. ";
+        String pre = StringHelper.getString(StringHelper.INDUSTRIES, "ai_core_alpha_assigned");
         if (mode == AICoreDescriptionMode.MANAGE_CORE_DIALOG_LIST || mode == AICoreDescriptionMode.INDUSTRY_TOOLTIP) {
-            pre = "Alpha-level AI core. ";
+            pre = StringHelper.getString(StringHelper.INDUSTRIES, "ai_core_alpha_short");
         }
 
+        String percent = (int)((1.0F - UPKEEP_MULT) * 100.0F) + "%";
+        String units = "" + DEMAND_REDUCTION;
+        String sentence = StringHelper.getString(StringHelper.INDUSTRIES, "chameleon_ai_alpha", StringHelper.tokens(
+                "prefix", pre, "percent", percent, "units", units, "market", this.market.getName()));
         if (mode == AICoreDescriptionMode.INDUSTRY_TOOLTIP) {
             CommoditySpecAPI coreSpec = Global.getSettings().getCommoditySpec(this.aiCoreId);
             TooltipMakerAPI text = tooltip.beginImageWithText(coreSpec.getIconName(), 48.0F);
-            text.addPara(pre + "Reduces upkeep cost by %s. Reduces demand by %s unit. " + "Pather cells on " + this.market.getName() + " are eliminated.", 0.0F, highlight, new String[]{(int)((1.0F - UPKEEP_MULT) * 100.0F) + "%", "" + DEMAND_REDUCTION});
+            StringHelper.applyHighlight(text.addPara(sentence, 0.0F), highlight, percent, units);
             tooltip.addImageWithText(opad);
         } else {
-            tooltip.addPara(pre + "Reduces upkeep cost by %s. Reduces demand by %s unit. " + "Pather cells on " + this.market.getName() + " are eliminated.", opad, highlight, new String[]{(int)((1.0F - UPKEEP_MULT) * 100.0F) + "%", "" + DEMAND_REDUCTION});
+            StringHelper.applyHighlight(tooltip.addPara(sentence, opad), highlight, percent, units);
         }
     }
 
@@ -380,7 +391,7 @@ public class Boggled_CHAMELEON extends BaseIndustry
         Pair<String, Integer> deficit = getChameleonDeficit();
         if(this.isImproved() && this.isFunctional() && !this.marketHasRampantMilitaryCore() && deficit.two <= 0)
         {
-            market.getStability().modifyFlat("chameleon_improve", IMPROVE_STABILITY_BONUS, getImprovementsDescForModifiers() + " (CHAMELEON)");
+            market.getStability().modifyFlat("chameleon_improve", IMPROVE_STABILITY_BONUS, StringHelper.getString(StringHelper.INDUSTRIES, "chameleon_improve_modifier", StringHelper.tokens("improvements", getImprovementsDescForModifiers())));
         }
         else
         {
@@ -393,10 +404,13 @@ public class Boggled_CHAMELEON extends BaseIndustry
         float opad = 10f;
         Color highlight = Misc.getHighlightColor();
 
+        String bonus = "" + (int) IMPROVE_STABILITY_BONUS;
         if (mode == ImprovementDescriptionMode.INDUSTRY_TOOLTIP) {
-            info.addPara("Stability increased by %s.", 0f, highlight, "" + (int) IMPROVE_STABILITY_BONUS);
+            String sentence = StringHelper.getString(StringHelper.INDUSTRIES, "chameleon_stability_increased", StringHelper.tokens("bonus", bonus));
+            StringHelper.applyHighlight(info.addPara(sentence, 0f), highlight, bonus);
         } else {
-            info.addPara("Increases stability by %s.", 0f, highlight, "" + (int) IMPROVE_STABILITY_BONUS);
+            String sentence = StringHelper.getString(StringHelper.INDUSTRIES, "chameleon_increases_stability", StringHelper.tokens("bonus", bonus));
+            StringHelper.applyHighlight(info.addPara(sentence, 0f), highlight, bonus);
         }
 
         info.addSpacer(opad);

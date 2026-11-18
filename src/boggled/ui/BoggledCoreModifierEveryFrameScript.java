@@ -1,5 +1,6 @@
 package boggled.ui;
 
+import boggled.campaign.econ.StringHelper;
 import boggled.campaign.econ.boggledTools;
 import com.fs.starfarer.api.EveryFrameScript;
 import com.fs.starfarer.api.Global;
@@ -28,6 +29,7 @@ public class BoggledCoreModifierEveryFrameScript implements EveryFrameScript {
     private Float rootY = null;
 
     private ButtonAPI currentButton = null;
+    private ButtonAPI terraformingButton = null;
 
     private static final MethodHandles.Lookup lookup = MethodHandles.lookup();
     private static final Class<?> methodClass;
@@ -69,7 +71,7 @@ public class BoggledCoreModifierEveryFrameScript implements EveryFrameScript {
         // Create a dummy CustomPanelAPI and TooltipMakerAPI, so we can make a button, which then gets inserted directly into the core panel
         CustomPanelAPI dummyPanel = Global.getSettings().createCustom(170, 18, null);
         TooltipMakerAPI dummyTooltip = dummyPanel.createUIElement(170, 18, false);
-        ButtonAPI terraformingButton = dummyTooltip.addButton("Terraforming",null, Global.getSector().getPlayerFaction().getBaseUIColor(), Global.getSector().getPlayerFaction().getDarkUIColor(), Alignment.MID, CutStyle.TOP, 170, 18, 0.0F);
+        ButtonAPI terraformingButton = dummyTooltip.addButton(StringHelper.getString(StringHelper.UI, "terraforming_tab"), null, Global.getSector().getPlayerFaction().getBaseUIColor(), Global.getSector().getPlayerFaction().getDarkUIColor(), Alignment.MID, CutStyle.TOP, 170, 18, 0.0F);
 
         // Setting the shortcut to 7 actually binds it to the 6 key...
         terraformingButton.setShortcut(7, false);
@@ -86,8 +88,8 @@ public class BoggledCoreModifierEveryFrameScript implements EveryFrameScript {
             }
 
             public void createTooltip(TooltipMakerAPI tooltip, boolean expanded, Object tooltipParam) {
-                tooltip.addSectionHeading("Terraforming & Station Construction", Alignment.MID, 0.0F);
-                tooltip.addPara("Use this tab to manage terraforming projects on your colonies.", 5.0F);
+                tooltip.addSectionHeading(StringHelper.getString(StringHelper.UI, "terraforming_tab_tooltip_heading"), Alignment.MID, 0.0F);
+                tooltip.addPara(StringHelper.getString(StringHelper.UI, "terraforming_tab_tooltip"), 5.0F);
             }
         };
         dummyTooltip.addTooltipToPrevious(terraformingButtonTooltip, TooltipLocation.BELOW);
@@ -95,34 +97,56 @@ public class BoggledCoreModifierEveryFrameScript implements EveryFrameScript {
         return terraformingButton;
     }
 
-    public static void insertTerraformingButtonIntoCorePanel(UIPanelAPI mainCorePanel, ButtonAPI terraformingButton)
+    public static boolean insertTerraformingButtonIntoCorePanel(UIPanelAPI mainCorePanel, ButtonAPI terraformingButton)
     {
-        ButtonAPI coloniesButton = tryToGetButton("colonies");
-        ButtonAPI aotdbutton = tryToGetButton("research & production");
-        String buttonInsertNextTo = aotdbutton != null ? "research & production" : "custom production";
-        ButtonAPI insertNextToButton = tryToGetButton(buttonInsertNextTo);
+        List<UIComponentAPI> children = getChildrenCopy(mainCorePanel);
+        if (children == null || terraformingButton == null || terraformingButton.getPosition() == null) {
+            return false;
+        }
 
-        // X location of the terraforming button is:
-        // the X position of the button immediately to the left (in the panel, not absolute),
-        // + the width of the button immediately to the left
-        // - the absolute (not in panel) X position of the colonies button
-        // + 1 as a spacer
-        mainCorePanel.addComponent(terraformingButton).inTL(insertNextToButton.getPosition().getX() + insertNextToButton.getPosition().getWidth() - coloniesButton.getPosition().getX() + 1.0F, 0.0F);
+        ButtonAPI leftmost = null;
+        ButtonAPI rightmost = null;
+        float minX = Float.POSITIVE_INFINITY;
+        float maxRight = Float.NEGATIVE_INFINITY;
+        for (UIComponentAPI component : children) {
+            if (!(component instanceof ButtonAPI button) || button.getPosition() == null) {
+                continue;
+            }
+            float x = button.getPosition().getX();
+            float right = x + button.getPosition().getWidth();
+            if (x < minX) {
+                minX = x;
+                leftmost = button;
+            }
+            if (right > maxRight) {
+                maxRight = right;
+                rightmost = button;
+            }
+        }
+        if (leftmost == null || rightmost == null || leftmost.getPosition() == null || rightmost.getPosition() == null) {
+            return false;
+        }
+
+        // Place the button at the end of the existing row. The leftmost button is the coordinate origin.
+        float x = rightmost.getPosition().getX() + rightmost.getPosition().getWidth() - leftmost.getPosition().getX() + 1.0F;
+        mainCorePanel.addComponent(terraformingButton).inTL(x, 0.0F);
         mainCorePanel.bringComponentToTop(terraformingButton);
+        return true;
     }
 
     private HashMap<ButtonAPI, UIComponentAPI> getModifiedPanelMapWithTerraformingMenu(HashMap<ButtonAPI, UIComponentAPI> originalMap, UIPanelAPI outpostsParentPanel)
     {
-        ButtonAPI existingTerraformingButton = tryToGetButton("terraforming");
-        if(existingTerraformingButton == null)
-        {
-            ButtonAPI terraformingButton = getNewTerraformingButton();
-            insertTerraformingButtonIntoCorePanel(outpostsParentPanel, terraformingButton);
-            originalMap.put(terraformingButton, null);
-
+        if (!isButtonOnPanel(outpostsParentPanel, this.terraformingButton)) {
+            this.terraformingButton = getNewTerraformingButton();
+            if (!insertTerraformingButtonIntoCorePanel(outpostsParentPanel, this.terraformingButton)) {
+                this.terraformingButton = null;
+                return originalMap;
+            }
             BoggledTerraformingCoreUI terraformingUI = new BoggledTerraformingCoreUI();
             terraformingUI.init(marketToOpen);
-            originalMap.put(terraformingButton, terraformingUI.getMainPanel());
+            originalMap.put(this.terraformingButton, terraformingUI.getMainPanel());
+        } else if (!originalMap.containsKey(this.terraformingButton)) {
+            originalMap.put(this.terraformingButton, null);
         }
 
         return originalMap;
@@ -155,19 +179,22 @@ public class BoggledCoreModifierEveryFrameScript implements EveryFrameScript {
                 try { originalMap = getOriginalPanelMap(mainParent); }
                 catch(Exception e) { return; }
 
-                // Get the root coordinates of the Colonies tab in the top left.
-                // Used later to know where to insert the panels.
-                if(rootX == null || rootY == null)
-                {
-                    ButtonAPI coloniesButton = tryToGetButton("colonies");
-                    UIComponentAPI coloniesPanel = originalMap.get(coloniesButton);
-                    rootX = coloniesPanel.getPosition().getX();
-                    rootY = coloniesPanel.getPosition().getY();
+                // Root coordinates come from the leftmost command-row button's panel.
+                if (rootX == null || rootY == null) {
+                    ButtonAPI anchorButton = leftmostButton(originalMap.keySet());
+                    UIComponentAPI anchorPanel = anchorButton == null ? null : originalMap.get(anchorButton);
+                    if (anchorPanel == null || anchorPanel.getPosition() == null) {
+                        return;
+                    }
+                    rootX = anchorPanel.getPosition().getX();
+                    rootY = anchorPanel.getPosition().getY();
                 }
 
                 // If terraforming button isn't on the screen, create it and add it to the map.
                 this.outpostsButtonToPanelMapping = getModifiedPanelMapWithTerraformingMenu(originalMap, mainParent);
-                ButtonAPI terraformingButton = tryToGetButton("terraforming");
+                if (this.terraformingButton == null) {
+                    return;
+                }
 
                 // If the user opened the CoreUI from the colony management industry tooltip, switch to the terraforming menu immediately
                 // boggledTools.writeMessageToLog("Market to open is: " + (marketToOpen != null ? marketToOpen.getName() : "null"));
@@ -176,7 +203,7 @@ public class BoggledCoreModifierEveryFrameScript implements EveryFrameScript {
                 {
                     uncheckButtons();
                     unhighlightButtons();
-                    terraformingButton.setChecked(true);
+                    this.terraformingButton.setChecked(true);
                     marketToOpen = null;
                 }
 
@@ -193,7 +220,7 @@ public class BoggledCoreModifierEveryFrameScript implements EveryFrameScript {
                 if(highlightedButton != null && highlightedButton != this.currentButton)
                 {
                     removeAllTabPanels(mainParent, null);
-                    if(highlightedButton.getText().contains("Terraforming"))
+                    if(highlightedButton == this.terraformingButton)
                     {
                         BoggledTerraformingCoreUI terraformingUI = new BoggledTerraformingCoreUI();
                         terraformingUI.init(marketTemp);
@@ -299,23 +326,28 @@ public class BoggledCoreModifierEveryFrameScript implements EveryFrameScript {
         }
     }
 
-    public static ButtonAPI tryToGetButton(String name) {
-        try
-        {
-            for(UIComponentAPI component : getChildrenCopy(getMainCorePanel()))
-            {
-                if (component instanceof ButtonAPI && ((ButtonAPI)component).getText().toLowerCase().contains(name))
-                {
-                    return (ButtonAPI) component;
-                }
-            }
+    private static boolean isButtonOnPanel(UIPanelAPI panel, ButtonAPI button) {
+        if (panel == null || button == null) {
+            return false;
+        }
+        List<UIComponentAPI> children = getChildrenCopy(panel);
+        return children != null && children.contains(button);
+    }
 
-            return null;
+    private static ButtonAPI leftmostButton(Iterable<ButtonAPI> buttons) {
+        ButtonAPI best = null;
+        float minX = Float.POSITIVE_INFINITY;
+        for (ButtonAPI button : buttons) {
+            if (button == null || button.getPosition() == null) {
+                continue;
+            }
+            float x = button.getPosition().getX();
+            if (x < minX) {
+                minX = x;
+                best = button;
+            }
         }
-        catch (Exception e)
-        {
-            return null;
-        }
+        return best;
     }
 
     public static List<UIComponentAPI> getChildrenCopy(UIPanelAPI panel)

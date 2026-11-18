@@ -1,5 +1,6 @@
 package boggled.terraforming;
 
+import boggled.campaign.econ.StringHelper;
 import boggled.campaign.econ.boggledTools;
 import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
@@ -39,7 +40,7 @@ public class ResourceImprovementOrganics extends BoggledBaseTerraformingProject
     @Override
     public String getProjectName()
     {
-        return "Improve organics";
+        return StringHelper.getString(StringHelper.TERRAFORMING, "project_improve_organics");
     }
 
     @Override
@@ -85,7 +86,7 @@ public class ResourceImprovementOrganics extends BoggledBaseTerraformingProject
             }
         };
 
-        return new TerraformingRequirementObject("World type supports organics deposits", maxOrganics > 0, null);
+        return new TerraformingRequirementObject(terraformingText("req_world_supports_organics"), maxOrganics > 0, null);
     }
 
     public TerraformingRequirementObject getRequirementOrganicsCanBeImproved()
@@ -109,6 +110,6 @@ public class ResourceImprovementOrganics extends BoggledBaseTerraformingProject
             }
         };
 
-        return new TerraformingRequirementObject("Organics can be improved", currentOrganics < maxOrganics, null);
+        return new TerraformingRequirementObject(terraformingText("req_organics_can_be_improved"), currentOrganics < maxOrganics, null);
     }
 }

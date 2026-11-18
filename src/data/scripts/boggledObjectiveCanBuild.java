@@ -10,6 +10,7 @@ import com.fs.starfarer.api.impl.campaign.ids.Commodities;
 import com.fs.starfarer.api.loading.Description;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
+import boggled.campaign.econ.StringHelper;
 import boggled.campaign.econ.boggledTools;
 import java.util.*;
 import java.util.List;
@@ -153,11 +154,14 @@ public class boggledObjectiveCanBuild extends BaseCommandPlugin
                     {
                         if (this.entity == curr)
                         {
-                            text.addPara("Another one in this star system would have no effect beyond providing redundancy in case this one is lost.");
+                            text.addPara(StringHelper.getString(StringHelper.INTEL, "objective_redundancy_this"));
                         }
                         else
                         {
-                            text.addPara("There's already " + curr.getCustomEntitySpec().getAOrAn() + " " + curr.getCustomEntitySpec().getNameInText() + " under your control " + "in this star system. Another one would have no effect " + "beyond providing redundancy if one is lost.");
+                            text.addPara(StringHelper.getString(StringHelper.INTEL, "objective_redundancy_other",
+                                    StringHelper.tokens(
+                                            "article", curr.getCustomEntitySpec().getAOrAn(),
+                                            "name", curr.getCustomEntitySpec().getNameInText())));
                         }
                         break;
                     }

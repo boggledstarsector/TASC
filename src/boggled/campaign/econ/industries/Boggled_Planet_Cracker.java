@@ -13,6 +13,7 @@ import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
 import com.fs.starfarer.api.impl.campaign.econ.impl.BaseIndustry;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
+import boggled.campaign.econ.StringHelper;
 import boggled.campaign.econ.boggledTools;
 
 public class Boggled_Planet_Cracker extends BaseIndustry
@@ -91,8 +92,8 @@ public class Boggled_Planet_Cracker extends BaseIndustry
                 {
                     if (this.market.isPlayerOwned())
                     {
-                        MessageIntel intel = new MessageIntel("Planet cracking on " + getFocusMarket().getName(), Misc.getBasePlayerColor());
-                        intel.addLine("    - Completed");
+                        MessageIntel intel = new MessageIntel(StringHelper.getString(StringHelper.INDUSTRIES, "planet_cracker_intel_title", StringHelper.tokens("market", getFocusMarket().getName())), Misc.getBasePlayerColor());
+                        intel.addLine(StringHelper.getString(StringHelper.INDUSTRIES, "planet_cracker_intel_completed"));
                         intel.setIcon(Global.getSector().getPlayerFaction().getCrest());
                         intel.setSound(BaseIntelPlugin.getSoundStandardUpdate());
                         Global.getSector().getCampaignUI().addMessage(intel, CommMessageAPI.MessageClickAction.COLONY_INFO, market);
@@ -239,32 +240,32 @@ public class Boggled_Planet_Cracker extends BaseIndustry
         SectorEntityToken orbitFocus = getOrbitFocus();
         if(orbitFocus == null)
         {
-            return this.market.getName() + " is not in orbit around a planet.";
+            return StringHelper.getString(StringHelper.INDUSTRIES, "planet_cracker_not_orbiting", StringHelper.tokens("market", this.market.getName()));
         }
 
         if(orbitFocus.getMarket() == null || orbitFocus.getMarket().getPlanetEntity() == null)
         {
-            return this.market.getName() + " is not in orbit around a planet.";
+            return StringHelper.getString(StringHelper.INDUSTRIES, "planet_cracker_not_orbiting", StringHelper.tokens("market", this.market.getName()));
         }
 
         PlanetAPI planet = this.market.getPlanetEntity();
         String planetType = boggledTools.getTascPlanetType(planet);
         if(planetType.equals(boggledTools.TascPlanetTypes.gasGiantPlanetId) || planetType.contains(boggledTools.TascPlanetTypes.starPlanetId))
         {
-            return "Gas giants and stars cannot be cracked.";
+            return StringHelper.getString(StringHelper.INDUSTRIES, "planet_cracker_gas_star");
         }
 
         // Can't already have tectonic activity
         MarketAPI focusMarket = getFocusMarket();
         if(focusMarket.hasCondition("tectonic_activity") || focusMarket.hasCondition("extreme_tectonic_activity"))
         {
-            return getFocusMarket().getName() + " already has tectonic activity - making it worse won't increase ore availability.";
+            return StringHelper.getString(StringHelper.INDUSTRIES, "planet_cracker_tectonic", StringHelper.tokens("market", getFocusMarket().getName()));
         }
 
         // Can't already have maxed out resources
         if(focusMarket.hasCondition("ore_ultrarich") && focusMarket.hasCondition("rare_ore_ultrarich"))
         {
-            return getFocusMarket().getName() + " already has easily accessible ore deposits. Cracking the planet would serve no purpose.";
+            return StringHelper.getString(StringHelper.INDUSTRIES, "planet_cracker_ore_maxed", StringHelper.tokens("market", getFocusMarket().getName()));
         }
 
         return super.getUnavailableReason();
@@ -303,19 +304,21 @@ public class Boggled_Planet_Cracker extends BaseIndustry
                 percentComplete = 99;
             }
 
-            tooltip.addPara("Planet cracking is approximately %s complete on " + getFocusMarket().getName() + ".", opad, highlight, new String[]{percentComplete + "%"});
+            String percent = percentComplete + "%";
+            String sentence = StringHelper.getString(StringHelper.INDUSTRIES, "planet_cracker_progress", StringHelper.tokens("percent", percent, "market", getFocusMarket().getName()));
+            StringHelper.applyHighlight(tooltip.addPara(sentence, opad), highlight, percent);
         }
 
         // Tell the player they can remove it
         if(!this.marketSuitableForCracker() && mode != IndustryTooltipMode.ADD_INDUSTRY && mode != IndustryTooltipMode.QUEUED && !isBuilding())
         {
-            tooltip.addPara("Further planet cracking operations would serve no purpose on " + getFocusMarket().getName() + ". The Planet Cracker can now be deconstructed without any risk of regression.", opad);
+            tooltip.addPara(StringHelper.getString(StringHelper.INDUSTRIES, "planet_cracker_finished", StringHelper.tokens("market", getFocusMarket().getName())), opad);
         }
 
         if(this.isDisrupted() && this.marketSuitableForCracker() && mode != IndustryTooltipMode.ADD_INDUSTRY && mode != IndustryTooltipMode.QUEUED && !isBuilding())
         {
             Color bad = Misc.getNegativeHighlightColor();
-            tooltip.addPara("Progress is stalled while the planet cracker is disrupted.", bad, opad);
+            tooltip.addPara(StringHelper.getString(StringHelper.INDUSTRIES, "planet_cracker_stalled"), bad, opad);
         }
     }
 
