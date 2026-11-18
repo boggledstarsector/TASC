@@ -13,6 +13,7 @@ import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.econ.*;
 import com.fs.starfarer.api.impl.campaign.ids.*;
 import com.fs.starfarer.api.impl.campaign.econ.impl.BaseIndustry;
+import boggled.campaign.econ.StringHelper;
 import boggled.campaign.econ.boggledTools;
 
 public class Boggled_Domed_Cities extends BaseIndustry implements MarketImmigrationModifier, ShowBoggledTerraformingMenuOption
@@ -28,29 +29,40 @@ public class Boggled_Domed_Cities extends BaseIndustry implements MarketImmigrat
     public static float SKY_CITIES_UPKEEP_MULTIPLIER = 6f;
     public static float SKY_CITIES_BUILD_COST_MULTIPLIER = 3f;
 
-    // Use this function to determine which mode the building is in
-    // e.g. this.getCurrentName().equals("Domed Cities")
+    // Mode is told apart with skyCitiesName(), seafloorCitiesName(), and domedCitiesName().
     @Override
     public String getCurrentName() {
         if(boggledTools.getTascPlanetType(market.getPlanetEntity()).equals(boggledTools.TascPlanetTypes.gasGiantPlanetId))
         {
-            return "Sky Cities";
+            return skyCitiesName();
         }
         else if(boggledTools.getTascPlanetType(market.getPlanetEntity()).equals(boggledTools.TascPlanetTypes.waterPlanetId))
         {
-            return "Seafloor Cities";
+            return seafloorCitiesName();
         }
         else
         {
-            return "Domed Cities";
+            return domedCitiesName();
         }
+    }
+
+    private String skyCitiesName() {
+        return StringHelper.getString(StringHelper.INDUSTRIES, "domed_cities_name_sky");
+    }
+
+    private String seafloorCitiesName() {
+        return StringHelper.getString(StringHelper.INDUSTRIES, "domed_cities_name_seafloor");
+    }
+
+    private String domedCitiesName() {
+        return StringHelper.getString(StringHelper.INDUSTRIES, "domed_cities_name_domed");
     }
 
     // Only the base Domed Cities mode can be disrupted
     @Override
     public boolean canBeDisrupted()
     {
-        return this.getCurrentName().equals("Domed Cities");
+        return this.getCurrentName().equals(domedCitiesName());
     }
 
     @Override
@@ -59,14 +71,14 @@ public class Boggled_Domed_Cities extends BaseIndustry implements MarketImmigrat
         super.apply(true);
 
         // Sky Cities upkeep malus
-        if(this.getCurrentName().equals("Sky Cities"))
+        if(this.getCurrentName().equals(skyCitiesName()))
         {
-            this.getUpkeep().modifyMultAlways("boggled_sky_cities", SKY_CITIES_UPKEEP_MULTIPLIER, "Sky cities upkeep multiplier");
+            this.getUpkeep().modifyMultAlways("boggled_sky_cities", SKY_CITIES_UPKEEP_MULTIPLIER, StringHelper.getString(StringHelper.INDUSTRIES, "domed_cities_upkeep_multiplier"));
         }
 
         // Reduces ground defense in Domed Cities and Sky Cities modes, increases it in Seafloor Cities mode.
         // Always applies the bonus/malus, even if the building is disrupted
-        if(this.getCurrentName().equals("Seafloor Cities"))
+        if(this.getCurrentName().equals(seafloorCitiesName()))
         {
             this.market.getStats().getDynamic().getMod(Stats.GROUND_DEFENSES_MOD).modifyMult(getModId(), DEFENSE_BONUS, getNameForModifier());
         }
@@ -90,7 +102,7 @@ public class Boggled_Domed_Cities extends BaseIndustry implements MarketImmigrat
                     // actually suppressing it causes aquaculture to produce no food.
                     // Alex has to fix this in vanilla as far as I know.
                     float hazard = -0.25f;
-                    this.market.getHazard().modifyFlat(this.getModId(), hazard, "Seafloor cities");
+                    this.market.getHazard().modifyFlat(this.getModId(), hazard, StringHelper.getString(StringHelper.INDUSTRIES, "domed_cities_modifier_seafloor"));
                 }
                 else
                 {
@@ -99,13 +111,13 @@ public class Boggled_Domed_Cities extends BaseIndustry implements MarketImmigrat
             }
 
             // Reduces accessibility by 10% if in Seafloor Cities mode, boosts it by 10% if in Sky Cities mode
-            if(this.getCurrentName().equals("Seafloor Cities"))
+            if(this.getCurrentName().equals(seafloorCitiesName()))
             {
-                this.market.getAccessibilityMod().modifyFlat(this.getModId(), ACCESSIBILITY_MALUS, "Seafloor cities");
+                this.market.getAccessibilityMod().modifyFlat(this.getModId(), ACCESSIBILITY_MALUS, StringHelper.getString(StringHelper.INDUSTRIES, "domed_cities_modifier_seafloor"));
             }
-            else if(this.getCurrentName().equals("Sky Cities"))
+            else if(this.getCurrentName().equals(skyCitiesName()))
             {
-                this.market.getAccessibilityMod().modifyFlat(this.getModId(), ACCESSIBILITY_BONUS, "Sky cities");
+                this.market.getAccessibilityMod().modifyFlat(this.getModId(), ACCESSIBILITY_BONUS, StringHelper.getString(StringHelper.INDUSTRIES, "domed_cities_modifier_sky"));
             }
 
             //Stability bonus
@@ -151,7 +163,7 @@ public class Boggled_Domed_Cities extends BaseIndustry implements MarketImmigrat
     @Override
     public float getBaseUpkeep()
     {
-        if(this.getCurrentName().equals("Sky Cities"))
+        if(this.getCurrentName().equals(skyCitiesName()))
         {
             return super.getBaseUpkeep() * SKY_CITIES_UPKEEP_MULTIPLIER;
         }
@@ -165,7 +177,7 @@ public class Boggled_Domed_Cities extends BaseIndustry implements MarketImmigrat
     @Override
     public float getBuildCost()
     {
-        if(this.getCurrentName().equals("Sky Cities"))
+        if(this.getCurrentName().equals(skyCitiesName()))
         {
             return super.getBuildCost() * SKY_CITIES_BUILD_COST_MULTIPLIER;
         }
@@ -201,14 +213,14 @@ public class Boggled_Domed_Cities extends BaseIndustry implements MarketImmigrat
         }
 
         // Meteor impacts preclude building except for Seafloor Cities
-        if(!this.getCurrentName().equals("Seafloor Cities") && market.hasCondition("meteor_impacts"))
+        if(!this.getCurrentName().equals(seafloorCitiesName()) && market.hasCondition("meteor_impacts"))
         {
             return false;
         }
 
         // Tectonic activity precludes building unless Harmonic Damper is built and functional or it's Sky Cities mode
         // There's no check to automatically remove Domed Cities if Harmonic Damper is deconstructed or disrupted.
-        if(!this.getCurrentName().equals("Sky Cities") && market.hasCondition("extreme_tectonic_activity") && (market.getIndustry("BOGGLED_HARMONIC_DAMPER") == null || !market.getIndustry("BOGGLED_HARMONIC_DAMPER").isFunctional()))
+        if(!this.getCurrentName().equals(skyCitiesName()) && market.hasCondition("extreme_tectonic_activity") && (market.getIndustry("BOGGLED_HARMONIC_DAMPER") == null || !market.getIndustry("BOGGLED_HARMONIC_DAMPER").isFunctional()))
         {
             return false;
         }
@@ -242,14 +254,14 @@ public class Boggled_Domed_Cities extends BaseIndustry implements MarketImmigrat
         }
 
         // Meteor impacts preclude building except for Seafloor Cities
-        if(!this.getCurrentName().equals("Seafloor Cities") && market.hasCondition("meteor_impacts"))
+        if(!this.getCurrentName().equals(seafloorCitiesName()) && market.hasCondition("meteor_impacts"))
         {
             return super.showWhenUnavailable();
         }
 
         // Tectonic activity precludes building unless Harmonic Damper is built and functional or it's Sky Cities mode
         // There's no check to automatically remove Domed Cities if Harmonic Damper is deconstructed or disrupted.
-        if(!this.getCurrentName().equals("Sky Cities") && market.hasCondition("extreme_tectonic_activity") && (market.getIndustry("BOGGLED_HARMONIC_DAMPER") == null || !market.getIndustry("BOGGLED_HARMONIC_DAMPER").isFunctional()))
+        if(!this.getCurrentName().equals(skyCitiesName()) && market.hasCondition("extreme_tectonic_activity") && (market.getIndustry("BOGGLED_HARMONIC_DAMPER") == null || !market.getIndustry("BOGGLED_HARMONIC_DAMPER").isFunctional()))
         {
             return super.showWhenUnavailable();
         }
@@ -263,16 +275,16 @@ public class Boggled_Domed_Cities extends BaseIndustry implements MarketImmigrat
         MarketAPI market = this.market;
 
         // Meteor impacts preclude building except for Seafloor Cities
-        if(!this.getCurrentName().equals("Seafloor Cities") && market.hasCondition("meteor_impacts"))
+        if(!this.getCurrentName().equals(seafloorCitiesName()) && market.hasCondition("meteor_impacts"))
         {
-            return market.getName() + " experiences frequent meteor impacts that could destroy megastructures. It would be too dangerous to construct one here.";
+            return StringHelper.getString(StringHelper.INDUSTRIES, "domed_cities_meteor_impacts", StringHelper.tokens("market", market.getName()));
         }
 
         // Tectonic activity precludes building unless Harmonic Damper is built and functional or it's Sky Cities mode
         // There's no check to automatically remove Domed Cities if Harmonic Damper is deconstructed or disrupted.
-        if(!this.getCurrentName().equals("Sky Cities") && market.hasCondition("extreme_tectonic_activity") && (market.getIndustry("BOGGLED_HARMONIC_DAMPER") == null || !market.getIndustry("BOGGLED_HARMONIC_DAMPER").isFunctional()))
+        if(!this.getCurrentName().equals(skyCitiesName()) && market.hasCondition("extreme_tectonic_activity") && (market.getIndustry("BOGGLED_HARMONIC_DAMPER") == null || !market.getIndustry("BOGGLED_HARMONIC_DAMPER").isFunctional()))
         {
-            return market.getName() + " experiences frequent seismic events that could destroy megastructures. It would be too dangerous to construct one here.";
+            return StringHelper.getString(StringHelper.INDUSTRIES, "domed_cities_seismic_events", StringHelper.tokens("market", market.getName()));
         }
 
         return super.getUnavailableReason();
@@ -289,18 +301,20 @@ public class Boggled_Domed_Cities extends BaseIndustry implements MarketImmigrat
     public void addAlphaCoreDescription(TooltipMakerAPI tooltip, AICoreDescriptionMode mode) {
         float opad = 10.0F;
         Color highlight = Misc.getHighlightColor();
-        String pre = "Alpha-level AI core currently assigned. ";
+        String pre = StringHelper.getString(StringHelper.INDUSTRIES, "ai_core_alpha_assigned");
         if (mode == AICoreDescriptionMode.MANAGE_CORE_DIALOG_LIST || mode == AICoreDescriptionMode.INDUSTRY_TOOLTIP) {
-            pre = "Alpha-level AI core. ";
+            pre = StringHelper.getString(StringHelper.INDUSTRIES, "ai_core_alpha_short");
         }
 
+        String bonus = "3";
+        String sentence = StringHelper.getString(StringHelper.INDUSTRIES, "domed_cities_ai_increases_stability", StringHelper.tokens("prefix", pre, "bonus", bonus));
         if (mode == AICoreDescriptionMode.INDUSTRY_TOOLTIP) {
             CommoditySpecAPI coreSpec = Global.getSettings().getCommoditySpec(this.aiCoreId);
             TooltipMakerAPI text = tooltip.beginImageWithText(coreSpec.getIconName(), 48.0F);
-            text.addPara(pre + "Increases stability by %s.", 0.0F, highlight, "3");
+            StringHelper.applyHighlight(text.addPara(sentence, 0.0F), highlight, bonus);
             tooltip.addImageWithText(opad);
         } else {
-            tooltip.addPara(pre + "Increases stability by %s.", opad, highlight, "3");
+            StringHelper.applyHighlight(tooltip.addPara(sentence, opad), highlight, bonus);
         }
     }
 
@@ -308,18 +322,20 @@ public class Boggled_Domed_Cities extends BaseIndustry implements MarketImmigrat
     public void addBetaCoreDescription(TooltipMakerAPI tooltip, AICoreDescriptionMode mode) {
         float opad = 10.0F;
         Color highlight = Misc.getHighlightColor();
-        String pre = "Beta-level AI core currently assigned. ";
+        String pre = StringHelper.getString(StringHelper.INDUSTRIES, "ai_core_beta_assigned");
         if (mode == AICoreDescriptionMode.MANAGE_CORE_DIALOG_LIST || mode == AICoreDescriptionMode.INDUSTRY_TOOLTIP) {
-            pre = "Beta-level AI core. ";
+            pre = StringHelper.getString(StringHelper.INDUSTRIES, "ai_core_beta_short");
         }
 
+        String bonus = "2";
+        String sentence = StringHelper.getString(StringHelper.INDUSTRIES, "domed_cities_ai_increases_stability", StringHelper.tokens("prefix", pre, "bonus", bonus));
         if (mode == AICoreDescriptionMode.INDUSTRY_TOOLTIP) {
             CommoditySpecAPI coreSpec = Global.getSettings().getCommoditySpec(this.aiCoreId);
             TooltipMakerAPI text = tooltip.beginImageWithText(coreSpec.getIconName(), 48.0F);
-            text.addPara(pre + "Increases stability by %s.", opad, highlight, "2");
+            StringHelper.applyHighlight(text.addPara(sentence, opad), highlight, bonus);
             tooltip.addImageWithText(opad);
         } else {
-            tooltip.addPara(pre + "Increases stability by %s.", opad, highlight, "2");
+            StringHelper.applyHighlight(tooltip.addPara(sentence, opad), highlight, bonus);
         }
     }
 
@@ -327,29 +343,31 @@ public class Boggled_Domed_Cities extends BaseIndustry implements MarketImmigrat
     public void addGammaCoreDescription(TooltipMakerAPI tooltip, AICoreDescriptionMode mode) {
         float opad = 10.0F;
         Color highlight = Misc.getHighlightColor();
-        String pre = "Gamma-level AI core currently assigned. ";
+        String pre = StringHelper.getString(StringHelper.INDUSTRIES, "ai_core_gamma_assigned");
         if (mode == AICoreDescriptionMode.MANAGE_CORE_DIALOG_LIST || mode == AICoreDescriptionMode.INDUSTRY_TOOLTIP) {
-            pre = "Gamma-level AI core. ";
+            pre = StringHelper.getString(StringHelper.INDUSTRIES, "ai_core_gamma_short");
         }
 
+        String bonus = "1";
+        String sentence = StringHelper.getString(StringHelper.INDUSTRIES, "domed_cities_ai_increases_stability", StringHelper.tokens("prefix", pre, "bonus", bonus));
         if (mode == AICoreDescriptionMode.INDUSTRY_TOOLTIP) {
             CommoditySpecAPI coreSpec = Global.getSettings().getCommoditySpec(this.aiCoreId);
             TooltipMakerAPI text = tooltip.beginImageWithText(coreSpec.getIconName(), 48.0F);
-            text.addPara(pre + "Increases stability by %s.", opad, highlight, "1");
+            StringHelper.applyHighlight(text.addPara(sentence, opad), highlight, bonus);
             tooltip.addImageWithText(opad);
         } else {
-            tooltip.addPara(pre + "Increases stability by %s.", opad, highlight, "1");
+            StringHelper.applyHighlight(tooltip.addPara(sentence, opad), highlight, bonus);
         }
     }
 
     @Override
     public String getCurrentImage()
     {
-        if(this.getCurrentName().equals("Seafloor Cities"))
+        if(this.getCurrentName().equals(seafloorCitiesName()))
         {
             return Global.getSettings().getSpriteName("boggled", "seafloor_cities");
         }
-        else if(this.getCurrentName().equals("Sky Cities"))
+        else if(this.getCurrentName().equals(skyCitiesName()))
         {
             return Global.getSettings().getSpriteName("boggled", "sky_cities");
         }
@@ -382,13 +400,13 @@ public class Boggled_Domed_Cities extends BaseIndustry implements MarketImmigrat
     @Override
     protected String getDescriptionOverride()
     {
-        if(this.getCurrentName().equals("Seafloor Cities"))
+        if(this.getCurrentName().equals(seafloorCitiesName()))
         {
-            return "Enclosed megastructures resting on the abyssal plains, these undersea cities withstand crushing pressure and eternal darkness with reinforced hulls and advanced life-support systems. The isolation of these colonies makes them difficult to reach, providing security from external threats but hampering trade.";
+            return StringHelper.getString(StringHelper.INDUSTRIES, "domed_cities_desc_seafloor");
         }
-        else if(this.getCurrentName().equals("Sky Cities"))
+        else if(this.getCurrentName().equals(skyCitiesName()))
         {
-            return "Colossal arcologies suspended within the upper atmosphere of a gas giant, held aloft by specialized atmospheric buoyancy systems. These floating cities can provide a habitable environment for millions, shielding them from the crushing pressures and violent storms below.";
+            return StringHelper.getString(StringHelper.INDUSTRIES, "domed_cities_desc_sky");
         }
         else
         {
@@ -407,17 +425,17 @@ public class Boggled_Domed_Cities extends BaseIndustry implements MarketImmigrat
     {
         if (isImproved())
         {
-            if(this.getCurrentName().equals("Seafloor Cities"))
+            if(this.getCurrentName().equals(seafloorCitiesName()))
             {
-                market.getStability().modifyFlat("DOME_improve", IMPROVE_STABILITY_BONUS, getImprovementsDescForModifiers() + " (Seafloor cities)");
+                market.getStability().modifyFlat("DOME_improve", IMPROVE_STABILITY_BONUS, StringHelper.getString(StringHelper.INDUSTRIES, "domed_cities_improve_seafloor", StringHelper.tokens("improvements", getImprovementsDescForModifiers())));
             }
-            else if(this.getCurrentName().equals("Sky Cities"))
+            else if(this.getCurrentName().equals(skyCitiesName()))
             {
-                market.getStability().modifyFlat("DOME_improve", IMPROVE_STABILITY_BONUS, getImprovementsDescForModifiers() + " (Sky cities)");
+                market.getStability().modifyFlat("DOME_improve", IMPROVE_STABILITY_BONUS, StringHelper.getString(StringHelper.INDUSTRIES, "domed_cities_improve_sky", StringHelper.tokens("improvements", getImprovementsDescForModifiers())));
             }
             else
             {
-                market.getStability().modifyFlat("DOME_improve", IMPROVE_STABILITY_BONUS, getImprovementsDescForModifiers() + " (Domed cities)");
+                market.getStability().modifyFlat("DOME_improve", IMPROVE_STABILITY_BONUS, StringHelper.getString(StringHelper.INDUSTRIES, "domed_cities_improve_domed", StringHelper.tokens("improvements", getImprovementsDescForModifiers())));
             }
         }
         else
@@ -432,13 +450,16 @@ public class Boggled_Domed_Cities extends BaseIndustry implements MarketImmigrat
         float opad = 10f;
         Color highlight = Misc.getHighlightColor();
 
+        String bonus = "" + (int) IMPROVE_STABILITY_BONUS;
         if (mode == ImprovementDescriptionMode.INDUSTRY_TOOLTIP)
         {
-            info.addPara("Stability increased by %s.", 0f, highlight, "" + (int) IMPROVE_STABILITY_BONUS);
+            String sentence = StringHelper.getString(StringHelper.INDUSTRIES, "domed_cities_stability_increased", StringHelper.tokens("bonus", bonus));
+            StringHelper.applyHighlight(info.addPara(sentence, 0f), highlight, bonus);
         }
         else
         {
-            info.addPara("Increases stability by %s.", 0f, highlight, "" + (int) IMPROVE_STABILITY_BONUS);
+            String sentence = StringHelper.getString(StringHelper.INDUSTRIES, "domed_cities_increases_stability", StringHelper.tokens("bonus", bonus));
+            StringHelper.applyHighlight(info.addPara(sentence, 0f), highlight, bonus);
         }
 
         info.addSpacer(opad);
@@ -473,68 +494,84 @@ public class Boggled_Domed_Cities extends BaseIndustry implements MarketImmigrat
 
         if(mode == IndustryTooltipMode.ADD_INDUSTRY || mode == IndustryTooltipMode.QUEUED || !isFunctional())
         {
-            tooltip.addPara("If operational, would counter the effects of:", opad, Misc.getHighlightColor(), "");
+            tooltip.addPara(StringHelper.getString(StringHelper.INDUSTRIES, "domed_cities_would_counter"), opad);
             int numCondsCountered = 0;
             for (String id : boggledTools.getDomedCitiesSuppressedConditions())
             {
                 if(this.market.hasCondition(id))
                 {
                     String condName = Global.getSettings().getMarketConditionSpec(id).getName();
-                    tooltip.addPara("           %s", 2f, Misc.getHighlightColor(), condName);
+                    String line = StringHelper.getString(StringHelper.INDUSTRIES, "domed_cities_condition_line", StringHelper.tokens("condition", condName));
+                    StringHelper.applyHighlight(tooltip.addPara(line, 2f), Misc.getHighlightColor(), condName);
                     numCondsCountered++;
                 }
             }
 
             if(numCondsCountered == 0)
             {
-                tooltip.addPara("           %s", 2f, Misc.getGrayColor(), "(none)");
+                String none = StringHelper.getString(StringHelper.INDUSTRIES, "domed_cities_none");
+                String line = StringHelper.getString(StringHelper.INDUSTRIES, "domed_cities_condition_line", StringHelper.tokens("condition", none));
+                StringHelper.applyHighlight(tooltip.addPara(line, 2f), Misc.getGrayColor(), none);
             }
         }
 
         if(mode != IndustryTooltipMode.ADD_INDUSTRY && mode != IndustryTooltipMode.QUEUED && isFunctional())
         {
-            tooltip.addPara("Countering the effects of:", opad, Misc.getHighlightColor(), "");
+            tooltip.addPara(StringHelper.getString(StringHelper.INDUSTRIES, "domed_cities_countering"), opad);
             int numCondsCountered = 0;
             for (String id : boggledTools.getDomedCitiesSuppressedConditions())
             {
                 if(this.market.hasCondition(id))
                 {
                     String condName = Global.getSettings().getMarketConditionSpec(id).getName();
-                    tooltip.addPara("           %s", 2f, Misc.getHighlightColor(), condName);
+                    String line = StringHelper.getString(StringHelper.INDUSTRIES, "domed_cities_condition_line", StringHelper.tokens("condition", condName));
+                    StringHelper.applyHighlight(tooltip.addPara(line, 2f), Misc.getHighlightColor(), condName);
                     numCondsCountered++;
                 }
             }
 
             if(numCondsCountered == 0)
             {
-                tooltip.addPara("           %s", 2f, Misc.getGrayColor(), "(none)");
+                String none = StringHelper.getString(StringHelper.INDUSTRIES, "domed_cities_none");
+                String line = StringHelper.getString(StringHelper.INDUSTRIES, "domed_cities_condition_line", StringHelper.tokens("condition", none));
+                StringHelper.applyHighlight(tooltip.addPara(line, 2f), Misc.getGrayColor(), none);
             }
         }
 
         if(isFunctional())
         {
-            tooltip.addPara("%s population growth (based on colony size)", 10f, Misc.getHighlightColor(), "+" + (int) getImmigrationBonus());
+            String growth = "+" + (int) getImmigrationBonus();
+            String growthSentence = StringHelper.getString(StringHelper.INDUSTRIES, "domed_cities_population_growth", StringHelper.tokens("bonus", growth));
+            StringHelper.applyHighlight(tooltip.addPara(growthSentence, 10f), Misc.getHighlightColor(), growth);
         }
 
-        if(this.getCurrentName().equals("Seafloor Cities"))
+        if(this.getCurrentName().equals(seafloorCitiesName()))
         {
-            tooltip.addPara("Ground defense strength: %s", opad, Misc.getHighlightColor(), new String[]{"x" + DEFENSE_BONUS});
+            String defense = "x" + DEFENSE_BONUS;
+            String defenseSentence = StringHelper.getString(StringHelper.INDUSTRIES, "domed_cities_ground_defense", StringHelper.tokens("bonus", defense));
+            StringHelper.applyHighlight(tooltip.addPara(defenseSentence, opad), Misc.getHighlightColor(), defense);
         }
         else
         {
             if(boggledTools.getBooleanSetting("boggledDomedCitiesDefensePenaltyEnabled"))
             {
-                tooltip.addPara("Ground defense strength: %s", opad, Misc.getNegativeHighlightColor(), new String[]{"x" + DEFENSE_MALUS});
+                String defense = "x" + DEFENSE_MALUS;
+                String defenseSentence = StringHelper.getString(StringHelper.INDUSTRIES, "domed_cities_ground_defense", StringHelper.tokens("bonus", defense));
+                StringHelper.applyHighlight(tooltip.addPara(defenseSentence, opad), Misc.getNegativeHighlightColor(), defense);
             }
         }
 
-        if(this.getCurrentName().equals("Seafloor Cities"))
+        if(this.getCurrentName().equals(seafloorCitiesName()))
         {
-            tooltip.addPara("Accessibility penalty: %s", opad, Misc.getNegativeHighlightColor(), "-10%");
+            String penalty = "-10%";
+            String penaltySentence = StringHelper.getString(StringHelper.INDUSTRIES, "domed_cities_accessibility_penalty", StringHelper.tokens("penalty", penalty));
+            StringHelper.applyHighlight(tooltip.addPara(penaltySentence, opad), Misc.getNegativeHighlightColor(), penalty);
         }
-        else if(this.getCurrentName().equals("Sky Cities"))
+        else if(this.getCurrentName().equals(skyCitiesName()))
         {
-            tooltip.addPara("Accessibility bonus: %s", opad, Misc.getHighlightColor(), "10%");
+            String access = "10%";
+            String accessSentence = StringHelper.getString(StringHelper.INDUSTRIES, "domed_cities_accessibility_bonus", StringHelper.tokens("bonus", access));
+            StringHelper.applyHighlight(tooltip.addPara(accessSentence, opad), Misc.getHighlightColor(), access);
         }
     }
 }

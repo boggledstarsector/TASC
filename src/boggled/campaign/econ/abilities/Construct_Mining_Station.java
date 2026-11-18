@@ -1,5 +1,6 @@
 package boggled.campaign.econ.abilities;
 
+import boggled.campaign.econ.StringHelper;
 import boggled.campaign.econ.boggledTools;
 import boggled.scripts.PlayerCargoCalculations.boggledDefaultCargo;
 import com.fs.starfarer.api.Global;
@@ -41,7 +42,8 @@ public class Construct_Mining_Station extends BaseDurationAbility
         boggledDefaultCargo.active.removeCommodity(playerCargo, boggledDefaultCargo.Mining_Station, "heavy_machinery", heavyMachineryCost);
 
         StarSystemAPI system = playerFleet.getStarSystem();
-        SectorEntityToken newMiningStation = system.addCustomEntity("boggled_mining_station" + clock.getCycle() + clock.getMonth() + clock.getDay(), system.getBaseName() + " Mining Station", "boggled_mining_station_small", playerFleet.getFaction().getId());
+        String miningName = StringHelper.getString(StringHelper.ABILITIES, "mining_entity_name", StringHelper.tokens("system", system.getBaseName()));
+        SectorEntityToken newMiningStation = system.addCustomEntity("boggled_mining_station" + clock.getCycle() + clock.getMonth() + clock.getDay(), miningName, "boggled_mining_station_small", playerFleet.getFaction().getId());
 
         //Set the mining station in an orbit that keeps it within the asteroid belt or asteroid field
         if(boggledTools.playerFleetInAsteroidBelt(playerFleet))
@@ -201,16 +203,23 @@ public class Construct_Mining_Station extends BaseDurationAbility
         Color highlight = Misc.getHighlightColor();
         Color bad = Misc.getNegativeHighlightColor();
 
-        tooltip.addTitle("Construct Mining Station");
+        tooltip.addTitle(StringHelper.getString(StringHelper.ABILITIES, "mining_title"));
         float pad = 10.0F;
-        tooltip.addPara("Construct a mining station in an asteroid belt or asteroid field. Expends %s credits, %s crew, %s heavy machinery, %s metals and %s transplutonics for construction.", pad, highlight, new String[]{(int)creditCost + "",(int)crewCost + "",(int)heavyMachineryCost +"", (int)metalCost + "", (int)transplutonicsCost +""});
+        String credits = (int) creditCost + "";
+        String crew = (int) crewCost + "";
+        String heavyMachinery = (int) heavyMachineryCost + "";
+        String metals = (int) metalCost + "";
+        String transplutonics = (int) transplutonicsCost + "";
+        String costSentence = StringHelper.getString(StringHelper.ABILITIES, "mining_cost", StringHelper.tokens(
+                "credits", credits, "crew", crew, "heavyMachinery", heavyMachinery, "metals", metals, "transplutonics", transplutonics));
+        StringHelper.applyHighlight(tooltip.addPara(costSentence, pad), highlight, credits, crew, heavyMachinery, metals, transplutonics);
 
         // Check research requirement for tooltip
         String requiredResearch = boggledTools.getRequiredResearchForAbility("boggled_construct_mining_station");
         if (requiredResearch != null && !boggledTools.isResearched(requiredResearch))
         {
             String researchName = boggledTools.getResearchDisplayName(requiredResearch);
-            tooltip.addPara("Requires the " + researchName + " research to be completed.", bad, pad);
+            tooltip.addPara(StringHelper.getString(StringHelper.GENERAL, "requires_research", StringHelper.tokens("research", researchName)), bad, pad);
         }
 
         SectorEntityToken playerFleet = Global.getSector().getPlayerFleet();
@@ -223,12 +232,16 @@ public class Construct_Mining_Station extends BaseDurationAbility
             if (!playerFleet.isInHyperspace() && !Global.getSector().getPlayerFleet().isInHyperspaceTransition() && system != null)
             {
                 Integer numAsteroidBeltsInSystem = boggledTools.getNumAsteroidTerrainsInSystem(playerFleet);
-                tooltip.addPara("There are %s asteroid belts and/or asteroid fields in the " + playerFleet.getStarSystem().getName() + ". A mining station constructed here would have %s resources.", pad, highlight, new String[]{numAsteroidBeltsInSystem +"", boggledTools.getMiningStationResourceString(numAsteroidBeltsInSystem)});
+                String count = numAsteroidBeltsInSystem + "";
+                String resources = miningResourceDisplay(boggledTools.getMiningStationResourceString(numAsteroidBeltsInSystem));
+                String beltSentence = StringHelper.getString(StringHelper.ABILITIES, "mining_belt_resources", StringHelper.tokens(
+                        "count", count, "system", playerFleet.getStarSystem().getName(), "resources", resources));
+                StringHelper.applyHighlight(tooltip.addPara(beltSentence, pad), highlight, count, resources);
             }
         }
         else
         {
-            // Static resources. Defaults to moderate.
+            // Static resources. Defaults to moderate. The switch values are condition ids.
             String resourceLevel = "moderate";
             int staticAmountPerSettings = boggledTools.getIntSetting("boggledMiningStationStaticAmount");
             resourceLevel = switch (staticAmountPerSettings) {
@@ -239,7 +252,9 @@ public class Construct_Mining_Station extends BaseDurationAbility
                 case 5 -> "ultrarich";
                 default -> resourceLevel;
             };
-            tooltip.addPara("Mining stations have %s ore and rare ore resources.", pad, highlight, new String[]{resourceLevel});
+            String resourceDisplay = miningResourceDisplay(resourceLevel);
+            String staticSentence = StringHelper.getString(StringHelper.ABILITIES, "mining_static_resources", StringHelper.tokens("level", resourceDisplay));
+            StringHelper.applyHighlight(tooltip.addPara(staticSentence, pad), highlight, resourceDisplay);
         }
 
         boolean playerFleetInAsteroidBelt = false;
@@ -253,19 +268,19 @@ public class Construct_Mining_Station extends BaseDurationAbility
 
         if(playerFleet.isInHyperspace() || Global.getSector().getPlayerFleet().isInHyperspaceTransition() || system == null)
         {
-            tooltip.addPara("You cannot construct a mining station in hyperspace.", bad, pad);
+            tooltip.addPara(StringHelper.getString(StringHelper.ABILITIES, "mining_hyperspace"), bad, pad);
         }
         else if(system.hasTag(Tags.SYSTEM_ABYSSAL))
         {
-            tooltip.addPara("You cannot construct a station in a system in abyssal hyperspace.", bad, pad);
+            tooltip.addPara(StringHelper.getString("cannot_construct_abyssal"), bad, pad);
         }
         else if(boggledTools.playerFleetTooCloseToJumpPoint(playerFleet))
         {
-            tooltip.addPara("You cannot construct a mining station so close to a jump point.", bad, pad);
+            tooltip.addPara(StringHelper.getString(StringHelper.ABILITIES, "mining_too_close_to_jump_point"), bad, pad);
         }
         else if(system.getJumpPoints().isEmpty())
         {
-            tooltip.addPara("You cannot construct a station in a system with no jump points.", bad, pad);
+            tooltip.addPara(StringHelper.getString("cannot_construct_no_jump_points"), bad, pad);
         }
 
         int miningStationCap = boggledTools.getIntSetting("boggledMaxNumMiningStationsPerSystem");
@@ -290,44 +305,51 @@ public class Construct_Mining_Station extends BaseDurationAbility
         {
             if(!playerFleetInAsteroidBelt)
             {
-                tooltip.addPara("Your fleet is too far away from an asteroid belt or asteroid field to build a mining station.", bad, pad);
+                tooltip.addPara(StringHelper.getString(StringHelper.ABILITIES, "mining_too_far"), bad, pad);
             }
 
             if(miningStationCap == 0)
             {
-                tooltip.addPara("Construction of player-built mining stations has been disabled in the settings.json file. To enable construction of mining stations, change the value boggledMaxNumMiningStationsPerSystem to something other than zero.", bad, pad);
+                tooltip.addPara(StringHelper.getString(StringHelper.ABILITIES, "mining_disabled"), bad, pad);
             }
             else if (miningStationCapReached && miningStationCap == 1)
             {
-                tooltip.addPara("Each system can only support one player-built mining station. The mining station that already exists must be abandoned before a new mining station can be built in this system.", bad, pad);
+                tooltip.addPara(StringHelper.getString(StringHelper.ABILITIES, "mining_cap_one"), bad, pad);
             }
             else if(miningStationCapReached && miningStationCap > 1)
             {
-                tooltip.addPara("Each system can only support " + miningStationCap + " player-built mining stations. You must abandon one or more existing mining stations before a new mining station can be constructed in this system.", bad, pad);
+                tooltip.addPara(StringHelper.getString(StringHelper.ABILITIES, "mining_cap_many", StringHelper.tokens("cap", miningStationCap + "")), bad, pad);
             }
         }
 
         CargoAPI playerCargo = playerFleet.getCargo();
         if(playerCargo.getCredits().get() < creditCost)
         {
-            tooltip.addPara("Insufficient credits.", bad, pad);
+            tooltip.addPara(StringHelper.getString("insufficient_credits"), bad, pad);
         }
         if(boggledDefaultCargo.active.getCommodityAmount(playerCargo, boggledDefaultCargo.Mining_Station, "metals") < metalCost)
         {
-            tooltip.addPara("Insufficient metals.", bad, pad);
+            tooltip.addPara(StringHelper.getString("insufficient_metals"), bad, pad);
         }
         if(boggledDefaultCargo.active.getCommodityAmount(playerCargo, boggledDefaultCargo.Mining_Station, "rare_metals") < transplutonicsCost)
         {
-            tooltip.addPara("Insufficient transplutonics.", bad, pad);
+            tooltip.addPara(StringHelper.getString("insufficient_transplutonics"), bad, pad);
         }
         if(boggledDefaultCargo.active.getCommodityAmount(playerCargo, boggledDefaultCargo.Mining_Station, "crew") < crewCost)
         {
-            tooltip.addPara("Insufficient crew.", bad, pad);
+            tooltip.addPara(StringHelper.getString("insufficient_crew"), bad, pad);
         }
         if(boggledDefaultCargo.active.getCommodityAmount(playerCargo, boggledDefaultCargo.Mining_Station, "heavy_machinery") < heavyMachineryCost)
         {
-            tooltip.addPara("Insufficient heavy machinery.", bad, pad);
+            tooltip.addPara(StringHelper.getString("insufficient_heavy_machinery"), bad, pad);
         }
+    }
+
+    private static String miningResourceDisplay(String resourceLevelId) {
+        if (resourceLevelId == null) {
+            return "";
+        }
+        return StringHelper.getString(StringHelper.ABILITIES, "mining_resource_" + resourceLevelId);
     }
 
     @Override

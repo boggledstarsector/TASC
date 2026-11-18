@@ -1,5 +1,6 @@
 package boggled.campaign.econ.industries;
 
+import boggled.campaign.econ.StringHelper;
 import boggled.campaign.econ.boggledTools;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.econ.CommoditySpecAPI;
@@ -50,7 +51,7 @@ public class Boggled_Limelight_Network extends BaseIndustry
                 Pair<String, Integer> deficit = getLimelightNetworkDeficit();
                 if(deficit.two > 0)
                 {
-                    getIncome().modifyMult("deficit_income_malus", 0.0F, "Domain-era artifacts shortage");
+                    getIncome().modifyMult("deficit_income_malus", 0.0F, StringHelper.getString(StringHelper.INDUSTRIES, "limelight_shortage"));
                 }
                 else
                 {
@@ -60,7 +61,7 @@ public class Boggled_Limelight_Network extends BaseIndustry
                 // Reduce stability by amount of the shortage.
                 if(deficit.two > 0)
                 {
-                    market.getStability().modifyFlat("deficit_stability_malus", -deficit.two, "Domain-era artifacts shortage");
+                    market.getStability().modifyFlat("deficit_stability_malus", -deficit.two, StringHelper.getString(StringHelper.INDUSTRIES, "limelight_shortage"));
                 }
                 else
                 {
@@ -96,12 +97,17 @@ public class Boggled_Limelight_Network extends BaseIndustry
 
             Pair<String, Integer> deficit = getLimelightNetworkDeficit();
             if(deficit.two > 0 && mode != IndustryTooltipMode.ADD_INDUSTRY && mode != IndustryTooltipMode.QUEUED && !isBuilding()) {
-                tooltip.addPara("Generating no income due to a shortage of %s.", opad, bad, boggledTools.getCommidityNameFromId(deficit.one));
+                String commodity = boggledTools.getCommidityNameFromId(deficit.one);
+                String sentence = StringHelper.getString(StringHelper.INDUSTRIES, "limelight_no_income", StringHelper.tokens("commodity", commodity));
+                StringHelper.applyHighlight(tooltip.addPara(sentence, opad), bad, commodity);
             }
 
             // Reduce stability by amount of the shortage.
             if(deficit.two > 0 && mode != IndustryTooltipMode.ADD_INDUSTRY && mode != IndustryTooltipMode.QUEUED && !isBuilding()) {
-                tooltip.addPara("Colony stability reduced by %s due to a shortage of %s.", opad, bad, deficit.two + "", boggledTools.getCommidityNameFromId(deficit.one));
+                String amount = deficit.two + "";
+                String commodity = boggledTools.getCommidityNameFromId(deficit.one);
+                String sentence = StringHelper.getString(StringHelper.INDUSTRIES, "limelight_stability_reduced", StringHelper.tokens("amount", amount, "commodity", commodity));
+                StringHelper.applyHighlight(tooltip.addPara(sentence, opad), bad, amount, commodity);
             }
         }
     }
@@ -143,18 +149,21 @@ public class Boggled_Limelight_Network extends BaseIndustry
         float opad = 10.0F;
         Color highlight = Misc.getHighlightColor();
         String bonus = (int) Math.round((ALPHA_BONUS - 1.0f) * 100) + "%";
-        String pre = "Alpha-level AI core currently assigned. ";
+        String pre = StringHelper.getString(StringHelper.INDUSTRIES, "ai_core_alpha_assigned");
         if (mode == AICoreDescriptionMode.MANAGE_CORE_DIALOG_LIST || mode == AICoreDescriptionMode.INDUSTRY_TOOLTIP) {
-            pre = "Alpha-level AI core. ";
+            pre = StringHelper.getString(StringHelper.INDUSTRIES, "ai_core_alpha_short");
         }
+        String upkeep = (int)((1.0F - UPKEEP_MULT) * 100.0F) + "%";
+        String demand = "" + DEMAND_REDUCTION;
+        String sentence = StringHelper.getString(StringHelper.INDUSTRIES, "limelight_alpha_core", StringHelper.tokens("prefix", pre, "upkeep", upkeep, "demand", demand, "income", bonus));
 
         if (mode == AICoreDescriptionMode.INDUSTRY_TOOLTIP) {
             CommoditySpecAPI coreSpec = Global.getSettings().getCommoditySpec(this.aiCoreId);
             TooltipMakerAPI text = tooltip.beginImageWithText(coreSpec.getIconName(), 48.0F);
-            text.addPara(pre + "Reduces upkeep cost by %s. Reduces demand by %s unit. " + "Increases income by %s.", 0.0F, highlight, new String[]{(int)((1.0F - UPKEEP_MULT) * 100.0F) + "%", "" + DEMAND_REDUCTION, bonus});
+            StringHelper.applyHighlight(text.addPara(sentence, 0.0F), highlight, upkeep, demand, bonus);
             tooltip.addImageWithText(opad);
         } else {
-            tooltip.addPara(pre + "Reduces upkeep cost by %s. Reduces demand by %s unit. " + "Increases income by %s.", opad, highlight, new String[]{(int)((1.0F - UPKEEP_MULT) * 100.0F) + "%", "" + DEMAND_REDUCTION, bonus});
+            StringHelper.applyHighlight(tooltip.addPara(sentence, opad), highlight, upkeep, demand, bonus);
         }
     }
 
@@ -165,7 +174,7 @@ public class Boggled_Limelight_Network extends BaseIndustry
 
         if(this.aiCoreId != null && this.aiCoreId.equals("alpha_core"))
         {
-            String name = "Alpha Core assigned";
+            String name = StringHelper.getString(StringHelper.INDUSTRIES, "limelight_alpha_assigned");
             this.getIncome().modifyMult("ind_lln_alpha_core", ALPHA_BONUS, name);
         }
         else
@@ -184,7 +193,7 @@ public class Boggled_Limelight_Network extends BaseIndustry
     {
         if (this.isImproved())
         {
-            this.getIncome().modifyMult("ind_improved", IMPROVE_BONUS, "Improvements");
+            this.getIncome().modifyMult("ind_improved", IMPROVE_BONUS, StringHelper.getString(StringHelper.INDUSTRIES, "limelight_improvements"));
         }
         else
         {
@@ -200,11 +209,13 @@ public class Boggled_Limelight_Network extends BaseIndustry
         String bonus = (int) Math.round((IMPROVE_BONUS - 1.0f) * 100) + "%";
         if (mode == ImprovementDescriptionMode.INDUSTRY_TOOLTIP)
         {
-            info.addPara("Income increased by %s.", 0.0F, highlight, new String[]{bonus});
+            String sentence = StringHelper.getString(StringHelper.INDUSTRIES, "limelight_improve_increased", StringHelper.tokens("bonus", bonus));
+            StringHelper.applyHighlight(info.addPara(sentence, 0.0F), highlight, bonus);
         }
         else
         {
-            info.addPara("Increases income by %s.", 0.0F, highlight, new String[]{bonus});
+            String sentence = StringHelper.getString(StringHelper.INDUSTRIES, "limelight_improve_increases", StringHelper.tokens("bonus", bonus));
+            StringHelper.applyHighlight(info.addPara(sentence, 0.0F), highlight, bonus);
         }
 
         info.addSpacer(opad);

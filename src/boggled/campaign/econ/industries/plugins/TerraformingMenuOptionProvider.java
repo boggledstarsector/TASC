@@ -1,5 +1,6 @@
 package boggled.campaign.econ.industries.plugins;
 
+import boggled.campaign.econ.StringHelper;
 import boggled.campaign.econ.boggledTools;
 import boggled.campaign.econ.industries.interfaces.ShowBoggledTerraformingMenuOption;
 import com.fs.starfarer.api.Global;
@@ -34,7 +35,7 @@ public class TerraformingMenuOptionProvider extends BaseIndustryOptionProvider
 
         List<IndustryOptionProvider.IndustryOptionData> result = new ArrayList<IndustryOptionData>();
 
-        IndustryOptionData opt = new IndustryOptionProvider.IndustryOptionData("Open terraforming menu", OPTION_OPEN_TERRAFORMING_MENU, ind, this);
+        IndustryOptionData opt = new IndustryOptionProvider.IndustryOptionData(StringHelper.getString(StringHelper.UI, "open_terraforming_menu"), OPTION_OPEN_TERRAFORMING_MENU, ind, this);
         //opt.color = new Color(150, 100, 255, 255);
         result.add(opt);
 
@@ -66,7 +67,7 @@ public class TerraformingMenuOptionProvider extends BaseIndustryOptionProvider
     {
         if(opt.id == OPTION_OPEN_TERRAFORMING_MENU)
         {
-            tooltip.addPara("Opens the terraforming menu with this colony already selected.", 0f);
+            tooltip.addPara(StringHelper.getString(StringHelper.UI, "opens_terraforming_menu"), 0f);
         }
     }
 

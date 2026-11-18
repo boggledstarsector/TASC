@@ -1,5 +1,6 @@
 package boggled.terraforming;
 
+import boggled.campaign.econ.StringHelper;
 import boggled.campaign.econ.boggledTools;
 import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
@@ -39,7 +40,7 @@ public class ResourceImprovementVolatiles extends BoggledBaseTerraformingProject
     @Override
     public String getProjectName()
     {
-        return "Improve volatiles";
+        return StringHelper.getString(StringHelper.TERRAFORMING, "project_improve_volatiles");
     }
 
     @Override
@@ -85,7 +86,7 @@ public class ResourceImprovementVolatiles extends BoggledBaseTerraformingProject
             }
         };
 
-        return new TerraformingRequirementObject("World type supports volatiles deposits", maxVolatiles > 0, null);
+        return new TerraformingRequirementObject(terraformingText("req_world_supports_volatiles"), maxVolatiles > 0, null);
     }
 
     public TerraformingRequirementObject getRequirementVolatilesCanBeImproved()
@@ -109,6 +110,6 @@ public class ResourceImprovementVolatiles extends BoggledBaseTerraformingProject
             }
         };
 
-        return new TerraformingRequirementObject("Volatiles can be improved", currentVolatiles < maxVolatiles, null);
+        return new TerraformingRequirementObject(terraformingText("req_volatiles_can_be_improved"), currentVolatiles < maxVolatiles, null);
     }
 }

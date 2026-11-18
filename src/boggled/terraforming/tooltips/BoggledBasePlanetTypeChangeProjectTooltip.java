@@ -1,5 +1,6 @@
 package boggled.terraforming.tooltips;
 
+import boggled.campaign.econ.StringHelper;
 import boggled.campaign.econ.boggledTools;
 import boggled.terraforming.BoggledBaseTerraformingPlanetTypeChangeProject;
 import com.fs.starfarer.api.ui.Fonts;
@@ -20,12 +21,18 @@ public class BoggledBasePlanetTypeChangeProjectTooltip extends BoggledBaseTerraf
         tooltipMakerAPI.setTitleFont(Fonts.ORBITRON_12);
         tooltipMakerAPI.setTitleFontColor(Misc.getPositiveHighlightColor());
         tooltipMakerAPI.addTitle(this.terraformingProject.getProjectName());
-        tooltipMakerAPI.addPara("%s worlds start with %s, %s and %s.", 10, Misc.getTextColor(), Misc.getHighlightColor(), new String[]{
-                boggledTools.tascPlanetTypeDisplayStringMap.get(boggledTools.getTascPlanetType(this.terraformingProject.getPlanetIdToChangeInto())).one,
-                (getSecondWord(this.terraformingProject.getBaseFarmlandId()) != null ? getSecondWord(this.terraformingProject.getBaseFarmlandId()) : "no") + " farmland",
-                (getSecondWord(this.terraformingProject.getBaseOrganics()) != null ? getSecondWord(this.terraformingProject.getBaseOrganics()) : "no") + " organics",
-                (getSecondWord(this.terraformingProject.getBaseVolatiles()) != null ? getSecondWord(this.terraformingProject.getBaseVolatiles()) : "no") + " volatiles"
-        });
+        String planetType = Misc.ucFirst(boggledTools.getPlanetTypeDisplayName(boggledTools.getTascPlanetType(this.terraformingProject.getPlanetIdToChangeInto())));
+        String farmland = depositPhrase(this.terraformingProject.getBaseFarmlandId(), "farmland");
+        String organics = depositPhrase(this.terraformingProject.getBaseOrganics(), "organics");
+        String volatiles = depositPhrase(this.terraformingProject.getBaseVolatiles(), "volatiles");
+        String starts = StringHelper.getString(StringHelper.TERRAFORMING, "type_change_starts_with", StringHelper.tokens("planetType", planetType, "farmland", farmland, "organics", organics, "volatiles", volatiles));
+        StringHelper.applyHighlight(
+                tooltipMakerAPI.addPara(starts, Misc.getTextColor(), 10f),
+                Misc.getHighlightColor(),
+                planetType,
+                farmland,
+                organics,
+                volatiles);
 
         int max_farmland_int = boggledTools.getMaxFarmlandLevelForTascPlanetType(boggledTools.getTascPlanetType(this.terraformingProject.getPlanetIdToChangeInto()));
         String max_farmland = boggledTools.getFarmlandConditionIdForInteger(max_farmland_int);
@@ -33,13 +40,26 @@ public class BoggledBasePlanetTypeChangeProjectTooltip extends BoggledBaseTerraf
         String max_organics = boggledTools.getOrganicsConditionIdForInteger(max_organics_int);
         int max_volatiles_int = boggledTools.getMaxVolatilesLevelForTascPlanetType(boggledTools.getTascPlanetType(this.terraformingProject.getPlanetIdToChangeInto()));
         String max_volatiles = boggledTools.getVolatilesConditionIdForInteger(max_volatiles_int);
-        tooltipMakerAPI.addPara("These amounts can be improved with further projects up to maximums of %s, %s and %s.", 10, Misc.getTextColor(), Misc.getHighlightColor(), new String[]{
-                (getSecondWord(max_farmland) != null ? getSecondWord(max_farmland) : "no") + " farmland",
-                (getSecondWord(max_organics) != null ? getSecondWord(max_organics) : "no") + " organics",
-                (getSecondWord(max_volatiles) != null ? getSecondWord(max_volatiles) : "no") + " volatiles"
-        });
+        String maxFarmlandPhrase = depositPhrase(max_farmland, "farmland");
+        String maxOrganicsPhrase = depositPhrase(max_organics, "organics");
+        String maxVolatilesPhrase = depositPhrase(max_volatiles, "volatiles");
+        String maximums = StringHelper.getString(StringHelper.TERRAFORMING, "type_change_maximums", StringHelper.tokens("farmland", maxFarmlandPhrase, "organics", maxOrganicsPhrase, "volatiles", maxVolatilesPhrase));
+        StringHelper.applyHighlight(
+                tooltipMakerAPI.addPara(maximums, Misc.getTextColor(), 10f),
+                Misc.getHighlightColor(),
+                maxFarmlandPhrase,
+                maxOrganicsPhrase,
+                maxVolatilesPhrase);
 
-        tooltipMakerAPI.addPara("Ore deposits are never modified by terraforming projects.", 10, Misc.getTextColor(), Misc.getHighlightColor(), new String[]{});
+        tooltipMakerAPI.addPara(StringHelper.getString(StringHelper.TERRAFORMING, "ore_deposits_unchanged"), Misc.getTextColor(), 10f);
+    }
+
+    private static String depositPhrase(String conditionId, String resource) {
+        String level = getSecondWord(conditionId);
+        if (level == null) {
+            level = "no";
+        }
+        return StringHelper.getString(StringHelper.TERRAFORMING, "deposit_" + resource + "_" + level);
     }
 
     public static String getSecondWord(String input) {

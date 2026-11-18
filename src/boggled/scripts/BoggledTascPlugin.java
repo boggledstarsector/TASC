@@ -20,8 +20,11 @@ import boggled.scripts.PlayerCargoCalculations.boggledCrewReplacerCargo;
 
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.Iterator;
+import java.util.Locale;
 
 public class BoggledTascPlugin extends BaseModPlugin {
 //    static {
@@ -47,6 +50,39 @@ public class BoggledTascPlugin extends BaseModPlugin {
     static int thisGameLoad = 0;
 
     static boolean aotdEnabled = Global.getSettings().getModManager().isModEnabled("aotd_vok");
+
+    private static final String[] REQUIRED_INDUSTRY_IDS = {
+            "BOGGLED_GENELAB",
+            "BOGGLED_STELLAR_REFLECTOR_ARRAY",
+            "BOGGLED_ISMARA_SLING",
+            "BOGGLED_MESOZOIC_PARK",
+            "BOGGLED_LIMELIGHT_NETWORK",
+            "BOGGLED_GPA",
+            "BOGGLED_CRYOSANCTUM",
+            "BOGGLED_CHAMELEON",
+            "BOGGLED_DOMED_CITIES",
+            "BOGGLED_DOMAIN_ARCHAEOLOGY",
+            "BOGGLED_KLETKA_SIMULATOR",
+            "BOGGLED_PERIHELION_PROJECT",
+            "BOGGLED_STATION_EXPANSION",
+            "BOGGLED_AI_MINING_DRONES",
+            "BOGGLED_HARMONIC_DAMPER",
+            "BOGGLED_PLANETARY_AGRAV_FIELD",
+            "BOGGLED_ATMOSPHERE_PROCESSOR",
+            "BOGGLED_PLANET_CRACKER",
+            "BOGGLED_OUYANG_OPTIMIZER",
+            "BOGGLED_CLONING",
+            "BOGGLED_HYDROPONICS",
+            "BOGGLED_REMNANT_STATION"
+    };
+
+    private static final String[] COMMAND_TAB_CAPTION_COLLISIONS = {
+            "income",
+            "colonies",
+            "doctrine & blueprints",
+            "custom production",
+            "research & production"
+    };
 
     public void applyStationSettingsToAllStationsInSector() {
         if(boggledTools.getBooleanSetting("boggledApplyStationSettingsToAllStationsInSector")) {
@@ -375,7 +411,13 @@ public class BoggledTascPlugin extends BaseModPlugin {
 
     @Override
     public void onApplicationLoad()  {
+        validateStringsFile();
+
+        boggled.campaign.econ.LunaSettingsRegistrar.register();
+
         loadSettingsFromJSON();
+
+        validateIndustryIds();
 
         if (Global.getSettings().getModManager().isModEnabled("aaacrew_replacer")) {
             boggledDefaultCargo.active = new boggledCrewReplacerCargo();
@@ -385,6 +427,65 @@ public class BoggledTascPlugin extends BaseModPlugin {
 
         if (aotdEnabled) {
             boggledTools.initialiseModIgnoreSettings();
+        }
+    }
+
+    private void validateStringsFile() {
+        JSONObject root;
+        try {
+            root = Global.getSettings().loadJSON("data/strings/strings.json", boggledTools.BoggledMods.tascModId);
+        } catch (Exception ex) {
+            throw new RuntimeException("TASC data/strings/strings.json failed to parse. Save the file as UTF-8. " + ex.getMessage(), ex);
+        }
+        walkStrings(root, "strings.json");
+        warnIfTabCaptionCollides(root);
+    }
+
+    private void walkStrings(Object node, String path) {
+        try {
+            if (node instanceof JSONObject object) {
+                Iterator<?> keys = object.keys();
+                while (keys.hasNext()) {
+                    String key = String.valueOf(keys.next());
+                    walkStrings(object.get(key), path + "." + key);
+                }
+            } else if (node instanceof JSONArray array) {
+                for (int i = 0; i < array.length(); i++) {
+                    walkStrings(array.get(i), path + "[" + i + "]");
+                }
+            } else if (node instanceof String text) {
+                for (String problem : boggled.campaign.econ.TranslationChecks.tokenProblems(text)) {
+                    boggledTools.writeMessageToLog(path + ": " + problem);
+                }
+            }
+        } catch (JSONException ex) {
+            throw new RuntimeException("TASC data/strings/strings.json failed to parse. " + ex.getMessage(), ex);
+        }
+    }
+
+    private void warnIfTabCaptionCollides(JSONObject root) {
+        try {
+            if (!root.has("tasc_ui")) {
+                boggledTools.writeMessageToLog("Missing string category tasc_ui");
+                return;
+            }
+            String caption = root.getJSONObject("tasc_ui").optString("terraforming_tab", "");
+            String lower = caption.toLowerCase(Locale.ROOT);
+            for (String forbidden : COMMAND_TAB_CAPTION_COLLISIONS) {
+                if (lower.contains(forbidden)) {
+                    boggledTools.writeMessageToLog("Terraforming tab caption contains \"" + forbidden + "\". Ashlib matches command tabs with contains(), so this caption can select the wrong button.");
+                }
+            }
+        } catch (JSONException ex) {
+            throw new RuntimeException("TASC data/strings/strings.json failed to parse. " + ex.getMessage(), ex);
+        }
+    }
+
+    private void validateIndustryIds() {
+        for (String id : REQUIRED_INDUSTRY_IDS) {
+            if (Global.getSettings().getIndustrySpec(id) == null) {
+                boggledTools.writeMessageToLog("Missing industry id: " + id);
+            }
         }
     }
 }

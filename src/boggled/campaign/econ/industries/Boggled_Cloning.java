@@ -1,5 +1,6 @@
 package boggled.campaign.econ.industries;
 
+import boggled.campaign.econ.StringHelper;
 import boggled.campaign.econ.boggledTools;
 import boggled.campaign.econ.industries.interfaces.ShowBoggledTerraformingMenuOption;
 import com.fs.starfarer.api.campaign.econ.*;
@@ -111,7 +112,9 @@ public class Boggled_Cloning extends BaseIndustry implements MarketImmigrationMo
     {
         if (isFunctional())
         {
-            tooltip.addPara("%s population growth (based on colony size)", 10f, Misc.getHighlightColor(), "+" + (int) getImmigrationBonus());
+            String bonus = "+" + (int) getImmigrationBonus();
+            String sentence = StringHelper.getString(StringHelper.INDUSTRIES, "cloning_population_growth", StringHelper.tokens("bonus", bonus));
+            StringHelper.applyHighlight(tooltip.addPara(sentence, 10f), Misc.getHighlightColor(), bonus);
         }
     }
 

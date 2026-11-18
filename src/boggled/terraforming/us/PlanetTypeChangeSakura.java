@@ -51,7 +51,7 @@ public class PlanetTypeChangeSakura extends PlanetTypeChangeTerran
             }
         };
 
-        return new TerraformingRequirementObject(this.market.getName() + " is not already a sakura world", requirementMet, null);
+        return new TerraformingRequirementObject(marketRequirement("req_not_already_sakura"), requirementMet, null);
     }
 
     @Override
