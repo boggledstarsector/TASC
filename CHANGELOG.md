@@ -1,5 +1,8 @@
 # Changelog
 
+## 10.2.0
+- Added a launch check that stops the game when Starsector is older than 0.98.5a, or when Ashlib is enabled and older than 2.2.1. The error states the required version.
+
 ## 10.1.0 *(not backwards compatible)*
 - Updated TASC for Starsector 0.98.5a-RC5.
 - Fixed a crash that could occur under certain circumstances when the player opened the command menu after losing a colony (due to abandonment, capture, decivilization, etc.). Thanks Hexxod for reporting this and providing detailed instructions for reproducing it!
