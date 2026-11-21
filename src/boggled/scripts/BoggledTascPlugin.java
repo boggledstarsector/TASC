@@ -411,6 +411,8 @@ public class BoggledTascPlugin extends BaseModPlugin {
 
     @Override
     public void onApplicationLoad()  {
+        SupportedVersionCheck.check();
+
         validateStringsFile();
 
         boggled.campaign.econ.LunaSettingsRegistrar.register();
