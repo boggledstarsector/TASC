@@ -92,7 +92,6 @@ public final class LunaSettingIds {
         "boggledKletkaSimulatorTemperatureBasedUpkeep",
         "boggledKletkaSimulatorSuppressTemperatureBasedUpkeep",
         "boggledCHAMELEONEnabled",
-        "boggledChameleonDecivilizedSubpopEradicationDaysToFinish",
         "boggledChameleonRogueCoreTerminationDaysToFinish",
         "boggledLimelightNetworkPlayerBuildEnabled",
         "boggledCryosanctumPlayerBuildEnabled",

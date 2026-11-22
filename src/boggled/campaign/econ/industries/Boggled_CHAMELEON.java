@@ -20,10 +20,6 @@ public class Boggled_CHAMELEON extends BaseIndustry
 {
     public static float IMPROVE_STABILITY_BONUS = 1f;
 
-    private int daysWithoutShortageDeciv = 0;
-    private int lastDayCheckedDeciv = 0;
-    private final int requiredDaysToRemoveDeciv = boggledTools.getIntSetting("boggledChameleonDecivilizedSubpopEradicationDaysToFinish");
-
     private int daysWithoutShortageRogue = 0;
     private int lastDayCheckedRogue = 0;
     private final int requiredDaysToRemoveRogue = boggledTools.getIntSetting("boggledChameleonRogueCoreTerminationDaysToFinish");
@@ -49,31 +45,6 @@ public class Boggled_CHAMELEON extends BaseIndustry
         }
 
         Pair<String, Integer> deficit = getChameleonDeficit();
-
-        if((this.market.hasCondition("decivilized_subpop") || this.market.hasCondition("decivilized")) && this.isFunctional())
-        {
-            CampaignClockAPI clock = Global.getSector().getClock();
-            if(clock.getDay() != this.lastDayCheckedDeciv && deficit.two <= 0)
-            {
-                this.daysWithoutShortageDeciv++;
-                this.lastDayCheckedDeciv = clock.getDay();
-
-                if(this.daysWithoutShortageDeciv >= this.requiredDaysToRemoveDeciv)
-                {
-                    if(this.market.isPlayerOwned())
-                    {
-                        MessageIntel intel = new MessageIntel(StringHelper.getString(StringHelper.INDUSTRIES, "chameleon_deciv_intel_title", StringHelper.tokens("market", market.getName())), Misc.getBasePlayerColor());
-                        intel.addLine(StringHelper.getString(StringHelper.INDUSTRIES, "chameleon_deciv_intel_line"));
-                        intel.setIcon(Global.getSettings().getSpriteName("boggled_intel_icons", "intel_icon_chameleon"));
-                        intel.setSound(BaseIntelPlugin.getSoundStandardUpdate());
-                        Global.getSector().getCampaignUI().addMessage(intel, CommMessageAPI.MessageClickAction.COLONY_INFO, market);
-                    }
-
-                    boggledTools.removeCondition(this.market, "decivilized_subpop");
-                    boggledTools.removeCondition(this.market, "decivilized");
-                }
-            }
-        }
 
         if(this.market.hasCondition("rogue_ai_core") && this.isFunctional())
         {
@@ -185,8 +156,6 @@ public class Boggled_CHAMELEON extends BaseIndustry
     @Override
     public void notifyBeingRemoved(MarketAPI.MarketInteractionMode mode, boolean forUpgrade)
     {
-        this.daysWithoutShortageDeciv = 0;
-        this.lastDayCheckedDeciv = 0;
         this.daysWithoutShortageRogue = 0;
         this.lastDayCheckedRogue = 0;
 
@@ -204,27 +173,6 @@ public class Boggled_CHAMELEON extends BaseIndustry
         {
             tooltip.addPara(StringHelper.getString(StringHelper.INDUSTRIES, "chameleon_disabled_by_rampant_core"), bad, opad);
             return;
-        }
-
-        // Inserts pacification status after description
-        if((this.market.hasCondition("decivilized_subpop") || this.market.hasCondition("decivilized")) && mode != IndustryTooltipMode.ADD_INDUSTRY && mode != IndustryTooltipMode.QUEUED && !isBuilding())
-        {
-            int percentComplete = (int) (((float) this.daysWithoutShortageDeciv / (float) this.requiredDaysToRemoveDeciv) * 100F);
-
-            // Makes sure the tooltip doesn't say "100% complete" on the last day due to rounding up 99.5 to 100
-            if(percentComplete > 99)
-            {
-                percentComplete = 99;
-            }
-
-            String percent = percentComplete + "%";
-            String sentence = StringHelper.getString(StringHelper.INDUSTRIES, "chameleon_deciv_eradicated", StringHelper.tokens("percent", percent, "market", this.market.getName()));
-            StringHelper.applyHighlight(tooltip.addPara(sentence, opad), highlight, percent);
-        }
-
-        if(this.isDisrupted() && (this.market.hasCondition("decivilized_subpop") || this.market.hasCondition("decivilized")) && mode != IndustryTooltipMode.ADD_INDUSTRY && mode != IndustryTooltipMode.QUEUED && !isBuilding())
-        {
-            tooltip.addPara(StringHelper.getString(StringHelper.INDUSTRIES, "chameleon_deciv_stalled_disrupted"), bad, opad);
         }
 
         // Inserts rogue AI core removal status after description
