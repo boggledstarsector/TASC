@@ -88,7 +88,6 @@ boggledKletkaSimulatorEnabled,Boolean,True,,,,Domain-tech Content
 boggledKletkaSimulatorTemperatureBasedUpkeep,Boolean,True,,,,Domain-tech Content
 boggledKletkaSimulatorSuppressTemperatureBasedUpkeep,Boolean,False,,,,Domain-tech Content
 boggledCHAMELEONEnabled,Boolean,True,,,,Domain-tech Content
-boggledChameleonDecivilizedSubpopEradicationDaysToFinish,Int,200,,1,2000,Domain-tech Content
 boggledChameleonRogueCoreTerminationDaysToFinish,Int,200,,1,2000,Domain-tech Content
 boggledLimelightNetworkPlayerBuildEnabled,Boolean,True,,,,Domain-tech Content
 boggledCryosanctumPlayerBuildEnabled,Boolean,False,,,,Domain-tech Content
