@@ -23,6 +23,7 @@ import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
 import com.fs.starfarer.api.util.Pair;
 import com.fs.starfarer.api.util.WeightedRandomPicker;
+import boggled.campaign.econ.StringHelper;
 import boggled.campaign.econ.boggledTools;
 import org.jetbrains.annotations.NotNull;
 
@@ -63,8 +64,8 @@ public class Boggled_Perihelion_Project extends BaseIndustry {
                 {
                     if (this.market.isPlayerOwned())
                     {
-                        MessageIntel intel = new MessageIntel("Coronal tap at " + this.market.getStarSystem().getName(), Misc.getBasePlayerColor());
-                        intel.addLine("    - Constructed");
+                        MessageIntel intel = new MessageIntel(StringHelper.getString(StringHelper.INDUSTRIES, "perihelion_intel_title", StringHelper.tokens("system", this.market.getStarSystem().getName())), Misc.getBasePlayerColor());
+                        intel.addLine(StringHelper.getString(StringHelper.INDUSTRIES, "perihelion_intel_constructed"));
                         intel.setIcon(Global.getSector().getPlayerFaction().getCrest());
                         intel.setSound(BaseIntelPlugin.getSoundStandardUpdate());
                         Global.getSector().getCampaignUI().addMessage(intel, CommMessageAPI.MessageClickAction.COLONY_INFO, this.market);
@@ -230,17 +231,17 @@ public class Boggled_Perihelion_Project extends BaseIndustry {
 
         if(system.hasTag(Tags.HAS_CORONAL_TAP))
         {
-            return "The " + this.market.getStarSystem().getName() + " already has a coronal tap.";
+            return StringHelper.getString(StringHelper.INDUSTRIES, "perihelion_has_tap", StringHelper.tokens("system", this.market.getStarSystem().getName()));
         }
 
         if(systemHasMarketWithPerihelionProject(system, this.market))
         {
-            return "There is already a colony in the " + this.market.getStarSystem().getName() + " constructing a coronal tap.";
+            return StringHelper.getString(StringHelper.INDUSTRIES, "perihelion_already_constructing", StringHelper.tokens("system", this.market.getStarSystem().getName()));
         }
 
         if(!systemValidForCoronalHypershuntPlacement(system))
         {
-            return "Coronal taps can only be constructed in systems with at least one blue star and/or trinary systems where all three stars are not the same color.";
+            return StringHelper.getString(StringHelper.INDUSTRIES, "perihelion_invalid_system");
         }
 
         return super.getUnavailableReason();
@@ -279,12 +280,14 @@ public class Boggled_Perihelion_Project extends BaseIndustry {
                 percentComplete = 99;
             }
 
-            tooltip.addPara("Construction of the coronal tap in the " + this.market.getStarSystem().getName() + " is approximately %s complete.", opad, highlight, new String[]{percentComplete + "%"});
+            String percent = percentComplete + "%";
+            String sentence = StringHelper.getString(StringHelper.INDUSTRIES, "perihelion_progress", StringHelper.tokens("system", this.market.getStarSystem().getName(), "percent", percent));
+            StringHelper.applyHighlight(tooltip.addPara(sentence, opad), highlight, percent);
         }
 
         if(this.isDisrupted() && mode != IndustryTooltipMode.ADD_INDUSTRY && mode != IndustryTooltipMode.QUEUED && !isBuilding())
         {
-            tooltip.addPara("Construction progress is stalled while the Perihelion Project is disrupted.", bad, opad);
+            tooltip.addPara(StringHelper.getString(StringHelper.INDUSTRIES, "perihelion_stalled_disrupted"), bad, opad);
         }
     }
 
@@ -297,7 +300,7 @@ public class Boggled_Perihelion_Project extends BaseIndustry {
 
         if(shortage && mode != IndustryTooltipMode.ADD_INDUSTRY && mode != IndustryTooltipMode.QUEUED && !isBuilding())
         {
-            tooltip.addPara("Construction of the coronal tap is stalled due to a shortage of raw materials.", bad, opad);
+            tooltip.addPara(StringHelper.getString(StringHelper.INDUSTRIES, "perihelion_stalled_shortage"), bad, opad);
         }
     }
 
@@ -346,7 +349,7 @@ public class Boggled_Perihelion_Project extends BaseIndustry {
         // to explain to the player that they will need to do additional steps to activate it.
         if(Global.getSettings().getModManager().isModEnabled("aotd_vok"))
         {
-            return this.getSpec().getDesc() + "\n\nOnce the structure itself is complete, additional on-site work will be required to bring the internal components into an operational state.";
+            return this.getSpec().getDesc() + StringHelper.getString(StringHelper.INDUSTRIES, "perihelion_description_extra");
         }
         else
         {

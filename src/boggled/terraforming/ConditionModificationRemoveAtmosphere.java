@@ -1,5 +1,6 @@
 package boggled.terraforming;
 
+import boggled.campaign.econ.StringHelper;
 import boggled.campaign.econ.boggledTools;
 import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Conditions;
@@ -14,7 +15,7 @@ public class ConditionModificationRemoveAtmosphere extends BoggledBaseTerraformi
 {
     public ConditionModificationRemoveAtmosphere(MarketAPI market)
     {
-        super(market, "Remove atmosphere", new HashSet<>(List.of(Conditions.NO_ATMOSPHERE)), new HashSet<>(Arrays.asList(
+        super(market, StringHelper.getString(StringHelper.TERRAFORMING, "project_remove_atmosphere"), new HashSet<>(List.of(Conditions.NO_ATMOSPHERE)), new HashSet<>(Arrays.asList(
                 Conditions.THIN_ATMOSPHERE,
                 Conditions.TOXIC_ATMOSPHERE,
                 Conditions.DENSE_ATMOSPHERE,
@@ -63,7 +64,7 @@ public class ConditionModificationRemoveAtmosphere extends BoggledBaseTerraformi
             }
         };
 
-        return new TerraformingRequirementObject(this.market.getName() + " is not a Water world", requirementMet, null);
+        return new TerraformingRequirementObject(marketRequirement("req_not_water_world"), requirementMet, null);
     }
 
     public static boolean isEnabledViaSettings() {

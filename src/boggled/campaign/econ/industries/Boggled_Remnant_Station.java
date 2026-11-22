@@ -21,6 +21,7 @@ import com.fs.starfarer.api.util.IntervalUtil;
 import com.fs.starfarer.api.util.Misc;
 import com.fs.starfarer.api.util.Pair;
 import com.fs.starfarer.api.util.WeightedRandomPicker;
+import boggled.campaign.econ.StringHelper;
 import boggled.campaign.econ.boggledTools;
 
 import java.util.*;
@@ -130,7 +131,7 @@ public class Boggled_Remnant_Station extends OrbitalStation implements RouteMana
         String defenseExtra = "";
         if (defenseMult != 1f)
         {
-            defenseExtra = " (" + getDeficitText(getMaxDeficit(Commodities.SUPPLIES).one).toLowerCase() + ")";
+            defenseExtra = StringHelper.getString(StringHelper.INDUSTRIES, "remnant_station_defense_extra", StringHelper.tokens("deficit", getDeficitText(getMaxDeficit(Commodities.SUPPLIES).one).toLowerCase()));
         }
         this.market.getStats().getDynamic().getMod(Stats.GROUND_DEFENSES_MOD).modifyMult(
                 this.getModId(),
@@ -348,7 +349,7 @@ public class Boggled_Remnant_Station extends OrbitalStation implements RouteMana
         fleet.addScript(new PatrolAssignmentAIV4(fleet, route));
 
         fleet.getMemoryWithoutUpdate().set(MemFlags.FLEET_IGNORES_OTHER_FLEETS, true, MilitaryBase.PATROL_IGNORE_OTHER_FLEETS_DELAY_DAYS);
-        fleet.getStats().addTemporaryModMult(MilitaryBase.PATROL_IGNORE_OTHER_FLEETS_DELAY_DAYS, "preparingForPatrol", "Preparing for patrol duty", 0f,
+        fleet.getStats().addTemporaryModMult(MilitaryBase.PATROL_IGNORE_OTHER_FLEETS_DELAY_DAYS, "preparingForPatrol", StringHelper.getString(StringHelper.INDUSTRIES, "remnant_station_preparing_patrol"), 0f,
                 fleet.getStats().getSensorRangeMod());
 
         if (custom.spawnFP <= 0) {
@@ -551,7 +552,7 @@ public class Boggled_Remnant_Station extends OrbitalStation implements RouteMana
     @Override
     public String getNameForModifier()
     {
-        return "Autonomous AI battlestation";
+        return StringHelper.getString(StringHelper.INDUSTRIES, "remnant_station_name");
     }
 
     @Override
@@ -562,7 +563,9 @@ public class Boggled_Remnant_Station extends OrbitalStation implements RouteMana
             Color h = Misc.getHighlightColor();
             float opad = 10.0F;
             float cr = this.getCR();
-            tooltip.addPara("Station combat readiness: %s", opad, h, Math.round(cr * 100.0F) + "%");
+            String percent = Math.round(cr * 100.0F) + "%";
+            String sentence = StringHelper.getString(StringHelper.INDUSTRIES, "remnant_station_cr", StringHelper.tokens("percent", percent));
+            StringHelper.applyHighlight(tooltip.addPara(sentence, opad), h, percent);
             this.addStabilityPostDemandSectionBoggledRemnantStation(tooltip, hasDemand, mode);
 
             this.addGroundDefensesImpactSection(tooltip, BASE_DEFENSE_BONUS_BOGGLED_REMNANT_BATTLESTATION, Commodities.SUPPLIES);
@@ -599,10 +602,12 @@ public class Boggled_Remnant_Station extends OrbitalStation implements RouteMana
         float pad = 3.0F;
         if (total >= 0)
         {
-            tooltip.addPara("Stability bonus: %s", opad, h, totalStr);
+            String sentence = StringHelper.getString(StringHelper.INDUSTRIES, "remnant_station_stability_bonus", StringHelper.tokens("bonus", totalStr));
+            StringHelper.applyHighlight(tooltip.addPara(sentence, opad), h, totalStr);
         } else
         {
-            tooltip.addPara("Stability penalty: %s", opad, h, totalStr);
+            String sentence = StringHelper.getString(StringHelper.INDUSTRIES, "remnant_station_stability_penalty", StringHelper.tokens("penalty", totalStr));
+            StringHelper.applyHighlight(tooltip.addPara(sentence, opad), h, totalStr);
         }
 
         tooltip.addStatModGrid(400.0F, 35.0F, opad, pad, fake, new TooltipMakerAPI.StatModValueGetter()
@@ -692,7 +697,7 @@ public class Boggled_Remnant_Station extends OrbitalStation implements RouteMana
     {
         if(!this.playerHasAutomatedShipsSkill())
         {
-            return "You lack the skill to command automated ships.";
+            return StringHelper.getString(StringHelper.INDUSTRIES, "remnant_station_no_skill");
         }
 
         return super.getUnavailableReason();

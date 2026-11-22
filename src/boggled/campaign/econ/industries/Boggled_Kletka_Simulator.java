@@ -2,6 +2,7 @@ package boggled.campaign.econ.industries;
 
 import java.awt.Color;
 import java.util.*;
+import boggled.campaign.econ.StringHelper;
 import boggled.campaign.econ.boggledTools;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.*;
@@ -100,18 +101,21 @@ public class Boggled_Kletka_Simulator extends BaseIndustry
     public void addAlphaCoreDescription(TooltipMakerAPI tooltip, AICoreDescriptionMode mode) {
         float opad = 10.0F;
         Color highlight = Misc.getHighlightColor();
-        String pre = "Alpha-level AI core currently assigned. ";
+        String pre = StringHelper.getString(StringHelper.INDUSTRIES, "ai_core_alpha_assigned");
         if (mode == AICoreDescriptionMode.MANAGE_CORE_DIALOG_LIST || mode == AICoreDescriptionMode.INDUSTRY_TOOLTIP) {
-            pre = "Alpha-level AI core. ";
+            pre = StringHelper.getString(StringHelper.INDUSTRIES, "ai_core_alpha_short");
         }
+        String bonus = ALPHA_CORE_BONUS + "%";
 
         if (mode == AICoreDescriptionMode.INDUSTRY_TOOLTIP) {
             CommoditySpecAPI coreSpec = Global.getSettings().getCommoditySpec(this.aiCoreId);
             TooltipMakerAPI text = tooltip.beginImageWithText(coreSpec.getIconName(), 48.0F);
-            text.addPara(pre + "AI core training methodology improved by %s.", 0.0F, highlight, ALPHA_CORE_BONUS + "%");
+            String sentence = StringHelper.getString(StringHelper.INDUSTRIES, "kletka_core_training_improved", StringHelper.tokens("prefix", pre, "bonus", bonus));
+            StringHelper.applyHighlight(text.addPara(sentence, 0.0F), highlight, bonus);
             tooltip.addImageWithText(opad);
         } else {
-            tooltip.addPara(pre + "Improves AI core training methodology by %s.", opad, highlight, ALPHA_CORE_BONUS + "%");
+            String sentence = StringHelper.getString(StringHelper.INDUSTRIES, "kletka_core_training_improves", StringHelper.tokens("prefix", pre, "bonus", bonus));
+            StringHelper.applyHighlight(tooltip.addPara(sentence, opad), highlight, bonus);
         }
     }
 
@@ -119,18 +123,21 @@ public class Boggled_Kletka_Simulator extends BaseIndustry
     public void addBetaCoreDescription(TooltipMakerAPI tooltip, AICoreDescriptionMode mode) {
         float opad = 10.0F;
         Color highlight = Misc.getHighlightColor();
-        String pre = "Beta-level AI core currently assigned. ";
+        String pre = StringHelper.getString(StringHelper.INDUSTRIES, "ai_core_beta_assigned");
         if (mode == AICoreDescriptionMode.MANAGE_CORE_DIALOG_LIST || mode == AICoreDescriptionMode.INDUSTRY_TOOLTIP) {
-            pre = "Beta-level AI core. ";
+            pre = StringHelper.getString(StringHelper.INDUSTRIES, "ai_core_beta_short");
         }
+        String bonus = BETA_CORE_BONUS + "%";
 
         if (mode == AICoreDescriptionMode.INDUSTRY_TOOLTIP) {
             CommoditySpecAPI coreSpec = Global.getSettings().getCommoditySpec(this.aiCoreId);
             TooltipMakerAPI text = tooltip.beginImageWithText(coreSpec.getIconName(), 48.0F);
-            text.addPara(pre + "AI core training methodology improved by %s.", opad, highlight, BETA_CORE_BONUS + "%");
+            String sentence = StringHelper.getString(StringHelper.INDUSTRIES, "kletka_core_training_improved", StringHelper.tokens("prefix", pre, "bonus", bonus));
+            StringHelper.applyHighlight(text.addPara(sentence, opad), highlight, bonus);
             tooltip.addImageWithText(opad);
         } else {
-            tooltip.addPara(pre + "Improves AI core training methodology by %s.", opad, highlight, BETA_CORE_BONUS + "%");
+            String sentence = StringHelper.getString(StringHelper.INDUSTRIES, "kletka_core_training_improves", StringHelper.tokens("prefix", pre, "bonus", bonus));
+            StringHelper.applyHighlight(tooltip.addPara(sentence, opad), highlight, bonus);
         }
     }
 
@@ -138,18 +145,21 @@ public class Boggled_Kletka_Simulator extends BaseIndustry
     public void addGammaCoreDescription(TooltipMakerAPI tooltip, AICoreDescriptionMode mode) {
         float opad = 10.0F;
         Color highlight = Misc.getHighlightColor();
-        String pre = "Gamma-level AI core currently assigned. ";
+        String pre = StringHelper.getString(StringHelper.INDUSTRIES, "ai_core_gamma_assigned");
         if (mode == AICoreDescriptionMode.MANAGE_CORE_DIALOG_LIST || mode == AICoreDescriptionMode.INDUSTRY_TOOLTIP) {
-            pre = "Gamma-level AI core. ";
+            pre = StringHelper.getString(StringHelper.INDUSTRIES, "ai_core_gamma_short");
         }
+        String bonus = GAMMA_CORE_BONUS + "%";
 
         if (mode == AICoreDescriptionMode.INDUSTRY_TOOLTIP) {
             CommoditySpecAPI coreSpec = Global.getSettings().getCommoditySpec(this.aiCoreId);
             TooltipMakerAPI text = tooltip.beginImageWithText(coreSpec.getIconName(), 48.0F);
-            text.addPara(pre + "AI core training methodology improved by %s.", opad, highlight, GAMMA_CORE_BONUS + "%");
+            String sentence = StringHelper.getString(StringHelper.INDUSTRIES, "kletka_core_training_improved", StringHelper.tokens("prefix", pre, "bonus", bonus));
+            StringHelper.applyHighlight(text.addPara(sentence, opad), highlight, bonus);
             tooltip.addImageWithText(opad);
         } else {
-            tooltip.addPara(pre + "Improves AI core training methodology by %s.", opad, highlight, GAMMA_CORE_BONUS + "%");
+            String sentence = StringHelper.getString(StringHelper.INDUSTRIES, "kletka_core_training_improves", StringHelper.tokens("prefix", pre, "bonus", bonus));
+            StringHelper.applyHighlight(tooltip.addPara(sentence, opad), highlight, bonus);
         }
     }
 
@@ -183,50 +193,50 @@ public class Boggled_Kletka_Simulator extends BaseIndustry
             boolean suppressionRemovesTemperatureModifier = boggledTools.getBooleanSetting("boggledKletkaSimulatorSuppressTemperatureBasedUpkeep");
             if(boggledTools.marketIsStation(market))
             {
-                getUpkeep().modifyMult("temperature", 8.0f, "Station");
+                getUpkeep().modifyMult("temperature", 8.0f, StringHelper.getString(StringHelper.INDUSTRIES, "kletka_upkeep_station"));
             }
             else if(market.hasCondition(Conditions.VERY_COLD))
             {
                 if(suppCond.contains(Conditions.VERY_COLD) && suppressionRemovesTemperatureModifier)
                 {
-                    getUpkeep().modifyMult("temperature", 1.0f, "Extreme cold (suppressed)");
+                    getUpkeep().modifyMult("temperature", 1.0f, StringHelper.getString(StringHelper.INDUSTRIES, "kletka_upkeep_very_cold_suppressed"));
                 }
                 else
                 {
-                    getUpkeep().modifyMult("temperature", 0.25f, "Extreme cold");
+                    getUpkeep().modifyMult("temperature", 0.25f, StringHelper.getString(StringHelper.INDUSTRIES, "kletka_upkeep_very_cold"));
                 }
             }
             else if(market.hasCondition(Conditions.COLD))
             {
                 if(suppCond.contains(Conditions.COLD) && suppressionRemovesTemperatureModifier)
                 {
-                    getUpkeep().modifyMult("temperature", 1.0f, "Cold (suppressed)");
+                    getUpkeep().modifyMult("temperature", 1.0f, StringHelper.getString(StringHelper.INDUSTRIES, "kletka_upkeep_cold_suppressed"));
                 }
                 else
                 {
-                    getUpkeep().modifyMult("temperature", 0.5f, "Cold");
+                    getUpkeep().modifyMult("temperature", 0.5f, StringHelper.getString(StringHelper.INDUSTRIES, "kletka_upkeep_cold"));
                 }
             }
             else if(market.hasCondition(Conditions.HOT))
             {
                 if(suppCond.contains(Conditions.HOT) && suppressionRemovesTemperatureModifier)
                 {
-                    getUpkeep().modifyMult("temperature", 1.0f, "Hot (suppressed)");
+                    getUpkeep().modifyMult("temperature", 1.0f, StringHelper.getString(StringHelper.INDUSTRIES, "kletka_upkeep_hot_suppressed"));
                 }
                 else
                 {
-                    getUpkeep().modifyMult("temperature", 2.0f, "Hot");
+                    getUpkeep().modifyMult("temperature", 2.0f, StringHelper.getString(StringHelper.INDUSTRIES, "kletka_upkeep_hot"));
                 }
             }
             else if(market.hasCondition(Conditions.VERY_HOT))
             {
                 if(suppCond.contains(Conditions.VERY_HOT) && suppressionRemovesTemperatureModifier)
                 {
-                    getUpkeep().modifyMult("temperature", 1.0f, "Extreme heat (suppressed)");
+                    getUpkeep().modifyMult("temperature", 1.0f, StringHelper.getString(StringHelper.INDUSTRIES, "kletka_upkeep_very_hot_suppressed"));
                 }
                 else
                 {
-                    getUpkeep().modifyMult("temperature", 4.0f, "Extreme heat");
+                    getUpkeep().modifyMult("temperature", 4.0f, StringHelper.getString(StringHelper.INDUSTRIES, "kletka_upkeep_very_hot"));
                 }
             }
             else
@@ -280,7 +290,7 @@ public class Boggled_Kletka_Simulator extends BaseIndustry
 
         if(boggledTools.getBooleanSetting("boggledKletkaSimulatorTemperatureBasedUpkeep"))
         {
-            tooltip.addPara("Supercomputers will melt themselves without adequate cooling. Operating costs are lowest on very cold worlds and highest on very hot worlds and stations.", opad, highlight, new String[]{""});
+            tooltip.addPara(StringHelper.getString(StringHelper.INDUSTRIES, "kletka_cooling"), opad);
         }
 
         // Don't show the core production changes until the Kletka Simulator is finished building
@@ -290,14 +300,16 @@ public class Boggled_Kletka_Simulator extends BaseIndustry
         }
 
         Pair<String, Integer> deficit = getKletkaSimulatorDeficit();
-        tooltip.addPara("The Kletka Simulator attempts to produce a single AI core each month. The odds it will be of a given type are as follows:", opad, highlight, new String[]{});
+        tooltip.addPara(StringHelper.getString(StringHelper.INDUSTRIES, "kletka_odds_intro"), opad);
         if(isDisrupted())
         {
-            tooltip.addPara("%s", 2f, bad, "           None (disrupted)");
+            String none = StringHelper.getString(StringHelper.INDUSTRIES, "kletka_none_disrupted");
+            StringHelper.applyHighlight(tooltip.addPara(none, 2f), bad, none);
         }
         else if(deficit.two > 0)
         {
-            tooltip.addPara("%s", 2f, bad, "           None (shortage)");
+            String none = StringHelper.getString(StringHelper.INDUSTRIES, "kletka_none_shortage");
+            StringHelper.applyHighlight(tooltip.addPara(none, 2f), bad, none);
         }
         else
         {
@@ -306,10 +318,14 @@ public class Boggled_Kletka_Simulator extends BaseIndustry
             int betaCorePercentage = Math.max(0, 100 + rollAdjustment - this.ROLL_THRESHOLD_BETA - alphaCorePercentage);
             int gammaCorePercentage = Math.max(0, 100 + rollAdjustment - this.ROLL_THRESHOLD_GAMMA - alphaCorePercentage - betaCorePercentage);
             int nothingPercentage = Math.max(0, 100 - alphaCorePercentage - betaCorePercentage - gammaCorePercentage);
-            tooltip.addPara("           Alpha Core: %s", 2f, highlight, alphaCorePercentage + "%");
-            tooltip.addPara("           Beta Core: %s", 2f, highlight, betaCorePercentage + "%");
-            tooltip.addPara("           Gamma Core: %s", 2f, highlight, gammaCorePercentage + "%");
-            tooltip.addPara("           Nothing (training failed): %s", 2f, highlight, nothingPercentage + "%");
+            String alphaPercent = alphaCorePercentage + "%";
+            String betaPercent = betaCorePercentage + "%";
+            String gammaPercent = gammaCorePercentage + "%";
+            String nothingPercent = nothingPercentage + "%";
+            StringHelper.applyHighlight(tooltip.addPara(StringHelper.getString(StringHelper.INDUSTRIES, "kletka_odds_alpha", StringHelper.tokens("percent", alphaPercent)), 2f), highlight, alphaPercent);
+            StringHelper.applyHighlight(tooltip.addPara(StringHelper.getString(StringHelper.INDUSTRIES, "kletka_odds_beta", StringHelper.tokens("percent", betaPercent)), 2f), highlight, betaPercent);
+            StringHelper.applyHighlight(tooltip.addPara(StringHelper.getString(StringHelper.INDUSTRIES, "kletka_odds_gamma", StringHelper.tokens("percent", gammaPercent)), 2f), highlight, gammaPercent);
+            StringHelper.applyHighlight(tooltip.addPara(StringHelper.getString(StringHelper.INDUSTRIES, "kletka_odds_nothing", StringHelper.tokens("percent", nothingPercent)), 2f), highlight, nothingPercent);
         }
     }
 
@@ -327,7 +343,9 @@ public class Boggled_Kletka_Simulator extends BaseIndustry
             float opad = 10.0F;
             Color highlight = Misc.getHighlightColor();
 
-            tooltip.addPara("Kletka Simulators always demand %s Domain-era artifacts regardless of colony size.", opad, highlight, new String[]{"" + CONSTANT_DOMAIN_ERA_ARTIFACT_DEMAND_QUANTITY});
+            String demand = "" + CONSTANT_DOMAIN_ERA_ARTIFACT_DEMAND_QUANTITY;
+            String sentence = StringHelper.getString(StringHelper.INDUSTRIES, "kletka_demand_artifacts", StringHelper.tokens("demand", demand));
+            StringHelper.applyHighlight(tooltip.addPara(sentence, opad), highlight, demand);
         }
     }
 
@@ -347,13 +365,16 @@ public class Boggled_Kletka_Simulator extends BaseIndustry
         float opad = 10f;
         Color highlight = Misc.getHighlightColor();
 
+        String bonus = IMPROVEMENT_BONUS + "%";
         if (mode == ImprovementDescriptionMode.INDUSTRY_TOOLTIP)
         {
-            info.addPara("AI core training methodology improved by %s.", 0f, highlight, IMPROVEMENT_BONUS + "%");
+            String sentence = StringHelper.getString(StringHelper.INDUSTRIES, "kletka_improve_training_improved", StringHelper.tokens("bonus", bonus));
+            StringHelper.applyHighlight(info.addPara(sentence, 0f), highlight, bonus);
         }
         else
         {
-            info.addPara("Improves AI core training methodology by %s.", 0f, highlight, IMPROVEMENT_BONUS + "%");
+            String sentence = StringHelper.getString(StringHelper.INDUSTRIES, "kletka_improve_training_improves", StringHelper.tokens("bonus", bonus));
+            StringHelper.applyHighlight(info.addPara(sentence, 0f), highlight, bonus);
         }
 
         info.addSpacer(opad);

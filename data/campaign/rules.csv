@@ -1,4 +1,5 @@
 id,trigger,conditions,script,text,options,notes
+# Translators: edit the text column, and the label after the second colon in options. Leave id, trigger, conditions, script, and option ids such as SL_buildDomainRelay unchanged. Leave $playerName unchanged.
 ,,,,,,
 #Remnant Patrol Dialogue
 ,,,,,,

@@ -320,20 +320,12 @@ public class boggledTools {
         put(TascPlanetTypes.unknownPlanetId, false);
     }};
 
-    public static final HashMap<String, Pair<String, String>> tascPlanetTypeDisplayStringMap = new HashMap<>(){{
-        put(TascPlanetTypes.starPlanetId, new Pair<>("Star", "star"));
-        put(TascPlanetTypes.barrenPlanetId, new Pair<>("Barren", "barren"));
-        put(TascPlanetTypes.desertPlanetId, new Pair<>("Desert", "desert"));
-        put(TascPlanetTypes.frozenPlanetId, new Pair<>("Frozen", "frozen"));
-        put(TascPlanetTypes.gasGiantPlanetId, new Pair<>("Gas giant", "gas giant"));
-        put(TascPlanetTypes.junglePlanetId, new Pair<>("Jungle", "jungle"));
-        put(TascPlanetTypes.terranPlanetId, new Pair<>("Terran", "terran"));
-        put(TascPlanetTypes.toxicPlanetId, new Pair<>("Toxic", "toxic"));
-        put(TascPlanetTypes.tundraPlanetId, new Pair<>("Tundra", "tundra"));
-        put(TascPlanetTypes.volcanicPlanetId, new Pair<>("Volcanic", "volcanic"));
-        put(TascPlanetTypes.waterPlanetId, new Pair<>("Water", "water"));
-        put(TascPlanetTypes.unknownPlanetId, new Pair<>("Unknown", "unknown"));
-    }};
+    public static String getPlanetTypeDisplayName(String tascPlanetTypeId) {
+        if (tascPlanetTypeId == null || tascPlanetTypeId.isBlank()) {
+            tascPlanetTypeId = TascPlanetTypes.unknownPlanetId;
+        }
+        return StringHelper.getString(StringHelper.TERRAFORMING, "planet_type_" + tascPlanetTypeId);
+    }
 
     private static final HashMap<String, Boolean> tascPlanetTypeAllowsForHumanHabitability = new HashMap<>(){{
         put(TascPlanetTypes.starPlanetId, false);
@@ -892,6 +884,15 @@ public class boggledTools {
                 // We can't swallow this exception because the game won't work correctly if the data isn't loaded
                 throw new RuntimeException("Error in planet mapping JSON parsing: " + e);
             }
+        }
+
+        if (planetsJson.length() == 0) {
+            writeMessageToLog("planet_type_mapping.csv has no rows");
+        }
+        ArrayList<String> requiredPlanetTypes = new ArrayList<>(validPlanetTypes);
+        requiredPlanetTypes.remove(TascPlanetTypes.unknownPlanetId);
+        for (String missing : TranslationChecks.missingIds(requiredPlanetTypes, planetTypeIdToTascPlanetTypeMapping.values())) {
+            writeMessageToLog("Missing planet type id in planet_type_mapping.csv: " + missing);
         }
 
         List<PlanetSpecAPI> planetSpecList = Global.getSettings().getAllPlanetSpecs();
@@ -2503,6 +2504,16 @@ public class boggledTools {
             writeMessageToLog("Loaded " + tascMappingCount + " TASC industry research mappings");
             writeMessageToLog("Loaded " + abilityResearchMap.size() + " TASC ability research mappings");
 
+            for (String researchId : new String[]{
+                    BoggledResearchProjects.planetTypeManipulation,
+                    BoggledResearchProjects.resourceManipulation,
+                    BoggledResearchProjects.atmosphereManipulation
+            }) {
+                if (!researchNamesMap.containsKey(researchId)) {
+                    writeMessageToLog("Missing research id: " + researchId);
+                }
+            }
+
         } catch (Exception e) {
             writeMessageToLog("Error loading aotd_tech_options.csv: " + e.getMessage());
             // Continue with empty map - buildings will be available (graceful degradation)
@@ -2684,7 +2695,7 @@ public class boggledTools {
     {
         if(Global.getSettings().getModManager().isModEnabled("ashlib"))
         {
-            CommandTabInterceptor.tabIdToSwitchToUponOpen = "terraforming";
+            CommandTabInterceptor.tabIdToSwitchToUponOpen = StringHelper.getString(StringHelper.UI, "terraforming_tab").toLowerCase(java.util.Locale.ROOT);
             Global.getSector().getCampaignUI().showCoreUITab(CoreUITabId.OUTPOSTS, null);
         }
         else

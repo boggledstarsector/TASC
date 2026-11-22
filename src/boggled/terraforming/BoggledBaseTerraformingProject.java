@@ -1,5 +1,6 @@
 package boggled.terraforming;
 
+import boggled.campaign.econ.StringHelper;
 import boggled.campaign.econ.boggledTools;
 import boggled.campaign.econ.conditions.Terraforming_Controller;
 import boggled.campaign.econ.industries.Boggled_Atmosphere_Processor;
@@ -45,12 +46,20 @@ public class BoggledBaseTerraformingProject extends BaseIntelPlugin {
     }
 
     private final HashMap<ProjectUpdateType, String> updateMessageMap = new HashMap<>(){{
-        put(ProjectUpdateType.STARTED, "Started");
-        put(ProjectUpdateType.STALLED, "Stalled");
-        put(ProjectUpdateType.RESUMED, "Resumed");
-        put(ProjectUpdateType.COMPLETED, "Completed");
-        put(ProjectUpdateType.CANCELLED, "Cancelled");
+        put(ProjectUpdateType.STARTED, StringHelper.getString(StringHelper.INTEL, "update_started"));
+        put(ProjectUpdateType.STALLED, StringHelper.getString(StringHelper.INTEL, "update_stalled"));
+        put(ProjectUpdateType.RESUMED, StringHelper.getString(StringHelper.INTEL, "update_resumed"));
+        put(ProjectUpdateType.COMPLETED, StringHelper.getString(StringHelper.INTEL, "update_completed"));
+        put(ProjectUpdateType.CANCELLED, StringHelper.getString(StringHelper.INTEL, "update_cancelled"));
     }};
+
+    private void refreshUpdateMessageMap() {
+        updateMessageMap.put(ProjectUpdateType.STARTED, StringHelper.getString(StringHelper.INTEL, "update_started"));
+        updateMessageMap.put(ProjectUpdateType.STALLED, StringHelper.getString(StringHelper.INTEL, "update_stalled"));
+        updateMessageMap.put(ProjectUpdateType.RESUMED, StringHelper.getString(StringHelper.INTEL, "update_resumed"));
+        updateMessageMap.put(ProjectUpdateType.COMPLETED, StringHelper.getString(StringHelper.INTEL, "update_completed"));
+        updateMessageMap.put(ProjectUpdateType.CANCELLED, StringHelper.getString(StringHelper.INTEL, "update_cancelled"));
+    }
 
     public BoggledBaseTerraformingProject(MarketAPI market, TerraformingProjectType projectType) {
         this.market = market;
@@ -154,8 +163,10 @@ public class BoggledBaseTerraformingProject extends BaseIntelPlugin {
 
     public void sendUpdateNotificationToPlayer(ProjectUpdateType type)
     {
-        MessageIntel intel = new MessageIntel(this.getProjectName() + " project on " + this.market.getName(), Misc.getBasePlayerColor());
-        intel.addLine("    - " + updateMessageMap.get(type));
+        refreshUpdateMessageMap();
+        String title = StringHelper.getString(StringHelper.INTEL, "message_title", StringHelper.tokens("project", this.getProjectName(), "market", this.market.getName()));
+        MessageIntel intel = new MessageIntel(title, Misc.getBasePlayerColor());
+        intel.addLine(updateMessageMap.get(type));
         intel.setIcon(this.getIcon());
         intel.setSound(BaseIntelPlugin.getSoundStandardUpdate());
         if(type == ProjectUpdateType.STARTED || type == ProjectUpdateType.STALLED || type == ProjectUpdateType.RESUMED)
@@ -199,6 +210,14 @@ public class BoggledBaseTerraformingProject extends BaseIntelPlugin {
         return "Override this";
     }
 
+    protected String terraformingText(String id) {
+        return StringHelper.getString(StringHelper.TERRAFORMING, id);
+    }
+
+    protected String marketRequirement(String id) {
+        return StringHelper.getString(StringHelper.TERRAFORMING, id, StringHelper.tokens("market", this.market.getName()));
+    }
+
     public static boolean isUnknownSkiesPlanetType(String str) {
         if (str == null || str.length() < 3) {
             return false;
@@ -230,22 +249,26 @@ public class BoggledBaseTerraformingProject extends BaseIntelPlugin {
                 super.createTooltip(tooltipMakerAPI, b, o);
                 tooltipMakerAPI.setTitleFont(Fonts.ORBITRON_12);
                 tooltipMakerAPI.setTitleFontColor(worldTypeAllowsTerraforming ? Misc.getPositiveHighlightColor(): Misc.getNegativeHighlightColor());
-                tooltipMakerAPI.addTitle("World type allows terraforming");
-                tooltipMakerAPI.addPara("%s is considered a %s world. %s worlds %s be terraformed.", 10, Misc.getTextColor(), Misc.getHighlightColor(), new String[]{
+                tooltipMakerAPI.addTitle(terraformingText("req_world_type_allows"));
+                String planetTypeName = boggledTools.getPlanetTypeDisplayName(boggledTools.getTascPlanetType(market.getPlanetEntity()));
+                String worldTypeSentence = StringHelper.getString(StringHelper.TERRAFORMING,
+                        worldTypeAllowsTerraforming ? "world_type_allows_can" : "world_type_allows_cannot",
+                        StringHelper.tokens("market", market.getName(), "planetType", planetTypeName));
+                StringHelper.applyHighlight(
+                        tooltipMakerAPI.addPara(worldTypeSentence, Misc.getTextColor(), 10f),
+                        Misc.getHighlightColor(),
                         market.getName(),
-                        boggledTools.tascPlanetTypeDisplayStringMap.get(boggledTools.getTascPlanetType(market.getPlanetEntity())).two,
-                        boggledTools.tascPlanetTypeDisplayStringMap.get(boggledTools.getTascPlanetType(market.getPlanetEntity())).one,
-                        worldTypeAllowsTerraforming ? "can" : "cannot"
-                });
+                        planetTypeName,
+                        Misc.ucFirst(planetTypeName));
 
                 if(boggledTools.getTascPlanetType(market.getPlanetEntity()).equals(boggledTools.TascPlanetTypes.unknownPlanetId))
                 {
-                    tooltipMakerAPI.addPara("Please notify me (boggled) in the TASC forum thread that this planet type is unsupported. I will promptly issue a patch to add support. Be sure to provide this ID: " + market.getPlanetEntity().getTypeId(), 10);
+                    tooltipMakerAPI.addPara(StringHelper.getString(StringHelper.TERRAFORMING, "unsupported_planet_type", StringHelper.tokens("typeId", market.getPlanetEntity().getTypeId())), 10);
                 }
             }
         };
 
-        return new TerraformingRequirementObject("World type allows terraforming", worldTypeAllowsTerraforming, tooltip);
+        return new TerraformingRequirementObject(terraformingText("req_world_type_allows"), worldTypeAllowsTerraforming, tooltip);
     }
 
     public TerraformingRequirementObject getRequirementWorldTypeAllowsHumanHabitability() {
@@ -267,7 +290,7 @@ public class BoggledBaseTerraformingProject extends BaseIntelPlugin {
             }
         };
 
-        return new TerraformingRequirementObject("World type can be habitable for humans", worldTypeAllowsTerraforming, null);
+        return new TerraformingRequirementObject(terraformingText("req_world_can_be_habitable"), worldTypeAllowsTerraforming, null);
     }
 
     public TerraformingRequirementObject getRequirementMarketIsHabitable() {
@@ -288,7 +311,7 @@ public class BoggledBaseTerraformingProject extends BaseIntelPlugin {
             }
         };
 
-        return new TerraformingRequirementObject(this.market.getName() + " is habitable for humans", requirementMet, null);
+        return new TerraformingRequirementObject(marketRequirement("req_is_habitable"), requirementMet, null);
     }
 
     public TerraformingRequirementObject getRequirementAtmosphericDensityNormal() {
@@ -309,7 +332,7 @@ public class BoggledBaseTerraformingProject extends BaseIntelPlugin {
             }
         };
 
-        return new TerraformingRequirementObject(this.market.getName() + " has standard atmospheric density", requirementMet, null);
+        return new TerraformingRequirementObject(marketRequirement("req_standard_atmosphere"), requirementMet, null);
     }
 
     public TerraformingRequirementObject getRequirementAtmosphericNotToxicOrIrradiated() {
@@ -331,7 +354,7 @@ public class BoggledBaseTerraformingProject extends BaseIntelPlugin {
             }
         };
 
-        return new TerraformingRequirementObject(this.market.getName() + " does not have a toxic or irradiated atmosphere", requirementMet, null);
+        return new TerraformingRequirementObject(marketRequirement("req_not_toxic_or_irradiated"), requirementMet, null);
     }
 
     public TerraformingRequirementObject getRequirementMarketHasAtmosphereProcessor() {
@@ -354,7 +377,7 @@ public class BoggledBaseTerraformingProject extends BaseIntelPlugin {
             }
         };
 
-        return new TerraformingRequirementObject(this.market.getName() + " has an atmosphere processor", requirementMet, null);
+        return new TerraformingRequirementObject(marketRequirement("req_has_atmosphere_processor"), requirementMet, null);
     }
 
     protected boolean isAtmosphereProcessorBuildingEnabled() {
@@ -389,7 +412,7 @@ public class BoggledBaseTerraformingProject extends BaseIntelPlugin {
             }
         };
 
-        return new TerraformingRequirementObject(this.market.getName() + " has a stellar reflector array", requirementMet, null);
+        return new TerraformingRequirementObject(marketRequirement("req_has_stellar_reflector"), requirementMet, null);
     }
 
     public ArrayList<TerraformingRequirementObject> getProjectRequirements() {
@@ -421,11 +444,12 @@ public class BoggledBaseTerraformingProject extends BaseIntelPlugin {
                     boggledTools.isResearched(boggledTools.BoggledResearchProjects.atmosphereManipulation);
         };
 
-        String terraformingProjectType = switch (projectType) {
-            case PLANET_TYPE_CHANGE -> "Planet Type Manipulation";
-            case RESOURCE_IMPROVEMENT -> "Resource Manipulation";
-            case CONDITION_IMPROVEMENT -> "Atmosphere Manipulation";
+        String researchKey = switch (projectType) {
+            case PLANET_TYPE_CHANGE -> "research_planet_type_manipulation";
+            case RESOURCE_IMPROVEMENT -> "research_resource_manipulation";
+            case CONDITION_IMPROVEMENT -> "research_atmosphere_manipulation";
         };
+        String researchName = terraformingText(researchKey);
         TooltipMakerAPI.TooltipCreator tooltip = new TooltipMakerAPI.TooltipCreator() {
             @Override
             public boolean isTooltipExpandable(Object o) {
@@ -443,7 +467,7 @@ public class BoggledBaseTerraformingProject extends BaseIntelPlugin {
             }
         };
 
-        return new TerraformingRequirementObject(terraformingProjectType + " research project completed", requirementMet, tooltip);
+        return new TerraformingRequirementObject(StringHelper.getString(StringHelper.TERRAFORMING, "research_project_completed", StringHelper.tokens("research", researchName)), requirementMet, tooltip);
     }
 
     public TerraformingRequirementObject getRequirementMarketIsVeryCold() {
@@ -466,7 +490,7 @@ public class BoggledBaseTerraformingProject extends BaseIntelPlugin {
             }
         };
 
-        return new TerraformingRequirementObject("Temperature is very cold", requirementMet, tooltip);
+        return new TerraformingRequirementObject(terraformingText("req_temperature_very_cold"), requirementMet, tooltip);
     }
 
     public TerraformingRequirementObject getRequirementMarketIsTemperateOrCold() {
@@ -489,7 +513,7 @@ public class BoggledBaseTerraformingProject extends BaseIntelPlugin {
             }
         };
 
-        return new TerraformingRequirementObject("Temperature is temperate or cold", requirementMet, null);
+        return new TerraformingRequirementObject(terraformingText("req_temperature_temperate_or_cold"), requirementMet, null);
     }
 
     public TerraformingRequirementObject getRequirementMarketIsTemperateOrHot() {
@@ -512,7 +536,7 @@ public class BoggledBaseTerraformingProject extends BaseIntelPlugin {
             }
         };
 
-        return new TerraformingRequirementObject("Temperature is temperate or hot", requirementMet, null);
+        return new TerraformingRequirementObject(terraformingText("req_temperature_temperate_or_hot"), requirementMet, null);
     }
 
     public TerraformingRequirementObject getRequirementMarketIsNotVeryHotOrVeryCold() {
@@ -535,137 +559,116 @@ public class BoggledBaseTerraformingProject extends BaseIntelPlugin {
             }
         };
 
-        return new TerraformingRequirementObject("Temperature is not very hot or very cold", requirementMet, null);
+        return new TerraformingRequirementObject(terraformingText("req_temperature_not_very_hot_or_very_cold"), requirementMet, null);
     }
 
     public TerraformingRequirementObject getRequirementMarketHasModerateWater()
     {
         boggledTools.PlanetWaterLevel currentWaterLevel = boggledTools.getWaterLevelForMarket(this.market);
         boolean requirementMet = currentWaterLevel == boggledTools.PlanetWaterLevel.HIGH_WATER || currentWaterLevel == boggledTools.PlanetWaterLevel.MEDIUM_WATER;
+        String title = marketRequirement("req_moderate_water");
 
         BoggledBaseTerraformingProjectTooltip tooltip = new BoggledBaseTerraformingProjectTooltip(this) {
             @Override
             public void createTooltip(TooltipMakerAPI tooltipMakerAPI, boolean b, Object o) {
                 super.createTooltip(tooltipMakerAPI, b, o);
-                tooltipMakerAPI.setTitleFont(Fonts.ORBITRON_12);
-                tooltipMakerAPI.setTitleFontColor(requirementMet ? Misc.getPositiveHighlightColor(): Misc.getNegativeHighlightColor());
-                tooltipMakerAPI.addTitle(market.getName() + " has at least a moderate amount of water");
-                String waterString = switch(boggledTools.getBaseWaterLevelForTascPlanetType(boggledTools.getTascPlanetType(market.getPlanetEntity())))
-                {
-                    case LOW_WATER -> "low";
-                    case MEDIUM_WATER -> "moderate";
-                    case HIGH_WATER -> "large";
-                };
-                tooltipMakerAPI.addPara("%s is considered a %s world. %s worlds always have a %s amount of water present.", 10, Misc.getTextColor(), Misc.getHighlightColor(), new String[]{
-                        market.getName(),
-                        boggledTools.tascPlanetTypeDisplayStringMap.get(boggledTools.getTascPlanetType(market.getPlanetEntity())).two,
-                        boggledTools.tascPlanetTypeDisplayStringMap.get(boggledTools.getTascPlanetType(market.getPlanetEntity())).one,
-                        waterString
-                });
-                tooltipMakerAPI.addPara("The amount of water present on a given planet for terraforming purposes can be increased to %s " +
-                        "by constructing an Ismara's Sling or Asteroid Processing building at a colony in the same system. ",
-                        10, Misc.getTextColor(), Misc.getHighlightColor(), new String[]{
-                        "large"
-                });
-
-                ArrayList<Pair<MarketAPI, boggledTools.WaterIndustryStatus>> waterStatusList = boggledTools.getWaterIndustryStatusForSystemPlayerMarketsOnly(market.getStarSystem());
-                waterStatusList.sort(Comparator.comparing(BoggledBaseTerraformingProject::getSortOrderForWaterStatus));
-                if(!waterStatusList.isEmpty())
-                {
-                    tooltipMakerAPI.addPara("Colonies you control in this system with one of those buildings: ", 10, Misc.getTextColor(), Misc.getTextColor(), new String[]{});
-                    for(Pair<MarketAPI, boggledTools.WaterIndustryStatus> marketStatus : waterStatusList)
-                    {
-                        if(marketStatus.two == boggledTools.WaterIndustryStatus.OPERATIONAL)
-                        {
-                            tooltipMakerAPI.addPara("           " + marketStatus.one.getName() + " (operational)", 2, Misc.getPositiveHighlightColor(), Misc.getPositiveHighlightColor(), new String[]{});
-                        }
-                        else if(marketStatus.two == boggledTools.WaterIndustryStatus.DISRUPTED)
-                        {
-                            tooltipMakerAPI.addPara("           " + marketStatus.one.getName() + " (disrupted)", 2, Misc.getNegativeHighlightColor(), Misc.getNegativeHighlightColor(), new String[]{});
-                        }
-                        else if(marketStatus.two == boggledTools.WaterIndustryStatus.SHORTAGE)
-                        {
-                            tooltipMakerAPI.addPara("           " + marketStatus.one.getName() + " (shortage)", 2, Misc.getNegativeHighlightColor(), Misc.getNegativeHighlightColor(), new String[]{});
-                        }
-                        else if(marketStatus.two == boggledTools.WaterIndustryStatus.UNDER_CONSTRUCTION)
-                        {
-                            tooltipMakerAPI.addPara("           " + marketStatus.one.getName() + " (under construction)", 2, Misc.getNegativeHighlightColor(), Misc.getNegativeHighlightColor(), new String[]{});
-                        }
-                    }
-                }
-                else
-                {
-                    tooltipMakerAPI.addPara("You don't control any colonies in this system with one of those buildings.", 10, Misc.getTextColor(), Misc.getTextColor(), new String[]{});
-                }
+                addWaterLevelTooltip(tooltipMakerAPI, requirementMet, title);
             }
         };
 
-        return new TerraformingRequirementObject(this.market.getName() + " has at least a moderate amount of water", requirementMet, tooltip);
+        return new TerraformingRequirementObject(title, requirementMet, tooltip);
     }
 
     public TerraformingRequirementObject getRequirementMarketHasHighWater()
     {
         boggledTools.PlanetWaterLevel currentWaterLevel = boggledTools.getWaterLevelForMarket(this.market);
         boolean requirementMet = currentWaterLevel == boggledTools.PlanetWaterLevel.HIGH_WATER;
+        String title = marketRequirement("req_large_water");
 
         BoggledBaseTerraformingProjectTooltip tooltip = new BoggledBaseTerraformingProjectTooltip(this) {
             @Override
             public void createTooltip(TooltipMakerAPI tooltipMakerAPI, boolean b, Object o) {
                 super.createTooltip(tooltipMakerAPI, b, o);
-                tooltipMakerAPI.setTitleFont(Fonts.ORBITRON_12);
-                tooltipMakerAPI.setTitleFontColor(requirementMet ? Misc.getPositiveHighlightColor(): Misc.getNegativeHighlightColor());
-                tooltipMakerAPI.addTitle(market.getName() + " has a large amount of water");
-                String waterString = switch(boggledTools.getBaseWaterLevelForTascPlanetType(boggledTools.getTascPlanetType(market.getPlanetEntity())))
-                {
-                    case LOW_WATER -> "low";
-                    case MEDIUM_WATER -> "moderate";
-                    case HIGH_WATER -> "large";
-                };
-                tooltipMakerAPI.addPara("%s is considered a %s world. %s worlds always have a %s amount of water present.", 10, Misc.getTextColor(), Misc.getHighlightColor(), new String[]{
-                        market.getName(),
-                        boggledTools.tascPlanetTypeDisplayStringMap.get(boggledTools.getTascPlanetType(market.getPlanetEntity())).two,
-                        boggledTools.tascPlanetTypeDisplayStringMap.get(boggledTools.getTascPlanetType(market.getPlanetEntity())).one,
-                        waterString
-                });
-                tooltipMakerAPI.addPara("The amount of water present on a given planet for terraforming purposes can be increased to %s " +
-                                "by constructing an Ismara's Sling or Asteroid Processing building at a colony in the same system. ",
-                        10, Misc.getTextColor(), Misc.getHighlightColor(), new String[]{
-                                "large"
-                        });
-
-                ArrayList<Pair<MarketAPI, boggledTools.WaterIndustryStatus>> waterStatusList = boggledTools.getWaterIndustryStatusForSystemPlayerMarketsOnly(market.getStarSystem());
-                waterStatusList.sort(Comparator.comparing(BoggledBaseTerraformingProject::getSortOrderForWaterStatus));
-                if(!waterStatusList.isEmpty())
-                {
-                    tooltipMakerAPI.addPara("Colonies you control in this system with one of those buildings: ", 10, Misc.getTextColor(), Misc.getTextColor(), new String[]{});
-                    for(Pair<MarketAPI, boggledTools.WaterIndustryStatus> marketStatus : waterStatusList)
-                    {
-                        if(marketStatus.two == boggledTools.WaterIndustryStatus.OPERATIONAL)
-                        {
-                            tooltipMakerAPI.addPara("           " + marketStatus.one.getName() + " (operational)", 2, Misc.getPositiveHighlightColor(), Misc.getPositiveHighlightColor(), new String[]{});
-                        }
-                        else if(marketStatus.two == boggledTools.WaterIndustryStatus.DISRUPTED)
-                        {
-                            tooltipMakerAPI.addPara("           " + marketStatus.one.getName() + " (disrupted)", 2, Misc.getNegativeHighlightColor(), Misc.getNegativeHighlightColor(), new String[]{});
-                        }
-                        else if(marketStatus.two == boggledTools.WaterIndustryStatus.SHORTAGE)
-                        {
-                            tooltipMakerAPI.addPara("           " + marketStatus.one.getName() + " (shortage)", 2, Misc.getNegativeHighlightColor(), Misc.getNegativeHighlightColor(), new String[]{});
-                        }
-                        else if(marketStatus.two == boggledTools.WaterIndustryStatus.UNDER_CONSTRUCTION)
-                        {
-                            tooltipMakerAPI.addPara("           " + marketStatus.one.getName() + " (under construction)", 2, Misc.getNegativeHighlightColor(), Misc.getNegativeHighlightColor(), new String[]{});
-                        }
-                    }
-                }
-                else
-                {
-                    tooltipMakerAPI.addPara("You don't control any colonies in this system with one of those buildings.", 10, Misc.getTextColor(), Misc.getTextColor(), new String[]{});
-                }
+                addWaterLevelTooltip(tooltipMakerAPI, requirementMet, title);
             }
         };
 
-        return new TerraformingRequirementObject(this.market.getName() + " has a large amount of water", requirementMet, tooltip);
+        return new TerraformingRequirementObject(title, requirementMet, tooltip);
+    }
+
+    private String baseWaterAmountWord()
+    {
+        return switch (boggledTools.getBaseWaterLevelForTascPlanetType(boggledTools.getTascPlanetType(market.getPlanetEntity())))
+        {
+            case LOW_WATER -> terraformingText("water_amount_low");
+            case MEDIUM_WATER -> terraformingText("water_amount_moderate");
+            case HIGH_WATER -> terraformingText("water_amount_large");
+        };
+    }
+
+    private void addWaterLevelTooltip(TooltipMakerAPI tooltipMakerAPI, boolean requirementMet, String title)
+    {
+        tooltipMakerAPI.setTitleFont(Fonts.ORBITRON_12);
+        tooltipMakerAPI.setTitleFontColor(requirementMet ? Misc.getPositiveHighlightColor(): Misc.getNegativeHighlightColor());
+        tooltipMakerAPI.addTitle(title);
+        String planetTypeName = boggledTools.getPlanetTypeDisplayName(boggledTools.getTascPlanetType(market.getPlanetEntity()));
+        String waterString = baseWaterAmountWord();
+        String considered = StringHelper.getString(StringHelper.TERRAFORMING, "water_base_present", StringHelper.tokens("market", market.getName(), "planetType", planetTypeName, "amount", waterString));
+        StringHelper.applyHighlight(
+                tooltipMakerAPI.addPara(considered, Misc.getTextColor(), 10f),
+                Misc.getHighlightColor(),
+                market.getName(),
+                planetTypeName,
+                Misc.ucFirst(planetTypeName),
+                waterString);
+        String large = terraformingText("water_amount_large");
+        String increased = StringHelper.getString(StringHelper.TERRAFORMING, "water_can_be_increased", StringHelper.tokens("amount", large));
+        StringHelper.applyHighlight(
+                tooltipMakerAPI.addPara(increased, Misc.getTextColor(), 10f),
+                Misc.getHighlightColor(),
+                large);
+
+        ArrayList<Pair<MarketAPI, boggledTools.WaterIndustryStatus>> waterStatusList = boggledTools.getWaterIndustryStatusForSystemPlayerMarketsOnly(market.getStarSystem());
+        waterStatusList.sort(Comparator.comparing(BoggledBaseTerraformingProject::getSortOrderForWaterStatus));
+        if(!waterStatusList.isEmpty())
+        {
+            tooltipMakerAPI.addPara(terraformingText("water_colonies_with_buildings"), Misc.getTextColor(), 10f);
+            for(Pair<MarketAPI, boggledTools.WaterIndustryStatus> marketStatus : waterStatusList)
+            {
+                String statusKey = null;
+                Color color = null;
+                if(marketStatus.two == boggledTools.WaterIndustryStatus.OPERATIONAL)
+                {
+                    statusKey = "status_operational";
+                    color = Misc.getPositiveHighlightColor();
+                }
+                else if(marketStatus.two == boggledTools.WaterIndustryStatus.DISRUPTED)
+                {
+                    statusKey = "status_disrupted";
+                    color = Misc.getNegativeHighlightColor();
+                }
+                else if(marketStatus.two == boggledTools.WaterIndustryStatus.SHORTAGE)
+                {
+                    statusKey = "status_shortage";
+                    color = Misc.getNegativeHighlightColor();
+                }
+                else if(marketStatus.two == boggledTools.WaterIndustryStatus.UNDER_CONSTRUCTION)
+                {
+                    statusKey = "status_under_construction";
+                    color = Misc.getNegativeHighlightColor();
+                }
+                if(statusKey != null)
+                {
+                    String status = StringHelper.getString(StringHelper.GENERAL, statusKey);
+                    String line = StringHelper.getString(StringHelper.TERRAFORMING, "water_colony_status", StringHelper.tokens("market", marketStatus.one.getName(), "status", status));
+                    tooltipMakerAPI.addPara(line, color, 2f);
+                }
+            }
+        }
+        else
+        {
+            tooltipMakerAPI.addPara(terraformingText("water_no_colonies"), Misc.getTextColor(), 10f);
+        }
     }
 
     private static String getSortOrderForWaterStatus(Pair<MarketAPI, boggledTools.WaterIndustryStatus> marketStatus)
@@ -680,7 +683,7 @@ public class BoggledBaseTerraformingProject extends BaseIntelPlugin {
     @Override
     protected String getName()
     {
-        return this.market.getName() + " Terraforming Project";
+        return StringHelper.getString(StringHelper.INTEL, "market_project_title", StringHelper.tokens("market", this.market.getName()));
     }
 
     @Override
@@ -703,22 +706,20 @@ public class BoggledBaseTerraformingProject extends BaseIntelPlugin {
 
         Color tc = this.getBulletColorForMode(mode);
         this.bullet(info);
-        info.addPara("Project: %s", initPad, tc, playerColor, new String[]{this.getProjectName()});
+        String projectName = this.getProjectName();
+        String projectLine = StringHelper.getString(StringHelper.INTEL, "bullet_project", StringHelper.tokens("project", projectName));
+        StringHelper.applyHighlight(info.addPara(projectLine, tc, initPad), playerColor, projectName);
 
         if(requirementsMet(getProjectRequirements()))
         {
-            if(getDaysRemaining() == 1)
-            {
-                info.addPara("%s day remaining until completion", initPad, tc, highlight, new String[]{String.valueOf(getDaysRemaining())});
-            }
-            else
-            {
-                info.addPara("%s days remaining until completion", initPad, tc, highlight, new String[]{String.valueOf(getDaysRemaining())});
-            }
+            String days = String.valueOf(getDaysRemaining());
+            String dayKey = getDaysRemaining() == 1 ? "bullet_day_remaining" : "bullet_days_remaining";
+            String dayLine = StringHelper.getString(StringHelper.INTEL, dayKey, StringHelper.tokens("days", days));
+            StringHelper.applyHighlight(info.addPara(dayLine, tc, initPad), highlight, days);
         }
         else
         {
-            info.addPara("Progress is stalled due to unmet requirements", initPad, bad, bad, new String[]{});
+            info.addPara(StringHelper.getString(StringHelper.INTEL, "bullet_stalled"), bad, initPad);
         }
 
 
@@ -733,7 +734,7 @@ public class BoggledBaseTerraformingProject extends BaseIntelPlugin {
     @Override
     public String getSmallDescriptionTitle()
     {
-        return this.market.getName() + " Terraforming Project";
+        return StringHelper.getString(StringHelper.INTEL, "market_project_title", StringHelper.tokens("market", this.market.getName()));
     }
 
     @Override
@@ -749,22 +750,20 @@ public class BoggledBaseTerraformingProject extends BaseIntelPlugin {
         info.addImage(faction.getLogo(), width, 128.0F, 10);
 
         // Project status
-        info.addPara("Project: %s", opad, tc, highlight, new String[]{this.getProjectName()});
-        if(getDaysRemaining() == 1)
-        {
-            info.addPara("There is %s day remaining until this project is complete.", pad, tc, highlight, new String[]{String.valueOf(getDaysRemaining())});
-        }
-        else
-        {
-            info.addPara("There are %s days remaining until this project is complete.", pad, tc, highlight, new String[]{String.valueOf(getDaysRemaining())});
-        }
+        String projectName = this.getProjectName();
+        String projectLine = StringHelper.getString(StringHelper.INTEL, "bullet_project", StringHelper.tokens("project", projectName));
+        StringHelper.applyHighlight(info.addPara(projectLine, tc, opad), highlight, projectName);
+        String days = String.valueOf(getDaysRemaining());
+        String dayKey = getDaysRemaining() == 1 ? "desc_day_remaining" : "desc_days_remaining";
+        String dayLine = StringHelper.getString(StringHelper.INTEL, dayKey, StringHelper.tokens("days", days));
+        StringHelper.applyHighlight(info.addPara(dayLine, tc, pad), highlight, days);
         if(!requirementsMet(getProjectRequirements()))
         {
-            info.addPara("Progress on this project is currently stalled due to unmet requirements.", pad, tc, highlight, new String[]{});
+            info.addPara(StringHelper.getString(StringHelper.INTEL, "desc_stalled"), tc, pad);
         }
 
         // Print requirements
-        info.addSectionHeading("Project Requirements", Alignment.MID, opad);
+        info.addSectionHeading(StringHelper.getString(StringHelper.INTEL, "project_requirements"), Alignment.MID, opad);
 
         // Get requirements for the selected project
         boolean firstRow = true;
@@ -781,7 +780,7 @@ public class BoggledBaseTerraformingProject extends BaseIntelPlugin {
             }
         }
 
-        info.addButton("Open terraforming menu", BUTTON_OPEN_TERRAFORMING_MENU, this.getFactionForUIColors().getBaseUIColor(), this.getFactionForUIColors().getDarkUIColor(), (float)((int)width), 20.0F, opad * 1.0F);
+        info.addButton(StringHelper.getString(StringHelper.INTEL, "open_terraforming_menu"), BUTTON_OPEN_TERRAFORMING_MENU, this.getFactionForUIColors().getBaseUIColor(), this.getFactionForUIColors().getDarkUIColor(), (float)((int)width), 20.0F, opad * 1.0F);
     }
 
     @Override
@@ -799,7 +798,7 @@ public class BoggledBaseTerraformingProject extends BaseIntelPlugin {
     @Override
     public Set<String> getIntelTags(SectorMapAPI map) {
         Set<String> tags = super.getIntelTags(map);
-        tags.add("Terraforming");
+        tags.add(StringHelper.getString(StringHelper.INTEL, "intel_tag"));
         return tags;
     }
 }

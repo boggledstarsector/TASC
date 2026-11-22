@@ -1,5 +1,6 @@
 package boggled.campaign.econ.abilities;
 
+import boggled.campaign.econ.StringHelper;
 import boggled.campaign.econ.boggledTools;
 import boggled.scripts.PlayerCargoCalculations.boggledDefaultCargo;
 import com.fs.starfarer.api.Global;
@@ -42,7 +43,11 @@ public class Construct_Astropolis_Station extends BaseDurationAbility
         int numAstro = boggledTools.numAstroInOrbit(targetPlanet);
         float orbitRadius = targetPlanet.getRadius() + 375.0F;
 
-        SectorEntityToken newAstropolis = system.addCustomEntity("boggled_astropolis_" + numAstro, targetPlanet.getName() + " Astropolis " + boggledTools.getAstropolisColonyNameStringGreekLetter(numAstro), "boggled_astropolis_station_" + boggledTools.getGreekLetterForNextAstropolisCustomEntityId(numAstro) + "_small", playerFactionID);
+        String astropolisLetter = boggledTools.getAstropolisColonyNameStringGreekLetter(numAstro);
+        String astropolisName = StringHelper.getString(StringHelper.ABILITIES, "astropolis_entity_name", StringHelper.tokens(
+                "planet", targetPlanet.getName(),
+                "letter", StringHelper.getString(StringHelper.ABILITIES, "astropolis_letter_" + astropolisLetter.toLowerCase(java.util.Locale.ROOT))));
+        SectorEntityToken newAstropolis = system.addCustomEntity("boggled_astropolis_" + numAstro, astropolisName, "boggled_astropolis_station_" + boggledTools.getGreekLetterForNextAstropolisCustomEntityId(numAstro) + "_small", playerFactionID);
         SectorEntityToken newAstropolisLights = system.addCustomEntity("boggled_astropolisLights", targetPlanet.getName() + " Astropolis " + boggledTools.getAstropolisColonyNameStringGreekLetter(numAstro) + " Lights Overlay", "boggled_astropolis_station_" + boggledTools.getGreekLetterForNextAstropolisCustomEntityId(numAstro) + "_small_lights_overlay", playerFactionID);
 
         // Figure out the orbital angle for the new astropolis.
@@ -217,33 +222,40 @@ public class Construct_Astropolis_Station extends BaseDurationAbility
         Color highlight = Misc.getHighlightColor();
         Color bad = Misc.getNegativeHighlightColor();
 
-        tooltip.addTitle("Construct Astropolis Station");
+        tooltip.addTitle(StringHelper.getString(StringHelper.ABILITIES, "astropolis_title"));
         float pad = 10.0F;
-        tooltip.addPara("Construct an astropolis station in orbit around a planet. Expends %s credits, %s crew, %s heavy machinery, %s metals and %s transplutonics for construction.", pad, highlight, new String[]{(int)creditCost + "",(int)crewCost + "",(int)heavyMachineryCost +"", (int)metalCost + "", (int)transplutonicsCost +""});
+        String credits = (int) creditCost + "";
+        String crew = (int) crewCost + "";
+        String heavyMachinery = (int) heavyMachineryCost + "";
+        String metals = (int) metalCost + "";
+        String transplutonics = (int) transplutonicsCost + "";
+        String costSentence = StringHelper.getString(StringHelper.ABILITIES, "astropolis_cost", StringHelper.tokens(
+                "credits", credits, "crew", crew, "heavyMachinery", heavyMachinery, "metals", metals, "transplutonics", transplutonics));
+        StringHelper.applyHighlight(tooltip.addPara(costSentence, pad), highlight, credits, crew, heavyMachinery, metals, transplutonics);
 
         // Check research requirement for tooltip
         String requiredResearch = boggledTools.getRequiredResearchForAbility("boggled_construct_astropolis_station");
         if (requiredResearch != null && !boggledTools.isResearched(requiredResearch))
         {
             String researchName = boggledTools.getResearchDisplayName(requiredResearch);
-            tooltip.addPara("Requires the " + researchName + " research to be completed.", bad, pad);
+            tooltip.addPara(StringHelper.getString(StringHelper.GENERAL, "requires_research", StringHelper.tokens("research", researchName)), bad, pad);
         }
 
         if(playerFleet.isInHyperspace() || Global.getSector().getPlayerFleet().isInHyperspaceTransition() || system == null)
         {
-            tooltip.addPara("You cannot construct an astropolis station in hyperspace.", bad, pad);
+            tooltip.addPara(StringHelper.getString(StringHelper.ABILITIES, "astropolis_hyperspace"), bad, pad);
         }
         else if(system.getJumpPoints().isEmpty())
         {
-            tooltip.addPara("You cannot construct a station in a system with no jump points.", bad, pad);
+            tooltip.addPara(StringHelper.getString("cannot_construct_no_jump_points"), bad, pad);
         }
         else if(system.hasTag(Tags.SYSTEM_ABYSSAL))
         {
-            tooltip.addPara("You cannot construct a station in a system in abyssal hyperspace.", bad, pad);
+            tooltip.addPara(StringHelper.getString("cannot_construct_abyssal"), bad, pad);
         }
         else if(targetPlanet == null)
         {
-            tooltip.addPara("There are no planets in the " + system.getName() + ".", bad, pad);
+            tooltip.addPara(StringHelper.getString(StringHelper.ABILITIES, "astropolis_no_planets", StringHelper.tokens("system", system.getName())), bad, pad);
         }
 
         if(!playerFleet.isInHyperspace() && !Global.getSector().getPlayerFleet().isInHyperspaceTransition() && system != null && targetPlanet != null)
@@ -254,11 +266,13 @@ public class Construct_Astropolis_Station extends BaseDurationAbility
                 String distanceInSuString = String.format("%.2f", distanceInSu);
                 float requiredDistanceInSu = 500f / 2000f;
                 String requiredDistanceInSuString = String.format("%.2f", requiredDistanceInSu);
-                tooltip.addPara("The world closest to your location is " + targetPlanet.getName() + ". Your fleet is " + distanceInSuString + " stellar units away. You must be within " + requiredDistanceInSuString + " stellar units to construct an astropolis station.", bad, pad);
+                tooltip.addPara(StringHelper.getString(StringHelper.ABILITIES, "astropolis_too_far", StringHelper.tokens(
+                        "planet", targetPlanet.getName(), "distance", distanceInSuString, "required", requiredDistanceInSuString)), bad, pad);
             }
             else
             {
-                tooltip.addPara("Target host world: %s", pad, highlight, new String[]{targetPlanet.getName()});
+                String targetSentence = StringHelper.getString(StringHelper.ABILITIES, "astropolis_target", StringHelper.tokens("planet", targetPlanet.getName()));
+                StringHelper.applyHighlight(tooltip.addPara(targetSentence, pad), highlight, targetPlanet.getName());
             }
 
             // Checks for governorship by player. Governed planets have isPlayerOwned() equals true but
@@ -267,11 +281,11 @@ public class Construct_Astropolis_Station extends BaseDurationAbility
             {
                 if(targetPlanet.getMarket().getFactionId().equals(Factions.NEUTRAL))
                 {
-                    tooltip.addPara("You can only construct astropolis stations in orbit around worlds you control.", bad, pad);
+                    tooltip.addPara(StringHelper.getString(StringHelper.ABILITIES, "astropolis_must_control"), bad, pad);
                 }
                 else
                 {
-                    tooltip.addPara("You cannot construct an astropolis station in orbit around a world colonized by another faction.", bad, pad);
+                    tooltip.addPara(StringHelper.getString(StringHelper.ABILITIES, "astropolis_other_faction"), bad, pad);
                 }
             }
 
@@ -280,53 +294,53 @@ public class Construct_Astropolis_Station extends BaseDurationAbility
                 AstropolisOrbitBlocker astroBlocker = astropolisOrbitBlocked(targetPlanet);
                 if(astroBlocker != null && astroBlocker.reason != null && astroBlocker.reason.equals("radius_too_small"))
                 {
-                    tooltip.addPara(targetPlanet.getName() + " is too small to host an astropolis.", bad, pad);
+                    tooltip.addPara(StringHelper.getString(StringHelper.ABILITIES, "astropolis_too_small", StringHelper.tokens("planet", targetPlanet.getName())), bad, pad);
                 }
                 else if(astroBlocker != null && astroBlocker.reason != null && astroBlocker.reason.equals("too_close_to_focus"))
                 {
-                    tooltip.addPara("An astropolis would be unable to achieve a satisfactory orbit around " + targetPlanet.getName() + " because it is orbiting too close to " + astroBlocker.blocker.getName() + ".", bad, pad);
+                    tooltip.addPara(StringHelper.getString(StringHelper.ABILITIES, "astropolis_orbit_too_close_to_focus", StringHelper.tokens("planet", targetPlanet.getName(), "blocker", astroBlocker.blocker.getName())), bad, pad);
                 }
                 else if(astroBlocker != null && astroBlocker.reason != null && astroBlocker.reason.equals("too_close_to_star"))
                 {
-                    tooltip.addPara(targetPlanet.getName() + " is too close to " + astroBlocker.blocker.getName() + " to host an astropolis.", bad, pad);
+                    tooltip.addPara(StringHelper.getString(StringHelper.ABILITIES, "astropolis_too_close_to_star", StringHelper.tokens("planet", targetPlanet.getName(), "blocker", astroBlocker.blocker.getName())), bad, pad);
                 }
                 else if(astroBlocker != null && astroBlocker.reason != null && astroBlocker.reason.equals("moon_too_close"))
                 {
-                    tooltip.addPara("An astropolis would be unable to achieve a satisfactory orbit around " + targetPlanet.getName() + " because " + astroBlocker.blocker.getName() + " is orbiting too close to it.", bad, pad);
+                    tooltip.addPara(StringHelper.getString(StringHelper.ABILITIES, "astropolis_moon_too_close", StringHelper.tokens("planet", targetPlanet.getName(), "blocker", astroBlocker.blocker.getName())), bad, pad);
                 }
                 else if(astroBlocker != null && astroBlocker.reason != null && astroBlocker.reason.equals("too_many_moons"))
                 {
-                    tooltip.addPara("An astropolis would be unable to maintain a satisfactory orbit around " + targetPlanet.getName() + " because there are four or more moons orbiting it.", bad, pad);
+                    tooltip.addPara(StringHelper.getString(StringHelper.ABILITIES, "astropolis_too_many_moons", StringHelper.tokens("planet", targetPlanet.getName())), bad, pad);
                 }
             }
 
             int numAstroInOrbit = boggledTools.getNumExistingAstroplisStations(targetPlanet);
             if(numAstroInOrbit >= 3)
             {
-                tooltip.addPara("Each world can support a maximum of three astropolis stations in orbit.", bad, pad);
+                tooltip.addPara(StringHelper.getString(StringHelper.ABILITIES, "astropolis_max_three"), bad, pad);
             }
         }
 
         CargoAPI playerCargo = playerFleet.getCargo();
         if(playerCargo.getCredits().get() < creditCost)
         {
-            tooltip.addPara("Insufficient credits.", bad, pad);
+            tooltip.addPara(StringHelper.getString("insufficient_credits"), bad, pad);
         }
         if(boggledDefaultCargo.active.getCommodityAmount(playerCargo, boggledDefaultCargo.Astropolis_Station, "metals") < metalCost)
         {
-            tooltip.addPara("Insufficient metals.", bad, pad);
+            tooltip.addPara(StringHelper.getString("insufficient_metals"), bad, pad);
         }
         if(boggledDefaultCargo.active.getCommodityAmount(playerCargo, boggledDefaultCargo.Astropolis_Station, "rare_metals") < transplutonicsCost)
         {
-            tooltip.addPara("Insufficient transplutonics.", bad, pad);
+            tooltip.addPara(StringHelper.getString("insufficient_transplutonics"), bad, pad);
         }
         if(boggledDefaultCargo.active.getCommodityAmount(playerCargo, boggledDefaultCargo.Astropolis_Station, "crew") < crewCost)
         {
-            tooltip.addPara("Insufficient crew.", bad, pad);
+            tooltip.addPara(StringHelper.getString("insufficient_crew"), bad, pad);
         }
         if(boggledDefaultCargo.active.getCommodityAmount(playerCargo, boggledDefaultCargo.Astropolis_Station, "heavy_machinery") < heavyMachineryCost)
         {
-            tooltip.addPara("Insufficient heavy machinery.", bad, pad);
+            tooltip.addPara(StringHelper.getString("insufficient_heavy_machinery"), bad, pad);
         }
     }
 

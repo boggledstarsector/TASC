@@ -33,7 +33,7 @@ public class PlanetTypeChangeAlpine extends PlanetTypeChangeTerran
             }
         };
 
-        return new TerraformingRequirementObject(this.market.getName() + " is not already an alpine world", requirementMet, null);
+        return new TerraformingRequirementObject(marketRequirement("req_not_already_alpine"), requirementMet, null);
     }
 
     @Override

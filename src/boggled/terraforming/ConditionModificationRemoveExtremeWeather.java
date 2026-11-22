@@ -1,5 +1,6 @@
 package boggled.terraforming;
 
+import boggled.campaign.econ.StringHelper;
 import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Conditions;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
@@ -12,7 +13,7 @@ public class ConditionModificationRemoveExtremeWeather extends BoggledBaseTerraf
 {
     public ConditionModificationRemoveExtremeWeather(MarketAPI market)
     {
-        super(market, "Stabilize weather patterns", new HashSet<>(), new HashSet<>(List.of(Conditions.EXTREME_WEATHER)));
+        super(market, StringHelper.getString(StringHelper.TERRAFORMING, "project_stabilize_weather"), new HashSet<>(), new HashSet<>(List.of(Conditions.EXTREME_WEATHER)));
     }
 
     @Override
@@ -47,6 +48,6 @@ public class ConditionModificationRemoveExtremeWeather extends BoggledBaseTerraf
             }
         };
 
-        return new TerraformingRequirementObject(this.market.getName() + " has extreme weather", requirementMet, null);
+        return new TerraformingRequirementObject(marketRequirement("req_has_extreme_weather"), requirementMet, null);
     }
 }

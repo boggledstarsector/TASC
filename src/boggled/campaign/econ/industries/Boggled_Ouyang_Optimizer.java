@@ -13,6 +13,7 @@ import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
 import com.fs.starfarer.api.impl.campaign.econ.impl.BaseIndustry;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
+import boggled.campaign.econ.StringHelper;
 import boggled.campaign.econ.boggledTools;
 
 public class Boggled_Ouyang_Optimizer extends BaseIndustry
@@ -98,8 +99,8 @@ public class Boggled_Ouyang_Optimizer extends BaseIndustry
                 {
                     if (this.market.isPlayerOwned())
                     {
-                        MessageIntel intel = new MessageIntel("Ouyang Optimization on " + getFocusMarket().getName(), Misc.getBasePlayerColor());
-                        intel.addLine("    - Completed");
+                        MessageIntel intel = new MessageIntel(StringHelper.getString(StringHelper.INDUSTRIES, "ouyang_intel_title", StringHelper.tokens("market", getFocusMarket().getName())), Misc.getBasePlayerColor());
+                        intel.addLine(StringHelper.getString(StringHelper.INDUSTRIES, "ouyang_intel_completed"));
                         intel.setIcon(Global.getSector().getPlayerFaction().getCrest());
                         intel.setSound(BaseIntelPlugin.getSoundStandardUpdate());
                         Global.getSector().getCampaignUI().addMessage(intel, CommMessageAPI.MessageClickAction.COLONY_INFO, market);
@@ -246,32 +247,32 @@ public class Boggled_Ouyang_Optimizer extends BaseIndustry
         SectorEntityToken orbitFocus = getOrbitFocus();
         if(orbitFocus == null)
         {
-            return this.market.getName() + " is not in orbit around a planet.";
+            return StringHelper.getString(StringHelper.INDUSTRIES, "ouyang_not_orbiting", StringHelper.tokens("market", this.market.getName()));
         }
 
         if(orbitFocus.getMarket() == null || orbitFocus.getMarket().getPlanetEntity() == null)
         {
-            return this.market.getName() + " is not in orbit around a planet.";
+            return StringHelper.getString(StringHelper.INDUSTRIES, "ouyang_not_orbiting", StringHelper.tokens("market", this.market.getName()));
         }
 
         PlanetAPI planet = orbitFocus.getMarket().getPlanetEntity();
         String planetType = boggledTools.getTascPlanetType(planet);
         if(!planetType.equals(boggledTools.TascPlanetTypes.gasGiantPlanetId))
         {
-            return "Only gas giants can undergo Ouyang optimization.";
+            return StringHelper.getString(StringHelper.INDUSTRIES, "ouyang_only_gas_giants");
         }
 
         // Can't already have extreme weather
         MarketAPI focusMarket = getFocusMarket();
         if(focusMarket.hasCondition("extreme_weather"))
         {
-            return getFocusMarket().getName() + " already has extreme weather - making it worse won't increase volatiles availability.";
+            return StringHelper.getString(StringHelper.INDUSTRIES, "ouyang_extreme_weather", StringHelper.tokens("market", getFocusMarket().getName()));
         }
 
         // Can't already have maxed out volatiles
         if(focusMarket.hasCondition("organics_plentiful"))
         {
-            return getFocusMarket().getName() + " is already extremely rich in volatiles. An Ouyang optimization would not yield any improvement.";
+            return StringHelper.getString(StringHelper.INDUSTRIES, "ouyang_volatiles_maxed", StringHelper.tokens("market", getFocusMarket().getName()));
         }
 
         return super.getUnavailableReason();
@@ -309,19 +310,21 @@ public class Boggled_Ouyang_Optimizer extends BaseIndustry
                 percentComplete = 99;
             }
 
-            tooltip.addPara("Ouyang optimization is approximately %s complete on " + getFocusMarket().getName() + ".", opad, highlight, new String[]{percentComplete + "%"});
+            String percent = percentComplete + "%";
+            String sentence = StringHelper.getString(StringHelper.INDUSTRIES, "ouyang_progress", StringHelper.tokens("percent", percent, "market", getFocusMarket().getName()));
+            StringHelper.applyHighlight(tooltip.addPara(sentence, opad), highlight, percent);
         }
 
         // Tell the player they can remove it
         if(!this.marketSuitableForOptimizer() && mode != IndustryTooltipMode.ADD_INDUSTRY && mode != IndustryTooltipMode.QUEUED && !isBuilding())
         {
-            tooltip.addPara("Further Ouyang optimization would yield no improvements on " + getFocusMarket().getName() + ". The Ouyang Optimizer can now be deconstructed without any risk of regression.", opad);
+            tooltip.addPara(StringHelper.getString(StringHelper.INDUSTRIES, "ouyang_finished", StringHelper.tokens("market", getFocusMarket().getName())), opad);
         }
 
         if(this.isDisrupted() && this.marketSuitableForOptimizer() && mode != IndustryTooltipMode.ADD_INDUSTRY && mode != IndustryTooltipMode.QUEUED && !isBuilding())
         {
             Color bad = Misc.getNegativeHighlightColor();
-            tooltip.addPara("Progress is stalled while the Ouyang optimizer is disrupted.", bad, opad);
+            tooltip.addPara(StringHelper.getString(StringHelper.INDUSTRIES, "ouyang_stalled"), bad, opad);
         }
     }
 

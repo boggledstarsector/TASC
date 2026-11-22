@@ -13,6 +13,7 @@ import com.fs.starfarer.api.impl.campaign.econ.impl.BaseIndustry;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.campaign.StarSystemAPI;
 import com.fs.starfarer.api.util.Pair;
+import boggled.campaign.econ.StringHelper;
 import boggled.campaign.econ.boggledTools;
 
 public class Boggled_Stellar_Reflector_Array extends BaseIndustry implements ShowBoggledTerraformingMenuOption
@@ -44,7 +45,7 @@ public class Boggled_Stellar_Reflector_Array extends BaseIndustry implements Sho
 
         if(shortage)
         {
-            getUpkeep().modifyMult("deficit", 5.0f, "Artifacts shortage");
+            getUpkeep().modifyMult("deficit", 5.0f, StringHelper.getString(StringHelper.INDUSTRIES, "stellar_reflector_artifacts_shortage"));
         }
         else
         {
@@ -82,15 +83,15 @@ public class Boggled_Stellar_Reflector_Array extends BaseIndustry implements Sho
         StarSystemAPI system = market.getStarSystem();
 
         ArrayList<Pair<String, String>> mirrorIdNamePairs = new ArrayList<>(Arrays.asList(
-                new Pair<>("stellar_mirror_alpha", "Stellar Mirror Alpha"),
-                new Pair<>("stellar_mirror_beta", "Stellar Mirror Beta"),
-                new Pair<>("stellar_mirror_gamma", "Stellar Mirror Gamma")
+                new Pair<>("stellar_mirror_alpha", StringHelper.getString(StringHelper.INDUSTRIES, "stellar_reflector_mirror_alpha")),
+                new Pair<>("stellar_mirror_beta", StringHelper.getString(StringHelper.INDUSTRIES, "stellar_reflector_mirror_beta")),
+                new Pair<>("stellar_mirror_gamma", StringHelper.getString(StringHelper.INDUSTRIES, "stellar_reflector_mirror_gamma"))
         ));
 
         ArrayList<Pair<String, String>> shadeIdNamePairs = new ArrayList<>(Arrays.asList(
-                new Pair<>("stellar_shade_alpha", "Stellar Shade Alpha"),
-                new Pair<>("stellar_shade_beta", "Stellar Shade Beta"),
-                new Pair<>("stellar_shade_gamma", "Stellar Shade Gamma")
+                new Pair<>("stellar_shade_alpha", StringHelper.getString(StringHelper.INDUSTRIES, "stellar_reflector_shade_alpha")),
+                new Pair<>("stellar_shade_beta", StringHelper.getString(StringHelper.INDUSTRIES, "stellar_reflector_shade_beta")),
+                new Pair<>("stellar_shade_gamma", StringHelper.getString(StringHelper.INDUSTRIES, "stellar_reflector_shade_gamma"))
         ));
 
         float baseAngle = market.getPrimaryEntity().getCircularOrbitAngle();
@@ -192,41 +193,45 @@ public class Boggled_Stellar_Reflector_Array extends BaseIndustry implements Sho
 
         if(mode == IndustryTooltipMode.ADD_INDUSTRY || mode == IndustryTooltipMode.QUEUED || !isFunctional())
         {
-            tooltip.addPara("If operational, would counter the effects of:", opad, Misc.getHighlightColor(), "");
+            tooltip.addPara(StringHelper.getString(StringHelper.INDUSTRIES, "stellar_reflector_would_counter"), opad);
             int numCondsCountered = 0;
             for (String id : boggledTools.getStellarReflectorArraySuppressedConditions())
             {
                 if(this.market.hasCondition(id))
                 {
                     String condName = Global.getSettings().getMarketConditionSpec(id).getName();
-                    tooltip.addPara("           %s", 2f, Misc.getHighlightColor(), condName);
+                    String line = StringHelper.getString(StringHelper.INDUSTRIES, "stellar_reflector_condition", StringHelper.tokens("condition", condName));
+                    StringHelper.applyHighlight(tooltip.addPara(line, 2f), Misc.getHighlightColor(), condName);
                     numCondsCountered++;
                 }
             }
 
             if(numCondsCountered == 0)
             {
-                tooltip.addPara("           %s", 2f, Misc.getGrayColor(), "(none)");
+                String none = StringHelper.getString(StringHelper.INDUSTRIES, "stellar_reflector_none");
+                StringHelper.applyHighlight(tooltip.addPara(none, 2f), Misc.getGrayColor(), "(none)");
             }
         }
 
         if(mode != IndustryTooltipMode.ADD_INDUSTRY && mode != IndustryTooltipMode.QUEUED && isFunctional())
         {
-            tooltip.addPara("Countering the effects of:", opad, Misc.getHighlightColor(), "");
+            tooltip.addPara(StringHelper.getString(StringHelper.INDUSTRIES, "stellar_reflector_countering"), opad);
             int numCondsCountered = 0;
             for (String id : boggledTools.getStellarReflectorArraySuppressedConditions())
             {
                 if(this.market.hasCondition(id))
                 {
                     String condName = Global.getSettings().getMarketConditionSpec(id).getName();
-                    tooltip.addPara("           %s", 2f, Misc.getHighlightColor(), condName);
+                    String line = StringHelper.getString(StringHelper.INDUSTRIES, "stellar_reflector_condition", StringHelper.tokens("condition", condName));
+                    StringHelper.applyHighlight(tooltip.addPara(line, 2f), Misc.getHighlightColor(), condName);
                     numCondsCountered++;
                 }
             }
 
             if(numCondsCountered == 0)
             {
-                tooltip.addPara("           %s", 2f, Misc.getGrayColor(), "(none)");
+                String none = StringHelper.getString(StringHelper.INDUSTRIES, "stellar_reflector_none");
+                StringHelper.applyHighlight(tooltip.addPara(none, 2f), Misc.getGrayColor(), "(none)");
             }
         }
     }
@@ -293,7 +298,7 @@ public class Boggled_Stellar_Reflector_Array extends BaseIndustry implements Sho
         // Can't be built on dark planets. All planets in nebulas and orbiting black holes have dark condition.
         if(this.market.hasCondition(Conditions.DARK))
         {
-            return "Stellar reflectors can serve no purpose orbiting a world that receives no light.";
+            return StringHelper.getString(StringHelper.INDUSTRIES, "stellar_reflector_unavailable_dark");
         }
 
         return super.getUnavailableReason();
