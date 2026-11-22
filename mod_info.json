@@ -4,7 +4,7 @@
 	"version":"10.2.0",
 	"author": "boggled",
 	"description":"Terraform planets and build stations.",
-	"gameVersion":"0.98.5a-RC5",
+	"gameVersion":"0.98.5a-RC8",
 	"jars":["jar/BoggledTerraformingAndStationConstruction.jar"],
 	"modPlugin":"boggled.scripts.BoggledTascPlugin",
 	"dependencies": [

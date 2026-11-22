@@ -17,10 +17,6 @@ This is a **Java project** for Starsector modding. The project uses:
 
 Player-facing documentation for TASC's content and systems lives in [tascdocs](https://github.com/boggledstarsector/tascdocs), a separate website repository. The guides under `docs/` in this repository are for developers working on the mod. They do not replace the site.
 
-Whenever any change is made in this repository, open a companion pull request against `boggledstarsector/tascdocs` that updates existing pages or adds new ones for that change. A TASC change is not finished while that companion pull request is missing. A translation that only changes display text does not need a tascdocs pull request.
-
-Site pages are organized by topic under `app/docs/` and `app/components/` (buildings, station abilities, and terraforming projects). Follow `docs/creating-new-building-pages.md` in tascdocs when adding a building page.
-
 ## Code Architecture
 
 ### Core Plugin Structure

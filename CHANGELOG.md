@@ -1,7 +1,7 @@
 # Changelog
 
 ## 10.2.0
-- Added a launch check that stops the game when Starsector is older than 0.98.5a, or when Ashlib is enabled and older than 2.2.1. The error states the required version.
+- Refactored TASC to enable translation into other languages without modifying and recompiling the Java code. I appreciate those who translate TASC - please let me know if you encounter any issues with the refactor, or if there's any way I can make it even easier to translate TASC.
 
 ## 10.1.0 *(not backwards compatible)*
 - Updated TASC for Starsector 0.98.5a-RC5.
