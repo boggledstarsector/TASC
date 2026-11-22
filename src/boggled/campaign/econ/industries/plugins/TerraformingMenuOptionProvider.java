@@ -31,7 +31,8 @@ public class TerraformingMenuOptionProvider extends BaseIndustryOptionProvider
     @Override
     public List<IndustryOptionData> getIndustryOptions(Industry ind)
     {
-        if (isUnsuitable(ind, false)) return null;
+        // 0.98.5a adds provider options to the right-click menu of a building that is still under construction.
+        if (isUnsuitable(ind, true)) return null;
 
         List<IndustryOptionProvider.IndustryOptionData> result = new ArrayList<IndustryOptionData>();
 
