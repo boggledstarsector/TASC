@@ -1,6 +1,5 @@
 package boggled.scripts;
 
-import boggled.campaign.econ.industries.Boggled_Remnant_Station;
 import boggled.campaign.econ.industries.plugins.TerraformingMenuOptionProvider;
 import boggled.ui.BoggledCoreModificationListener;
 import boggled.ui.BoggledCoreModifierEveryFrameScript;
@@ -421,8 +420,6 @@ public class BoggledTascPlugin extends BaseModPlugin {
         loadSettingsFromJSON();
 
         validateIndustryIds();
-
-        Boggled_Remnant_Station.registerSharedDescription();
 
         if (Global.getSettings().getModManager().isModEnabled("aaacrew_replacer")) {
             boggledDefaultCargo.active = new boggledCrewReplacerCargo();
