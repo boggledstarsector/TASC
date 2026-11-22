@@ -60,7 +60,12 @@ public class TascAshlibCommandTabListener implements CommandTabListener {
 
     @Override
     public int getKeyBind() {
-        return  Keyboard.KEY_6;
+        try {
+            return BoggledCoreModifierEveryFrameScript.shortcutForNewCommandButton(
+                    BoggledCoreModifierEveryFrameScript.getMainCorePanel());
+        } catch (RuntimeException ex) {
+            return Keyboard.KEY_NONE;
+        }
     }
 
     @Override
