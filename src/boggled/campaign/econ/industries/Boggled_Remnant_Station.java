@@ -35,7 +35,11 @@ import com.fs.starfarer.api.impl.campaign.ids.Commodities;
 import com.fs.starfarer.api.impl.campaign.ids.Factions;
 import com.fs.starfarer.api.impl.campaign.ids.MemFlags;
 import com.fs.starfarer.api.impl.campaign.ids.Stats;
+import com.fs.starfarer.api.loading.Description;
+import com.fs.starfarer.api.loading.IndustrySpecAPI;
 import org.lwjgl.util.vector.Vector2f;
+
+import java.lang.reflect.Method;
 
 public class Boggled_Remnant_Station extends OrbitalStation implements RouteManager.RouteFleetSpawner, FleetEventListener
 {
@@ -48,7 +52,7 @@ public class Boggled_Remnant_Station extends OrbitalStation implements RouteMana
     public static float BASE_DEFENSE_BONUS_BOGGLED_REMNANT_BATTLESTATION = 2.0F;
     public static int BASE_STABILITY_MOD_BOGGLED_REMNANT_BATTLESTATION = 3;
     private static final String SECOND_IN_COMMAND_MOD_ID = "second_in_command";
-    // Map hover loads a CUSTOM description. The Remnant Nexus hull text is a SHIP description, so it never appears there.
+    // Map hover loads a CUSTOM description by this id. The text is copied from the industry desc at load.
     private static final String REMNANT_STATION_DESCRIPTION_ID = "boggled_remnant_station";
     private static final String DEFAULT_STATION_DESCRIPTION_ID = "orbital_station_default";
 
@@ -740,14 +744,81 @@ public class Boggled_Remnant_Station extends OrbitalStation implements RouteMana
 
     private void applyRemnantStationDescription()
     {
-        if (this.stationEntity == null) return;
+        if (this.stationEntity != null) {
+            this.applyDescriptionId(this.stationEntity);
+        }
+        if (this.stationFleet != null) {
+            this.applyDescriptionId(this.stationFleet);
+        }
+    }
 
-        String currentId = this.stationEntity.getCustomDescriptionId();
+    private void applyDescriptionId(SectorEntityToken entity)
+    {
+        String currentId = entity.getCustomDescriptionId();
         if (REMNANT_STATION_DESCRIPTION_ID.equals(currentId)) return;
         // An entity already in orbit can carry its own description. The industry-built station uses the default orbital text.
         if (currentId != null && !DEFAULT_STATION_DESCRIPTION_ID.equals(currentId)) return;
 
-        this.stationEntity.setCustomDescriptionId(REMNANT_STATION_DESCRIPTION_ID);
+        entity.setCustomDescriptionId(REMNANT_STATION_DESCRIPTION_ID);
+    }
+
+    public static void registerSharedDescription()
+    {
+        IndustrySpecAPI spec = Global.getSettings().getIndustrySpec(boggledTools.BoggledIndustries.remnantStationIndustryId);
+        if (spec == null || spec.getDesc() == null || spec.getDesc().isEmpty()) return;
+
+        // The station tooltip looks up a CUSTOM description. Copy the industry desc into that entry so industries.csv stays the only sentence to translate.
+        Description description = findStoredDescription();
+        if (description == null) {
+            description = new Description(REMNANT_STATION_DESCRIPTION_ID, Description.Type.CUSTOM);
+            description.setText1(spec.getDesc());
+            storeDescription(description);
+            return;
+        }
+        description.setText1(spec.getDesc());
+    }
+
+    private static Description findStoredDescription()
+    {
+        Method method = specStoreMethod(String.class, Description.Type.class, boolean.class);
+        try {
+            return (Description) method.invoke(null, REMNANT_STATION_DESCRIPTION_ID, Description.Type.CUSTOM, Boolean.TRUE);
+        } catch (ReflectiveOperationException ex) {
+            throw new RuntimeException("Could not read the remnant station description", ex);
+        }
+    }
+
+    private static void storeDescription(Description description)
+    {
+        Method method = specStoreMethod(Class.class, String.class, Object.class);
+        try {
+            method.invoke(null, Description.class, description.getUID(), description);
+        } catch (ReflectiveOperationException ex) {
+            throw new RuntimeException("Could not store the remnant station description", ex);
+        }
+    }
+
+    private static Method specStoreMethod(Class<?>... parameterTypes)
+    {
+        Class<?> store;
+        try {
+            store = Class.forName("com.fs.starfarer.loading.SpecStore");
+        } catch (ClassNotFoundException ex) {
+            throw new RuntimeException("Starsector description store is missing", ex);
+        }
+
+        Method found = null;
+        for (Method method : store.getMethods()) {
+            if (!Arrays.equals(method.getParameterTypes(), parameterTypes)) continue;
+            if (found != null) {
+                throw new RuntimeException("More than one description store method matches " + Arrays.toString(parameterTypes));
+            }
+            found = method;
+        }
+        if (found == null) {
+            throw new RuntimeException("No description store method matches " + Arrays.toString(parameterTypes));
+        }
+        return found;
     }
 
     @Override
