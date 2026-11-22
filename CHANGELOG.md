@@ -1,9 +1,9 @@
 # Changelog
 
 ## 10.2.0
-- The Terraforming command tab hotkey now follows its place in the command row, and selecting that tab tells other mods which command tab is open so their buttons can hide. Thanks WolframSegler for reporting this!
 - Refactored TASC to enable translation into other languages without modifying and recompiling the Java code. I appreciate those who translate TASC - please let me know if you encounter any issues with the refactor, or if there's any way I can make it even easier to translate TASC.
 - CHAMELEON can no longer remove the Decivilized Subpopulation condition. The base game added a way to suppress this condition in 0.98.5a, so I removed this feature from TASC.
+- Fixed a bug where the terraforming tab could have the wrong hotkey. Thanks WolframSegler for reporting this!
 
 ## 10.1.0 *(not backwards compatible)*
 - Updated TASC for Starsector 0.98.5a-RC5.
