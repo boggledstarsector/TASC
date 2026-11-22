@@ -19,7 +19,6 @@ import org.lwjgl.input.Keyboard;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -587,28 +586,25 @@ public class BoggledCoreModifierEveryFrameScript implements EveryFrameScript {
         {
             return component;
         }
-        for (Method method : component.getClass().getMethods())
+        // ScriptClassLoader refuses to load java.lang.reflect.Method. Ask for the
+        // wrapper methods by name through the same no-argument path as getButtonToTab.
+        String className = component.getClass().getName();
+        if (!className.contains("Wrapper"))
         {
-            String name = method.getName();
-            if ((!name.equals("getWrapped") && !name.equals("wrapped")) || method.getParameterCount() != 0)
-            {
-                continue;
-            }
-            if (!UIComponentAPI.class.isAssignableFrom(method.getReturnType()))
-            {
-                continue;
-            }
+            return component;
+        }
+        for (String name : new String[] { "getWrapped", "wrapped" })
+        {
             try
             {
-                Object wrapped = invokeMethodHandle.invoke(method, component, new Object[0]);
+                Object wrapped = invokeMethod(name, component);
                 if (wrapped instanceof UIComponentAPI ui && ui != component)
                 {
                     return unwrap(ui);
                 }
             }
-            catch (Throwable ignored)
+            catch (RuntimeException ignored)
             {
-                return component;
             }
         }
         return component;
