@@ -1,6 +1,7 @@
 # Changelog
 
 ## 10.2.0
+- Hovering over an Autonomous AI Battlestation shows the Remnant Nexus description.
 - Refactored TASC to enable translation into other languages without modifying and recompiling the Java code. I appreciate those who translate TASC - please let me know if you encounter any issues with the refactor, or if there's any way I can make it even easier to translate TASC.
 - CHAMELEON can no longer remove the Decivilized Subpopulation condition. The base game added a way to suppress this condition in 0.98.5a, so I removed this feature from TASC.
 

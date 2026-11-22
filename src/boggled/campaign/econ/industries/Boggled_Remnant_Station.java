@@ -48,6 +48,9 @@ public class Boggled_Remnant_Station extends OrbitalStation implements RouteMana
     public static float BASE_DEFENSE_BONUS_BOGGLED_REMNANT_BATTLESTATION = 2.0F;
     public static int BASE_STABILITY_MOD_BOGGLED_REMNANT_BATTLESTATION = 3;
     private static final String SECOND_IN_COMMAND_MOD_ID = "second_in_command";
+    // Map hover loads a CUSTOM description. The Remnant Nexus hull text is a SHIP description, so it never appears there.
+    private static final String REMNANT_STATION_DESCRIPTION_ID = "boggled_remnant_station";
+    private static final String DEFAULT_STATION_DESCRIPTION_ID = "orbital_station_default";
 
     // Use this to dynamically handle demand whether DEA is enabled or not.
     // Need to use some ordered data structure because we don't want the UI to display the commodities in a random order
@@ -169,6 +172,7 @@ public class Boggled_Remnant_Station extends OrbitalStation implements RouteMana
 
         // OrbitalStation.advance returns before spawnStation() in sim mode, so these stay null on a sim copy.
         if (Global.getSector().getEconomy().isSimMode()) return;
+        this.applyRemnantStationDescription();
         if (this.stationEntity == null || this.stationFleet == null) return;
 
         // Handle case where player lost control of planet. Possibilities for this include:
@@ -725,6 +729,25 @@ public class Boggled_Remnant_Station extends OrbitalStation implements RouteMana
         super.buildingFinished();
 
         tracker.forceIntervalElapsed();
+    }
+
+    @Override
+    protected void ensureStationEntityIsSetOrCreated()
+    {
+        super.ensureStationEntityIsSetOrCreated();
+        this.applyRemnantStationDescription();
+    }
+
+    private void applyRemnantStationDescription()
+    {
+        if (this.stationEntity == null) return;
+
+        String currentId = this.stationEntity.getCustomDescriptionId();
+        if (REMNANT_STATION_DESCRIPTION_ID.equals(currentId)) return;
+        // An entity already in orbit can carry its own description. The industry-built station uses the default orbital text.
+        if (currentId != null && !DEFAULT_STATION_DESCRIPTION_ID.equals(currentId)) return;
+
+        this.stationEntity.setCustomDescriptionId(REMNANT_STATION_DESCRIPTION_ID);
     }
 
     @Override
