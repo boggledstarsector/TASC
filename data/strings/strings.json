@@ -13,7 +13,12 @@
     "status_under_construction": "under construction",
     "requires_research": "Requires the $research research to be completed.",
     "cannot_construct_no_jump_points": "You cannot construct a station in a system with no jump points.",
-    "cannot_construct_abyssal": "You cannot construct a station in a system in abyssal hyperspace."
+    "cannot_construct_abyssal": "You cannot construct a station in a system in abyssal hyperspace.",
+    "game_version_too_old": "TASC requires Starsector 0.98.5a or newer. This game is $gameVersion.",
+    "game_version_unreadable": "TASC requires Starsector 0.98.5a or newer. This game's version could not be read.",
+    "ashlib_version_too_old": "TASC requires Ashlib 2.2.1 or newer when Ashlib is enabled. The enabled Ashlib is $ashlibVersion.",
+    "ashlib_version_unreadable": "TASC requires Ashlib 2.2.1 or newer when Ashlib is enabled. The enabled Ashlib version could not be read.",
+    "mod_list_unreadable": "TASC could not read the list of enabled mods, so it could not check the Ashlib version."
   },
   "tasc_ui": {
     "terraforming_tab": "Terraforming",
