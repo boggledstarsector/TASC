@@ -1,5 +1,6 @@
 package boggled.terraforming;
 
+import boggled.campaign.econ.StringHelper;
 import boggled.campaign.econ.boggledTools;
 import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
@@ -38,7 +39,7 @@ public class ResourceImprovementFarmland extends BoggledBaseTerraformingProject
     @Override
     public String getProjectName()
     {
-        return "Improve farmland";
+        return StringHelper.getString(StringHelper.TERRAFORMING, "project_improve_farmland");
     }
 
     @Override
@@ -91,7 +92,7 @@ public class ResourceImprovementFarmland extends BoggledBaseTerraformingProject
             }
         };
 
-        return new TerraformingRequirementObject("World type supports farmland", worldTypeSupportsFarmland, null);
+        return new TerraformingRequirementObject(terraformingText("req_world_supports_farmland"), worldTypeSupportsFarmland, null);
     }
 
     public TerraformingRequirementObject getRequirementFarmlandCanBeImproved()
@@ -114,7 +115,7 @@ public class ResourceImprovementFarmland extends BoggledBaseTerraformingProject
             }
         };
 
-        return new TerraformingRequirementObject("Farmland can be improved", requirementMet, null);
+        return new TerraformingRequirementObject(terraformingText("req_farmland_can_be_improved"), requirementMet, null);
     }
 
     public TerraformingRequirementObject getRequirementAdequateWaterToImproveFarmland()
@@ -148,6 +149,6 @@ public class ResourceImprovementFarmland extends BoggledBaseTerraformingProject
             }
         };
 
-        return new TerraformingRequirementObject(this.market.getName() + " has adequate water", requirementMet, null);
+        return new TerraformingRequirementObject(marketRequirement("req_adequate_water"), requirementMet, null);
     }
 }

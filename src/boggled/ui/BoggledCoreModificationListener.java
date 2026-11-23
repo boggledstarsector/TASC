@@ -10,4 +10,13 @@ public class BoggledCoreModificationListener implements CoreUITabListener {
     {
 
     }
+
+    @Override
+    public void reportOpenedCoreTab(CoreUITabId tab, Object param)
+    {
+        if (tab == CoreUITabId.OUTPOSTS)
+        {
+            BoggledCoreModifierEveryFrameScript.onOutpostsTabOpened();
+        }
+    }
 }

@@ -1,0 +1,112 @@
+fieldID,fieldType,defaultValue,secondaryValue,minValue,maxValue,tab
+boggledTerraformingContentEnabled,Boolean,True,,,,Terraforming
+boggled_terraformingProjectsHeader,Header,,,,,Terraforming
+boggledTerraformingTime,Int,400,,1,2000,Terraforming
+boggledResourceImprovementTime,Int,200,,1,1000,Terraforming
+boggledConditionImprovementTime,Int,200,,1,1000,Terraforming
+boggledTerraformingTypeChangeAddVolatiles,Boolean,True,,,,Terraforming
+boggledTerraformingRemoveRadiationProjectEnabled,Boolean,False,,,,Terraforming
+boggledTerraformingRemoveAtmosphereProjectEnabled,Boolean,False,,,,Terraforming
+boggled_terraformingBuildingHeader,Header,,,,,Terraforming
+boggledStellarReflectorArrayEnabled,Boolean,True,,,,Terraforming
+boggledStellarReflectorArrayMarketAutoPlacementEnabled,Boolean,True,,,,Terraforming
+boggledGenelabEnabled,Boolean,True,,,,Terraforming
+boggledGenelabPollutionRemediationDaysToFinish,Int,200,,1,2000,Terraforming
+boggledGenelabLobsterSeedingDaysToFinish,Int,200,,1,2000,Terraforming
+boggledMesozoicParkEnabled,Boolean,True,,,,Terraforming
+boggledAtmosphereProcessorEnabled,Boolean,True,,,,Terraforming
+boggledIsmaraSlingEnabled,Boolean,True,,,,Terraforming
+boggledDomedCitiesEnabled,Boolean,True,,,,Terraforming
+boggledDomedCitiesDefensePenaltyEnabled,Boolean,True,,,,Terraforming
+boggledHarmonicDamperEnabled,Boolean,False,,,,Terraforming
+boggledPlanetaryAgravFieldEnabled,Boolean,False,,,,Terraforming
+boggledPlanetCrackerEnabled,Boolean,False,,,,Terraforming
+boggledPlanetCrackerProjectTime,Int,200,,1,1000,Terraforming
+boggledOuyangOptimizerEnabled,Boolean,False,,,,Terraforming
+boggledOuyangOptimizerProjectTime,Int,200,,1,1000,Terraforming
+boggledStationConstructionContentEnabled,Boolean,True,,,,Station Construction
+boggled_StationConstructionHeader,Header,,,,,Station Construction
+boggledStationAccessibilityBoost,Int,0,,-100,100,Station Construction
+boggledStationHazardRatingModifier,Int,0,,-100,100,Station Construction
+boggledApplyStationSettingsToAllStationsInSector,Boolean,True,,,,Station Construction
+boggledEnableAIMiningDronesStructure,Boolean,False,,,,Station Construction
+boggled_CrampedQuartersHeader,Header,,,,,Station Construction
+boggledStationCrampedQuartersEnabled,Boolean,False,,,,Station Construction
+boggledStationCrampedQuartersSizeGrowthReductionStarts,Int,3,,0,6,Station Construction
+boggledStationCrampedQuartersBaseGrowthPenalty,Int,25,,1,125,Station Construction
+boggledStationCrampedQuartersPlayerCanPayToIncreaseStationSize,Boolean,False,,,,Station Construction
+boggledStationProgressiveIncreaseInCostsToExpandStation,Boolean,True,,,,Station Construction
+boggled_AstropolisHeader,Header,,,,,Station Construction
+boggledAstropolisEnabled,Boolean,True,,,,Station Construction
+boggledCanBuildAstropolisOnPurchasedGovernorshipPlanets,Boolean,False,,,,Station Construction
+boggledAstropolisIgnoreOrbitalRequirements,Boolean,False,,,,Station Construction
+boggledAstropolisStationBuildCreditCost,Int,500000,,0,2500000,Station Construction
+boggledAstropolisStationBuildCrewCost,Int,1000,,0,5000,Station Construction
+boggledAstropolisStationBuildHeavyMachineryCost,Int,250,,0,1250,Station Construction
+boggledAstropolisStationBuildMetalCost,Int,1000,,0,5000,Station Construction
+boggledAstropolisStationBuildTransplutonicsCost,Int,250,,0,1250,Station Construction
+boggledAstropolisSpriteToUse,Int,0,,0,3,Station Construction
+boggled_MiningHeader,Header,,,,,Station Construction
+boggledMiningStationEnabled,Boolean,True,,,,Station Construction
+boggledMaxNumMiningStationsPerSystem,Int,1,,0,5,Station Construction
+boggledMiningStationLinkToResourceBelts,Boolean,False,,,,Station Construction
+boggledMiningStationSparseOre,Int,0,,0,10,Station Construction
+boggledMiningStationModerateOre,Int,2,,0,10,Station Construction
+boggledMiningStationAbundantOre,Int,5,,0,25,Station Construction
+boggledMiningStationRichOre,Int,7,,0,35,Station Construction
+boggledMiningStationUltrarichOre,Int,9,,0,45,Station Construction
+boggledMiningStationStaticAmount,Int,2,,1,5,Station Construction
+boggledMiningStationBuildCreditCost,Int,500000,,0,2500000,Station Construction
+boggledMiningStationBuildCrewCost,Int,1000,,0,5000,Station Construction
+boggledMiningStationBuildHeavyMachineryCost,Int,250,,0,1250,Station Construction
+boggledMiningStationBuildMetalCost,Int,1000,,0,5000,Station Construction
+boggledMiningStationBuildTransplutonicsCost,Int,250,,0,1250,Station Construction
+boggled_SiphonHeader,Header,,,,,Station Construction
+boggledSiphonStationEnabled,Boolean,True,,,,Station Construction
+boggledSiphonStationLinkToGasGiant,Boolean,True,,,,Station Construction
+boggledSiphonStationStaticAmount,Int,2,,1,4,Station Construction
+boggledSiphonStationBuildCreditCost,Int,500000,,0,2500000,Station Construction
+boggledSiphonStationBuildCrewCost,Int,1000,,0,5000,Station Construction
+boggledSiphonStationBuildHeavyMachineryCost,Int,250,,0,1250,Station Construction
+boggledSiphonStationBuildMetalCost,Int,1000,,0,5000,Station Construction
+boggledSiphonStationBuildTransplutonicsCost,Int,250,,0,1250,Station Construction
+boggled_RecolonizationHeader,Header,,,,,Station Construction
+boggledStationColonizationEnabled,Boolean,True,,,,Station Construction
+boggledStationRecolonizeCreditCost,Int,250000,,0,1250000,Station Construction
+boggledStationRecolonizeCrewCost,Int,500,,0,2500,Station Construction
+boggledStationRecolonizeHeavyMachineryCost,Int,125,,0,625,Station Construction
+boggledStationRecolonizeMetalCost,Int,500,,0,2500,Station Construction
+boggledStationRecolonizeTransplutonicsCost,Int,125,,0,625,Station Construction
+boggledDomainTechContentEnabled,Boolean,True,,,,Domain-tech Content
+boggled_PerihelionProjectHeader,Header,,,,,Domain-tech Content
+boggledPerihelionProjectEnabled,Boolean,False,,,,Domain-tech Content
+boggledPerihelionProjectDaysToFinish,Int,400,,1,3000,Domain-tech Content
+boggled_DomainArchaeologyHeader,Header,,,,,Domain-tech Content
+boggledDomainArchaeologyEnabled,Boolean,True,,,,Domain-tech Content
+boggledAddDomainTechBuildingsToVanillaColonies,Boolean,True,,,,Domain-tech Content
+boggledKletkaSimulatorEnabled,Boolean,True,,,,Domain-tech Content
+boggledKletkaSimulatorTemperatureBasedUpkeep,Boolean,True,,,,Domain-tech Content
+boggledKletkaSimulatorSuppressTemperatureBasedUpkeep,Boolean,False,,,,Domain-tech Content
+boggledCHAMELEONEnabled,Boolean,True,,,,Domain-tech Content
+boggledChameleonRogueCoreTerminationDaysToFinish,Int,200,,1,2000,Domain-tech Content
+boggledLimelightNetworkPlayerBuildEnabled,Boolean,True,,,,Domain-tech Content
+boggledCryosanctumPlayerBuildEnabled,Boolean,False,,,,Domain-tech Content
+boggled_ObjectivesHeader,Header,,,,,Domain-tech Content
+boggledDomainTechObjectivesEnabled,Boolean,True,,,,Domain-tech Content
+boggledDomainTechObjectivesUpgradeRelationshipImpact,Int,5,,0,25,Domain-tech Content
+boggledStableLocationDomainTechStructureCostHeavyMachinery,Int,50,,0,250,Domain-tech Content
+boggledStableLocationDomainTechStructureCostMetals,Int,200,,0,1000,Domain-tech Content
+boggledStableLocationDomainTechStructureCostTransplutonics,Int,20,,0,100,Domain-tech Content
+boggledStableLocationDomainTechStructureCostDomainEraArtifacts,Int,20,,0,100,Domain-tech Content
+boggled_InactiveGateHeader,Header,,,,,Domain-tech Content
+boggledDomainTechInactiveGateConstructionEnabled,Boolean,True,,,,Domain-tech Content
+boggledDomainTechInactiveGateConstructionMainQuestCompletionRequired,Boolean,True,,,,Domain-tech Content
+boggledPlayerMustHaveMarketInSystemToBuildInactiveGate,Boolean,True,,,,Domain-tech Content
+boggledMarketSizeRequiredToBuildInactiveGate,Int,5,,1,10,Domain-tech Content
+boggledStableLocationGateCostHeavyMachinery,Int,500,,0,2500,Domain-tech Content
+boggledStableLocationGateCostMetals,Int,2000,,0,10000,Domain-tech Content
+boggledStableLocationGateCostTransplutonics,Int,200,,0,1000,Domain-tech Content
+boggledStableLocationGateCostDomainEraArtifacts,Int,200,,0,1000,Domain-tech Content
+boggledRemnantStationEnabled,Boolean,True,,,,Miscellaneous
+boggledHydroponicsEnabled,Boolean,False,,,,Miscellaneous
+boggledCloningEnabled,Boolean,False,,,,Miscellaneous

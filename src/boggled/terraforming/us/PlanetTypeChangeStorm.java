@@ -51,7 +51,7 @@ public class PlanetTypeChangeStorm extends PlanetTypeChangeArid
             }
         };
 
-        return new TerraformingRequirementObject(this.market.getName() + " is not already a windswept world", requirementMet, null);
+        return new TerraformingRequirementObject(marketRequirement("req_not_already_windswept"), requirementMet, null);
     }
 
     @Override

@@ -12,6 +12,7 @@ import com.fs.starfarer.api.impl.campaign.ids.Factions;
 import com.fs.starfarer.api.impl.campaign.ids.Industries;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
+import boggled.campaign.econ.StringHelper;
 import boggled.campaign.econ.boggledTools;
 
 
@@ -86,13 +87,15 @@ public class Boggled_Solar_Array_Overwrite extends BaseMarketConditionPlugin
             conds.add(mc.getName());
         }
 
-        String farmAqua = "Farming";
+        String farmAqua = StringHelper.getString(StringHelper.INDUSTRIES, "solar_array_farming");
         if(this.market.hasCondition(Conditions.WATER_SURFACE))
         {
-            farmAqua = "Aquaculture";
+            farmAqua = StringHelper.getString(StringHelper.INDUSTRIES, "solar_array_aquaculture");
         }
 
-        tooltip.addPara("Counters the effects of " + Misc.getAndJoined(conds) + ".\n\nIncreases food production by %s (" + farmAqua + ").", opad, Misc.getHighlightColor(), "" + FARMING_BONUS);
+        String bonus = "" + FARMING_BONUS;
+        String sentence = StringHelper.getString(StringHelper.INDUSTRIES, "solar_array_effects", StringHelper.tokens("conditions", Misc.getAndJoined(conds), "farmAqua", farmAqua, "bonus", bonus));
+        StringHelper.applyHighlight(tooltip.addPara(sentence, opad), Misc.getHighlightColor(), bonus);
     }
 
     public String getIconName()

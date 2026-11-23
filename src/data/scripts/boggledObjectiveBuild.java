@@ -13,6 +13,7 @@ import com.fs.starfarer.api.impl.campaign.ids.Factions;
 import com.fs.starfarer.api.loading.Description;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
+import boggled.campaign.econ.StringHelper;
 import boggled.campaign.econ.boggledTools;
 import org.json.JSONException;
 import java.io.IOException;
@@ -85,7 +86,9 @@ public class boggledObjectiveBuild extends BaseCommandPlugin
             {
                 CoreReputationPlugin.CustomRepImpact impact = new CoreReputationPlugin.CustomRepImpact();
                 impact.delta = boggledTools.getFloatSetting("boggledDomainTechObjectivesUpgradeRelationshipImpact") / 100;
-                Global.getSector().adjustPlayerReputation(new CoreReputationPlugin.RepActionEnvelope(CoreReputationPlugin.RepActions.CUSTOM, impact, (CommMessageAPI)null, (TextPanelAPI)null, false, true, "Change caused by upgrading " + this.entity.getCustomEntitySpec().getDefaultName().toLowerCase()), factionId);
+                String upgradeReason = StringHelper.getString(StringHelper.INTEL, "objective_upgrade_reputation",
+                        StringHelper.tokens("name", this.entity.getCustomEntitySpec().getDefaultName().toLowerCase()));
+                Global.getSector().adjustPlayerReputation(new CoreReputationPlugin.RepActionEnvelope(CoreReputationPlugin.RepActions.CUSTOM, impact, (CommMessageAPI)null, (TextPanelAPI)null, false, true, upgradeReason), factionId);
             }
         }
 
@@ -216,11 +219,14 @@ public class boggledObjectiveBuild extends BaseCommandPlugin
                     {
                         if (this.entity == curr)
                         {
-                            text.addPara("Another one in this star system would have no effect beyond providing redundancy in case this one is lost.");
+                            text.addPara(StringHelper.getString(StringHelper.INTEL, "objective_redundancy_this"));
                         }
                         else
                         {
-                            text.addPara("There's already " + curr.getCustomEntitySpec().getAOrAn() + " " + curr.getCustomEntitySpec().getNameInText() + " under your control " + "in this star system. Another one would have no effect " + "beyond providing redundancy if one is lost.");
+                            text.addPara(StringHelper.getString(StringHelper.INTEL, "objective_redundancy_other",
+                                    StringHelper.tokens(
+                                            "article", curr.getCustomEntitySpec().getAOrAn(),
+                                            "name", curr.getCustomEntitySpec().getNameInText())));
                         }
                         break;
                     }

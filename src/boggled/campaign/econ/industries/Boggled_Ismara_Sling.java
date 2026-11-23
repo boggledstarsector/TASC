@@ -3,6 +3,7 @@ package boggled.campaign.econ.industries;
 import java.awt.Color;
 import java.util.ArrayList;
 
+import boggled.campaign.econ.StringHelper;
 import boggled.campaign.econ.boggledTools;
 import boggled.campaign.econ.industries.interfaces.ShowBoggledTerraformingMenuOption;
 import com.fs.starfarer.api.Global;
@@ -46,8 +47,8 @@ public class Boggled_Ismara_Sling extends BaseIndustry implements ShowBoggledTer
 
             if(this.market.isPlayerOwned())
             {
-                MessageIntel intel = new MessageIntel("Ismara's Sling on " + this.market.getName(), Misc.getBasePlayerColor());
-                intel.addLine("    - Deconstructed");
+                MessageIntel intel = new MessageIntel(StringHelper.getString(StringHelper.INDUSTRIES, "ismara_intel_title", StringHelper.tokens("market", this.market.getName())), Misc.getBasePlayerColor());
+                intel.addLine(StringHelper.getString(StringHelper.INDUSTRIES, "ismara_intel_deconstructed"));
                 intel.setIcon(Global.getSector().getPlayerFaction().getCrest());
                 intel.setSound(BaseIntelPlugin.getSoundStandardUpdate());
                 Global.getSector().getCampaignUI().addMessage(intel, CommMessageAPI.MessageClickAction.COLONY_INFO, this.market);
@@ -78,11 +79,11 @@ public class Boggled_Ismara_Sling extends BaseIndustry implements ShowBoggledTer
     {
         if(boggledTools.marketIsStation(this.market))
         {
-            return "Asteroid Processing";
+            return StringHelper.getString(StringHelper.INDUSTRIES, "ismara_name_asteroid_processing");
         }
         else
         {
-            return "Ismara's Sling";
+            return StringHelper.getString(StringHelper.INDUSTRIES, "ismara_name");
         }
     }
 
@@ -104,7 +105,7 @@ public class Boggled_Ismara_Sling extends BaseIndustry implements ShowBoggledTer
     {
         if(boggledTools.marketIsStation(this.market))
         {
-            return "Crashing asteroids rich in water-ice into planets is an effective means of terraforming - except when the asteroid is so large that the impact would be cataclysmic. In this case, the asteroid can be towed to a space station, where the water-ice is safely extracted and shipped to the destination planet. \n\nCan only help terraform worlds in the same system.";
+            return StringHelper.getString(StringHelper.INDUSTRIES, "ismara_description_station");
         }
         else
         {
@@ -188,7 +189,7 @@ public class Boggled_Ismara_Sling extends BaseIndustry implements ShowBoggledTer
 
         if(!boggledTools.getTascPlanetType(this.market.getPlanetEntity()).equals(boggledTools.TascPlanetTypes.waterPlanetId) && !boggledTools.getTascPlanetType(this.market.getPlanetEntity()).equals(boggledTools.TascPlanetTypes.frozenPlanetId))
         {
-            return "Ismara's Sling can only be built on cryovolcanic, frozen and water-covered worlds.";
+            return StringHelper.getString(StringHelper.INDUSTRIES, "ismara_unavailable_planet");
         }
 
         return super.getUnavailableReason();
@@ -203,14 +204,9 @@ public class Boggled_Ismara_Sling extends BaseIndustry implements ShowBoggledTer
         float opad = 10.0F;
         Color highlight = Misc.getHighlightColor();
 
-        if(boggledTools.marketIsStation(this.market))
-        {
-            tooltip.addPara("Asteroid Processing always demands %s heavy machinery regardless of market size.", opad, highlight, new String[]{"" + STATIC_HEAVY_MACHINERY_DEMAND});
-        }
-        else
-        {
-            tooltip.addPara("Ismara's Sling always demands %s heavy machinery regardless of market size.", opad, highlight, new String[]{"" + STATIC_HEAVY_MACHINERY_DEMAND});
-        }
+        String demand = "" + STATIC_HEAVY_MACHINERY_DEMAND;
+        String sentence = StringHelper.getString(StringHelper.INDUSTRIES, "ismara_demand", StringHelper.tokens("name", this.getCurrentName(), "demand", demand));
+        StringHelper.applyHighlight(tooltip.addPara(sentence, opad), highlight, demand);
     }
 
     @Override
@@ -230,7 +226,9 @@ public class Boggled_Ismara_Sling extends BaseIndustry implements ShowBoggledTer
         Pair<String, Integer> deficit = getIsmaraSlingDeficit();
         if(deficit.two > 0)
         {
-            tooltip.addPara(this.getCurrentName() + " is experiencing a shortage of %s. No water-ice can be supplied for terraforming projects until the shortage is resolved.", opad, bad, new String[]{boggledTools.getCommidityNameFromId(deficit.one)});
+            String commodity = boggledTools.getCommidityNameFromId(deficit.one);
+            String sentence = StringHelper.getString(StringHelper.INDUSTRIES, "ismara_shortage", StringHelper.tokens("name", this.getCurrentName(), "commodity", commodity));
+            StringHelper.applyHighlight(tooltip.addPara(sentence, opad), bad, commodity);
         }
     }
 }

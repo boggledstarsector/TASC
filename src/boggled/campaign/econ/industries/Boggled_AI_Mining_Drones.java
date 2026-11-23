@@ -2,6 +2,7 @@ package boggled.campaign.econ.industries;
 
 import java.awt.Color;
 
+import boggled.campaign.econ.StringHelper;
 import boggled.campaign.econ.boggledTools;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.econ.CommoditySpecAPI;
@@ -10,6 +11,7 @@ import com.fs.starfarer.api.campaign.econ.MutableCommodityQuantity;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.*;
 import com.fs.starfarer.api.impl.campaign.econ.impl.BaseIndustry;
+import com.fs.starfarer.api.impl.campaign.ids.Industries;
 import com.fs.starfarer.api.util.Misc;
 
 public class Boggled_AI_Mining_Drones extends BaseIndustry
@@ -81,11 +83,11 @@ public class Boggled_AI_Mining_Drones extends BaseIndustry
             //Increased production
             for(Industry i : market.getIndustries())
             {
-                if(i.getCurrentName().equals("Mining"))
+                if(Industries.MINING.equals(i.getId()))
                 {
                     for(MutableCommodityQuantity c : i.getAllSupply())
                     {
-                        i.getSupply(c.getCommodityId()).getQuantity().modifyFlat(id, getProductionBonusFromMiningDrones(), "AI Mining Drones");
+                        i.getSupply(c.getCommodityId()).getQuantity().modifyFlat(id, getProductionBonusFromMiningDrones(), StringHelper.getString(StringHelper.INDUSTRIES, "ai_mining_drones_modifier"));
                     }
                 }
             }
@@ -161,18 +163,20 @@ public class Boggled_AI_Mining_Drones extends BaseIndustry
     {
         float opad = 10.0F;
         Color highlight = Misc.getHighlightColor();
-        String pre = "Alpha-level AI core currently assigned. ";
+        String pre = StringHelper.getString(StringHelper.INDUSTRIES, "ai_core_alpha_assigned");
         if (mode == AICoreDescriptionMode.MANAGE_CORE_DIALOG_LIST || mode == AICoreDescriptionMode.INDUSTRY_TOOLTIP) {
-            pre = "Alpha-level AI core. ";
+            pre = StringHelper.getString(StringHelper.INDUSTRIES, "ai_core_alpha_short");
         }
 
+        String bonus = "3";
+        String sentence = StringHelper.getString(StringHelper.INDUSTRIES, "ai_mining_drones_ai_increases_production_units", StringHelper.tokens("prefix", pre, "bonus", bonus));
         if (mode == AICoreDescriptionMode.INDUSTRY_TOOLTIP) {
             CommoditySpecAPI coreSpec = Global.getSettings().getCommoditySpec(this.aiCoreId);
             TooltipMakerAPI text = tooltip.beginImageWithText(coreSpec.getIconName(), 48.0F);
-            text.addPara(pre + "Increases mining production by %s units.", 0.0F, highlight, "3");
+            StringHelper.applyHighlight(text.addPara(sentence, 0.0F), highlight, bonus);
             tooltip.addImageWithText(opad);
         } else {
-            tooltip.addPara(pre + "Increases mining production by %s units.", opad, highlight, "3");
+            StringHelper.applyHighlight(tooltip.addPara(sentence, opad), highlight, bonus);
         }
     }
 
@@ -181,18 +185,20 @@ public class Boggled_AI_Mining_Drones extends BaseIndustry
     {
         float opad = 10.0F;
         Color highlight = Misc.getHighlightColor();
-        String pre = "Beta-level AI core currently assigned. ";
+        String pre = StringHelper.getString(StringHelper.INDUSTRIES, "ai_core_beta_assigned");
         if (mode == AICoreDescriptionMode.MANAGE_CORE_DIALOG_LIST || mode == AICoreDescriptionMode.INDUSTRY_TOOLTIP) {
-            pre = "Beta-level AI core. ";
+            pre = StringHelper.getString(StringHelper.INDUSTRIES, "ai_core_beta_short");
         }
 
+        String bonus = "2";
+        String sentence = StringHelper.getString(StringHelper.INDUSTRIES, "ai_mining_drones_ai_increases_production_units", StringHelper.tokens("prefix", pre, "bonus", bonus));
         if (mode == AICoreDescriptionMode.INDUSTRY_TOOLTIP) {
             CommoditySpecAPI coreSpec = Global.getSettings().getCommoditySpec(this.aiCoreId);
             TooltipMakerAPI text = tooltip.beginImageWithText(coreSpec.getIconName(), 48.0F);
-            text.addPara(pre + "Increases mining production by %s units.", opad, highlight, "2");
+            StringHelper.applyHighlight(text.addPara(sentence, opad), highlight, bonus);
             tooltip.addImageWithText(opad);
         } else {
-            tooltip.addPara(pre + "Increases mining production by %s units.", opad, highlight, "2");
+            StringHelper.applyHighlight(tooltip.addPara(sentence, opad), highlight, bonus);
         }
     }
 
@@ -201,18 +207,20 @@ public class Boggled_AI_Mining_Drones extends BaseIndustry
     {
         float opad = 10.0F;
         Color highlight = Misc.getHighlightColor();
-        String pre = "Gamma-level AI core currently assigned. ";
+        String pre = StringHelper.getString(StringHelper.INDUSTRIES, "ai_core_gamma_assigned");
         if (mode == AICoreDescriptionMode.MANAGE_CORE_DIALOG_LIST || mode == AICoreDescriptionMode.INDUSTRY_TOOLTIP) {
-            pre = "Gamma-level AI core. ";
+            pre = StringHelper.getString(StringHelper.INDUSTRIES, "ai_core_gamma_short");
         }
 
+        String bonus = "1";
+        String sentence = StringHelper.getString(StringHelper.INDUSTRIES, "ai_mining_drones_ai_increases_production_unit", StringHelper.tokens("prefix", pre, "bonus", bonus));
         if (mode == AICoreDescriptionMode.INDUSTRY_TOOLTIP) {
             CommoditySpecAPI coreSpec = Global.getSettings().getCommoditySpec(this.aiCoreId);
             TooltipMakerAPI text = tooltip.beginImageWithText(coreSpec.getIconName(), 48.0F);
-            text.addPara(pre + "Increases mining production by %s unit.", opad, highlight, "1");
+            StringHelper.applyHighlight(text.addPara(sentence, opad), highlight, bonus);
             tooltip.addImageWithText(opad);
         } else {
-            tooltip.addPara(pre + "Increases mining production by %s unit.", opad, highlight, "1");
+            StringHelper.applyHighlight(tooltip.addPara(sentence, opad), highlight, bonus);
         }
     }
 
@@ -237,17 +245,21 @@ public class Boggled_AI_Mining_Drones extends BaseIndustry
 
         if(this.market.getPrimaryEntity() != null && this.market.getPrimaryEntity().hasTag("station"))
         {
-            tooltip.addPara("Current production bonus: %s", opad, highlight, new String[]{getProductionBonusFromMiningDrones() + ""});
+            String bonus = getProductionBonusFromMiningDrones() + "";
+            String bonusSentence = StringHelper.getString(StringHelper.INDUSTRIES, "ai_mining_drones_current_production_bonus", StringHelper.tokens("bonus", bonus));
+            StringHelper.applyHighlight(tooltip.addPara(bonusSentence, opad), highlight, bonus);
             Pair<String, Integer> deficit = this.getMaxDeficit(new String[]{"fuel","supplies","ships"});
 
             if(deficit.two > 0)
             {
-                tooltip.addPara("The production bonus is being reduced by " + deficit.two + " due to a " + deficit.one + " shortage.", bad, opad);
+                String reduced = StringHelper.getString(StringHelper.INDUSTRIES, "ai_mining_drones_production_reduced", StringHelper.tokens(
+                        "amount", String.valueOf(deficit.two), "commodity", String.valueOf(deficit.one)));
+                tooltip.addPara(reduced, bad, opad);
             }
         }
         else
         {
-            tooltip.addPara("AI Mining Drones are only useful on station-based markets.", opad, highlight, new String[]{""});
+            tooltip.addPara(StringHelper.getString(StringHelper.INDUSTRIES, "ai_mining_drones_station_only"), opad);
         }
     }
 
@@ -261,7 +273,7 @@ public class Boggled_AI_Mining_Drones extends BaseIndustry
     {
         if (this.isImproved())
         {
-            market.getAccessibilityMod().modifyFlat(this.getModId(5), IMPROVE_BONUS, "AI Mining Drones");
+            market.getAccessibilityMod().modifyFlat(this.getModId(5), IMPROVE_BONUS, StringHelper.getString(StringHelper.INDUSTRIES, "ai_mining_drones_modifier"));
 
             if (!this.isFunctional())
             {
@@ -283,11 +295,13 @@ public class Boggled_AI_Mining_Drones extends BaseIndustry
         String aStr = Math.round(a * 100.0F) + "%";
         if (mode == ImprovementDescriptionMode.INDUSTRY_TOOLTIP)
         {
-            info.addPara("Colony accessibility increased by %s.", 0.0F, highlight, new String[]{aStr});
+            String sentence = StringHelper.getString(StringHelper.INDUSTRIES, "ai_mining_drones_accessibility_increased", StringHelper.tokens("bonus", aStr));
+            StringHelper.applyHighlight(info.addPara(sentence, 0.0F), highlight, aStr);
         }
         else
         {
-            info.addPara("Increases colony accessibility by %s.", 0.0F, highlight, new String[]{aStr});
+            String sentence = StringHelper.getString(StringHelper.INDUSTRIES, "ai_mining_drones_increases_accessibility", StringHelper.tokens("bonus", aStr));
+            StringHelper.applyHighlight(info.addPara(sentence, 0.0F), highlight, aStr);
         }
 
         info.addSpacer(opad);

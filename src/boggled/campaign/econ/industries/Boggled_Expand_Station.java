@@ -2,6 +2,7 @@ package boggled.campaign.econ.industries;
 
 import java.lang.String;
 import com.fs.starfarer.api.impl.campaign.econ.impl.BaseIndustry;
+import boggled.campaign.econ.StringHelper;
 import boggled.campaign.econ.boggledTools;
 
 public class Boggled_Expand_Station extends BaseIndustry {
@@ -94,7 +95,7 @@ public class Boggled_Expand_Station extends BaseIndustry {
     {
         if(11 <= (boggledTools.getIntSetting("boggledStationCrampedQuartersSizeGrowthReductionStarts") + boggledTools.getNumberOfStationExpansions(this.market)))
         {
-            return this.market.getName() + " has already been expanded to the maximum size.";
+            return StringHelper.getString(StringHelper.INDUSTRIES, "expand_station_max_size", StringHelper.tokens("market", this.market.getName()));
         }
 
         return super.getUnavailableReason();

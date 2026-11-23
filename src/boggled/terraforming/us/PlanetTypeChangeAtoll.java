@@ -51,7 +51,7 @@ public class PlanetTypeChangeAtoll extends PlanetTypeChangeWater
             }
         };
 
-        return new TerraformingRequirementObject(this.market.getName() + " is not already an atoll world", requirementMet, null);
+        return new TerraformingRequirementObject(marketRequirement("req_not_already_atoll"), requirementMet, null);
     }
 
     @Override

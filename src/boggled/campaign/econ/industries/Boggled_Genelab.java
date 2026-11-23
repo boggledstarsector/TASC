@@ -2,6 +2,7 @@ package boggled.campaign.econ.industries;
 
 import java.awt.Color;
 import java.util.ArrayList;
+import boggled.campaign.econ.StringHelper;
 import boggled.campaign.econ.boggledTools;
 import boggled.campaign.econ.industries.interfaces.ShowBoggledTerraformingMenuOption;
 import com.fs.starfarer.api.Global;
@@ -96,8 +97,8 @@ public class Boggled_Genelab extends BaseIndustry implements ShowBoggledTerrafor
                 {
                     if(this.market.isPlayerOwned())
                     {
-                        MessageIntel intel = new MessageIntel("Pollution on " + this.market.getName(), Misc.getBasePlayerColor());
-                        intel.addLine("    - Remediated");
+                        MessageIntel intel = new MessageIntel(StringHelper.getString(StringHelper.INDUSTRIES, "genelab_pollution_intel_title", StringHelper.tokens("market", this.market.getName())), Misc.getBasePlayerColor());
+                        intel.addLine(StringHelper.getString(StringHelper.INDUSTRIES, "genelab_pollution_intel_line"));
                         intel.setIcon(getCurrentIntelIcon());
                         intel.setSound(BaseIntelPlugin.getSoundStandardUpdate());
                         Global.getSector().getCampaignUI().addMessage(intel, CommMessageAPI.MessageClickAction.COLONY_INFO, this.market);
@@ -126,8 +127,8 @@ public class Boggled_Genelab extends BaseIndustry implements ShowBoggledTerrafor
                 {
                     if (this.market.isPlayerOwned())
                     {
-                        MessageIntel intel = new MessageIntel("Lobster seeding on " + this.market.getName(), Misc.getBasePlayerColor());
-                        intel.addLine("    - Completed");
+                        MessageIntel intel = new MessageIntel(StringHelper.getString(StringHelper.INDUSTRIES, "genelab_lobster_intel_title", StringHelper.tokens("market", this.market.getName())), Misc.getBasePlayerColor());
+                        intel.addLine(StringHelper.getString(StringHelper.INDUSTRIES, "genelab_lobster_intel_line"));
                         intel.setIcon(getCurrentIntelIcon());
                         intel.setSound(BaseIntelPlugin.getSoundStandardUpdate());
                         Global.getSector().getCampaignUI().addMessage(intel, CommMessageAPI.MessageClickAction.COLONY_INFO, this.market);
@@ -165,17 +166,19 @@ public class Boggled_Genelab extends BaseIndustry implements ShowBoggledTerrafor
 
             if(pollutionIsOngoing())
             {
-                tooltip.addPara("Heavy industrial activity is currently polluting " + this.market.getName() + ". Remediation can only begin once this ceases.", bad, opad);
+                tooltip.addPara(StringHelper.getString(StringHelper.INDUSTRIES, "genelab_pollution_ongoing", StringHelper.tokens("market", this.market.getName())), bad, opad);
             }
             else
             {
-                tooltip.addPara("Approximately %s of the pollution on " + this.market.getName() + " has been remediated.", opad, highlight, new String[]{percentComplete + "%"});
+                String percent = percentComplete + "%";
+                String sentence = StringHelper.getString(StringHelper.INDUSTRIES, "genelab_pollution_remediated", StringHelper.tokens("percent", percent, "market", this.market.getName()));
+                StringHelper.applyHighlight(tooltip.addPara(sentence, opad), highlight, percent);
             }
         }
 
         if(this.isDisrupted() && this.market.hasCondition("pollution") && mode != IndustryTooltipMode.ADD_INDUSTRY && mode != IndustryTooltipMode.QUEUED && !isBuilding())
         {
-            tooltip.addPara("Pollution remediation progress is stalled while the Genelab is disrupted.", bad, opad);
+            tooltip.addPara(StringHelper.getString(StringHelper.INDUSTRIES, "genelab_pollution_stalled_disrupted"), bad, opad);
         }
 
         //
@@ -192,13 +195,15 @@ public class Boggled_Genelab extends BaseIndustry implements ShowBoggledTerrafor
                 percentComplete = 99;
             }
 
-            tooltip.addPara("Lobster seeding is approximately %s complete.", opad, highlight, new String[]{percentComplete + "%"});
+            String percent = percentComplete + "%";
+            String sentence = StringHelper.getString(StringHelper.INDUSTRIES, "genelab_lobster_progress", StringHelper.tokens("percent", percent));
+            StringHelper.applyHighlight(tooltip.addPara(sentence, opad), highlight, percent);
 
         }
 
         if(this.isDisrupted() && boggledTools.marketHasWaterSurface(this.market) && !this.market.hasCondition("volturnian_lobster_pens") && mode != IndustryTooltipMode.ADD_INDUSTRY && mode != IndustryTooltipMode.QUEUED && !isBuilding())
         {
-            tooltip.addPara("Lobster seeding progress is stalled while the Genelab is disrupted.", bad, opad);
+            tooltip.addPara(StringHelper.getString(StringHelper.INDUSTRIES, "genelab_lobster_stalled_disrupted"), bad, opad);
         }
     }
 
@@ -228,7 +233,7 @@ public class Boggled_Genelab extends BaseIndustry implements ShowBoggledTerrafor
         Boggled_Mesozoic_Park park = (Boggled_Mesozoic_Park) this.market.getIndustry("BOGGLED_MESOZOIC_PARK");
         if(park != null && this.isFunctional())
         {
-            park.getIncome().modifyMult("ind_genelab", ((float) (getGenelabMesozoicParkIncomeBonus() + 100)) / 100.0f, "Genelab");
+            park.getIncome().modifyMult("ind_genelab", ((float) (getGenelabMesozoicParkIncomeBonus() + 100)) / 100.0f, StringHelper.getString(StringHelper.INDUSTRIES, "genelab_income_modifier"));
         }
     }
 
@@ -328,10 +333,15 @@ public class Boggled_Genelab extends BaseIndustry implements ShowBoggledTerrafor
                 int currentIncomeBonus = getGenelabMesozoicParkIncomeBonus();
                 if(this.isFunctional())
                 {
-                    tooltip.addPara("Mesozoic Park income bonus: %s", opad, currentIncomeBonus > 0 ? highlight : bad, currentIncomeBonus + "%");
+                    String bonus = currentIncomeBonus + "%";
+                    String bonusSentence = StringHelper.getString(StringHelper.INDUSTRIES, "genelab_mesozoic_income_bonus", StringHelper.tokens("bonus", bonus));
+                    StringHelper.applyHighlight(tooltip.addPara(bonusSentence, opad), currentIncomeBonus > 0 ? highlight : bad, bonus);
                     if(deficit.two > 0)
                     {
-                        tooltip.addPara("Mesozoic Park income bonus reduced by %s due to a shortage of %s.", opad, bad, (deficit.two * 50) + "%", boggledTools.getCommidityNameFromId(deficit.one));
+                        String percent = (deficit.two * 50) + "%";
+                        String commodity = boggledTools.getCommidityNameFromId(deficit.one);
+                        String reduced = StringHelper.getString(StringHelper.INDUSTRIES, "genelab_mesozoic_income_reduced", StringHelper.tokens("percent", percent, "commodity", commodity));
+                        StringHelper.applyHighlight(tooltip.addPara(reduced, opad), bad, percent, commodity);
                     }
                 }
             }
@@ -339,12 +349,16 @@ public class Boggled_Genelab extends BaseIndustry implements ShowBoggledTerrafor
 
         if(deficit.two > 0 && this.market.hasCondition("pollution") && mode != IndustryTooltipMode.ADD_INDUSTRY && mode != IndustryTooltipMode.QUEUED && !isBuilding())
         {
-            tooltip.addPara("Pollution remediation progress is stalled due to a shortage of %s.", opad, bad, boggledTools.getCommidityNameFromId(deficit.one));
+            String commodity = boggledTools.getCommidityNameFromId(deficit.one);
+            String sentence = StringHelper.getString(StringHelper.INDUSTRIES, "genelab_pollution_stalled_shortage", StringHelper.tokens("commodity", commodity));
+            StringHelper.applyHighlight(tooltip.addPara(sentence, opad), bad, commodity);
         }
 
         if(deficit.two > 0 && boggledTools.marketHasWaterSurface(this.market) && !this.market.hasCondition("volturnian_lobster_pens") && mode != IndustryTooltipMode.ADD_INDUSTRY && mode != IndustryTooltipMode.QUEUED && !isBuilding())
         {
-            tooltip.addPara("Lobster seeding progress is stalled due to a shortage of %s.", opad, bad, boggledTools.getCommidityNameFromId(deficit.one));
+            String commodity = boggledTools.getCommidityNameFromId(deficit.one);
+            String sentence = StringHelper.getString(StringHelper.INDUSTRIES, "genelab_lobster_stalled_shortage", StringHelper.tokens("commodity", commodity));
+            StringHelper.applyHighlight(tooltip.addPara(sentence, opad), bad, commodity);
         }
     }
 
@@ -401,18 +415,20 @@ public class Boggled_Genelab extends BaseIndustry implements ShowBoggledTerrafor
     public void addAlphaCoreDescription(TooltipMakerAPI tooltip, AICoreDescriptionMode mode) {
         float opad = 10.0F;
         Color highlight = Misc.getHighlightColor();
-        String pre = "Alpha-level AI core currently assigned. ";
+        String pre = StringHelper.getString(StringHelper.INDUSTRIES, "ai_core_alpha_assigned");
         if (mode == AICoreDescriptionMode.MANAGE_CORE_DIALOG_LIST || mode == AICoreDescriptionMode.INDUSTRY_TOOLTIP) {
-            pre = "Alpha-level AI core. ";
+            pre = StringHelper.getString(StringHelper.INDUSTRIES, "ai_core_alpha_short");
         }
 
+        String bonus = MESOZOIC_PARK_INCOME_BONUS_ALPHA_CORE + "%";
+        String sentence = StringHelper.getString(StringHelper.INDUSTRIES, "genelab_ai_increases_mesozoic_income", StringHelper.tokens("prefix", pre, "bonus", bonus));
         if (mode == AICoreDescriptionMode.INDUSTRY_TOOLTIP) {
             CommoditySpecAPI coreSpec = Global.getSettings().getCommoditySpec(this.aiCoreId);
             TooltipMakerAPI text = tooltip.beginImageWithText(coreSpec.getIconName(), 48.0F);
-            text.addPara(pre + "Increases Mesozoic Park income by %s.", 0.0F, highlight, MESOZOIC_PARK_INCOME_BONUS_ALPHA_CORE + "%");
+            StringHelper.applyHighlight(text.addPara(sentence, 0.0F), highlight, bonus);
             tooltip.addImageWithText(opad);
         } else {
-            tooltip.addPara(pre + "Increases Mesozoic Park income by %s.", opad, highlight, MESOZOIC_PARK_INCOME_BONUS_ALPHA_CORE + "%");
+            StringHelper.applyHighlight(tooltip.addPara(sentence, opad), highlight, bonus);
         }
     }
 
@@ -420,18 +436,20 @@ public class Boggled_Genelab extends BaseIndustry implements ShowBoggledTerrafor
     public void addBetaCoreDescription(TooltipMakerAPI tooltip, AICoreDescriptionMode mode) {
         float opad = 10.0F;
         Color highlight = Misc.getHighlightColor();
-        String pre = "Beta-level AI core currently assigned. ";
+        String pre = StringHelper.getString(StringHelper.INDUSTRIES, "ai_core_beta_assigned");
         if (mode == AICoreDescriptionMode.MANAGE_CORE_DIALOG_LIST || mode == AICoreDescriptionMode.INDUSTRY_TOOLTIP) {
-            pre = "Beta-level AI core. ";
+            pre = StringHelper.getString(StringHelper.INDUSTRIES, "ai_core_beta_short");
         }
 
+        String bonus = MESOZOIC_PARK_INCOME_BONUS_BETA_CORE + "%";
+        String sentence = StringHelper.getString(StringHelper.INDUSTRIES, "genelab_ai_increases_mesozoic_income", StringHelper.tokens("prefix", pre, "bonus", bonus));
         if (mode == AICoreDescriptionMode.INDUSTRY_TOOLTIP) {
             CommoditySpecAPI coreSpec = Global.getSettings().getCommoditySpec(this.aiCoreId);
             TooltipMakerAPI text = tooltip.beginImageWithText(coreSpec.getIconName(), 48.0F);
-            text.addPara(pre + "Increases Mesozoic Park income by %s.", opad, highlight, MESOZOIC_PARK_INCOME_BONUS_BETA_CORE + "%");
+            StringHelper.applyHighlight(text.addPara(sentence, opad), highlight, bonus);
             tooltip.addImageWithText(opad);
         } else {
-            tooltip.addPara(pre + "Increases Mesozoic Park income by %s.", opad, highlight, MESOZOIC_PARK_INCOME_BONUS_BETA_CORE  + "%");
+            StringHelper.applyHighlight(tooltip.addPara(sentence, opad), highlight, bonus);
         }
     }
 
@@ -439,18 +457,20 @@ public class Boggled_Genelab extends BaseIndustry implements ShowBoggledTerrafor
     public void addGammaCoreDescription(TooltipMakerAPI tooltip, AICoreDescriptionMode mode) {
         float opad = 10.0F;
         Color highlight = Misc.getHighlightColor();
-        String pre = "Gamma-level AI core currently assigned. ";
+        String pre = StringHelper.getString(StringHelper.INDUSTRIES, "ai_core_gamma_assigned");
         if (mode == AICoreDescriptionMode.MANAGE_CORE_DIALOG_LIST || mode == AICoreDescriptionMode.INDUSTRY_TOOLTIP) {
-            pre = "Gamma-level AI core. ";
+            pre = StringHelper.getString(StringHelper.INDUSTRIES, "ai_core_gamma_short");
         }
 
+        String bonus = MESOZOIC_PARK_INCOME_BONUS_GAMMA_CORE + "%";
+        String sentence = StringHelper.getString(StringHelper.INDUSTRIES, "genelab_ai_increases_mesozoic_income", StringHelper.tokens("prefix", pre, "bonus", bonus));
         if (mode == AICoreDescriptionMode.INDUSTRY_TOOLTIP) {
             CommoditySpecAPI coreSpec = Global.getSettings().getCommoditySpec(this.aiCoreId);
             TooltipMakerAPI text = tooltip.beginImageWithText(coreSpec.getIconName(), 48.0F);
-            text.addPara(pre + "Increases Mesozoic Park income by %s.", opad, highlight, MESOZOIC_PARK_INCOME_BONUS_GAMMA_CORE + "%");
+            StringHelper.applyHighlight(text.addPara(sentence, opad), highlight, bonus);
             tooltip.addImageWithText(opad);
         } else {
-            tooltip.addPara(pre + "Increases Mesozoic Park income by %s.", opad, highlight, MESOZOIC_PARK_INCOME_BONUS_GAMMA_CORE + "%");
+            StringHelper.applyHighlight(tooltip.addPara(sentence, opad), highlight, bonus);
         }
     }
 
@@ -493,13 +513,16 @@ public class Boggled_Genelab extends BaseIndustry implements ShowBoggledTerrafor
         float opad = 10f;
         Color highlight = Misc.getHighlightColor();
 
+        String bonus = MESOZOIC_PARK_INCOME_BONUS_IMPROVEMENT + "%";
         if (mode == ImprovementDescriptionMode.INDUSTRY_TOOLTIP)
         {
-            info.addPara("Mesozoic Park income increased by %s.", 0f, highlight, MESOZOIC_PARK_INCOME_BONUS_IMPROVEMENT + "%");
+            String sentence = StringHelper.getString(StringHelper.INDUSTRIES, "genelab_mesozoic_income_increased", StringHelper.tokens("bonus", bonus));
+            StringHelper.applyHighlight(info.addPara(sentence, 0f), highlight, bonus);
         }
         else
         {
-            info.addPara("Increases Mesozoic Park income by %s.", 0f, highlight, MESOZOIC_PARK_INCOME_BONUS_IMPROVEMENT + "%");
+            String sentence = StringHelper.getString(StringHelper.INDUSTRIES, "genelab_increases_mesozoic_income", StringHelper.tokens("bonus", bonus));
+            StringHelper.applyHighlight(info.addPara(sentence, 0f), highlight, bonus);
         }
 
         info.addSpacer(opad);

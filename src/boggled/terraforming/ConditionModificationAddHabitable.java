@@ -1,5 +1,6 @@
 package boggled.terraforming;
 
+import boggled.campaign.econ.StringHelper;
 import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Conditions;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
@@ -12,7 +13,7 @@ public class ConditionModificationAddHabitable extends BoggledBaseTerraformingCo
 {
     public ConditionModificationAddHabitable(MarketAPI market)
     {
-        super(market, "Make atmosphere habitable", new HashSet<>(List.of(Conditions.HABITABLE)), new HashSet<>());
+        super(market, StringHelper.getString(StringHelper.TERRAFORMING, "project_make_atmosphere_habitable"), new HashSet<>(List.of(Conditions.HABITABLE)), new HashSet<>());
     }
 
     @Override
@@ -50,6 +51,6 @@ public class ConditionModificationAddHabitable extends BoggledBaseTerraformingCo
             }
         };
 
-        return new TerraformingRequirementObject(this.market.getName() + " is not habitable for humans", requirementMet, null);
+        return new TerraformingRequirementObject(marketRequirement("req_not_habitable"), requirementMet, null);
     }
 }

@@ -8,6 +8,7 @@ import com.fs.starfarer.api.impl.campaign.population.PopulationComposition;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
 import java.util.Map;
+import boggled.campaign.econ.StringHelper;
 import boggled.campaign.econ.boggledTools;
 
 public class Cramped_Quarters extends BaseHazardCondition implements MarketImmigrationModifier {
@@ -83,13 +84,13 @@ public class Cramped_Quarters extends BaseHazardCondition implements MarketImmig
         if(boggledTools.getIntSetting("boggledStationHazardRatingModifier") != 0) {
             // Market hazard modifier
             float hazard = (float)boggledTools.getIntSetting("boggledStationHazardRatingModifier") / 100.0F;
-            this.market.getHazard().modifyFlat(id, hazard, "Base station hazard");
+            this.market.getHazard().modifyFlat(id, hazard, StringHelper.getString(StringHelper.INDUSTRIES, "cramped_quarters_base_hazard"));
         }
 
         if(boggledTools.getIntSetting("boggledStationAccessibilityBoost") != 0) {
             // Accessibility boost
             float access = (float)boggledTools.getIntSetting("boggledStationAccessibilityBoost") / 100.0F;
-            this.market.getAccessibilityMod().modifyFlat(id, access, "Space station");
+            this.market.getAccessibilityMod().modifyFlat(id, access, StringHelper.getString(StringHelper.INDUSTRIES, "cramped_quarters_space_station"));
         }
     }
 
@@ -124,16 +125,22 @@ public class Cramped_Quarters extends BaseHazardCondition implements MarketImmig
     protected void createTooltipAfterDescription(TooltipMakerAPI tooltip, boolean expanded) {
         super.createTooltipAfterDescription(tooltip, expanded);
 
-        tooltip.addPara("Population growth reduction at this station begins at market size %s and gets worse if the station continues to grow further beyond that limit.", 10.0F, Misc.getHighlightColor(), new String[]{getStationCrampedThreshold(this.market) + ""});
+        String size = getStationCrampedThreshold(this.market) + "";
+        String growth = StringHelper.getString(StringHelper.INDUSTRIES, "cramped_quarters_growth", StringHelper.tokens("size", size));
+        StringHelper.applyHighlight(tooltip.addPara(growth, 10.0F), Misc.getHighlightColor(), size);
 
         if(boggledTools.getBooleanSetting(boggledTools.BoggledSettings.stationCrampedQuartersPlayerCanPayToIncreaseStationSize))
         {
-            tooltip.addPara("Stations can be expanded to increase the maximum number of residents. Number of times this station has been expanded: %s", 10.0F, Misc.getHighlightColor(), boggledTools.getNumberOfStationExpansions(this.market) + "");
+            String expansions = boggledTools.getNumberOfStationExpansions(this.market) + "";
+            String expandedCount = StringHelper.getString(StringHelper.INDUSTRIES, "cramped_quarters_expanded", StringHelper.tokens("count", expansions));
+            StringHelper.applyHighlight(tooltip.addPara(expandedCount, 10.0F), Misc.getHighlightColor(), expansions);
         }
 
         if(boggledTools.getBooleanSetting(boggledTools.BoggledSettings.stationCrampedQuartersPlayerCanPayToIncreaseStationSize) && boggledTools.getBooleanSetting(boggledTools.BoggledSettings.stationProgressIncreaseInCostsToExpandStation))
         {
-            tooltip.addPara("Station expansions become more progressively more expensive as the size of the station grows. Each new expansion is twice the cost of the previous one.", 10.0F, Misc.getHighlightColor(), boggledTools.getNumberOfStationExpansions(this.market) + "");
+            String expansions = boggledTools.getNumberOfStationExpansions(this.market) + "";
+            String cost = StringHelper.getString(StringHelper.INDUSTRIES, "cramped_quarters_cost");
+            StringHelper.applyHighlight(tooltip.addPara(cost, 10.0F), Misc.getHighlightColor(), expansions);
         }
     }
 }

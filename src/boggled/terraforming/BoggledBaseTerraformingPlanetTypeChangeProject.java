@@ -1,5 +1,6 @@
 package boggled.terraforming;
 
+import boggled.campaign.econ.StringHelper;
 import boggled.campaign.econ.boggledTools;
 import boggled.terraforming.tooltips.BoggledBasePlanetTypeChangeProjectTooltip;
 import com.fs.starfarer.api.campaign.PlanetAPI;
@@ -194,19 +195,19 @@ public class BoggledBaseTerraformingPlanetTypeChangeProject extends BoggledBaseT
         {
             throw new IllegalArgumentException("planetIdToChangeInto had invalid value: " + planetIdToChangeInto);
         }
-        String projectName = planetSpec.getName();
+        String planetName = planetSpec.getName();
         if(isUnknownSkiesPlanetType(planetIdToChangeInto))
         {
-            projectName += " (Unknown Skies)";
+            return StringHelper.getString(StringHelper.TERRAFORMING, "project_type_change_unknown_skies", StringHelper.tokens("planetName", planetName));
         }
-        return projectName + " Type Change";
+        return StringHelper.getString(StringHelper.TERRAFORMING, "project_type_change", StringHelper.tokens("planetName", planetName));
     }
 
     public TerraformingRequirementObject getRequirementNotAlreadyTargetType()
     {
         String tascPlanetType = boggledTools.getTascPlanetType(this.market.getPlanetEntity());
         String tascPlanetTypeToChangeInto = boggledTools.getTascPlanetType(this.planetIdToChangeInto);
-        String planetTypeDisplayString = boggledTools.tascPlanetTypeDisplayStringMap.get(tascPlanetTypeToChangeInto).two;
+        String planetTypeDisplayString = boggledTools.getPlanetTypeDisplayName(tascPlanetTypeToChangeInto);
         Boolean requirementMet = !tascPlanetType.equals(tascPlanetTypeToChangeInto);
         TooltipMakerAPI.TooltipCreator tooltip = new TooltipMakerAPI.TooltipCreator() {
             @Override
@@ -225,7 +226,7 @@ public class BoggledBaseTerraformingPlanetTypeChangeProject extends BoggledBaseT
             }
         };
 
-        return new TerraformingRequirementObject(this.market.getName() + " is not already a " + planetTypeDisplayString + " world", requirementMet, null);
+        return new TerraformingRequirementObject(StringHelper.getString(StringHelper.TERRAFORMING, "req_not_already_type", StringHelper.tokens("market", this.market.getName(), "planetType", planetTypeDisplayString)), requirementMet, null);
     }
 
     @Override

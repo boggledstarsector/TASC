@@ -17,10 +17,6 @@ This is a **Java project** for Starsector modding. The project uses:
 
 Player-facing documentation for TASC's content and systems lives in [tascdocs](https://github.com/boggledstarsector/tascdocs), a separate website repository. The guides under `docs/` in this repository are for developers working on the mod. They do not replace the site.
 
-Whenever any change is made in this repository, open a companion pull request against `boggledstarsector/tascdocs` that updates existing pages or adds new ones for that change. A TASC change is not finished while that companion pull request is missing.
-
-Site pages are organized by topic under `app/docs/` and `app/components/` (buildings, station abilities, and terraforming projects). Follow `docs/creating-new-building-pages.md` in tascdocs when adding a building page.
-
 ## Code Architecture
 
 ### Core Plugin Structure
@@ -92,6 +88,7 @@ Custom industries in `src/boggled/campaign/econ/industries/`:
 - Customization is now handled **exclusively via LunaLib**
 - The `data/config/settings.json` file only contains graphics configuration and rule command packages
 - LunaLib settings are loaded at runtime through `boggledTools.getBooleanSetting()` and similar methods
+- Setting ids, types, defaults, min, max, and tab live in `data/config/boggled/luna_settings_structure.csv`. Names and tooltips live in `strings.json` under `tasc_luna`. There is no `data/config/LunaSettings.csv`, because LunaLib would display that file's prose columns.
 
 ### UI Components
 
@@ -110,6 +107,7 @@ Located in `src/boggled/ui/`:
 - `data/campaign/abilities.csv` - Ability definitions
 - `data/campaign/market_conditions.csv` - Market condition definitions
 - `data/campaign/commodities.csv` - Commodity definitions (e.g., domain_artifacts)
+- `data/strings/strings.json` - Player-facing sentences, keyed by category
 - `data/strings/descriptions.csv` - Text descriptions
 - `data/config/` - Graphics and sounds configuration
 
@@ -165,3 +163,50 @@ The plugin carefully manages state:
 - **[AoTD Research Integration](docs/aotd-research-integration.md)** - Complete guide to TASC's integration with Ashes of the Domain Vaults of Knowledge research system, including tech tree structure, research-locked buildings/projects, and ability unlocking
 - **[Data-Driven Research System](docs/data-driven-research-system.md)** - Technical documentation of TASC's CSV-based research system, including how to add custom research, the parsing system, and building/ability integration
 - **[Ability Research Implementation](docs/ability-research-implementation.md)** - Guide to implementing research-locked abilities using the data-driven system
+
+## Translating TASC
+
+This section is for an agent producing a translation of TASC into any language. Edit display text only. Leave Java alone. A translation does not include a tascdocs change. The tascdocs rule above still applies to code and content changes.
+
+Save every edited file as UTF-8. Do not let an editor rewrite a CSV into another encoding. Do not add or remove rows. Do not reorder columns. A `strings.json` that is not valid UTF-8 fails mod load with the parser's error.
+
+`$token` and `$Token` stay spelled exactly as in the English string, including the capital letter when it is capitalized. Tokens contain no spaces. Word order may change around the tokens. `$playerName` in `rules.csv` stays as written. Substitution is a literal replace, so a `%` or an extra parenthesis in a translation is shown as text.
+
+A missing key shows `[INVALID]` plus the id, and the log names the category and id the first time that key is used. Fill the key. Do not delete the key.
+
+Highlighted values are the tokens. Do not add a second copy of a word for the highlighter to search for.
+
+Singular and plural are separate keys. Translate both. Do not merge them. The same applies to pairs such as can / cannot.
+
+The terraforming tab caption comes from `tasc_ui` key `terraforming_tab`. It must not contain these substrings, because Ashlib matches button text with `contains`: `income`, `colonies`, `doctrine & blueprints`, `custom production`, `research & production`.
+
+`TascAshlibCommandTabListener.getButtonToBePlacedNear()` returns `"custom production"`. That is an Ashlib map key in Java. It is not a translatable string. With Ashlib loaded, a translated vanilla command row never gets past Ashlib's search for `"income"`, so TASC's tab is not created. That limit is in Ashlib's `CommandTabTracker`, not in a TASC string. Do not try to fix it by translating the anchor.
+
+`tasc_abilities` key `vanilla_abandoned_siphon_station` is a search string. Colonize Abandoned Station looks for that text inside the station's full name, then gives a matching gas-giant station the siphon volatiles, a Mining industry, and the `siphon_entity_name` rename. Set the value to the name the base game shows for an abandoned siphon station. The shipped value `Abandoned Siphon Station` is the English fallback when a translation leaves the key unchanged. Keep the value non-empty, because an empty value matches no station.
+
+Planet-type words the player sees are the `tasc_terraforming` keys `planet_type_<id>` (`planet_type_terran`, `planet_type_gas_giant`, and the rest). The ids in `planet_type_mapping.csv` and in code (`terran`, `barren`, `gas_giant`, and the rest) stay English.
+
+Building names are the `name` column of `industries.csv` and the matching display strings. Translate the column. Leave the `id` column.
+
+Files to edit, and the columns or keys that are display text:
+
+- `data/strings/strings.json` — every value. Keys stay. Categories: `tasc_general`, `tasc_ui`, `tasc_abilities`, `tasc_terraforming`, `tasc_industries`, `tasc_intel`, `tasc_luna` (`name_<fieldID>`, `tooltip_<fieldID>`).
+- `data/strings/descriptions.csv` — `text1`, `text2`, `text3`. Leave `id` and `type`.
+- `data/strings/tips.json` — the tip strings. Leave the keys.
+- `data/campaign/industries.csv` — `name`, `desc`. Leave `id`, tags, plugin, and the numeric columns.
+- `data/campaign/abilities.csv` — `name`, `desc`. Leave `id` and `plugin`.
+- `data/campaign/market_conditions.csv` — `name`, `desc`. Leave `id` and `script`.
+- `data/campaign/commodities.csv` — `name`, `desc`. Leave `id`.
+- `data/campaign/rules.csv` — the `text` column, and the label after the second colon in `options` (`40:SL_buildDomainRelay:Construct a Domain-tech comm relay` — only the part after the second colon). Leave `id`, `trigger`, `conditions`, `script`, and the option id (`SL_buildDomainRelay`).
+- `data/campaign/aotd_tech_options.csv` and `data/campaign/custom_tech_trees/aotd_tech_options.csv` — the `name` column. Leave `id`, `rewards`, and the other columns. Both copies need the same names where the ids match.
+- `mod_info.json` — `name` and `description` only. Leave `id` (`Terraforming & Station Construction`), `modPlugin`, dependency ids, and version fields.
+
+Files and columns an agent must not edit for a translation:
+
+- Any file under `src/`.
+- `data/config/boggled/luna_settings_structure.csv` (field ids, types, defaults, min, max, tab). LunaLib auto-loads `data/config/LunaSettings.csv`. That path is not in this mod, so a translation must not create it.
+- `data/config/settings.json`.
+- `data/campaign/terraforming/planet_type_mapping.csv`, `domed_cities_suppressed_conditions.csv`, and `stellar_reflector_array_suppressed_conditions.csv`. Both sides of those tables are ids.
+- Graphics paths, sound ids, plugin class names, and commodity or condition ids inside sentences. If a sentence names a commodity, the Java token already inserts that commodity's display name. Do not replace an id that the script compares.
+
+Load a campaign, open the colony command row, open one station ability tooltip, open one terraforming requirement, and open LunaLib. Any `[INVALID]` line is a missed key. A crash on the command row with Ashlib and a translated base game is Ashlib's `"income"` lookup, not a bad TASC string.

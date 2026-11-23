@@ -1,6 +1,7 @@
 package boggled.ui;
 
 import ashlib.data.plugins.coreui.CommandTabListener;
+import boggled.campaign.econ.StringHelper;
 import ashlib.data.plugins.coreui.CommandUIPlugin;
 import com.fs.starfarer.api.ui.Alignment;
 import com.fs.starfarer.api.ui.ButtonAPI;
@@ -11,7 +12,7 @@ import org.lwjgl.input.Keyboard;
 public class TascAshlibCommandTabListener implements CommandTabListener {
     @Override
     public String getNameForTab() {
-        return "Terraforming";
+        return StringHelper.getString(StringHelper.UI, "terraforming_tab");
     }
 
     @Override
@@ -21,6 +22,7 @@ public class TascAshlibCommandTabListener implements CommandTabListener {
 
     @Override
     public String getButtonToBePlacedNear() {
+        // Ashlib map key in vanillaButtonsOriginal. Do not pass this through StringHelper.
         return "custom production";
     }
 
@@ -39,8 +41,8 @@ public class TascAshlibCommandTabListener implements CommandTabListener {
 
             @Override
             public void createTooltip(TooltipMakerAPI tooltip, boolean expanded, Object tooltipParam) {
-                tooltip.addSectionHeading("TASC", Alignment.MID,0f);
-                tooltip.addPara("Use this tab to manage terraforming projects on your colonies.",5f);
+                tooltip.addSectionHeading(StringHelper.getString(StringHelper.UI, "terraforming_tab_tooltip_heading_short"), Alignment.MID,0f);
+                tooltip.addPara(StringHelper.getString(StringHelper.UI, "terraforming_tab_tooltip"),5f);
             }
         };
     }
@@ -58,7 +60,12 @@ public class TascAshlibCommandTabListener implements CommandTabListener {
 
     @Override
     public int getKeyBind() {
-        return  Keyboard.KEY_6;
+        try {
+            return BoggledCoreModifierEveryFrameScript.shortcutForNewCommandButton(
+                    BoggledCoreModifierEveryFrameScript.getMainCorePanel());
+        } catch (RuntimeException ex) {
+            return Keyboard.KEY_NONE;
+        }
     }
 
     @Override

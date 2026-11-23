@@ -1,5 +1,6 @@
 package boggled.terraforming;
 
+import boggled.campaign.econ.StringHelper;
 import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Conditions;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
@@ -12,7 +13,7 @@ public class ConditionModificationRemoveNoAtmosphere extends BoggledBaseTerrafor
 {
     public ConditionModificationRemoveNoAtmosphere(MarketAPI market)
     {
-        super(market, "Add atmosphere", new HashSet<>(List.of(Conditions.THIN_ATMOSPHERE)), new HashSet<>(List.of(Conditions.NO_ATMOSPHERE)));
+        super(market, StringHelper.getString(StringHelper.TERRAFORMING, "project_add_atmosphere"), new HashSet<>(List.of(Conditions.THIN_ATMOSPHERE)), new HashSet<>(List.of(Conditions.NO_ATMOSPHERE)));
     }
 
     @Override
@@ -47,6 +48,6 @@ public class ConditionModificationRemoveNoAtmosphere extends BoggledBaseTerrafor
             }
         };
 
-        return new TerraformingRequirementObject(this.market.getName() + " has no atmosphere", requirementMet, null);
+        return new TerraformingRequirementObject(marketRequirement("req_has_no_atmosphere"), requirementMet, null);
     }
 }

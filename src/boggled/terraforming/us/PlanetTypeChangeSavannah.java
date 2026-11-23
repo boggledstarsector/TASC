@@ -33,7 +33,7 @@ public class PlanetTypeChangeSavannah extends PlanetTypeChangeTerran
             }
         };
 
-        return new TerraformingRequirementObject(this.market.getName() + " is not already a savannah world", requirementMet, null);
+        return new TerraformingRequirementObject(marketRequirement("req_not_already_savannah"), requirementMet, null);
     }
 
     @Override
