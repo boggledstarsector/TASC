@@ -344,7 +344,7 @@ public class Boggled_Kletka_Simulator extends BaseIndustry
             Color highlight = Misc.getHighlightColor();
 
             String demand = "" + CONSTANT_HYPERLATTICE_ALLOYS_DEMAND_QUANTITY;
-            String sentence = StringHelper.getString(StringHelper.INDUSTRIES, "kletka_demand_artifacts", StringHelper.tokens("demand", demand));
+            String sentence = StringHelper.getString(StringHelper.INDUSTRIES, "kletka_demand_hyperlattice_alloys", StringHelper.tokens("demand", demand));
             StringHelper.applyHighlight(tooltip.addPara(sentence, opad), highlight, demand);
         }
     }

@@ -28,7 +28,7 @@ id,name,tier,timeToResearch,reqToResearchFirst,itemReqToResearch,iconId,rewards,
 
 **Example Entries:**
 ```csv
-tasc_domain_excavation,Domain Artifact Excavation,3,25,aotd_tech_streamlined_production,research_databank:1,none,BOGGLED_DOMAIN_ARCHAEOLOGY:industry,0,3,false,,,Terraforming & Station Construction
+tasc_domain_excavation,Hyperlattice Alloys Excavation,3,25,aotd_tech_streamlined_production,research_databank:1,none,BOGGLED_DOMAIN_ARCHAEOLOGY:industry,0,3,false,,,Terraforming & Station Construction
 tasc_light_manipulation,Stellar Light Manipulation,3,40,tasc_domain_excavation,research_databank:3,none,BOGGLED_STELLAR_REFLECTOR_ARRAY:industry,1,0,false,,,Terraforming & Station Construction
 tasc_atmosphere_manipulation,Atmosphere Manipulation,3,60,tasc_light_manipulation,research_databank:5,none,"Unlocks atmosphere modification terraforming projects:modifier
 BOGGLED_ATMOSPHERE_PROCESSOR:industry",2,0,false,,,Terraforming & Station Construction
@@ -56,7 +56,7 @@ TASC defines the following research projects in AoTD's tech tree:
 
 | Research ID | Name | Tier | Prerequisites | Rewards |
 |-------------|------|------|---------------|---------|
-| `tasc_domain_excavation` | Domain Artifact Excavation | 3 | `aotd_tech_streamlined_production` | `BOGGLED_DOMAIN_ARCHAEOLOGY` industry |
+| `tasc_domain_excavation` | Hyperlattice Alloys Excavation | 3 | `aotd_tech_streamlined_production` | `BOGGLED_DOMAIN_ARCHAEOLOGY` industry |
 | `tasc_light_manipulation` | Stellar Light Manipulation | 3 | `tasc_domain_excavation` | `BOGGLED_STELLAR_REFLECTOR_ARRAY` industry |
 | `tasc_atmosphere_manipulation` | Atmosphere Manipulation | 3 | `tasc_light_manipulation` | Atmosphere modification terraforming projects, `BOGGLED_ATMOSPHERE_PROCESSOR` industry |
 | `tasc_resource_manipulation` | Resource Manipulation | 3 | `tasc_atmosphere_manipulation` | Resource improvement projects, `BOGGLED_DOMED_CITIES`, `BOGGLED_ISMARA_SLING` industries |
