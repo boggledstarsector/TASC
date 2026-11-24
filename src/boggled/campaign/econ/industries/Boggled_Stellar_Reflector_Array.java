@@ -28,29 +28,7 @@ public class Boggled_Stellar_Reflector_Array extends BaseIndustry implements Sho
     {
         super.apply(true);
 
-        if(boggledTools.getBooleanSetting("boggledDomainTechContentEnabled") && boggledTools.getBooleanSetting("boggledDomainArchaeologyEnabled"))
-        {
-            this.demand("domain_artifacts", 1);
-        }
-
-        boolean shortage = false;
-        if(boggledTools.getBooleanSetting("boggledDomainTechContentEnabled") && boggledTools.getBooleanSetting("boggledDomainArchaeologyEnabled"))
-        {
-            Pair<String, Integer> deficit = this.getMaxDeficit(new String[]{"domain_artifacts"});
-            if(deficit.two != 0)
-            {
-                shortage = true;
-            }
-        }
-
-        if(shortage)
-        {
-            getUpkeep().modifyMult("deficit", 5.0f, StringHelper.getString(StringHelper.INDUSTRIES, "stellar_reflector_artifacts_shortage"));
-        }
-        else
-        {
-            getUpkeep().unmodifyMult("deficit");
-        }
+        getUpkeep().unmodifyMult("deficit");
     }
 
     @Override

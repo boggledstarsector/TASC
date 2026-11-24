@@ -52,16 +52,16 @@ public class Boggled_Remnant_Station extends OrbitalStation implements RouteMana
     private static final String REMNANT_STATION_DESCRIPTION_ID = "boggled_remnant_station";
     private static final String DEFAULT_STATION_DESCRIPTION_ID = "orbital_station_default";
 
-    // Use this to dynamically handle demand whether DEA is enabled or not.
+    // Use this to dynamically handle demand whether hyperlattice alloys are enabled or not.
     // Need to use some ordered data structure because we don't want the UI to display the commodities in a random order
     private ArrayList<Pair<String, Integer>> getCommodityDemand()
     {
         ArrayList<Pair<String, Integer>> demandArray = new ArrayList<>();
         demandArray.add(new Pair<>(Commodities.SUPPLIES, 7));
 
-        if(boggledTools.domainEraArtifactDemandEnabled())
+        if(boggledTools.hyperlatticeAlloysDemandEnabled())
         {
-            demandArray.add(new Pair<>(boggledTools.BoggledCommodities.domainArtifacts, 4));
+            demandArray.add(new Pair<>(boggledTools.BoggledCommodities.hyperlatticeAlloys, 4));
         }
 
         return demandArray;
@@ -119,15 +119,15 @@ public class Boggled_Remnant_Station extends OrbitalStation implements RouteMana
         this.modifyStabilityWithBaseMod();
         this.applyIncomeAndUpkeep(7);
 
-        // Set demand based on values configured in getCommodityDemand(). Handles DEA being enabled or disabled.
+        // Set demand based on values configured in getCommodityDemand(). Handles hyperlattice alloys being enabled or disabled.
         ArrayList<Pair<String, Integer>> demandArrayList = getCommodityDemand();
         for(Pair<String, Integer> demand : demandArrayList)
         {
             this.demand(demand.one, demand.two);
         }
-        if (!boggledTools.domainEraArtifactDemandEnabled())
+        if (!boggledTools.hyperlatticeAlloysDemandEnabled())
         {
-            this.demand(boggledTools.BoggledCommodities.domainArtifacts, 0);
+            this.demand(boggledTools.BoggledCommodities.hyperlatticeAlloys, 0);
         }
 
         float defenseMult = getDeficitMult(Commodities.SUPPLIES);
@@ -486,7 +486,7 @@ public class Boggled_Remnant_Station extends OrbitalStation implements RouteMana
     @Override
     protected float getCR()
     {
-        // Deviates from vanilla logic since the Remnant station demands an unequal amount of supplies and DEA
+        // Deviates from vanilla logic since the Remnant station demands an unequal amount of supplies and hyperlattice alloys
         float q = Misc.getShipQuality(this.market, Factions.REMNANTS);
         if (q < 0.0F)
         {

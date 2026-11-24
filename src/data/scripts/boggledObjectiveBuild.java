@@ -129,7 +129,7 @@ public class boggledObjectiveBuild extends BaseCommandPlugin
     {
         if(boggledTools.getBooleanSetting(boggledTools.BoggledSettings.domainArchaeologyEnabled))
         {
-            return new String[]{Commodities.HEAVY_MACHINERY, Commodities.METALS, Commodities.RARE_METALS, boggledTools.BoggledCommodities.domainArtifacts};
+            return new String[]{Commodities.HEAVY_MACHINERY, Commodities.METALS, Commodities.RARE_METALS, Commodities.PARTS};
         }
         else
         {
