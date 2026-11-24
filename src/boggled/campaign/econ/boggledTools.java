@@ -72,7 +72,6 @@ public class boggledTools {
         public static final String boggledDomainTechContentEnabled = "boggledDomainTechContentEnabled";
         public static final String enableAIMiningDronesStructure = "boggledEnableAIMiningDronesStructure";
         public static final String domainTechContentEnabled = "boggledDomainTechContentEnabled";
-        public static final String domainTechCraftingEnabled = "boggledDomainTechCraftingEnabled";
         public static final String domainArchaeologyEnabled = "boggledDomainArchaeologyEnabled";
         public static final String CHAMELEONEnabled = "boggledCHAMELEONEnabled";
         public static final String cloningEnabled = "boggledCloningEnabled";
@@ -104,9 +103,6 @@ public class boggledTools {
         public static final String miningStationAbundantOre = "boggledMiningStationAbundantOre";
         public static final String miningStationModerateOre = "boggledMiningStationModerateOre";
         public static final String miningStationSparseOre = "boggledMiningStationSparseOre";
-
-        public static final String domainTechCraftingArtifactCost = "boggledDomainTechCraftingArtifactCost";
-        public static final String domainTechCraftingStoryPointCost = "boggledDomainTechCraftingStoryPointCost";
 
         public static final String miningStationLinkToResourceBelts = "boggledMiningStationLinkToResourceBelts";
         public static final String miningStationStaticAmount = "boggledMiningStationStaticAmount";
