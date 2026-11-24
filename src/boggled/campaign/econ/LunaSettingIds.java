@@ -101,7 +101,6 @@ public final class LunaSettingIds {
         "boggledStableLocationDomainTechStructureCostHeavyMachinery",
         "boggledStableLocationDomainTechStructureCostMetals",
         "boggledStableLocationDomainTechStructureCostTransplutonics",
-        "boggledStableLocationDomainTechStructureCostVolatiles",
         "boggledStableLocationDomainTechStructureCostDomainGradeParts",
         "boggled_InactiveGateHeader",
         "boggledDomainTechInactiveGateConstructionEnabled",
