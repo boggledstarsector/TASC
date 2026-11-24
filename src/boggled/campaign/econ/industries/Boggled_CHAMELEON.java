@@ -82,10 +82,10 @@ public class Boggled_CHAMELEON extends BaseIndustry
     {
         super.apply(true);
 
-        if(boggledTools.hyperlatticeAlloyDemandEnabled())
+        if(boggledTools.hyperlatticeAlloysDemandEnabled())
         {
             int size = this.market.getSize();
-            this.demand("hyperlattice_alloy", size);
+            this.demand("hyperlattice_alloys", size);
         }
     }
 
@@ -98,8 +98,8 @@ public class Boggled_CHAMELEON extends BaseIndustry
     public Pair<String, Integer> getChameleonDeficit()
     {
         ArrayList<String> deficitCommodities = new ArrayList<>();
-        if(boggledTools.hyperlatticeAlloyDemandEnabled()) {
-            deficitCommodities.add("hyperlattice_alloy");
+        if(boggledTools.hyperlatticeAlloysDemandEnabled()) {
+            deficitCommodities.add("hyperlattice_alloys");
         }
 
         return this.getMaxDeficit(deficitCommodities.toArray(new String[0]));

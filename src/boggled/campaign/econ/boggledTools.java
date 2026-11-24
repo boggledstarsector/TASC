@@ -177,7 +177,7 @@ public class boggledTools {
     }
 
     public static class BoggledCommodities {
-        public static final String hyperlatticeAlloy = "hyperlattice_alloy";
+        public static final String hyperlatticeAlloys = "hyperlattice_alloys";
     }
 
     public static class BoggledIndustries {
@@ -2700,7 +2700,7 @@ public class boggledTools {
         }
     }
 
-    public static boolean hyperlatticeAlloyDemandEnabled()
+    public static boolean hyperlatticeAlloysDemandEnabled()
     {
         if(getBooleanSetting(BoggledSettings.domainTechContentEnabled) && getBooleanSetting(BoggledSettings.domainArchaeologyEnabled))
         {

@@ -106,7 +106,7 @@ Located in `src/boggled/ui/`:
 - `data/campaign/industries.csv` - Industry definitions
 - `data/campaign/abilities.csv` - Ability definitions
 - `data/campaign/market_conditions.csv` - Market condition definitions
-- `data/campaign/commodities.csv` - Commodity definitions (e.g., hyperlattice_alloy)
+- `data/campaign/commodities.csv` - Commodity definitions (e.g., hyperlattice_alloys)
 - `data/strings/strings.json` - Player-facing sentences, keyed by category
 - `data/strings/descriptions.csv` - Text descriptions
 - `data/config/` - Graphics and sounds configuration

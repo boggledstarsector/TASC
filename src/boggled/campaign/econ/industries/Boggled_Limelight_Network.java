@@ -31,9 +31,9 @@ public class Boggled_Limelight_Network extends BaseIndustry
         super.apply(true);
 
         int size = this.market.getSize();
-        if(boggledTools.hyperlatticeAlloyDemandEnabled())
+        if(boggledTools.hyperlatticeAlloysDemandEnabled())
         {
-            this.demand("hyperlattice_alloy", size - 2);
+            this.demand("hyperlattice_alloys", size - 2);
         }
 
         // Only has negative effects on player-owned markets
@@ -46,7 +46,7 @@ public class Boggled_Limelight_Network extends BaseIndustry
                 }
             }
 
-            if(boggledTools.hyperlatticeAlloyDemandEnabled())
+            if(boggledTools.hyperlatticeAlloysDemandEnabled())
             {
                 Pair<String, Integer> deficit = getLimelightNetworkDeficit();
                 if(deficit.two > 0)
@@ -238,8 +238,8 @@ public class Boggled_Limelight_Network extends BaseIndustry
     public Pair<String, Integer> getLimelightNetworkDeficit()
     {
         ArrayList<String> deficitCommodities = new ArrayList<>();
-        if(boggledTools.hyperlatticeAlloyDemandEnabled()) {
-            deficitCommodities.add("hyperlattice_alloy");
+        if(boggledTools.hyperlatticeAlloysDemandEnabled()) {
+            deficitCommodities.add("hyperlattice_alloys");
         }
 
         return this.getMaxDeficit(deficitCommodities.toArray(new String[0]));

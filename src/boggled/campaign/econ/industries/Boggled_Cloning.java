@@ -26,9 +26,9 @@ public class Boggled_Cloning extends BaseIndustry implements MarketImmigrationMo
         int size = this.market.getSize();
 
         // Demand and supply
-        if(boggledTools.hyperlatticeAlloyDemandEnabled())
+        if(boggledTools.hyperlatticeAlloysDemandEnabled())
         {
-            this.demand("hyperlattice_alloy", size);
+            this.demand("hyperlattice_alloys", size);
         }
 
         if (!this.market.hasCondition("habitable")) {
@@ -39,9 +39,9 @@ public class Boggled_Cloning extends BaseIndustry implements MarketImmigrationMo
 
         // Deficit impact on supply
         ArrayList<String> deficitCommodities = new ArrayList<>();
-        if(boggledTools.hyperlatticeAlloyDemandEnabled())
+        if(boggledTools.hyperlatticeAlloysDemandEnabled())
         {
-            deficitCommodities.add("hyperlattice_alloy");
+            deficitCommodities.add("hyperlattice_alloys");
         }
 
         if (!this.market.hasCondition("habitable")) {

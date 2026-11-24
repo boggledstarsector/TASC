@@ -14,9 +14,9 @@ public class Boggled_GPA extends BaseIndustry
     @Override
     public void apply()
     {
-        if(boggledTools.hyperlatticeAlloyDemandEnabled())
+        if(boggledTools.hyperlatticeAlloysDemandEnabled())
         {
-            this.demand("hyperlattice_alloy", 3);
+            this.demand("hyperlattice_alloys", 3);
         }
 
         super.apply(false);
