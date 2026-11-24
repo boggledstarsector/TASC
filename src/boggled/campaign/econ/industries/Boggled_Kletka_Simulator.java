@@ -15,7 +15,7 @@ import com.fs.starfarer.api.util.Pair;
 
 public class Boggled_Kletka_Simulator extends BaseIndustry
 {
-    private final int CONSTANT_DOMAIN_ERA_ARTIFACT_DEMAND_QUANTITY = 4;
+    private final int CONSTANT_HYPERLATTICE_ALLOY_DEMAND_QUANTITY = 4;
     private final int ROLL_THRESHOLD_ALPHA = 100;
     private final int ROLL_THRESHOLD_BETA = 75;
     private final int ROLL_THRESHOLD_GAMMA = 50;
@@ -32,8 +32,8 @@ public class Boggled_Kletka_Simulator extends BaseIndustry
     public Pair<String, Integer> getKletkaSimulatorDeficit()
     {
         ArrayList<String> deficitCommodities = new ArrayList<>();
-        if(boggledTools.domainEraArtifactDemandEnabled()) {
-            deficitCommodities.add("domain_artifacts");
+        if(boggledTools.hyperlatticeAlloyDemandEnabled()) {
+            deficitCommodities.add("hyperlattice_alloy");
         }
 
         return this.getMaxDeficit(deficitCommodities.toArray(new String[0]));
@@ -178,9 +178,9 @@ public class Boggled_Kletka_Simulator extends BaseIndustry
     @Override
     public void apply()
     {
-        if(boggledTools.domainEraArtifactDemandEnabled())
+        if(boggledTools.hyperlatticeAlloyDemandEnabled())
         {
-            this.demand("domain_artifacts", CONSTANT_DOMAIN_ERA_ARTIFACT_DEMAND_QUANTITY);
+            this.demand("hyperlattice_alloy", CONSTANT_HYPERLATTICE_ALLOY_DEMAND_QUANTITY);
         }
 
         super.apply(false);
@@ -332,18 +332,18 @@ public class Boggled_Kletka_Simulator extends BaseIndustry
     @Override
     protected boolean hasPostDemandSection(boolean hasDemand, IndustryTooltipMode mode)
     {
-        return boggledTools.domainEraArtifactDemandEnabled();
+        return boggledTools.hyperlatticeAlloyDemandEnabled();
     }
 
     @Override
     protected void addPostDemandSection(TooltipMakerAPI tooltip, boolean hasDemand, IndustryTooltipMode mode)
     {
-        if(boggledTools.domainEraArtifactDemandEnabled())
+        if(boggledTools.hyperlatticeAlloyDemandEnabled())
         {
             float opad = 10.0F;
             Color highlight = Misc.getHighlightColor();
 
-            String demand = "" + CONSTANT_DOMAIN_ERA_ARTIFACT_DEMAND_QUANTITY;
+            String demand = "" + CONSTANT_HYPERLATTICE_ALLOY_DEMAND_QUANTITY;
             String sentence = StringHelper.getString(StringHelper.INDUSTRIES, "kletka_demand_artifacts", StringHelper.tokens("demand", demand));
             StringHelper.applyHighlight(tooltip.addPara(sentence, opad), highlight, demand);
         }

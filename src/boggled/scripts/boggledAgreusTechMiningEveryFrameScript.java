@@ -10,12 +10,12 @@ import boggled.campaign.econ.boggledTools;
 
 public class boggledAgreusTechMiningEveryFrameScript implements EveryFrameScript
 {
-    private boolean hasSetDomainEraArtifactSupply = false;
+    private boolean hasSetHyperlatticeAlloySupply = false;
     private float waitTime = .75f;
 
     public boggledAgreusTechMiningEveryFrameScript() { }
 
-    private void setDomainEraArtifactSupply()
+    private void setHyperlatticeAlloySupply()
     {
         if(boggledTools.getBooleanSetting("boggledReplaceAgreusTechMiningWithDomainArchaeology"))
         {
@@ -27,13 +27,13 @@ public class boggledAgreusTechMiningEveryFrameScript implements EveryFrameScript
                 {
                     // Don't swap these industries if Everybody loves KoC mod is enabled because this causes compatibility issues
                     // per post in TASC thread on page 142, post #2128 by bodeshmoun.
-                    // UPDATE 5/15/23: Not placing the Domain Archaeology building is problematic because buildings that require DEA have no supply.
-                    // Adds DEA artifact production to the Techmining industry on Agreus. I can't just add the DA building itself because Agreus
+                    // UPDATE 5/15/23: Not placing the Domain Archaeology building is problematic because buildings that require hyperlattice alloy have no supply.
+                    // Adds hyperlattice alloy production to the Techmining industry on Agreus. I can't just add the DA building itself because Agreus
                     // already has four industries due to KoC and adding a fifth reduces stability by 5.
 
                     if(Global.getSettings().getModManager().isModEnabled("Everybody loves KoC"))
                     {
-                        ((BaseIndustry) agreusMarket.getIndustry("techmining")).supply(boggledTools.BoggledCommodities.domainArtifacts, agreusMarket.getSize() - 1);
+                        ((BaseIndustry) agreusMarket.getIndustry("techmining")).supply(boggledTools.BoggledCommodities.hyperlatticeAlloy, agreusMarket.getSize() - 1);
                     }
                 }
             }
@@ -43,7 +43,7 @@ public class boggledAgreusTechMiningEveryFrameScript implements EveryFrameScript
     @Override
     public boolean isDone()
     {
-        if(hasSetDomainEraArtifactSupply)
+        if(hasSetHyperlatticeAlloySupply)
         {
             return true;
         }
@@ -69,10 +69,10 @@ public class boggledAgreusTechMiningEveryFrameScript implements EveryFrameScript
             return;
         }
 
-        if (!hasSetDomainEraArtifactSupply && waitTime <= 0f)
+        if (!hasSetHyperlatticeAlloySupply && waitTime <= 0f)
         {
-            setDomainEraArtifactSupply();
-            hasSetDomainEraArtifactSupply = true;
+            setHyperlatticeAlloySupply();
+            hasSetHyperlatticeAlloySupply = true;
         }
         else
         {

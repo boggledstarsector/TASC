@@ -95,9 +95,9 @@ public class Boggled_Perihelion_Project extends BaseIndustry {
         // AotD megastructure activation functionality requires huge amounts so the player will pay there.
         if(!Global.getSettings().getModManager().isModEnabled("aotd_vok"))
         {
-            if(boggledTools.domainEraArtifactDemandEnabled())
+            if(boggledTools.hyperlatticeAlloyDemandEnabled())
             {
-                this.demand("domain_artifacts", 7);
+                this.demand("hyperlattice_alloy", 7);
             }
 
             this.demand("metals", 11);
@@ -115,9 +115,9 @@ public class Boggled_Perihelion_Project extends BaseIndustry {
     public boolean perihelionProjectHasShortage()
     {
         boolean shortage = false;
-        if(boggledTools.domainEraArtifactDemandEnabled())
+        if(boggledTools.hyperlatticeAlloyDemandEnabled())
         {
-            Pair<String, Integer> deficit = this.getMaxDeficit(new String[]{"domain_artifacts"});
+            Pair<String, Integer> deficit = this.getMaxDeficit(new String[]{"hyperlattice_alloy"});
             if(deficit.two != 0)
             {
                 shortage = true;

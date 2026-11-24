@@ -30,19 +30,19 @@ public class BoggledTascPlugin extends BaseModPlugin {
 //    static {
 //        if(boggledTools.getBooleanSetting("boggledDomainTechContentEnabled") && boggledTools.getBooleanSetting("boggledDomainArchaeologyEnabled"))
 //        {
-//            ResourceDepositsCondition.COMMODITY.put(Conditions.RUINS_SCATTERED, boggledTools.BoggledCommodities.domainArtifacts);
-//            ResourceDepositsCondition.COMMODITY.put(Conditions.RUINS_WIDESPREAD, boggledTools.BoggledCommodities.domainArtifacts);
-//            ResourceDepositsCondition.COMMODITY.put(Conditions.RUINS_EXTENSIVE, boggledTools.BoggledCommodities.domainArtifacts);
-//            ResourceDepositsCondition.COMMODITY.put(Conditions.RUINS_VAST, boggledTools.BoggledCommodities.domainArtifacts);
+//            ResourceDepositsCondition.COMMODITY.put(Conditions.RUINS_SCATTERED, boggledTools.BoggledCommodities.hyperlatticeAlloy);
+//            ResourceDepositsCondition.COMMODITY.put(Conditions.RUINS_WIDESPREAD, boggledTools.BoggledCommodities.hyperlatticeAlloy);
+//            ResourceDepositsCondition.COMMODITY.put(Conditions.RUINS_EXTENSIVE, boggledTools.BoggledCommodities.hyperlatticeAlloy);
+//            ResourceDepositsCondition.COMMODITY.put(Conditions.RUINS_VAST, boggledTools.BoggledCommodities.hyperlatticeAlloy);
 //
 //            ResourceDepositsCondition.MODIFIER.put(Conditions.RUINS_SCATTERED, -1);
 //            ResourceDepositsCondition.MODIFIER.put(Conditions.RUINS_WIDESPREAD, 0);
 //            ResourceDepositsCondition.MODIFIER.put(Conditions.RUINS_EXTENSIVE, 1);
 //            ResourceDepositsCondition.MODIFIER.put(Conditions.RUINS_VAST, 2);
 //
-//            ResourceDepositsCondition.INDUSTRY.put(boggledTools.BoggledCommodities.domainArtifacts, boggledTools.BoggledIndustries.domainArchaeologyIndustryId);
+//            ResourceDepositsCondition.INDUSTRY.put(boggledTools.BoggledCommodities.hyperlatticeAlloy, boggledTools.BoggledIndustries.domainArchaeologyIndustryId);
 //
-//            ResourceDepositsCondition.BASE_MODIFIER.put(boggledTools.BoggledCommodities.domainArtifacts, -2);
+//            ResourceDepositsCondition.BASE_MODIFIER.put(boggledTools.BoggledCommodities.hyperlatticeAlloy, -2);
 //        }
 //    }
 
@@ -175,23 +175,23 @@ public class BoggledTascPlugin extends BaseModPlugin {
         }
     }
 
-    public void applyDomainEraArtifactSettings() {
+    public void applyHyperlatticeAlloySettings() {
         //Enable/disable Domain-tech content
 
         if(boggledTools.getBooleanSetting(boggledTools.BoggledSettings.domainTechContentEnabled) && boggledTools.getBooleanSetting(boggledTools.BoggledSettings.domainArchaeologyEnabled)) {
-            ResourceDepositsCondition.COMMODITY.put(Conditions.RUINS_SCATTERED, boggledTools.BoggledCommodities.domainArtifacts);
-            ResourceDepositsCondition.COMMODITY.put(Conditions.RUINS_WIDESPREAD, boggledTools.BoggledCommodities.domainArtifacts);
-            ResourceDepositsCondition.COMMODITY.put(Conditions.RUINS_EXTENSIVE, boggledTools.BoggledCommodities.domainArtifacts);
-            ResourceDepositsCondition.COMMODITY.put(Conditions.RUINS_VAST, boggledTools.BoggledCommodities.domainArtifacts);
+            ResourceDepositsCondition.COMMODITY.put(Conditions.RUINS_SCATTERED, boggledTools.BoggledCommodities.hyperlatticeAlloy);
+            ResourceDepositsCondition.COMMODITY.put(Conditions.RUINS_WIDESPREAD, boggledTools.BoggledCommodities.hyperlatticeAlloy);
+            ResourceDepositsCondition.COMMODITY.put(Conditions.RUINS_EXTENSIVE, boggledTools.BoggledCommodities.hyperlatticeAlloy);
+            ResourceDepositsCondition.COMMODITY.put(Conditions.RUINS_VAST, boggledTools.BoggledCommodities.hyperlatticeAlloy);
 
             ResourceDepositsCondition.MODIFIER.put(Conditions.RUINS_SCATTERED, -1);
             ResourceDepositsCondition.MODIFIER.put(Conditions.RUINS_WIDESPREAD, 0);
             ResourceDepositsCondition.MODIFIER.put(Conditions.RUINS_EXTENSIVE, 1);
             ResourceDepositsCondition.MODIFIER.put(Conditions.RUINS_VAST, 2);
 
-            ResourceDepositsCondition.INDUSTRY.put(boggledTools.BoggledCommodities.domainArtifacts, boggledTools.BoggledIndustries.domainArchaeologyIndustryId);
+            ResourceDepositsCondition.INDUSTRY.put(boggledTools.BoggledCommodities.hyperlatticeAlloy, boggledTools.BoggledIndustries.domainArchaeologyIndustryId);
 
-            ResourceDepositsCondition.BASE_MODIFIER.put(boggledTools.BoggledCommodities.domainArtifacts, -2);
+            ResourceDepositsCondition.BASE_MODIFIER.put(boggledTools.BoggledCommodities.hyperlatticeAlloy, -2);
         }
         else
         {
@@ -205,23 +205,23 @@ public class BoggledTascPlugin extends BaseModPlugin {
             ResourceDepositsCondition.MODIFIER.put(Conditions.RUINS_EXTENSIVE, null);
             ResourceDepositsCondition.MODIFIER.put(Conditions.RUINS_VAST, null);
 
-            ResourceDepositsCondition.INDUSTRY.put(boggledTools.BoggledCommodities.domainArtifacts, null);
+            ResourceDepositsCondition.INDUSTRY.put(boggledTools.BoggledCommodities.hyperlatticeAlloy, null);
 
-            ResourceDepositsCondition.BASE_MODIFIER.put(boggledTools.BoggledCommodities.domainArtifacts, null);
+            ResourceDepositsCondition.BASE_MODIFIER.put(boggledTools.BoggledCommodities.hyperlatticeAlloy, null);
         }
 
         if(boggledTools.getBooleanSetting(boggledTools.BoggledSettings.domainTechContentEnabled) && boggledTools.getBooleanSetting(boggledTools.BoggledSettings.domainArchaeologyEnabled)) {
-            if(Global.getSector().getFaction(Factions.LUDDIC_CHURCH) != null && !Global.getSector().getFaction(Factions.LUDDIC_CHURCH).isIllegal(boggledTools.BoggledCommodities.domainArtifacts)) {
-                Global.getSector().getFaction(Factions.LUDDIC_CHURCH).makeCommodityIllegal(boggledTools.BoggledCommodities.domainArtifacts);
+            if(Global.getSector().getFaction(Factions.LUDDIC_CHURCH) != null && !Global.getSector().getFaction(Factions.LUDDIC_CHURCH).isIllegal(boggledTools.BoggledCommodities.hyperlatticeAlloy)) {
+                Global.getSector().getFaction(Factions.LUDDIC_CHURCH).makeCommodityIllegal(boggledTools.BoggledCommodities.hyperlatticeAlloy);
             }
 
-            if(Global.getSector().getFaction(Factions.LUDDIC_PATH) != null && !Global.getSector().getFaction(Factions.LUDDIC_PATH).isIllegal(boggledTools.BoggledCommodities.domainArtifacts)) {
-                Global.getSector().getFaction(Factions.LUDDIC_PATH).makeCommodityIllegal(boggledTools.BoggledCommodities.domainArtifacts);
+            if(Global.getSector().getFaction(Factions.LUDDIC_PATH) != null && !Global.getSector().getFaction(Factions.LUDDIC_PATH).isIllegal(boggledTools.BoggledCommodities.hyperlatticeAlloy)) {
+                Global.getSector().getFaction(Factions.LUDDIC_PATH).makeCommodityIllegal(boggledTools.BoggledCommodities.hyperlatticeAlloy);
             }
 
-            Global.getSettings().getCommoditySpec(boggledTools.BoggledCommodities.domainArtifacts).getTags().clear();
+            Global.getSettings().getCommoditySpec(boggledTools.BoggledCommodities.hyperlatticeAlloy).getTags().clear();
         } else {
-            Global.getSettings().getCommoditySpec(boggledTools.BoggledCommodities.domainArtifacts).getTags().add("nonecon");
+            Global.getSettings().getCommoditySpec(boggledTools.BoggledCommodities.hyperlatticeAlloy).getTags().add("nonecon");
         }
     }
 
@@ -285,7 +285,7 @@ public class BoggledTascPlugin extends BaseModPlugin {
     }
 
     public void replaceCryosanctums() {
-        // Replace all Cryosanctums with the Boggled_Cryosanctum industry that can demand Domain-era artifacts
+        // Replace all Cryosanctums with the Boggled_Cryosanctum industry that can demand hyperlattice alloy
         if(!Global.getSector().getPlayerPerson().hasTag("boggledCryosanctumReplacementFinished")) {
             for(StarSystemAPI system : Global.getSector().getStarSystems()) {
                 for(MarketAPI market : Global.getSector().getEconomy().getMarkets(system)) {
@@ -365,7 +365,7 @@ public class BoggledTascPlugin extends BaseModPlugin {
 
         applyStationConstructionAbilitiesPerSettingsFile();
 
-        applyDomainEraArtifactSettings();
+        applyHyperlatticeAlloySettings();
 
         addDomainTechBuildingsToVanillaColonies();
 
@@ -385,7 +385,7 @@ public class BoggledTascPlugin extends BaseModPlugin {
 
         Global.getSector().getCharacterData().removeAbility("boggled_open_terraforming_control_panel");
 
-        Global.getSettings().getCommoditySpec(boggledTools.BoggledCommodities.domainArtifacts).getTags().clear();
+        Global.getSettings().getCommoditySpec(boggledTools.BoggledCommodities.hyperlatticeAlloy).getTags().clear();
 
         Global.getSector().getPlayerFleet().removeScriptsOfClass(BoggledAotDEveryFrameScript.class);
     }
@@ -396,7 +396,7 @@ public class BoggledTascPlugin extends BaseModPlugin {
 
         applyStationConstructionAbilitiesPerSettingsFile();
 
-        applyDomainEraArtifactSettings();
+        applyHyperlatticeAlloySettings();
 
         addDomainTechBuildingsToVanillaColonies();
 

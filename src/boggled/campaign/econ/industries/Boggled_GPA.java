@@ -14,9 +14,9 @@ public class Boggled_GPA extends BaseIndustry
     @Override
     public void apply()
     {
-        if(boggledTools.domainEraArtifactDemandEnabled())
+        if(boggledTools.hyperlatticeAlloyDemandEnabled())
         {
-            this.demand("domain_artifacts", 3);
+            this.demand("hyperlattice_alloy", 3);
         }
 
         super.apply(false);

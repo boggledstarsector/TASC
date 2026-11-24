@@ -213,15 +213,15 @@ public class Boggled_Genelab extends BaseIndustry implements ShowBoggledTerrafor
         super.apply(true);
         int size = this.market.getSize();
 
-        if(boggledTools.domainEraArtifactDemandEnabled())
+        if(boggledTools.hyperlatticeAlloyDemandEnabled())
         {
             if(!this.market.isPlayerOwned())
             {
-                this.demand("domain_artifacts", 4);
+                this.demand("hyperlattice_alloy", 4);
             }
             else
             {
-                this.demand("domain_artifacts", size - 2);
+                this.demand("hyperlattice_alloy", size - 2);
             }
         }
         if (!this.market.hasCondition("habitable")) {
@@ -399,8 +399,8 @@ public class Boggled_Genelab extends BaseIndustry implements ShowBoggledTerrafor
         if (!this.market.hasCondition("habitable")) {
             deficitCommodities.add("organics");
         }
-        if(boggledTools.domainEraArtifactDemandEnabled()) {
-            deficitCommodities.add("domain_artifacts");
+        if(boggledTools.hyperlatticeAlloyDemandEnabled()) {
+            deficitCommodities.add("hyperlattice_alloy");
         }
 
         return this.getMaxDeficit(deficitCommodities.toArray(new String[0]));
