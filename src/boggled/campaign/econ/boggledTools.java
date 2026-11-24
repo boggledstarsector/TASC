@@ -115,12 +115,12 @@ public class boggledTools {
         public static final String stableLocationGateCostHeavyMachinery = "boggledStableLocationGateCostHeavyMachinery";
         public static final String stableLocationGateCostMetals = "boggledStableLocationGateCostMetals";
         public static final String stableLocationGateCostTransplutonics = "boggledStableLocationGateCostTransplutonics";
-        public static final String stableLocationGateCostDomainEraArtifacts = "boggledStableLocationGateCostDomainEraArtifacts";
+        public static final String stableLocationGateCostDomainGradeParts = "boggledStableLocationGateCostDomainGradeParts";
 
         public static final String stableLocationDomainTechStructureCostHeavyMachinery = "boggledStableLocationDomainTechStructureCostHeavyMachinery";
         public static final String stableLocationDomainTechStructureCostMetals = "boggledStableLocationDomainTechStructureCostMetals";
         public static final String stableLocationDomainTechStructureCostTransplutonics = "boggledStableLocationDomainTechStructureCostTransplutonics";
-        public static final String stableLocationDomainTechStructureCostDomainEraArtifacts = "boggledStableLocationDomainTechStructureCostDomainEraArtifacts";
+        public static final String stableLocationDomainTechStructureCostDomainGradeParts = "boggledStableLocationDomainTechStructureCostDomainGradeParts";
 
         public static final String marketSizeRequiredToBuildInactiveGate = "boggledMarketSizeRequiredToBuildInactiveGate";
 
@@ -177,7 +177,7 @@ public class boggledTools {
     }
 
     public static class BoggledCommodities {
-        public static final String domainArtifacts = "domain_artifacts";
+        public static final String hyperlatticeAlloys = "hyperlattice_alloys";
     }
 
     public static class BoggledIndustries {
@@ -2394,7 +2394,7 @@ public class boggledTools {
                     boggledTools.getIntSetting(BoggledSettings.stableLocationGateCostTransplutonics)
             ));
             if (boggledTools.getBooleanSetting(BoggledSettings.domainArchaeologyEnabled)) {
-                ret.add(boggledTools.getIntSetting(BoggledSettings.stableLocationGateCostDomainEraArtifacts));
+                ret.add(boggledTools.getIntSetting(BoggledSettings.stableLocationGateCostDomainGradeParts));
             }
         } else {
             ret.addAll(asList(
@@ -2403,7 +2403,7 @@ public class boggledTools {
                     boggledTools.getIntSetting(BoggledSettings.stableLocationDomainTechStructureCostTransplutonics)
             ));
             if (boggledTools.getBooleanSetting(BoggledSettings.domainArchaeologyEnabled)) {
-                ret.add(boggledTools.getIntSetting(BoggledSettings.stableLocationDomainTechStructureCostDomainEraArtifacts));
+                ret.add(boggledTools.getIntSetting(BoggledSettings.stableLocationDomainTechStructureCostDomainGradeParts));
             }
         }
         int[] ret2 = new int[ret.size()];
@@ -2700,7 +2700,7 @@ public class boggledTools {
         }
     }
 
-    public static boolean domainEraArtifactDemandEnabled()
+    public static boolean hyperlatticeAlloysDemandEnabled()
     {
         if(getBooleanSetting(BoggledSettings.domainTechContentEnabled) && getBooleanSetting(BoggledSettings.domainArchaeologyEnabled))
         {

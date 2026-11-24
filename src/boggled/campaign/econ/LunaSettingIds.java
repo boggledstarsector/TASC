@@ -101,7 +101,7 @@ public final class LunaSettingIds {
         "boggledStableLocationDomainTechStructureCostHeavyMachinery",
         "boggledStableLocationDomainTechStructureCostMetals",
         "boggledStableLocationDomainTechStructureCostTransplutonics",
-        "boggledStableLocationDomainTechStructureCostDomainEraArtifacts",
+        "boggledStableLocationDomainTechStructureCostDomainGradeParts",
         "boggled_InactiveGateHeader",
         "boggledDomainTechInactiveGateConstructionEnabled",
         "boggledDomainTechInactiveGateConstructionMainQuestCompletionRequired",
@@ -110,7 +110,7 @@ public final class LunaSettingIds {
         "boggledStableLocationGateCostHeavyMachinery",
         "boggledStableLocationGateCostMetals",
         "boggledStableLocationGateCostTransplutonics",
-        "boggledStableLocationGateCostDomainEraArtifacts",
+        "boggledStableLocationGateCostDomainGradeParts",
         "boggledRemnantStationEnabled",
         "boggledHydroponicsEnabled",
         "boggledCloningEnabled"
