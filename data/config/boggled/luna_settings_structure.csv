@@ -97,7 +97,7 @@ boggledDomainTechObjectivesUpgradeRelationshipImpact,Int,5,,0,25,Domain-tech Con
 boggledStableLocationDomainTechStructureCostHeavyMachinery,Int,50,,0,250,Domain-tech Content
 boggledStableLocationDomainTechStructureCostMetals,Int,200,,0,1000,Domain-tech Content
 boggledStableLocationDomainTechStructureCostTransplutonics,Int,20,,0,100,Domain-tech Content
-boggledStableLocationDomainTechStructureCostDomainGradeParts,Int,20,,0,100,Domain-tech Content
+boggledStableLocationDomainTechStructureCostDomainGradeParts,Int,10,,0,100,Domain-tech Content
 boggled_InactiveGateHeader,Header,,,,,Domain-tech Content
 boggledDomainTechInactiveGateConstructionEnabled,Boolean,True,,,,Domain-tech Content
 boggledDomainTechInactiveGateConstructionMainQuestCompletionRequired,Boolean,True,,,,Domain-tech Content
