@@ -120,6 +120,7 @@ public class boggledTools {
         public static final String stableLocationDomainTechStructureCostHeavyMachinery = "boggledStableLocationDomainTechStructureCostHeavyMachinery";
         public static final String stableLocationDomainTechStructureCostMetals = "boggledStableLocationDomainTechStructureCostMetals";
         public static final String stableLocationDomainTechStructureCostTransplutonics = "boggledStableLocationDomainTechStructureCostTransplutonics";
+        public static final String stableLocationDomainTechStructureCostVolatiles = "boggledStableLocationDomainTechStructureCostVolatiles";
         public static final String stableLocationDomainTechStructureCostDomainGradeParts = "boggledStableLocationDomainTechStructureCostDomainGradeParts";
 
         public static final String marketSizeRequiredToBuildInactiveGate = "boggledMarketSizeRequiredToBuildInactiveGate";
@@ -2400,7 +2401,8 @@ public class boggledTools {
             ret.addAll(asList(
                     boggledTools.getIntSetting(BoggledSettings.stableLocationDomainTechStructureCostHeavyMachinery),
                     boggledTools.getIntSetting(BoggledSettings.stableLocationDomainTechStructureCostMetals),
-                    boggledTools.getIntSetting(BoggledSettings.stableLocationDomainTechStructureCostTransplutonics)
+                    boggledTools.getIntSetting(BoggledSettings.stableLocationDomainTechStructureCostTransplutonics),
+                    boggledTools.getIntSetting(BoggledSettings.stableLocationDomainTechStructureCostVolatiles)
             ));
             if (boggledTools.getBooleanSetting(BoggledSettings.domainArchaeologyEnabled)) {
                 ret.add(boggledTools.getIntSetting(BoggledSettings.stableLocationDomainTechStructureCostDomainGradeParts));

@@ -628,6 +628,8 @@
     "tooltip_boggledStableLocationDomainTechStructureCostMetals": "How much metal is required to construct a Domain-tech stable location structure.",
     "name_boggledStableLocationDomainTechStructureCostTransplutonics": "Domain-tech stable location structure transplutonics cost",
     "tooltip_boggledStableLocationDomainTechStructureCostTransplutonics": "How much transplutonic metal is required to construct a Domain-tech stable location structure.",
+    "name_boggledStableLocationDomainTechStructureCostVolatiles": "Domain-tech stable location structure volatiles cost",
+    "tooltip_boggledStableLocationDomainTechStructureCostVolatiles": "How many volatiles are required to construct a Domain-tech stable location structure.",
     "name_boggledStableLocationDomainTechStructureCostDomainGradeParts": "Domain-tech stable location structure Domain-grade parts cost",
     "tooltip_boggledStableLocationDomainTechStructureCostDomainGradeParts": "How many Domain-grade parts are required to construct a Domain-tech stable location structure.",
     "name_boggled_InactiveGateHeader": "Inactive Gate Construction Settings",
