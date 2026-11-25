@@ -32,6 +32,16 @@ public class Boggled_Genelab extends BaseIndustry implements ShowBoggledTerrafor
     private static final int HYDROPONICS_FOOD_BONUS_IMPROVED = 2;
     private static final int HYDROPONICS_FOOD_BONUS_PER_SHORTAGE = 2;
 
+    static final String CLONING_ORGAN_BONUS_MOD = "genelab_cloning_organs";
+    private static final int CLONING_ORGAN_BONUS_OPERATIONAL = 1;
+    private static final int CLONING_ORGAN_BONUS_ALPHA_CORE = 1;
+    private static final int CLONING_ORGAN_BONUS_IMPROVED = 1;
+    private static final int CLONING_ORGAN_BONUS_PER_SHORTAGE = 1;
+    private static final int CLONING_GROWTH_BONUS_OPERATIONAL = 2;
+    private static final int CLONING_GROWTH_BONUS_ALPHA_CORE = 2;
+    private static final int CLONING_GROWTH_BONUS_IMPROVED = 2;
+    private static final int CLONING_GROWTH_BONUS_PER_SHORTAGE = 2;
+
     private int daysWithoutShortagePollution = 0;
     private int lastDayCheckedPollution = 0;
     private final int requiredDaysToRemovePollution = boggledTools.getIntSetting("boggledGenelabPollutionRemediationDaysToFinish");
@@ -247,6 +257,12 @@ public class Boggled_Genelab extends BaseIndustry implements ShowBoggledTerrafor
         {
             updateHydroponicsFoodBonus((Boggled_Hydroponics) hydroponics);
         }
+
+        Industry cloning = this.market.getIndustry("BOGGLED_CLONING");
+        if(cloning instanceof Boggled_Cloning)
+        {
+            updateCloningOrganBonus((Boggled_Cloning) cloning);
+        }
     }
 
     @Override
@@ -259,6 +275,7 @@ public class Boggled_Genelab extends BaseIndustry implements ShowBoggledTerrafor
         }
 
         removeHydroponicsFoodBonus();
+        removeCloningOrganBonus();
 
         super.unapply();
     }
@@ -367,6 +384,19 @@ public class Boggled_Genelab extends BaseIndustry implements ShowBoggledTerrafor
             String bonus = Integer.toString(foodBonus);
             String bonusSentence = StringHelper.getString(StringHelper.INDUSTRIES, "genelab_hydroponics_food_bonus", StringHelper.tokens("bonus", bonus));
             StringHelper.applyHighlight(tooltip.addPara(bonusSentence, opad), foodBonus > 0 ? highlight : bad, "+" + bonus);
+        }
+
+        if(boggledTools.getBooleanSetting("boggledCloningEnabled") && mode != IndustryTooltipMode.QUEUED && !isBuilding() && this.isFunctional())
+        {
+            int organBonus = getCloningOrganProductionBonus();
+            String organs = Integer.toString(organBonus);
+            String organSentence = StringHelper.getString(StringHelper.INDUSTRIES, "genelab_cloning_organ_bonus", StringHelper.tokens("bonus", organs));
+            StringHelper.applyHighlight(tooltip.addPara(organSentence, opad), organBonus > 0 ? highlight : bad, "+" + organs);
+
+            int growthBonus = getCloningPopulationGrowthBonus();
+            String growth = Integer.toString(growthBonus);
+            String growthSentence = StringHelper.getString(StringHelper.INDUSTRIES, "genelab_cloning_growth_bonus", StringHelper.tokens("bonus", growth));
+            StringHelper.applyHighlight(tooltip.addPara(growthSentence, opad), growthBonus > 0 ? highlight : bad, "+" + growth);
         }
 
         if(deficit.two > 0 && this.market.hasCondition("pollution") && mode != IndustryTooltipMode.ADD_INDUSTRY && mode != IndustryTooltipMode.QUEUED && !isBuilding())
@@ -485,6 +515,87 @@ public class Boggled_Genelab extends BaseIndustry implements ShowBoggledTerrafor
         if(food != null)
         {
             food.getQuantity().unmodifyFlat(HYDROPONICS_FOOD_BONUS_MOD);
+        }
+    }
+
+    public int getCloningOrganProductionBonus()
+    {
+        return getScaledGenelabBonus(CLONING_ORGAN_BONUS_OPERATIONAL, CLONING_ORGAN_BONUS_ALPHA_CORE, CLONING_ORGAN_BONUS_IMPROVED, CLONING_ORGAN_BONUS_PER_SHORTAGE);
+    }
+
+    public int getCloningPopulationGrowthBonus()
+    {
+        return getScaledGenelabBonus(CLONING_GROWTH_BONUS_OPERATIONAL, CLONING_GROWTH_BONUS_ALPHA_CORE, CLONING_GROWTH_BONUS_IMPROVED, CLONING_GROWTH_BONUS_PER_SHORTAGE);
+    }
+
+    private int getScaledGenelabBonus(int operational, int alphaCore, int improved, int perShortage)
+    {
+        if(!this.isFunctional())
+        {
+            return 0;
+        }
+
+        int bonus = operational;
+        if(Commodities.ALPHA_CORE.equals(this.aiCoreId))
+        {
+            bonus += alphaCore;
+        }
+        if(this.isImproved())
+        {
+            bonus += improved;
+        }
+
+        bonus -= perShortage * getGenelabDeficit().two;
+        return Math.max(bonus, 0);
+    }
+
+    static void updateCloningOrganBonus(Boggled_Cloning cloning)
+    {
+        int bonus = 0;
+        Industry genelab = cloning.getMarket().getIndustry(boggledTools.BoggledIndustries.genelabIndustryId);
+        if(genelab instanceof Boggled_Genelab)
+        {
+            bonus = ((Boggled_Genelab) genelab).getCloningOrganProductionBonus();
+        }
+
+        MutableCommodityQuantity organs = cloning.getSupply().get(Commodities.ORGANS);
+        if(!cloning.isFunctional())
+        {
+            if(organs != null)
+            {
+                organs.getQuantity().unmodifyFlat(CLONING_ORGAN_BONUS_MOD);
+            }
+            return;
+        }
+
+        if(bonus <= 0)
+        {
+            if(organs != null)
+            {
+                organs.getQuantity().unmodifyFlat(CLONING_ORGAN_BONUS_MOD);
+            }
+            return;
+        }
+
+        if(organs == null)
+        {
+            organs = cloning.getSupply(Commodities.ORGANS);
+        }
+        organs.getQuantity().modifyFlat(CLONING_ORGAN_BONUS_MOD, bonus, StringHelper.getString(StringHelper.INDUSTRIES, "genelab_income_modifier"));
+    }
+
+    private void removeCloningOrganBonus()
+    {
+        Industry industry = this.market.getIndustry("BOGGLED_CLONING");
+        if(!(industry instanceof Boggled_Cloning))
+        {
+            return;
+        }
+
+        MutableCommodityQuantity organs = ((Boggled_Cloning) industry).getSupply().get(Commodities.ORGANS);
+        if(organs != null)
+        {
+            organs.getQuantity().unmodifyFlat(CLONING_ORGAN_BONUS_MOD);
         }
     }
 

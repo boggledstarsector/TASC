@@ -13,6 +13,7 @@ tasc_planet_type_manipulation,Planet Type Manipulation,3,120,tasc_resource_manip
 ,,,,,,,,,,,,,
 tasc_genetic_manipulation,Genetics,3,40,tasc_domain_excavation,research_databank:3,none,"BOGGLED_GENELAB:industry
 BOGGLED_MESOZOIC_PARK:industry",1,6,false,,,Terraforming & Station Construction
+tasc_cloning_technology,Advanced Cloning,3,60,tasc_genetic_manipulation,research_databank:5,none,BOGGLED_CLONING:industry,2,6,false,,,Terraforming & Station Construction
 ,,,,,,,,,,,,,
 tasc_limelight_network,Virtual Reality,3,40,tasc_domain_excavation,"research_databank:3,gamma_core:3",none,BOGGLED_LIMELIGHT_NETWORK:industry,1,4,false,,,Terraforming & Station Construction
 tasc_chameleon,Advanced Cryptography,3,60,tasc_limelight_network,"research_databank:5,beta_core:2,gamma_core:4",none,BOGGLED_CHAMELEON:industry,2,4,false,,,Terraforming & Station Construction

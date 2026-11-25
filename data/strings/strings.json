@@ -269,6 +269,8 @@
     "genelab_income_modifier": "Genelab",
     "genelab_mesozoic_income_bonus": "Mesozoic Park income bonus: $bonus",
     "genelab_hydroponics_food_bonus": "Hydroponics food production bonus: +$bonus",
+    "genelab_cloning_organ_bonus": "Cloning harvested organ production bonus: +$bonus",
+    "genelab_cloning_growth_bonus": "Cloning population growth bonus: +$bonus",
     "genelab_mesozoic_income_reduced": "Mesozoic Park income bonus reduced by $percent due to a shortage of $commodity.",
     "genelab_pollution_stalled_shortage": "Pollution remediation progress is stalled due to a shortage of $commodity.",
     "genelab_lobster_stalled_shortage": "Lobster seeding progress is stalled due to a shortage of $commodity.",
@@ -654,6 +656,6 @@
     "name_boggledHydroponicsEnabled": "Enable Hydroponics",
     "tooltip_boggledHydroponicsEnabled": "Set this to false to disable construction of the Hydroponics building.\n\nThe Hydroponics building is an industry that can produce food without any farmland.",
     "name_boggledCloningEnabled": "Enable Cloning",
-    "tooltip_boggledCloningEnabled": "Set this to true to enable construction of the Cloning building.\n\nThe Cloning building is an industry that can produce harvested organs and increase colony growth."
+    "tooltip_boggledCloningEnabled": "Set this to false to disable construction of the Cloning building.\n\nThe Cloning building is an industry that can produce harvested organs and increase colony growth."
   }
 }

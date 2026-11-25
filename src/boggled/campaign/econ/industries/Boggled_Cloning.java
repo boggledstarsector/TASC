@@ -56,6 +56,10 @@ public class Boggled_Cloning extends BaseIndustry implements MarketImmigrationMo
             this.supply.clear();
             this.unapply();
         }
+        else
+        {
+            Boggled_Genelab.updateCloningOrganBonus(this);
+        }
     }
 
     public void modifyIncoming(MarketAPI market, PopulationComposition incoming)
@@ -67,7 +71,13 @@ public class Boggled_Cloning extends BaseIndustry implements MarketImmigrationMo
     }
 
     protected float getImmigrationBonus() {
-        return Math.max(0, market.getSize() - 1);
+        float bonus = Math.max(0, market.getSize() - 1);
+        Industry genelab = this.market.getIndustry(boggledTools.BoggledIndustries.genelabIndustryId);
+        if(genelab instanceof Boggled_Genelab)
+        {
+            bonus += ((Boggled_Genelab) genelab).getCloningPopulationGrowthBonus();
+        }
+        return bonus;
     }
 
     @Override
