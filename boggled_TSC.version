@@ -6,8 +6,8 @@
 	"changelogURL": "https://raw.githubusercontent.com/boggledstarsector/tasc/main/CHANGELOG.md",
     "modVersion":
     {
-        "major":10,
-        "minor":3,
+        "major":11,
+        "minor":0,
         "patch":0
     }
 }

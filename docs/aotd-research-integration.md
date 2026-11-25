@@ -624,8 +624,8 @@ TASC includes an alternate tech tree that provides **complete coverage** of all 
 **Default Tech Tree** (`data/campaign/aotd_tech_options.csv`):
 - Covers 13 buildings and the 4 station abilities
 - Research progression focused on core terraforming and station features
-- Includes Hydroponics (`tasc_hydroponics`) and Cloning (`tasc_cloning_technology`). Both ids match the complete tree. Cryosanctum stays on the complete tree only
-- Hydroponics and Cloning are enabled by default in LunaLib (`boggledHydroponicsEnabled`, `boggledCloningEnabled`). A saved LunaLib config keeps an older disabled value until that setting is changed
+- Includes Hydroponics (`tasc_hydroponics`) and Cloning (`tasc_cloning_technology`), using the same ids as the complete tree. Cryosanctum is only in the complete tree
+- Hydroponics and Cloning are enabled by default in LunaLib (`boggledHydroponicsEnabled`, `boggledCloningEnabled`)
 - Recommended for first-time players
 
 **Alternate Complete Tech Tree** (`data/campaign/custom_tech_trees/aotd_tech_options.csv`):

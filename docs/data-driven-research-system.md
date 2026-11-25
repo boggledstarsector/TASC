@@ -272,36 +272,9 @@ At worst, buildings become available (same as AoTD disabled). No crashes or brok
    - Removed constructor parameter (no hardcoded map)
    - Simplified loop logic (one research per ability)
 
-### Building Updates (21 files)
+### Industry research checks
 
-All TASC industries updated to use `isBuildingResearchComplete(this.getId())`:
-
-**Buildings WITH existing research when this migration landed (11 files)**:
-3. Boggled_Stellar_Reflector_Array.java
-4. Boggled_Atmosphere_Processor.java
-5. Boggled_Domed_Cities.java
-6. Boggled_Ismara_Sling.java
-7. Boggled_Genelab.java
-8. Boggled_Mesozoic_Park.java
-9. Boggled_Limelight_Network.java
-10. Boggled_CHAMELEON.java
-11. Boggled_Kletka_Simulator.java
-12. Boggled_Domain_Archaeology.java
-13. Boggled_Remnant_Station.java
-
-**Buildings WITHOUT existing research when this migration landed (10 files)**:
-14. Boggled_Planet_Cracker.java
-15. Boggled_Ouyang_Optimizer.java
-16. Boggled_Perihelion_Project.java
-17. Boggled_Cryosanctum.java
-18. Boggled_Hydroponics.java
-19. Boggled_Harmonic_Damper.java
-20. Boggled_Planetary_Agrav_Field.java
-21. Boggled_AI_Mining_Drones.java
-22. Boggled_Expand_Station.java
-23. Boggled_GPA.java (disabled)
-
-Hydroponics and Cloning were added to the default tree after this migration. The building lists near the top of this document are the current split.
+Every TASC industry uses `isBuildingResearchComplete(this.getId())`. The default-tree assignments are listed under "Buildings with Research in the Default Tree" above.
 
 ## CSV Data Files
 
