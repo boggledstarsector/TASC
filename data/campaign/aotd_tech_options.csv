@@ -22,6 +22,7 @@ tasc_station_restoration,Station Restoration Equipment,3,40,tasc_domain_excavati
 boggled_colonize_abandoned_station:ability",1,2,false,,,Terraforming & Station Construction
 tasc_astropolis_construction,Orbital Colonies,3,60,tasc_station_restoration,research_databank:5,none,"Allow building Astropolis type stations. You can add this ability to your ability bar once this technology is researched.:modifier
 boggled_construct_astropolis_station:ability",2,2,false,,,Terraforming & Station Construction
+tasc_hydroponics,Orbital Agriculture,3,70,tasc_astropolis_construction,research_databank:5,none,BOGGLED_HYDROPONICS:industry,3,1,false,,,Terraforming & Station Construction
 tasc_industrial_stations,Orbital Industrial Complex,3,90,tasc_astropolis_construction,research_databank:7,none,"Allow building Mining and Siphon type stations. You can add this ability to your ability bar once this technology is researched.:modifier
 boggled_construct_mining_station:ability
 boggled_construct_siphon_station:ability",3,2,false,,,Terraforming & Station Construction

@@ -268,6 +268,7 @@
     "genelab_lobster_stalled_disrupted": "Lobster seeding progress is stalled while the Genelab is disrupted.",
     "genelab_income_modifier": "Genelab",
     "genelab_mesozoic_income_bonus": "Mesozoic Park income bonus: $bonus",
+    "genelab_hydroponics_food_bonus": "Hydroponics food production bonus: +$bonus",
     "genelab_mesozoic_income_reduced": "Mesozoic Park income bonus reduced by $percent due to a shortage of $commodity.",
     "genelab_pollution_stalled_shortage": "Pollution remediation progress is stalled due to a shortage of $commodity.",
     "genelab_lobster_stalled_shortage": "Lobster seeding progress is stalled due to a shortage of $commodity.",
@@ -651,7 +652,7 @@
     "name_boggledRemnantStationEnabled": "Enable Remnant Station",
     "tooltip_boggledRemnantStationEnabled": "Set this to false to disable construction of the Remnant Station building.\n\nThe Remnant Station is a type of orbital station. It has only one level instead of three and it spawns remnant patrols allied with the player to protect the colony.",
     "name_boggledHydroponicsEnabled": "Enable Hydroponics",
-    "tooltip_boggledHydroponicsEnabled": "Set this to true to enable construction of the Hydroponics building.\n\nThe Hydroponics building is an industry that can produce food without any farmland.",
+    "tooltip_boggledHydroponicsEnabled": "Set this to false to disable construction of the Hydroponics building.\n\nThe Hydroponics building is an industry that can produce food without any farmland.",
     "name_boggledCloningEnabled": "Enable Cloning",
     "tooltip_boggledCloningEnabled": "Set this to true to enable construction of the Cloning building.\n\nThe Cloning building is an industry that can produce harvested organs and increase colony growth."
   }
