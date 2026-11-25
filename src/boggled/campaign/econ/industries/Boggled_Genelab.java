@@ -27,20 +27,16 @@ public class Boggled_Genelab extends BaseIndustry implements ShowBoggledTerrafor
     public final int MESOZOIC_PARK_INCOME_BONUS_ALPHA_CORE = 60;
 
     static final String HYDROPONICS_FOOD_BONUS_MOD = "genelab_hydroponics_food";
-    private static final int HYDROPONICS_FOOD_BONUS_OPERATIONAL = 2;
-    private static final int HYDROPONICS_FOOD_BONUS_ALPHA_CORE = 2;
-    private static final int HYDROPONICS_FOOD_BONUS_IMPROVED = 2;
-    private static final int HYDROPONICS_FOOD_BONUS_PER_SHORTAGE = 2;
+    private static final int HYDROPONICS_FOOD_BONUS_OPERATIONAL = 1;
+    private static final int HYDROPONICS_FOOD_BONUS_ALPHA_CORE = 1;
+    private static final int HYDROPONICS_FOOD_BONUS_IMPROVED = 1;
+    private static final int HYDROPONICS_FOOD_BONUS_PER_SHORTAGE = 1;
 
     static final String CLONING_ORGAN_BONUS_MOD = "genelab_cloning_organs";
     private static final int CLONING_ORGAN_BONUS_OPERATIONAL = 1;
     private static final int CLONING_ORGAN_BONUS_ALPHA_CORE = 1;
     private static final int CLONING_ORGAN_BONUS_IMPROVED = 1;
     private static final int CLONING_ORGAN_BONUS_PER_SHORTAGE = 1;
-    private static final int CLONING_GROWTH_BONUS_OPERATIONAL = 2;
-    private static final int CLONING_GROWTH_BONUS_ALPHA_CORE = 2;
-    private static final int CLONING_GROWTH_BONUS_IMPROVED = 2;
-    private static final int CLONING_GROWTH_BONUS_PER_SHORTAGE = 2;
 
     private int daysWithoutShortagePollution = 0;
     private int lastDayCheckedPollution = 0;
@@ -392,11 +388,6 @@ public class Boggled_Genelab extends BaseIndustry implements ShowBoggledTerrafor
             String organs = Integer.toString(organBonus);
             String organSentence = StringHelper.getString(StringHelper.INDUSTRIES, "genelab_cloning_organ_bonus", StringHelper.tokens("bonus", organs));
             StringHelper.applyHighlight(tooltip.addPara(organSentence, opad), organBonus > 0 ? highlight : bad, "+" + organs);
-
-            int growthBonus = getCloningPopulationGrowthBonus();
-            String growth = Integer.toString(growthBonus);
-            String growthSentence = StringHelper.getString(StringHelper.INDUSTRIES, "genelab_cloning_growth_bonus", StringHelper.tokens("bonus", growth));
-            StringHelper.applyHighlight(tooltip.addPara(growthSentence, opad), growthBonus > 0 ? highlight : bad, "+" + growth);
         }
 
         if(deficit.two > 0 && this.market.hasCondition("pollution") && mode != IndustryTooltipMode.ADD_INDUSTRY && mode != IndustryTooltipMode.QUEUED && !isBuilding())
@@ -523,11 +514,6 @@ public class Boggled_Genelab extends BaseIndustry implements ShowBoggledTerrafor
         return getScaledGenelabBonus(CLONING_ORGAN_BONUS_OPERATIONAL, CLONING_ORGAN_BONUS_ALPHA_CORE, CLONING_ORGAN_BONUS_IMPROVED, CLONING_ORGAN_BONUS_PER_SHORTAGE);
     }
 
-    public int getCloningPopulationGrowthBonus()
-    {
-        return getScaledGenelabBonus(CLONING_GROWTH_BONUS_OPERATIONAL, CLONING_GROWTH_BONUS_ALPHA_CORE, CLONING_GROWTH_BONUS_IMPROVED, CLONING_GROWTH_BONUS_PER_SHORTAGE);
-    }
-
     private int getScaledGenelabBonus(int operational, int alphaCore, int improved, int perShortage)
     {
         if(!this.isFunctional())
@@ -630,7 +616,7 @@ public class Boggled_Genelab extends BaseIndustry implements ShowBoggledTerrafor
         ArrayList<String> highlights = new ArrayList<>();
         highlights.add(bonus);
         String sentence = StringHelper.getString(StringHelper.INDUSTRIES, "genelab_ai_increases_mesozoic_income", StringHelper.tokens("prefix", pre, "bonus", bonus));
-        sentence = appendHydroponicsAndCloningBonuses(sentence, false, HYDROPONICS_FOOD_BONUS_ALPHA_CORE, CLONING_ORGAN_BONUS_ALPHA_CORE, CLONING_GROWTH_BONUS_ALPHA_CORE, highlights);
+        sentence = appendHydroponicsAndCloningBonuses(sentence, false, HYDROPONICS_FOOD_BONUS_ALPHA_CORE, CLONING_ORGAN_BONUS_ALPHA_CORE, highlights);
         if (mode == AICoreDescriptionMode.INDUSTRY_TOOLTIP) {
             CommoditySpecAPI coreSpec = Global.getSettings().getCommoditySpec(this.aiCoreId);
             TooltipMakerAPI text = tooltip.beginImageWithText(coreSpec.getIconName(), 48.0F);
@@ -735,14 +721,14 @@ public class Boggled_Genelab extends BaseIndustry implements ShowBoggledTerrafor
         {
             sentence = StringHelper.getString(StringHelper.INDUSTRIES, "genelab_increases_mesozoic_income", StringHelper.tokens("bonus", bonus));
         }
-        sentence = appendHydroponicsAndCloningBonuses(sentence, installed, HYDROPONICS_FOOD_BONUS_IMPROVED, CLONING_ORGAN_BONUS_IMPROVED, CLONING_GROWTH_BONUS_IMPROVED, highlights);
+        sentence = appendHydroponicsAndCloningBonuses(sentence, installed, HYDROPONICS_FOOD_BONUS_IMPROVED, CLONING_ORGAN_BONUS_IMPROVED, highlights);
         StringHelper.applyHighlight(info.addPara(sentence, 0f), highlight, highlights.toArray(new String[0]));
 
         info.addSpacer(opad);
         super.addImproveDesc(info, mode);
     }
 
-    private String appendHydroponicsAndCloningBonuses(String sentence, boolean installed, int foodBonus, int organBonus, int growthBonus, ArrayList<String> highlights)
+    private String appendHydroponicsAndCloningBonuses(String sentence, boolean installed, int foodBonus, int organBonus, ArrayList<String> highlights)
     {
         if(boggledTools.getBooleanSetting("boggledHydroponicsEnabled"))
         {
@@ -754,11 +740,9 @@ public class Boggled_Genelab extends BaseIndustry implements ShowBoggledTerrafor
         if(boggledTools.getBooleanSetting("boggledCloningEnabled"))
         {
             String organs = Integer.toString(organBonus);
-            String growth = Integer.toString(growthBonus);
             String key = installed ? "genelab_cloning_production_increased" : "genelab_increases_cloning_production";
-            sentence = sentence + " " + StringHelper.getString(StringHelper.INDUSTRIES, key, StringHelper.tokens("organs", organs, "growth", growth));
+            sentence = sentence + " " + StringHelper.getString(StringHelper.INDUSTRIES, key, StringHelper.tokens("organs", organs));
             highlights.add(organs);
-            highlights.add(growth);
         }
         return sentence;
     }

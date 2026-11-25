@@ -71,26 +71,7 @@ public class Boggled_Cloning extends BaseIndustry implements MarketImmigrationMo
     }
 
     protected float getImmigrationBonus() {
-        float bonus = getColonySizeGrowthBonus();
-        Integer genelabBonus = getGenelabGrowthBonus();
-        if(genelabBonus != null)
-        {
-            bonus += genelabBonus;
-        }
-        return bonus;
-    }
-
-    private int getColonySizeGrowthBonus() {
         return Math.max(0, market.getSize() - 1);
-    }
-
-    private Integer getGenelabGrowthBonus() {
-        Industry genelab = this.market.getIndustry(boggledTools.BoggledIndustries.genelabIndustryId);
-        if(genelab instanceof Boggled_Genelab)
-        {
-            return ((Boggled_Genelab) genelab).getCloningPopulationGrowthBonus();
-        }
-        return null;
     }
 
     @Override
@@ -138,18 +119,6 @@ public class Boggled_Cloning extends BaseIndustry implements MarketImmigrationMo
             String bonus = "+" + (int) getImmigrationBonus();
             String sentence = StringHelper.getString(StringHelper.INDUSTRIES, "cloning_population_growth", StringHelper.tokens("bonus", bonus));
             StringHelper.applyHighlight(tooltip.addPara(sentence, 10f), Misc.getHighlightColor(), bonus);
-
-            String sizeBonus = "+" + getColonySizeGrowthBonus();
-            String sizeLine = StringHelper.getString(StringHelper.INDUSTRIES, "cloning_population_growth_source", StringHelper.tokens("bonus", sizeBonus, "source", "colony size"));
-            StringHelper.applyHighlight(tooltip.addPara(sizeLine, 2f), Misc.getHighlightColor(), sizeBonus);
-
-            Integer genelabBonus = getGenelabGrowthBonus();
-            if(genelabBonus != null)
-            {
-                String genelabAmount = "+" + genelabBonus;
-                String genelabLine = StringHelper.getString(StringHelper.INDUSTRIES, "cloning_population_growth_source", StringHelper.tokens("bonus", genelabAmount, "source", "Genelab"));
-                StringHelper.applyHighlight(tooltip.addPara(genelabLine, 2f), Misc.getHighlightColor(), genelabAmount);
-            }
         }
     }
 
