@@ -37,8 +37,6 @@
             "domain_archaeology_jungle":"graphics/icons/industry/domain_archaeology_jungle.png",
             "domain_archaeology_desert":"graphics/icons/industry/domain_archaeology_desert.png",
             "domain_archaeology_tundra":"graphics/icons/industry/domain_archaeology_tundra.png",
-            "domain_archaeology_water":"graphics/icons/industry/domain_archaeology_water.png",
-            "domain_archaeology_toxic":"graphics/icons/industry/domain_archaeology_toxic.png",
 
             "stellar_mirror_condition":"graphics/icons/conditions/stellar_mirror.png",
             "stellar_shade_condition":"graphics/icons/conditions/stellar_shade.png",

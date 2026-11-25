@@ -27,10 +27,6 @@ public class Boggled_Domain_Archaeology extends BaseIndustry
                     Global.getSettings().getSpriteName("boggled", "domain_archaeology_desert");
             case boggledTools.TascPlanetTypes.frozenPlanetId, boggledTools.TascPlanetTypes.tundraPlanetId ->
                     Global.getSettings().getSpriteName("boggled", "domain_archaeology_tundra");
-            case boggledTools.TascPlanetTypes.waterPlanetId ->
-                    Global.getSettings().getSpriteName("boggled", "domain_archaeology_water");
-            case boggledTools.TascPlanetTypes.gasGiantPlanetId, boggledTools.TascPlanetTypes.toxicPlanetId ->
-                    Global.getSettings().getSpriteName("boggled", "domain_archaeology_toxic");
             default -> this.getSpec().getImageName();
         };
     }
