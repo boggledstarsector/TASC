@@ -231,7 +231,7 @@
     "chameleon_stability_increased": "Stability increased by $bonus.",
     "chameleon_increases_stability": "Increases stability by $bonus.",
     "cloning_population_growth": "$bonus population growth",
-    "cloning_population_growth_source": "           $bonus ($source)",
+    "cloning_population_growth_source": "      $bonus ($source)",
     "domain_archaeology_requires_ruins": "Requires ruins",
     "domed_cities_name_sky": "Sky Cities",
     "domed_cities_name_seafloor": "Seafloor Cities",

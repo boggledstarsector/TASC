@@ -627,16 +627,17 @@ public class Boggled_Genelab extends BaseIndustry implements ShowBoggledTerrafor
         }
 
         String bonus = MESOZOIC_PARK_INCOME_BONUS_ALPHA_CORE + "%";
+        ArrayList<String> highlights = new ArrayList<>();
+        highlights.add(bonus);
         String sentence = StringHelper.getString(StringHelper.INDUSTRIES, "genelab_ai_increases_mesozoic_income", StringHelper.tokens("prefix", pre, "bonus", bonus));
+        sentence = appendHydroponicsAndCloningBonuses(sentence, false, HYDROPONICS_FOOD_BONUS_ALPHA_CORE, CLONING_ORGAN_BONUS_ALPHA_CORE, CLONING_GROWTH_BONUS_ALPHA_CORE, highlights);
         if (mode == AICoreDescriptionMode.INDUSTRY_TOOLTIP) {
             CommoditySpecAPI coreSpec = Global.getSettings().getCommoditySpec(this.aiCoreId);
             TooltipMakerAPI text = tooltip.beginImageWithText(coreSpec.getIconName(), 48.0F);
-            StringHelper.applyHighlight(text.addPara(sentence, 0.0F), highlight, bonus);
-            addHydroponicsAndCloningBonusLines(text, 3f, false, HYDROPONICS_FOOD_BONUS_ALPHA_CORE, CLONING_ORGAN_BONUS_ALPHA_CORE, CLONING_GROWTH_BONUS_ALPHA_CORE);
+            StringHelper.applyHighlight(text.addPara(sentence, 0.0F), highlight, highlights.toArray(new String[0]));
             tooltip.addImageWithText(opad);
         } else {
-            StringHelper.applyHighlight(tooltip.addPara(sentence, opad), highlight, bonus);
-            addHydroponicsAndCloningBonusLines(tooltip, 3f, false, HYDROPONICS_FOOD_BONUS_ALPHA_CORE, CLONING_ORGAN_BONUS_ALPHA_CORE, CLONING_GROWTH_BONUS_ALPHA_CORE);
+            StringHelper.applyHighlight(tooltip.addPara(sentence, opad), highlight, highlights.toArray(new String[0]));
         }
     }
 
@@ -723,41 +724,43 @@ public class Boggled_Genelab extends BaseIndustry implements ShowBoggledTerrafor
 
         String bonus = MESOZOIC_PARK_INCOME_BONUS_IMPROVEMENT + "%";
         boolean installed = mode == ImprovementDescriptionMode.INDUSTRY_TOOLTIP;
+        ArrayList<String> highlights = new ArrayList<>();
+        highlights.add(bonus);
+        String sentence;
         if (installed)
         {
-            String sentence = StringHelper.getString(StringHelper.INDUSTRIES, "genelab_mesozoic_income_increased", StringHelper.tokens("bonus", bonus));
-            StringHelper.applyHighlight(info.addPara(sentence, 0f), highlight, bonus);
+            sentence = StringHelper.getString(StringHelper.INDUSTRIES, "genelab_mesozoic_income_increased", StringHelper.tokens("bonus", bonus));
         }
         else
         {
-            String sentence = StringHelper.getString(StringHelper.INDUSTRIES, "genelab_increases_mesozoic_income", StringHelper.tokens("bonus", bonus));
-            StringHelper.applyHighlight(info.addPara(sentence, 0f), highlight, bonus);
+            sentence = StringHelper.getString(StringHelper.INDUSTRIES, "genelab_increases_mesozoic_income", StringHelper.tokens("bonus", bonus));
         }
-
-        addHydroponicsAndCloningBonusLines(info, 3f, installed, HYDROPONICS_FOOD_BONUS_IMPROVED, CLONING_ORGAN_BONUS_IMPROVED, CLONING_GROWTH_BONUS_IMPROVED);
+        sentence = appendHydroponicsAndCloningBonuses(sentence, installed, HYDROPONICS_FOOD_BONUS_IMPROVED, CLONING_ORGAN_BONUS_IMPROVED, CLONING_GROWTH_BONUS_IMPROVED, highlights);
+        StringHelper.applyHighlight(info.addPara(sentence, 0f), highlight, highlights.toArray(new String[0]));
 
         info.addSpacer(opad);
         super.addImproveDesc(info, mode);
     }
 
-    private void addHydroponicsAndCloningBonusLines(TooltipMakerAPI tooltip, float pad, boolean installed, int foodBonus, int organBonus, int growthBonus)
+    private String appendHydroponicsAndCloningBonuses(String sentence, boolean installed, int foodBonus, int organBonus, int growthBonus, ArrayList<String> highlights)
     {
-        Color highlight = Misc.getHighlightColor();
         if(boggledTools.getBooleanSetting("boggledHydroponicsEnabled"))
         {
             String bonus = Integer.toString(foodBonus);
             String key = installed ? "genelab_hydroponics_food_increased" : "genelab_increases_hydroponics_food";
-            String sentence = StringHelper.getString(StringHelper.INDUSTRIES, key, StringHelper.tokens("bonus", bonus));
-            StringHelper.applyHighlight(tooltip.addPara(sentence, pad), highlight, bonus);
+            sentence = sentence + " " + StringHelper.getString(StringHelper.INDUSTRIES, key, StringHelper.tokens("bonus", bonus));
+            highlights.add(bonus);
         }
         if(boggledTools.getBooleanSetting("boggledCloningEnabled"))
         {
             String organs = Integer.toString(organBonus);
             String growth = Integer.toString(growthBonus);
             String key = installed ? "genelab_cloning_production_increased" : "genelab_increases_cloning_production";
-            String sentence = StringHelper.getString(StringHelper.INDUSTRIES, key, StringHelper.tokens("organs", organs, "growth", growth));
-            StringHelper.applyHighlight(tooltip.addPara(sentence, pad), highlight, organs, growth);
+            sentence = sentence + " " + StringHelper.getString(StringHelper.INDUSTRIES, key, StringHelper.tokens("organs", organs, "growth", growth));
+            highlights.add(organs);
+            highlights.add(growth);
         }
+        return sentence;
     }
 
     @Override
