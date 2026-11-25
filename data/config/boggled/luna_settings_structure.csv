@@ -97,7 +97,7 @@ boggledDomainTechObjectivesUpgradeRelationshipImpact,Int,5,,0,25,Domain-tech Con
 boggledStableLocationDomainTechStructureCostHeavyMachinery,Int,50,,0,250,Domain-tech Content
 boggledStableLocationDomainTechStructureCostMetals,Int,200,,0,1000,Domain-tech Content
 boggledStableLocationDomainTechStructureCostTransplutonics,Int,20,,0,100,Domain-tech Content
-boggledStableLocationDomainTechStructureCostDomainEraArtifacts,Int,20,,0,100,Domain-tech Content
+boggledStableLocationDomainTechStructureCostDomainGradeParts,Int,10,,0,100,Domain-tech Content
 boggled_InactiveGateHeader,Header,,,,,Domain-tech Content
 boggledDomainTechInactiveGateConstructionEnabled,Boolean,True,,,,Domain-tech Content
 boggledDomainTechInactiveGateConstructionMainQuestCompletionRequired,Boolean,True,,,,Domain-tech Content
@@ -106,7 +106,7 @@ boggledMarketSizeRequiredToBuildInactiveGate,Int,5,,1,10,Domain-tech Content
 boggledStableLocationGateCostHeavyMachinery,Int,500,,0,2500,Domain-tech Content
 boggledStableLocationGateCostMetals,Int,2000,,0,10000,Domain-tech Content
 boggledStableLocationGateCostTransplutonics,Int,200,,0,1000,Domain-tech Content
-boggledStableLocationGateCostDomainEraArtifacts,Int,200,,0,1000,Domain-tech Content
+boggledStableLocationGateCostDomainGradeParts,Int,200,,0,1000,Domain-tech Content
 boggledRemnantStationEnabled,Boolean,True,,,,Miscellaneous
-boggledHydroponicsEnabled,Boolean,False,,,,Miscellaneous
-boggledCloningEnabled,Boolean,False,,,,Miscellaneous
+boggledHydroponicsEnabled,Boolean,True,,,,Miscellaneous
+boggledCloningEnabled,Boolean,True,,,,Miscellaneous

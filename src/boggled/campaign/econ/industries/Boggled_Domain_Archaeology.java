@@ -2,6 +2,7 @@ package boggled.campaign.econ.industries;
 
 import java.lang.String;
 
+import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.impl.campaign.econ.impl.BaseIndustry;
 import com.fs.starfarer.api.impl.campaign.ids.Conditions;
@@ -10,6 +11,26 @@ import boggled.campaign.econ.boggledTools;
 
 public class Boggled_Domain_Archaeology extends BaseIndustry
 {
+    @Override
+    public String getCurrentImage()
+    {
+        if(this.market == null)
+        {
+            return this.getSpec().getImageName();
+        }
+
+        String planetType = boggledTools.getTascPlanetType(this.market.getPlanetEntity());
+        return switch (planetType) {
+            case boggledTools.TascPlanetTypes.junglePlanetId, boggledTools.TascPlanetTypes.terranPlanetId ->
+                    Global.getSettings().getSpriteName("boggled", "domain_archaeology_jungle");
+            case boggledTools.TascPlanetTypes.desertPlanetId, boggledTools.TascPlanetTypes.volcanicPlanetId ->
+                    Global.getSettings().getSpriteName("boggled", "domain_archaeology_desert");
+            case boggledTools.TascPlanetTypes.frozenPlanetId, boggledTools.TascPlanetTypes.tundraPlanetId ->
+                    Global.getSettings().getSpriteName("boggled", "domain_archaeology_tundra");
+            default -> this.getSpec().getImageName();
+        };
+    }
+
     @Override
     public boolean canBeDisrupted() {
         return true;

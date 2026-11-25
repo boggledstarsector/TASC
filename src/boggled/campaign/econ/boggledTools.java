@@ -72,7 +72,6 @@ public class boggledTools {
         public static final String boggledDomainTechContentEnabled = "boggledDomainTechContentEnabled";
         public static final String enableAIMiningDronesStructure = "boggledEnableAIMiningDronesStructure";
         public static final String domainTechContentEnabled = "boggledDomainTechContentEnabled";
-        public static final String domainTechCraftingEnabled = "boggledDomainTechCraftingEnabled";
         public static final String domainArchaeologyEnabled = "boggledDomainArchaeologyEnabled";
         public static final String CHAMELEONEnabled = "boggledCHAMELEONEnabled";
         public static final String cloningEnabled = "boggledCloningEnabled";
@@ -105,9 +104,6 @@ public class boggledTools {
         public static final String miningStationModerateOre = "boggledMiningStationModerateOre";
         public static final String miningStationSparseOre = "boggledMiningStationSparseOre";
 
-        public static final String domainTechCraftingArtifactCost = "boggledDomainTechCraftingArtifactCost";
-        public static final String domainTechCraftingStoryPointCost = "boggledDomainTechCraftingStoryPointCost";
-
         public static final String miningStationLinkToResourceBelts = "boggledMiningStationLinkToResourceBelts";
         public static final String miningStationStaticAmount = "boggledMiningStationStaticAmount";
 
@@ -119,12 +115,12 @@ public class boggledTools {
         public static final String stableLocationGateCostHeavyMachinery = "boggledStableLocationGateCostHeavyMachinery";
         public static final String stableLocationGateCostMetals = "boggledStableLocationGateCostMetals";
         public static final String stableLocationGateCostTransplutonics = "boggledStableLocationGateCostTransplutonics";
-        public static final String stableLocationGateCostDomainEraArtifacts = "boggledStableLocationGateCostDomainEraArtifacts";
+        public static final String stableLocationGateCostDomainGradeParts = "boggledStableLocationGateCostDomainGradeParts";
 
         public static final String stableLocationDomainTechStructureCostHeavyMachinery = "boggledStableLocationDomainTechStructureCostHeavyMachinery";
         public static final String stableLocationDomainTechStructureCostMetals = "boggledStableLocationDomainTechStructureCostMetals";
         public static final String stableLocationDomainTechStructureCostTransplutonics = "boggledStableLocationDomainTechStructureCostTransplutonics";
-        public static final String stableLocationDomainTechStructureCostDomainEraArtifacts = "boggledStableLocationDomainTechStructureCostDomainEraArtifacts";
+        public static final String stableLocationDomainTechStructureCostDomainGradeParts = "boggledStableLocationDomainTechStructureCostDomainGradeParts";
 
         public static final String marketSizeRequiredToBuildInactiveGate = "boggledMarketSizeRequiredToBuildInactiveGate";
 
@@ -181,7 +177,7 @@ public class boggledTools {
     }
 
     public static class BoggledCommodities {
-        public static final String domainArtifacts = "domain_artifacts";
+        public static final String hyperlatticeAlloys = "hyperlattice_alloys";
     }
 
     public static class BoggledIndustries {
@@ -2395,20 +2391,16 @@ public class boggledTools {
             ret.addAll(asList(
                     boggledTools.getIntSetting(BoggledSettings.stableLocationGateCostHeavyMachinery),
                     boggledTools.getIntSetting(BoggledSettings.stableLocationGateCostMetals),
-                    boggledTools.getIntSetting(BoggledSettings.stableLocationGateCostTransplutonics)
+                    boggledTools.getIntSetting(BoggledSettings.stableLocationGateCostTransplutonics),
+                    boggledTools.getIntSetting(BoggledSettings.stableLocationGateCostDomainGradeParts)
             ));
-            if (boggledTools.getBooleanSetting(BoggledSettings.domainArchaeologyEnabled)) {
-                ret.add(boggledTools.getIntSetting(BoggledSettings.stableLocationGateCostDomainEraArtifacts));
-            }
         } else {
             ret.addAll(asList(
                     boggledTools.getIntSetting(BoggledSettings.stableLocationDomainTechStructureCostHeavyMachinery),
                     boggledTools.getIntSetting(BoggledSettings.stableLocationDomainTechStructureCostMetals),
-                    boggledTools.getIntSetting(BoggledSettings.stableLocationDomainTechStructureCostTransplutonics)
+                    boggledTools.getIntSetting(BoggledSettings.stableLocationDomainTechStructureCostTransplutonics),
+                    boggledTools.getIntSetting(BoggledSettings.stableLocationDomainTechStructureCostDomainGradeParts)
             ));
-            if (boggledTools.getBooleanSetting(BoggledSettings.domainArchaeologyEnabled)) {
-                ret.add(boggledTools.getIntSetting(BoggledSettings.stableLocationDomainTechStructureCostDomainEraArtifacts));
-            }
         }
         int[] ret2 = new int[ret.size()];
         Iterator<Integer> it = ret.iterator();
@@ -2704,7 +2696,7 @@ public class boggledTools {
         }
     }
 
-    public static boolean domainEraArtifactDemandEnabled()
+    public static boolean hyperlatticeAlloysDemandEnabled()
     {
         if(getBooleanSetting(BoggledSettings.domainTechContentEnabled) && getBooleanSetting(BoggledSettings.domainArchaeologyEnabled))
         {

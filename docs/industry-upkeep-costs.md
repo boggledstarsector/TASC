@@ -39,7 +39,7 @@ These industries override the vanilla behavior and set fixed construction cost a
 - Hot: 2x upkeep multiplier
 - Very Hot: 4x upkeep multiplier
 
-**Boggled_Remnant_Station**: Set to size 7 to represent a full star fortress equivalent, with special demands (7 supplies, 4 domain artifacts if enabled).
+**Boggled_Remnant_Station**: Set to size 7 to represent a full star fortress equivalent, with special demands (7 supplies, 4 hyperlattice alloys if enabled).
 
 ---
 

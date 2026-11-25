@@ -34,6 +34,10 @@
             "mesozoic_park_jungle":"graphics/icons/industry/mesozoic_park_jungle.png",
             "mesozoic_park_desert":"graphics/icons/industry/mesozoic_park_desert.png",
 
+            "domain_archaeology_jungle":"graphics/icons/industry/domain_archaeology_jungle.png",
+            "domain_archaeology_desert":"graphics/icons/industry/domain_archaeology_desert.png",
+            "domain_archaeology_tundra":"graphics/icons/industry/domain_archaeology_tundra.png",
+
             "stellar_mirror_condition":"graphics/icons/conditions/stellar_mirror.png",
             "stellar_shade_condition":"graphics/icons/conditions/stellar_shade.png",
         },

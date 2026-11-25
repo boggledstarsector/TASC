@@ -22,7 +22,7 @@ public class Boggled_Hydroponics extends BaseIndustry
             this.demand("organics", size - 2);
         }
         this.demand("heavy_machinery", size);
-        this.supply("food", size);
+        this.supply("food", size - 2);
 
         Pair<String, Integer> deficit = null;
         if (!this.market.hasCondition("habitable")) {
@@ -39,6 +39,10 @@ public class Boggled_Hydroponics extends BaseIndustry
         {
             this.supply.clear();
             this.unapply();
+        }
+        else
+        {
+            Boggled_Genelab.updateHydroponicsFoodBonus(this);
         }
     }
 

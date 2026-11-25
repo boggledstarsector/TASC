@@ -81,9 +81,9 @@ Returns `false` if:
 
 ## Building Updates
 
-All 21 TASC industries now use `isBuildingResearchComplete(this.getId())` instead of hardcoded research checks.
+Every TASC industry class uses `isBuildingResearchComplete(this.getId())` instead of hardcoded research checks.
 
-### Buildings with Existing Research (11 files)
+### Buildings with Research in the Default Tree (13 files)
 
 1. Boggled_Stellar_Reflector_Array - `tasc_light_manipulation`
 2. Boggled_Atmosphere_Processor - `tasc_atmosphere_manipulation`
@@ -96,6 +96,8 @@ All 21 TASC industries now use `isBuildingResearchComplete(this.getId())` instea
 9. Boggled_Kletka_Simulator - `tasc_remnant_algorithms`
 10. Boggled_Domain_Archaeology - `tasc_domain_excavation`
 11. Boggled_Remnant_Station - `tasc_remnant_station`
+12. Boggled_Hydroponics - `tasc_hydroponics`
+13. Boggled_Cloning - `tasc_cloning_technology`
 
 ### Abilities with Research Requirements (4 abilities)
 
@@ -106,19 +108,18 @@ TASC abilities also use the data-driven research system. Ability IDs are specifi
 3. **boggled_construct_mining_station** - Unlocked by `tasc_industrial_stations`
 4. **boggled_construct_siphon_station** - Unlocked by `tasc_industrial_stations`
 
-### Buildings without Research Requirements (10 files)
+### Buildings without a Default-Tree Entry (9 files)
 
-These buildings now have research checks but no entries in CSV (yet):
+These buildings call `isBuildingResearchComplete`, but the default `aotd_tech_options.csv` has no reward for them, so they stay available while AoTD is enabled. The complete tree adds an entry for each of these except Expand Station and GPA:
 1. Boggled_Planet_Cracker
 2. Boggled_Ouyang_Optimizer
 3. Boggled_Perihelion_Project
 4. Boggled_Cryosanctum
-5. Boggled_Hydroponics
-6. Boggled_Harmonic_Damper
-7. Boggled_Planetary_Agrav_Field
-8. Boggled_AI_Mining_Drones
-9. Boggled_Expand_Station (removed from research system)
-10. Boggled_GPA (disabled, returns false)
+5. Boggled_Harmonic_Damper
+6. Boggled_Planetary_Agrav_Field
+7. Boggled_AI_Mining_Drones
+8. Boggled_Expand_Station (no research entry in either tree)
+9. Boggled_GPA (disabled, returns false)
 
 ## CSV File Format
 
@@ -271,42 +272,17 @@ At worst, buildings become available (same as AoTD disabled). No crashes or brok
    - Removed constructor parameter (no hardcoded map)
    - Simplified loop logic (one research per ability)
 
-### Building Updates (21 files)
+### Industry research checks
 
-All TASC industries updated to use `isBuildingResearchComplete(this.getId())`:
-
-**Buildings WITH existing research (11 files)**:
-3. Boggled_Stellar_Reflector_Array.java
-4. Boggled_Atmosphere_Processor.java
-5. Boggled_Domed_Cities.java
-6. Boggled_Ismara_Sling.java
-7. Boggled_Genelab.java
-8. Boggled_Mesozoic_Park.java
-9. Boggled_Limelight_Network.java
-10. Boggled_CHAMELEON.java
-11. Boggled_Kletka_Simulator.java
-12. Boggled_Domain_Archaeology.java
-13. Boggled_Remnant_Station.java
-
-**Buildings WITHOUT existing research (10 files)**:
-14. Boggled_Planet_Cracker.java
-15. Boggled_Ouyang_Optimizer.java
-16. Boggled_Perihelion_Project.java
-17. Boggled_Cryosanctum.java
-18. Boggled_Hydroponics.java
-19. Boggled_Harmonic_Damper.java
-20. Boggled_Planetary_Agrav_Field.java
-21. Boggled_AI_Mining_Drones.java
-22. Boggled_Expand_Station.java
-23. Boggled_GPA.java (disabled)
+Every TASC industry uses `isBuildingResearchComplete(this.getId())`. The default-tree assignments are listed under "Buildings with Research in the Default Tree" above.
 
 ## CSV Data Files
 
 **Default Tech Tree:**
-- **data/campaign/aotd_tech_options.csv** - Contains TASC research project definitions with building and ability unlocks (11 buildings, default coverage)
+- **data/campaign/aotd_tech_options.csv** - Contains TASC research project definitions with building and ability unlocks (13 buildings)
 
 **Alternate Complete Tech Tree:**
-- **data/campaign/custom_tech_trees/aotd_tech_options.csv** - Alternate tech tree with complete coverage of all 21 buildings and 4 abilities
+- **data/campaign/custom_tech_trees/aotd_tech_options.csv** - Alternate tech tree. It keeps the default projects and adds the 7 buildings the default tree does not gate
 - **data/campaign/custom_tech_trees/README.md** - Instructions for switching to the alternate tech tree
 
 See the "Alternate Tech Tree" section in `aotd-research-integration.md` for details on the differences between default and complete trees.
@@ -318,7 +294,7 @@ See the "Alternate Tech Tree" section in `aotd-research-integration.md` for deta
 - Research IDs in CSV are case-sensitive when used with `isResearched()`
 - The `rewards` column parsing supports multiple entries separated by `\n`
 - Buildings/abilities not listed in any research project's rewards are automatically available
-- All 21 TASC buildings now use the unified research checking system
+- Every TASC building uses the unified research checking system
 - All 4 TASC station construction abilities now use the unified research checking system
 - The system is opt-in: buildings/abilities without research entries remain available
 - The `BoggledAotDEveryFrameScript` runs every frame and checks research status

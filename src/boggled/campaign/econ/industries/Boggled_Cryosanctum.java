@@ -21,8 +21,8 @@ public class Boggled_Cryosanctum extends Cryosanctum
         if (!this.market.hasCondition("habitable")) {
             this.demand("organics", size - 3);
         }
-        if(boggledTools.domainEraArtifactDemandEnabled()) {
-            this.demand("domain_artifacts", size - 3);
+        if(boggledTools.hyperlatticeAlloysDemandEnabled()) {
+            this.demand("hyperlattice_alloys", size - 3);
         }
         this.supply("organs", size);
 
@@ -31,8 +31,8 @@ public class Boggled_Cryosanctum extends Cryosanctum
         if (!this.market.hasCondition("habitable")) {
             deficitCommodities.add("organics");
         }
-        if(boggledTools.domainEraArtifactDemandEnabled()) {
-            deficitCommodities.add("domain_artifacts");
+        if(boggledTools.hyperlatticeAlloysDemandEnabled()) {
+            deficitCommodities.add("hyperlattice_alloys");
         }
 
         Pair<String, Integer> deficit = this.getMaxDeficit(deficitCommodities.toArray(new String[0]));
