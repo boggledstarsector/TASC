@@ -108,5 +108,5 @@ boggledStableLocationGateCostMetals,Int,2000,,0,10000,Domain-tech Content
 boggledStableLocationGateCostTransplutonics,Int,200,,0,1000,Domain-tech Content
 boggledStableLocationGateCostDomainGradeParts,Int,200,,0,1000,Domain-tech Content
 boggledRemnantStationEnabled,Boolean,True,,,,Miscellaneous
-boggledHydroponicsEnabled,Boolean,False,,,,Miscellaneous
-boggledCloningEnabled,Boolean,False,,,,Miscellaneous
+boggledHydroponicsEnabled,Boolean,True,,,,Miscellaneous
+boggledCloningEnabled,Boolean,True,,,,Miscellaneous

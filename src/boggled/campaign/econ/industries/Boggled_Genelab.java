@@ -26,6 +26,18 @@ public class Boggled_Genelab extends BaseIndustry implements ShowBoggledTerrafor
     public final int MESOZOIC_PARK_INCOME_BONUS_BETA_CORE = 30;
     public final int MESOZOIC_PARK_INCOME_BONUS_ALPHA_CORE = 60;
 
+    static final String HYDROPONICS_FOOD_BONUS_MOD = "genelab_hydroponics_food";
+    private static final int HYDROPONICS_FOOD_BONUS_OPERATIONAL = 1;
+    private static final int HYDROPONICS_FOOD_BONUS_ALPHA_CORE = 1;
+    private static final int HYDROPONICS_FOOD_BONUS_IMPROVED = 1;
+    private static final int HYDROPONICS_FOOD_BONUS_PER_SHORTAGE = 1;
+
+    static final String CLONING_ORGAN_BONUS_MOD = "genelab_cloning_organs";
+    private static final int CLONING_ORGAN_BONUS_OPERATIONAL = 1;
+    private static final int CLONING_ORGAN_BONUS_ALPHA_CORE = 1;
+    private static final int CLONING_ORGAN_BONUS_IMPROVED = 1;
+    private static final int CLONING_ORGAN_BONUS_PER_SHORTAGE = 1;
+
     private int daysWithoutShortagePollution = 0;
     private int lastDayCheckedPollution = 0;
     private final int requiredDaysToRemovePollution = boggledTools.getIntSetting("boggledGenelabPollutionRemediationDaysToFinish");
@@ -235,6 +247,18 @@ public class Boggled_Genelab extends BaseIndustry implements ShowBoggledTerrafor
         {
             park.getIncome().modifyMult("ind_genelab", ((float) (getGenelabMesozoicParkIncomeBonus() + 100)) / 100.0f, StringHelper.getString(StringHelper.INDUSTRIES, "genelab_income_modifier"));
         }
+
+        Industry hydroponics = this.market.getIndustry("BOGGLED_HYDROPONICS");
+        if(hydroponics instanceof Boggled_Hydroponics)
+        {
+            updateHydroponicsFoodBonus((Boggled_Hydroponics) hydroponics);
+        }
+
+        Industry cloning = this.market.getIndustry("BOGGLED_CLONING");
+        if(cloning instanceof Boggled_Cloning)
+        {
+            updateCloningOrganBonus((Boggled_Cloning) cloning);
+        }
     }
 
     @Override
@@ -245,6 +269,9 @@ public class Boggled_Genelab extends BaseIndustry implements ShowBoggledTerrafor
             Boggled_Mesozoic_Park park = (Boggled_Mesozoic_Park) this.market.getIndustry("BOGGLED_MESOZOIC_PARK");
             park.getIncome().unmodifyMult("ind_genelab");
         }
+
+        removeHydroponicsFoodBonus();
+        removeCloningOrganBonus();
 
         super.unapply();
     }
@@ -347,6 +374,22 @@ public class Boggled_Genelab extends BaseIndustry implements ShowBoggledTerrafor
             }
         }
 
+        if(boggledTools.getBooleanSetting("boggledHydroponicsEnabled") && mode != IndustryTooltipMode.QUEUED && !isBuilding() && this.isFunctional())
+        {
+            int foodBonus = getHydroponicsFoodProductionBonus();
+            String bonus = Integer.toString(foodBonus);
+            String bonusSentence = StringHelper.getString(StringHelper.INDUSTRIES, "genelab_hydroponics_food_bonus", StringHelper.tokens("bonus", bonus));
+            StringHelper.applyHighlight(tooltip.addPara(bonusSentence, opad), foodBonus > 0 ? highlight : bad, "+" + bonus);
+        }
+
+        if(boggledTools.getBooleanSetting("boggledCloningEnabled") && mode != IndustryTooltipMode.QUEUED && !isBuilding() && this.isFunctional())
+        {
+            int organBonus = getCloningOrganProductionBonus();
+            String organs = Integer.toString(organBonus);
+            String organSentence = StringHelper.getString(StringHelper.INDUSTRIES, "genelab_cloning_organ_bonus", StringHelper.tokens("bonus", organs));
+            StringHelper.applyHighlight(tooltip.addPara(organSentence, opad), organBonus > 0 ? highlight : bad, "+" + organs);
+        }
+
         if(deficit.two > 0 && this.market.hasCondition("pollution") && mode != IndustryTooltipMode.ADD_INDUSTRY && mode != IndustryTooltipMode.QUEUED && !isBuilding())
         {
             String commodity = boggledTools.getCommidityNameFromId(deficit.one);
@@ -393,6 +436,155 @@ public class Boggled_Genelab extends BaseIndustry implements ShowBoggledTerrafor
         return Math.max(improveBonus, 0);
     }
 
+    public int getHydroponicsFoodProductionBonus()
+    {
+        if(!this.isFunctional())
+        {
+            return 0;
+        }
+
+        int bonus = HYDROPONICS_FOOD_BONUS_OPERATIONAL;
+        if(Commodities.ALPHA_CORE.equals(this.aiCoreId))
+        {
+            bonus += HYDROPONICS_FOOD_BONUS_ALPHA_CORE;
+        }
+        if(this.isImproved())
+        {
+            bonus += HYDROPONICS_FOOD_BONUS_IMPROVED;
+        }
+
+        Pair<String, Integer> deficit = getGenelabDeficit();
+        bonus -= HYDROPONICS_FOOD_BONUS_PER_SHORTAGE * deficit.two;
+
+        return Math.max(bonus, 0);
+    }
+
+    static void updateHydroponicsFoodBonus(Boggled_Hydroponics hydroponics)
+    {
+        int bonus = 0;
+        Industry genelab = hydroponics.getMarket().getIndustry(boggledTools.BoggledIndustries.genelabIndustryId);
+        if(genelab instanceof Boggled_Genelab)
+        {
+            bonus = ((Boggled_Genelab) genelab).getHydroponicsFoodProductionBonus();
+        }
+
+        MutableCommodityQuantity food = hydroponics.getSupply().get(Commodities.FOOD);
+        if(!hydroponics.isFunctional())
+        {
+            if(food != null)
+            {
+                food.getQuantity().unmodifyFlat(HYDROPONICS_FOOD_BONUS_MOD);
+            }
+            return;
+        }
+
+        if(bonus <= 0)
+        {
+            if(food != null)
+            {
+                food.getQuantity().unmodifyFlat(HYDROPONICS_FOOD_BONUS_MOD);
+            }
+            return;
+        }
+
+        if(food == null)
+        {
+            food = hydroponics.getSupply(Commodities.FOOD);
+        }
+        food.getQuantity().modifyFlat(HYDROPONICS_FOOD_BONUS_MOD, bonus, StringHelper.getString(StringHelper.INDUSTRIES, "genelab_income_modifier"));
+    }
+
+    private void removeHydroponicsFoodBonus()
+    {
+        Industry industry = this.market.getIndustry("BOGGLED_HYDROPONICS");
+        if(!(industry instanceof Boggled_Hydroponics))
+        {
+            return;
+        }
+
+        MutableCommodityQuantity food = ((Boggled_Hydroponics) industry).getSupply().get(Commodities.FOOD);
+        if(food != null)
+        {
+            food.getQuantity().unmodifyFlat(HYDROPONICS_FOOD_BONUS_MOD);
+        }
+    }
+
+    public int getCloningOrganProductionBonus()
+    {
+        return getScaledGenelabBonus(CLONING_ORGAN_BONUS_OPERATIONAL, CLONING_ORGAN_BONUS_ALPHA_CORE, CLONING_ORGAN_BONUS_IMPROVED, CLONING_ORGAN_BONUS_PER_SHORTAGE);
+    }
+
+    private int getScaledGenelabBonus(int operational, int alphaCore, int improved, int perShortage)
+    {
+        if(!this.isFunctional())
+        {
+            return 0;
+        }
+
+        int bonus = operational;
+        if(Commodities.ALPHA_CORE.equals(this.aiCoreId))
+        {
+            bonus += alphaCore;
+        }
+        if(this.isImproved())
+        {
+            bonus += improved;
+        }
+
+        bonus -= perShortage * getGenelabDeficit().two;
+        return Math.max(bonus, 0);
+    }
+
+    static void updateCloningOrganBonus(Boggled_Cloning cloning)
+    {
+        int bonus = 0;
+        Industry genelab = cloning.getMarket().getIndustry(boggledTools.BoggledIndustries.genelabIndustryId);
+        if(genelab instanceof Boggled_Genelab)
+        {
+            bonus = ((Boggled_Genelab) genelab).getCloningOrganProductionBonus();
+        }
+
+        MutableCommodityQuantity organs = cloning.getSupply().get(Commodities.ORGANS);
+        if(!cloning.isFunctional())
+        {
+            if(organs != null)
+            {
+                organs.getQuantity().unmodifyFlat(CLONING_ORGAN_BONUS_MOD);
+            }
+            return;
+        }
+
+        if(bonus <= 0)
+        {
+            if(organs != null)
+            {
+                organs.getQuantity().unmodifyFlat(CLONING_ORGAN_BONUS_MOD);
+            }
+            return;
+        }
+
+        if(organs == null)
+        {
+            organs = cloning.getSupply(Commodities.ORGANS);
+        }
+        organs.getQuantity().modifyFlat(CLONING_ORGAN_BONUS_MOD, bonus, StringHelper.getString(StringHelper.INDUSTRIES, "genelab_income_modifier"));
+    }
+
+    private void removeCloningOrganBonus()
+    {
+        Industry industry = this.market.getIndustry("BOGGLED_CLONING");
+        if(!(industry instanceof Boggled_Cloning))
+        {
+            return;
+        }
+
+        MutableCommodityQuantity organs = ((Boggled_Cloning) industry).getSupply().get(Commodities.ORGANS);
+        if(organs != null)
+        {
+            organs.getQuantity().unmodifyFlat(CLONING_ORGAN_BONUS_MOD);
+        }
+    }
+
     public Pair<String, Integer> getGenelabDeficit()
     {
         ArrayList<String> deficitCommodities = new ArrayList<>();
@@ -421,14 +613,17 @@ public class Boggled_Genelab extends BaseIndustry implements ShowBoggledTerrafor
         }
 
         String bonus = MESOZOIC_PARK_INCOME_BONUS_ALPHA_CORE + "%";
+        ArrayList<String> highlights = new ArrayList<>();
+        highlights.add(bonus);
         String sentence = StringHelper.getString(StringHelper.INDUSTRIES, "genelab_ai_increases_mesozoic_income", StringHelper.tokens("prefix", pre, "bonus", bonus));
+        sentence = appendHydroponicsAndCloningBonuses(sentence, false, HYDROPONICS_FOOD_BONUS_ALPHA_CORE, CLONING_ORGAN_BONUS_ALPHA_CORE, highlights);
         if (mode == AICoreDescriptionMode.INDUSTRY_TOOLTIP) {
             CommoditySpecAPI coreSpec = Global.getSettings().getCommoditySpec(this.aiCoreId);
             TooltipMakerAPI text = tooltip.beginImageWithText(coreSpec.getIconName(), 48.0F);
-            StringHelper.applyHighlight(text.addPara(sentence, 0.0F), highlight, bonus);
+            StringHelper.applyHighlight(text.addPara(sentence, 0.0F), highlight, highlights.toArray(new String[0]));
             tooltip.addImageWithText(opad);
         } else {
-            StringHelper.applyHighlight(tooltip.addPara(sentence, opad), highlight, bonus);
+            StringHelper.applyHighlight(tooltip.addPara(sentence, opad), highlight, highlights.toArray(new String[0]));
         }
     }
 
@@ -514,19 +709,42 @@ public class Boggled_Genelab extends BaseIndustry implements ShowBoggledTerrafor
         Color highlight = Misc.getHighlightColor();
 
         String bonus = MESOZOIC_PARK_INCOME_BONUS_IMPROVEMENT + "%";
-        if (mode == ImprovementDescriptionMode.INDUSTRY_TOOLTIP)
+        boolean installed = mode == ImprovementDescriptionMode.INDUSTRY_TOOLTIP;
+        ArrayList<String> highlights = new ArrayList<>();
+        highlights.add(bonus);
+        String sentence;
+        if (installed)
         {
-            String sentence = StringHelper.getString(StringHelper.INDUSTRIES, "genelab_mesozoic_income_increased", StringHelper.tokens("bonus", bonus));
-            StringHelper.applyHighlight(info.addPara(sentence, 0f), highlight, bonus);
+            sentence = StringHelper.getString(StringHelper.INDUSTRIES, "genelab_mesozoic_income_increased", StringHelper.tokens("bonus", bonus));
         }
         else
         {
-            String sentence = StringHelper.getString(StringHelper.INDUSTRIES, "genelab_increases_mesozoic_income", StringHelper.tokens("bonus", bonus));
-            StringHelper.applyHighlight(info.addPara(sentence, 0f), highlight, bonus);
+            sentence = StringHelper.getString(StringHelper.INDUSTRIES, "genelab_increases_mesozoic_income", StringHelper.tokens("bonus", bonus));
         }
+        sentence = appendHydroponicsAndCloningBonuses(sentence, installed, HYDROPONICS_FOOD_BONUS_IMPROVED, CLONING_ORGAN_BONUS_IMPROVED, highlights);
+        StringHelper.applyHighlight(info.addPara(sentence, 0f), highlight, highlights.toArray(new String[0]));
 
         info.addSpacer(opad);
         super.addImproveDesc(info, mode);
+    }
+
+    private String appendHydroponicsAndCloningBonuses(String sentence, boolean installed, int foodBonus, int organBonus, ArrayList<String> highlights)
+    {
+        if(boggledTools.getBooleanSetting("boggledHydroponicsEnabled"))
+        {
+            String bonus = Integer.toString(foodBonus);
+            String key = installed ? "genelab_hydroponics_food_increased" : "genelab_increases_hydroponics_food";
+            sentence = sentence + " " + StringHelper.getString(StringHelper.INDUSTRIES, key, StringHelper.tokens("bonus", bonus));
+            highlights.add(bonus);
+        }
+        if(boggledTools.getBooleanSetting("boggledCloningEnabled"))
+        {
+            String organs = Integer.toString(organBonus);
+            String key = installed ? "genelab_cloning_production_increased" : "genelab_increases_cloning_production";
+            sentence = sentence + " " + StringHelper.getString(StringHelper.INDUSTRIES, key, StringHelper.tokens("organs", organs));
+            highlights.add(organs);
+        }
+        return sentence;
     }
 
     @Override
