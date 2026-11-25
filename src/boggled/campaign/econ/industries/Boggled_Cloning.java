@@ -28,7 +28,7 @@ public class Boggled_Cloning extends BaseIndustry implements MarketImmigrationMo
         // Demand and supply
         if(boggledTools.hyperlatticeAlloysDemandEnabled())
         {
-            this.demand("hyperlattice_alloys", size);
+            this.demand("hyperlattice_alloys", size + 2);
         }
 
         if (!this.market.hasCondition("habitable")) {
@@ -55,6 +55,10 @@ public class Boggled_Cloning extends BaseIndustry implements MarketImmigrationMo
         {
             this.supply.clear();
             this.unapply();
+        }
+        else
+        {
+            Boggled_Genelab.updateCloningOrganBonus(this);
         }
     }
 

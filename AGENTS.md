@@ -101,8 +101,8 @@ Located in `src/boggled/ui/`:
 ### Data Files Structure
 
 - `data/campaign/terraforming/` - Terraforming configuration (planet type mappings, suppressed conditions)
-- `data/campaign/aotd_tech_options.csv` - Default AoTD research tree definitions (11 buildings)
-- `data/campaign/custom_tech_trees/aotd_tech_options.csv` - Alternate complete tech tree (21 buildings)
+- `data/campaign/aotd_tech_options.csv` - Default AoTD research tree definitions (13 buildings, including Hydroponics and Cloning)
+- `data/campaign/custom_tech_trees/aotd_tech_options.csv` - Alternate complete tech tree (the default buildings plus Harmonic Damper, Planetary Agrav Field, Perihelion Project, Cryosanctum, AI Mining Drones, Ouyang Optimizer, and Planet Cracker)
 - `data/campaign/industries.csv` - Industry definitions
 - `data/campaign/abilities.csv` - Ability definitions
 - `data/campaign/market_conditions.csv` - Market condition definitions
@@ -137,8 +137,8 @@ TASC features a **data-driven research system** that integrates with AoTD's Vaul
 - Checked via `boggledTools.isResearched(researchId)` in terraforming project requirements
 
 **Tech Trees:**
-- **Default Tree** (`data/campaign/aotd_tech_options.csv`): 11 buildings, core progression
-- **Alternate Complete Tree** (`data/campaign/custom_tech_trees/aotd_tech_options.csv`): 21 buildings, comprehensive coverage
+- **Default Tree** (`data/campaign/aotd_tech_options.csv`): 13 buildings, core progression, including Hydroponics and Cloning
+- **Alternate Complete Tree** (`data/campaign/custom_tech_trees/aotd_tech_options.csv`): the default buildings plus the non-default buildings
 - See `docs/data-driven-research-system.md` for detailed implementation guide
 
 ### Unknown Skies (US) Planet Types

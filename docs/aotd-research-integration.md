@@ -67,6 +67,7 @@ TASC defines the following research projects in AoTD's tech tree:
 | Research ID | Name | Tier | Prerequisites | Rewards |
 |-------------|------|------|---------------|---------|
 | `tasc_genetic_manipulation` | Genetics | 3 | `tasc_domain_excavation` | `BOGGLED_GENELAB`, `BOGGLED_MESOZOIC_PARK` industries |
+| `tasc_cloning_technology` | Advanced Cloning | 3 | `tasc_genetic_manipulation` | `BOGGLED_CLONING` industry |
 
 #### AI/Tech Tech Line (Column 4)
 
@@ -82,6 +83,7 @@ TASC defines the following research projects in AoTD's tech tree:
 |-------------|------|------|---------------|---------|
 | `tasc_station_restoration` | Station Restoration Equipment | 3 | `tasc_domain_excavation` | Colonize abandoned stations ability |
 | `tasc_astropolis_construction` | Orbital Colonies | 3 | `tasc_station_restoration` | Astropolis station construction ability |
+| `tasc_hydroponics` | Orbital Agriculture | 3 | `tasc_astropolis_construction` | `BOGGLED_HYDROPONICS` industry |
 | `tasc_industrial_stations` | Orbital Industrial Complex | 3 | `tasc_astropolis_construction` | Mining and Siphon station construction abilities |
 
 #### Advanced Station Tech (Column 3)
@@ -192,6 +194,8 @@ public boolean isAvailableToBuild()
 | `Boggled_CHAMELEON` | `tasc_chameleon` |
 | `Boggled_Kletka_Simulator` | `tasc_remnant_algorithms` |
 | `Boggled_Remnant_Station` | `tasc_remnant_station` |
+| `Boggled_Cloning` | `tasc_cloning_technology` |
+| `Boggled_Hydroponics` | `tasc_hydroponics` |
 
 ### UI Visibility Control
 
@@ -446,6 +450,8 @@ Tier 3 AoTD Tech: aotd_tech_streamlined_production
         │   tasc_planet_type_manipulation (Planet Type Changes)
         │
         ├──→ tasc_genetic_manipulation (Genelab, Mesozoic Park)
+        │       ↓
+        │   tasc_cloning_technology (Cloning)
         │
         ├──→ tasc_limelight_network (Limelight Network)
         │       ↓
@@ -456,10 +462,10 @@ Tier 3 AoTD Tech: aotd_tech_streamlined_production
         └──→ tasc_station_restoration (Colonize Abandoned Stations)
                 ↓
             tasc_astropolis_construction (Astropolis Stations)
-                ↓
-            tasc_industrial_stations (Mining/Siphon Stations)
-                ↓
-            └──→ tasc_remnant_station (AI Station) [requires tasc_remnant_algorithms]
+                ├──→ tasc_hydroponics (Hydroponics)
+                └──→ tasc_industrial_stations (Mining/Siphon Stations)
+                        ↓
+                    tasc_remnant_station (AI Station) [requires tasc_remnant_algorithms]
 ```
 
 ### Player Experience
@@ -616,13 +622,15 @@ TASC includes an alternate tech tree that provides **complete coverage** of all 
 ### Complete vs Default Tech Trees
 
 **Default Tech Tree** (`data/campaign/aotd_tech_options.csv`):
-- Covers 11 buildings
+- Covers 13 buildings and the 4 station abilities
 - Research progression focused on core terraforming and station features
+- Includes Hydroponics (`tasc_hydroponics`) and Cloning (`tasc_cloning_technology`). Both ids match the complete tree. Cryosanctum stays on the complete tree only
+- Hydroponics and Cloning are enabled by default in LunaLib (`boggledHydroponicsEnabled`, `boggledCloningEnabled`). A saved LunaLib config keeps an older disabled value until that setting is changed
 - Recommended for first-time players
 
 **Alternate Complete Tech Tree** (`data/campaign/custom_tech_trees/aotd_tech_options.csv`):
-- Covers all 21 buildings and 4 abilities
-- All content requires research
+- Covers the default tree plus 7 buildings the default tree does not gate
+- All of that content requires research
 - More challenging progression
 - Includes visual icons for all research projects
 - See `custom_tech_trees/README.md` for swap instructions
@@ -714,15 +722,13 @@ tasc_cryopreservation (Cryosanctum)
 tasc_station_restoration (Colonize Abandoned Station ability)
     ↓
 tasc_astropolis_construction (Astropolis Station ability)
-    ↓
-tasc_hydroponics (Hydroponics)
-    ↓
-tasc_industrial_stations (Mining/Siphon Station abilities)
-    ↓
-tasc_automation_systems (AI Mining Drones)
-tasc_gas_giant_harvesting (Ouyang Optimizer)
-    ↓
-tasc_planetary_cracking (Planet Cracker)
+    ├──→ tasc_hydroponics (Hydroponics)
+    └──→ tasc_industrial_stations (Mining/Siphon Station abilities)
+            ↓
+        tasc_automation_systems (AI Mining Drones)
+        tasc_gas_giant_harvesting (Ouyang Optimizer)
+            ↓
+        tasc_planetary_cracking (Planet Cracker)
 ```
 
 #### Path 4: Security & AI Systems (Column 1-6, Row 4)
@@ -739,9 +745,9 @@ tasc_remnant_algorithms (Kletka Simulator)
 tasc_remnant_station (Remnant Station - requires both AI and Station tech)
 ```
 
-### New Research Entries in Complete Tree
+### Research Entries Only in the Complete Tree
 
-The complete tech tree adds **9 new research entries** for buildings not covered in the default tree:
+Advanced Cloning (`tasc_cloning_technology`) and Orbital Agriculture (`tasc_hydroponics`) are in both trees, with the same ids. The complete tech tree adds **7 research entries** for buildings the default tree does not cover:
 
 1. **tasc_geological_stabilization** - Geological Stabilization
    - Unlocks: BOGGLED_HARMONIC_DAMPER
@@ -753,37 +759,27 @@ The complete tech tree adds **9 new research entries** for buildings not covered
    - Prerequisites: tasc_resource_manipulation
    - Cost: Tier 3, 100 days, 8 databank
 
-3. **tasc_cloning_technology** - Advanced Cloning
-   - Unlocks: BOGGLED_CLONING
-   - Prerequisites: tasc_genetic_manipulation
-   - Cost: Tier 3, 60 days, 5 databank
-
-4. **tasc_cryopreservation** - Cryogenic Preservation
+3. **tasc_cryopreservation** - Cryogenic Preservation
    - Unlocks: BOGGLED_CRYOSANCTUM
    - Prerequisites: tasc_cloning_technology
    - Cost: Tier 3, 80 days, 7 databank
 
-5. **tasc_hydroponics** - Orbital Agriculture
-   - Unlocks: BOGGLED_HYDROPONICS
-   - Prerequisites: tasc_astropolis_construction
-   - Cost: Tier 3, 70 days, 5 databank
-
-6. **tasc_automation_systems** - Industrial Automation
+4. **tasc_automation_systems** - Industrial Automation
    - Unlocks: BOGGLED_AI_MINING_DRONES
    - Prerequisites: tasc_industrial_stations
    - Cost: Tier 3, 100 days, 8 databank
 
-7. **tasc_gas_giant_harvesting** - Gas Giant Optimization
+5. **tasc_gas_giant_harvesting** - Gas Giant Optimization
    - Unlocks: BOGGLED_OUYANG_OPTIMIZER
    - Prerequisites: tasc_industrial_stations
    - Cost: Tier 3, 110 days, 9 databank
 
-8. **tasc_planetary_cracking** - Planetary Cracking Technology
+6. **tasc_planetary_cracking** - Planetary Cracking Technology
    - Unlocks: BOGGLED_PLANET_CRACKER
    - Prerequisites: tasc_automation_systems
    - Cost: Tier 3, 150 days, 15 databank (endgame)
 
-9. **tasc_coronal_tap** - Coronal Tap Construction
+7. **tasc_coronal_tap** - Coronal Tap Construction
     - Unlocks: BOGGLED_PERIHELION_PROJECT
     - Prerequisites: tasc_planetary_agrav
     - Cost: Tier 3, 140 days, 12 databank (endgame)
