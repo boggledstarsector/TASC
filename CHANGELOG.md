@@ -1,6 +1,19 @@
 # Changelog
 
-## 10.2.0
+## 11.0.0 *(not backwards compatible)*
+- Removed Domain-era artifacts and replaced them with a new commodity, hyperlattice alloys. It functions almost identically to Domain-era artifacts.
+- Building Domain-tech stable location structures now requires Domain-grade parts, not hyperlattice alloys.
+- Stellar Reflector Array no longer requires hyperlattice alloys.
+- Updated the descriptions and artwork for several buildings.
+- Hydroponics is now enabled by default.
+- Hydroponics base food production is now (colony size - 2) instead of (colony size).
+- Genelab now increases Hydroponics food production.
+- Cloning is now enabled by default.
+- Cloning base construction cost is increased from $600,000 to $1,000,000.
+- Cloning hyperlattice alloy demand increased from (colony size) to (colony size + 2).
+- Genelab now increases Cloning harvested organs production.
+- 
+## 10.2.0 *(not backwards compatible)*
 - Refactored TASC to enable translation into other languages without modifying and recompiling the Java code. I appreciate those who translate TASC - please let me know if you encounter any issues with the refactor, or if there's any way I can make it even easier to translate TASC.
 - CHAMELEON can no longer remove the Decivilized Subpopulation condition. The base game added a way to suppress this condition in 0.98.5a, so I removed this feature from TASC.
 - Fixed a bug where the terraforming tab could have the wrong hotkey. Thanks WolframSegler for reporting this!
