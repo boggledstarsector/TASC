@@ -2391,20 +2391,16 @@ public class boggledTools {
             ret.addAll(asList(
                     boggledTools.getIntSetting(BoggledSettings.stableLocationGateCostHeavyMachinery),
                     boggledTools.getIntSetting(BoggledSettings.stableLocationGateCostMetals),
-                    boggledTools.getIntSetting(BoggledSettings.stableLocationGateCostTransplutonics)
+                    boggledTools.getIntSetting(BoggledSettings.stableLocationGateCostTransplutonics),
+                    boggledTools.getIntSetting(BoggledSettings.stableLocationGateCostDomainGradeParts)
             ));
-            if (boggledTools.getBooleanSetting(BoggledSettings.domainArchaeologyEnabled)) {
-                ret.add(boggledTools.getIntSetting(BoggledSettings.stableLocationGateCostDomainGradeParts));
-            }
         } else {
             ret.addAll(asList(
                     boggledTools.getIntSetting(BoggledSettings.stableLocationDomainTechStructureCostHeavyMachinery),
                     boggledTools.getIntSetting(BoggledSettings.stableLocationDomainTechStructureCostMetals),
-                    boggledTools.getIntSetting(BoggledSettings.stableLocationDomainTechStructureCostTransplutonics)
+                    boggledTools.getIntSetting(BoggledSettings.stableLocationDomainTechStructureCostTransplutonics),
+                    boggledTools.getIntSetting(BoggledSettings.stableLocationDomainTechStructureCostDomainGradeParts)
             ));
-            if (boggledTools.getBooleanSetting(BoggledSettings.domainArchaeologyEnabled)) {
-                ret.add(boggledTools.getIntSetting(BoggledSettings.stableLocationDomainTechStructureCostDomainGradeParts));
-            }
         }
         int[] ret2 = new int[ret.size()];
         Iterator<Integer> it = ret.iterator();

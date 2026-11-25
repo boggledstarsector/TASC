@@ -53,14 +53,7 @@ public class boggledObjectiveCanBuild extends BaseCommandPlugin
 
     public String[] getResources()
     {
-        if(boggledTools.getBooleanSetting(boggledTools.BoggledSettings.domainArchaeologyEnabled))
-        {
-            return new String[]{Commodities.HEAVY_MACHINERY, Commodities.METALS, Commodities.RARE_METALS, Commodities.PARTS};
-        }
-        else
-        {
-            return new String[]{Commodities.HEAVY_MACHINERY, Commodities.METALS, Commodities.RARE_METALS};
-        }
+        return new String[]{Commodities.HEAVY_MACHINERY, Commodities.METALS, Commodities.RARE_METALS, Commodities.PARTS};
     }
 
     public boolean canBuild(String type)
