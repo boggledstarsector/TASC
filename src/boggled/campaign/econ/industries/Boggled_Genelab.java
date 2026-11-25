@@ -27,10 +27,10 @@ public class Boggled_Genelab extends BaseIndustry implements ShowBoggledTerrafor
     public final int MESOZOIC_PARK_INCOME_BONUS_ALPHA_CORE = 60;
 
     static final String HYDROPONICS_FOOD_BONUS_MOD = "genelab_hydroponics_food";
-    private static final int HYDROPONICS_FOOD_BONUS_OPERATIONAL = 1;
-    private static final int HYDROPONICS_FOOD_BONUS_ALPHA_CORE = 1;
-    private static final int HYDROPONICS_FOOD_BONUS_IMPROVED = 1;
-    private static final int HYDROPONICS_FOOD_BONUS_SHORTAGE = 1;
+    private static final int HYDROPONICS_FOOD_BONUS_OPERATIONAL = 2;
+    private static final int HYDROPONICS_FOOD_BONUS_ALPHA_CORE = 2;
+    private static final int HYDROPONICS_FOOD_BONUS_IMPROVED = 2;
+    private static final int HYDROPONICS_FOOD_BONUS_PER_SHORTAGE = 2;
 
     private int daysWithoutShortagePollution = 0;
     private int lastDayCheckedPollution = 0;
@@ -433,10 +433,7 @@ public class Boggled_Genelab extends BaseIndustry implements ShowBoggledTerrafor
         }
 
         Pair<String, Integer> deficit = getGenelabDeficit();
-        if(deficit.two > 0)
-        {
-            bonus -= HYDROPONICS_FOOD_BONUS_SHORTAGE;
-        }
+        bonus -= HYDROPONICS_FOOD_BONUS_PER_SHORTAGE * deficit.two;
 
         return Math.max(bonus, 0);
     }
