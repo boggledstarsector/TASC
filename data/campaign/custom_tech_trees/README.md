@@ -2,7 +2,7 @@
 
 ## What This Is
 
-This folder contains an **alternate research tech tree** for TASC. The default tree gates 13 buildings and the 4 station abilities, including Hydroponics and Cloning. This tree keeps those projects and adds 7 more buildings: Harmonic Damper, Planetary Agrav Field, Perihelion Project, Cryosanctum, AI Mining Drones, Ouyang Optimizer, and Planet Cracker.
+This folder contains an **alternate research tech tree** for TASC. The default tree gates 13 buildings and the 4 station abilities. This tree keeps those projects and adds 7 more buildings: Harmonic Damper, Planetary Agrav Field, Perihelion Project, Cryosanctum, AI Mining Drones, Ouyang Optimizer, and Planet Cracker.
 
 If you enabled all TASC buildings, you can use this tech tree to gate those buildings behind research projects. You can also use it as a template for creating your own tech tree depending on which TASC features you enabled or disabled via LunaLib.
 

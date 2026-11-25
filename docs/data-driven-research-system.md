@@ -279,7 +279,7 @@ Every TASC industry uses `isBuildingResearchComplete(this.getId())`. The default
 ## CSV Data Files
 
 **Default Tech Tree:**
-- **data/campaign/aotd_tech_options.csv** - Contains TASC research project definitions with building and ability unlocks (13 buildings, including Hydroponics and Cloning)
+- **data/campaign/aotd_tech_options.csv** - Contains TASC research project definitions with building and ability unlocks (13 buildings)
 
 **Alternate Complete Tech Tree:**
 - **data/campaign/custom_tech_trees/aotd_tech_options.csv** - Alternate tech tree. It keeps the default projects and adds the 7 buildings the default tree does not gate
